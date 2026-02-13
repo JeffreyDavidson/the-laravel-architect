@@ -270,8 +270,8 @@
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:block flex-shrink-0 w-[480px]">
-                <div class="code-editor">
+            <div class="hidden lg:block flex-shrink-0 w-[520px]">
+                <div class="code-editor" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
                         <div class="flex gap-1.5">
@@ -280,128 +280,66 @@
                             <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
                         </div>
                         <div class="flex items-center ml-2">
-                            <div class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5">
+                            <button onclick="switchTab('routes')" id="tab-routes" class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
                                 web.php
-                            </div>
-                            <div class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5">
+                            </button>
+                            <button onclick="switchTab('architect')" id="tab-architect" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
                                 Architect.php
-                            </div>
+                            </button>
                         </div>
                     </div>
-                    {{-- Code body --}}
-                    <div class="p-5 font-mono text-[13px] leading-6 overflow-hidden">
-                        {{-- Line 1 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">1</span>
-                            <span><span class="syn-comment">// routes/web.php</span></span>
-                        </div>
-                        {{-- Line 2 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">2</span>
-                            <span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span>
-                        </div>
-                        {{-- Line 3 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">3</span>
-                            <span>&nbsp;</span>
-                        </div>
-                        {{-- Line 4 (highlighted) --}}
-                        <div class="flex gap-4 code-line-highlight rounded">
-                            <span class="code-line-number">4</span>
-                            <span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span>
-                        </div>
-                        {{-- Line 5 --}}
-                        <div class="flex gap-4 code-line-highlight rounded">
-                            <span class="code-line-number">5</span>
-                            <span class="ml-4"><span class="syn-arrow">-></span><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span>
-                        </div>
-                        {{-- Line 6 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">6</span>
-                            <span>&nbsp;</span>
-                        </div>
-                        {{-- Line 7 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">7</span>
-                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>, <span class="syn-bracket">[</span></span>
-                        </div>
-                        {{-- Line 8 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">8</span>
-                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
-                        </div>
-                        {{-- Line 9 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">9</span>
-                            <span class="ml-12"><span class="syn-string">'share'</span></span>
-                        </div>
-                        {{-- Line 10 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">10</span>
-                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
-                        </div>
-                        {{-- Line 11 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">11</span>
-                            <span>&nbsp;</span>
-                        </div>
-                        {{-- Line 12 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">12</span>
-                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/projects'</span>, <span class="syn-bracket">[</span></span>
-                        </div>
-                        {{-- Line 13 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">13</span>
-                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
-                        </div>
-                        {{-- Line 14 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">14</span>
-                            <span class="ml-12"><span class="syn-string">'build'</span></span>
-                        </div>
-                        {{-- Line 15 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">15</span>
-                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
-                        </div>
-                        {{-- Line 16 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">16</span>
-                            <span>&nbsp;</span>
-                        </div>
-                        {{-- Line 17 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">17</span>
-                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/hire-me'</span>, <span class="syn-bracket">[</span></span>
-                        </div>
-                        {{-- Line 18 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">18</span>
-                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
-                        </div>
-                        {{-- Line 19 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">19</span>
-                            <span class="ml-12"><span class="syn-string">'collaborate'</span></span>
-                        </div>
-                        {{-- Line 20 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">20</span>
-                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
-                        </div>
-                        {{-- Line 21 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">21</span>
-                            <span>&nbsp;</span>
-                        </div>
-                        {{-- Line 22 --}}
-                        <div class="flex gap-4">
-                            <span class="code-line-number">22</span>
-                            <span class="ml-4"><span class="syn-bracket">}</span>);</span>
-                        </div>
+                    {{-- Code body: web.php --}}
+                    <div id="code-routes" class="p-5 font-mono text-[13px] leading-6 overflow-hidden">
+                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 4</span><span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>, <span class="syn-bracket">[</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'share'</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/projects'</span>, <span class="syn-bracket">[</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">13</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'build'</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">15</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">16</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">17</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/hire-me'</span>, <span class="syn-bracket">[</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'collaborate'</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">20</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
+                    </div>
+                    {{-- Code body: Architect.php --}}
+                    <div id="code-architect" class="p-5 font-mono text-[13px] leading-6 overflow-hidden hidden">
+                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-keyword">&lt;?php</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">namespace</span> <span class="syn-class">App\Models</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 4</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 5</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span><span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$guarded</span> = <span class="syn-bracket">[]</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$casts</span> = <span class="syn-bracket">[</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'skills'</span> <span class="syn-arrow">=></span> <span class="syn-string">'array'</span>,</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'available'</span> <span class="syn-arrow">=></span> <span class="syn-string">'boolean'</span>,</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">13</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">scopeAvailable</span>(<span class="syn-variable">$query</span>)</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">15</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-variable">$query</span><span class="syn-arrow">-></span><span class="syn-method">where</span>(<span class="syn-string">'available'</span>, <span class="syn-keyword">true</span>);</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">17</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">projects</span>()</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">20</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-variable">$this</span><span class="syn-arrow">-></span><span class="syn-method">hasMany</span>(<span class="syn-class">Project</span>::<span class="syn-keyword">class</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">23</span><span><span class="syn-bracket">}</span></span></div>
                     </div>
                 </div>
             </div>
@@ -727,6 +665,26 @@
 </section>
 
 <script>
+// Code editor tab switching
+function switchTab(tab) {
+    const routesCode = document.getElementById('code-routes');
+    const architectCode = document.getElementById('code-architect');
+    const tabRoutes = document.getElementById('tab-routes');
+    const tabArchitect = document.getElementById('tab-architect');
+
+    if (tab === 'routes') {
+        routesCode.classList.remove('hidden');
+        architectCode.classList.add('hidden');
+        tabRoutes.className = tabRoutes.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
+        tabArchitect.className = tabArchitect.className.replace('code-editor-tab', 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
+    } else {
+        routesCode.classList.add('hidden');
+        architectCode.classList.remove('hidden');
+        tabArchitect.className = tabArchitect.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
+        tabRoutes.className = tabRoutes.className.replace('code-editor-tab', 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
+    }
+}
+
 // Typing effect
 (function() {
     const phrases = ['elegant APIs', 'scalable apps', 'clean code', 'Filament dashboards'];
