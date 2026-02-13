@@ -41,14 +41,72 @@
         50% { border-color: transparent; }
     }
 
-    /* ===== Floating Code Snippet ===== */
-    @keyframes floatIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 0.12; transform: translateY(0); }
+    /* ===== Code Editor Window ===== */
+    .code-editor {
+        background: #0d1117;
+        border: 1px solid rgba(74, 127, 191, 0.25);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 0 30px rgba(74, 127, 191, 0.15),
+            0 0 60px rgba(74, 127, 191, 0.08),
+            0 25px 50px rgba(0, 0, 0, 0.5);
+        transition: all 0.4s ease;
     }
-    .floating-code {
-        animation: floatIn 2s ease 1s forwards;
-        opacity: 0;
+    .code-editor:hover {
+        border-color: rgba(74, 127, 191, 0.4);
+        box-shadow:
+            0 0 40px rgba(74, 127, 191, 0.2),
+            0 0 80px rgba(74, 127, 191, 0.1),
+            0 25px 50px rgba(0, 0, 0, 0.5);
+        transform: translateY(-4px);
+    }
+    .code-editor-bar {
+        background: #161b22;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-editor-tab {
+        background: #0d1117;
+        border-top: 2px solid #4A7FBF;
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-editor-tab-inactive {
+        background: #161b22;
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-line-number {
+        color: #484f58;
+        user-select: none;
+        min-width: 2rem;
+        text-align: right;
+    }
+    /* Syntax colors */
+    .syn-keyword { color: #ff7b72; }
+    .syn-string { color: #a5d6ff; }
+    .syn-class { color: #79c0ff; }
+    .syn-method { color: #d2a8ff; }
+    .syn-comment { color: #484f58; font-style: italic; }
+    .syn-variable { color: #ffa657; }
+    .syn-function { color: #d2a8ff; }
+    .syn-arrow { color: #ff7b72; }
+    .syn-bracket { color: #8b949e; }
+    .syn-text { color: #c9d1d9; }
+    .syn-param { color: #ffa657; }
+
+    @keyframes codeSlideIn {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .code-editor {
+        animation: codeSlideIn 0.8s ease 0.3s both;
+    }
+
+    /* Line highlight */
+    .code-line-highlight {
+        background: rgba(74, 127, 191, 0.08);
+        border-left: 2px solid #4A7FBF;
+        margin-left: -0.5rem;
+        padding-left: calc(0.5rem - 2px);
     }
 
     /* ===== Glowing Buttons ===== */
@@ -138,16 +196,6 @@
     /* ===== Count Up ===== */
     .count-up { display: inline-block; }
 
-    /* ===== Hero Character Float ===== */
-    @keyframes heroFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    .hero-character {
-        animation: heroFloat 6s ease-in-out infinite;
-        filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
-    }
-
     /* ===== Blog Placeholder Gradients ===== */
     .post-placeholder-0 { background: linear-gradient(135deg, #1a2a4a, #2b3a5e, #1a2a4a); }
     .post-placeholder-1 { background: linear-gradient(135deg, #2a1a3a, #3b2a4e, #2a1a3a); }
@@ -171,19 +219,8 @@
 
 {{-- ===== HERO ===== --}}
 <section class="hero-mesh relative overflow-hidden min-h-[90vh] flex items-center">
-    {{-- Floating Code Snippet --}}
-    <div class="floating-code absolute bottom-8 right-8 md:bottom-16 md:right-16 font-mono text-xs md:text-sm text-brand-400 leading-relaxed pointer-events-none select-none hidden md:block">
-        <pre class="text-left"><code>Route::middleware('architect')
-    ->group(function () {
-        Route::get('/build', [
-            ProjectController::class,
-            'create'
-        ]);
-    });</code></pre>
-    </div>
-
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 z-10">
-        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
+        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
                 <p class="text-brand-400 font-semibold mb-6 text-sm tracking-wide uppercase">Hey, I'm Jeffrey Davidson 👋</p>
@@ -232,9 +269,141 @@
                 </div>
             </div>
 
-            {{-- Right: Character Art --}}
-            <div class="hidden lg:block flex-shrink-0">
-                <img src="/images/logo-alternate.jpg" alt="The Laravel Architect" class="hero-character w-80 rounded-2xl border border-brand-700/30">
+            {{-- Right: Code Editor --}}
+            <div class="hidden lg:block flex-shrink-0 w-[480px]">
+                <div class="code-editor">
+                    {{-- Title bar --}}
+                    <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
+                        <div class="flex gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                        </div>
+                        <div class="flex items-center ml-2">
+                            <div class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
+                                web.php
+                            </div>
+                            <div class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
+                                Architect.php
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Code body --}}
+                    <div class="p-5 font-mono text-[13px] leading-6 overflow-hidden">
+                        {{-- Line 1 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">1</span>
+                            <span><span class="syn-comment">// routes/web.php</span></span>
+                        </div>
+                        {{-- Line 2 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">2</span>
+                            <span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span>
+                        </div>
+                        {{-- Line 3 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">3</span>
+                            <span>&nbsp;</span>
+                        </div>
+                        {{-- Line 4 (highlighted) --}}
+                        <div class="flex gap-4 code-line-highlight rounded">
+                            <span class="code-line-number">4</span>
+                            <span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span>
+                        </div>
+                        {{-- Line 5 --}}
+                        <div class="flex gap-4 code-line-highlight rounded">
+                            <span class="code-line-number">5</span>
+                            <span class="ml-4"><span class="syn-arrow">-></span><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span>
+                        </div>
+                        {{-- Line 6 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">6</span>
+                            <span>&nbsp;</span>
+                        </div>
+                        {{-- Line 7 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">7</span>
+                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>, <span class="syn-bracket">[</span></span>
+                        </div>
+                        {{-- Line 8 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">8</span>
+                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
+                        </div>
+                        {{-- Line 9 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">9</span>
+                            <span class="ml-12"><span class="syn-string">'share'</span></span>
+                        </div>
+                        {{-- Line 10 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">10</span>
+                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
+                        </div>
+                        {{-- Line 11 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">11</span>
+                            <span>&nbsp;</span>
+                        </div>
+                        {{-- Line 12 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">12</span>
+                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/projects'</span>, <span class="syn-bracket">[</span></span>
+                        </div>
+                        {{-- Line 13 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">13</span>
+                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
+                        </div>
+                        {{-- Line 14 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">14</span>
+                            <span class="ml-12"><span class="syn-string">'build'</span></span>
+                        </div>
+                        {{-- Line 15 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">15</span>
+                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
+                        </div>
+                        {{-- Line 16 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">16</span>
+                            <span>&nbsp;</span>
+                        </div>
+                        {{-- Line 17 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">17</span>
+                            <span class="ml-8"><span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/hire-me'</span>, <span class="syn-bracket">[</span></span>
+                        </div>
+                        {{-- Line 18 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">18</span>
+                            <span class="ml-12"><span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span>
+                        </div>
+                        {{-- Line 19 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">19</span>
+                            <span class="ml-12"><span class="syn-string">'collaborate'</span></span>
+                        </div>
+                        {{-- Line 20 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">20</span>
+                            <span class="ml-8"><span class="syn-bracket">]</span>);</span>
+                        </div>
+                        {{-- Line 21 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">21</span>
+                            <span>&nbsp;</span>
+                        </div>
+                        {{-- Line 22 --}}
+                        <div class="flex gap-4">
+                            <span class="code-line-number">22</span>
+                            <span class="ml-4"><span class="syn-bracket">}</span>);</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -275,18 +444,25 @@
 
 {{-- ===== ABOUT BLURB ===== --}}
 <section class="py-16 fade-up">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-lg text-gray-300 leading-relaxed">
-            I'm a husband, father, and software developer who moved from Kansas to Florida to chase better weather
-            and build better software. By day, I architect Laravel applications. By night, I create content to help
-            other developers level up — through <span class="text-brand-400">blog posts</span>,
-            <span class="text-brand-400">YouTube tutorials</span>, and
-            <span class="text-brand-400">two podcasts</span>. I believe clean code and genuine community
-            make the tech world a better place.
-        </p>
-        <a href="{{ route('about') }}" class="inline-flex items-center mt-6 text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
-            More about me →
-        </a>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="flex-shrink-0">
+                <img src="/images/logo-alternate.jpg" alt="The Laravel Architect" class="w-40 h-40 rounded-2xl object-cover border border-brand-700/30 shadow-lg shadow-brand-600/10">
+            </div>
+            <div class="text-center md:text-left">
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    I'm a husband, father, and software developer who moved from Kansas to Florida to chase better weather
+                    and build better software. By day, I architect Laravel applications. By night, I create content to help
+                    other developers level up — through <span class="text-brand-400">blog posts</span>,
+                    <span class="text-brand-400">YouTube tutorials</span>, and
+                    <span class="text-brand-400">two podcasts</span>. I believe clean code and genuine community
+                    make the tech world a better place.
+                </p>
+                <a href="{{ route('about') }}" class="inline-flex items-center mt-6 text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
+                    More about me →
+                </a>
+            </div>
+        </div>
     </div>
 </section>
 
