@@ -226,7 +226,7 @@
 {{-- ===== HERO ===== --}}
 <section class="hero-mesh relative overflow-hidden min-h-[90vh] flex items-center">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
-        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
                 <p class="text-brand-400 font-semibold mb-6 text-sm tracking-wide uppercase">Hey, I'm Jeffrey Davidson 👋</p>
@@ -276,7 +276,7 @@
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-1 self-stretch min-w-0">
+            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0">
                 <div class="code-editor flex flex-col h-full" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
