@@ -455,7 +455,7 @@
 
 {{-- ===== ABOUT & TECH STACK ===== --}}
 <section class="py-16 fade-up">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row items-center gap-10">
             <div class="flex-shrink-0">
                 <img src="/images/logo-alternate.jpg" alt="The Laravel Architect" class="w-40 h-40 rounded-2xl object-cover border border-brand-700/30 shadow-lg shadow-brand-600/10">
@@ -506,7 +506,7 @@
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
 <section class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl font-bold text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
@@ -540,7 +540,7 @@
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
 <section class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl font-bold text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
@@ -588,7 +588,7 @@
 
 {{-- ===== PODCASTS ===== --}}
 <section class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl font-bold text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
