@@ -258,6 +258,32 @@
                     </a>
                 </div>
 
+                {{-- Mobile Code Editor Preview --}}
+                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono" style="animation:none;">
+                    <div class="code-editor-bar px-3 py-2 flex items-center gap-2">
+                        <div class="flex gap-1">
+                            <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
+                            <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
+                            <span class="w-2 h-2 rounded-full bg-green-500/80"></span>
+                        </div>
+                        <span class="code-editor-tab px-2 py-0.5 text-[10px] text-gray-300">Architect.php</span>
+                    </div>
+                    <div class="p-3 space-y-0.5">
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span> <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$available_for_hire</span> = <span class="syn-keyword">true</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$skills</span> = [<span class="syn-string">'Laravel'</span>, <span class="syn-string">'PHP'</span>, ...];</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">philosophy</span>(): <span class="syn-class">string</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-string">'Build it clean, build it right,'</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. <span class="syn-string">' then teach someone how.'</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">12</span><span><span class="syn-bracket">}</span></span></div>
+                    </div>
+                </div>
+
                 {{-- Social links --}}
                 <div class="flex items-center justify-center lg:justify-start gap-6">
                     <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors" title="YouTube">
@@ -429,40 +455,7 @@
     </div>
 </section>
 
-{{-- ===== STATS BAR ===== --}}
-<section class="border-y border-brand-800/50 bg-brand-900/80 backdrop-blur">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-                <div class="flex items-center justify-center gap-1">
-                    <span class="count-up text-white text-2xl font-bold" data-target="15">0</span>
-                    <span class="text-brand-400 text-2xl font-bold">+</span>
-                </div>
-                <p class="text-gray-500 text-sm mt-1">Years Experience</p>
-            </div>
-            <div>
-                <div class="flex items-center justify-center gap-1">
-                    <span class="count-up text-white text-2xl font-bold" data-target="2">0</span>
-                </div>
-                <p class="text-gray-500 text-sm mt-1">Podcasts</p>
-            </div>
-            <div>
-                <div class="flex items-center justify-center gap-1">
-                    <span class="text-white text-2xl font-bold">Laravel</span>
-                </div>
-                <p class="text-gray-500 text-sm mt-1">& PHP Specialist</p>
-            </div>
-            <div>
-                <div class="flex items-center justify-center gap-1">
-                    <span class="text-brand-400 text-2xl font-bold">✓</span>
-                </div>
-                <p class="text-gray-500 text-sm mt-1">Available for Hire</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- ===== ABOUT BLURB ===== --}}
+{{-- ===== ABOUT & TECH STACK ===== --}}
 <section class="py-16 fade-up">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row items-center gap-10">
@@ -478,74 +471,35 @@
                     <span class="text-brand-400">two podcasts</span>. I believe clean code and genuine community
                     make the tech world a better place.
                 </p>
-                <a href="{{ route('about') }}" class="inline-flex items-center mt-6 text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
+                <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-6">
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Laravel">
+                        <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="PHP">
+                        <svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Filament">
+                        <span class="text-amber-400 text-sm font-bold">F</span>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Livewire">
+                        <svg class="w-5 h-5 text-pink-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 0C6.174 0 1.448 4.957 1.448 11.07c0 3.806 1.83 7.184 4.665 9.227.233.168.482-.111.379-.367a16.06 16.06 0 0 1-.592-1.874c-.063-.252.085-.442.276-.583 2.794-2.07 4.6-5.395 4.6-9.142 0-.357-.017-.71-.05-1.06-.026-.276.226-.5.493-.41 3.147 1.074 5.554 3.752 6.278 7.066a.274.274 0 0 0 .491.1c.654-.883 1.088-1.894 1.301-2.983.052-.266.367-.375.565-.182a9.384 9.384 0 0 1 2.7 6.617c0 .575-.053 1.14-.155 1.69-.048.262.218.459.438.31A11.123 11.123 0 0 0 22.554 11.07C22.554 4.957 17.828 0 12.001 0z"/></svg>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Tailwind CSS">
+                        <svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/></svg>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="MySQL">
+                        <svg class="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153z"/></svg>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Alpine.js">
+                        <span class="text-teal-400 text-sm font-bold">A</span>
+                    </div>
+                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Redis">
+                        <svg class="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2.661l.54.997-1.797.644 2.409.218.748 1.246.467-1.48 2.077-.322-1.584-.72.514-1.467-1.596.885zM3.055 8.6l5.036 2.093 7.074-3.06L9.89 5.57zm17.834 1.735c.017.18-.07.396-.283.551l-7.697 4.39v7.702c0 .253-.166.384-.378.312l-9.237-3.234c-.2-.07-.345-.282-.345-.527V12.15c0-.166.117-.327.291-.396l8.04-3.109 8.913 3.592c.2.072.384.22.396.398z"/></svg>
+                    </div>
+                </div>
+                <a href="{{ route('about') }}" class="inline-flex items-center mt-4 text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
                     More about me →
                 </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- ===== TECH STACK ===== --}}
-<section class="py-12 border-y border-brand-800/30">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p class="text-center text-sm text-gray-500 uppercase tracking-widest mb-8">Tech I work with</p>
-        <div class="flex flex-wrap justify-center gap-8 items-center">
-            {{-- Laravel --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002c.015.01.027.021.04.033.013.01.027.018.038.028.014.013.023.03.035.045.009.011.02.021.024.033.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1.004-.013.01-.021.015-.033a.376.376 0 0 1 .023-.058c.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027.013-.012.027-.024.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045.008.011.019.021.023.033.01.019.017.038.024.058.005.012.011.02.014.033zm-.74 5.032V5.86l-1.58.908-2.18 1.257v4.6zm-4.518 7.76v-4.604l-2.146 1.225-6.608 3.772v4.652zM1.133 3.665v14.757l8.282 4.773v-4.65l-4.32-2.44-.003-.003-.004-.001c-.013-.01-.025-.022-.039-.032-.012-.01-.026-.018-.036-.029l-.002-.003c-.011-.012-.02-.028-.03-.042-.01-.012-.021-.023-.028-.037l-.002-.003c-.008-.014-.012-.031-.018-.047-.006-.013-.014-.025-.018-.039-.004-.018-.004-.037-.006-.056-.002-.014-.006-.027-.006-.041V5.862l-2.18-1.257zM5.085.861L1.322 3.033l3.762 2.171 3.762-2.171zm1.892 13.292l2.18-1.256V3.665l-1.58.909-2.18 1.256v9.232zm8.094-9.181l-3.762 2.172 3.762 2.172 3.762-2.172zm-.378 4.673l-2.18-1.256-1.58-.909v4.6l2.18 1.257 1.58.908zm-8.47 9.172l5.53-3.159 2.925-1.67-3.756-2.167-4.324 2.49-3.63 2.091z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Laravel</span>
-            </div>
-            {{-- PHP --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.866 1.55zm5.943-.209c.043-.186.06-.345.05-.475-.01-.131-.053-.233-.129-.306-.076-.074-.19-.12-.342-.14a3.3 3.3 0 0 0-.594-.025l-.737 0-.283 1.454h-.658l.857-4.404h.658l-.283 1.455.72-.001c.39-.003.67.037.838.12.168.082.271.244.308.484.021.13.012.323-.027.578l-.193.992h-.668l.203-1.046zm3.838-.562c-.086.42-.243.79-.47 1.108-.228.319-.511.564-.847.735-.337.17-.738.256-1.203.256h-.964l-.327 1.681h-1.378l1.23-6.326h2.648c.798 0 1.38.209 1.745.628.367.418.477 1.002.33 1.752a2.84 2.84 0 0 1-.764 1.166zm-.437-.985c.092-.47.05-.802-.124-.995-.174-.193-.523-.29-1.047-.29h-.944l-.515 2.648h.838c.557 0 .97-.105 1.242-.314.272-.21.456-.559.55-1.049z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">PHP</span>
-            </div>
-            {{-- Filament --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <span class="text-amber-400 text-xl font-bold">F</span>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Filament</span>
-            </div>
-            {{-- Livewire --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-pink-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 0C6.174 0 1.448 4.957 1.448 11.07c0 3.806 1.83 7.184 4.665 9.227.233.168.482-.111.379-.367a16.06 16.06 0 0 1-.592-1.874c-.063-.252.085-.442.276-.583 2.794-2.07 4.6-5.395 4.6-9.142 0-.357-.017-.71-.05-1.06-.026-.276.226-.5.493-.41 3.147 1.074 5.554 3.752 6.278 7.066a.274.274 0 0 0 .491.1c.654-.883 1.088-1.894 1.301-2.983.052-.266.367-.375.565-.182a9.384 9.384 0 0 1 2.7 6.617c0 .575-.053 1.14-.155 1.69-.048.262.218.459.438.31A11.123 11.123 0 0 0 22.554 11.07C22.554 4.957 17.828 0 12.001 0z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Livewire</span>
-            </div>
-            {{-- Tailwind --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-cyan-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Tailwind</span>
-            </div>
-            {{-- MySQL --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153zM5.77 18.695h-.927a50.854 50.854 0 0 0-.27-4.41h-.008l-1.41 4.41H2.45l-1.4-4.41h-.01a72.892 72.892 0 0 0-.195 4.41H0c.055-1.966.192-3.81.41-5.53h1.15l1.335 4.064h.008l1.347-4.064h1.095c.242 2.015.384 3.86.428 5.53zm4.326-3.78c-.2.59-.37 1.06-.507 1.41-.14.35-.26.607-.363.77-.1.164-.213.278-.328.34-.116.06-.26.092-.437.092-.128 0-.233-.018-.313-.056l-.065-.372c.087.028.16.042.22.042.17 0 .3-.09.4-.27.094-.18.097-.39.013-.62l-1.2-3.466h.87l.727 2.414c.033.1.04.19.02.27l.006.007c.09-.27.196-.564.317-.88l.677-1.81h.82zm5.2 3.64c-.39.12-.63.18-.72.18-.36 0-.65-.12-.84-.36-.21-.24-.35-.64-.42-1.2-.08-.56-.08-1.35 0-2.35.07-.96.24-1.65.5-2.07.26-.43.67-.64 1.22-.64.15 0 .35.04.59.12.24.07.42.17.55.29l-.36.66c-.15-.16-.37-.24-.65-.24-.28 0-.5.13-.66.38-.15.26-.26.67-.33 1.23-.06.54-.07 1.17-.03 1.9.06.7.18 1.17.37 1.42.18.24.44.36.78.36.22 0 .44-.05.68-.16l.11.54z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">MySQL</span>
-            </div>
-            {{-- Alpine.js --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <span class="text-teal-400 text-lg font-bold">A</span>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Alpine.js</span>
-            </div>
-            {{-- Redis --}}
-            <div class="tech-icon flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2.661l.54.997-1.797.644 2.409.218.748 1.246.467-1.48 2.077-.322-1.584-.72.514-1.467-1.596.885zM3.055 8.6l5.036 2.093 7.074-3.06L9.89 5.57zm17.834 1.735c.017.18-.07.396-.283.551l-7.697 4.39v7.702c0 .253-.166.384-.378.312l-9.237-3.234c-.2-.07-.345-.282-.345-.527V12.15c0-.166.117-.327.291-.396l8.04-3.109 8.913 3.592c.2.072.384.22.396.398z"/></svg>
-                </div>
-                <span class="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">Redis</span>
             </div>
         </div>
     </div>
@@ -655,8 +609,11 @@
                     </div>
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2 group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
-                <p class="text-gray-400 text-sm mb-5">Conversations about Laravel, web development, and the developer life — one cup at a time.</p>
-                <span class="text-sm text-brand-400 group-hover:text-brand-300 font-medium transition-colors">Listen now →</span>
+                <p class="text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life — one cup at a time.</p>
+                @if(isset($coffeeEpisodeCount) && $coffeeEpisodeCount > 0)
+                    <span class="text-xs text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
+                @endif
+                <span class="text-sm text-brand-400 group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
             </a>
             {{-- Cloudy Days podcast --}}
             <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-600/30 transition-all duration-300 hover:border-accent-600/50" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));">
@@ -671,8 +628,11 @@
                     </div>
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2 group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
-                <p class="text-gray-400 text-sm mb-5">Real talk about mental health, burnout, work-life balance, and finding your way through the fog.</p>
-                <span class="text-sm text-accent-500 group-hover:text-accent-400 font-medium transition-colors">Listen now →</span>
+                <p class="text-gray-400 text-sm mb-3">Real talk about mental health, burnout, work-life balance, and finding your way through the fog.</p>
+                @if(isset($cloudyEpisodeCount) && $cloudyEpisodeCount > 0)
+                    <span class="text-xs text-accent-400 mb-2 inline-block">{{ $cloudyEpisodeCount }} episodes</span>
+                @endif
+                <span class="text-sm text-accent-500 group-hover:text-accent-400 font-medium transition-colors block">Listen now →</span>
             </a>
         </div>
     </div>
@@ -698,7 +658,7 @@
                 </div>
             </div>
             <div class="aspect-video bg-brand-800">
-                <img src="/images/social-banner.jpg" alt="The Laravel Architect YouTube" class="w-full h-full object-cover">
+                <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=UC42H30o7l5QvvCzC86dSu_A" title="The Laravel Architect YouTube" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
             </div>
         </div>
         <div class="mt-8">

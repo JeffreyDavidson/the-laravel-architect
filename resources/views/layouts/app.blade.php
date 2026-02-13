@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'The Laravel Architect') — Jeffrey Davidson</title>
     <meta name="description" content="@yield('meta_description', 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect.')">
+    <link rel="icon" type="image/svg+xml" href="/images/logo-color.svg">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,500" rel="stylesheet" />
