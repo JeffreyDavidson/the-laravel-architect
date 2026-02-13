@@ -294,6 +294,10 @@
                                 <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
                                 Architect.php
                             </button>
+                            <button onclick="switchTab('test')" id="tab-test" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                ArchitectTest.php
+                            </button>
                         </div>
                     </div>
                     {{-- Code body: web.php --}}
@@ -362,6 +366,49 @@
                         <div class="flex gap-4"><span class="code-line-number">39</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. <span class="syn-string">' then teach someone how.'</span>;</span></div>
                         <div class="flex gap-4"><span class="code-line-number">40</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number">41</span><span><span class="syn-bracket">}</span></span></div>
+                    </div>
+                    {{-- Code body: ArchitectTest.php --}}
+                    <div id="code-test" class="p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
+                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// tests/Feature/ArchitectTest.php</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Models\Architect</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 4</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 5</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect has required skills'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">first</span>();</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 7</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">skills</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Laravel'</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'PHP'</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Filament'</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Livewire'</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">13</span><span><span class="syn-bracket">}</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">14</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">15</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect is available for hire'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">find</span>(<span class="syn-string">'jeffrey'</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">17</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">available_for_hire</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeTrue</span>();</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">20</span><span><span class="syn-bracket">}</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">22</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect delivers quality work'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">23</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$project</span> = <span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-method">build</span>(<span class="syn-string">'your-idea'</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$project</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeClean</span>()</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeScalable</span>()</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">28</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeWellTested</span>()</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">29</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeDeliveredOnTime</span>();</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">30</span><span><span class="syn-bracket">}</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">31</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">32</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect never stops learning'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">find</span>(<span class="syn-string">'jeffrey'</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">podcasts</span>)<span class="syn-arrow">-></span><span class="syn-method">toHaveCount</span>(<span class="syn-variable">2</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">36</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">youtube</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">37</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">blog</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">38</span><span><span class="syn-bracket">}</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">39</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">40</span><span><span class="syn-comment">// ✓ All tests passed (4 assertions)</span></span></div>
                     </div>
                 </div>
             </div>
@@ -689,22 +736,20 @@
 <script>
 // Code editor tab switching
 function switchTab(tab) {
-    const routesCode = document.getElementById('code-routes');
-    const architectCode = document.getElementById('code-architect');
-    const tabRoutes = document.getElementById('tab-routes');
-    const tabArchitect = document.getElementById('tab-architect');
+    const panels = { routes: 'code-routes', architect: 'code-architect', test: 'code-test' };
+    const tabs = { routes: 'tab-routes', architect: 'tab-architect', test: 'tab-test' };
 
-    if (tab === 'routes') {
-        routesCode.classList.remove('hidden');
-        architectCode.classList.add('hidden');
-        tabRoutes.className = tabRoutes.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
-        tabArchitect.className = tabArchitect.className.replace('code-editor-tab', 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
-    } else {
-        routesCode.classList.add('hidden');
-        architectCode.classList.remove('hidden');
-        tabArchitect.className = tabArchitect.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
-        tabRoutes.className = tabRoutes.className.replace('code-editor-tab', 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
-    }
+    Object.keys(panels).forEach(key => {
+        const panel = document.getElementById(panels[key]);
+        const btn = document.getElementById(tabs[key]);
+        if (key === tab) {
+            panel.classList.remove('hidden');
+            btn.className = btn.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
+        } else {
+            panel.classList.add('hidden');
+            btn.className = btn.className.replace(/\bcode-editor-tab\b(?!-)/, 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
+        }
+    });
 }
 
 // Typing effect
