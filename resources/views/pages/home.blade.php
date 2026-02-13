@@ -276,7 +276,7 @@
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-shrink-0 w-[520px] self-stretch">
+            <div class="hidden lg:flex lg:flex-col flex-1 self-stretch min-w-0">
                 <div class="code-editor flex flex-col h-full" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
