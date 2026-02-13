@@ -15,6 +15,57 @@
         animation: meshShift 20s ease infinite;
     }
 
+    /* ===== Noise/Grain Texture Overlay ===== */
+    .noise-overlay {
+        position: relative;
+    }
+    .noise-overlay::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.04;
+        pointer-events: none;
+        z-index: 1;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 256px 256px;
+    }
+
+    /* ===== Dot Grid Pattern for Content Sections ===== */
+    .dot-grid-bg {
+        position: relative;
+    }
+    .dot-grid-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        pointer-events: none;
+        background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+        background-size: 24px 24px;
+        z-index: 0;
+    }
+    .dot-grid-bg > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ===== Section Dividers ===== */
+    .section-divider {
+        height: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+    .section-divider-hero {
+        background: linear-gradient(to bottom, transparent, #0D1117);
+    }
+    .section-divider-dark {
+        background: linear-gradient(to bottom, #0D1117, rgba(13,17,23,0.95));
+    }
+    .section-divider-cta {
+        background: linear-gradient(to bottom, #0D1117, #4A7FBF);
+    }
+
     /* ===== Laravel Gradient Glow Text ===== */
     .laravel-glow {
         font-family: 'Empera', serif;
@@ -25,20 +76,21 @@
         filter: drop-shadow(0 0 20px rgba(74, 127, 191, 0.5)) drop-shadow(0 0 40px rgba(74, 127, 191, 0.25));
     }
 
-    /* ===== Typing Effect ===== */
-    .typing-wrapper {
+    /* ===== Text Scramble Effect ===== */
+    .scramble-wrapper {
         display: inline-flex;
         align-items: center;
         min-height: 1.5em;
     }
-    .typing-text {
-        border-right: 2px solid #4A7FBF;
-        animation: blink 0.7s step-end infinite;
+    .scramble-text {
         white-space: nowrap;
-        overflow: hidden;
+        font-family: 'JetBrains Mono', monospace, ui-monospace;
     }
-    @keyframes blink {
-        50% { border-color: transparent; }
+    .scramble-char-random {
+        color: rgba(74, 127, 191, 0.4);
+    }
+    .scramble-char-resolved {
+        color: #7bb8e0;
     }
 
     /* ===== Code Editor Window ===== */
@@ -52,6 +104,7 @@
             0 0 60px rgba(74, 127, 191, 0.08),
             0 25px 50px rgba(0, 0, 0, 0.5);
         transition: all 0.4s ease;
+        will-change: transform;
     }
     .code-editor:hover {
         border-color: rgba(74, 127, 191, 0.4);
@@ -122,6 +175,7 @@
     .glow-btn {
         position: relative;
         transition: all 0.3s ease;
+        will-change: transform;
     }
     .glow-btn:hover {
         box-shadow: 0 0 20px rgba(74, 127, 191, 0.4), 0 0 40px rgba(74, 127, 191, 0.2);
@@ -134,7 +188,7 @@
         color: white;
     }
 
-    /* ===== Glassmorphism Cards ===== */
+    /* ===== Glassmorphism Cards with Cursor Glow ===== */
     .glass-card {
         background: rgba(26, 29, 33, 0.6);
         backdrop-filter: blur(16px);
@@ -143,6 +197,22 @@
         transition: all 0.4s ease;
         transform-style: preserve-3d;
         perspective: 800px;
+        --glow-x: 50%;
+        --glow-y: 50%;
+    }
+    .glass-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        background: radial-gradient(600px circle at var(--glow-x) var(--glow-y), rgba(74, 127, 191, 0.12), transparent 40%);
+        pointer-events: none;
+        z-index: 1;
+    }
+    .glass-card:hover::after {
+        opacity: 1;
     }
     .glass-card:hover {
         border-color: rgba(74, 127, 191, 0.5);
@@ -150,10 +220,12 @@
         transform: rotateY(-2deg) rotateX(2deg) scale(1.02);
     }
 
-    /* ===== Gradient Top Border Cards ===== */
+    /* ===== Gradient Top Border Cards with Cursor Glow ===== */
     .gradient-border-card {
         position: relative;
         overflow: hidden;
+        --glow-x: 50%;
+        --glow-y: 50%;
     }
     .gradient-border-card::before {
         content: '';
@@ -161,6 +233,21 @@
         top: 0; left: 0; right: 0;
         height: 3px;
         background: linear-gradient(90deg, #4A7FBF, #E47A9D);
+        z-index: 2;
+    }
+    .gradient-border-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        background: radial-gradient(600px circle at var(--glow-x) var(--glow-y), rgba(74, 127, 191, 0.1), transparent 40%);
+        pointer-events: none;
+        z-index: 1;
+    }
+    .gradient-border-card:hover::after {
+        opacity: 1;
     }
 
     /* ===== Scroll Fade Up ===== */
@@ -224,34 +311,85 @@
         box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
         outline: none;
     }
+
+    /* ===== Magnetic Button ===== */
+    .magnetic-btn {
+        transition: transform 0.2s ease-out;
+        will-change: transform;
+    }
+
+    /* ===== Bento Grid for Projects ===== */
+    .bento-projects {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    .bento-projects > :first-child {
+        grid-column: span 2;
+    }
+    @media (max-width: 767px) {
+        .bento-projects {
+            grid-template-columns: 1fr;
+        }
+        .bento-projects > :first-child {
+            grid-column: span 1;
+        }
+    }
+
+    /* ===== Bento Grid for Posts ===== */
+    .bento-posts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 1.5rem;
+    }
+    .bento-posts > :first-child {
+        grid-row: span 2;
+    }
+    .bento-posts > :first-child .aspect-video {
+        aspect-ratio: auto;
+        height: 100%;
+        min-height: 200px;
+    }
+    @media (max-width: 767px) {
+        .bento-posts {
+            grid-template-columns: 1fr;
+        }
+        .bento-posts > :first-child {
+            grid-row: span 1;
+        }
+    }
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="hero-mesh relative overflow-hidden min-h-[90vh] flex items-center">
+<section class="hero-mesh noise-overlay relative overflow-hidden min-h-[90vh] flex items-center">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
-                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight mb-6 text-white">
-                    I architect things for the web with
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-2 text-white">
+                    I don't just write code—
                     <br>
-                    <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">Laravel</span>
+                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it.
                 </h1>
-
-                <div class="text-lg sm:text-xl text-gray-400 mb-4">
-                    Crafting <span class="typing-wrapper"><span class="typing-text text-brand-300" id="typed-text"></span></span>
+                <div class="mb-6">
+                    <span class="laravel-glow text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide">Laravel</span>
                 </div>
 
-                <p class="text-gray-500 mb-10 max-w-2xl">
-                    Software developer, content creator, and architect of clean, maintainable applications.
-                    I write about Laravel, PHP, web development, and the lessons learned along the way.
+                <div class="text-xl sm:text-2xl text-gray-400 mb-4">
+                    Crafting <span class="scramble-wrapper"><span class="scramble-text text-brand-300" id="scramble-text"></span></span>
+                </div>
+
+                <p class="text-xl text-gray-500 mb-10 max-w-2xl">
+                    15 years of building Laravel applications that scale. I write about the craft,
+                    host two podcasts, and help developers build things they're proud of.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
-                    <a href="{{ route('blog.index') }}" class="glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
+                    <a href="{{ route('blog.index') }}" class="magnetic-btn glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
                         Read the Blog
                     </a>
-                    <a href="{{ route('projects.index') }}" class="glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-brand-700 text-gray-300 font-semibold rounded-lg transition-all">
+                    <a href="{{ route('projects.index') }}" class="magnetic-btn glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-brand-700 text-gray-300 font-semibold rounded-lg transition-all">
                         View Projects
                     </a>
                 </div>
@@ -303,7 +441,7 @@
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0">
+            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0" id="code-editor-wrapper">
                 <div class="code-editor flex flex-col h-full" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
@@ -453,8 +591,11 @@
     </div>
 </section>
 
+{{-- Section Divider: Hero → Content --}}
+<div class="section-divider section-divider-hero"></div>
+
 {{-- ===== ABOUT & TECH STACK ===== --}}
-<section class="py-16 fade-up">
+<section class="py-16 fade-up dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row items-center gap-10">
             <div class="flex-shrink-0">
@@ -503,24 +644,27 @@
     </div>
 </section>
 
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark"></div>
+
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
-<section class="py-20">
+<section class="py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-3xl font-bold text-white">Featured Projects</h2>
+            <h2 class="text-4xl font-extrabold text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            @foreach($featuredProjects as $project)
-            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up">
+        <div class="bento-projects">
+            @foreach($featuredProjects as $index => $project)
+            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up" data-glow-card>
                 @if($project->featured_image)
-                <div class="aspect-video bg-brand-800 overflow-hidden">
+                <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
                     <img src="{{ Storage::url($project->featured_image) }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 @endif
                 <div class="p-6">
-                    <h3 class="font-semibold text-lg text-white mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
+                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-white mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
                     <p class="text-gray-400 text-sm mb-4">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
@@ -537,24 +681,27 @@
 </section>
 @endif
 
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark"></div>
+
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
-<section class="py-20">
+<section class="py-20 dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-3xl font-bold text-white">Latest Posts</h2>
+            <h2 class="text-4xl font-extrabold text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bento-posts">
             @foreach($latestPosts as $index => $post)
-            <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300">
-                <a href="{{ route('blog.show', $post) }}" class="block">
-                    <div class="aspect-video overflow-hidden">
+            <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300 {{ $index === 0 ? 'flex flex-col' : '' }}" data-glow-card>
+                <a href="{{ route('blog.show', $post) }}" class="block {{ $index === 0 ? 'flex flex-col h-full' : '' }}">
+                    <div class="{{ $index === 0 ? 'flex-1 min-h-[200px]' : 'aspect-video' }} overflow-hidden">
                         @if($post->featured_image)
                         <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
                         {{-- Gradient placeholder with category icon --}}
-                        <div class="w-full h-full post-placeholder-{{ $index % 3 }} flex items-center justify-center">
+                        <div class="w-full h-full post-placeholder-{{ $index % 3 }} flex items-center justify-center {{ $index === 0 ? 'min-h-[200px]' : '' }}">
                             <div class="text-center">
                                 <svg class="w-10 h-10 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
@@ -570,7 +717,7 @@
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
                         @endif
-                        <h3 class="font-semibold text-lg text-white mt-1 mb-2 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
+                        <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-white mt-1 mb-2 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
                         <p class="text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
                         <div class="mt-3 flex items-center gap-3 text-xs text-gray-500">
                             <time>{{ $post->published_at->format('M d, Y') }}</time>
@@ -586,16 +733,19 @@
 </section>
 @endif
 
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark"></div>
+
 {{-- ===== PODCASTS ===== --}}
-<section class="py-20">
+<section class="py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-3xl font-bold text-white">Podcasts</h2>
+            <h2 class="text-4xl font-extrabold text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- Coffee podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-600/30 transition-all duration-300 hover:border-brand-600/50" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));">
+            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-600/30 transition-all duration-300 hover:border-brand-600/50" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));" data-glow-card>
                 <div class="flex items-start justify-between mb-4">
                     <img src="/images/podcast-coffee-logo.png" alt="Coffee With The Laravel Architect" class="w-16 h-16 rounded-xl object-cover">
                     <div class="flex items-end gap-1 h-8">
@@ -614,7 +764,7 @@
                 <span class="text-sm text-brand-400 group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
             </a>
             {{-- Cloudy Days podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-600/30 transition-all duration-300 hover:border-accent-600/50" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));">
+            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-600/30 transition-all duration-300 hover:border-accent-600/50" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));" data-glow-card>
                 <div class="flex items-start justify-between mb-4">
                     <img src="/images/podcast-cloudy-logo-white.jpg" alt="Embracing Cloudy Days" class="w-16 h-16 rounded-xl object-cover">
                     <div class="flex items-end gap-1 h-8">
@@ -636,10 +786,13 @@
     </div>
 </section>
 
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark"></div>
+
 {{-- ===== YOUTUBE ===== --}}
-<section class="py-20">
+<section class="py-20 dot-grid-bg">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-bold text-white mb-4">Watch on YouTube</h2>
+        <h2 class="text-4xl font-extrabold text-white mb-4">Watch on YouTube</h2>
         <p class="text-gray-400 mb-10 max-w-xl mx-auto">
             Tutorials, live coding, and conversations about Laravel and web development.
         </p>
@@ -660,7 +813,7 @@
             </div>
         </div>
         <div class="mt-8">
-            <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="glow-btn inline-flex items-center px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-all" style="--tw-shadow-color: rgba(239,68,68,0.3);">
+            <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="magnetic-btn glow-btn inline-flex items-center px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-all" style="--tw-shadow-color: rgba(239,68,68,0.3);">
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 Subscribe
             </a>
@@ -668,8 +821,11 @@
     </div>
 </section>
 
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark"></div>
+
 {{-- ===== NEWSLETTER ===== --}}
-<section class="py-20 fade-up">
+<section class="py-20 fade-up dot-grid-bg">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="bg-brand-900/50 border border-brand-800/50 rounded-2xl p-10">
             <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -683,7 +839,7 @@
                 @csrf
                 <input type="email" name="email" placeholder="you@example.com" required
                     class="newsletter-input flex-1 px-4 py-3 bg-brand-800 border border-brand-700/50 rounded-lg text-white placeholder-gray-500 text-sm transition-all">
-                <button type="submit" class="glow-btn px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg text-sm transition-all">
+                <button type="submit" class="magnetic-btn glow-btn px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg text-sm transition-all">
                     Subscribe
                 </button>
             </form>
@@ -691,14 +847,17 @@
     </div>
 </section>
 
+{{-- Section Divider: Content → CTA --}}
+<div class="section-divider section-divider-cta"></div>
+
 {{-- ===== FINAL CTA ===== --}}
-<section class="relative overflow-hidden" style="background: linear-gradient(135deg, #4A7FBF, #E47A9D);">
+<section class="relative overflow-hidden noise-overlay" style="background: linear-gradient(135deg, #4A7FBF, #E47A9D);">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center relative z-10">
-        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Need a Laravel Developer?</h2>
-        <p class="text-white/80 mb-8 max-w-xl mx-auto text-lg">
+        <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">Need a Laravel Developer?</h2>
+        <p class="text-white/80 mb-8 max-w-xl mx-auto text-xl">
             I'm available for freelance projects, consulting, and collaborations. Let's build something great together.
         </p>
-        <a href="{{ route('contact') }}" class="inline-flex items-center px-10 py-4 bg-white text-brand-600 font-bold rounded-lg hover:bg-gray-100 transition-colors text-lg">
+        <a href="{{ route('contact') }}" class="magnetic-btn inline-flex items-center px-10 py-4 bg-white text-brand-600 font-bold rounded-lg hover:bg-gray-100 transition-colors text-lg">
             Get in Touch
         </a>
     </div>
@@ -723,24 +882,54 @@ function switchTab(tab) {
     });
 }
 
-// Typing effect
+// Text Scramble/Decode Effect
 (function() {
     const phrases = ['elegant APIs', 'scalable apps', 'clean code', 'Filament dashboards'];
-    const el = document.getElementById('typed-text');
-    let phraseIdx = 0, charIdx = 0, deleting = false;
+    const chars = '!<>-_\\/[]{}—=+*^?#_abcdefghijklmnopqrstuvwxyz';
+    const el = document.getElementById('scramble-text');
+    let phraseIdx = 0;
 
-    function tick() {
-        const current = phrases[phraseIdx];
-        if (!deleting) {
-            el.textContent = current.substring(0, ++charIdx);
-            if (charIdx === current.length) { setTimeout(() => { deleting = true; tick(); }, 2000); return; }
-        } else {
-            el.textContent = current.substring(0, --charIdx);
-            if (charIdx === 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; }
+    function scramble(text, onComplete) {
+        let frame = 0;
+        const length = text.length;
+        const totalFrames = length * 3; // frames to fully resolve
+        let resolved = 0;
+        let output = '';
+
+        function update() {
+            output = '';
+            resolved = Math.floor(frame / 3);
+            for (let i = 0; i < length; i++) {
+                if (i < resolved) {
+                    output += '<span class="scramble-char-resolved">' + text[i] + '</span>';
+                } else if (i < resolved + 3) {
+                    output += '<span class="scramble-char-random">' + chars[Math.floor(Math.random() * chars.length)] + '</span>';
+                } else {
+                    output += '<span class="scramble-char-random">' + chars[Math.floor(Math.random() * chars.length)] + '</span>';
+                }
+            }
+            el.innerHTML = output;
+            frame++;
+
+            if (frame <= totalFrames) {
+                requestAnimationFrame(update);
+            } else {
+                el.innerHTML = '<span class="scramble-char-resolved">' + text + '</span>';
+                if (onComplete) onComplete();
+            }
         }
-        setTimeout(tick, deleting ? 40 : 80);
+        requestAnimationFrame(update);
     }
-    tick();
+
+    function cycle() {
+        scramble(phrases[phraseIdx], function() {
+            setTimeout(function() {
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+                cycle();
+            }, 2500);
+        });
+    }
+    cycle();
 })();
 
 // IntersectionObserver for fade-up + count-up
@@ -773,6 +962,53 @@ function switchTab(tab) {
         });
     }, { threshold: 0.5 });
     document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
+})();
+
+// Cursor-following glow on cards
+(function() {
+    document.querySelectorAll('[data-glow-card]').forEach(function(card) {
+        card.addEventListener('mousemove', function(e) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--glow-x', (e.clientX - rect.left) + 'px');
+            card.style.setProperty('--glow-y', (e.clientY - rect.top) + 'px');
+        }, { passive: true });
+    });
+})();
+
+// Magnetic effect on CTA buttons
+(function() {
+    document.querySelectorAll('.magnetic-btn').forEach(function(btn) {
+        btn.addEventListener('mousemove', function(e) {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
+        }, { passive: true });
+
+        btn.addEventListener('mouseleave', function() {
+            btn.style.transform = '';
+        }, { passive: true });
+    });
+})();
+
+// Smooth parallax on hero code editor
+(function() {
+    const wrapper = document.getElementById('code-editor-wrapper');
+    if (!wrapper) return;
+    let ticking = false;
+
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(function() {
+                const scrollY = window.scrollY;
+                if (scrollY < window.innerHeight) {
+                    wrapper.style.transform = 'translateY(' + (scrollY * 0.12) + 'px)';
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
 })();
 </script>
 @endsection
