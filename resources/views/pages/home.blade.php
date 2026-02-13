@@ -101,6 +101,9 @@
         animation: codeSlideIn 0.8s ease 0.3s both;
     }
 
+    /* Consistent code panel height */
+    .code-panel { min-height: 620px; }
+
     /* Custom scrollbar for code editor */
     .code-editor ::-webkit-scrollbar { width: 8px; }
     .code-editor ::-webkit-scrollbar-track { background: transparent; }
@@ -301,7 +304,7 @@
                         </div>
                     </div>
                     {{-- Code body: web.php --}}
-                    <div id="code-routes" class="p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1">
+                    <div id="code-routes" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span>&nbsp;</span></div>
@@ -324,7 +327,7 @@
                         <div class="flex gap-4"><span class="code-line-number">20</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
                     </div>
                     {{-- Code body: Architect.php --}}
-                    <div id="code-architect" class="p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
+                    <div id="code-architect" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-keyword">&lt;?php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">namespace</span> <span class="syn-class">App\Models</span>;</span></div>
@@ -368,7 +371,7 @@
                         <div class="flex gap-4"><span class="code-line-number">41</span><span><span class="syn-bracket">}</span></span></div>
                     </div>
                     {{-- Code body: ArchitectTest.php --}}
-                    <div id="code-test" class="p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
+                    <div id="code-test" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// tests/Feature/ArchitectTest.php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Models\Architect</span>;</span></div>
