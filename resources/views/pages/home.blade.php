@@ -232,8 +232,6 @@
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
-                <p class="text-brand-400 font-semibold mb-6 text-sm tracking-wide uppercase">Hey, I'm Jeffrey Davidson 👋</p>
-
                 <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight mb-6 text-white">
                     I architect things for the web with
                     <br>
