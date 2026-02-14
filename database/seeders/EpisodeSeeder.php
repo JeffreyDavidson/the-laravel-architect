@@ -27,6 +27,7 @@ class EpisodeSeeder extends Seeder
         $episodes = [
             [
                 'title' => 'Why Laravel? A Love Letter to the Framework',
+                'slug' => 'why-laravel-a-love-letter-to-the-framework',
                 'episode_number' => 1,
                 'description' => "In the debut episode, Jeffrey talks about his journey from vanilla PHP to Laravel, why he's stuck with it for over a decade, and what makes it different from every other framework he's tried.",
                 'duration_minutes' => 38,
@@ -34,6 +35,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'The Architecture Nobody Talks About',
+                'slug' => 'the-architecture-nobody-talks-about',
                 'episode_number' => 2,
                 'description' => "Everyone talks about clean architecture in the abstract. Jeffrey breaks down what it actually looks like in a real Laravel project — actions, DTOs, form requests, and where most developers overcomplicate things.",
                 'duration_minutes' => 45,
@@ -41,6 +43,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Testing Is Not Optional',
+                'slug' => 'testing-is-not-optional',
                 'episode_number' => 3,
                 'description' => "Jeffrey's three-suite testing philosophy: Feature, Integration, and Unit. What goes where, why Unit means zero dependencies, and how Adam Wathan's TDD course changed everything.",
                 'duration_minutes' => 42,
@@ -48,6 +51,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Legacy Code Isn\'t a Dirty Word',
+                'slug' => 'legacy-code-isnt-a-dirty-word',
                 'episode_number' => 4,
                 'description' => "After migrating codebases from CodeIgniter, Yii2, CakePHP, and ExpressionEngine into Laravel, Jeffrey shares the patterns that make legacy rewrites survivable — and even enjoyable.",
                 'duration_minutes' => 51,
@@ -55,6 +59,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Filament Changed How I Build Admin Panels',
+                'slug' => 'filament-changed-how-i-build-admin-panels',
                 'episode_number' => 5,
                 'description' => "A deep dive into Filament — why Jeffrey chose it over Nova, how it handles forms and tables, and the moment he realized he'd never hand-roll another admin panel again.",
                 'duration_minutes' => 36,
@@ -62,6 +67,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Eloquent: The Good, The Bad, and The N+1',
+                'slug' => 'eloquent-the-good-the-bad-and-the-n1',
                 'episode_number' => 6,
                 'description' => "Eloquent is beautiful until it isn't. Jeffrey talks about the patterns that keep Eloquent clean, the traps that kill performance, and when it's time to reach for the query builder instead.",
                 'duration_minutes' => 40,
@@ -69,6 +75,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Deploying Laravel Without Losing Sleep',
+                'slug' => 'deploying-laravel-without-losing-sleep',
                 'episode_number' => 7,
                 'description' => "From Forge to Envoyer to GitHub Actions — Jeffrey walks through his deployment setup, zero-downtime strategies, and the checklist he runs before every production push.",
                 'duration_minutes' => 34,
@@ -76,6 +83,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'The Self-Taught Developer\'s Advantage',
+                'slug' => 'the-self-taught-developers-advantage',
                 'episode_number' => 8,
                 'description' => "Jeffrey started self-taught, went to Full Sail, and came out the other side. He talks about what formal education gave him, what it didn't, and why self-taught developers have an edge they don't realize.",
                 'duration_minutes' => 44,
@@ -83,6 +91,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'APIs That Don\'t Make People Cry',
+                'slug' => 'apis-that-dont-make-people-cry',
                 'episode_number' => 9,
                 'description' => "Designing APIs that other developers actually want to use. Resource classes, consistent error handling, versioning strategies, and why your API is a product whether you think of it that way or not.",
                 'duration_minutes' => 39,
@@ -90,6 +99,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Building in Public: Why I Started This Podcast',
+                'slug' => 'building-in-public-why-i-started-this-podcast',
                 'episode_number' => 10,
                 'description' => "Jeffrey gets meta and talks about why he's building a content platform, the fear of putting yourself out there, and what he hopes this podcast becomes over time.",
                 'duration_minutes' => 32,
@@ -112,6 +122,7 @@ class EpisodeSeeder extends Seeder
         $episodes = [
             [
                 'title' => 'Welcome to the Clouds',
+                'slug' => 'welcome-to-the-clouds',
                 'episode_number' => 1,
                 'description' => "The one where Jeffrey explains why he's starting a mental health podcast, what he hopes it becomes, and why pretending everything is fine helps exactly nobody.",
                 'duration_minutes' => 28,
@@ -119,6 +130,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'The Weight of Being "Fine"',
+                'slug' => 'the-weight-of-being-fine',
                 'episode_number' => 2,
                 'description' => "We all say we're fine when we're not. Jeffrey talks about the cost of that lie — at work, at home, and in your own head. And what happens when you finally stop saying it.",
                 'duration_minutes' => 35,
@@ -126,6 +138,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Parenting When the Playbook Doesn\'t Exist',
+                'slug' => 'parenting-when-the-playbook-doesnt-exist',
                 'episode_number' => 3,
                 'description' => "Raising a nonverbal autistic daughter means there's no manual. Jeffrey talks about the beautiful chaos of parenting Viola, the grief nobody warns you about, and the joy that blindsides you when you least expect it.",
                 'duration_minutes' => 42,
@@ -133,6 +146,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Burnout Is Not a Badge of Honor',
+                'slug' => 'burnout-is-not-a-badge-of-honor',
                 'episode_number' => 4,
                 'description' => "The tech industry glorifies hustle culture. Jeffrey pushes back — talking about the burnout he's experienced, the warning signs he missed, and why rest isn't the opposite of productivity.",
                 'duration_minutes' => 37,
@@ -140,6 +154,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Marriage Under Pressure',
+                'slug' => 'marriage-under-pressure',
                 'episode_number' => 5,
                 'description' => "Being a spouse when life is heavy. Jeffrey talks honestly about what it's like to maintain a marriage when you're both exhausted, both stressed, and both trying to hold it together for your kid.",
                 'duration_minutes' => 40,
@@ -147,6 +162,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'The Loneliness of Remote Work',
+                'slug' => 'the-loneliness-of-remote-work',
                 'episode_number' => 6,
                 'description' => "Working from home sounds like a dream until the walls start closing in. Jeffrey explores the isolation that comes with remote work and the small things that keep him connected.",
                 'duration_minutes' => 33,
@@ -154,6 +170,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Anxiety and the Keyboard',
+                'slug' => 'anxiety-and-the-keyboard',
                 'episode_number' => 7,
                 'description' => "That feeling before you push to production. The dread before a code review. Jeffrey talks about anxiety as a developer — where it shows up, how it disguises itself, and what helps.",
                 'duration_minutes' => 36,
@@ -161,6 +178,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Finding God in the Mess',
+                'slug' => 'finding-god-in-the-mess',
                 'episode_number' => 8,
                 'description' => "Jeffrey's faith journey as a Lutheran and how it intersects with the hard stuff — doubt, unanswered prayers, and finding meaning when life doesn't make sense.",
                 'duration_minutes' => 44,
@@ -168,6 +186,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'The Things We Don\'t Say Out Loud',
+                'slug' => 'the-things-we-dont-say-out-loud',
                 'episode_number' => 9,
                 'description' => "There are thoughts every parent of a special needs child has that they never say out loud. Jeffrey says some of them. Raw, honest, and necessary.",
                 'duration_minutes' => 38,
@@ -175,6 +194,7 @@ class EpisodeSeeder extends Seeder
             ],
             [
                 'title' => 'Small Wins and Why They Matter',
+                'slug' => 'small-wins-and-why-they-matter',
                 'episode_number' => 10,
                 'description' => "When the big picture feels overwhelming, small wins keep you going. Jeffrey talks about celebrating the tiny victories — in code, in parenting, and in getting through the day.",
                 'duration_minutes' => 31,
