@@ -165,7 +165,7 @@ MARKDOWN;
         return <<<'MARKDOWN'
 ## Flat Land, Big Sky
 
-I grew up in Kansas. And look, I know what you're picturing — flat fields stretching to the horizon, wheat, maybe a tornado or two. You're not wrong, honestly. Kansas is flat. Spectacularly, almost aggressively flat. But there's a beauty to it that's hard to explain to people who've never stood in the middle of it. The sky is enormous. Sunsets go on forever. There's a stillness to the place that I didn't appreciate until I left.
+I grew up in Kansas. And look, I know what you're picturing — flat fields stretching to the horizon, wheat, maybe a tornado or two. Fair enough, that *is* a lot of Kansas. But I grew up in the suburbs — strip malls, chain restaurants, and a neighborhood where every house looked like it came from the same three blueprints. Not exactly the dramatic prairie origin story people expect. Still, it was home, and it shaped me more than I realized at the time.
 
 I grew up in a pretty typical Midwestern household. Church on Sundays, high school sports, the kind of town where everybody knows your parents and your parents know everybody. I played baseball, watched the Jayhawks with something approaching religious devotion, and didn't really know what I wanted to do with my life.
 
