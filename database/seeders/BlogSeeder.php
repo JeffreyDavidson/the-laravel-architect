@@ -103,11 +103,13 @@ I'm also launching a YouTube channel and two podcasts — *Coffee with The Larav
 
 ## Why a Blog? Why Now?
 
-Fair question. I've always loved the idea of teaching through multiple formats — video, audio, and written. There's something about talking through a problem out loud, walking through code on screen, that just *clicks* for certain topics. But some things are better written down.
+Fair question. I've been a developer for over fifteen years, and for most of that time I've been learning from other people's content — blog posts, conference talks, tutorials, podcasts. At some point you stop just consuming and start wanting to contribute back.
 
-You ever try to reference a specific point from a 45-minute YouTube video? You're scrubbing back and forth, trying to find the part where I talked about service classes, and it's buried between a tangent about Pest assertions and me taking a sip of coffee. Written content is scannable. It's searchable. It's linkable. You can bookmark a heading and come back to it six months later.
+I chose to start with writing because it forces clarity. You can't hand-wave in a blog post. You can't say "you know what I mean" and move on. You have to actually organize your thoughts and say what you mean. That's a discipline I think every developer benefits from.
 
-I've also found that writing forces me to think more carefully. When I'm recording, I can wave my hands and say "you know what I mean." In writing, I actually have to say what I mean. That's a good exercise for someone who talks for a living.
+Written content is also the most useful long-term format. It's scannable, searchable, and linkable. You can bookmark a heading and come back to it six months later. Try finding a specific tip buried in a 45-minute video — you'll be scrubbing back and forth for five minutes. A blog post? Ctrl+F.
+
+Video and audio are coming too — I'm genuinely excited about those formats. But the blog felt like the right place to start. Get the ideas down in writing first, then bring them to life on screen and in conversation.
 
 ## What You Can Expect
 
