@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             BlogSeeder::class,
             PodcastSeeder::class,
             EpisodeSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }
