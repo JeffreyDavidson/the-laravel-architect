@@ -816,15 +816,26 @@
 <div class="section-divider section-divider-cta"></div>
 
 {{-- ===== FINAL CTA ===== --}}
-<section class="relative overflow-hidden noise-overlay" style="background: linear-gradient(135deg, #4A7FBF, #E47A9D);">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center relative z-10">
-        <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">Need a Laravel Developer?</h2>
-        <p class="text-white/80 mb-8 max-w-xl mx-auto text-xl">
-            I'm available for freelance projects, consulting, and collaborations. Let's build something great together.
+<section class="relative overflow-hidden border-t border-[#1e2a3a]">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center relative z-10">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#4A7FBF]/20 bg-[#4A7FBF]/5 text-[#4A7FBF] text-xs font-semibold uppercase tracking-widest mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+            Available for Hire
+        </div>
+        <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">Let's Build Something Together</h2>
+        <p class="text-gray-400 mb-10 max-w-xl mx-auto text-lg leading-relaxed">
+            I'm available for freelance Laravel projects, legacy modernization, consulting, and collaborations.
         </p>
-        <a href="{{ route('contact') }}" class="magnetic-btn inline-flex items-center px-10 py-4 bg-white text-brand-600 font-bold rounded-lg hover:bg-gray-100 transition-colors text-lg">
-            Get in Touch
-        </a>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="{{ route('contact') }}" class="magnetic-btn inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors text-lg">
+                Get in Touch
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1e2a3a] hover:border-gray-600 text-gray-300 font-semibold rounded-lg transition-colors text-lg">
+                View My Work
+            </a>
+        </div>
     </div>
 </section>
 
