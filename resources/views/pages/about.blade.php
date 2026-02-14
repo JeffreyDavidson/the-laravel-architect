@@ -77,14 +77,9 @@
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="flex flex-col lg:flex-row gap-12 items-center">
                 {{-- Photo / Brand --}}
-                <div class="flex-shrink-0">
-                    <div class="relative">
-                        <div class="w-56 h-56 lg:w-64 lg:h-64 rounded-2xl overflow-hidden border-2 border-[#1e2a3a] shadow-2xl">
-                            <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-cover">
-                        </div>
-                        {{-- Decorative corner accent --}}
-                        <div class="absolute -bottom-3 -right-3 w-20 h-20 border-b-2 border-r-2 border-[#4A7FBF]/30 rounded-br-2xl"></div>
-                        <div class="absolute -top-3 -left-3 w-20 h-20 border-t-2 border-l-2 border-[#4A7FBF]/30 rounded-tl-2xl"></div>
+                <div class="flex-shrink-0 relative">
+                    <div class="w-72 h-72 lg:w-96 lg:h-96">
+                        <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-contain opacity-40 mix-blend-lighten">
                     </div>
                 </div>
 
