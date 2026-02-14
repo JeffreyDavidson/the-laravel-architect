@@ -22,9 +22,9 @@ class BlogSeeder extends Seeder
         );
 
         // Create categories
-        $personal = Category::firstOrCreate(['name' => 'Personal'], ['description' => 'Personal stories, reflections, and life updates.']);
-        $career = Category::firstOrCreate(['name' => 'Career'], ['description' => 'Career advice, lessons learned, and professional growth.']);
-        $laravel = Category::firstOrCreate(['name' => 'Laravel'], ['description' => 'Laravel tutorials, opinions, and deep dives.']);
+        $personal = Category::firstOrCreate(['name' => 'Personal'], ['slug' => 'personal', 'description' => 'Personal stories, reflections, and life updates.']);
+        $career = Category::firstOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
+        $laravel = Category::firstOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
 
         // Post 1
         Post::updateOrCreate(['slug' => 'hello-world-why-im-starting-this-blog'], [
