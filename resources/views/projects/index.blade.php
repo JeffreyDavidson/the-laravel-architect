@@ -129,7 +129,7 @@
                 </button>
 
             {{-- Featured Projects (Large Cards) --}}
-            <div class="mb-12" x-show="filter === 'all' || filter === 'featured'">
+            <div class="mt-10 mb-12" x-show="filter === 'all' || filter === 'featured'">
                 <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6">Featured Projects</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     @foreach($projects->where('is_featured', true) as $project)
