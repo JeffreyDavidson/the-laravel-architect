@@ -72,51 +72,97 @@
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay border-b border-[#1e2a3a] relative overflow-hidden" style="min-height: 500px;">
+    <div class="noise-overlay border-b border-[#1e2a3a]">
         <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
 
-        {{-- Ghost avatar watermark — bleeds off bottom-right --}}
-        <div class="absolute right-[-80px] bottom-[-60px] w-[550px] h-[550px] pointer-events-none select-none hidden lg:block" style="opacity: 0.07;">
-            <img src="/images/logo-alternate.jpg" alt="" class="w-full h-full object-contain" style="filter: grayscale(100%) contrast(1.2); mix-blend-mode: lighten;">
-        </div>
-        {{-- Gradient fade over the watermark edges --}}
-        <div class="absolute right-0 bottom-0 w-[600px] h-[600px] pointer-events-none hidden lg:block" style="background: radial-gradient(ellipse at bottom right, transparent 30%, #0D1117 70%);"></div>
+                {{-- Trading Card --}}
+                <div class="flex-shrink-0 trading-card-wrapper">
+                    <div class="trading-card relative group cursor-default" style="perspective: 800px;">
+                        {{-- Glow --}}
+                        <div class="absolute -inset-2 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: conic-gradient(from 0deg, #4A7FBF33, #9D517533, #4A7FBF33); filter: blur(20px);"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-            <div class="max-w-2xl">
-                <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">About Me</p>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-                    I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
-                </h1>
-                <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                    Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
-                </p>
+                        {{-- Card body --}}
+                        <div class="relative w-72 rounded-2xl border border-[#1e2a3a] overflow-hidden shadow-2xl transition-transform duration-300 group-hover:rotate-1 group-hover:scale-[1.02]" style="background: linear-gradient(165deg, #0D1117 0%, #0a0e14 50%, #0f1520 100%);">
+                            {{-- Top accent stripe --}}
+                            <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #9D5175, #4A7FBF);"></div>
 
-                {{-- Quick facts --}}
-                <div class="flex flex-wrap gap-x-8 gap-y-3 text-sm mb-10">
-                    <div class="flex items-center gap-2 text-gray-400">
-                        <span class="text-[#4A7FBF]">📍</span> Florida
-                    </div>
-                    <div class="flex items-center gap-2 text-gray-400">
-                        <span class="text-[#4A7FBF]">💼</span> 15+ years
-                    </div>
-                    <div class="flex items-center gap-2 text-gray-400">
-                        <span class="text-[#4A7FBF]">🎓</span> Full Sail University
-                    </div>
-                    <div class="flex items-center gap-2 text-gray-400">
-                        <span class="text-[#4A7FBF]">🐘</span> Laravel since 4.2
+                            {{-- Rarity badge --}}
+                            <div class="absolute top-4 right-4 z-10">
+                                <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full border" style="color: #E47A9D; border-color: #E47A9D44; background: #E47A9D11;">Legendary</span>
+                            </div>
+
+                            {{-- Avatar --}}
+                            <div class="mx-4 mt-4 rounded-xl overflow-hidden border border-[#1e2a3a]">
+                                <div class="aspect-square bg-white">
+                                    <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            {{-- Name + Class --}}
+                            <div class="px-5 pt-4 pb-2 text-center">
+                                <h2 class="text-lg font-extrabold tracking-tight">Jeffrey Davidson</h2>
+                                <p class="text-xs font-mono mt-0.5" style="color: #4A7FBF;">⚔️ Laravel Architect</p>
+                            </div>
+
+                            {{-- Divider --}}
+                            <div class="mx-5 h-px" style="background: linear-gradient(90deg, transparent, #1e2a3a, transparent);"></div>
+
+                            {{-- Stats --}}
+                            <div class="px-5 py-4 space-y-2.5">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>☕</span> PHP</span>
+                                    <span class="font-mono font-bold text-gray-300">since 2008</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>🏗️</span> Laravel</span>
+                                    <span class="font-mono font-bold text-gray-300">v4.2 →</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>🧪</span> Test Suites</span>
+                                    <span class="font-mono font-bold text-gray-300">3</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>📍</span> Location</span>
+                                    <span class="font-mono font-bold text-gray-300">Florida</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>⭐</span> Experience</span>
+                                    <span class="font-mono font-bold text-gray-300">15+ yrs</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 text-gray-500"><span>🎙️</span> Podcasts</span>
+                                    <span class="font-mono font-bold text-gray-300">2</span>
+                                </div>
+                            </div>
+
+                            {{-- Bottom accent --}}
+                            <div class="h-1" style="background: linear-gradient(90deg, #4A7FBF, #9D5175, #4A7FBF);"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        Get in Touch
-                    </a>
-                    <a href="https://github.com/JeffreyDavidson" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 border border-[#1e2a3a] hover:border-gray-600 text-sm font-semibold rounded-lg transition-colors">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        GitHub
-                    </a>
+                {{-- Intro Text --}}
+                <div class="flex-1 text-center lg:text-left">
+                    <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">About Me</p>
+                    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                        I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mb-8">
+                        Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                        <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Get in Touch
+                        </a>
+                        <a href="https://github.com/JeffreyDavidson" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 border border-[#1e2a3a] hover:border-gray-600 text-sm font-semibold rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            GitHub
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
