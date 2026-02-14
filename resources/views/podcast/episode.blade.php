@@ -151,6 +151,16 @@
                     </div>
                     @endif
 
+                    {{-- Description Fallback (no audio, no show_notes, no youtube) --}}
+                    @if(!$episode->audio_url && !$episode->show_notes && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
+                    <div class="mb-10 p-8 rounded-2xl border border-[#1e2a3a] bg-[#0D1117] relative" style="box-shadow: 0 0 40px {{ $podcast->color }}06;">
+                        <div class="absolute top-6 left-6 text-6xl leading-none opacity-15" style="color: {{ $podcast->color }};">"</div>
+                        <div class="pl-8 pt-4">
+                            <p class="text-xl md:text-2xl text-gray-300 leading-relaxed italic">{{ $episode->description }}</p>
+                        </div>
+                    </div>
+                    @endif
+
                     {{-- YouTube Embed --}}
                     @if($episode->youtube_url && str_contains($episode->youtube_url, 'youtu'))
                     <div class="mb-10 rounded-2xl overflow-hidden border border-[#1e2a3a]">
@@ -244,6 +254,14 @@
                             <span class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#1e2a3a] text-gray-400 hover:border-gray-600 transition-colors">{{ $tag->name }}</span>
                             @endforeach
                         </div>
+                    </div>
+                    @endif
+                    {{-- Empty State Fallback --}}
+                    @if(!$episode->audio_url && !$episode->show_notes && !$episode->guest_name && !$episode->tags->count() && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && !$episode->spotify_url && !$episode->apple_podcasts_url)
+                    <div class="mb-12 p-8 rounded-2xl border border-dashed border-[#1e2a3a] text-center">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <p class="text-lg font-semibold text-gray-400">Full episode details coming soon</p>
+                        <p class="text-sm text-gray-600 mt-2">Show notes, links, and more will be added shortly.</p>
                     </div>
                     @endif
                 </div>
