@@ -226,7 +226,7 @@
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                                 @THELARAVELARCH
                             </a>
-                            <a href="https://bsky.app/profile/thelaravelarch.bsky.social" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+                            <a href="https://bsky.app/profile/thelaravelarch" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.785 2.627 3.584 3.493 6.173 3.243-4.058.666-7.652 2.174-4.461 7.744 3.648 5.123 5.353-1.31 5.664-2.978.311 1.669 1.104 8.101 5.664 2.978 3.191-5.57-.403-7.078-4.461-7.744 2.589.25 5.388-.616 6.173-3.243C15.622 9.418 16 4.458 16 3.768c0-.69-.139-1.861-.902-2.203-.659-.299-1.664-.62-4.3 1.24C8.046 4.747 5.087 8.686 4 10.8"/></svg>
                                 Bluesky
                             </a>
