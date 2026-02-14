@@ -28,5 +28,8 @@ class DatabaseSeeder extends Seeder
             EpisodeSeeder::class,
             ProjectSeeder::class,
         ]);
+
+        // Generate featured images for all posts
+        $this->command->call('posts:generate-images', ['--force' => true]);
     }
 }

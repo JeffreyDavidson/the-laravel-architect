@@ -6,188 +6,270 @@ use App\Models\Post;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
-use Intervention\Image\Geometry\Factories\RectangleFactory;
-use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Typography\FontFactory;
 
 class FeaturedImageGenerator
 {
-    protected ImageManager $manager;
-    protected string $fontBold;
-    protected string $fontRegular;
-    protected string $fontSemiBold;
+    private ImageManager $manager;
+    private int $width = 1200;
+    private int $height = 630;
 
-    protected array $categoryGradients = [
-        'laravel' => ['accent' => 'E74C3C', 'secondary' => '1a3a6b'],
-        'personal' => ['accent' => '8B5CF6', 'secondary' => '2d1b69'],
-        'career' => ['accent' => '14B8A6', 'secondary' => '134e4a'],
+    // Category color schemes: [primary, secondary, accent]
+    private array $categoryColors = [
+        'personal' => ['#4A7FBF', '#2d5a8e', '#6fa3d6'],
+        'career' => ['#E47A9D', '#9D5175', '#f4a5bd'],
+        'laravel' => ['#FF2D20', '#cc2419', '#ff6b61'],
+        'testing' => ['#22c55e', '#16a34a', '#4ade80'],
+        'architecture' => ['#a855f7', '#7c3aed', '#c084fc'],
+        'default' => ['#4A7FBF', '#2d5a8e', '#6fa3d6'],
     ];
 
     public function __construct()
     {
         $this->manager = new ImageManager(new Driver());
-        $this->fontBold = resource_path('fonts/Inter-Bold.ttf');
-        $this->fontRegular = resource_path('fonts/Inter-Regular.ttf');
-        $this->fontSemiBold = resource_path('fonts/Inter-SemiBold.ttf');
     }
 
-    public function generate(Post $post): \Intervention\Image\Interfaces\ImageInterface
+    public function generate(Post $post): string
     {
-        $width = 1200;
-        $height = 675;
-
-        $categorySlug = $post->category?->slug ?? 'personal';
-        $colors = $this->categoryGradients[$categorySlug] ?? $this->categoryGradients['personal'];
-
-        $image = $this->manager->create($width, $height)->fill('0D1117');
-
-        // Simulated gradient by drawing horizontal bands
-        $this->drawGradientBands($image, $width, $height, $colors['secondary']);
-
-        // Grid pattern
-        for ($x = 0; $x < $width; $x += 40) {
-            $image->drawLine(function (LineFactory $line) use ($x, $height) {
-                $line->from($x, 0);
-                $line->to($x, $height);
-                $line->color('1a2332');
-                $line->width(1);
-            });
-        }
-        for ($y = 0; $y < $height; $y += 40) {
-            $image->drawLine(function (LineFactory $line) use ($y, $width) {
-                $line->from(0, $y);
-                $line->to($width, $y);
-                $line->color('1a2332');
-                $line->width(1);
-            });
-        }
-
-        // Abstract geometric shapes
-        $seed = crc32($post->slug);
-        mt_srand($seed);
-
-        // Circles
-        for ($i = 0; $i < 5; $i++) {
-            $cx = mt_rand(600, 1150);
-            $cy = mt_rand(50, 625);
-            $r = mt_rand(30, 100);
-            $image->drawCircle($cx, $cy, function (CircleFactory $circle) use ($r, $colors) {
-                $circle->radius($r);
-                $circle->border($colors['secondary'], 2);
-            });
-        }
-
-        // Rectangles
-        for ($i = 0; $i < 3; $i++) {
-            $rx = mt_rand(700, 1100);
-            $ry = mt_rand(100, 500);
-            $image->drawRectangle($rx, $ry, function (RectangleFactory $rect) use ($colors) {
-                $rect->size(mt_rand(40, 120), mt_rand(40, 120));
-                $rect->border($colors['secondary'], 2);
-            });
-        }
-
-        // Brand accent bar at top
-        $image->drawRectangle(0, 0, function (RectangleFactory $rect) use ($width, $colors) {
-            $rect->size($width, 4);
-            $rect->background($colors['accent']);
-        });
-
-        // Code bracket motif - large faded angle brackets
-        $image->text('<', 950, 200, function (FontFactory $font) {
-            $font->filename($this->fontBold);
-            $font->size(180);
-            $font->color('1a2332');
-        });
-        $image->text('/>', 1020, 350, function (FontFactory $font) {
-            $font->filename($this->fontBold);
-            $font->size(140);
-            $font->color('1a2332');
-        });
-
-        // Category name at top
+        $categorySlug = $post->category?->slug ?? 'default';
+        $colors = $this->categoryColors[$categorySlug] ?? $this->categoryColors['default'];
         $categoryName = $post->category?->name ?? 'Blog';
-        $image->text(strtoupper($categoryName), 80, 120, function (FontFactory $font) use ($colors) {
-            $font->filename($this->fontSemiBold);
-            $font->size(16);
-            $font->color($colors['accent']);
-            $font->lineHeight(1.6);
-        });
 
-        // Post title
-        $lines = $this->wordWrap($post->title, 26);
-        $yOffset = 180;
-        foreach ($lines as $line) {
-            $image->text($line, 80, $yOffset, function (FontFactory $font) {
-                $font->filename($this->fontBold);
-                $font->size(52);
-                $font->color('ffffff');
-                $font->lineHeight(1.4);
-            });
-            $yOffset += 70;
+        $image = $this->manager->create($this->width, $this->height);
+
+        // Dark background
+        $image = $image->fill('#0D1117');
+
+        // Draw gradient-like background with rectangles
+        $this->drawGradientBackground($image, $colors);
+
+        // Draw dot grid pattern
+        $this->drawDotGrid($image);
+
+        // Draw decorative lines
+        $this->drawDecorativeLines($image, $colors);
+
+        // Draw category badge
+        $this->drawCategoryBadge($image, $categoryName, $colors[0]);
+
+        // Draw post title
+        $this->drawTitle($image, $post->title);
+
+        // Draw author line
+        $this->drawAuthorLine($image);
+
+        // Draw brand mark
+        $this->drawBrandMark($image, $colors[0]);
+
+        // Save to storage
+        $path = 'featured-images/' . $post->slug . '.png';
+        $storagePath = storage_path('app/public/' . $path);
+
+        // Ensure directory exists
+        if (!is_dir(dirname($storagePath))) {
+            mkdir(dirname($storagePath), 0755, true);
         }
 
-        // Branding at bottom
-        $image->text('The Laravel Architect', 80, 620, function (FontFactory $font) {
-            $font->filename($this->fontRegular);
-            $font->size(18);
-            $font->color('6b7280');
-        });
+        $image->toPng()->save($storagePath);
 
-        // Small accent line before branding
-        $image->drawRectangle(80, 580, function (RectangleFactory $rect) use ($colors) {
-            $rect->size(60, 3);
-            $rect->background($colors['accent']);
-        });
-
-        return $image;
+        return $path;
     }
 
-    protected function drawGradientBands($image, int $width, int $height, string $secondaryHex): void
+    private function drawGradientBackground($image, array $colors): void
     {
-        // Parse secondary color
-        $r2 = hexdec(substr($secondaryHex, 0, 2));
-        $g2 = hexdec(substr($secondaryHex, 2, 2));
-        $b2 = hexdec(substr($secondaryHex, 4, 2));
+        // Large accent orb top-right
+        for ($r = 300; $r > 0; $r -= 2) {
+            $opacity = max(0, min(1, ($r / 300) * 0.12));
+            $hex = $colors[0];
+            $alpha = (int)($opacity * 127);
+            // Use circles for gradient orb effect
+            $image->drawCircle(1050, 80, function ($circle) use ($r, $hex, $alpha) {
+                $circle->radius($r);
+                $circle->background($hex . sprintf('%02x', min(255, max(0, (int)(255 * 0.03)))));
+            });
+        }
 
-        // Base: 0D1117
-        $r1 = 13; $g1 = 17; $b1 = 23;
-
-        $bands = 20;
-        $bandHeight = (int)ceil($height / $bands);
-
-        for ($i = 0; $i < $bands; $i++) {
-            $ratio = $i / $bands;
-            $r = (int)($r1 + ($r2 - $r1) * $ratio * 0.5);
-            $g = (int)($g1 + ($g2 - $g1) * $ratio * 0.5);
-            $b = (int)($b1 + ($b2 - $b1) * $ratio * 0.5);
-            $color = sprintf('%02x%02x%02x', $r, $g, $b);
-
-            $image->drawRectangle(0, $i * $bandHeight, function (RectangleFactory $rect) use ($width, $bandHeight, $color) {
-                $rect->size($width, $bandHeight);
-                $rect->background($color);
+        // Smaller accent orb bottom-left
+        for ($r = 200; $r > 0; $r -= 3) {
+            $image->drawCircle(150, 550, function ($circle) use ($r, $colors) {
+                $circle->radius($r);
+                $circle->background($colors[1] . sprintf('%02x', min(255, max(0, (int)(255 * 0.02)))));
             });
         }
     }
 
-    protected function wordWrap(string $text, int $maxChars): array
+    private function drawDotGrid($image): void
     {
-        $words = explode(' ', $text);
-        $lines = [];
-        $current = '';
-
-        foreach ($words as $word) {
-            if (strlen($current . ' ' . $word) > $maxChars && $current !== '') {
-                $lines[] = trim($current);
-                $current = $word;
-            } else {
-                $current .= ($current ? ' ' : '') . $word;
+        $spacing = 30;
+        for ($x = 0; $x < $this->width; $x += $spacing) {
+            for ($y = 0; $y < $this->height; $y += $spacing) {
+                $image->drawCircle($x, $y, function ($circle) {
+                    $circle->radius(1);
+                    $circle->background('rgba(255, 255, 255, 0.03)');
+                });
             }
         }
-        if ($current) {
-            $lines[] = trim($current);
+    }
+
+    private function drawDecorativeLines($image, array $colors): void
+    {
+        // Top accent line
+        $image->drawLine(function (LineFactory $line) use ($colors) {
+            $line->from(0, 3);
+            $line->to((int)($this->width * 0.4), 3);
+            $line->color($colors[0]);
+            $line->width(6);
+        });
+
+        // Right side vertical accent
+        $image->drawLine(function (LineFactory $line) use ($colors) {
+            $line->from($this->width - 3, 0);
+            $line->to($this->width - 3, (int)($this->height * 0.3));
+            $line->color($colors[2]);
+            $line->width(3);
+        });
+
+        // Bottom subtle line
+        $image->drawLine(function (LineFactory $line) use ($colors) {
+            $line->from((int)($this->width * 0.6), $this->height - 3);
+            $line->to($this->width, $this->height - 3);
+            $line->color($colors[0] . '40');
+            $line->width(2);
+        });
+    }
+
+    private function drawCategoryBadge($image, string $categoryName, string $color): void
+    {
+        $badgeY = 180;
+        $badgeX = 80;
+
+        // Badge background
+        $image->drawRectangle($badgeX - 2, $badgeY - 2, function ($rect) use ($color) {
+            $rect->size(strlen($color) > 7 ? 140 : 120, 32);
+            $rect->background($color . '30');
+            $rect->border($color . '60', 1);
+        });
+
+        // Badge text
+        $fontPath = $this->getMonoFont();
+        $image->text(strtoupper($categoryName), $badgeX + 12, $badgeY + 20, function (FontFactory $font) use ($fontPath, $color) {
+            $font->filename($fontPath);
+            $font->size(13);
+            $font->color($color);
+        });
+    }
+
+    private function drawTitle($image, string $title): void
+    {
+        $fontPath = $this->getBoldFont();
+        $maxWidth = $this->width - 160; // 80px padding each side
+        $x = 80;
+        $y = 260;
+        $lineHeight = 58;
+
+        // Word-wrap the title
+        $words = explode(' ', $title);
+        $lines = [];
+        $currentLine = '';
+
+        foreach ($words as $word) {
+            $testLine = $currentLine ? $currentLine . ' ' . $word : $word;
+            // Rough character width estimate for ~44px font
+            $testWidth = strlen($testLine) * 26;
+            if ($testWidth > $maxWidth && $currentLine) {
+                $lines[] = $currentLine;
+                $currentLine = $word;
+            } else {
+                $currentLine = $testLine;
+            }
+        }
+        if ($currentLine) {
+            $lines[] = $currentLine;
         }
 
-        return array_slice($lines, 0, 4);
+        // Limit to 3 lines
+        if (count($lines) > 3) {
+            $lines = array_slice($lines, 0, 3);
+            $lines[2] = rtrim($lines[2]) . '...';
+        }
+
+        foreach ($lines as $i => $line) {
+            $image->text($line, $x, $y + ($i * $lineHeight), function (FontFactory $font) use ($fontPath) {
+                $font->filename($fontPath);
+                $font->size(44);
+                $font->color('#ffffff');
+            });
+        }
+    }
+
+    private function drawAuthorLine($image): void
+    {
+        $fontPath = $this->getMonoFont();
+        $y = 530;
+
+        $image->text('Jeffrey Davidson', 80, $y, function (FontFactory $font) use ($fontPath) {
+            $font->filename($fontPath);
+            $font->size(14);
+            $font->color('#8b949e');
+        });
+
+        $image->text('thelaravelarchitect.com', 80, $y + 24, function (FontFactory $font) use ($fontPath) {
+            $font->filename($fontPath);
+            $font->size(12);
+            $font->color('#484f58');
+        });
+    }
+
+    private function drawBrandMark($image, string $color): void
+    {
+        // Small colored square in bottom-right as brand mark
+        $image->drawRectangle($this->width - 120, $this->height - 60, function ($rect) use ($color) {
+            $rect->size(40, 40);
+            $rect->background($color . '40');
+            $rect->border($color, 2);
+        });
+
+        // "TLA" text inside
+        $fontPath = $this->getMonoFont();
+        $image->text('TLA', $this->width - 112, $this->height - 32, function (FontFactory $font) use ($fontPath, $color) {
+            $font->filename($fontPath);
+            $font->size(14);
+            $font->color($color);
+        });
+    }
+
+    private function getBoldFont(): string
+    {
+        // Try system fonts that support bold
+        $fonts = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+            '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+            '/usr/share/fonts/truetype/ubuntu/Ubuntu-Bold.ttf',
+            public_path('fonts/empera/Empera-Regular.ttf'),
+        ];
+
+        foreach ($fonts as $font) {
+            if (file_exists($font)) {
+                return $font;
+            }
+        }
+
+        return public_path('fonts/empera/Empera-Regular.ttf');
+    }
+
+    private function getMonoFont(): string
+    {
+        $fonts = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf',
+            '/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf',
+        ];
+
+        foreach ($fonts as $font) {
+            if (file_exists($font)) {
+                return $font;
+            }
+        }
+
+        return $this->getBoldFont();
     }
 }
