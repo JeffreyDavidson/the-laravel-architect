@@ -736,11 +736,8 @@
     </div>
 </section>
 
-{{-- Section Divider: Hero → Content --}}
-<div class="section-divider section-divider-hero"></div>
-
 {{-- ===== TECH STACK MARQUEE ===== --}}
-<section class="py-12 overflow-hidden relative">
+<section class="py-8 overflow-hidden relative" style="background: #0D1117;">
     <div class="marquee-fade-left"></div>
     <div class="marquee-fade-right"></div>
     <div class="marquee-track">
