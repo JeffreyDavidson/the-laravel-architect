@@ -13,8 +13,6 @@ class NewsletterController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        $subscriber = Subscriber::withTrashed ?? Subscriber::where('email', $validated['email'])->first();
-
         if ($subscriber = Subscriber::where('email', $validated['email'])->first()) {
             if ($subscriber->unsubscribed_at) {
                 $subscriber->update(['unsubscribed_at' => null, 'subscribed_at' => now()]);
