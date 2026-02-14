@@ -1304,33 +1304,28 @@
 
                     {{-- Split screen layout --}}
                     <div class="absolute inset-0 flex">
-                        {{-- Left: Presenter side --}}
-                        <div class="w-[45%] relative bg-gradient-to-br from-[#0f1318] via-[#111820] to-[#0a0f14] overflow-hidden">
-                            {{-- Ambient glow behind presenter --}}
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full opacity-20 blur-[80px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+                        {{-- Left: Presenter/webcam side --}}
+                        <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden">
+                            {{-- Subtle grid pattern --}}
+                            <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 20px 20px;"></div>
 
-                            {{-- Presenter silhouette --}}
-                            <div class="absolute inset-0 flex items-end justify-center">
-                                <div class="relative w-[75%] h-[85%]">
-                                    {{-- Head --}}
-                                    <div class="absolute top-[8%] left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-b from-[#2a3444] to-[#1a2232] border border-[#2a3a4a]/30"></div>
-                                    {{-- Shoulders/body --}}
-                                    <div class="absolute top-[30%] inset-x-0 bottom-0 bg-gradient-to-b from-[#1e2a38] to-[#141c28] rounded-t-[60px] border-t border-x border-[#2a3a4a]/20">
-                                        {{-- Shirt collar detail --}}
-                                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-6 bg-[#0f1620] rounded-b-full"></div>
-                                    </div>
-                                    {{-- Logo badge on chest --}}
-                                    <div class="absolute top-[42%] left-1/2 -translate-x-1/2">
-                                        <img src="/images/logo-color.svg" alt="" class="w-8 h-8 opacity-40">
-                                    </div>
+                            {{-- Ambient glow --}}
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full opacity-15 blur-[80px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+
+                            {{-- Center content --}}
+                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                                <img src="/images/logo-color.svg" alt="" class="w-16 h-16 opacity-50">
+                                <div class="text-center">
+                                    <p class="text-white/60 text-sm font-semibold tracking-wide">Jeffrey Davidson</p>
+                                    <p class="text-gray-600 text-[10px] uppercase tracking-widest mt-1">Camera 1</p>
                                 </div>
                             </div>
 
                             {{-- Webcam frame corners --}}
-                            <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-red-500/30 rounded-tl"></div>
-                            <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-red-500/30 rounded-tr"></div>
-                            <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-red-500/30 rounded-bl"></div>
-                            <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-red-500/30 rounded-br"></div>
+                            <div class="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-white/10 rounded-tl-sm"></div>
+                            <div class="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-white/10 rounded-tr-sm"></div>
+                            <div class="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-white/10 rounded-bl-sm"></div>
+                            <div class="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-white/10 rounded-br-sm"></div>
                         </div>
 
                         {{-- Divider --}}
