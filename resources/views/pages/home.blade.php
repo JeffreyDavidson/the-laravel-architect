@@ -1100,14 +1100,18 @@
                         @php $catSlug = $post->category?->slug ?? 'default'; $catInitial = strtoupper(substr($post->category?->name ?? 'B', 0, 1)); @endphp
                         <div class="w-full h-full post-art post-art-{{ $catSlug }} {{ $index === 0 ? 'min-h-[200px]' : '' }}">
                             {{-- Gradient orbs --}}
-                            <div class="post-art-orb" style="width:180px;height:180px;background:var(--art-color);top:-40px;right:-30px;"></div>
-                            <div class="post-art-orb" style="width:120px;height:120px;background:var(--art-color2);bottom:-20px;left:-20px;animation-delay:1s;"></div>
+                            <div class="post-art-orb" style="width:200px;height:200px;background:var(--art-color);top:-50px;right:-40px;"></div>
+                            <div class="post-art-orb" style="width:140px;height:140px;background:var(--art-color2);bottom:-30px;left:-30px;"></div>
+                            <div class="post-art-orb" style="width:100px;height:100px;background:var(--art-color);top:50%;left:50%;opacity:0.15;"></div>
                             {{-- Geometric shapes --}}
-                            <div class="post-art-shape rounded-lg" style="width:60px;height:60px;border-color:var(--art-color);top:20%;left:15%;transform:rotate(15deg);"></div>
-                            <div class="post-art-shape rounded-full" style="width:40px;height:40px;border-color:var(--art-color2);top:60%;right:20%;"></div>
-                            <div class="post-art-shape" style="width:80px;height:80px;border-color:var(--art-color);bottom:15%;left:40%;transform:rotate(45deg);"></div>
-                            {{-- Accent line --}}
+                            <div class="post-art-shape rounded-lg" style="width:70px;height:70px;border-color:var(--art-color);top:15%;left:12%;transform:rotate(15deg);"></div>
+                            <div class="post-art-shape rounded-full" style="width:50px;height:50px;border-color:var(--art-color2);top:55%;right:18%;"></div>
+                            <div class="post-art-shape" style="width:90px;height:90px;border-color:var(--art-color);bottom:10%;left:35%;transform:rotate(45deg);"></div>
+                            <div class="post-art-shape rounded-full" style="width:30px;height:30px;border-color:var(--art-color2);top:25%;right:35%;"></div>
+                            <div class="post-art-shape rounded-lg" style="width:45px;height:45px;border-color:var(--art-color);bottom:30%;left:65%;transform:rotate(-20deg);"></div>
+                            {{-- Accent lines --}}
                             <div class="post-art-line" style="background:var(--art-color);width:30%;top:30%;left:0;"></div>
+                            <div class="post-art-line" style="background:var(--art-color2);width:20%;bottom:25%;right:0;left:auto;opacity:0.15;"></div>
                             {{-- Category monogram --}}
                             <span class="post-art-mono" style="color:var(--art-color);">{{ $catInitial }}</span>
                         </div>
