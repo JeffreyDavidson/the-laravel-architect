@@ -4,6 +4,13 @@
 @section('meta_description', $post->meta_description ?? $post->excerpt)
 
 @push('head')
+    <meta property="og:title" content="{{ $post->meta_title ?? $post->title }}">
+    <meta property="og:description" content="{{ $post->meta_description ?? $post->excerpt }}">
+    <meta property="og:image" content="{{ url(route('og-image', $post, false)) }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ url(route('blog.show', $post, false)) }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ url(route('og-image', $post, false)) }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 @endpush
 

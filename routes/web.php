@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
@@ -16,6 +17,9 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/blog/tag/{tag:slug}', [BlogController::class, 'tag'])->name('blog.tag');
+
+// OG Images
+Route::get('/og-image/{post:slug}', OgImageController::class)->name('og-image');
 
 // Podcasts
 Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcast.index');
