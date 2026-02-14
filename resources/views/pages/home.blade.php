@@ -944,10 +944,10 @@ expect($tutorials)->each->toBeHelpful();
         <div class="mt-8 max-w-md mx-auto">
             <div class="flex items-center justify-between text-xs mb-2">
                 <span class="text-gray-500">Subscriber Goal</span>
-                <span class="text-red-400 font-mono font-bold">0 / 100</span>
+                <span class="text-red-400 font-mono font-bold">21 / 100</span>
             </div>
             <div class="h-2 rounded-full bg-[#111111] border border-[#1e2a3a] overflow-hidden">
-                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="width: 2%;"></div>
+                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="width: 21%;"></div>
             </div>
             <p class="text-[10px] text-gray-600 mt-2 text-center">Help us hit 100 subscribers before launch day 🚀</p>
         </div>
