@@ -594,56 +594,6 @@
 {{-- Section Divider: Hero → Content --}}
 <div class="section-divider section-divider-hero"></div>
 
-{{-- ===== ABOUT & TECH STACK ===== --}}
-<section class="py-16 fade-up dot-grid-bg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center gap-10">
-            <div class="flex-shrink-0">
-                <img src="/images/logo-alternate.jpg" alt="The Laravel Architect" class="w-40 h-40 rounded-2xl object-cover border border-brand-700/30 shadow-lg shadow-brand-600/10">
-            </div>
-            <div class="text-center md:text-left">
-                <p class="text-lg text-gray-300 leading-relaxed">
-                    I'm a husband, father, and software developer who moved from Kansas to Florida to chase better weather
-                    and build better software. By day, I architect Laravel applications. By night, I create content to help
-                    other developers level up — through <span class="text-brand-400">blog posts</span>,
-                    <span class="text-brand-400">YouTube tutorials</span>, and
-                    <span class="text-brand-400">two podcasts</span>. I believe clean code and genuine community
-                    make the tech world a better place.
-                </p>
-                <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-6">
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Laravel">
-                        <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="PHP">
-                        <svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Filament">
-                        <span class="text-amber-400 text-sm font-bold">F</span>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Livewire">
-                        <svg class="w-5 h-5 text-pink-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 0C6.174 0 1.448 4.957 1.448 11.07c0 3.806 1.83 7.184 4.665 9.227.233.168.482-.111.379-.367a16.06 16.06 0 0 1-.592-1.874c-.063-.252.085-.442.276-.583 2.794-2.07 4.6-5.395 4.6-9.142 0-.357-.017-.71-.05-1.06-.026-.276.226-.5.493-.41 3.147 1.074 5.554 3.752 6.278 7.066a.274.274 0 0 0 .491.1c.654-.883 1.088-1.894 1.301-2.983.052-.266.367-.375.565-.182a9.384 9.384 0 0 1 2.7 6.617c0 .575-.053 1.14-.155 1.69-.048.262.218.459.438.31A11.123 11.123 0 0 0 22.554 11.07C22.554 4.957 17.828 0 12.001 0z"/></svg>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Tailwind CSS">
-                        <svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"/></svg>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="MySQL">
-                        <svg class="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4S4 11.21 4 9zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z"/></svg>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Alpine.js">
-                        <span class="text-teal-400 text-sm font-bold">A</span>
-                    </div>
-                    <div class="tech-icon w-9 h-9 rounded-lg bg-brand-900/50 border border-brand-800/50 flex items-center justify-center" title="Redis">
-                        <svg class="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2.661l.54.997-1.797.644 2.409.218.748 1.246.467-1.48 2.077-.322-1.584-.72.514-1.467-1.596.885zM3.055 8.6l5.036 2.093 7.074-3.06L9.89 5.57zm17.834 1.735c.017.18-.07.396-.283.551l-7.697 4.39v7.702c0 .253-.166.384-.378.312l-9.237-3.234c-.2-.07-.345-.282-.345-.527V12.15c0-.166.117-.327.291-.396l8.04-3.109 8.913 3.592c.2.072.384.22.396.398z"/></svg>
-                    </div>
-                </div>
-                <a href="{{ route('about') }}" class="inline-flex items-center mt-4 text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
-                    More about me →
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark"></div>
 
