@@ -183,9 +183,13 @@ For the first few years though, I was still writing the kind of PHP that would m
 
 But I was building things, and people were paying me to build things, and I was learning something new every single day. That momentum carried me through the rough patches.
 
-## Finding Laravel
+## Finding My Way Through Frameworks
 
-I found Laravel around version 4, and it was one of those moments where everything just clicked. Here was this framework that was opinionated in all the right ways, that made PHP feel *modern*, that actually cared about developer experience. Eloquent blew my mind. Blade templates made sense. Artisan commands felt like having a conversation with your framework.
+I started writing PHP in 2008, and for the first few years it was all vanilla — no framework, no structure, just raw PHP files doing whatever I needed them to do. It worked, but as projects got bigger, the mess got harder to manage.
+
+That's when I discovered CodeIgniter. It was my first real framework, and it was a revelation. Suddenly I had routing, a templating system, a database abstraction layer. I worked with CodeIgniter for a few years and it taught me the value of structure and convention. But as the PHP ecosystem evolved, I could feel it falling behind.
+
+Then in 2014, I found Laravel — specifically version 4.2 — and it was one of those moments where everything just clicked. Here was this framework that was opinionated in all the right ways, that made PHP feel *modern*, that actually cared about developer experience. Eloquent blew my mind. Blade templates made sense. Artisan commands felt like having a conversation with your framework.
 
 I went all in. Started rebuilding everything in Laravel. Started reading the source code. Started following Taylor Otwell on Twitter and absorbing everything the community was putting out. Within a couple of years, Laravel wasn't just my framework of choice — it was the lens through which I understood web development.
 
