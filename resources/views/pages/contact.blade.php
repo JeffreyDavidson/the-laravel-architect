@@ -94,7 +94,23 @@
                         Send a Message
                     </h2>
 
-                    <form action="#" method="POST" class="space-y-6">
+                    @if(session('success'))
+                    <div class="mb-6 p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-400 text-sm">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    @if($errors->any())
+                    <div class="mb-6 p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
                         @csrf
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
