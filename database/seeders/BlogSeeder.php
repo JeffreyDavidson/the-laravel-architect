@@ -99,7 +99,7 @@ class BlogSeeder extends Seeder
 
 Alright, let's get this out of the way. My name is Jeffrey Davidson. I've been building things on the web for over fifteen years now, mostly with PHP, and for the last decade-plus, almost exclusively with Laravel. I live in Florida with my wife Cassie and our daughter Viola. I'm a Jayhawks fan stuck in Gator country, I play way too much poker, and I'm pretty sure I've been to Walt Disney World more times than some of the cast members.
 
-I also run a YouTube channel and two podcasts — *Coffee with The Laravel Architect* and *Embracing Cloudy Days* — and now, apparently, I'm a blogger too.
+I also run a YouTube channel and two podcasts — *Coffee with The Laravel Architect* and *Embracing Cloudy Days* — and this site is where it all comes together. Blog posts, video tutorials, and everything in between.
 
 ## Why a Blog? Why Now?
 
@@ -111,16 +111,22 @@ I've also found that writing forces me to think more carefully. When I'm recordi
 
 ## What You Can Expect
 
-This isn't going to be a tutorial mill. I'm not going to churn out "How to Install Laravel" posts that rewrite the documentation. The docs are great — go read them.
+This site is the home base for everything I create. Blog posts, yes — but also video tutorials, live coding sessions, and companion content for my YouTube channel and podcasts.
 
-What I *will* write about:
+Here's how I see the content mix shaping up:
+
+- **Written posts** for architecture deep dives, opinions, and reference material — the stuff you want to scan, bookmark, and come back to.
+- **Video tutorials** for walkthroughs, live coding, and anything where watching someone build it makes more sense than reading about it. Some blog posts will have companion videos, and some videos will have companion write-ups.
+- **Podcast episodes** for longer conversations — interviews with other developers, discussions about the industry, and the human side of building software.
+
+What I *will* cover:
 
 - **Architecture and patterns.** How I structure projects, how I think about responsibilities, when to reach for certain patterns and when to keep it simple.
 - **Opinions.** I have them. Sometimes they're spicy. I think the Laravel community could benefit from more honest, opinionated writing instead of the same "10 Tips" listicle recycled across forty blogs.
 - **The human side of development.** Career stuff. Burnout. What it's like to be a developer and a dad. How I manage my time. The unglamorous reality of freelancing and running a brand.
-- **Technical deep dives.** When I learn something interesting or solve a gnarly problem, I want to write it up so you don't have to fight the same battle.
+- **Technical deep dives.** When I learn something interesting or solve a gnarly problem, I want to document it so you don't have to fight the same battle.
 
-I'll try to publish weekly, but I'm not going to stress about a rigid schedule. Quality over frequency. I'd rather write one genuinely useful post a month than four forgettable ones.
+I'll try to publish weekly — written, video, or both — but I'm not going to stress about a rigid schedule. Quality over frequency. I'd rather put out one genuinely useful piece a month than four forgettable ones.
 
 ## My Philosophy on Teaching
 
@@ -144,7 +150,7 @@ I'm a photographer. I'm a poker player. I'm a dad who will absolutely destroy yo
 
 I'm genuinely excited about this. The podcasts and YouTube channel have been incredible — the conversations, the community, the people who message me saying something I said helped them land a job or finally understand dependency injection. That never gets old.
 
-This blog is just another way to keep that going. Another format, another avenue, another chance to be useful to someone.
+And there's a lot more video content on the way. Tutorials, live builds, deep dives into packages and patterns. This blog is the written companion to all of that. Another format, another avenue, another chance to be useful to someone.
 
 If you've made it this far, thanks for reading. Seriously. Subscribe to the RSS feed if that's your thing, follow me on social media if you want the updates, or just bookmark the site and check back when you're bored at work. I won't judge.
 
