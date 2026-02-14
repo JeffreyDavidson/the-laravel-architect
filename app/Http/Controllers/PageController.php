@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Project;
+use App\Services\YouTubeService;
 
 class PageController extends Controller
 {
@@ -21,7 +22,9 @@ class PageController extends Controller
             ->take(4)
             ->get();
 
-        return view('pages.home', compact('latestPosts', 'featuredProjects'));
+        $youtubeSubscribers = YouTubeService::subscriberCount();
+
+        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers'));
     }
 
     public function about()
