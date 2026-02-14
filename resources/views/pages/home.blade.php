@@ -1407,9 +1407,8 @@ expect($tutorials)->each->toBeHelpful();
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {{-- Thumbnail 1 --}}
                 <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video bg-gradient-to-br from-[#1a0a0a] to-[#0D1117] relative flex items-center justify-center">
-                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-red-400 p-3 overflow-hidden">expect($test)->toPass(); $this->assertDatabaseHas('users');</div>
-                        <span class="text-3xl">🧪</span>
+                    <div class="aspect-video relative overflow-hidden">
+                        <img src="/images/yt-thumb-testing.png" alt="Testing Like You Mean It" class="w-full h-full object-cover">
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">12:34</div>
                     </div>
                     <div class="p-4">
@@ -1420,9 +1419,8 @@ expect($tutorials)->each->toBeHelpful();
 
                 {{-- Thumbnail 2 --}}
                 <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video bg-gradient-to-br from-[#0a0a1a] to-[#0D1117] relative flex items-center justify-center">
-                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-blue-400 p-3 overflow-hidden">php artisan make:action SendInvoice; $action->execute($user);</div>
-                        <span class="text-3xl">🏗️</span>
+                    <div class="aspect-video relative overflow-hidden">
+                        <img src="/images/yt-thumb-saas.png" alt="Build a SaaS from Scratch" class="w-full h-full object-cover">
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">18:47</div>
                     </div>
                     <div class="p-4">
@@ -1433,9 +1431,8 @@ expect($tutorials)->each->toBeHelpful();
 
                 {{-- Thumbnail 3 --}}
                 <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video bg-gradient-to-br from-[#1a0a14] to-[#0D1117] relative flex items-center justify-center">
-                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-pink-400 p-3 overflow-hidden">$legacy->rewrite()->using('laravel'); Route::prefix('v2');</div>
-                        <span class="text-3xl">🔥</span>
+                    <div class="aspect-video relative overflow-hidden">
+                        <img src="/images/yt-thumb-codeigniter.png" alt="Why I Left CodeIgniter" class="w-full h-full object-cover">
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">24:12</div>
                     </div>
                     <div class="p-4">
