@@ -385,6 +385,9 @@
         padding: 2rem;
         position: relative;
         transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        min-height: 280px;
     }
     .testimonial-card:hover {
         border-color: rgba(74, 127, 191, 0.25);
@@ -1511,9 +1514,11 @@ function countdown() {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="testimonial-card fade-up">
-                <p class="text-gray-300 text-sm leading-relaxed mb-6">Jeffrey has an incredible eye for clean architecture. He took our messy legacy codebase and transformed it into something our team actually enjoys working with. The test coverage alone was worth it.</p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-400 font-bold text-sm">MR</div>
+                <div class="flex-1">
+                    <p class="text-gray-300 text-sm leading-relaxed">Jeffrey has an incredible eye for clean architecture. He took our messy legacy codebase and transformed it into something our team actually enjoys working with. The test coverage alone was worth it.</p>
+                </div>
+                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
+                    <div class="w-10 h-10 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-400 font-bold text-sm flex-shrink-0">MR</div>
                     <div>
                         <p class="text-white text-sm font-semibold">Mike Rodriguez</p>
                         <p class="text-gray-500 text-xs">CTO, SaaS Startup</p>
@@ -1521,9 +1526,11 @@ function countdown() {
                 </div>
             </div>
             <div class="testimonial-card fade-up">
-                <p class="text-gray-300 text-sm leading-relaxed mb-6">Working with Jeffrey felt like having a senior architect on the team. He doesn't just write code — he thinks about the system as a whole. Our Laravel migration finished ahead of schedule.</p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-accent-600/20 flex items-center justify-center text-accent-400 font-bold text-sm">SL</div>
+                <div class="flex-1">
+                    <p class="text-gray-300 text-sm leading-relaxed">Working with Jeffrey felt like having a senior architect on the team. He doesn't just write code — he thinks about the system as a whole. Our Laravel migration finished ahead of schedule.</p>
+                </div>
+                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
+                    <div class="w-10 h-10 rounded-full bg-accent-600/20 flex items-center justify-center text-accent-400 font-bold text-sm flex-shrink-0">SL</div>
                     <div>
                         <p class="text-white text-sm font-semibold">Sarah Lin</p>
                         <p class="text-gray-500 text-xs">Engineering Manager</p>
@@ -1531,9 +1538,11 @@ function countdown() {
                 </div>
             </div>
             <div class="testimonial-card fade-up">
-                <p class="text-gray-300 text-sm leading-relaxed mb-6">Jeffrey's blog posts and teaching style are what got me into Laravel in the first place. Clear, practical, no fluff. When I needed a consultant, he was the obvious choice.</p>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-green-600/20 flex items-center justify-center text-green-400 font-bold text-sm">AK</div>
+                <div class="flex-1">
+                    <p class="text-gray-300 text-sm leading-relaxed">Jeffrey's blog posts and teaching style are what got me into Laravel in the first place. Clear, practical, no fluff. When I needed a consultant, he was the obvious choice.</p>
+                </div>
+                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
+                    <div class="w-10 h-10 rounded-full bg-green-600/20 flex items-center justify-center text-green-400 font-bold text-sm flex-shrink-0">AK</div>
                     <div>
                         <p class="text-white text-sm font-semibold">Alex Kim</p>
                         <p class="text-gray-500 text-xs">Full-Stack Developer</p>
