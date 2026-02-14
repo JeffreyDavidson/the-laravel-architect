@@ -167,7 +167,7 @@ MARKDOWN;
 
 I grew up in Kansas. And look, I know what you're picturing — flat fields stretching to the horizon, wheat, maybe a tornado or two. You're not wrong, honestly. Kansas is flat. Spectacularly, almost aggressively flat. But there's a beauty to it that's hard to explain to people who've never stood in the middle of it. The sky is enormous. Sunsets go on forever. There's a stillness to the place that I didn't appreciate until I left.
 
-I grew up in a pretty typical Midwestern household. Church on Sundays, high school sports, the kind of town where everybody knows your parents and your parents know everybody. I played softball, watched the Jayhawks with something approaching religious devotion, and didn't really know what I wanted to do with my life.
+I grew up in a pretty typical Midwestern household. Church on Sundays, high school sports, the kind of town where everybody knows your parents and your parents know everybody. I played baseball, watched the Jayhawks with something approaching religious devotion, and didn't really know what I wanted to do with my life.
 
 Computers were around, sure. I had a desktop in my room by high school, and I spent an embarrassing amount of time on forums and messing around with MySpace layouts. But I didn't look at a computer and think "career." It was just something I did for fun.
 
@@ -175,7 +175,11 @@ Computers were around, sure. I had a desktop in my room by high school, and I sp
 
 The web development thing happened almost by accident. I was in my late teens, messing around with HTML because I wanted to customize things online. Then someone showed me PHP, and suddenly I could make things *do* stuff. Not just look different — actually work. Forms that sent emails. Pages that pulled data from a database. It felt like magic, and I was hooked.
 
-I didn't go to school for computer science. I'm mostly self-taught, which is both a point of pride and a source of occasional imposter syndrome. For the first few years, I was writing the kind of PHP that would make current-me break out in hives. Spaghetti code, SQL queries concatenated with user input, `include` files nested six deep. No version control. No tests. No architecture to speak of.
+I started out completely self-taught, not even sure if this was going to be a real career or just a hobby that occasionally paid. After high school, I tried the traditional route — a couple semesters at a community college. But it was table-based layouts and outdated practices, and I knew that wasn't how the modern web worked. I was learning more on my own than I was in class.
+
+So I made the leap and enrolled at Full Sail University, where I earned my Bachelor of Science in Web Design and Development. That experience gave me the structure and foundation I'd been missing as a self-taught developer — proper patterns, real collaboration, and the confidence that this wasn't just a hobby anymore. It was my career.
+
+For the first few years though, I was still writing the kind of PHP that would make current-me break out in hives. Spaghetti code, SQL queries concatenated with user input, `include` files nested six deep. No version control. No tests. No architecture to speak of.
 
 But I was building things, and people were paying me to build things, and I was learning something new every single day. That momentum carried me through the rough patches.
 
