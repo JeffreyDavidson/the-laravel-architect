@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
         ]);
 
-        // Generate featured images for all posts
-        $this->command->call('posts:generate-images', ['--force' => true]);
+        // Clear featured images so CSS card art is used
+        \App\Models\Post::query()->update(['featured_image' => null]);
     }
 }

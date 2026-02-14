@@ -10,11 +10,19 @@
         <div class="space-y-8">
             @forelse($posts as $post)
             <article class="group flex gap-6">
-                @if($post->featured_image)
-                <a href="{{ route('blog.show', $post) }}" class="hidden sm:block flex-shrink-0 w-48 h-32 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                <a href="{{ route('blog.show', $post) }}" class="hidden sm:block flex-shrink-0 w-48 h-32 rounded-lg overflow-hidden">
+                    @if($post->featured_image)
                     <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    @else
+                    @php $catSlug = $post->category?->slug ?? 'default'; $catInitial = strtoupper(substr($post->category?->name ?? 'B', 0, 1)); @endphp
+                    <div class="w-full h-full post-art post-art-{{ $catSlug }} relative">
+                        <div class="post-art-orb" style="width:100px;height:100px;background:var(--art-color);top:-20px;right:-15px;"></div>
+                        <div class="post-art-shape rounded-lg" style="width:30px;height:30px;border-color:var(--art-color);top:25%;left:20%;transform:rotate(15deg);"></div>
+                        <div class="post-art-shape rounded-full" style="width:20px;height:20px;border-color:var(--art-color2);bottom:20%;right:25%;"></div>
+                        <span class="post-art-mono" style="color:var(--art-color);font-size:4rem;bottom:-0.5rem;right:0.5rem;">{{ $catInitial }}</span>
+                    </div>
+                    @endif
                 </a>
-                @endif
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-3 mb-2">
                         @if($post->category)

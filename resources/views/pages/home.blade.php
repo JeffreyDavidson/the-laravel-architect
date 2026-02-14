@@ -432,10 +432,7 @@
     /* ===== Count Up ===== */
     .count-up { display: inline-block; }
 
-    /* ===== Blog Placeholder Gradients ===== */
-    .post-placeholder-0 { background: linear-gradient(135deg, #1a2a4a, #2b3a5e, #1a2a4a); }
-    .post-placeholder-1 { background: linear-gradient(135deg, #2a1a3a, #3b2a4e, #2a1a3a); }
-    .post-placeholder-2 { background: linear-gradient(135deg, #1a3a3a, #2b4a4e, #1a3a3a); }
+    /* Blog card art styles are in app.css */
 
     /* ===== Tech Stack Icons ===== */
     .tech-icon {
@@ -1100,16 +1097,19 @@
                         @if($post->featured_image)
                         <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
-                        {{-- Gradient placeholder with category icon --}}
-                        <div class="w-full h-full post-placeholder-{{ $index % 3 }} flex items-center justify-center {{ $index === 0 ? 'min-h-[200px]' : '' }}">
-                            <div class="text-center">
-                                <svg class="w-10 h-10 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                                </svg>
-                                @if($post->category)
-                                <span class="text-white/20 text-xs font-medium uppercase tracking-wider">{{ $post->category->name }}</span>
-                                @endif
-                            </div>
+                        @php $catSlug = $post->category?->slug ?? 'default'; $catInitial = strtoupper(substr($post->category?->name ?? 'B', 0, 1)); @endphp
+                        <div class="w-full h-full post-art post-art-{{ $catSlug }} {{ $index === 0 ? 'min-h-[200px]' : '' }}">
+                            {{-- Gradient orbs --}}
+                            <div class="post-art-orb" style="width:180px;height:180px;background:var(--art-color);top:-40px;right:-30px;"></div>
+                            <div class="post-art-orb" style="width:120px;height:120px;background:var(--art-color2);bottom:-20px;left:-20px;animation-delay:1s;"></div>
+                            {{-- Geometric shapes --}}
+                            <div class="post-art-shape rounded-lg" style="width:60px;height:60px;border-color:var(--art-color);top:20%;left:15%;transform:rotate(15deg);"></div>
+                            <div class="post-art-shape rounded-full" style="width:40px;height:40px;border-color:var(--art-color2);top:60%;right:20%;"></div>
+                            <div class="post-art-shape" style="width:80px;height:80px;border-color:var(--art-color);bottom:15%;left:40%;transform:rotate(45deg);"></div>
+                            {{-- Accent line --}}
+                            <div class="post-art-line" style="background:var(--art-color);width:30%;top:30%;left:0;"></div>
+                            {{-- Category monogram --}}
+                            <span class="post-art-mono" style="color:var(--art-color);">{{ $catInitial }}</span>
                         </div>
                         @endif
                     </div>
