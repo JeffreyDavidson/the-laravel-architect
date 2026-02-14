@@ -114,7 +114,7 @@
 
         <div x-data="{ filter: 'all' }">
             {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2 mb-10">
+            <div class="flex flex-wrap gap-2 mb-6">
                 <button @click="filter = 'all'" :class="filter === 'all' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
                     All Projects
                 </button>
