@@ -11,6 +11,7 @@
         "intervention/image": "^3.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "resend/resend-laravel": "^1.2",
         "spatie/laravel-markdown": "^2.7"
     },
     "require-dev": {
