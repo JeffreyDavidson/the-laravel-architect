@@ -92,22 +92,23 @@
 .post-art-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.25;
+    filter: blur(50px);
+    opacity: 0.35;
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .group:hover .post-art-orb {
-    opacity: 0.4;
-    transform: scale(1.15);
+    opacity: 0.5;
+    transform: scale(1.2);
 }
 .post-art-shape {
     position: absolute;
-    border: 1px solid;
-    opacity: 0.08;
+    border: 1.5px solid;
+    opacity: 0.12;
     transition: opacity 0.4s ease, transform 0.6s ease;
 }
 .group:hover .post-art-shape {
-    opacity: 0.15;
+    opacity: 0.25;
+    transform: rotate(25deg) scale(1.1);
 }
 .post-art-line {
     position: absolute;
@@ -121,17 +122,18 @@
 .post-art-mono {
     position: absolute;
     font-family: 'Empera', serif;
-    font-size: 8rem;
+    font-size: 10rem;
     font-weight: 700;
     line-height: 1;
-    opacity: 0.04;
-    bottom: -1rem;
-    right: 1rem;
+    opacity: 0.06;
+    bottom: -1.5rem;
+    right: 0.5rem;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 .group:hover .post-art-mono {
-    opacity: 0.08;
+    opacity: 0.12;
+    transform: scale(1.05);
 }
 .post-art-personal { --art-color: #3d6a9e; --art-color2: #5a86b5; }
 .post-art-career { --art-color: #8b5a6b; --art-color2: #a07080; }
