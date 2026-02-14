@@ -209,13 +209,15 @@ That's the driving force behind everything I'm building now. *Coffee with The La
 
 Cassie and I got married in July of 2014, and almost immediately started talking about what we wanted our future to look like. By February we'd booked a trip to Orlando to look at apartments. By March, we'd packed up and moved. No years of deliberation, no endless pros-and-cons lists — we just did it. Packed up our Kansas lives and landed in the theme park kingdom.
 
-The reasons were a mix of practical and personal. Weather played a role — Kansas winters are no joke, and as someone managing Type 2 diabetes, the ability to be active outdoors year-round mattered. Our daughter Viola was a big factor too. Florida has resources and communities that we wanted access to, and being closer to Walt Disney World certainly didn't hurt. That kid lights up in the parks in a way that makes every minute of the drive worth it.
+The reasons were a mix of practical and personal. Weather played a role — Kansas winters are no joke, and as someone managing Type 2 diabetes, the ability to be active outdoors year-round mattered. And being closer to Walt Disney World certainly didn't hurt.
+
+Then in 2017, our daughter Viola came along, and suddenly the move felt even more right. Viola is autistic and nonverbal, and being her dad has changed me in ways I'm still figuring out. It's reshaped my priorities, my patience, and honestly my entire perspective on what matters. Florida has resources and communities that we wanted access to for her, and she lights up in the parks in a way that makes every minute of the drive worth it.
 
 I won't pretend the transition was seamless. Leaving the place you grew up is weird, even when you're excited about where you're going. I missed the people. I missed the familiarity. I even missed the flatness, if you can believe that. But Florida has become home in ways I didn't expect. The developer community down here is solid. The pace of life suits us. And honestly, I don't miss shoveling snow even a little bit.
 
 ## Remote Work and Roots
 
-One of the things that made the move possible is that software development is beautifully location-independent. My clients don't care where I am as long as the code ships on time. My YouTube subscribers don't know if I'm recording from Kansas or Florida or the surface of the moon. Remote work isn't just a pandemic trend for me — it's been my reality for years, and it's the reason I could pick up and move my family a thousand miles without changing my career.
+One of the things that made the move possible is that software development is beautifully location-independent. My clients don't care where I am as long as the code ships on time. Future clients and collaborators won't care if I'm working from Kansas or Florida or the surface of the moon. Remote work isn't just a pandemic trend for me — it's been my reality for years, and it's the reason I could pick up and move my family a thousand miles without changing my career.
 
 That said, I think there's something to be said for having roots. Kansas shaped me. The work ethic, the straightforwardness, the "just get it done" mentality — that's pure Midwest. I carry it with me. When I sit down to architect a Laravel application, I'm not trying to be clever. I'm trying to be clear. I'm trying to build something that works, that the next developer can understand, that solves the actual problem without unnecessary complexity.
 
