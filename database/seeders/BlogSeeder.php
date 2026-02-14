@@ -623,26 +623,26 @@ Testing is something I'm genuinely passionate about, and I've developed a strong
 
 ```
 tests/
-├── Unit/
+├── Feature/
+│   ├── Controllers/
+│   │   ├── SubscriptionControllerTest.php
+│   │   └── AuthControllerTest.php
+│   └── Commands/
+│       └── PruneExpiredSubscriptionsTest.php
+├── Integration/
 │   ├── Actions/
 │   │   └── CreateSubscriptionTest.php
-│   ├── DTOs/
-│   │   └── SubscriptionDataTest.php
-│   └── Enums/
-│       └── PlanTest.php
-├── Integration/
 │   ├── Models/
 │   │   └── SubscriptionTest.php
-│   ├── Services/
-│   │   └── StripeServiceTest.php
-│   └── Queries/
-│       └── ActiveSubscriptionsQueryTest.php
-└── Feature/
-    ├── Controllers/
-    │   ├── SubscriptionControllerTest.php
-    │   └── AuthControllerTest.php
-    └── Commands/
-        └── PruneExpiredSubscriptionsTest.php
+│   ├── Queries/
+│   │   └── ActiveSubscriptionsQueryTest.php
+│   └── Services/
+│       └── StripeServiceTest.php
+└── Unit/
+    ├── DTOs/
+    │   └── SubscriptionDataTest.php
+    └── Enums/
+        └── PlanTest.php
 ```
 
 The distinction between these three suites is important, and I see a lot of developers get it wrong.
