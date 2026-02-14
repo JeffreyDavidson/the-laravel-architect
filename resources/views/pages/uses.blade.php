@@ -71,6 +71,7 @@
                                 ['icon' => '⌨️', 'name' => 'Apple Magic Keyboard', 'desc' => 'Simple, reliable, and matches the ecosystem. No mechanical keyboard phase — yet.', 'tag' => 'Keyboard'],
                                 ['icon' => '🖱️', 'name' => 'Apple Magic Trackpad', 'desc' => 'Gestures are too good to give up. The trackpad stays.', 'tag' => 'Trackpad'],
                                 ['icon' => '🔌', 'name' => 'CalDigit TS3 Plus', 'desc' => 'Thunderbolt dock. One cable to rule them all — monitor, peripherals, power, everything.', 'tag' => 'Dock', 'url' => 'https://www.caldigit.com/ts3-plus/'],
+                                ['icon' => '🔊', 'name' => 'Kanto YU2', 'desc' => 'Compact powered desktop speakers. Big sound from a small footprint — perfect for the desk setup.', 'tag' => 'Speakers', 'url' => 'https://www.kantoaudio.com/powered-speakers/yu2/'],
                                 ['icon' => '🪑', 'name' => 'Secretlab Chair', 'desc' => 'Comfortable for long coding sessions. Worth the investment.', 'tag' => 'Chair'],
                                 ['icon' => '🪵', 'name' => 'Fully Jarvis 72×30', 'desc' => 'Black bamboo standing desk. Sit-stand with plenty of room for the ultrawide and all the gear.', 'tag' => 'Desk', 'url' => 'https://www.fully.com/standing-desks/jarvis.html'],
                             ] as $item)
