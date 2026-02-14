@@ -745,71 +745,103 @@
 <div class="section-divider section-divider-dark"></div>
 
 {{-- ===== YOUTUBE ===== --}}
-<section class="py-20 dot-grid-bg">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col lg:flex-row gap-12 items-center">
+<section class="relative py-24 overflow-hidden">
+    {{-- Red ambient glow --}}
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.04] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
 
-            {{-- Video preview card --}}
-            <div class="flex-1 w-full">
-                <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] aspect-video bg-gradient-to-br from-[#0D1117] via-[#111820] to-[#0D1117]">
-                    {{-- Grid lines --}}
-                    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 40px 40px;"></div>
+    {{-- Scanlines --}}
+    <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, #ffffff 2px, #ffffff 3px);"></div>
 
-                    {{-- Center play button --}}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- Section header --}}
+        <div class="text-center mb-14">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+                Launching Soon
+            </div>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4">
+                Watch on <span class="text-red-500">YouTube</span>
+            </h2>
+            <p class="text-gray-400 max-w-xl mx-auto text-lg">
+                Tutorials, live coding, and honest conversations about building with Laravel.
+            </p>
+        </div>
+
+        {{-- Main content --}}
+        <div class="relative">
+            {{-- Video preview --}}
+            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
+                {{-- Animated border glow on hover --}}
+                <div class="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: conic-gradient(from 0deg, transparent 60%, #ef4444 80%, transparent 100%); animation: spin 3s linear infinite;"></div>
+
+                <div class="relative aspect-[21/9] bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a]">
+                    {{-- Code-style background texture --}}
+                    <div class="absolute inset-0 opacity-[0.04] font-mono text-[10px] leading-tight text-gray-500 p-6 overflow-hidden select-none" style="word-break: break-all;">
+                        Route::get('/tutorials', [YouTubeController::class, 'index']); Route::get('/live-coding', [StreamController::class, 'show']); $architect->teach('laravel')->with('passion'); expect($content)->toBeEngaging(); foreach($topics as $topic) { Video::create(['title' => $topic, 'quality' => 'high']); } // Coming soon to a screen near you Route::get('/deep-dives', [PackageController::class, 'explore']); $this->buildInPublic()->shareTheJourney(); expect($tutorials)->each->toBeHelpful(); Route::middleware('caffeinated')->group(function() { Route::resource('episodes', EpisodeController::class); }); $channel->launch()->andNeverLookBack();
+                    </div>
+
+                    {{-- Center play button with rings --}}
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-red-500 transition-all duration-300" style="box-shadow: 0 0 40px rgba(239,68,68,0.3);">
+                        {{-- Outer ring pulse --}}
+                        <div class="absolute w-32 h-32 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
+                        <div class="absolute w-24 h-24 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 3s;"></div>
+
+                        {{-- Play button --}}
+                        <div class="relative w-20 h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.1);">
                             <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
 
-                    {{-- Coming Soon badge --}}
-                    <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20">Coming Soon</span>
-                    </div>
-
-                    {{-- Bottom bar --}}
-                    <div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-[#0D1117] via-[#0D1117]/80 to-transparent">
-                        <div class="flex items-center gap-3">
-                            <img src="/images/logo-color.svg" alt="" class="w-10 h-10 rounded-full">
-                            <div>
-                                <p class="text-white font-semibold text-sm">The Laravel Architect</p>
-                                <p class="text-gray-500 text-xs">youtube.com/@thelaravelarchitect</p>
+                    {{-- Channel info bottom bar --}}
+                    <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="/images/logo-color.svg" alt="" class="w-10 h-10 rounded-full ring-2 ring-red-500/30">
+                                <div>
+                                    <p class="text-white font-bold text-sm">The Laravel Architect</p>
+                                    <p class="text-gray-400 text-xs">@thelaravelarchitect</p>
+                                </div>
                             </div>
+                            <span class="px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors">
+                                Subscribe
+                            </span>
                         </div>
                     </div>
-                </a>
-            </div>
-
-            {{-- Text content --}}
-            <div class="flex-1 lg:max-w-sm">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/10 text-red-400 text-xs font-semibold uppercase tracking-widest mb-4 border border-red-500/20">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><path fill="#0D1117" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    YouTube
                 </div>
-                <h2 class="text-3xl font-extrabold text-white mb-4">Tutorials & Live Coding</h2>
-                <p class="text-gray-400 mb-6 leading-relaxed">
-                    Laravel tutorials, package deep dives, live coding sessions, and the occasional rant about testing. The channel is launching soon.
-                </p>
+            </a>
 
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
-                        Step-by-step Laravel tutorials
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
-                        Live coding & building in public
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
-                        Package reviews & architecture talks
-                    </li>
-                </ul>
-
-                <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-all hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    Subscribe
-                </a>
+            {{-- Content cards below --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Tutorials</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed">Step-by-step Laravel guides from basics to advanced architecture patterns.</p>
+                </div>
+                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Live Coding</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed">Building real projects in real time. Mistakes included, lessons guaranteed.</p>
+                </div>
+                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        </div>
+                        <h3 class="font-bold text-sm text-white">Deep Dives</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed">Package reviews, architecture breakdowns, and the "why" behind the code.</p>
+                </div>
             </div>
         </div>
     </div>
