@@ -19,8 +19,11 @@
                     <div class="flex items-center gap-3 mb-2">
                         @if($post->category)
                         <a href="{{ route('blog.category', $post->category) }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide hover:underline">{{ $post->category->name }}</a>
+                        <span class="text-xs text-gray-500">·</span>
                         @endif
                         <span class="text-xs text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
+                        <span class="text-xs text-gray-500">·</span>
+                        <span class="text-xs text-gray-500">{{ $post->reading_time }} min read</span>
                     </div>
                     <a href="{{ route('blog.show', $post) }}">
                         <h2 class="font-semibold text-xl mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ $post->title }}</h2>
@@ -30,7 +33,6 @@
                         @foreach($post->tags as $tag)
                         <a href="{{ route('blog.tag', $tag) }}" class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-xs rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">{{ $tag->name }}</a>
                         @endforeach
-                        <span class="text-xs text-gray-500 ml-auto">{{ $post->reading_time }} min read</span>
                     </div>
                 </div>
             </article>
