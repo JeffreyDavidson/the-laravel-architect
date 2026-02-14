@@ -113,28 +113,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
         <div x-data="{ filter: 'all' }">
-            {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2">
-                <button @click="filter = 'all'" :class="filter === 'all' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
-                    All Projects
-                </button>
-                <button @click="filter = 'featured'" :class="filter === 'featured' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
-                    ⭐ Featured
-                </button>
-                <button @click="filter = 'opensource'" :class="filter === 'opensource' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
-                    Open Source
-                </button>
-                <button @click="filter = 'client'" :class="filter === 'client' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
-                    Client Work
-                </button>
-            </div>
+            <x-projects.filter-tabs />
 
             {{-- Project Content --}}
             <div class="mt-10 space-y-12">
 
             {{-- Featured Projects (Large Cards) --}}
-            <div x-show="filter === 'all' || filter === 'featured'">
-                <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6">Featured Projects</h2>
+            <x-projects.grid title="Featured Projects" show="filter === 'all' || filter === 'featured'">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     @foreach($projects->where('is_featured', true) as $project)
                     <a href="{{ route('projects.show', $project) }}" class="featured-card group relative block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
@@ -188,10 +173,10 @@
                     </a>
                     @endforeach
                 </div>
-            </div>
+            </x-projects.grid>
 
             {{-- All Other Projects (Compact Grid) --}}
-            <div>
+            <x-projects.grid show="true">
                 <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6" x-text="filter === 'all' ? 'More Projects' : filter === 'featured' ? '' : filter === 'opensource' ? 'Open Source' : 'Client Work'"></h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($projects as $project)
@@ -241,7 +226,7 @@
                     </a>
                     @endforeach
                 </div>
-            </div>
+            </x-projects.grid>
 
             </div> {{-- end project content wrapper --}}
         </div> {{-- end x-data --}}
