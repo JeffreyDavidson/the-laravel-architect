@@ -486,11 +486,6 @@
     .bento-posts > :first-child {
         grid-row: span 2;
     }
-    .bento-posts > :first-child .aspect-video {
-        aspect-ratio: auto;
-        height: 100%;
-        min-height: 200px;
-    }
     @media (max-width: 767px) {
         .bento-posts {
             grid-template-columns: 1fr;
@@ -1094,43 +1089,17 @@
         </div>
         <div class="bento-posts">
             @foreach($latestPosts as $index => $post)
-            <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300 {{ $index === 0 ? 'flex flex-col' : '' }}" data-glow-card>
-                <a href="{{ route('blog.show', $post) }}" class="block {{ $index === 0 ? 'flex flex-col h-full' : '' }}">
-                    <div class="{{ $index === 0 ? 'flex-1 min-h-[200px]' : 'aspect-video' }} overflow-hidden">
-                        @if($post->featured_image)
-                        <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                        @php $catSlug = $post->category?->slug ?? 'default'; $catInitial = strtoupper(substr($post->category?->name ?? 'B', 0, 1)); @endphp
-                        <div class="w-full h-full post-art post-art-{{ $catSlug }} {{ $index === 0 ? 'min-h-[200px]' : '' }}">
-                            {{-- Gradient orbs --}}
-                            <div class="post-art-orb" style="width:200px;height:200px;background:var(--art-color);top:-50px;right:-40px;"></div>
-                            <div class="post-art-orb" style="width:140px;height:140px;background:var(--art-color2);bottom:-30px;left:-30px;"></div>
-                            <div class="post-art-orb" style="width:100px;height:100px;background:var(--art-color);top:50%;left:50%;opacity:0.15;"></div>
-                            {{-- Geometric shapes --}}
-                            <div class="post-art-shape rounded-lg" style="width:70px;height:70px;border-color:var(--art-color);top:15%;left:12%;transform:rotate(15deg);"></div>
-                            <div class="post-art-shape rounded-full" style="width:50px;height:50px;border-color:var(--art-color2);top:55%;right:18%;"></div>
-                            <div class="post-art-shape" style="width:90px;height:90px;border-color:var(--art-color);bottom:10%;left:35%;transform:rotate(45deg);"></div>
-                            <div class="post-art-shape rounded-full" style="width:30px;height:30px;border-color:var(--art-color2);top:25%;right:35%;"></div>
-                            <div class="post-art-shape rounded-lg" style="width:45px;height:45px;border-color:var(--art-color);bottom:30%;left:65%;transform:rotate(-20deg);"></div>
-                            {{-- Accent lines --}}
-                            <div class="post-art-line" style="background:var(--art-color);width:30%;top:30%;left:0;"></div>
-                            <div class="post-art-line" style="background:var(--art-color2);width:20%;bottom:25%;right:0;left:auto;opacity:0.15;"></div>
-                            {{-- Category monogram --}}
-                            <span class="post-art-mono" style="color:var(--art-color);">{{ $catInitial }}</span>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="p-5">
-                        @if($post->category)
-                        <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
-                        @endif
-                        <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-white mt-1 mb-2 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
-                        <p class="text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
-                        <div class="mt-3 flex items-center gap-3 text-xs text-gray-500">
-                            <time>{{ $post->published_at->format('M d, Y') }}</time>
-                            <span>·</span>
-                            <span>{{ $post->reading_time }} min read</span>
-                        </div>
+            <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
+                <a href="{{ route('blog.show', $post) }}" class="block p-6">
+                    @if($post->category)
+                    <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
+                    @endif
+                    <h3 class="font-semibold {{ $index === 0 ? 'text-2xl' : 'text-lg' }} text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
+                    <p class="text-gray-400 text-sm line-clamp-{{ $index === 0 ? '3' : '2' }}">{{ $post->excerpt }}</p>
+                    <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
+                        <time>{{ $post->published_at->format('M d, Y') }}</time>
+                        <span>·</span>
+                        <span>{{ $post->reading_time }} min read</span>
                     </div>
                 </a>
             </article>
