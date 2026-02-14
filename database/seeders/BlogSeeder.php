@@ -29,7 +29,7 @@ class BlogSeeder extends Seeder
         // Post 1
         Post::updateOrCreate(['slug' => 'hello-world-why-im-starting-this-blog'], [
             'title' => "Hello World — Why I'm Starting This Blog",
-            'excerpt' => "After 15 years of building things with PHP and Laravel, two podcasts, and a YouTube channel, I figured it was time to start writing things down. Here's why.",
+            'excerpt' => "After 15 years of building things with PHP and Laravel — with two podcasts and a YouTube channel on the way — I figured it was time to start writing things down. Here's why.",
             'content' => self::post1(),
             'category_id' => $personal->id,
             'user_id' => $user->id,
@@ -377,7 +377,7 @@ I've used other languages. I've built things in Python, dabbled in Go, written e
 
 I keep coming back to this, but it's true: the Laravel community is special. Laracon is one of the best developer conferences I've attended. The online community — Discord, Twitter, forums, YouTube — is active and welcoming. When I got stuck on something, I've had package maintainers personally help me troubleshoot in Discord threads. Try getting that kind of support from a billion-dollar framework backed by a trillion-dollar company.
 
-The community also produces an incredible amount of educational content. Laracasts is a treasure. The number of high-quality blogs, podcasts (including, he said humbly, my own), and YouTube channels dedicated to Laravel is remarkable for a framework of its size.
+The community also produces an incredible amount of educational content. Laracasts is a treasure. The number of high-quality blogs, podcasts (including, he said humbly, my own — launching soon), and YouTube channels dedicated to Laravel is remarkable for a framework of its size.
 
 This community orientation isn't accidental — it flows from the top. Taylor and the Laravel team actively foster community. They spotlight community members. They maintain an ecosystem of tools that work together seamlessly. They listen to feedback. It's not perfect, but it's a culture that I want to be part of.
 

@@ -382,7 +382,7 @@
 
                 <p class="text-xl text-gray-500 mb-10 max-w-2xl">
                     15 years of building Laravel applications that scale. I write about the craft,
-                    host two podcasts, and help developers build things they're proud of.
+                    I'm launching two podcasts, and I help developers build things they're proud of.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
