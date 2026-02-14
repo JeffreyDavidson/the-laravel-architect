@@ -84,7 +84,7 @@
     {{-- Hero --}}
     <div class="noise-overlay border-b border-[#1e2a3a]">
         <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#E47A9D]/5"></div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 pb-12 md:pb-14">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
             <div class="max-w-3xl">
                 <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Things I've Built</h1>
                 <p class="text-gray-400 text-lg md:text-xl leading-relaxed">From open-source packages to full-scale SaaS platforms — a collection of projects that reflect how I think about architecture, testing, and clean code.</p>
@@ -110,11 +110,11 @@
 
     {{-- Projects --}}
     <div class="dot-grid-bg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-10 pb-12 md:pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
         <div x-data="{ filter: 'all' }">
             {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2 mb-6">
+            <div class="flex flex-wrap gap-2 mb-12">
                 <button @click="filter = 'all'" :class="filter === 'all' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
                     All Projects
                 </button>
