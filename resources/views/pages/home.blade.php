@@ -862,48 +862,214 @@
 <div class="section-divider section-divider-dark"></div>
 
 {{-- ===== WHAT I DO ===== --}}
+<style>
+    @keyframes serviceGlow {
+        0%, 100% { opacity: 0.4; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.15); }
+    }
+    @keyframes serviceBorderSpin {
+        0% { --service-angle: 0deg; }
+        100% { --service-angle: 360deg; }
+    }
+    @property --service-angle {
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: false;
+    }
+    .service-card-v2 {
+        position: relative;
+        background: rgba(13, 17, 23, 0.8);
+        border-radius: 1rem;
+        padding: 2.5rem;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .service-card-v2::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 1rem;
+        padding: 1px;
+        background: conic-gradient(from var(--service-angle), transparent 60%, var(--card-color) 80%, transparent 100%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        animation: serviceBorderSpin 4s linear infinite;
+    }
+    .service-card-v2:hover::before {
+        opacity: 1;
+    }
+    .service-card-v2:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 40px var(--card-glow);
+        border-color: transparent;
+    }
+    .service-orb {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        filter: blur(50px);
+        opacity: 0.15;
+        animation: serviceGlow 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+    .service-card-v2:hover .service-orb {
+        opacity: 0.3;
+    }
+    .service-number {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 5rem;
+        font-weight: 900;
+        position: absolute;
+        top: -0.5rem;
+        right: 1rem;
+        line-height: 1;
+        opacity: 0.04;
+        pointer-events: none;
+    }
+    .service-card-v2:hover .service-number {
+        opacity: 0.08;
+    }
+    .service-icon-v2 {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .service-card-v2:hover .service-icon-v2 {
+        transform: scale(1.1) rotate(-5deg);
+        box-shadow: 0 0 25px var(--card-glow);
+    }
+    .service-arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .service-arrow svg {
+        transition: transform 0.3s ease;
+    }
+    .service-card-v2:hover .service-arrow svg {
+        transform: translateX(4px);
+    }
+    /* Floating dots */
+    .service-dots {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .service-dots span {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    .service-card-v2:hover .service-dots span {
+        opacity: 0.3;
+        animation: floatDot 3s ease-in-out infinite;
+    }
+    @keyframes floatDot {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+</style>
+
 <section class="py-20 noise-overlay">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14 fade-up">
-            <h2 class="text-4xl font-extrabold text-white mb-4">What I Do</h2>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.38-5.38a1 1 0 010-1.41l.7-.7a1 1 0 011.41 0L12 11.5l3.85-3.85a1 1 0 011.41 0l.7.7a1 1 0 010 1.41l-5.38 5.38a1 1 0 01-1.16.04z"/></svg>
+                Services
+            </div>
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">What I Do</h2>
             <p class="text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues — I help teams build software they can be proud of.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {{-- Laravel Development --}}
-            <div class="service-card fade-up" style="--service-gradient: linear-gradient(90deg, #4A7FBF, #6fa3d6);">
-                <div class="service-icon bg-brand-600/10 text-brand-400">🏗️</div>
-                <h3 class="text-xl font-bold text-white mb-3">Laravel Development</h3>
-                <p class="text-gray-400 text-sm leading-relaxed mb-4">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-600/10 rounded-full">APIs</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-600/10 rounded-full">SaaS</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-600/10 rounded-full">Filament</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-600/10 rounded-full">Livewire</span>
+            <div class="service-card-v2 fade-up" style="--card-color: #4A7FBF; --card-glow: rgba(74,127,191,0.15);">
+                <div class="service-orb" style="background: #4A7FBF; top: -20px; right: -20px;"></div>
+                <div class="service-dots">
+                    <span class="bg-brand-400" style="top:20%;left:80%;animation-delay:0s;"></span>
+                    <span class="bg-brand-400" style="top:60%;left:90%;animation-delay:0.5s;"></span>
+                    <span class="bg-brand-400" style="top:40%;left:15%;animation-delay:1s;"></span>
+                    <span class="bg-brand-400" style="top:80%;left:70%;animation-delay:1.5s;"></span>
                 </div>
+                <span class="service-number text-brand-400">01</span>
+                <div class="service-icon-v2 bg-brand-500/15 text-brand-400 border border-brand-500/20">🏗️</div>
+                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Laravel Development</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
+                <div class="flex flex-wrap gap-2 relative z-10">
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">SaaS</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Filament</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Livewire</span>
+                </div>
+                <a href="{{ route('contact') }}" class="service-arrow text-brand-400 relative z-10">
+                    Start a project <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
             </div>
 
             {{-- Legacy Modernization --}}
-            <div class="service-card fade-up" style="--service-gradient: linear-gradient(90deg, #E47A9D, #f4a5bd);">
-                <div class="service-icon bg-accent-600/10 text-accent-400">🔄</div>
-                <h3 class="text-xl font-bold text-white mb-3">Legacy Modernization</h3>
-                <p class="text-gray-400 text-sm leading-relaxed mb-4">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-600/10 rounded-full">Migration</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-600/10 rounded-full">Refactoring</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-600/10 rounded-full">Testing</span>
+            <div class="service-card-v2 fade-up" style="--card-color: #E47A9D; --card-glow: rgba(228,122,157,0.15);">
+                <div class="service-orb" style="background: #E47A9D; top: -20px; right: -20px;"></div>
+                <div class="service-dots">
+                    <span class="bg-accent-400" style="top:25%;left:85%;animation-delay:0.3s;"></span>
+                    <span class="bg-accent-400" style="top:55%;left:10%;animation-delay:0.8s;"></span>
+                    <span class="bg-accent-400" style="top:75%;left:75%;animation-delay:1.3s;"></span>
+                    <span class="bg-accent-400" style="top:15%;left:20%;animation-delay:1.8s;"></span>
                 </div>
+                <span class="service-number text-accent-400">02</span>
+                <div class="service-icon-v2 bg-accent-500/15 text-accent-400 border border-accent-500/20">🔄</div>
+                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Legacy Modernization</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
+                <div class="flex flex-wrap gap-2 relative z-10">
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Refactoring</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Testing</span>
+                </div>
+                <a href="{{ route('contact') }}" class="service-arrow text-accent-400 relative z-10">
+                    Modernize now <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
             </div>
 
             {{-- Content & Teaching --}}
-            <div class="service-card fade-up" style="--service-gradient: linear-gradient(90deg, #22c55e, #4ade80);">
-                <div class="service-icon bg-green-600/10 text-green-400">🎓</div>
-                <h3 class="text-xl font-bold text-white mb-3">Content & Teaching</h3>
-                <p class="text-gray-400 text-sm leading-relaxed mb-4">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-600/10 rounded-full">Blog</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-600/10 rounded-full">Podcasts</span>
-                    <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-600/10 rounded-full">YouTube</span>
+            <div class="service-card-v2 fade-up" style="--card-color: #22c55e; --card-glow: rgba(34,197,94,0.15);">
+                <div class="service-orb" style="background: #22c55e; top: -20px; right: -20px;"></div>
+                <div class="service-dots">
+                    <span class="bg-green-400" style="top:30%;left:80%;animation-delay:0.2s;"></span>
+                    <span class="bg-green-400" style="top:65%;left:15%;animation-delay:0.7s;"></span>
+                    <span class="bg-green-400" style="top:45%;left:90%;animation-delay:1.2s;"></span>
+                    <span class="bg-green-400" style="top:85%;left:60%;animation-delay:1.7s;"></span>
                 </div>
+                <span class="service-number text-green-400">03</span>
+                <div class="service-icon-v2 bg-green-500/15 text-green-400 border border-green-500/20">🎓</div>
+                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Content & Teaching</h3>
+                <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
+                <div class="flex flex-wrap gap-2 relative z-10">
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">YouTube</span>
+                </div>
+                <a href="{{ route('blog.index') }}" class="service-arrow text-green-400 relative z-10">
+                    Start learning <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
             </div>
         </div>
     </div>
