@@ -647,45 +647,6 @@ tests/
 
 The distinction between these three suites is important, and I see a lot of developers get it wrong.
 
-**Unit tests are true unit tests.** They test a single class in complete isolation with zero external dependencies. No database, no file system, no HTTP calls, no queue — nothing. If your "unit test" needs to migrate a database to pass, it's not a unit test. Actions, DTOs, Enums, and pure logic classes get unit tested. Mock or stub any dependencies.
-
-```php
-it('creates subscription data from valid input', function () {
-    $data = new SubscriptionData(
-        plan: Plan::Monthly,
-        startsAt: Carbon::parse('2026-03-01'),
-    );
-
-    expect($data)
-        ->plan->toBe(Plan::Monthly)
-        ->startsAt->toBeInstanceOf(Carbon::class)
-        ->couponCode->toBeNull();
-});
-
-it('calculates the correct price for each plan', function (Plan $plan, int $expected) {
-    expect($plan->price())->toBe($expected);
-})->with([
-    [Plan::Monthly, 1500],
-    [Plan::Yearly, 15000],
-    [Plan::Lifetime, 50000],
-]);
-```
-
-**Integration tests** are where you test how your code interacts with external systems — primarily the database, but also things like cache, queue, or third-party APIs. Models, query classes, services that hit the database, and repository-style logic belong here. These tests use `RefreshDatabase` and actually read and write to a test database.
-
-```php
-it('returns only active subscriptions', function () {
-    Subscription::factory()->active()->count(3)->create();
-    Subscription::factory()->expired()->count(2)->create();
-
-    $active = Subscription::query()
-        ->tap(new ActiveSubscriptionsQuery)
-        ->get();
-
-    expect($active)->toHaveCount(3);
-});
-```
-
 **Feature tests** test the entry points into your application — controllers and console commands. They test the full HTTP request/response cycle or the full command execution. These are your highest-level tests: "when a user hits this endpoint with this data, does the right thing happen?"
 
 ```php
@@ -710,7 +671,46 @@ it('rejects invalid plan types', function () {
 });
 ```
 
-This three-suite approach gives me confidence at every level. Unit tests catch logic bugs fast (and run in milliseconds). Integration tests verify my data layer works. Feature tests confirm the whole request pipeline holds together. When something breaks, the failing test suite tells me *where* to look.
+**Integration tests** are where you test how your code interacts with external systems — primarily the database, but also things like cache, queue, or third-party APIs. Models, query classes, actions, services that hit the database, and repository-style logic belong here. These tests use `RefreshDatabase` and actually read and write to a test database.
+
+```php
+it('returns only active subscriptions', function () {
+    Subscription::factory()->active()->count(3)->create();
+    Subscription::factory()->expired()->count(2)->create();
+
+    $active = Subscription::query()
+        ->tap(new ActiveSubscriptionsQuery)
+        ->get();
+
+    expect($active)->toHaveCount(3);
+});
+```
+
+**Unit tests are true unit tests.** They test a single class in complete isolation with zero external dependencies. No database, no file system, no HTTP calls, no queue — nothing. If your "unit test" needs to migrate a database to pass, it's not a unit test. DTOs, Enums, and pure logic classes get unit tested. Mock or stub any dependencies.
+
+```php
+it('creates subscription data from valid input', function () {
+    $data = new SubscriptionData(
+        plan: Plan::Monthly,
+        startsAt: Carbon::parse('2026-03-01'),
+    );
+
+    expect($data)
+        ->plan->toBe(Plan::Monthly)
+        ->startsAt->toBeInstanceOf(Carbon::class)
+        ->couponCode->toBeNull();
+});
+
+it('calculates the correct price for each plan', function (Plan $plan, int $expected) {
+    expect($plan->price())->toBe($expected);
+})->with([
+    [Plan::Monthly, 1500],
+    [Plan::Yearly, 15000],
+    [Plan::Lifetime, 50000],
+]);
+```
+
+This three-suite approach gives me confidence at every level. Feature tests confirm the whole request pipeline holds together. Integration tests verify my data layer works. Unit tests catch logic bugs fast (and run in milliseconds). When something breaks, the failing test suite tells me *where* to look.
 
 I use Pest exclusively. The syntax is cleaner, the output is better, and the `expect()` API makes assertions readable. If you're still using PHPUnit, give Pest a real try. Not a five-minute glance — actually build something with it. I think you'll be surprised.
 
