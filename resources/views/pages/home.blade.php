@@ -799,7 +799,7 @@
             </div>
             <div class="stat-divider hidden sm:block"></div>
             <div class="flex-1 text-center">
-                <div class="stat-number count-up" data-target="6">0</div>
+                <div class="stat-number count-up" data-target="4">0</div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Open Source Projects</div>
             </div>
             <div class="stat-divider hidden sm:block"></div>
