@@ -24,7 +24,7 @@ class ContactController extends Controller
             "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
             "Message:\n{$validated['message']}",
             function ($message) use ($validated) {
-                $message->to(config('app.contact_email', config('mail.from.address')))
+                $message->to(config('mail.contact_to', config('mail.from.address')))
                     ->replyTo($validated['email'], $validated['name'])
                     ->subject("Contact Form: {$validated['type']} — {$validated['name']}");
             }
