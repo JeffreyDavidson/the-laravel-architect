@@ -209,7 +209,7 @@ That's the driving force behind everything I'm building now. *Coffee with The La
 
 Cassie and I got married in July of 2014, and almost immediately started talking about what we wanted our future to look like. By February we'd booked a trip to Orlando to look at apartments. By March, we'd packed up and moved. No years of deliberation, no endless pros-and-cons lists — we just did it. Packed up our Kansas lives and landed in the theme park kingdom.
 
-The reasons were a mix of practical and personal. Weather played a role — Kansas winters are no joke, and as someone managing Type 2 diabetes, the ability to be active outdoors year-round mattered. And being closer to Walt Disney World certainly didn't hurt.
+The reasons were a mix of practical and personal. Weather played a role — Kansas winters are no joke, and the ability to be active outdoors year-round mattered. And being closer to Walt Disney World certainly didn't hurt.
 
 Then in 2017, our daughter Viola came along, and suddenly the move felt even more right. Viola is autistic and nonverbal, and being her dad has changed me in ways I'm still figuring out. It's reshaped my priorities, my patience, and honestly my entire perspective on what matters. Florida has resources and communities that we wanted access to for her, and she lights up in the parks in a way that makes every minute of the drive worth it.
 
