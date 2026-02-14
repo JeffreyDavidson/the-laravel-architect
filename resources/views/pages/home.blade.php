@@ -790,7 +790,17 @@
             <p class="text-gray-400 mb-6">
                 A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam, unsubscribe anytime.
             </p>
-            <form action="#" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            @if(session('newsletter_success'))
+            <div class="mb-4 p-3 rounded-lg border border-green-500/30 bg-green-500/10 text-green-400 text-sm max-w-md mx-auto">
+                {{ session('newsletter_success') }}
+            </div>
+            @endif
+            @error('email')
+            <div class="mb-4 p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm max-w-md mx-auto">
+                {{ $message }}
+            </div>
+            @enderror
+            <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 @csrf
                 <input type="email" name="email" placeholder="you@example.com" required
                     class="newsletter-input flex-1 px-4 py-3 bg-brand-800 border border-brand-700/50 rounded-lg text-white placeholder-gray-500 text-sm transition-all">
