@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,12 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'jeffrey@thelaravelarchitect.com'],
+            [
+                'name' => 'Jeffrey Davidson',
+                'password' => \Illuminate\Support\Facades\Hash::make('change-me-immediately'),
+            ]
+        );
 
         $this->call([
             BlogSeeder::class,
