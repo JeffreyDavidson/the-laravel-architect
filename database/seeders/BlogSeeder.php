@@ -207,7 +207,7 @@ That's the driving force behind everything I'm building now. *Coffee with The La
 
 ## The Move South
 
-A few years back, Cassie and I made the decision to leave Kansas and move to Florida. It wasn't a snap decision. We'd been talking about it for years, weighing the pros and cons, visiting different areas. But eventually the timing felt right, and we packed up our lives and headed south.
+Cassie and I got married in July of 2014, and almost immediately started talking about what we wanted our future to look like. By February we'd booked a trip to Orlando to look at apartments. By March, we'd packed up and moved. No years of deliberation, no endless pros-and-cons lists — we just did it. Packed up our Kansas lives and landed in the theme park kingdom.
 
 The reasons were a mix of practical and personal. Weather played a role — Kansas winters are no joke, and as someone managing Type 2 diabetes, the ability to be active outdoors year-round mattered. Our daughter Viola was a big factor too. Florida has resources and communities that we wanted access to, and being closer to Walt Disney World certainly didn't hurt. That kid lights up in the parks in a way that makes every minute of the drive worth it.
 
