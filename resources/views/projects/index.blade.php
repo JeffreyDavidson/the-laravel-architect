@@ -114,7 +114,7 @@
 
         <div x-data="{ filter: 'all' }">
             {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2 mb-12">
+            <div class="flex flex-wrap gap-2">
                 <button @click="filter = 'all'" :class="filter === 'all' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
                     All Projects
                 </button>
@@ -127,9 +127,13 @@
                 <button @click="filter = 'client'" :class="filter === 'client' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
                     Client Work
                 </button>
+            </div>
+
+            {{-- Project Content --}}
+            <div class="mt-10 space-y-12">
 
             {{-- Featured Projects (Large Cards) --}}
-            <div class="mt-10 mb-12" x-show="filter === 'all' || filter === 'featured'">
+            <div x-show="filter === 'all' || filter === 'featured'">
                 <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6">Featured Projects</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     @foreach($projects->where('is_featured', true) as $project)
@@ -187,7 +191,7 @@
             </div>
 
             {{-- All Other Projects (Compact Grid) --}}
-            <div class="mt-10">
+            <div>
                 <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6" x-text="filter === 'all' ? 'More Projects' : filter === 'featured' ? '' : filter === 'opensource' ? 'Open Source' : 'Client Work'"></h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($projects as $project)
@@ -239,8 +243,8 @@
                 </div>
             </div>
 
-            </div>
-        </div>
+            </div> {{-- end project content wrapper --}}
+        </div> {{-- end x-data --}}
         </div>
     </div>
 @endsection
