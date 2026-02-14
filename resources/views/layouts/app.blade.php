@@ -6,6 +6,7 @@
     <title>@yield('title', 'The Laravel Architect') — Jeffrey Davidson</title>
     <meta name="description" content="@yield('meta_description', 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect.')">
     <link rel="icon" type="image/svg+xml" href="/images/logo-color.svg">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
     <link rel="preconnect" href="https://fonts.bunny.net">
