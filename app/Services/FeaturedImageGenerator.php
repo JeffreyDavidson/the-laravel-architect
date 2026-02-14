@@ -19,9 +19,102 @@ class FeaturedImageGenerator
         'personal' => ['#3d6a9e', '#2d5078', '#5a86b5'],
         'career' => ['#8b5a6b', '#6b4555', '#a07080'],
         'laravel' => ['#8b3a3a', '#6b2d2d', '#a85454'],
-        'testing' => ['#22c55e', '#16a34a', '#4ade80'],
-        'architecture' => ['#a855f7', '#7c3aed', '#c084fc'],
-        'default' => ['#4A7FBF', '#2d5a8e', '#6fa3d6'],
+        'testing' => ['#3a6b4a', '#2d5538', '#5a8b6a'],
+        'architecture' => ['#6b5a8b', '#553d6b', '#8070a0'],
+        'default' => ['#3d6a9e', '#2d5078', '#5a86b5'],
+    ];
+
+    // Code snippets per category - these get rendered as syntax-highlighted text
+    private array $codeSnippets = [
+        'personal' => [
+            ['$architect = new Developer();', 'keyword'],
+            ['$architect->name = \'Jeffrey\';', 'string'],
+            ['$architect->location = \'Florida\';', 'string'],
+            ['', ''],
+            ['class Life extends Journey {', 'keyword'],
+            ['    protected $coffee = true;', 'variable'],
+            ['    protected $passion = \'code\';', 'string'],
+            ['}', 'keyword'],
+            ['', ''],
+            ['Route::get(\'/story\', fn() =>', 'method'],
+            ['    view(\'chapters.next\'));', 'string'],
+            ['', ''],
+            ['$this->buildInPublic();', 'method'],
+            ['$this->shareTheJourney();', 'method'],
+        ],
+        'career' => [
+            ['function careerAdvice(): Collection', 'keyword'],
+            ['{', 'bracket'],
+            ['    return collect([', 'method'],
+            ['        \'Ship early, iterate often\',', 'string'],
+            ['        \'Soft skills > algorithms\',', 'string'],
+            ['        \'Read the source code\',', 'string'],
+            ['        \'Teach to learn deeper\',', 'string'],
+            ['    ]);', 'bracket'],
+            ['}', 'bracket'],
+            ['', ''],
+            ['expect($developer)->toGrow();', 'method'],
+            ['expect($career)->toBeRewarding();', 'method'],
+            ['', ''],
+            ['// 15 years and counting...', 'comment'],
+        ],
+        'laravel' => [
+            ['Route::middleware(\'architect\')', 'method'],
+            ['    ->group(function () {', 'keyword'],
+            ['        Route::resource(', 'method'],
+            ['            \'projects\',', 'string'],
+            ['            ProjectController::class', 'class'],
+            ['        );', 'bracket'],
+            ['    });', 'bracket'],
+            ['', ''],
+            ['$app = Application::configure()', 'method'],
+            ['    ->withRouting(web: true)', 'method'],
+            ['    ->withMiddleware()', 'method'],
+            ['    ->create();', 'method'],
+            ['', ''],
+            ['// Elegant. Always.', 'comment'],
+        ],
+        'testing' => [
+            ['test(\'it builds quality\', function () {', 'method'],
+            ['    $project = Architect::build(', 'method'],
+            ['        request: $validated,', 'variable'],
+            ['    );', 'bracket'],
+            ['', ''],
+            ['    expect($project)', 'method'],
+            ['        ->toBeClean()', 'method'],
+            ['        ->toBeScalable()', 'method'],
+            ['        ->toBeWellTested();', 'method'],
+            ['});', 'bracket'],
+            ['', ''],
+            ['// ✓ All tests passed', 'comment'],
+            ['// 4 tests, 12 assertions', 'comment'],
+        ],
+        'architecture' => [
+            ['namespace App\\Actions;', 'keyword'],
+            ['', ''],
+            ['class CreateSubscription', 'class'],
+            ['{', 'bracket'],
+            ['    public function handle(', 'keyword'],
+            ['        User $user,', 'variable'],
+            ['        Plan $plan,', 'variable'],
+            ['    ): Subscription {', 'class'],
+            ['        return $user', 'variable'],
+            ['            ->subscriptions()', 'method'],
+            ['            ->create([...]);', 'method'],
+            ['    }', 'bracket'],
+            ['}', 'bracket'],
+        ],
+    ];
+
+    // Syntax colors matching the hero code editor
+    private array $syntaxColors = [
+        'keyword' => '#ff7b72',
+        'string' => '#a5d6ff',
+        'class' => '#79c0ff',
+        'method' => '#d2a8ff',
+        'comment' => '#484f58',
+        'variable' => '#ffa657',
+        'bracket' => '#8b949e',
     ];
 
     public function __construct()
@@ -33,39 +126,34 @@ class FeaturedImageGenerator
     {
         $categorySlug = $post->category?->slug ?? 'default';
         $colors = $this->categoryColors[$categorySlug] ?? $this->categoryColors['default'];
+        $snippets = $this->codeSnippets[$categorySlug] ?? $this->codeSnippets['laravel'];
         $categoryName = $post->category?->name ?? 'Blog';
 
         $image = $this->manager->create($this->width, $this->height);
-
-        // Dark background
         $image = $image->fill('#0D1117');
 
-        // Draw gradient-like background with rectangles
-        $this->drawGradientBackground($image, $colors);
+        // Draw gradient orbs
+        $this->drawGradientOrbs($image, $colors);
 
         // Draw dot grid pattern
         $this->drawDotGrid($image);
 
-        // Draw decorative lines
-        $this->drawDecorativeLines($image, $colors);
+        // Draw decorative accent lines
+        $this->drawAccentLines($image, $colors);
 
-        // Draw category badge
+        // Draw code snippets
+        $this->drawCodeSnippets($image, $snippets);
+
+        // Draw category badge (small, bottom-left)
         $this->drawCategoryBadge($image, $categoryName, $colors[0]);
 
-        // Draw post title
-        $this->drawTitle($image, $post->title);
-
-        // Draw author line
-        $this->drawAuthorLine($image);
-
-        // Draw brand mark
+        // Draw brand mark (bottom-right)
         $this->drawBrandMark($image, $colors[0]);
 
-        // Save to storage
+        // Save
         $path = 'featured-images/' . $post->slug . '.png';
         $storagePath = storage_path('app/public/' . $path);
 
-        // Ensure directory exists
         if (!is_dir(dirname($storagePath))) {
             mkdir(dirname($storagePath), 0755, true);
         }
@@ -75,186 +163,133 @@ class FeaturedImageGenerator
         return $path;
     }
 
-    private function drawGradientBackground($image, array $colors): void
+    private function drawGradientOrbs($image, array $colors): void
     {
-        // Large accent orb top-right
-        for ($r = 300; $r > 0; $r -= 2) {
-            $opacity = max(0, min(1, ($r / 300) * 0.12));
-            $hex = $colors[0];
-            $alpha = (int)($opacity * 127);
-            // Use circles for gradient orb effect
-            $image->drawCircle(1050, 80, function ($circle) use ($r, $hex, $alpha) {
+        // Large orb top-right
+        for ($r = 300; $r > 0; $r -= 3) {
+            $image->drawCircle(1000, 100, function ($circle) use ($r, $colors) {
                 $circle->radius($r);
-                $circle->background($hex . sprintf('%02x', min(255, max(0, (int)(255 * 0.015)))));
+                $circle->background($colors[0] . '02');
             });
         }
 
-        // Smaller accent orb bottom-left
+        // Smaller orb bottom-left
         for ($r = 200; $r > 0; $r -= 3) {
-            $image->drawCircle(150, 550, function ($circle) use ($r, $colors) {
+            $image->drawCircle(200, 530, function ($circle) use ($r, $colors) {
                 $circle->radius($r);
-                $circle->background($colors[1] . sprintf('%02x', min(255, max(0, (int)(255 * 0.01)))));
+                $circle->background($colors[1] . '02');
             });
         }
     }
 
     private function drawDotGrid($image): void
     {
-        $spacing = 30;
+        $spacing = 32;
         for ($x = 0; $x < $this->width; $x += $spacing) {
             for ($y = 0; $y < $this->height; $y += $spacing) {
                 $image->drawCircle($x, $y, function ($circle) {
                     $circle->radius(1);
-                    $circle->background('rgba(255, 255, 255, 0.03)');
+                    $circle->background('#ffffff05');
                 });
             }
         }
     }
 
-    private function drawDecorativeLines($image, array $colors): void
+    private function drawAccentLines($image, array $colors): void
     {
-        // Top accent line
+        // Top accent line (partial)
         $image->drawLine(function (LineFactory $line) use ($colors) {
-            $line->from(0, 3);
-            $line->to((int)($this->width * 0.4), 3);
+            $line->from(0, 2);
+            $line->to((int)($this->width * 0.3), 2);
             $line->color($colors[0]);
-            $line->width(6);
+            $line->width(4);
         });
 
         // Right side vertical accent
         $image->drawLine(function (LineFactory $line) use ($colors) {
-            $line->from($this->width - 3, 0);
-            $line->to($this->width - 3, (int)($this->height * 0.3));
-            $line->color($colors[2]);
-            $line->width(3);
-        });
-
-        // Bottom subtle line
-        $image->drawLine(function (LineFactory $line) use ($colors) {
-            $line->from((int)($this->width * 0.6), $this->height - 3);
-            $line->to($this->width, $this->height - 3);
-            $line->color($colors[0] . '40');
+            $line->from($this->width - 2, 0);
+            $line->to($this->width - 2, (int)($this->height * 0.25));
+            $line->color($colors[2] . '80');
             $line->width(2);
         });
     }
 
-    private function drawCategoryBadge($image, string $categoryName, string $color): void
+    private function drawCodeSnippets($image, array $snippets): void
     {
-        $badgeY = 180;
-        $badgeX = 80;
+        $monoFont = $this->getMonoFont();
+        $startX = 60;
+        $startY = 50;
+        $lineHeight = 38;
+        $lineNumberWidth = 40;
 
-        // Badge background
-        $image->drawRectangle($badgeX - 2, $badgeY - 2, function ($rect) use ($color) {
-            $rect->size(strlen($color) > 7 ? 140 : 120, 32);
-            $rect->background($color . '30');
-            $rect->border($color . '60', 1);
-        });
+        foreach ($snippets as $i => $snippet) {
+            [$text, $type] = $snippet;
+            $y = $startY + ($i * $lineHeight);
 
-        // Badge text
-        $fontPath = $this->getMonoFont();
-        $image->text(strtoupper($categoryName), $badgeX + 12, $badgeY + 20, function (FontFactory $font) use ($fontPath, $color) {
-            $font->filename($fontPath);
-            $font->size(13);
-            $font->color($color);
-        });
-    }
+            // Don't draw past the bottom
+            if ($y > $this->height - 80) break;
 
-    private function drawTitle($image, string $title): void
-    {
-        $fontPath = $this->getBoldFont();
-        $maxWidth = $this->width - 160; // 80px padding each side
-        $x = 80;
-        $y = 260;
-        $lineHeight = 58;
+            // Line number
+            $lineNum = str_pad((string)($i + 1), 2, ' ', STR_PAD_LEFT);
+            $image->text($lineNum, $startX, $y, function (FontFactory $font) use ($monoFont) {
+                $font->filename($monoFont);
+                $font->size(15);
+                $font->color('#484f5840');
+            });
 
-        // Word-wrap the title
-        $words = explode(' ', $title);
-        $lines = [];
-        $currentLine = '';
-
-        foreach ($words as $word) {
-            $testLine = $currentLine ? $currentLine . ' ' . $word : $word;
-            // Rough character width estimate for ~44px font
-            $testWidth = strlen($testLine) * 26;
-            if ($testWidth > $maxWidth && $currentLine) {
-                $lines[] = $currentLine;
-                $currentLine = $word;
-            } else {
-                $currentLine = $testLine;
+            // Code text
+            if ($text && $type) {
+                $color = $this->syntaxColors[$type] ?? '#c9d1d9';
+                // Reduce opacity for a subtle, background feel
+                $image->text($text, $startX + $lineNumberWidth, $y, function (FontFactory $font) use ($monoFont, $color) {
+                    $font->filename($monoFont);
+                    $font->size(16);
+                    $font->color($color . '90');
+                });
             }
         }
-        if ($currentLine) {
-            $lines[] = $currentLine;
-        }
 
-        // Limit to 3 lines
-        if (count($lines) > 3) {
-            $lines = array_slice($lines, 0, 3);
-            $lines[2] = rtrim($lines[2]) . '...';
-        }
+        // Draw a second column of code (offset, more faded) for visual density
+        $startX2 = 620;
+        $startY2 = 120;
+        $reversedSnippets = array_reverse($snippets);
 
-        foreach ($lines as $i => $line) {
-            $image->text($line, $x, $y + ($i * $lineHeight), function (FontFactory $font) use ($fontPath) {
-                $font->filename($fontPath);
-                $font->size(44);
-                $font->color('#ffffff');
+        foreach ($reversedSnippets as $i => $snippet) {
+            [$text, $type] = $snippet;
+            $y = $startY2 + ($i * $lineHeight);
+
+            if ($y > $this->height - 60) break;
+            if (!$text || !$type) continue;
+
+            $color = $this->syntaxColors[$type] ?? '#c9d1d9';
+            $image->text($text, $startX2, $y, function (FontFactory $font) use ($monoFont, $color) {
+                $font->filename($monoFont);
+                $font->size(14);
+                $font->color($color . '40');
             });
         }
     }
 
-    private function drawAuthorLine($image): void
+    private function drawCategoryBadge($image, string $categoryName, string $color): void
     {
-        $fontPath = $this->getMonoFont();
-        $y = 530;
+        $monoFont = $this->getMonoFont();
 
-        $image->text('Jeffrey Davidson', 80, $y, function (FontFactory $font) use ($fontPath) {
-            $font->filename($fontPath);
-            $font->size(14);
-            $font->color('#8b949e');
-        });
-
-        $image->text('thelaravelarchitect.com', 80, $y + 24, function (FontFactory $font) use ($fontPath) {
-            $font->filename($fontPath);
-            $font->size(12);
-            $font->color('#484f58');
+        $image->text(strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color) {
+            $font->filename($monoFont);
+            $font->size(11);
+            $font->color($color . 'a0');
         });
     }
 
     private function drawBrandMark($image, string $color): void
     {
-        // Small colored square in bottom-right as brand mark
-        $image->drawRectangle($this->width - 120, $this->height - 60, function ($rect) use ($color) {
-            $rect->size(40, 40);
-            $rect->background($color . '40');
-            $rect->border($color, 2);
+        $monoFont = $this->getMonoFont();
+
+        $image->text('thelaravelarchitect.com', $this->width - 230, $this->height - 40, function (FontFactory $font) use ($monoFont) {
+            $font->filename($monoFont);
+            $font->size(11);
+            $font->color('#484f5880');
         });
-
-        // "TLA" text inside
-        $fontPath = $this->getMonoFont();
-        $image->text('TLA', $this->width - 112, $this->height - 32, function (FontFactory $font) use ($fontPath, $color) {
-            $font->filename($fontPath);
-            $font->size(14);
-            $font->color($color);
-        });
-    }
-
-    private function getBoldFont(): string
-    {
-        // Try system fonts that support bold
-        $fonts = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-            '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
-            '/usr/share/fonts/truetype/ubuntu/Ubuntu-Bold.ttf',
-            public_path('fonts/empera/Empera-Regular.ttf'),
-        ];
-
-        foreach ($fonts as $font) {
-            if (file_exists($font)) {
-                return $font;
-            }
-        }
-
-        return public_path('fonts/empera/Empera-Regular.ttf');
     }
 
     private function getMonoFont(): string
@@ -270,6 +305,6 @@ class FeaturedImageGenerator
             }
         }
 
-        return $this->getBoldFont();
+        return public_path('fonts/empera/Empera-Regular.ttf');
     }
 }
