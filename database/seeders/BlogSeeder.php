@@ -99,11 +99,11 @@ class BlogSeeder extends Seeder
 
 Alright, let's get this out of the way. My name is Jeffrey Davidson. I've been building things on the web for over fifteen years now, mostly with PHP, and for the last decade-plus, almost exclusively with Laravel. I live in Florida with my wife Cassie and our daughter Viola. I'm a Jayhawks fan stuck in Gator country, I play way too much poker, and I'm pretty sure I've been to Walt Disney World more times than some of the cast members.
 
-I also run a YouTube channel and two podcasts — *Coffee with The Laravel Architect* and *Embracing Cloudy Days* — and this site is where it all comes together. Blog posts, video tutorials, and everything in between.
+I'm also launching a YouTube channel and two podcasts — *Coffee with The Laravel Architect* and *Embracing Cloudy Days* — and this site is where it all comes together. Blog posts, video tutorials, and everything in between.
 
 ## Why a Blog? Why Now?
 
-Fair question. I've been making video content and recording podcast episodes for a while now, and I love those formats. There's something about talking through a problem out loud, walking through code on screen, that just *clicks* for certain topics. But some things are better written down.
+Fair question. I've always loved the idea of teaching through multiple formats — video, audio, and written. There's something about talking through a problem out loud, walking through code on screen, that just *clicks* for certain topics. But some things are better written down.
 
 You ever try to reference a specific point from a 45-minute YouTube video? You're scrubbing back and forth, trying to find the part where I talked about service classes, and it's buried between a tangent about Pest assertions and me taking a sip of coffee. Written content is scannable. It's searchable. It's linkable. You can bookmark a heading and come back to it six months later.
 
@@ -111,7 +111,7 @@ I've also found that writing forces me to think more carefully. When I'm recordi
 
 ## What You Can Expect
 
-This site is the home base for everything I create. Blog posts, yes — but also video tutorials, live coding sessions, and companion content for my YouTube channel and podcasts.
+This site is the home base for everything I'm building. Blog posts to start — with video tutorials, live coding sessions, and podcast episodes on the way.
 
 Here's how I see the content mix shaping up:
 
@@ -148,9 +148,9 @@ I'm a photographer. I'm a poker player. I'm a dad who will absolutely destroy yo
 
 ## Let's Do This
 
-I'm genuinely excited about this. The podcasts and YouTube channel have been incredible — the conversations, the community, the people who message me saying something I said helped them land a job or finally understand dependency injection. That never gets old.
+I'm genuinely excited about this. I've spent years consuming content from developers I admire — on podcasts, YouTube, blogs. Now it's my turn to contribute. The YouTube channel and both podcasts are in the works, and I can't wait to share them with you.
 
-And there's a lot more video content on the way. Tutorials, live builds, deep dives into packages and patterns. This blog is the written companion to all of that. Another format, another avenue, another chance to be useful to someone.
+This blog is the first piece of the puzzle. Another format, another avenue, another chance to be useful to someone.
 
 If you've made it this far, thanks for reading. Seriously. Subscribe to the RSS feed if that's your thing, follow me on social media if you want the updates, or just bookmark the site and check back when you're bored at work. I won't judge.
 
