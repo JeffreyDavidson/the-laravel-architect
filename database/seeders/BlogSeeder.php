@@ -201,9 +201,9 @@ The next several years were a blur of projects, clients, and learning. I did fre
 
 A big part of my career has been modernization work — taking legacy PHP applications written in other frameworks and rewriting them in the latest version of Laravel. I've migrated codebases from CodeIgniter, ExpressionEngine, Yii2, and CakePHP. Every one of those projects taught me something different about untangling technical debt, understanding someone else's architectural decisions (or lack thereof), and building something clean from the wreckage. It's not glamorous work, but it's made me a significantly better architect. When you've seen every way a codebase can go wrong, you develop strong opinions about how to get it right.
 
-I also started creating content. It began with a desire to teach — I remembered how confusing everything was when I was starting out, and I wanted to make it less confusing for the next person. The YouTube channel came first, then *Coffee with The Laravel Architect*, which is exactly what it sounds like: me drinking coffee and talking about Laravel. Later came *Embracing Cloudy Days*, which is more personal, more philosophical, less code and more life.
+I've also been feeling the pull to create content. For years I've learned from other developers who put themselves out there — on blogs, YouTube, podcasts — and I want to do the same. I remember how confusing everything was when I was starting out, and I want to make it less confusing for the next person.
 
-Creating content while working full-time as a developer is a juggling act, and I won't pretend I've always done it gracefully. But it's been worth it. The people I've met, the conversations I've had, the developers who've reached out to say something I made helped them — that's the good stuff.
+That's the driving force behind everything I'm building now. *Coffee with The Laravel Architect* is exactly what it sounds like: me drinking coffee and talking about Laravel. *Embracing Cloudy Days* is more personal, more philosophical — less code and more life. And the YouTube channel will bring tutorials and live coding to the mix. None of it has launched yet, but it's all in the works and I couldn't be more excited about it.
 
 ## The Move South
 
