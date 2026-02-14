@@ -76,11 +76,22 @@
         <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="flex flex-col lg:flex-row gap-12 items-center">
-                {{-- Photo / Brand --}}
-                <div class="flex-shrink-0 relative">
-                    <div class="w-72 h-72 lg:w-96 lg:h-96">
-                        <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-contain opacity-40 mix-blend-lighten">
+                {{-- Avatar --}}
+                <div class="flex-shrink-0 relative hidden lg:block" style="width: 320px; height: 380px;">
+                    {{-- Glow behind image --}}
+                    <div class="absolute inset-0 rounded-3xl" style="background: radial-gradient(circle at center, rgba(74,127,191,0.08) 0%, transparent 70%);"></div>
+                    {{-- Image with blended background --}}
+                    <div class="absolute inset-0 rounded-3xl overflow-hidden" style="background: #0D1117;">
+                        <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-contain" style="opacity: 0.2; filter: grayscale(30%) brightness(0.9); mix-blend-mode: screen;">
                     </div>
+                    {{-- Visible image on top, cropped tighter --}}
+                    <div class="absolute inset-4 rounded-2xl overflow-hidden">
+                        <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-contain drop-shadow-2xl" style="filter: brightness(0.95); mix-blend-mode: lighten;">
+                    </div>
+                </div>
+                {{-- Mobile version --}}
+                <div class="lg:hidden w-48 h-48 mx-auto rounded-2xl overflow-hidden border border-[#1e2a3a]" style="background: #0D1117;">
+                    <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson — The Laravel Architect" class="w-full h-full object-contain" style="mix-blend-mode: lighten;">
                 </div>
 
                 {{-- Intro --}}
