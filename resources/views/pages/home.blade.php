@@ -1198,10 +1198,6 @@
 
 {{-- ===== YOUTUBE ===== --}}
 <style>
-    @keyframes codeRain {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-50%); }
-    }
     @keyframes glitch {
         0%, 100% { transform: translate(0); filter: none; }
         20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
@@ -1304,50 +1300,104 @@
         {{-- Main video preview --}}
         <div class="relative">
             <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
-                <div class="relative aspect-[21/9] bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a]">
+                <div class="relative aspect-video bg-[#0a0a0a]">
 
-                    {{-- Animated code rain --}}
-                    <div class="absolute inset-0 overflow-hidden opacity-[0.06] pointer-events-none">
-                        <div class="font-mono text-[11px] leading-relaxed text-red-400/80 whitespace-pre-wrap p-6" style="animation: codeRain 20s linear infinite;">
-Route::get('/tutorials', [YouTubeController::class, 'index']);
-$architect->teach('laravel')->with('passion');
-expect($content)->toBeEngaging();
+                    {{-- Split screen layout --}}
+                    <div class="absolute inset-0 flex">
+                        {{-- Left: Presenter side --}}
+                        <div class="w-[45%] relative bg-gradient-to-br from-[#0f1318] via-[#111820] to-[#0a0f14] overflow-hidden">
+                            {{-- Ambient glow behind presenter --}}
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full opacity-20 blur-[80px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
 
-foreach ($topics as $topic) {
-    Video::create([
-        'title' => $topic,
-        'quality' => 'cinematic',
-        'has_tests' => true,
-    ]);
-}
+                            {{-- Presenter silhouette --}}
+                            <div class="absolute inset-0 flex items-end justify-center">
+                                <div class="relative w-[75%] h-[85%]">
+                                    {{-- Head --}}
+                                    <div class="absolute top-[8%] left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-b from-[#2a3444] to-[#1a2232] border border-[#2a3a4a]/30"></div>
+                                    {{-- Shoulders/body --}}
+                                    <div class="absolute top-[30%] inset-x-0 bottom-0 bg-gradient-to-b from-[#1e2a38] to-[#141c28] rounded-t-[60px] border-t border-x border-[#2a3a4a]/20">
+                                        {{-- Shirt collar detail --}}
+                                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-6 bg-[#0f1620] rounded-b-full"></div>
+                                    </div>
+                                    {{-- Logo badge on chest --}}
+                                    <div class="absolute top-[42%] left-1/2 -translate-x-1/2">
+                                        <img src="/images/logo-color.svg" alt="" class="w-8 h-8 opacity-40">
+                                    </div>
+                                </div>
+                            </div>
 
-Route::get('/live-coding', [StreamController::class, 'show']);
-$this->buildInPublic()->shareTheJourney();
-expect($tutorials)->each->toBeHelpful();
+                            {{-- Webcam frame corners --}}
+                            <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-red-500/30 rounded-tl"></div>
+                            <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-red-500/30 rounded-tr"></div>
+                            <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-red-500/30 rounded-bl"></div>
+                            <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-red-500/30 rounded-br"></div>
+                        </div>
 
-Route::middleware('caffeinated')->group(function () {
-    Route::resource('episodes', EpisodeController::class);
-});
+                        {{-- Divider --}}
+                        <div class="w-px bg-[#1e2a3a]"></div>
 
-$channel->subscribers()->count(); // Growing...
-$channel->launch()->andNeverLookBack();
+                        {{-- Right: Browser/editor side --}}
+                        <div class="flex-1 relative bg-[#0D1117] overflow-hidden flex flex-col">
+                            {{-- Browser chrome --}}
+                            <div class="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-[#1e2a3a]">
+                                <div class="flex gap-1.5">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-[#f85149]/60"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-[#d29922]/60"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-[#3fb950]/60"></div>
+                                </div>
+                                <div class="flex-1 mx-3">
+                                    <div class="bg-[#0D1117] rounded-md px-3 py-1 flex items-center gap-2">
+                                        <svg class="w-3 h-3 text-green-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                        <span class="text-[10px] text-gray-500 font-mono">thelaravelarchitect.com</span>
+                                    </div>
+                                </div>
+                            </div>
 
-// --- repeat for seamless loop ---
-Route::get('/tutorials', [YouTubeController::class, 'index']);
-$architect->teach('laravel')->with('passion');
-expect($content)->toBeEngaging();
+                            {{-- Editor content --}}
+                            <div class="flex-1 p-4 font-mono text-[11px] leading-relaxed overflow-hidden">
+                                <div class="flex gap-4 text-gray-600">
+                                    <div class="select-none text-right w-6 flex-shrink-0 space-y-0.5">
+                                        @for($i = 1; $i <= 18; $i++)
+                                            <div>{{ $i }}</div>
+                                        @endfor
+                                    </div>
+                                    <div class="space-y-0.5 overflow-hidden">
+                                        <div><span class="text-[#ff7b72]">class</span> <span class="text-[#d2a8ff]">ArchitectController</span></div>
+                                        <div>{</div>
+                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">index</span>()</div>
+                                        <div>&nbsp;&nbsp;{</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.index'</span>, [</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'videos'</span> <span class="text-gray-500">=></span> <span class="text-[#79c0ff]">Video</span>::<span class="text-[#d2a8ff]">published</span>()</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'tags'</span>)</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">latest</span>()</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">paginate</span>(<span class="text-[#79c0ff]">12</span>),</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;]);</div>
+                                        <div>&nbsp;&nbsp;}</div>
+                                        <div></div>
+                                        <div>&nbsp;&nbsp;<span class="text-gray-600">// 🎬 New episodes every week</span></div>
+                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">show</span>(<span class="text-[#79c0ff]">Video</span> <span class="text-[#ffa657]">$video</span>)</div>
+                                        <div>&nbsp;&nbsp;{</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.show'</span>)</div>
+                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'video'</span>, <span class="text-[#ffa657]">$video</span>);</div>
+                                        <div>&nbsp;&nbsp;}</div>
+                                    </div>
+                                </div>
 
-foreach ($topics as $topic) {
-    Video::create([
-        'title' => $topic,
-        'quality' => 'cinematic',
-        'has_tests' => true,
-    ]);
-}
+                                {{-- Blinking cursor --}}
+                                <div class="absolute bottom-16 left-[4.5rem]">
+                                    <div class="w-[2px] h-4 bg-[#4A7FBF] animate-pulse"></div>
+                                </div>
+                            </div>
 
-Route::get('/live-coding', [StreamController::class, 'show']);
-$this->buildInPublic()->shareTheJourney();
-expect($tutorials)->each->toBeHelpful();
+                            {{-- Terminal strip at bottom --}}
+                            <div class="px-4 py-2 bg-[#161b22] border-t border-[#1e2a3a] font-mono text-[10px] text-gray-600 flex items-center gap-3">
+                                <span class="text-green-500">●</span>
+                                <span>PHP 8.4</span>
+                                <span class="text-[#1e2a3a]">|</span>
+                                <span>Laravel 12</span>
+                                <span class="text-[#1e2a3a]">|</span>
+                                <span class="text-green-400/60">✓ 42 tests passing</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1359,11 +1409,11 @@ expect($tutorials)->each->toBeHelpful();
 
                     {{-- Coming Soon badge --}}
                     <div class="absolute top-4 right-4 z-10">
-                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20">Coming Soon</span>
+                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20 backdrop-blur-sm">Coming Soon</span>
                     </div>
 
                     {{-- Center play button with rings --}}
-                    <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="absolute inset-0 flex items-center justify-center z-10">
                         <div class="absolute w-36 h-36 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 2.5s;"></div>
                         <div class="absolute w-28 h-28 rounded-full border border-red-500/15 animate-ping" style="animation-duration: 3.5s;"></div>
                         <div class="absolute w-20 h-20 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
@@ -1373,19 +1423,28 @@ expect($tutorials)->each->toBeHelpful();
                         </div>
                     </div>
 
-                    {{-- Channel bar --}}
-                    <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                    {{-- Video title overlay --}}
+                    <div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <img src="/images/logo-color.svg" alt="" class="w-10 h-10 rounded-full ring-2 ring-red-500/30">
+                                <img src="/images/logo-color.svg" alt="" class="w-9 h-9 rounded-full ring-2 ring-red-500/30">
                                 <div>
-                                    <p class="text-white font-bold text-sm">The Laravel Architect</p>
-                                    <p class="text-gray-400 text-xs">@thelaravelarchitect</p>
+                                    <p class="text-white font-bold text-sm">Welcome to The Laravel Architect</p>
+                                    <p class="text-gray-400 text-xs">The Laravel Architect · Channel Trailer</p>
                                 </div>
                             </div>
                             <span class="px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors">
                                 Subscribe
                             </span>
+                        </div>
+
+                        {{-- Progress bar --}}
+                        <div class="mt-3 flex items-center gap-3">
+                            <span class="text-[10px] text-gray-500 font-mono">0:00</span>
+                            <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full w-0 rounded-full bg-red-600"></div>
+                            </div>
+                            <span class="text-[10px] text-gray-500 font-mono">2:47</span>
                         </div>
                     </div>
                 </div>
