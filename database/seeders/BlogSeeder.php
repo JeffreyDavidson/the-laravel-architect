@@ -264,7 +264,7 @@ This doesn't mean never try new things. It means be honest about *why* you're tr
 
 I didn't write tests for the first several years of my career. I told myself the usual excuses: the project is too small, the deadline is too tight, I'll add tests later. "Later" never came.
 
-The turning point was a production bug that took me sixteen hours to track down. Sixteen hours of staring at code, adding `dd()` statements, questioning my life choices. The fix was a two-line change. A single test would have caught it instantly.
+The turning point was Adam Wathan's *Test Driven Laravel* course. I'd heard people talk about testing for years, but it always felt like extra work with no clear payoff. Then I watched Adam build a real application test-first, and something clicked. It wasn't about writing tests *after* the fact to check boxes — it was about using tests to *drive* the design. The code that came out of that process was cleaner, more intentional, and easier to change. I was sold.
 
 I started writing tests the next day. First with PHPUnit, which felt clunky and verbose. Then Pest came along and made testing feel like it actually belonged in my workflow. Pest's syntax is clean, expressive, and — this matters — *enjoyable*. I actually look forward to writing tests now, which is something I never thought I'd say.
 
