@@ -16,7 +16,7 @@ class SubscriberResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static ?string $navigationGroup = 'Newsletter';
+    protected static string|BackedEnum|null $navigationGroup = 'Newsletter';
 
     public static function canCreate(): bool
     {
