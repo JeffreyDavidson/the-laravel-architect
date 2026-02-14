@@ -116,7 +116,7 @@
             <x-projects.filter-tabs />
 
             {{-- Project Content --}}
-            <div class="mt-10 space-y-12">
+            <div class="mt-10 flex flex-col gap-12">
 
             {{-- Featured Projects (Large Cards) --}}
             <x-projects.grid title="Featured Projects" show="filter === 'all' || filter === 'featured'">
