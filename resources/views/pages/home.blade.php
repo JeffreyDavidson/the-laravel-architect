@@ -476,22 +476,22 @@
         }
     }
 
-    /* ===== Bento Grid for Posts ===== */
-    .bento-posts {
+    /* ===== Blog Posts Layout ===== */
+    .blog-posts-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
         gap: 1.5rem;
     }
-    .bento-posts > :first-child {
-        grid-row: span 2;
+    .blog-posts-grid .blog-featured {
+        grid-column: 1 / -1;
+    }
+    .blog-posts-rest {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
     @media (max-width: 767px) {
-        .bento-posts {
+        .blog-posts-rest {
             grid-template-columns: 1fr;
-        }
-        .bento-posts > :first-child {
-            grid-row: span 1;
         }
     }
 </style>
@@ -1087,23 +1087,47 @@
             <h2 class="text-4xl font-extrabold text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
-        <div class="bento-posts">
-            @foreach($latestPosts as $index => $post)
-            <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
-                <a href="{{ route('blog.show', $post) }}" class="block p-6">
-                    @if($post->category)
-                    <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
+        <div class="blog-posts-grid">
+            {{-- Featured post --}}
+            @if($latestPosts->first())
+            @php $featured = $latestPosts->first(); @endphp
+            <article class="blog-featured group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
+                <a href="{{ route('blog.show', $featured) }}" class="block p-8">
+                    @if($featured->category)
+                    <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
                     @endif
-                    <h3 class="font-semibold {{ $index === 0 ? 'text-2xl' : 'text-lg' }} text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
-                    <p class="text-gray-400 text-sm line-clamp-{{ $index === 0 ? '3' : '2' }}">{{ $post->excerpt }}</p>
-                    <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
-                        <time>{{ $post->published_at->format('M d, Y') }}</time>
+                    <h3 class="font-semibold text-2xl md:text-3xl text-white mt-2 mb-4 group-hover:text-brand-400 transition-colors">{{ $featured->title }}</h3>
+                    <p class="text-gray-400 text-base line-clamp-3 max-w-3xl">{{ $featured->excerpt }}</p>
+                    <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
+                        <time>{{ $featured->published_at->format('M d, Y') }}</time>
                         <span>·</span>
-                        <span>{{ $post->reading_time }} min read</span>
+                        <span>{{ $featured->reading_time }} min read</span>
                     </div>
                 </a>
             </article>
-            @endforeach
+            @endif
+
+            {{-- Remaining posts --}}
+            @if($latestPosts->count() > 1)
+            <div class="blog-posts-rest">
+                @foreach($latestPosts->skip(1) as $post)
+                <article class="group fade-up gradient-border-card bg-brand-900/60 rounded-xl overflow-hidden border border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
+                    <a href="{{ route('blog.show', $post) }}" class="block p-6">
+                        @if($post->category)
+                        <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
+                        @endif
+                        <h3 class="font-semibold text-lg text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
+                        <p class="text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
+                        <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
+                            <time>{{ $post->published_at->format('M d, Y') }}</time>
+                            <span>·</span>
+                            <span>{{ $post->reading_time }} min read</span>
+                        </div>
+                    </a>
+                </article>
+                @endforeach
+            </div>
+            @endif
         </div>
     </div>
 </section>
