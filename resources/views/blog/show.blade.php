@@ -3,6 +3,19 @@
 @section('title', $post->meta_title ?? $post->title)
 @section('meta_description', $post->meta_description ?? $post->excerpt)
 
+@push('head')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+@endpush
+
 @section('content')
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {{-- Header --}}
@@ -28,8 +41,8 @@
         @endif
 
         {{-- Content --}}
-        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-code:font-mono prose-pre:bg-gray-900 prose-pre:text-gray-100">
-            {!! Str::markdown($post->content) !!}
+        <div class="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-a:text-brand-400 prose-strong:text-white prose-code:text-brand-300">
+            <x-markdown>{!! $post->content !!}</x-markdown>
         </div>
 
         {{-- Tags --}}
