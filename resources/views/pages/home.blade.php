@@ -745,57 +745,183 @@
 <div class="section-divider section-divider-dark"></div>
 
 {{-- ===== YOUTUBE ===== --}}
+<style>
+    @keyframes codeRain {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+    }
+    @keyframes glitch {
+        0%, 100% { transform: translate(0); filter: none; }
+        20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+        40% { transform: translate(2px, -1px); filter: hue-rotate(-90deg); }
+        60% { transform: translate(-1px, -1px); }
+        80% { transform: translate(1px, 2px); }
+    }
+    .yt-heading:hover .glitch-text {
+        animation: glitch 0.3s ease-in-out;
+    }
+    @keyframes flipIn {
+        0% { transform: rotateX(90deg); opacity: 0; }
+        100% { transform: rotateX(0); opacity: 1; }
+    }
+    .countdown-digit {
+        perspective: 200px;
+    }
+    .countdown-digit span {
+        display: inline-block;
+        animation: flipIn 0.6s ease-out both;
+    }
+    .rec-dot {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    .thumbnail-card {
+        transition: all 0.3s ease;
+    }
+    .thumbnail-card:hover {
+        transform: translateY(-4px) scale(1.02);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    .subscriber-bar-fill {
+        animation: fillBar 2s ease-out 0.5s both;
+    }
+    @keyframes fillBar {
+        from { width: 0%; }
+    }
+</style>
+
 <section class="relative py-24 overflow-hidden">
     {{-- Red ambient glow --}}
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.04] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
 
     {{-- Scanlines --}}
     <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, #ffffff 2px, #ffffff 3px);"></div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Section header --}}
-        <div class="text-center mb-14">
+        {{-- Section header with glitch --}}
+        <div class="text-center mb-14 yt-heading">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
                 <span class="relative flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                 </span>
-                Launching Soon
+                Launching March 2
             </div>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4">
-                Watch on <span class="text-red-500">YouTube</span>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4 cursor-default">
+                Watch on <span class="glitch-text inline-block text-red-500">YouTube</span>
             </h2>
             <p class="text-gray-400 max-w-xl mx-auto text-lg">
                 Tutorials, live coding, and honest conversations about building with Laravel.
             </p>
+
+            {{-- Countdown timer --}}
+            <div class="flex items-center justify-center gap-4 mt-8" x-data="countdown()" x-init="start()">
+                <div class="text-center">
+                    <div class="countdown-digit w-16 h-16 rounded-xl bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                        <span x-text="days">00</span>
+                    </div>
+                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Days</p>
+                </div>
+                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
+                <div class="text-center">
+                    <div class="countdown-digit w-16 h-16 rounded-xl bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                        <span x-text="hours">00</span>
+                    </div>
+                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Hours</p>
+                </div>
+                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
+                <div class="text-center">
+                    <div class="countdown-digit w-16 h-16 rounded-xl bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                        <span x-text="minutes">00</span>
+                    </div>
+                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Min</p>
+                </div>
+                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
+                <div class="text-center">
+                    <div class="countdown-digit w-16 h-16 rounded-xl bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
+                        <span x-text="seconds">00</span>
+                    </div>
+                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Sec</p>
+                </div>
+            </div>
         </div>
 
-        {{-- Main content --}}
+        {{-- Main video preview --}}
         <div class="relative">
-            {{-- Video preview --}}
             <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
-                {{-- Animated border glow on hover --}}
-                <div class="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: conic-gradient(from 0deg, transparent 60%, #ef4444 80%, transparent 100%); animation: spin 3s linear infinite;"></div>
-
                 <div class="relative aspect-[21/9] bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a]">
-                    {{-- Code-style background texture --}}
-                    <div class="absolute inset-0 opacity-[0.04] font-mono text-[10px] leading-tight text-gray-500 p-6 overflow-hidden select-none" style="word-break: break-all;">
-                        Route::get('/tutorials', [YouTubeController::class, 'index']); Route::get('/live-coding', [StreamController::class, 'show']); $architect->teach('laravel')->with('passion'); expect($content)->toBeEngaging(); foreach($topics as $topic) { Video::create(['title' => $topic, 'quality' => 'high']); } // Coming soon to a screen near you Route::get('/deep-dives', [PackageController::class, 'explore']); $this->buildInPublic()->shareTheJourney(); expect($tutorials)->each->toBeHelpful(); Route::middleware('caffeinated')->group(function() { Route::resource('episodes', EpisodeController::class); }); $channel->launch()->andNeverLookBack();
+
+                    {{-- Animated code rain --}}
+                    <div class="absolute inset-0 overflow-hidden opacity-[0.06] pointer-events-none">
+                        <div class="font-mono text-[11px] leading-relaxed text-red-400/80 whitespace-pre-wrap p-6" style="animation: codeRain 20s linear infinite;">
+Route::get('/tutorials', [YouTubeController::class, 'index']);
+$architect->teach('laravel')->with('passion');
+expect($content)->toBeEngaging();
+
+foreach ($topics as $topic) {
+    Video::create([
+        'title' => $topic,
+        'quality' => 'cinematic',
+        'has_tests' => true,
+    ]);
+}
+
+Route::get('/live-coding', [StreamController::class, 'show']);
+$this->buildInPublic()->shareTheJourney();
+expect($tutorials)->each->toBeHelpful();
+
+Route::middleware('caffeinated')->group(function () {
+    Route::resource('episodes', EpisodeController::class);
+});
+
+$channel->subscribers()->count(); // Growing...
+$channel->launch()->andNeverLookBack();
+
+// --- repeat for seamless loop ---
+Route::get('/tutorials', [YouTubeController::class, 'index']);
+$architect->teach('laravel')->with('passion');
+expect($content)->toBeEngaging();
+
+foreach ($topics as $topic) {
+    Video::create([
+        'title' => $topic,
+        'quality' => 'cinematic',
+        'has_tests' => true,
+    ]);
+}
+
+Route::get('/live-coding', [StreamController::class, 'show']);
+$this->buildInPublic()->shareTheJourney();
+expect($tutorials)->each->toBeHelpful();
+                        </div>
+                    </div>
+
+                    {{-- REC indicator --}}
+                    <div class="absolute top-4 left-4 flex items-center gap-2 z-10">
+                        <span class="rec-dot w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                        <span class="text-red-500 text-[11px] font-mono font-bold tracking-wider">REC</span>
+                    </div>
+
+                    {{-- Coming Soon badge --}}
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20">Coming Soon</span>
                     </div>
 
                     {{-- Center play button with rings --}}
                     <div class="absolute inset-0 flex items-center justify-center">
-                        {{-- Outer ring pulse --}}
-                        <div class="absolute w-32 h-32 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
-                        <div class="absolute w-24 h-24 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 3s;"></div>
+                        <div class="absolute w-36 h-36 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 2.5s;"></div>
+                        <div class="absolute w-28 h-28 rounded-full border border-red-500/15 animate-ping" style="animation-duration: 3.5s;"></div>
+                        <div class="absolute w-20 h-20 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
 
-                        {{-- Play button --}}
-                        <div class="relative w-20 h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.1);">
+                        <div class="relative w-20 h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.15);">
                             <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
 
-                    {{-- Channel info bottom bar --}}
+                    {{-- Channel bar --}}
                     <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -812,40 +938,87 @@
                     </div>
                 </div>
             </a>
+        </div>
 
-            {{-- Content cards below --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                        </div>
-                        <h3 class="font-bold text-sm text-white">Tutorials</h3>
+        {{-- Subscriber goal --}}
+        <div class="mt-8 max-w-md mx-auto">
+            <div class="flex items-center justify-between text-xs mb-2">
+                <span class="text-gray-500">Subscriber Goal</span>
+                <span class="text-red-400 font-mono font-bold">0 / 100</span>
+            </div>
+            <div class="h-2 rounded-full bg-[#111111] border border-[#1e2a3a] overflow-hidden">
+                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="width: 2%;"></div>
+            </div>
+            <p class="text-[10px] text-gray-600 mt-2 text-center">Help us hit 100 subscribers before launch day 🚀</p>
+        </div>
+
+        {{-- Upcoming video thumbnails --}}
+        <div class="mt-12">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Coming to the Channel</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {{-- Thumbnail 1 --}}
+                <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
+                    <div class="aspect-video bg-gradient-to-br from-[#1a0a0a] to-[#0D1117] relative flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-red-400 p-3 overflow-hidden">expect($test)->toPass(); $this->assertDatabaseHas('users');</div>
+                        <span class="text-3xl">🧪</span>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">12:34</div>
                     </div>
-                    <p class="text-xs text-gray-500 leading-relaxed">Step-by-step Laravel guides from basics to advanced architecture patterns.</p>
+                    <div class="p-4">
+                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Testing Like You Mean It: 3 Suites, Zero Excuses</p>
+                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 2</p>
+                    </div>
                 </div>
-                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                        </div>
-                        <h3 class="font-bold text-sm text-white">Live Coding</h3>
+
+                {{-- Thumbnail 2 --}}
+                <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
+                    <div class="aspect-video bg-gradient-to-br from-[#0a0a1a] to-[#0D1117] relative flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-blue-400 p-3 overflow-hidden">php artisan make:action SendInvoice; $action->execute($user);</div>
+                        <span class="text-3xl">🏗️</span>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">18:47</div>
                     </div>
-                    <p class="text-xs text-gray-500 leading-relaxed">Building real projects in real time. Mistakes included, lessons guaranteed.</p>
+                    <div class="p-4">
+                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Build a SaaS from Scratch with Laravel & Filament</p>
+                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 9</p>
+                    </div>
                 </div>
-                <div class="p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/80 hover:border-red-500/20 transition-colors group">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        </div>
-                        <h3 class="font-bold text-sm text-white">Deep Dives</h3>
+
+                {{-- Thumbnail 3 --}}
+                <div class="thumbnail-card rounded-xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden cursor-default">
+                    <div class="aspect-video bg-gradient-to-br from-[#1a0a14] to-[#0D1117] relative flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-[0.04] font-mono text-[9px] text-pink-400 p-3 overflow-hidden">$legacy->rewrite()->using('laravel'); Route::prefix('v2');</div>
+                        <span class="text-3xl">🔥</span>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">24:12</div>
                     </div>
-                    <p class="text-xs text-gray-500 leading-relaxed">Package reviews, architecture breakdowns, and the "why" behind the code.</p>
+                    <div class="p-4">
+                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Why I Left CodeIgniter (And Never Looked Back)</p>
+                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 16</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+function countdown() {
+    return {
+        days: '00', hours: '00', minutes: '00', seconds: '00',
+        start() {
+            const target = new Date('2026-03-02T12:00:00-05:00').getTime();
+            const tick = () => {
+                const now = Date.now();
+                const diff = Math.max(0, target - now);
+                this.days = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                this.hours = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+                this.minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                this.seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+            };
+            tick();
+            setInterval(tick, 1000);
+        }
+    };
+}
+</script>
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark"></div>
