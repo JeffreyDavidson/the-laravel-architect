@@ -1012,7 +1012,9 @@
                     <span class="bg-brand-400" style="top:80%;left:70%;animation-delay:1.5s;"></span>
                 </div>
                 <span class="service-number text-brand-400">01</span>
-                <div class="service-icon-v2 bg-brand-500/15 text-brand-400 border border-brand-500/20">🏗️</div>
+                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-brand-500/20 font-mono text-sm">
+                    <span class="text-gray-500">$</span> <span class="text-brand-400">php artisan</span> <span class="text-white">build</span><span class="animate-pulse text-brand-400">▊</span>
+                </div>
                 <h3 class="text-xl font-bold text-white mb-3 relative z-10">Laravel Development</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
@@ -1036,7 +1038,9 @@
                     <span class="bg-accent-400" style="top:15%;left:20%;animation-delay:1.8s;"></span>
                 </div>
                 <span class="service-number text-accent-400">02</span>
-                <div class="service-icon-v2 bg-accent-500/15 text-accent-400 border border-accent-500/20">🔄</div>
+                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-accent-500/20 font-mono text-sm">
+                    <span class="text-gray-500">$</span> <span class="text-accent-400">php artisan</span> <span class="text-white">modernize</span><span class="animate-pulse text-accent-400">▊</span>
+                </div>
                 <h3 class="text-xl font-bold text-white mb-3 relative z-10">Legacy Modernization</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
@@ -1059,7 +1063,9 @@
                     <span class="bg-green-400" style="top:85%;left:60%;animation-delay:1.7s;"></span>
                 </div>
                 <span class="service-number text-green-400">03</span>
-                <div class="service-icon-v2 bg-green-500/15 text-green-400 border border-green-500/20">🎓</div>
+                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-green-500/20 font-mono text-sm">
+                    <span class="text-gray-500">$</span> <span class="text-green-400">php artisan</span> <span class="text-white">teach</span><span class="animate-pulse text-green-400">▊</span>
+                </div>
                 <h3 class="text-xl font-bold text-white mb-3 relative z-10">Content & Teaching</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
