@@ -16,9 +16,9 @@ class FeaturedImageGenerator
 
     // Category color schemes: [primary, secondary, accent]
     private array $categoryColors = [
-        'personal' => ['#4A7FBF', '#2d5a8e', '#6fa3d6'],
-        'career' => ['#E47A9D', '#9D5175', '#f4a5bd'],
-        'laravel' => ['#FF2D20', '#cc2419', '#ff6b61'],
+        'personal' => ['#3d6a9e', '#2d5078', '#5a86b5'],
+        'career' => ['#8b5a6b', '#6b4555', '#a07080'],
+        'laravel' => ['#8b3a3a', '#6b2d2d', '#a85454'],
         'testing' => ['#22c55e', '#16a34a', '#4ade80'],
         'architecture' => ['#a855f7', '#7c3aed', '#c084fc'],
         'default' => ['#4A7FBF', '#2d5a8e', '#6fa3d6'],
@@ -85,7 +85,7 @@ class FeaturedImageGenerator
             // Use circles for gradient orb effect
             $image->drawCircle(1050, 80, function ($circle) use ($r, $hex, $alpha) {
                 $circle->radius($r);
-                $circle->background($hex . sprintf('%02x', min(255, max(0, (int)(255 * 0.03)))));
+                $circle->background($hex . sprintf('%02x', min(255, max(0, (int)(255 * 0.015)))));
             });
         }
 
@@ -93,7 +93,7 @@ class FeaturedImageGenerator
         for ($r = 200; $r > 0; $r -= 3) {
             $image->drawCircle(150, 550, function ($circle) use ($r, $colors) {
                 $circle->radius($r);
-                $circle->background($colors[1] . sprintf('%02x', min(255, max(0, (int)(255 * 0.02)))));
+                $circle->background($colors[1] . sprintf('%02x', min(255, max(0, (int)(255 * 0.01)))));
             });
         }
     }
