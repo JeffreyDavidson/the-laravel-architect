@@ -4,9 +4,7 @@
 
 @section('content')
 <style>
-    .noise-overlay {
-        position: relative;
-    }
+    .noise-overlay { position: relative; }
     .noise-overlay::after {
         content: '';
         position: absolute;
@@ -18,9 +16,7 @@
         background-repeat: repeat;
         background-size: 256px 256px;
     }
-    .dot-grid-bg {
-        position: relative;
-    }
+    .dot-grid-bg { position: relative; }
     .dot-grid-bg::before {
         content: '';
         position: absolute;
@@ -31,13 +27,8 @@
         background-size: 24px 24px;
         z-index: 0;
     }
-    .dot-grid-bg > * {
-        position: relative;
-        z-index: 1;
-    }
-    .uses-item {
-        transition: all 0.2s ease;
-    }
+    .dot-grid-bg > * { position: relative; z-index: 1; }
+    .uses-item { transition: all 0.2s ease; }
     .uses-item:hover {
         background: rgba(74, 127, 191, 0.03);
         border-color: #2a3a4a;
@@ -57,24 +48,57 @@
         </div>
     </div>
 
-    {{-- Desk Photo Placeholder --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="rounded-2xl border border-dashed border-[#1e2a3a] bg-[#0D1117]/50 p-12 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                <svg class="w-8 h-8 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </div>
-            <p class="text-gray-400 font-semibold mb-1">Desk photo coming soon</p>
-            <p class="text-gray-600 text-sm">Currently upgrading my home office. The desk tour drops when it's ready.</p>
-        </div>
-    </div>
-
     {{-- Content --}}
     <div class="dot-grid-bg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <div class="flex flex-col lg:flex-row gap-12">
 
                 {{-- Main Content --}}
                 <div class="flex-1 min-w-0">
+
+                    {{-- Hardware --}}
+                    <section id="hardware" class="mb-16 scroll-mt-24">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <h2 class="text-2xl font-extrabold">Hardware</h2>
+                        </div>
+                        <div class="space-y-3">
+                            @foreach([
+                                ['icon' => '💻', 'name' => 'MacBook Pro 16" (Nov 2024)', 'desc' => 'Apple M4 Max, 48GB RAM. The daily driver for everything — development, content creation, and life.', 'tag' => 'Laptop'],
+                                ['icon' => '🖥️', 'name' => 'LG 39GS95QE', 'desc' => '39" ultrawide OLED gaming monitor. Gorgeous colors, plenty of real estate for code + browser side by side.', 'tag' => 'Monitor', 'url' => 'https://www.lg.com/us/monitors/lg-39gs95qe-b-gaming-monitor'],
+                                ['icon' => '⌨️', 'name' => 'Apple Magic Keyboard', 'desc' => 'Simple, reliable, and matches the ecosystem. No mechanical keyboard phase — yet.', 'tag' => 'Keyboard'],
+                                ['icon' => '🖱️', 'name' => 'Apple Magic Trackpad', 'desc' => 'Gestures are too good to give up. The trackpad stays.', 'tag' => 'Trackpad'],
+                                ['icon' => '🔌', 'name' => 'CalDigit TS3 Plus', 'desc' => 'Thunderbolt dock. One cable to rule them all — monitor, peripherals, power, everything.', 'tag' => 'Dock', 'url' => 'https://www.caldigit.com/ts3-plus/'],
+                                ['icon' => '🪑', 'name' => 'Secretlab Chair', 'desc' => 'Comfortable for long coding sessions. Worth the investment.', 'tag' => 'Chair'],
+                                ['icon' => '🪵', 'name' => 'Fully Jarvis 72×30', 'desc' => 'Black bamboo standing desk. Sit-stand with plenty of room for the ultrawide and all the gear.', 'tag' => 'Desk', 'url' => 'https://www.fully.com/standing-desks/jarvis.html'],
+                            ] as $item)
+                            @if(isset($item['url']))
+                            <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-[#1e2a3a]">
+                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-semibold text-sm group-hover:text-[#4A7FBF] transition-colors">{{ $item['name'] }}</h3>
+                                        <svg class="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                </div>
+                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
+                            </a>
+                            @else
+                            <div class="uses-item flex items-start gap-4 p-4 rounded-xl border border-[#1e2a3a]">
+                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-semibold text-sm">{{ $item['name'] }}</h3>
+                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                </div>
+                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
+                    </section>
 
                     {{-- Development --}}
                     <section id="development" class="mb-16 scroll-mt-24">
@@ -86,12 +110,13 @@
                         </div>
                         <div class="space-y-3">
                             @foreach([
-                                ['icon' => '🧠', 'name' => 'PhpStorm', 'desc' => 'Primary IDE. The refactoring tools and deep Laravel/PHP understanding are unmatched.', 'tag' => 'Editor', 'url' => 'https://www.jetbrains.com/phpstorm/'],
-                                ['icon' => '🦙', 'name' => 'Laravel Herd', 'desc' => 'Local development environment. Zero-config PHP, nginx, and dnsmasq.', 'tag' => 'Local Dev', 'url' => 'https://herd.laravel.com'],
+                                ['icon' => '📝', 'name' => 'Visual Studio Code', 'desc' => 'My editor of choice. Fast, extensible, and the ecosystem of extensions is unbeatable.', 'tag' => 'Editor', 'url' => 'https://code.visualstudio.com'],
+                                ['icon' => '🐚', 'name' => 'Warp', 'desc' => 'Modern terminal with AI built in. Getting a little bloated though — eyeing Ghostty as a leaner alternative.', 'tag' => 'Terminal', 'url' => 'https://www.warp.dev'],
+                                ['icon' => '🦙', 'name' => 'Laravel Herd', 'desc' => 'Local development environment. Zero-config PHP, nginx, and dnsmasq on macOS.', 'tag' => 'Local Dev', 'url' => 'https://herd.laravel.com'],
                                 ['icon' => '🔨', 'name' => 'Laravel Forge', 'desc' => 'Server management and deployment. Push to main and it\'s live.', 'tag' => 'Hosting', 'url' => 'https://forge.laravel.com'],
                                 ['icon' => '🐙', 'name' => 'GitHub', 'desc' => 'Version control, CI/CD, and open source home.', 'tag' => 'Git', 'url' => 'https://github.com/JeffreyDavidson'],
-                                ['icon' => '🗄️', 'name' => 'TablePlus', 'desc' => 'Database GUI. Clean interface for MySQL, SQLite, and Redis.', 'tag' => 'Database', 'url' => 'https://tableplus.com'],
-                                ['icon' => '🦊', 'name' => 'Firefox', 'desc' => 'Primary browser for development and daily use.', 'tag' => 'Browser', 'url' => 'https://www.mozilla.org/firefox/'],
+                                ['icon' => '🗄️', 'name' => 'TablePlus', 'desc' => 'Database GUI. Clean, fast, and works beautifully with MySQL, SQLite, and Redis.', 'tag' => 'Database', 'url' => 'https://tableplus.com'],
+                                ['icon' => '🦊', 'name' => 'Firefox', 'desc' => 'Primary browser for development and daily use. Looking at Arc for something fresh.', 'tag' => 'Browser', 'url' => 'https://www.mozilla.org/firefox/'],
                                 ['icon' => '🔦', 'name' => 'Ray', 'desc' => 'By Spatie. A beautiful debugging tool that replaced dd() in my workflow.', 'tag' => 'Debugging', 'url' => 'https://myray.app'],
                                 ['icon' => '🧪', 'name' => 'Pest', 'desc' => 'Testing framework for PHP. Elegant syntax, powerful assertions. Three suites: Feature, Integration, Unit.', 'tag' => 'Testing', 'url' => 'https://pestphp.com'],
                             ] as $item)
@@ -110,34 +135,6 @@
                         </div>
                     </section>
 
-                    {{-- Hardware --}}
-                    <section id="hardware" class="mb-16 scroll-mt-24">
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            </div>
-                            <h2 class="text-2xl font-extrabold">Hardware</h2>
-                        </div>
-                        <div class="space-y-3">
-                            @foreach([
-                                ['icon' => '💻', 'name' => 'MacBook Pro', 'desc' => 'My daily driver for everything — development, content creation, and life.', 'tag' => 'Laptop'],
-                                ['icon' => '📷', 'name' => 'Sony Alpha Camera', 'desc' => 'For photography and video content. Finalizing which model — eyeing the a6700 and a7C II.', 'tag' => 'Camera'],
-                                ['icon' => '🎧', 'name' => 'Headphones', 'desc' => 'TBD — researching options for podcasting and daily use.', 'tag' => 'Audio'],
-                                ['icon' => '🖥️', 'name' => 'Monitor', 'desc' => 'TBD — upgrading to a proper external display for the home office.', 'tag' => 'Display'],
-                                ['icon' => '🪑', 'name' => 'Desk & Chair', 'desc' => 'Currently upgrading the home office. Full desk tour coming when it\'s done.', 'tag' => 'Office'],
-                            ] as $item)
-                            <div class="uses-item flex items-start gap-4 p-4 rounded-xl border border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-sm">{{ $item['name'] }}</h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </div>
-                            @endforeach
-                        </div>
-                    </section>
-
                     {{-- Content Creation --}}
                     <section id="content-creation" class="mb-16 scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
@@ -148,11 +145,12 @@
                         </div>
                         <div class="space-y-3">
                             @foreach([
-                                ['icon' => '🎬', 'name' => 'OBS Studio', 'desc' => 'Screen recording and streaming. Free, open source, and endlessly customizable.', 'tag' => 'Recording', 'url' => 'https://obsproject.com'],
-                                ['icon' => '✂️', 'name' => 'DaVinci Resolve', 'desc' => 'Video editing. The free version is absurdly powerful for YouTube content.', 'tag' => 'Editing', 'url' => 'https://www.blackmagicdesign.com/products/davinciresolve'],
-                                ['icon' => '🎨', 'name' => 'Canva', 'desc' => 'Thumbnails, social graphics, and quick design work. Not a designer, but Canva helps me fake it.', 'tag' => 'Design', 'url' => 'https://www.canva.com'],
-                                ['icon' => '🎙️', 'name' => 'Audacity', 'desc' => 'Audio editing for podcast episodes. Simple, effective, and free.', 'tag' => 'Audio', 'url' => 'https://www.audacityteam.org'],
-                                ['icon' => '🖼️', 'name' => 'Figma', 'desc' => 'When I need to think visually before building. Wireframes and quick mockups.', 'tag' => 'Design', 'url' => 'https://www.figma.com'],
+                                ['icon' => '🎙️', 'name' => 'Shure SM7B', 'desc' => 'The industry standard broadcast mic. Warm, rich sound that makes everything sound professional.', 'tag' => 'Microphone', 'url' => 'https://www.shure.com/en-US/products/microphones/sm/sm7b'],
+                                ['icon' => '🎛️', 'name' => 'RØDECaster Pro', 'desc' => 'All-in-one podcast production studio. Handles audio processing, mixing, and recording in one box.', 'tag' => 'Audio', 'url' => 'https://rode.com/en/interfaces-mixers/rodecaster-series/rodecaster-pro'],
+                                ['icon' => '📷', 'name' => 'Sony ZV-E10', 'desc' => 'Mirrorless camera made for content creators. Great video quality, compact body, interchangeable lenses.', 'tag' => 'Camera', 'url' => 'https://electronics.sony.com/imaging/interchangeable-lens-cameras/aps-c/p/ilczve10-b'],
+                                ['icon' => '💡', 'name' => 'Elgato Key Light', 'desc' => 'Edge-lit LED panel. App-controlled brightness and color temperature. Clean, even lighting for video.', 'tag' => 'Lighting', 'url' => 'https://www.elgato.com/us/en/p/key-light'],
+                                ['icon' => '🎮', 'name' => 'Elgato Stream Deck XL', 'desc' => '32 programmable LCD keys. Scene switching, shortcuts, and macros for streaming and productivity.', 'tag' => 'Control', 'url' => 'https://www.elgato.com/us/en/p/stream-deck-xl'],
+                                ['icon' => '🕹️', 'name' => 'Elgato Stream Deck MK.2', 'desc' => '15-key companion to the XL. Extra controls for when one deck isn\'t enough.', 'tag' => 'Control', 'url' => 'https://www.elgato.com/us/en/p/stream-deck-mk2-black'],
                             ] as $item)
                             <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-[#1e2a3a]">
                                 <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
@@ -182,7 +180,6 @@
                                 ['icon' => '📓', 'name' => 'Notion', 'desc' => 'Everything lives here. Family organization, project planning, content calendars, and notes.', 'tag' => 'Notes', 'url' => 'https://www.notion.so'],
                                 ['icon' => '💬', 'name' => 'Slack', 'desc' => 'Work communication and Laravel community channels.', 'tag' => 'Chat', 'url' => 'https://slack.com'],
                                 ['icon' => '🎮', 'name' => 'Discord', 'desc' => 'Dev communities, podcast listeners, and gaming.', 'tag' => 'Community', 'url' => 'https://discord.com'],
-                                ['icon' => '📧', 'name' => 'Spark', 'desc' => 'Email client by Readdle. Smart inbox and send-later keep me sane.', 'tag' => 'Email', 'url' => 'https://sparkmailapp.com'],
                             ] as $item)
                             <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-[#1e2a3a]">
                                 <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
@@ -218,6 +215,8 @@
                                 ['icon' => '🔨', 'name' => 'Laravel Forge', 'desc' => 'Deployment'],
                                 ['icon' => '🖼️', 'name' => 'Intervention Image', 'desc' => 'OG images'],
                                 ['icon' => '✨', 'name' => 'Prism.js', 'desc' => 'Syntax highlighting'],
+                                ['icon' => '📧', 'name' => 'Resend', 'desc' => 'Email'],
+                                ['icon' => '⛰️', 'name' => 'Alpine.js', 'desc' => 'Interactivity'],
                             ] as $tech)
                             <div class="p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50">
                                 <div class="flex items-center gap-2 mb-1">
@@ -238,18 +237,12 @@
                         <div class="p-5 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Jump To</h3>
                             <nav class="space-y-2">
-                                <a href="#development" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">💻 Development</a>
                                 <a href="#hardware" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">🖥️ Hardware</a>
+                                <a href="#development" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">💻 Development</a>
                                 <a href="#content-creation" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">🎬 Content Creation</a>
                                 <a href="#productivity" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">📋 Productivity</a>
                                 <a href="#this-site" class="block text-sm text-gray-400 hover:text-[#4A7FBF] transition-colors">🧪 This Site</a>
                             </nav>
-                        </div>
-
-                        {{-- Note --}}
-                        <div class="p-5 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
-                            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">🚧 Work in Progress</h3>
-                            <p class="text-xs text-gray-500 leading-relaxed">I'm still building out my home office and content creation setup. Hardware section will get fleshed out as I finalize gear. Check back!</p>
                         </div>
 
                         {{-- uses.tech --}}
@@ -259,7 +252,7 @@
                                 uses.tech
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
-                            <p class="text-xs text-gray-500 mt-1.5">A directory of developer /uses pages. Submit yours once you're happy with it!</p>
+                            <p class="text-xs text-gray-500 mt-1.5">A directory of developer /uses pages.</p>
                         </div>
                     </div>
                 </div>
