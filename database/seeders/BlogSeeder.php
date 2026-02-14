@@ -296,7 +296,7 @@ If you want to level up your career and you're already technically competent, in
 
 ## 7. Take Care of Your Body
 
-This one's personal, but I think it matters. I was diagnosed with Type 2 diabetes a few years ago, and while genetics played a role, years of sitting in a chair for 10+ hours a day didn't help. I wasn't exercising. I was eating garbage. I was treating my body like it was just a vehicle for getting my brain to the keyboard.
+This one's personal, but I think it matters. For years, I treated my body like it was just a vehicle for getting my brain to the keyboard. Sitting in a chair for 10+ hours a day. Not exercising. Eating garbage. I told myself I'd deal with it later, that the work was more important.
 
 Your career is a marathon, not a sprint. If you burn out physically, all the technical skill in the world won't help you. Get a standing desk. Take walks. Drink water. Get your blood work done. This stuff isn't sexy, but neither is a health crisis at 40.
 
