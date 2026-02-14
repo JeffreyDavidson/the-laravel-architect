@@ -112,8 +112,9 @@
     <div class="dot-grid-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
+        <div x-data="{ filter: 'all' }">
             {{-- Filter Tabs --}}
-            <div class="flex flex-wrap gap-2 mb-10" x-data="{ filter: 'all' }">
+            <div class="flex flex-wrap gap-2 mb-10">
                 <button @click="filter = 'all'" :class="filter === 'all' ? 'active' : ''" class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-[#1e2a3a] text-gray-400 hover:text-white hover:border-gray-600">
                     All Projects
                 </button>
@@ -192,7 +193,7 @@
                     @foreach($projects as $project)
                     <a href="{{ route('projects.show', $project) }}"
                        class="project-card group relative block p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50 overflow-hidden"
-                       x-show="filter === 'all'{{ $project->is_featured ? " || filter === 'featured'" : '' }}{{ $project->github_url ? " || filter === 'opensource'" : '' }}{{ !$project->github_url && !$project->is_featured ? " || filter === 'client'" : '' }}"
+                       x-show="{{ $project->is_featured ? 'false' : "filter === 'all'" }}{{ $project->github_url ? " || filter === 'opensource'" : '' }}{{ !$project->github_url && !$project->is_featured ? " || filter === 'client'" : '' }}"
                        x-transition
                     >
                         {{-- Glow --}}
@@ -239,6 +240,7 @@
             </div>
 
             </div>
+        </div>
         </div>
     </div>
 @endsection
