@@ -69,76 +69,134 @@
         transform: translateY(-4px);
         box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
     }
+
+    /* Trading Card */
+    .trading-card-tilt {
+        perspective: 1000px;
+    }
+    .trading-card-inner {
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        transform-style: preserve-3d;
+    }
+    .trading-card-tilt:hover .trading-card-inner {
+        transform: rotateY(-3deg) rotateX(2deg) scale(1.02);
+        box-shadow:
+            0 25px 50px -12px rgba(0, 0, 0, 0.6),
+            0 0 40px rgba(74, 127, 191, 0.1),
+            0 0 80px rgba(157, 81, 117, 0.05);
+    }
+
+    /* Holographic shimmer */
+    .holo-border {
+        position: relative;
+    }
+    .holo-border::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 1.25rem;
+        background: conic-gradient(
+            from var(--holo-angle, 0deg),
+            #4A7FBF 0%,
+            #9D5175 25%,
+            #4A7FBF 50%,
+            #E47A9D 75%,
+            #4A7FBF 100%
+        );
+        opacity: 0.4;
+        z-index: -1;
+        transition: opacity 0.4s ease;
+        animation: holoSpin 6s linear infinite;
+    }
+    .trading-card-tilt:hover .holo-border::before {
+        opacity: 0.7;
+    }
+    @keyframes holoSpin {
+        to { --holo-angle: 360deg; }
+    }
+    @property --holo-angle {
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: false;
+    }
+
+    /* Stat bar fill animation */
+    .stat-bar {
+        transition: width 1s ease-out;
+    }
 </style>
 
     {{-- Hero --}}
     <div class="noise-overlay border-b border-[#1e2a3a]">
         <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+            <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
                 {{-- Trading Card --}}
-                <div class="flex-shrink-0 trading-card-wrapper">
-                    <div class="trading-card relative group cursor-default" style="perspective: 800px;">
-                        {{-- Glow --}}
-                        <div class="absolute -inset-2 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: conic-gradient(from 0deg, #4A7FBF33, #9D517533, #4A7FBF33); filter: blur(20px);"></div>
+                <div class="flex-shrink-0 trading-card-tilt">
+                    <div class="holo-border">
+                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl" style="background: linear-gradient(165deg, #111820 0%, #0a0e14 50%, #0f1520 100%);">
 
-                        {{-- Card body --}}
-                        <div class="relative w-72 rounded-2xl border border-[#1e2a3a] overflow-hidden shadow-2xl transition-transform duration-300 group-hover:rotate-1 group-hover:scale-[1.02]" style="background: linear-gradient(165deg, #0D1117 0%, #0a0e14 50%, #0f1520 100%);">
-                            {{-- Top accent stripe --}}
-                            <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #9D5175, #4A7FBF);"></div>
+                            {{-- Top holographic stripe --}}
+                            <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
 
-                            {{-- Rarity badge --}}
-                            <div class="absolute top-4 right-4 z-10">
-                                <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full border" style="color: #E47A9D; border-color: #E47A9D44; background: #E47A9D11;">Legendary</span>
+                            {{-- Card header --}}
+                            <div class="flex items-center justify-between px-5 pt-3 pb-2">
+                                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Developer Card</span>
+                                <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
                             </div>
 
-                            {{-- Avatar --}}
-                            <div class="mx-4 mt-4 rounded-xl overflow-hidden border border-[#1e2a3a]">
-                                <div class="aspect-square bg-white">
-                                    <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover">
+                            {{-- Avatar frame --}}
+                            <div class="mx-4 rounded-xl overflow-hidden border-2 border-[#1e2a3a] relative">
+                                <div class="aspect-[4/3] bg-white">
+                                    <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                 </div>
+                                {{-- Gradient overlay at bottom of image --}}
+                                <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[#111820] to-transparent"></div>
                             </div>
 
-                            {{-- Name + Class --}}
-                            <div class="px-5 pt-4 pb-2 text-center">
-                                <h2 class="text-lg font-extrabold tracking-tight">Jeffrey Davidson</h2>
-                                <p class="text-xs font-mono mt-0.5" style="color: #4A7FBF;">⚔️ Laravel Architect</p>
-                            </div>
-
-                            {{-- Divider --}}
-                            <div class="mx-5 h-px" style="background: linear-gradient(90deg, transparent, #1e2a3a, transparent);"></div>
-
-                            {{-- Stats --}}
-                            <div class="px-5 py-4 space-y-2.5">
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>☕</span> PHP</span>
-                                    <span class="font-mono font-bold text-gray-300">since 2008</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>🏗️</span> Laravel</span>
-                                    <span class="font-mono font-bold text-gray-300">v4.2 →</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>🧪</span> Test Suites</span>
-                                    <span class="font-mono font-bold text-gray-300">3</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>📍</span> Location</span>
-                                    <span class="font-mono font-bold text-gray-300">Florida</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>⭐</span> Experience</span>
-                                    <span class="font-mono font-bold text-gray-300">15+ yrs</span>
-                                </div>
-                                <div class="flex items-center justify-between text-xs">
-                                    <span class="flex items-center gap-2 text-gray-500"><span>🎙️</span> Podcasts</span>
-                                    <span class="font-mono font-bold text-gray-300">2</span>
+                            {{-- Name plate --}}
+                            <div class="px-5 pt-3 pb-1 text-center">
+                                <h2 class="text-xl font-empera tracking-wide">Jeffrey Davidson</h2>
+                                <div class="flex items-center justify-center gap-2 mt-1">
+                                    <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#4A7FBF]/30"></div>
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em]" style="color: #4A7FBF;">Laravel Architect</p>
+                                    <div class="h-px flex-1 bg-gradient-to-l from-transparent to-[#4A7FBF]/30"></div>
                                 </div>
                             </div>
 
-                            {{-- Bottom accent --}}
-                            <div class="h-1" style="background: linear-gradient(90deg, #4A7FBF, #9D5175, #4A7FBF);"></div>
+                            {{-- Stats grid --}}
+                            <div class="px-4 pt-3 pb-4">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">PHP</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">2008</span>
+                                    </div>
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Laravel</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">v4.2+</span>
+                                    </div>
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Test Suites</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">3</span>
+                                    </div>
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Experience</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">15+ yrs</span>
+                                    </div>
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Location</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">Florida</span>
+                                    </div>
+                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Podcasts</span>
+                                        <span class="text-sm font-mono font-bold text-gray-200">2</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Bottom holographic stripe --}}
+                            <div class="h-1" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
                         </div>
                     </div>
                 </div>
