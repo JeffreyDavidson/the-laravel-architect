@@ -746,32 +746,71 @@
 
 {{-- ===== YOUTUBE ===== --}}
 <section class="py-20 dot-grid-bg">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-extrabold text-white mb-4">Watch on YouTube</h2>
-        <p class="text-gray-400 mb-10 max-w-xl mx-auto">
-            Tutorials, live coding, and conversations about Laravel and web development.
-        </p>
-        <div class="browser-frame mx-auto">
-            {{-- Browser chrome --}}
-            <div class="bg-brand-900 px-4 py-3 flex items-center gap-3 border-b border-white/10">
-                <div class="browser-dots flex gap-2">
-                    <span class="bg-red-500/80"></span>
-                    <span class="bg-yellow-500/80"></span>
-                    <span class="bg-green-500/80"></span>
-                </div>
-                <div class="flex-1 bg-brand-800 rounded-md px-3 py-1 text-xs text-gray-500 text-left truncate">
-                    youtube.com/@thelaravelarchitect
-                </div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-12 items-center">
+
+            {{-- Video preview card --}}
+            <div class="flex-1 w-full">
+                <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] aspect-video bg-gradient-to-br from-[#0D1117] via-[#111820] to-[#0D1117]">
+                    {{-- Grid lines --}}
+                    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+                    {{-- Center play button --}}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-red-500 transition-all duration-300" style="box-shadow: 0 0 40px rgba(239,68,68,0.3);">
+                            <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+
+                    {{-- Coming Soon badge --}}
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20">Coming Soon</span>
+                    </div>
+
+                    {{-- Bottom bar --}}
+                    <div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-[#0D1117] via-[#0D1117]/80 to-transparent">
+                        <div class="flex items-center gap-3">
+                            <img src="/images/logo-color.svg" alt="" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="text-white font-semibold text-sm">The Laravel Architect</p>
+                                <p class="text-gray-500 text-xs">youtube.com/@thelaravelarchitect</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-            <div class="aspect-video bg-brand-800">
-                <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=UC42H30o7l5QvvCzC86dSu_A" title="The Laravel Architect YouTube" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+
+            {{-- Text content --}}
+            <div class="flex-1 lg:max-w-sm">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/10 text-red-400 text-xs font-semibold uppercase tracking-widest mb-4 border border-red-500/20">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><path fill="#0D1117" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    YouTube
+                </div>
+                <h2 class="text-3xl font-extrabold text-white mb-4">Tutorials & Live Coding</h2>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    Laravel tutorials, package deep dives, live coding sessions, and the occasional rant about testing. The channel is launching soon.
+                </p>
+
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                        Step-by-step Laravel tutorials
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                        Live coding & building in public
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                        Package reviews & architecture talks
+                    </li>
+                </ul>
+
+                <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-all hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    Subscribe
+                </a>
             </div>
-        </div>
-        <div class="mt-8">
-            <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="magnetic-btn glow-btn inline-flex items-center px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-all" style="--tw-shadow-color: rgba(239,68,68,0.3);">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                Subscribe
-            </a>
         </div>
     </div>
 </section>
