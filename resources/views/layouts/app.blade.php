@@ -89,6 +89,7 @@
                         <li><a href="{{ route('podcast.index') }}" class="hover:text-brand-400 transition-colors">Podcasts</a></li>
                         <li><a href="{{ route('projects.index') }}" class="hover:text-brand-400 transition-colors">Projects</a></li>
                         <li><a href="{{ route('about') }}" class="hover:text-brand-400 transition-colors">About</a></li>
+                        <li><a href="{{ route('uses') }}" class="hover:text-brand-400 transition-colors">Uses</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-brand-400 transition-colors">Contact</a></li>
                     </ul>
                 </div>
