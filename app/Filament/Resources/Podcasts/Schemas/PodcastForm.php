@@ -59,7 +59,10 @@ class PodcastForm
                         TextInput::make('sort_order')->numeric()->default(0),
                     ])->columns(2),
 
-                SEO::make(),
+                Section::make('SEO')
+                    ->schema([
+                        SEO::make(),
+                    ]),
             ]);
     }
 }
