@@ -17,6 +17,9 @@
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
     {!! seo() !!}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @if(config('services.fathom.site_id'))
+    <script src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.json-ld')
     @stack('head')
