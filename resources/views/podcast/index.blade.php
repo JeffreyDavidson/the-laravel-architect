@@ -296,23 +296,4 @@
 </section>
 @endif
 
-{{-- ===== SUBSCRIBE CTA ===== --}}
-<section class="relative border-t border-[#1e2a3a] overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#4A7FBF]/[0.03] to-transparent"></div>
-
-    <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-        {{-- Microphone icon --}}
-        <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#4A7FBF]/20 to-[#9D5175]/20 flex items-center justify-center border border-white/5">
-            <svg class="w-8 h-8 text-white/60" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
-        </div>
-
-        <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Don't Miss an Episode</h2>
-        <p class="text-gray-400 text-lg mb-8 max-w-lg mx-auto">Both shows are launching soon. Subscribe to the newsletter and be the first to know when episodes drop.</p>
-
-        <a href="/#newsletter" class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-white text-[#0D1117] font-bold text-sm hover:bg-gray-200 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            Get Notified
-        </a>
-    </div>
-</section>
 @endsection
