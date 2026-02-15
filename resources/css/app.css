@@ -143,6 +143,28 @@
 /* Light mode glow orbs */
 :root:not(.dark) [style*="radial-gradient"] { opacity: 0.03 !important; }
 
+/* Keep white text on branded buttons */
+:root:not(.dark) .bg-brand-600 { color: #ffffff !important; }
+:root:not(.dark) .bg-brand-600 .text-white { color: #ffffff !important; }
+
+/* Light mode tag pills */
+:root:not(.dark) .category-pill { border-color: var(--border-primary); color: var(--text-muted); }
+:root:not(.dark) .category-pill:hover,
+:root:not(.dark) .category-pill.active { background: rgba(74, 127, 191, 0.1); border-color: #4A7FBF; color: #4A7FBF; }
+
+/* Light mode input fields */
+:root:not(.dark) input[type="text"],
+:root:not(.dark) input[type="email"],
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Light mode hover states */
+:root:not(.dark) .hover\:bg-brand-800:hover { background-color: var(--bg-secondary) !important; }
+
 /* Code block styling for blog posts */
 .prose pre {
     background: #0d1117 !important;
