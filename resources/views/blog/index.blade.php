@@ -102,9 +102,9 @@
 
                     <p class="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">{{ $post->excerpt }}</p>
 
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2" @click.stop>
                         @foreach($post->tags as $tag)
-                        <span class="px-2.5 py-1 text-xs rounded-full border border-[#1e2a3a] text-gray-500 bg-[#161b22]">{{ $tag->name }}</span>
+                        <a href="{{ route('blog.tag', $tag) }}" class="px-2.5 py-1 text-xs rounded-full border border-[#1e2a3a] text-gray-500 bg-[#161b22] hover:border-[#4A7FBF]/50 hover:text-[#4A7FBF] transition-colors">{{ $tag->name }}</a>
                         @endforeach
                     </div>
                 </div>
