@@ -73,7 +73,10 @@ class PostForm
                             ->default(fn () => auth()->id()),
                     ])->columns(2),
 
-                SEO::make(),
+                Section::make('SEO')
+                    ->schema([
+                        SEO::make(),
+                    ]),
             ]);
     }
 }

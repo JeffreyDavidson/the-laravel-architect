@@ -103,7 +103,10 @@ class EpisodeForm
                             ->label('Publish Date'),
                     ])->columns(3),
 
-                SEO::make(),
+                Section::make('SEO')
+                    ->schema([
+                        SEO::make(),
+                    ]),
             ]);
     }
 }
