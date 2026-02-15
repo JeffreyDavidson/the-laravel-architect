@@ -49,8 +49,8 @@ class BlogController extends Controller
 
     public function tag(Tag $tag)
     {
-        $posts = $tag->posts()
-            ->published()
+        $posts = Post::published()
+            ->withAnyTags([$tag])
             ->with(['category', 'author'])
             ->latest('published_at')
             ->paginate(10);

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Project;
-use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
 class ProjectSeeder extends Seeder
@@ -72,8 +71,7 @@ class ProjectSeeder extends Seeder
             $project = Project::create($data);
 
             if (!empty($tags)) {
-                $tagIds = Tag::whereIn('name', $tags)->pluck('id');
-                $project->tags()->attach($tagIds);
+                $project->attachTags($tags);
             }
         }
     }

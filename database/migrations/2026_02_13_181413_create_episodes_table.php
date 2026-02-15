@@ -17,10 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->longText('show_notes')->nullable();
             $table->string('audio_url')->nullable();
-            $table->string('audio_file')->nullable();
             $table->string('embed_url')->nullable();
             $table->string('youtube_url')->nullable();
-            $table->string('featured_image')->nullable();
             $table->integer('duration_minutes')->nullable();
             $table->string('guest_name')->nullable();
             $table->string('guest_title')->nullable();
@@ -29,17 +27,10 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('episode_tag', function (Blueprint $table) {
-            $table->foreignId('episode_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-            $table->primary(['episode_id', 'tag_id']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('episode_tag');
         Schema::dropIfExists('episodes');
     }
 };

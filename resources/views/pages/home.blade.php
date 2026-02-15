@@ -830,9 +830,9 @@
         <div class="bento-projects">
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up" data-glow-card>
-                @if($project->featured_image)
+                @if($project->hasMedia('featured_image'))
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ Storage::url($project->featured_image) }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $project->getFirstMediaUrl('featured_image') }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 @endif
                 <div class="p-6">

@@ -35,8 +35,6 @@ class BlogSeeder extends Seeder
             'user_id' => $user->id,
             'status' => 'published',
             'published_at' => '2026-01-15 09:00:00',
-            'meta_title' => "Hello World — Why I'm Starting This Blog | The Laravel Architect",
-            'meta_description' => "Jeffrey Davidson introduces The Laravel Architect blog — who he is, what to expect, and why he's adding a blog to the mix.",
         ]);
 
         // Post 2
@@ -48,8 +46,6 @@ class BlogSeeder extends Seeder
             'user_id' => $user->id,
             'status' => 'published',
             'published_at' => '2026-01-22 09:00:00',
-            'meta_title' => "From Kansas to Florida: A Developer's Journey | The Laravel Architect",
-            'meta_description' => "The personal story behind The Laravel Architect — from Kansas roots to a career in web development and a new life in Florida.",
         ]);
 
         // Post 3
@@ -61,8 +57,6 @@ class BlogSeeder extends Seeder
             'user_id' => $user->id,
             'status' => 'published',
             'published_at' => '2026-01-30 09:00:00',
-            'meta_title' => 'What 15 Years of Web Development Taught Me | The Laravel Architect',
-            'meta_description' => "Hard-won lessons from 15 years of building for the web — from PHP spaghetti to clean architecture, and everything in between.",
         ]);
 
         // Post 4
@@ -74,8 +68,6 @@ class BlogSeeder extends Seeder
             'user_id' => $user->id,
             'status' => 'published',
             'published_at' => '2026-02-05 09:00:00',
-            'meta_title' => 'Why I Still Choose Laravel in 2026 | The Laravel Architect',
-            'meta_description' => "A seasoned developer makes the case for Laravel in 2026 — the ecosystem, the philosophy, and why it keeps winning.",
         ]);
 
         // Post 5
@@ -87,8 +79,6 @@ class BlogSeeder extends Seeder
             'user_id' => $user->id,
             'status' => 'published',
             'published_at' => '2026-02-12 09:00:00',
-            'meta_title' => 'How I Structure Every Laravel Project | The Laravel Architect',
-            'meta_description' => "A practical, opinionated guide to structuring Laravel applications — with real code examples, folder conventions, and testing patterns.",
         ]);
     }
 

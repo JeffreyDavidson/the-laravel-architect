@@ -3,14 +3,15 @@
 namespace App\Filament\Resources\Podcasts\Schemas;
 
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\SchemaComponents\SEO;
 
 class PodcastForm
 {
@@ -36,9 +37,9 @@ class PodcastForm
                             ->rows(5)
                             ->helperText('Full about section for the podcast page')
                             ->columnSpanFull(),
-                        FileUpload::make('cover_image')
-                            ->image()
-                            ->directory('podcasts'),
+                        SpatieMediaLibraryFileUpload::make('cover_image')
+                            ->collection('cover_image')
+                            ->image(),
                         ColorPicker::make('color')
                             ->default('#6366f1')
                             ->helperText('Brand color for this show'),
@@ -57,6 +58,8 @@ class PodcastForm
                         Toggle::make('is_active')->label('Active')->default(true),
                         TextInput::make('sort_order')->numeric()->default(0),
                     ])->columns(2),
+
+                SEO::make(),
             ]);
     }
 }

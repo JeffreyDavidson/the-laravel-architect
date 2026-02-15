@@ -5,9 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Podcast extends Model
+class Podcast extends Model implements HasMedia
 {
+    use HasSEO;
+    use InteractsWithMedia;
+
     protected $guarded = [];
 
     protected static function booted(): void
@@ -39,5 +46,18 @@ class Podcast extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover_image')->singleFile();
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            title: $this->name,
+            description: $this->description,
+        );
     }
 }

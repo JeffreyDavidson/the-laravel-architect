@@ -3,15 +3,17 @@
 namespace App\Filament\Resources\Episodes\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\SchemaComponents\SEO;
 
 class EpisodeForm
 {
@@ -56,9 +58,8 @@ class EpisodeForm
                             ->label('Audio URL')
                             ->url()
                             ->helperText('Link to hosted audio (Buzzsprout, Anchor, etc.)'),
-                        FileUpload::make('audio_file')
-                            ->label('Or Upload Audio')
-                            ->directory('episodes')
+                        SpatieMediaLibraryFileUpload::make('audio')
+                            ->collection('audio')
                             ->acceptedFileTypes(['audio/mpeg', 'audio/mp3', 'audio/wav']),
                         TextInput::make('embed_url')
                             ->label('Embed URL')
@@ -68,9 +69,9 @@ class EpisodeForm
                             ->label('YouTube URL')
                             ->url()
                             ->helperText('If episode is also on YouTube'),
-                        FileUpload::make('featured_image')
-                            ->image()
-                            ->directory('episodes'),
+                        SpatieMediaLibraryFileUpload::make('featured_image')
+                            ->collection('featured_image')
+                            ->image(),
                         TextInput::make('duration_minutes')
                             ->numeric()
                             ->label('Duration (minutes)'),
@@ -89,11 +90,7 @@ class EpisodeForm
 
                 Section::make('Publishing')
                     ->schema([
-                        Select::make('tags')
-                            ->relationship('tags', 'name')
-                            ->multiple()
-                            ->searchable()
-                            ->preload(),
+                        SpatieTagsInput::make('tags'),
                         Select::make('status')
                             ->options([
                                 'draft' => 'Draft',
@@ -105,6 +102,8 @@ class EpisodeForm
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),
                     ])->columns(3),
+
+                SEO::make(),
             ]);
     }
 }

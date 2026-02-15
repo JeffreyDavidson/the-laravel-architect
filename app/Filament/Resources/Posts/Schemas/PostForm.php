@@ -3,17 +3,18 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\SchemaComponents\SEO;
 
 class PostForm
 {
@@ -41,9 +42,9 @@ class PostForm
 
                 Section::make('Media & Metadata')
                     ->schema([
-                        FileUpload::make('featured_image')
+                        SpatieMediaLibraryFileUpload::make('featured_image')
+                            ->collection('featured_image')
                             ->image()
-                            ->directory('posts')
                             ->columnSpanFull(),
                         Select::make('category_id')
                             ->relationship('category', 'name')
@@ -53,15 +54,7 @@ class PostForm
                                 TextInput::make('name')->required(),
                                 TextInput::make('slug')->required(),
                             ]),
-                        Select::make('tags')
-                            ->relationship('tags', 'name')
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                TextInput::make('name')->required(),
-                                TextInput::make('slug')->required(),
-                            ]),
+                        SpatieTagsInput::make('tags'),
                     ])->columns(2),
 
                 Section::make('Publishing')
@@ -80,15 +73,7 @@ class PostForm
                             ->default(fn () => auth()->id()),
                     ])->columns(2),
 
-                Section::make('SEO')
-                    ->schema([
-                        TextInput::make('meta_title')
-                            ->helperText('Leave blank to use post title'),
-                        Textarea::make('meta_description')
-                            ->rows(2)
-                            ->helperText('Leave blank to use excerpt'),
-                    ])
-                    ->collapsed(),
+                SEO::make(),
             ]);
     }
 }

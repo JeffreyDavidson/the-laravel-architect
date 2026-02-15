@@ -14,26 +14,16 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('excerpt')->nullable();
             $table->longText('content');
-            $table->string('featured_image')->nullable();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['draft', 'published', 'scheduled'])->default('draft');
             $table->timestamp('published_at')->nullable();
-            $table->string('meta_title')->nullable();
-            $table->text('meta_description')->nullable();
             $table->timestamps();
-        });
-
-        Schema::create('post_tag', function (Blueprint $table) {
-            $table->foreignId('post_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-            $table->primary(['post_id', 'tag_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('post_tag');
         Schema::dropIfExists('posts');
     }
 };

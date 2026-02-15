@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->text('long_description')->nullable();
-            $table->string('cover_image')->nullable();
             $table->string('color')->default('#6366f1');
             $table->string('apple_url')->nullable();
             $table->string('spotify_url')->nullable();
