@@ -509,8 +509,9 @@
         background: linear-gradient(to left, #ffffff, transparent);
     }
     :root:not(.dark) .glass-card {
-        background: rgba(255,255,255,0.8);
-        border: 1px solid rgba(0,0,0,0.08);
+        background: rgba(246,248,250,0.9) !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
+        backdrop-filter: none;
     }
     :root:not(.dark) .service-card-v2 {
         background: rgba(255,255,255,0.9);
@@ -559,6 +560,11 @@
     :root:not(.dark) .stat-divider {
         background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1), transparent);
     }
+    /* Light mode section backgrounds */
+    :root:not(.dark) section:not(.hero-mesh) {
+        background-color: #ffffff;
+    }
+
     /* Keep hero dark in light mode */
     :root:not(.dark) .hero-mesh {
         background: linear-gradient(-45deg, #0D1117, #1a1040, #0d2847, #1a0d30, #0D1117);
