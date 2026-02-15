@@ -494,6 +494,44 @@
             grid-template-columns: 1fr;
         }
     }
+
+    /* ===== Light Mode Overrides ===== */
+    :root:not(.dark) .section-divider-hero {
+        background: linear-gradient(to bottom, transparent, #ffffff);
+    }
+    :root:not(.dark) .section-divider-dark {
+        background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.95));
+    }
+    :root:not(.dark) .marquee-fade-left {
+        background: linear-gradient(to right, #ffffff, transparent);
+    }
+    :root:not(.dark) .marquee-fade-right {
+        background: linear-gradient(to left, #ffffff, transparent);
+    }
+    :root:not(.dark) .glass-card {
+        background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(0,0,0,0.08);
+    }
+    :root:not(.dark) .service-card-v2 {
+        background: rgba(255,255,255,0.9);
+    }
+    :root:not(.dark) .testimonial-card {
+        background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(0,0,0,0.08);
+    }
+    :root:not(.dark) .stat-number {
+        background: linear-gradient(135deg, #1f2328 0%, #656d76 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    :root:not(.dark) .noise-overlay::after {
+        opacity: 0.02;
+    }
+    :root:not(.dark) .dot-grid-bg::before {
+        background-image: radial-gradient(circle, #000000 1px, transparent 1px);
+        opacity: 0.03;
+    }
 </style>
 
 {{-- ===== HERO ===== --}}
@@ -732,7 +770,7 @@
 </section>
 
 {{-- ===== TECH STACK MARQUEE ===== --}}
-<section class="py-8 overflow-hidden relative" style="background: #0D1117;">
+<section class="py-8 overflow-hidden relative bg-white dark:bg-[#0D1117]">
     <div class="marquee-fade-left"></div>
     <div class="marquee-fade-right"></div>
     <div class="marquee-track">
@@ -790,7 +828,7 @@
 </section>
 
 {{-- ===== STATS BAR ===== --}}
-<section class="py-16 border-y border-[#1e2a3a]/50">
+<section class="py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between fade-up">
             <div class="flex-1 text-center">
@@ -817,14 +855,14 @@
 </section>
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
 <section class="py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-white">Featured Projects</h2>
+            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="bento-projects">
@@ -836,7 +874,7 @@
                 </div>
                 @endif
                 <div class="p-6">
-                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-white mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
+                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-gray-900 dark:text-white mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
                     <p class="text-gray-400 text-sm mb-4">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
@@ -854,7 +892,7 @@
 @endif
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== WHAT I DO ===== --}}
 <style>
@@ -993,7 +1031,7 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.38-5.38a1 1 0 010-1.41l.7-.7a1 1 0 011.41 0L12 11.5l3.85-3.85a1 1 0 011.41 0l.7.7a1 1 0 010 1.41l-5.38 5.38a1 1 0 01-1.16.04z"/></svg>
                 Services
             </div>
-            <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">What I Do</h2>
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">What I Do</h2>
             <p class="text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues — I help teams build software they can be proud of.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1010,7 +1048,7 @@
                 <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-brand-500/20 font-mono text-sm">
                     <span class="text-gray-500">$</span> <span class="text-brand-400">php artisan</span> <span class="text-white">build</span><span class="animate-pulse text-brand-400">▊</span>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Laravel Development</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Laravel Development</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
@@ -1036,7 +1074,7 @@
                 <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-accent-500/20 font-mono text-sm">
                     <span class="text-gray-500">$</span> <span class="text-accent-400">php artisan</span> <span class="text-white">modernize</span><span class="animate-pulse text-accent-400">▊</span>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Legacy Modernization</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Legacy Modernization</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
@@ -1061,7 +1099,7 @@
                 <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-green-500/20 font-mono text-sm">
                     <span class="text-gray-500">$</span> <span class="text-green-400">php artisan</span> <span class="text-white">teach</span><span class="animate-pulse text-green-400">▊</span>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-3 relative z-10">Content & Teaching</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Content & Teaching</h3>
                 <p class="text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
@@ -1077,14 +1115,14 @@
 </section>
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
 <section class="py-20 dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-white">Latest Posts</h2>
+            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="blog-posts-grid">
@@ -1096,7 +1134,7 @@
                     @if($featured->category)
                     <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
                     @endif
-                    <h3 class="font-semibold text-2xl md:text-3xl text-white mt-2 mb-4 group-hover:text-brand-400 transition-colors">{{ $featured->title }}</h3>
+                    <h3 class="font-semibold text-2xl md:text-3xl text-gray-900 dark:text-white mt-2 mb-4 group-hover:text-brand-400 transition-colors">{{ $featured->title }}</h3>
                     <p class="text-gray-400 text-base line-clamp-3 max-w-3xl">{{ $featured->excerpt }}</p>
                     <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
                         <time>{{ $featured->published_at->format('M d, Y') }}</time>
@@ -1116,7 +1154,7 @@
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
                         @endif
-                        <h3 class="font-semibold text-lg text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
+                        <h3 class="font-semibold text-lg text-gray-900 dark:text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
                         <p class="text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
                         <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
                             <time>{{ $post->published_at->format('M d, Y') }}</time>
@@ -1134,13 +1172,13 @@
 @endif
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== PODCASTS ===== --}}
 <section class="py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-white">Podcasts</h2>
+            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1156,7 +1194,7 @@
                         <span class="eq-bar bg-brand-400"></span>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
                 <p class="text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life — one cup at a time.</p>
                 @if(isset($coffeeEpisodeCount) && $coffeeEpisodeCount > 0)
                     <span class="text-xs text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
@@ -1175,7 +1213,7 @@
                         <span class="eq-bar bg-accent-500"></span>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
                 <p class="text-gray-400 text-sm mb-3">Real talk about mental health, burnout, work-life balance, and finding your way through the fog.</p>
                 @if(isset($cloudyEpisodeCount) && $cloudyEpisodeCount > 0)
                     <span class="text-xs text-accent-400 mb-2 inline-block">{{ $cloudyEpisodeCount }} episodes</span>
@@ -1187,7 +1225,7 @@
 </section>
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== YOUTUBE ===== --}}
 <style>
@@ -1517,7 +1555,7 @@ function countdown() {
 </script>
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== NEWSLETTER ===== --}}
 <section class="py-20 fade-up dot-grid-bg">
@@ -1526,7 +1564,7 @@ function countdown() {
             <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
             </svg>
-            <h3 class="text-2xl font-bold text-white mb-3">Get Laravel tips in your inbox</h3>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Get Laravel tips in your inbox</h3>
             <p class="text-gray-400 mb-6">
                 A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam, unsubscribe anytime.
             </p>
@@ -1560,7 +1598,7 @@ function countdown() {
             <div class="inline-block mb-6">
                 <svg class="w-10 h-10 text-[#4A7FBF]/30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
             </div>
-            <blockquote class="text-2xl md:text-3xl font-extrabold text-white mb-4 max-w-3xl mx-auto leading-snug">
+            <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-4 max-w-3xl mx-auto leading-snug">
                 Clean architecture, tested code, and honest conversations — that's what I bring to every project.
             </blockquote>
             <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
@@ -1596,7 +1634,7 @@ function countdown() {
         {{-- Submit Testimonial Form --}}
         <div class="max-w-2xl mx-auto fade-up">
             <div class="rounded-2xl border border-[#1e2a3a] bg-[#0D1117] p-8">
-                <h3 class="text-lg font-bold text-white mb-2 text-center">Worked with me?</h3>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h3>
                 <p class="text-gray-500 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
 
                 @if(session('testimonial_success'))
@@ -1640,7 +1678,7 @@ function countdown() {
 </section>
 
 {{-- Section Divider --}}
-<div class="section-divider section-divider-dark"></div>
+<div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== FINAL CTA ===== --}}
 <section class="relative overflow-hidden border-t border-[#1e2a3a]">

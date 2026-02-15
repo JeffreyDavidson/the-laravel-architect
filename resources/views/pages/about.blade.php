@@ -71,7 +71,6 @@
     .value-card {
         position: relative;
         transition: all 0.3s ease;
-        background: #0D1117;
         overflow: hidden;
     }
     .value-card::before {
@@ -176,10 +175,10 @@
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay relative overflow-hidden border-b border-[#1e2a3a]">
+    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
         {{-- Ambient glow --}}
-        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
-        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+        <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="hidden dark:block absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
@@ -187,21 +186,21 @@
                 {{-- Trading Card --}}
                 <div class="flex-shrink-0 trading-card-tilt relative">
                     {{-- Pulsing ambient glow --}}
-                    <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px]" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
+                    <div class="hidden dark:block trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px]" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
                     <div class="holo-border relative">
-                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl" style="background: linear-gradient(165deg, #111820 0%, #0a0e14 50%, #0f1520 100%);">
+                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-transparent" style="background: linear-gradient(165deg, #111820 0%, #0a0e14 50%, #0f1520 100%);">
 
                             {{-- Top holographic stripe --}}
                             <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
 
                             {{-- Card header --}}
                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Developer Card</span>
+                                <span class="text-[10px] font-mono text-gray-500 dark:text-gray-600 uppercase tracking-widest">Developer Card</span>
                                 <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
                             </div>
 
                             {{-- Avatar frame --}}
-                            <div class="mx-4 rounded-xl overflow-hidden border-2 border-[#1e2a3a] relative">
+                            <div class="mx-4 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-[#1e2a3a] relative">
                                 <div class="aspect-[4/3] bg-white">
                                     <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                 </div>
@@ -211,7 +210,7 @@
 
                             {{-- Name plate --}}
                             <div class="px-5 pt-3 pb-1 text-center">
-                                <h2 class="text-xl font-empera tracking-wide">Jeffrey Davidson</h2>
+                                <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                 <div class="flex items-center justify-center gap-2 mt-1">
                                     <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#4A7FBF]/30"></div>
                                     <p class="text-[11px] font-semibold uppercase tracking-[0.2em]" style="color: #4A7FBF;">Laravel Architect</p>
@@ -222,29 +221,29 @@
                             {{-- Stats grid --}}
                             <div class="px-4 pt-3 pb-4">
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">PHP</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">2008</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2008</span>
                                     </div>
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Laravel</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">v4.2+</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
                                     </div>
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Test Suites</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">3</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">3</span>
                                     </div>
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Experience</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">15+ yrs</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">15+ yrs</span>
                                     </div>
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Location</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">Florida</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Florida</span>
                                     </div>
-                                    <div class="px-3 py-2 rounded-lg bg-[#0D1117]/80 border border-[#1e2a3a]/50">
+                                    <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                         <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Podcasts</span>
-                                        <span class="text-sm font-mono font-bold text-gray-200">2</span>
+                                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2</span>
                                     </div>
                                 </div>
                             </div>
@@ -258,10 +257,10 @@
                 {{-- Intro Text --}}
                 <div class="flex-1 text-center lg:text-left">
                     <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">About Me</p>
-                    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-400 text-lg leading-relaxed max-w-2xl">
+                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
@@ -269,7 +268,7 @@
                         <span class="text-[#4A7FBF]">$</span>
                         <span>whoami</span>
                         <span class="text-gray-600">→</span>
-                        <span class="text-gray-400">Laravel developer, dad, podcaster</span>
+                        <span class="text-gray-600 dark:text-gray-400">Laravel developer, dad, podcaster</span>
                         <span class="animate-pulse text-[#4A7FBF]">▊</span>
                     </div>
 
@@ -278,7 +277,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             Get in Touch
                         </a>
-                        <a href="https://github.com/JeffreyDavidson" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 border border-[#1e2a3a] hover:border-gray-600 text-sm font-semibold rounded-lg transition-colors">
+                        <a href="https://github.com/JeffreyDavidson" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 dark:border-[#1e2a3a] hover:border-gray-400 dark:hover:border-gray-600 text-gray-900 dark:text-white text-sm font-semibold rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                             GitHub
                         </a>
@@ -301,24 +300,24 @@
                         My Story
                     </h2>
 
-                    <div class="space-y-6 text-gray-400 leading-relaxed">
+                    <div class="space-y-6 text-gray-600 dark:text-gray-400 leading-relaxed">
                         <p>
                             I grew up in the suburbs of Kansas, messing around with HTML on a desktop in my bedroom and spending way too much time customizing MySpace layouts. That turned into PHP, which turned into a career I never planned on having.
                         </p>
                         <p>
-                            After a couple semesters at community college learning table-based layouts (seriously), I enrolled at <strong class="text-gray-200">Full Sail University</strong> and earned my Bachelor of Science in Web Design and Development. That gave me the structure I'd been missing as a self-taught developer.
+                            After a couple semesters at community college learning table-based layouts (seriously), I enrolled at <strong class="text-gray-900 dark:text-gray-200">Full Sail University</strong> and earned my Bachelor of Science in Web Design and Development. That gave me the structure I'd been missing as a self-taught developer.
                         </p>
                         <p>
-                            I found <strong class="text-gray-200">Laravel</strong> in 2014 — version 4.2 — and everything clicked. Here was a framework that was opinionated in all the right ways, that made PHP feel modern, that actually cared about developer experience. I've been building with it ever since.
+                            I found <strong class="text-gray-900 dark:text-gray-200">Laravel</strong> in 2014 — version 4.2 — and everything clicked. Here was a framework that was opinionated in all the right ways, that made PHP feel modern, that actually cared about developer experience. I've been building with it ever since.
                         </p>
                         <p>
-                            A big part of my career has been <strong class="text-gray-200">modernization work</strong> — taking legacy codebases written in CodeIgniter, Yii2, CakePHP, and ExpressionEngine and rewriting them in Laravel. Every migration taught me something about untangling technical debt and building something clean from the wreckage.
+                            A big part of my career has been <strong class="text-gray-900 dark:text-gray-200">modernization work</strong> — taking legacy codebases written in CodeIgniter, Yii2, CakePHP, and ExpressionEngine and rewriting them in Laravel. Every migration taught me something about untangling technical debt and building something clean from the wreckage.
                         </p>
                         <p>
-                            In 2015, my wife Cassie and I packed up our Kansas lives and moved to <strong class="text-gray-200">Florida</strong>. In 2017, our daughter <strong class="text-gray-200">Viola</strong> came along, and being her dad has reshaped my priorities, my patience, and my entire perspective on what matters.
+                            In 2015, my wife Cassie and I packed up our Kansas lives and moved to <strong class="text-gray-900 dark:text-gray-200">Florida</strong>. In 2017, our daughter <strong class="text-gray-900 dark:text-gray-200">Viola</strong> came along, and being her dad has reshaped my priorities, my patience, and my entire perspective on what matters.
                         </p>
                         <p>
-                            Now I'm building content alongside code. <strong class="text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love. <strong class="text-gray-200">Embracing Cloudy Days</strong> is the personal side — mental health, parenting, and the messier parts of life. And <strong class="text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
+                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love. <strong class="text-gray-900 dark:text-gray-200">Embracing Cloudy Days</strong> is the personal side — mental health, parenting, and the messier parts of life. And <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
                         </p>
                     </div>
                 </div>
@@ -334,32 +333,32 @@
                     <div class="space-y-6">
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">~2008</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">Started writing PHP</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Started writing PHP</p>
                             <p class="text-xs text-gray-500 mt-0.5">Self-taught, building things for fun</p>
                         </div>
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2012</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">Full Sail University</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Full Sail University</p>
                             <p class="text-xs text-gray-500 mt-0.5">B.S. in Web Design & Development</p>
                         </div>
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2014</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">Discovered Laravel 4.2</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Discovered Laravel 4.2</p>
                             <p class="text-xs text-gray-500 mt-0.5">Everything clicked</p>
                         </div>
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2015</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">Moved to Florida</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Moved to Florida</p>
                             <p class="text-xs text-gray-500 mt-0.5">Packed up Kansas, headed south</p>
                         </div>
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2017</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">Daughter Viola born</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Daughter Viola born</p>
                             <p class="text-xs text-gray-500 mt-0.5">Changed everything</p>
                         </div>
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2026</span>
-                            <p class="text-sm text-gray-300 font-semibold mt-1">The Laravel Architect</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">The Laravel Architect</p>
                             <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube — building in public</p>
                         </div>
                     </div>
@@ -369,98 +368,98 @@
     </div>
 
     {{-- What I Believe In --}}
-    <div class="border-t border-[#1e2a3a]">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Core Values</p>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-white">What I Believe In</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">What I Believe In</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Architecture Over Cleverness</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">Clean structure beats clever tricks every time. Code should be readable, predictable, and easy to change. If your future self can't understand it, it's not good code.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Architecture Over Cleverness</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Clean structure beats clever tricks every time. Code should be readable, predictable, and easy to change. If your future self can't understand it, it's not good code.</p>
                 </div>
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Tests Are Not Optional</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">I run three test suites on every project: Feature, Integration, and Unit. Tests aren't overhead — they're how you ship with confidence and sleep at night.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Tests Are Not Optional</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">I run three test suites on every project: Feature, Integration, and Unit. Tests aren't overhead — they're how you ship with confidence and sleep at night.</p>
                 </div>
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Teach What You Learn</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">The best way to solidify knowledge is to share it. Every blog post, podcast episode, and tutorial is me learning out loud — and hopefully making someone else's path easier.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Teach What You Learn</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">The best way to solidify knowledge is to share it. Every blog post, podcast episode, and tutorial is me learning out loud — and hopefully making someone else's path easier.</p>
                 </div>
-                <div class="value-card value-card-pink p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card value-card-pink p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Family First</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">My daughter Viola is autistic and nonverbal, and being her dad has taught me more about patience, empathy, and what really matters than any codebase ever could.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Family First</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">My daughter Viola is autistic and nonverbal, and being her dad has taught me more about patience, empathy, and what really matters than any codebase ever could.</p>
                 </div>
-                <div class="value-card value-card-pink p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card value-card-pink p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Embrace the Cloudy Days</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">Not every day is sunshine. I talk openly about mental health, burnout, and the hard parts of being a developer and a parent. Vulnerability isn't weakness — it's honesty.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Embrace the Cloudy Days</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Not every day is sunshine. I talk openly about mental health, burnout, and the hard parts of being a developer and a parent. Vulnerability isn't weakness — it's honesty.</p>
                 </div>
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2">Ship, Don't Perfect</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">Done is better than perfect. I've learned more from shipping imperfect things and iterating than from any project I polished endlessly in private.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Ship, Don't Perfect</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Done is better than perfect. I've learned more from shipping imperfect things and iterating than from any project I polished endlessly in private.</p>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Fun Facts --}}
-    <div class="border-t border-[#1e2a3a]">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
                 <div>
                     <span class="text-2xl mb-1 block">☕</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Daily Coffee</p>
-                    <p class="text-sm font-semibold text-gray-300 mt-1">Too Many</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Too Many</p>
                 </div>
                 <div>
                     <span class="text-2xl mb-1 block">🎢</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Favorite Park</p>
-                    <p class="text-sm font-semibold text-gray-300 mt-1">Disney World</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Disney World</p>
                 </div>
                 <div>
                     <span class="text-2xl mb-1 block">🃏</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Poker Style</p>
-                    <p class="text-sm font-semibold text-gray-300 mt-1">Aggressive</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Aggressive</p>
                 </div>
                 <div>
                     <span class="text-2xl mb-1 block">🤼</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Side Project</p>
-                    <p class="text-sm font-semibold text-gray-300 mt-1">Wrestling App</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Wrestling App</p>
                 </div>
                 <div>
                     <span class="text-2xl mb-1 block">🏫</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Alma Mater</p>
-                    <p class="text-sm font-semibold text-gray-300 mt-1">Full Sail University</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Full Sail University</p>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Tech Stack --}}
-    <div class="border-t border-[#1e2a3a] dot-grid-bg">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a] dot-grid-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Toolbox</p>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-white">What I Work With</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">What I Work With</h2>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach([
@@ -477,9 +476,9 @@
                     ['name' => 'Git', 'icon' => '📦', 'desc' => 'Version everything, always'],
                     ['name' => 'SQLite', 'icon' => '💾', 'desc' => 'Perfect for the right project'],
                 ] as $tech)
-                <div class="value-card p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50 hover:border-[#4A7FBF]/20">
+                <div class="value-card p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]/50 hover:border-[#4A7FBF]/20 dark:hover:border-[#4A7FBF]/20">
                     <span class="text-lg mb-1 block">{{ $tech['icon'] }}</span>
-                    <p class="font-semibold text-sm mb-0.5">{{ $tech['name'] }}</p>
+                    <p class="font-semibold text-sm mb-0.5 text-gray-900 dark:text-white">{{ $tech['name'] }}</p>
                     <p class="text-xs text-gray-500">{{ $tech['desc'] }}</p>
                 </div>
                 @endforeach
@@ -488,10 +487,10 @@
     </div>
 
     {{-- CTA --}}
-    <div class="relative border-t border-[#1e2a3a] overflow-hidden">
+    <div class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
         {{-- Floating orbs --}}
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>
+        <div class="hidden dark:block absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
+        <div class="hidden dark:block absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>
 
         <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
@@ -504,7 +503,7 @@
             <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
                 <span style="background: linear-gradient(90deg, #fff 0%, #4A7FBF 50%, #fff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite;">Want to work together?</span>
             </h2>
-            <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
+            <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-colors text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                 Contact Me
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
