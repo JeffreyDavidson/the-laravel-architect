@@ -31,36 +31,40 @@ class PageController extends Controller
             ->latest()
             ->get();
 
-        seo()
-            ->title('The Laravel Architect — Jeffrey Davidson')
-            ->description('Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.');
+        seo()->for(new SEOData(
+            title: 'The Laravel Architect — Jeffrey Davidson',
+            description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
+        ));
 
         return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'testimonials'));
     }
 
     public function about()
     {
-        seo()
-            ->title('About')
-            ->description('Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.');
+        seo()->for(new SEOData(
+            title: 'About',
+            description: 'Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.',
+        ));
 
         return view('pages.about');
     }
 
     public function contact()
     {
-        seo()
-            ->title('Contact')
-            ->description('Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.');
+        seo()->for(new SEOData(
+            title: 'Contact',
+            description: 'Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.',
+        ));
 
         return view('pages.contact');
     }
 
     public function uses()
     {
-        seo()
-            ->title('Uses')
-            ->description('The tools, hardware, and software Jeffrey Davidson uses for Laravel development, content creation, and everyday work.');
+        seo()->for(new SEOData(
+            title: 'Uses',
+            description: 'The tools, hardware, and software Jeffrey Davidson uses for Laravel development, content creation, and everyday work.',
+        ));
 
         return view('pages.uses');
     }

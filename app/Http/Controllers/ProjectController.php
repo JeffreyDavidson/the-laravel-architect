@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ProjectController extends Controller
 {
@@ -13,9 +14,10 @@ class ProjectController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        seo()
-            ->title('Projects')
-            ->description('Open source projects and side projects by Jeffrey Davidson — including Ringside, Campus Sync, and more built with Laravel.');
+        seo()->for(new SEOData(
+            title: 'Projects',
+            description: 'Open source projects and side projects by Jeffrey Davidson — including Ringside, Campus Sync, and more built with Laravel.',
+        ));
 
         return view('projects.index', compact('projects'));
     }

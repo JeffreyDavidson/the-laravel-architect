@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class BlogController extends Controller
 {
@@ -17,9 +18,10 @@ class BlogController extends Controller
 
         $categories = Category::withCount('posts')->get();
 
-        seo()
-            ->title('Blog')
-            ->description('Articles on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.');
+        seo()->for(new SEOData(
+            title: 'Blog',
+            description: 'Articles on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.',
+        ));
 
         return view('blog.index', compact('posts', 'categories'));
     }
@@ -48,9 +50,10 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
-        seo()
-            ->title($category->name . ' Articles')
-            ->description("Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.");
+        seo()->for(new SEOData(
+            title: $category->name . ' Articles',
+            description: "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.",
+        ));
 
         return view('blog.category', compact('category', 'posts'));
     }
@@ -63,9 +66,10 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
-        seo()
-            ->title($tag->name . ' Articles')
-            ->description("Articles tagged with {$tag->name} on The Laravel Architect.");
+        seo()->for(new SEOData(
+            title: $tag->name . ' Articles',
+            description: "Articles tagged with {$tag->name} on The Laravel Architect.",
+        ));
 
         return view('blog.tag', compact('tag', 'posts'));
     }
