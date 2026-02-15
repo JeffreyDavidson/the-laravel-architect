@@ -562,7 +562,11 @@
     }
     /* Light mode section backgrounds */
     :root:not(.dark) section:not(.hero-mesh) {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
+    }
+    :root:not(.dark) .noise-overlay::after,
+    :root:not(.dark) .dot-grid-bg::before {
+        display: none !important;
     }
 
     /* Keep hero dark in light mode */
@@ -908,7 +912,7 @@
         </div>
         <div class="bento-projects">
             @foreach($featuredProjects as $index => $project)
-            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up" data-glow-card>
+            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent" data-glow-card>
                 @if($project->hasMedia('featured_image'))
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
                     <img src="{{ $project->getFirstMediaUrl('featured_image') }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
