@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'jeffrey@thelaravelarchitect.com'],
+            ['email' => 'thelaravelarchitect@gmail.com'],
             [
                 'name' => 'Jeffrey Davidson',
                 'password' => \Illuminate\Support\Facades\Hash::make('change-me-immediately'),
