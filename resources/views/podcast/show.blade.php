@@ -3,13 +3,13 @@
 @section('content')
 <style>
     .noise-overlay { position: relative; }
-    .noise-overlay::after {
+    .dark .noise-overlay::after {
         content: ''; position: absolute; inset: 0; opacity: 0.04; pointer-events: none; z-index: 1;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         background-repeat: repeat; background-size: 256px 256px;
     }
     .dot-grid-bg { position: relative; }
-    .dot-grid-bg::before {
+    .dark .dot-grid-bg::before {
         content: ''; position: absolute; inset: 0; opacity: 0.03; pointer-events: none;
         background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
         background-size: 24px 24px; z-index: 0;
@@ -64,14 +64,14 @@
 </style>
 
 {{-- ===== PODCAST HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden border-b border-[#1e2a3a]">
+<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
     {{-- Ambient glow --}}
-    <div class="absolute top-0 left-1/3 w-[700px] h-[700px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-    <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
+    <div class="hidden dark:block absolute top-0 left-1/3 w-[700px] h-[700px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
+    <div class="hidden dark:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         {{-- Breadcrumb --}}
-        <a href="{{ route('podcast.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-8 relative z-10">
+        <a href="{{ route('podcast.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors mb-8 relative z-10">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             All Podcasts
         </a>
@@ -115,8 +115,8 @@
                     </div>
                 </div>
 
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-white">{{ $podcast->name }}</h1>
-                <p class="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl">{{ $podcast->description }}</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">{{ $podcast->name }}</h1>
+                <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl">{{ $podcast->description }}</p>
 
                 {{-- Subscribe buttons --}}
                 <div class="flex flex-wrap gap-3 justify-center md:justify-start">
@@ -145,7 +145,7 @@
                     </a>
                     @endif
                     @unless($podcast->spotify_url || $podcast->apple_url || $podcast->youtube_url || $podcast->rss_url)
-                    <span class="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm text-gray-500 border border-[#1e2a3a] rounded-xl">
+                    <span class="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm text-gray-500 border border-gray-200 dark:border-[#1e2a3a] rounded-xl">
                         <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: {{ $podcast->color }};"></span>
                         Subscribe links coming soon
                     </span>
@@ -158,11 +158,11 @@
 
 {{-- ===== ABOUT ===== --}}
 @if($podcast->long_description)
-<section class="border-b border-[#1e2a3a]">
+<section class="border-b border-gray-200 dark:border-[#1e2a3a]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div class="max-w-3xl">
             <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">About the Show</h2>
-            <div class="text-gray-400 text-base leading-relaxed space-y-4">
+            <div class="text-gray-600 dark:text-gray-400 text-base leading-relaxed space-y-4">
                 @foreach(explode("\n\n", $podcast->long_description) as $paragraph)
                     @if(trim($paragraph))
                     <p>{{ trim($paragraph) }}</p>
@@ -176,9 +176,9 @@
 
 {{-- ===== LATEST EPISODE FEATURE ===== --}}
 @if($latestEpisode)
-<section class="border-b border-[#1e2a3a]">
+<section class="border-b border-gray-200 dark:border-[#1e2a3a]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <a href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}" class="group block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden hover:border-opacity-60 transition-all" style="box-shadow: 0 0 60px {{ $podcast->color }}06;">
+        <a href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}" class="group block rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden hover:border-opacity-60 transition-all" style="box-shadow: 0 0 60px {{ $podcast->color }}06;">
             {{-- Top accent --}}
             <div class="h-[2px]" style="background: linear-gradient(90deg, transparent, {{ $podcast->color }}, transparent);"></div>
 
@@ -194,17 +194,17 @@
                     @endif
                 </div>
 
-                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-3 group-hover:opacity-80 transition-opacity">{{ $latestEpisode->title }}</h2>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-3 group-hover:opacity-80 transition-opacity">{{ $latestEpisode->title }}</h2>
 
                 @if($latestEpisode->description)
-                <p class="text-gray-400 leading-relaxed mb-6 max-w-3xl">{{ Str::limit($latestEpisode->description, 300) }}</p>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-6 max-w-3xl">{{ Str::limit($latestEpisode->description, 300) }}</p>
                 @endif
 
                 @if($latestEpisode->guest_name)
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">{{ substr($latestEpisode->guest_name, 0, 1) }}</div>
                     <div>
-                        <span class="text-sm text-gray-300">{{ $latestEpisode->guest_name }}</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ $latestEpisode->guest_name }}</span>
                         @if($latestEpisode->guest_title)
                         <span class="text-sm text-gray-600"> · {{ $latestEpisode->guest_title }}</span>
                         @endif
@@ -228,7 +228,7 @@
 <section class="dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-extrabold text-white">
+            <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">
                 @if($episodes->count()) All Episodes @else Episodes @endif
             </h2>
             @if($episodes->total() > 0)
@@ -239,7 +239,7 @@
         @if($episodes->count())
         <div class="space-y-2">
             @foreach($episodes as $episode)
-            <a href="{{ route('podcast.episode', [$podcast, $episode]) }}" class="episode-card group flex items-center gap-5 p-4 md:p-5 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50">
+            <a href="{{ route('podcast.episode', [$podcast, $episode]) }}" class="episode-card group flex items-center gap-5 p-4 md:p-5 rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]/50">
                 {{-- Episode number / play icon --}}
                 <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center relative" style="background: {{ $podcast->color }}08;">
                     <span class="ep-number font-mono text-xs font-bold" style="color: {{ $podcast->color }};">{{ $episode->episode_code }}</span>
@@ -251,15 +251,15 @@
                 </div>
 
                 <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-white group-hover:opacity-80 transition-opacity truncate">{{ $episode->title }}</h3>
+                    <h3 class="font-semibold text-gray-900 dark:text-white group-hover:opacity-80 transition-opacity truncate">{{ $episode->title }}</h3>
                     <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
                         <span>{{ $episode->published_at->format('M d, Y') }}</span>
                         @if($episode->formatted_duration)
-                        <span class="text-gray-700">·</span>
+                        <span class="text-gray-300 dark:text-gray-700">·</span>
                         <span>{{ $episode->formatted_duration }}</span>
                         @endif
                         @if($episode->guest_name)
-                        <span class="hidden sm:inline text-gray-700">·</span>
+                        <span class="hidden sm:inline text-gray-700 dark:text-gray-300 dark:text-gray-700">·</span>
                         <span class="hidden sm:inline">with <span style="color: {{ $podcast->color }};">{{ $episode->guest_name }}</span></span>
                         @endif
                     </div>
@@ -282,11 +282,11 @@
             {{ $episodes->links() }}
         </div>
         @else
-        <div class="text-center py-20 rounded-2xl border border-dashed border-[#1e2a3a]">
+        <div class="text-center py-20 rounded-2xl border border-dashed border-gray-200 dark:border-[#1e2a3a]">
             <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: {{ $podcast->color }}10;">
                 <svg class="w-8 h-8" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
             </div>
-            <p class="text-gray-400 text-lg font-medium mb-2">No episodes yet</p>
+            <p class="text-gray-600 dark:text-gray-400 text-lg font-medium mb-2">No episodes yet</p>
             <p class="text-gray-500 text-sm">First episodes are in the works. Check back soon!</p>
         </div>
         @endif
