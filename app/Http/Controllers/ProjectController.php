@@ -22,6 +22,12 @@ class ProjectController extends Controller
 
         $project->load('tags');
 
-        return view('projects.show', compact('project'));
+        $otherProjects = Project::published()
+            ->where('id', '!=', $project->id)
+            ->with('tags')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('projects.show', compact('project', 'otherProjects'));
     }
 }
