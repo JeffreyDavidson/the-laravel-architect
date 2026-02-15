@@ -16,6 +16,24 @@ class YouTubeService
         $this->channelId = config('services.youtube.channel_id');
     }
 
+    public static function subscriberCount(): int
+    {
+        try {
+            $apiKey = config('services.youtube.api_key');
+            $channelId = config('services.youtube.channel_id');
+
+            $response = Http::get('https://www.googleapis.com/youtube/v3/channels', [
+                'key' => $apiKey,
+                'id' => $channelId,
+                'part' => 'statistics',
+            ]);
+
+            return (int) ($response->json('items.0.statistics.subscriberCount') ?? 0);
+        } catch (\Exception) {
+            return 0;
+        }
+    }
+
     public function getChannelVideos(int $maxResults = 50): array
     {
         $videos = [];
