@@ -178,7 +178,7 @@
                     <div class="flex flex-col {{ $index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse' }} items-center gap-10">
 
                         {{-- Artwork with vinyl record effect --}}
-                        <div class="relative flex-shrink-0">
+                        <div class="relative flex-shrink-0 w-48 h-48 md:w-60 md:h-60">
                             {{-- Vinyl disc behind artwork --}}
                             <div class="absolute top-1/2 {{ $index % 2 === 0 ? 'left-1/2 -translate-x-[30%]' : 'right-1/2 translate-x-[30%]' }} -translate-y-1/2 w-44 h-44 md:w-52 md:h-52 rounded-full bg-[#111] border border-[#222] vinyl-spin">
                                 <div class="absolute inset-0 rounded-full" style="background: repeating-radial-gradient(circle at center, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);"></div>
