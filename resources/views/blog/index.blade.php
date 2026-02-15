@@ -80,9 +80,12 @@
             @forelse($posts as $post)
             <a href="{{ route('blog.show', $post) }}"
                 x-show="activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}'"
-                x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-y-2"
-                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:enter="transition ease-out duration-500 delay-[{{ $loop->index * 75 }}ms]"
+                x-transition:enter-start="opacity-0 translate-y-4 scale-[0.98]"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2"
                 class="blog-card group block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
