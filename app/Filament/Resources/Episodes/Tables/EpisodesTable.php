@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -20,6 +20,9 @@ class EpisodesTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
+                TextColumn::make('podcast.name')
+                    ->label('Podcast')
+                    ->sortable(),
                 TextColumn::make('guest_name')
                     ->label('Guest')
                     ->placeholder('Solo'),
@@ -43,6 +46,9 @@ class EpisodesTable
                         'published' => 'Published',
                         'scheduled' => 'Scheduled',
                     ]),
+            ])
+            ->bulkActions([
+                DeleteBulkAction::make(),
             ])
             ->defaultSort('episode_number', 'desc');
     }

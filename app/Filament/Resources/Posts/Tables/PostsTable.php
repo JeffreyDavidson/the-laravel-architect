@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -21,6 +24,9 @@ class PostsTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
+                TextColumn::make('author.name')
+                    ->label('Author')
+                    ->sortable(),
                 TextColumn::make('category.name')
                     ->badge()
                     ->sortable(),
@@ -48,6 +54,14 @@ class PostsTable
                     ]),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
+            ])
+            ->actions([
+                EditAction::make(),
+                Action::make('view_on_site')
+                    ->label('View on site')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->url(fn ($record) => route('blog.show', $record))
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc');
     }
