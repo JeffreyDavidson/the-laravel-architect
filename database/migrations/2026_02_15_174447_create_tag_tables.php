@@ -8,6 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Drop legacy tag tables from before Spatie Tags integration
+        Schema::dropIfExists('episode_tag');
+        Schema::dropIfExists('project_tag');
+        Schema::dropIfExists('post_tag');
+        Schema::dropIfExists('tags');
+
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
 
