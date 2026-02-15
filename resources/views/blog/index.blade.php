@@ -26,6 +26,7 @@
     }
     .category-pill {
         transition: all 0.2s ease;
+        cursor: pointer;
     }
     .category-pill:hover, .category-pill.active {
         background: #4A7FBF20;
@@ -53,19 +54,23 @@
 </div>
 
 {{-- Content --}}
-<div class="dot-grid-bg">
+<div class="dot-grid-bg" x-data="{ activeCategory: 'all' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
         {{-- Category filters --}}
         @if($categories->count())
         <div class="flex flex-wrap gap-2 mb-10">
-            <a href="{{ route('blog.index') }}" class="category-pill px-4 py-1.5 text-xs font-semibold rounded-full border border-[#1e2a3a] text-gray-400 {{ !request()->is('blog/category/*') ? 'active' : '' }}">
-                All Posts
-            </a>
+            <button @click="activeCategory = 'all'"
+                :class="activeCategory === 'all' ? 'active' : ''"
+                class="category-pill px-4 py-1.5 text-xs font-semibold rounded-full border border-[#1e2a3a] text-gray-400">
+                All Posts <span class="text-gray-600 ml-1">{{ $posts->count() }}</span>
+            </button>
             @foreach($categories as $category)
-            <a href="{{ route('blog.category', $category) }}" class="category-pill px-4 py-1.5 text-xs font-semibold rounded-full border border-[#1e2a3a] text-gray-400">
+            <button @click="activeCategory = '{{ $category->slug }}'"
+                :class="activeCategory === '{{ $category->slug }}' ? 'active' : ''"
+                class="category-pill px-4 py-1.5 text-xs font-semibold rounded-full border border-[#1e2a3a] text-gray-400">
                 {{ $category->name }} <span class="text-gray-600 ml-1">{{ $category->posts_count }}</span>
-            </a>
+            </button>
             @endforeach
         </div>
         @endif
@@ -73,7 +78,12 @@
         {{-- Posts --}}
         <div class="space-y-6">
             @forelse($posts as $post)
-            <a href="{{ route('blog.show', $post) }}" class="blog-card group block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
+            <a href="{{ route('blog.show', $post) }}"
+                x-show="activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}'"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="blog-card group block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
                         @if($post->category)
@@ -106,13 +116,6 @@
                 </div>
             </div>
             @endforelse
-
-            {{-- Pagination --}}
-            @if($posts->hasPages())
-            <div class="pt-8">
-                {{ $posts->links() }}
-            </div>
-            @endif
         </div>
     </div>
 </div>

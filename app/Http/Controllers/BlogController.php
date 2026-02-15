@@ -14,7 +14,7 @@ class BlogController extends Controller
         $posts = Post::published()
             ->with(['category', 'tags', 'author'])
             ->latest('published_at')
-            ->paginate(10);
+            ->get();
 
         $categories = Category::withCount('posts')->get();
 
