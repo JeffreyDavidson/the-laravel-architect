@@ -13,6 +13,10 @@ class ProjectController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        seo()
+            ->title('Projects')
+            ->description('Open source projects and side projects by Jeffrey Davidson — including Ringside, Campus Sync, and more built with Laravel.');
+
         return view('projects.index', compact('projects'));
     }
 
