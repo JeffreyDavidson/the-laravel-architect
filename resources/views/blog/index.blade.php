@@ -57,8 +57,18 @@
 <div class="dot-grid-bg" x-data="{
     activeCategory: 'all',
     search: '',
-    get filteredVisible() {
-        return this.activeCategory === 'all' && this.search === '';
+    posts: [
+        @foreach($posts as $post)
+        { slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' },
+        @endforeach
+    ],
+    isVisible(post) {
+        const catMatch = this.activeCategory === 'all' || this.activeCategory === post.category;
+        const searchMatch = this.search === '' || post.text.includes(this.search.toLowerCase());
+        return catMatch && searchMatch;
+    },
+    get visibleCount() {
+        return this.posts.filter(p => this.isVisible(p)).length;
     }
 }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -99,7 +109,7 @@
         {{-- Posts --}}
         <div class="space-y-6">
             @forelse($posts as $post)
-            <div x-show="(activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}') && (search === '' || '{{ strtolower(addslashes($post->title)) }} {{ strtolower(addslashes($post->excerpt ?? '')) }} {{ strtolower($post->tags->pluck('name')->join(' ')) }}'.includes(search.toLowerCase()))"
+            <div x-show="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' })"
                 x-transition:enter="transition ease-out duration-500 delay-[{{ $loop->index * 75 }}ms]"
                 x-transition:enter-start="opacity-0 translate-y-4 scale-[0.98]"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -143,17 +153,10 @@
             @endforelse
 
             {{-- No search results --}}
-            <div x-show="search.length > 0" x-cloak class="text-center py-16" id="no-results"
-                x-effect="
-                    let visible = 0;
-                    document.querySelectorAll('.blog-card').forEach(el => {
-                        if (el.style.display !== 'none') visible++;
-                    });
-                    $el.style.display = (visible === 0 && search.length > 0) ? '' : 'none';
-                ">
+            <div x-show="visibleCount === 0" x-cloak class="text-center py-16">
                 <div class="inline-block bg-[#0D1117] border border-[#1e2a3a] rounded-xl px-6 py-4">
                     <div class="font-mono text-sm">
-                        <p class="text-gray-500">$ grep -r "<span x-text="search"></span>" ./posts</p>
+                        <p class="text-gray-500">$ grep -r "<span x-text="search || activeCategory"></span>" ./posts</p>
                         <p class="text-yellow-400 mt-1">No matching posts found.</p>
                     </div>
                 </div>
