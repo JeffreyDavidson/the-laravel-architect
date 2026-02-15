@@ -25,8 +25,5 @@ class DatabaseSeeder extends Seeder
             PodcastSeeder::class,
             ProjectSeeder::class,
         ]);
-
-        // Clear featured images so CSS card art is used
-        \App\Models\Post::query()->update(['featured_image' => null]);
     }
 }

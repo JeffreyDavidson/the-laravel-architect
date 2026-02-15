@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', $podcast->name)
-
 @section('content')
 <style>
     .noise-overlay { position: relative; }
@@ -83,8 +81,8 @@
             <div class="flex-shrink-0 relative">
                 <div class="artwork-glow absolute top-1/2 left-1/2 w-72 h-72 rounded-full blur-[80px]" style="background: {{ $podcast->color }};"></div>
 
-                @if($podcast->cover_image)
-                <img src="{{ asset($podcast->cover_image) }}" alt="{{ $podcast->name }}" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                @if($podcast->hasMedia('cover_image'))
+                <img src="{{ $podcast->getFirstMediaUrl('cover_image') }}" alt="{{ $podcast->name }}" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
                 <div class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}44, {{ $podcast->color }}11);">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>

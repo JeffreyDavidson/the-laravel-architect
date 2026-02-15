@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', $project->title)
-
 @section('content')
 <style>
     .noise-overlay { position: relative; }
@@ -141,10 +139,10 @@
 </section>
 
 {{-- ===== FEATURED IMAGE ===== --}}
-@if($project->featured_image)
+@if($project->hasMedia('featured_image'))
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-8 relative z-10">
     <div class="rounded-2xl overflow-hidden border border-[#1e2a3a] shadow-2xl mt-[-2rem]">
-        <img src="{{ Storage::url($project->featured_image) }}" alt="{{ $project->title }}" class="w-full">
+        <img src="{{ $project->getFirstMediaUrl('featured_image') }}" alt="{{ $project->title }}" class="w-full">
     </div>
 </div>
 @endif

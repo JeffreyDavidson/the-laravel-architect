@@ -18,8 +18,11 @@ class TagsTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                TextColumn::make('color')
+                TextColumn::make('type')
                     ->searchable(),
+                TextColumn::make('order_column')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

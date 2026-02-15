@@ -4,11 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Tags\HasTags;
 
-class Episode extends Model
+class Episode extends Model implements HasMedia
 {
+    use HasSEO;
+    use HasTags;
+    use InteractsWithMedia;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -29,11 +37,6 @@ class Episode extends Model
         return $this->belongsTo(Podcast::class);
     }
 
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
@@ -50,7 +53,23 @@ class Episode extends Model
 
     public function getEpisodeCodeAttribute(): string
     {
-        return 'S' . str_pad($this->season_number, 2, '0', STR_PAD_LEFT) 
+        return 'S' . str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
             . 'E' . str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('featured_image')->singleFile();
+        $this->addMediaCollection('audio')->singleFile();
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        $podcast = $this->podcast;
+
+        return new SEOData(
+            title: $this->title . ' — ' . ($podcast?->name ?? 'Podcast'),
+            description: $this->description,
+        );
     }
 }

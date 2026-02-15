@@ -15,7 +15,11 @@ class TagForm
                     ->required(),
                 TextInput::make('slug')
                     ->required(),
-                TextInput::make('color'),
+                TextInput::make('type')
+                    ->nullable(),
+                TextInput::make('order_column')
+                    ->numeric()
+                    ->nullable(),
             ]);
     }
 }

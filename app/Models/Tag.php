@@ -2,35 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
+use Spatie\Tags\Tag as SpatieTag;
 
-class Tag extends Model
+class Tag extends SpatieTag
 {
-    protected $guarded = [];
-
-    protected static function booted(): void
+    public function resolveRouteBinding($value, $field = null)
     {
-        static::creating(function (Tag $tag) {
-            if (empty($tag->slug)) {
-                $tag->slug = Str::slug($tag->name);
-            }
-        });
-    }
+        $locale = app()->getLocale();
 
-    public function posts(): BelongsToMany
-    {
-        return $this->belongsToMany(Post::class);
-    }
-
-    public function projects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class);
-    }
-
-    public function episodes(): BelongsToMany
-    {
-        return $this->belongsToMany(Episode::class);
+        return static::query()
+            ->where("slug->{$locale}", $value)
+            ->firstOrFail();
     }
 }

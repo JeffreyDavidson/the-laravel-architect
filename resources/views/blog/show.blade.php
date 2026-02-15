@@ -1,16 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $post->meta_title ?? $post->title)
-@section('meta_description', $post->meta_description ?? $post->excerpt)
-
 @push('head')
-    <meta property="og:title" content="{{ $post->meta_title ?? $post->title }}">
-    <meta property="og:description" content="{{ $post->meta_description ?? $post->excerpt }}">
-    <meta property="og:image" content="{{ url(route('og-image', $post, false)) }}">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ url(route('blog.show', $post, false)) }}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="{{ url(route('og-image', $post, false)) }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 @endpush
 
@@ -41,9 +31,9 @@
         </header>
 
         {{-- Featured Image --}}
-        @if($post->featured_image)
+        @if($post->hasMedia('featured_image'))
         <div class="rounded-xl overflow-hidden mb-10 bg-gray-100 dark:bg-gray-800">
-            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full">
+            <img src="{{ $post->getFirstMediaUrl('featured_image') }}" alt="{{ $post->title }}" class="w-full">
         </div>
         @endif
 
