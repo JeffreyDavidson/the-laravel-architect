@@ -19,6 +19,8 @@ class SubscriberResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Newsletter';
 
+    protected static ?int $navigationSort = 7;
+
     public static function canCreate(): bool
     {
         return false;
