@@ -14,6 +14,10 @@ class PodcastController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        seo()
+            ->title('Podcasts')
+            ->description('Two podcasts from Jeffrey Davidson — Coffee with The Laravel Architect (deep dives into Laravel and PHP) and Embracing Cloudy Days (mental health and real talk).');
+
         return view('podcast.index', compact('podcasts'));
     }
 

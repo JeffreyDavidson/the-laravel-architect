@@ -16,7 +16,7 @@ return [
         'force_default' => false,
     ],
 
-    'favicon' => '/images/logo-color.svg',
+    'favicon' => '/images/favicon-32x32.png',
 
     'title' => [
         'infer_title_from_url' => true,
@@ -29,7 +29,7 @@ return [
     ],
 
     'image' => [
-        'fallback' => '/images/logo-color.svg',
+        'fallback' => '/images/logo-color-black-bg.png',
     ],
 
     'author' => [

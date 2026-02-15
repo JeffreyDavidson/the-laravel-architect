@@ -8,6 +8,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180x180.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#0D1117">
+    <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
     {!! seo() !!}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
