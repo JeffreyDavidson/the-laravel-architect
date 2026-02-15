@@ -6,6 +6,7 @@ use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,7 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 Route::get('/uses', [PageController::class, 'uses'])->name('uses');
 
 // RSS
