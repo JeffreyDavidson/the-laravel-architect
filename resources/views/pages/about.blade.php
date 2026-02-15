@@ -38,6 +38,7 @@
     .timeline-item {
         position: relative;
         padding-left: 2rem;
+        transition: all 0.3s ease;
     }
     .timeline-item::before {
         content: '';
@@ -49,6 +50,11 @@
         border-radius: 50%;
         background: #4A7FBF;
         box-shadow: 0 0 10px rgba(74, 127, 191, 0.3);
+        transition: all 0.3s ease;
+    }
+    .timeline-item:hover::before {
+        box-shadow: 0 0 20px rgba(74, 127, 191, 0.5);
+        transform: scale(1.3);
     }
     .timeline-item::after {
         content: '';
@@ -63,11 +69,40 @@
         display: none;
     }
     .value-card {
+        position: relative;
         transition: all 0.3s ease;
+        background: #0D1117;
+        overflow: hidden;
+    }
+    .value-card::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 1rem;
+        background: conic-gradient(from var(--card-angle, 0deg), transparent 60%, #4A7FBF 80%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+        animation: cardSpin 4s linear infinite;
+    }
+    .value-card:hover::before {
+        opacity: 1;
     }
     .value-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+        border-color: transparent;
+    }
+    .value-card-pink::before {
+        background: conic-gradient(from var(--card-angle, 0deg), transparent 60%, #9D5175 80%, transparent 100%);
+    }
+    @keyframes cardSpin {
+        to { --card-angle: 360deg; }
+    }
+    @property --card-angle {
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: false;
     }
 
     /* Trading Card */
@@ -124,6 +159,20 @@
     .stat-bar {
         transition: width 1s ease-out;
     }
+
+    /* Pulsing glow behind trading card */
+    @keyframes glowPulse {
+        0%, 100% { opacity: 0.08; transform: scale(1); }
+        50% { opacity: 0.15; transform: scale(1.05); }
+    }
+    .trading-card-glow {
+        animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    /* Shimmer for CTA */
+    @keyframes shimmer {
+        to { background-position: 200% center; }
+    }
 </style>
 
     {{-- Hero --}}
@@ -136,8 +185,10 @@
             <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
                 {{-- Trading Card --}}
-                <div class="flex-shrink-0 trading-card-tilt">
-                    <div class="holo-border">
+                <div class="flex-shrink-0 trading-card-tilt relative">
+                    {{-- Pulsing ambient glow --}}
+                    <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px]" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
+                    <div class="holo-border relative">
                         <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl" style="background: linear-gradient(165deg, #111820 0%, #0a0e14 50%, #0f1520 100%);">
 
                             {{-- Top holographic stripe --}}
@@ -210,9 +261,17 @@
                     <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mb-8">
+                    <p class="text-gray-400 text-lg leading-relaxed max-w-2xl">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
+
+                    <div class="font-mono text-sm text-gray-500 mb-8 flex items-center gap-2">
+                        <span class="text-[#4A7FBF]">$</span>
+                        <span>whoami</span>
+                        <span class="text-gray-600">→</span>
+                        <span class="text-gray-400">Laravel developer, dad, podcaster</span>
+                        <span class="animate-pulse text-[#4A7FBF]">▊</span>
+                    </div>
 
                     <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
                         <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
@@ -338,14 +397,14 @@
                     <h3 class="font-bold mb-2">Teach What You Learn</h3>
                     <p class="text-sm text-gray-400 leading-relaxed">The best way to solidify knowledge is to share it. Every blog post, podcast episode, and tutorial is me learning out loud — and hopefully making someone else's path easier.</p>
                 </div>
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card value-card-pink p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     </div>
                     <h3 class="font-bold mb-2">Family First</h3>
                     <p class="text-sm text-gray-400 leading-relaxed">My daughter Viola is autistic and nonverbal, and being her dad has taught me more about patience, empathy, and what really matters than any codebase ever could.</p>
                 </div>
-                <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
+                <div class="value-card value-card-pink p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                     </div>
@@ -363,6 +422,39 @@
         </div>
     </div>
 
+    {{-- Fun Facts --}}
+    <div class="border-t border-[#1e2a3a]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
+                <div>
+                    <span class="text-2xl mb-1 block">☕</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Daily Coffee</p>
+                    <p class="text-sm font-semibold text-gray-300 mt-1">Too Many</p>
+                </div>
+                <div>
+                    <span class="text-2xl mb-1 block">🎢</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Favorite Park</p>
+                    <p class="text-sm font-semibold text-gray-300 mt-1">Disney World</p>
+                </div>
+                <div>
+                    <span class="text-2xl mb-1 block">🃏</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Poker Style</p>
+                    <p class="text-sm font-semibold text-gray-300 mt-1">Aggressive</p>
+                </div>
+                <div>
+                    <span class="text-2xl mb-1 block">🤼</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Side Project</p>
+                    <p class="text-sm font-semibold text-gray-300 mt-1">Wrestling App</p>
+                </div>
+                <div>
+                    <span class="text-2xl mb-1 block">🏫</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Alma Mater</p>
+                    <p class="text-sm font-semibold text-gray-300 mt-1">Full Sail University</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Tech Stack --}}
     <div class="border-t border-[#1e2a3a] dot-grid-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -372,20 +464,21 @@
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach([
-                    ['name' => 'Laravel', 'desc' => 'My framework of choice since 2014'],
-                    ['name' => 'PHP', 'desc' => 'The language that started it all'],
-                    ['name' => 'Filament', 'desc' => 'Admin panels done right'],
-                    ['name' => 'Livewire', 'desc' => 'Reactive interfaces without the SPA'],
-                    ['name' => 'Tailwind CSS', 'desc' => 'Utility-first, no going back'],
-                    ['name' => 'Alpine.js', 'desc' => 'Just enough JavaScript'],
-                    ['name' => 'Pest', 'desc' => 'Testing with elegance'],
-                    ['name' => 'MySQL', 'desc' => 'Relational data, done well'],
-                    ['name' => 'Redis', 'desc' => 'Caching, queues, sessions'],
-                    ['name' => 'Laravel Forge', 'desc' => 'Deployment without the pain'],
-                    ['name' => 'Git', 'desc' => 'Version everything, always'],
-                    ['name' => 'SQLite', 'desc' => 'Perfect for the right project'],
+                    ['name' => 'Laravel', 'icon' => '🔺', 'desc' => 'My framework of choice since 2014'],
+                    ['name' => 'PHP', 'icon' => '🐘', 'desc' => 'The language that started it all'],
+                    ['name' => 'Filament', 'icon' => '🛡️', 'desc' => 'Admin panels done right'],
+                    ['name' => 'Livewire', 'icon' => '⚡', 'desc' => 'Reactive interfaces without the SPA'],
+                    ['name' => 'Tailwind CSS', 'icon' => '🎨', 'desc' => 'Utility-first, no going back'],
+                    ['name' => 'Alpine.js', 'icon' => '🏔️', 'desc' => 'Just enough JavaScript'],
+                    ['name' => 'Pest', 'icon' => '🧪', 'desc' => 'Testing with elegance'],
+                    ['name' => 'MySQL', 'icon' => '🗄️', 'desc' => 'Relational data, done well'],
+                    ['name' => 'Redis', 'icon' => '⚡', 'desc' => 'Caching, queues, sessions'],
+                    ['name' => 'Laravel Forge', 'icon' => '🔨', 'desc' => 'Deployment without the pain'],
+                    ['name' => 'Git', 'icon' => '📦', 'desc' => 'Version everything, always'],
+                    ['name' => 'SQLite', 'icon' => '💾', 'desc' => 'Perfect for the right project'],
                 ] as $tech)
                 <div class="value-card p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50 hover:border-[#4A7FBF]/20">
+                    <span class="text-lg mb-1 block">{{ $tech['icon'] }}</span>
                     <p class="font-semibold text-sm mb-0.5">{{ $tech['name'] }}</p>
                     <p class="text-xs text-gray-500">{{ $tech['desc'] }}</p>
                 </div>
@@ -408,7 +501,9 @@
                 </span>
                 Available for Projects
             </div>
-            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Want to work together?</h2>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
+                <span style="background: linear-gradient(90deg, #fff 0%, #4A7FBF 50%, #fff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite;">Want to work together?</span>
+            </h2>
             <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-colors text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                 Hire Me
