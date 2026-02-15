@@ -48,7 +48,7 @@ class BlogController extends Controller
 
             $tagRelated = Post::published()
                 ->whereNotIn('id', $exclude)
-                ->withAnyTags($post->tags->toArray())
+                ->withAnyTags($post->tags)
                 ->with(['category', 'tags'])
                 ->latest('published_at')
                 ->take(3 - $relatedPosts->count())
