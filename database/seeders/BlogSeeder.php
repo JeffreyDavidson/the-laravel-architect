@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -26,8 +27,18 @@ class BlogSeeder extends Seeder
         $career = Category::firstOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
         $laravel = Category::firstOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
 
+        // Create tags
+        $tags = collect([
+            'PHP', 'Laravel', 'Testing', 'Architecture', 'Eloquent',
+            'Deployment', 'Pest', 'Filament', 'Livewire', 'TDD',
+            'Refactoring', 'Legacy Code', 'API Design', 'Content Creation',
+        ])->mapWithKeys(function ($name) {
+            $tag = Tag::findOrCreate($name);
+            return [\Illuminate\Support\Str::slug($name) => $tag];
+        });
+
         // Post 1
-        Post::updateOrCreate(['slug' => 'hello-world-why-im-starting-this-blog'], [
+        $post1 = Post::updateOrCreate(['slug' => 'hello-world-why-im-starting-this-blog'], [
             'title' => "Hello World — Why I'm Starting This Blog",
             'excerpt' => "After 15 years of building things with PHP and Laravel — with two podcasts and a YouTube channel on the way — I figured it was time to start writing things down. Here's why.",
             'content' => self::post1(),
@@ -37,8 +48,10 @@ class BlogSeeder extends Seeder
             'published_at' => '2026-01-15 09:00:00',
         ]);
 
+        $post1->syncTags($tags->only(['laravel', 'php', 'content-creation'])->values()->all());
+
         // Post 2
-        Post::updateOrCreate(['slug' => 'from-kansas-to-florida-a-developers-journey'], [
+        $post2 = Post::updateOrCreate(['slug' => 'from-kansas-to-florida-a-developers-journey'], [
             'title' => "From Kansas to Florida: A Developer's Journey",
             'excerpt' => "I grew up in Kansas, discovered the web in the late 2000s, and somehow ended up writing code full-time in Florida. This is that story.",
             'content' => self::post2(),
@@ -48,8 +61,10 @@ class BlogSeeder extends Seeder
             'published_at' => '2026-01-22 09:00:00',
         ]);
 
+        $post2->syncTags($tags->only(['php', 'laravel'])->values()->all());
+
         // Post 3
-        Post::updateOrCreate(['slug' => 'what-15-years-of-web-development-taught-me'], [
+        $post3 = Post::updateOrCreate(['slug' => 'what-15-years-of-web-development-taught-me'], [
             'title' => 'What 15 Years of Web Development Taught Me',
             'excerpt' => "Fifteen years is a long time to do anything. Here are the lessons — technical and otherwise — that I wish someone had told me on day one.",
             'content' => self::post3(),
@@ -59,8 +74,10 @@ class BlogSeeder extends Seeder
             'published_at' => '2026-01-30 09:00:00',
         ]);
 
+        $post3->syncTags($tags->only(['php', 'testing', 'architecture', 'refactoring'])->values()->all());
+
         // Post 4
-        Post::updateOrCreate(['slug' => 'why-i-still-choose-laravel-in-2026'], [
+        $post4 = Post::updateOrCreate(['slug' => 'why-i-still-choose-laravel-in-2026'], [
             'title' => 'Why I Still Choose Laravel in 2026',
             'excerpt' => "Every year someone declares PHP dead and Laravel irrelevant. Every year I start another Laravel project. Here's why I'm not switching.",
             'content' => self::post4(),
@@ -70,8 +87,10 @@ class BlogSeeder extends Seeder
             'published_at' => '2026-02-05 09:00:00',
         ]);
 
+        $post4->syncTags($tags->only(['laravel', 'php', 'eloquent', 'filament', 'livewire'])->values()->all());
+
         // Post 5
-        Post::updateOrCreate(['slug' => 'how-i-structure-every-laravel-project'], [
+        $post5 = Post::updateOrCreate(['slug' => 'how-i-structure-every-laravel-project'], [
             'title' => 'How I Structure Every Laravel Project',
             'excerpt' => "After years of iteration, this is the project structure I reach for on every new Laravel app. Actions, services, form requests, and Pest tests — all of it.",
             'content' => self::post5(),
@@ -80,6 +99,7 @@ class BlogSeeder extends Seeder
             'status' => 'published',
             'published_at' => '2026-02-12 09:00:00',
         ]);
+        $post5->syncTags($tags->only(['laravel', 'architecture', 'testing', 'pest', 'tdd'])->values()->all());
     }
 
     private static function post1(): string
