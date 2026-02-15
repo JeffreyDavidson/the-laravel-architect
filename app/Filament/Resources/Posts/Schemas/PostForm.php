@@ -14,7 +14,7 @@ use Filament\Forms\Set;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
-use RalphJSmit\Laravel\SEO\SchemaComponents\SEO;
+use RalphJSmit\Filament\SEO\SEO;
 
 class PostForm
 {
