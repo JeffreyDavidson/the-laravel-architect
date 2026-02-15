@@ -17,6 +17,7 @@ class ContactController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
+        // Send to Jeffrey
         Mail::raw(
             "Name: {$validated['name']}\n" .
             "Email: {$validated['email']}\n" .
@@ -30,6 +31,22 @@ class ContactController extends Controller
             }
         );
 
-        return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours.');
+        // Send confirmation copy to submitter
+        Mail::raw(
+            "Hi {$validated['name']},\n\n" .
+            "Thanks for reaching out! Here's a copy of your message. I'll get back to you within 24–48 hours.\n\n" .
+            "---\n\n" .
+            "Type: {$validated['type']}\n" .
+            "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
+            "Message:\n{$validated['message']}\n\n" .
+            "---\n\n" .
+            "Jeffrey Davidson\nThe Laravel Architect\nhttps://thelaravelarchitect.com",
+            function ($message) use ($validated) {
+                $message->to($validated['email'], $validated['name'])
+                    ->subject("Got your message — thanks, {$validated['name']}!");
+            }
+        );
+
+        return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
     }
 }
