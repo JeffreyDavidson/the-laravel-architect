@@ -54,12 +54,32 @@
 </div>
 
 {{-- Content --}}
-<div class="dot-grid-bg" x-data="{ activeCategory: 'all' }">
+<div class="dot-grid-bg" x-data="{
+    activeCategory: 'all',
+    search: '',
+    get filteredVisible() {
+        return this.activeCategory === 'all' && this.search === '';
+    }
+}">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
-        {{-- Category filters --}}
-        @if($categories->count())
-        <div class="flex flex-wrap gap-2 mb-10">
+        {{-- Search + Category filters --}}
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
+            {{-- Search --}}
+            <div class="relative flex-shrink-0 sm:w-72">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" x-model="search" placeholder="Search posts..."
+                    class="w-full pl-10 pr-4 py-2 text-sm bg-[#0D1117] border border-[#1e2a3a] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#4A7FBF]/50 focus:ring-1 focus:ring-[#4A7FBF]/20 transition-colors">
+                <button x-show="search.length > 0" @click="search = ''" class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            {{-- Category filters --}}
+            @if($categories->count())
+            <div class="flex flex-wrap gap-2">
             <button @click="activeCategory = 'all'"
                 :class="activeCategory === 'all' ? 'active' : ''"
                 class="category-pill px-4 py-1.5 text-xs font-semibold rounded-full border border-[#1e2a3a] text-gray-400">
@@ -72,13 +92,14 @@
                 {{ $category->name }} <span class="text-gray-600 ml-1">{{ $category->posts_count }}</span>
             </button>
             @endforeach
+            </div>
+            @endif
         </div>
-        @endif
 
         {{-- Posts --}}
         <div class="space-y-6">
             @forelse($posts as $post)
-            <div x-show="activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}'"
+            <div x-show="(activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}') && (search === '' || '{{ strtolower(addslashes($post->title)) }} {{ strtolower(addslashes($post->excerpt ?? '')) }} {{ strtolower($post->tags->pluck('name')->join(' ')) }}'.includes(search.toLowerCase()))"
                 x-transition:enter="transition ease-out duration-500 delay-[{{ $loop->index * 75 }}ms]"
                 x-transition:enter-start="opacity-0 translate-y-4 scale-[0.98]"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -120,6 +141,23 @@
                 </div>
             </div>
             @endforelse
+
+            {{-- No search results --}}
+            <div x-show="search.length > 0" x-cloak class="text-center py-16" id="no-results"
+                x-effect="
+                    let visible = 0;
+                    document.querySelectorAll('.blog-card').forEach(el => {
+                        if (el.style.display !== 'none') visible++;
+                    });
+                    $el.style.display = (visible === 0 && search.length > 0) ? '' : 'none';
+                ">
+                <div class="inline-block bg-[#0D1117] border border-[#1e2a3a] rounded-xl px-6 py-4">
+                    <div class="font-mono text-sm">
+                        <p class="text-gray-500">$ grep -r "<span x-text="search"></span>" ./posts</p>
+                        <p class="text-yellow-400 mt-1">No matching posts found.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
