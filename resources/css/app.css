@@ -47,6 +47,102 @@
     --color-accent-400: #e0a0aa;
 }
 
+/* Theme CSS variables */
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: rgba(22, 27, 34, 0.5);
+    --border-primary: #1e2a3a;
+    --border-hover: rgba(74, 127, 191, 0.3);
+    --text-primary: #ffffff;
+    --text-secondary: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dimmed: #484f58;
+    --glow-blue: rgba(74, 127, 191, 0.06);
+    --glow-pink: rgba(157, 81, 117, 0.04);
+}
+
+:root:not(.dark) {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-card: rgba(246, 248, 250, 0.8);
+    --border-primary: #d0d7de;
+    --border-hover: rgba(74, 127, 191, 0.4);
+    --text-primary: #1f2328;
+    --text-secondary: #424a53;
+    --text-muted: #656d76;
+    --text-dimmed: #afb8c1;
+    --glow-blue: rgba(74, 127, 191, 0.08);
+    --glow-pink: rgba(157, 81, 117, 0.06);
+}
+
+/* Light mode overrides */
+:root:not(.dark) body {
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+}
+
+:root:not(.dark) .bg-brand-950 { background-color: var(--bg-primary) !important; }
+:root:not(.dark) .bg-\[\#0D1117\] { background-color: var(--bg-primary) !important; }
+:root:not(.dark) .bg-\[\#0d1117\] { background-color: var(--bg-primary) !important; }
+:root:not(.dark) .bg-\[\#161b22\] { background-color: var(--bg-secondary) !important; }
+:root:not(.dark) .border-\[\#1e2a3a\] { border-color: var(--border-primary) !important; }
+:root:not(.dark) .border-brand-800\/50 { border-color: var(--border-primary) !important; }
+:root:not(.dark) .bg-brand-950\/90 { background-color: rgba(255, 255, 255, 0.92) !important; }
+
+:root:not(.dark) .text-white { color: var(--text-primary) !important; }
+:root:not(.dark) .text-gray-100 { color: var(--text-secondary) !important; }
+:root:not(.dark) .text-gray-400 { color: var(--text-muted) !important; }
+:root:not(.dark) .text-gray-500 { color: var(--text-muted) !important; }
+:root:not(.dark) .text-gray-600 { color: var(--text-dimmed) !important; }
+:root:not(.dark) .text-gray-700 { color: var(--text-dimmed) !important; }
+
+:root:not(.dark) .bg-gray-800\/50,
+:root:not(.dark) .bg-gray-800 { background-color: var(--bg-secondary) !important; }
+
+:root:not(.dark) .border-gray-700\/50,
+:root:not(.dark) .border-gray-800 { border-color: var(--border-primary) !important; }
+
+/* Light mode cards and surfaces */
+:root:not(.dark) .blog-card,
+:root:not(.dark) [class*="bg-\[#0D1117\]"],
+:root:not(.dark) [class*="bg-\[#0d1117\]"] {
+    background-color: var(--bg-primary) !important;
+    border-color: var(--border-primary) !important;
+}
+
+/* Light mode nav */
+:root:not(.dark) nav {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    border-color: var(--border-primary) !important;
+}
+
+/* Light mode footer */
+:root:not(.dark) footer {
+    border-color: var(--border-primary) !important;
+}
+
+/* Light mode prose */
+:root:not(.dark) .prose {
+    --tw-prose-body: var(--text-secondary);
+    --tw-prose-headings: var(--text-primary);
+    --tw-prose-links: #4a7fbf;
+    --tw-prose-bold: var(--text-primary);
+    --tw-prose-code: #4a7fbf;
+}
+
+/* Light mode code blocks stay dark */
+:root:not(.dark) .prose pre {
+    background: #0d1117 !important;
+}
+
+/* Light mode noise overlay reduction */
+:root:not(.dark) .noise-overlay::after { opacity: 0.02; }
+:root:not(.dark) .dot-grid-bg::before { opacity: 0.015; }
+
+/* Light mode glow orbs */
+:root:not(.dark) [style*="radial-gradient"] { opacity: 0.03 !important; }
+
 /* Code block styling for blog posts */
 .prose pre {
     background: #0d1117 !important;
