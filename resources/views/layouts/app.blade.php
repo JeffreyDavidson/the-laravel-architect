@@ -44,7 +44,7 @@
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors @if(request()->routeIs('projects.*')) text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors @if(request()->routeIs('about')) text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors @if(request()->routeIs('uses')) text-white @endif">Uses</a>
-                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors">Hire Me</a>
+                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors">Contact Me</a>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-white @endif">Uses</a>
-                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors w-fit">Hire Me</a>
+                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors w-fit">Contact Me</a>
                 </div>
             </div>
         </div>

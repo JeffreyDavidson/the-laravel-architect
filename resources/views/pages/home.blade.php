@@ -1658,7 +1658,7 @@ function countdown() {
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
             </span>
-            Available for Hire
+            Available for Projects
         </div>
 
         {{-- Headline with gradient text --}}
