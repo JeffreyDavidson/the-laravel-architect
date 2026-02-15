@@ -78,15 +78,14 @@
         {{-- Posts --}}
         <div class="space-y-6">
             @forelse($posts as $post)
-            <a href="{{ route('blog.show', $post) }}"
-                x-show="activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}'"
+            <div x-show="activeCategory === 'all' || activeCategory === '{{ $post->category?->slug }}'"
                 x-transition:enter="transition ease-out duration-500 delay-[{{ $loop->index * 75 }}ms]"
                 x-transition:enter-start="opacity-0 translate-y-4 scale-[0.98]"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2"
-                class="blog-card group block rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
+                class="blog-card group rounded-2xl border border-[#1e2a3a] bg-[#0D1117] overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
                         @if($post->category)
@@ -98,17 +97,19 @@
                         <span class="text-xs text-gray-500">{{ $post->reading_time }} min read</span>
                     </div>
 
-                    <h2 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-[#4A7FBF] transition-colors">{{ $post->title }}</h2>
+                    <a href="{{ route('blog.show', $post) }}">
+                        <h2 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-[#4A7FBF] transition-colors">{{ $post->title }}</h2>
+                    </a>
 
                     <p class="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">{{ $post->excerpt }}</p>
 
-                    <div class="flex flex-wrap items-center gap-2" @click.stop>
+                    <div class="flex flex-wrap items-center gap-2">
                         @foreach($post->tags as $tag)
-                        <a href="{{ route('blog.tag', $tag) }}" class="px-2.5 py-1 text-xs rounded-full border border-[#1e2a3a] text-gray-500 bg-[#161b22] hover:border-[#4A7FBF]/50 hover:text-[#4A7FBF] transition-colors">{{ $tag->name }}</a>
+                        <a href="{{ route('blog.tag', $tag) }}" class="px-2.5 py-1 text-xs rounded-full border border-[#1e2a3a] text-gray-500 bg-[#161b22] hover:border-[#4A7FBF]/50 hover:text-[#4A7FBF] transition-colors relative z-10">{{ $tag->name }}</a>
                         @endforeach
                     </div>
                 </div>
-            </a>
+            </div>
             @empty
             <div class="text-center py-20">
                 <div class="inline-block bg-[#0D1117] border border-[#1e2a3a] rounded-xl px-6 py-4 mb-6">
