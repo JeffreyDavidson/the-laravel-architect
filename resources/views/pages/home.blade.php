@@ -1555,46 +1555,85 @@ function countdown() {
 {{-- ===== TESTIMONIALS ===== --}}
 <section class="py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14 fade-up">
-            <h2 class="text-4xl font-extrabold text-white mb-4">Kind Words</h2>
-            <p class="text-gray-400 text-lg">From colleagues and collaborators over the years.</p>
+        {{-- Personal Quote --}}
+        <div class="text-center mb-16 fade-up">
+            <div class="inline-block mb-6">
+                <svg class="w-10 h-10 text-[#4A7FBF]/30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+            </div>
+            <blockquote class="text-2xl md:text-3xl font-extrabold text-white mb-4 max-w-3xl mx-auto leading-snug">
+                Clean architecture, tested code, and honest conversations — that's what I bring to every project.
+            </blockquote>
+            <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="testimonial-card fade-up">
-                <div class="flex-1">
-                    <p class="text-gray-300 text-sm leading-relaxed">Jeffrey has an incredible eye for clean architecture. He took our messy legacy codebase and transformed it into something our team actually enjoys working with. The test coverage alone was worth it.</p>
-                </div>
-                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
-                    <div class="w-10 h-10 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-400 font-bold text-sm flex-shrink-0">MR</div>
-                    <div>
-                        <p class="text-white text-sm font-semibold">Mike Rodriguez</p>
-                        <p class="text-gray-500 text-xs">CTO, SaaS Startup</p>
+
+        {{-- Approved Testimonials --}}
+        @if($testimonials->count())
+        <div class="mb-16">
+            <h3 class="text-center text-sm font-semibold uppercase tracking-widest text-gray-600 mb-10">Kind Words from Colleagues & Collaborators</h3>
+            <div class="grid grid-cols-1 md:grid-cols-{{ min($testimonials->count(), 3) }} gap-6">
+                @foreach($testimonials as $testimonial)
+                <div class="testimonial-card fade-up">
+                    <div class="flex-1">
+                        <p class="text-gray-300 text-sm leading-relaxed">"{{ $testimonial->body }}"</p>
+                    </div>
+                    <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
+                        <div class="w-10 h-10 rounded-full bg-[#4A7FBF]/20 flex items-center justify-center text-[#4A7FBF] font-bold text-sm flex-shrink-0">
+                            {{ collect(explode(' ', $testimonial->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('') }}
+                        </div>
+                        <div>
+                            <p class="text-white text-sm font-semibold">{{ $testimonial->name }}</p>
+                            @if($testimonial->role || $testimonial->company)
+                            <p class="text-gray-500 text-xs">{{ collect([$testimonial->role, $testimonial->company])->filter()->join(', ') }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
+                @endforeach
             </div>
-            <div class="testimonial-card fade-up">
-                <div class="flex-1">
-                    <p class="text-gray-300 text-sm leading-relaxed">Working with Jeffrey felt like having a senior architect on the team. He doesn't just write code — he thinks about the system as a whole. Our Laravel migration finished ahead of schedule.</p>
+        </div>
+        @endif
+
+        {{-- Submit Testimonial Form --}}
+        <div class="max-w-2xl mx-auto fade-up">
+            <div class="rounded-2xl border border-[#1e2a3a] bg-[#0D1117] p-8">
+                <h3 class="text-lg font-bold text-white mb-2 text-center">Worked with me?</h3>
+                <p class="text-gray-500 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
+
+                @if(session('testimonial_success'))
+                <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+                    {{ session('testimonial_success') }}
                 </div>
-                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
-                    <div class="w-10 h-10 rounded-full bg-accent-600/20 flex items-center justify-center text-accent-400 font-bold text-sm flex-shrink-0">SL</div>
-                    <div>
-                        <p class="text-white text-sm font-semibold">Sarah Lin</p>
-                        <p class="text-gray-500 text-xs">Engineering Manager</p>
+                @endif
+
+                <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
+                                class="w-full px-4 py-3 bg-[#161b22] border border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                            @error('name') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <input type="text" name="company" placeholder="Company" value="{{ old('company') }}"
+                                class="w-full px-4 py-3 bg-[#161b22] border border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="testimonial-card fade-up">
-                <div class="flex-1">
-                    <p class="text-gray-300 text-sm leading-relaxed">Jeffrey's blog posts and teaching style are what got me into Laravel in the first place. Clear, practical, no fluff. When I needed a consultant, he was the obvious choice.</p>
-                </div>
-                <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
-                    <div class="w-10 h-10 rounded-full bg-green-600/20 flex items-center justify-center text-green-400 font-bold text-sm flex-shrink-0">AK</div>
                     <div>
-                        <p class="text-white text-sm font-semibold">Alex Kim</p>
-                        <p class="text-gray-500 text-xs">Full-Stack Developer</p>
+                        <input type="text" name="role" placeholder="Your role (e.g. CTO, Developer)" value="{{ old('role') }}"
+                            class="w-full px-4 py-3 bg-[#161b22] border border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
                     </div>
-                </div>
+                    <div>
+                        <textarea name="body" rows="4" placeholder="What was it like working with me? *" required
+                            class="w-full px-4 py-3 bg-[#161b22] border border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors resize-none">{{ old('body') }}</textarea>
+                        @error('body') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            Submit Testimonial
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

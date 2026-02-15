@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Testimonial;
 use App\Services\YouTubeService;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -25,11 +26,16 @@ class PageController extends Controller
 
         $youtubeSubscribers = YouTubeService::subscriberCount();
 
+        $testimonials = Testimonial::approved()
+            ->orderBy('sort_order')
+            ->latest()
+            ->get();
+
         seo()
             ->title('The Laravel Architect — Jeffrey Davidson')
             ->description('Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.');
 
-        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers'));
+        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'testimonials'));
     }
 
     public function about()
