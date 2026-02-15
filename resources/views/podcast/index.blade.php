@@ -198,7 +198,7 @@
                         </div>
 
                         {{-- Content --}}
-                        <div class="flex-1 min-w-0 {{ $index % 2 === 0 ? 'text-left' : 'md:text-right' }} text-center md:text-left">
+                        <div class="flex-1 min-w-0 text-center md:text-left">
                             {{-- Badge --}}
                             @if($podcast->published_episodes_count > 0)
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
