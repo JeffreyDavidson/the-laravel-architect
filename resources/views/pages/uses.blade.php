@@ -34,14 +34,38 @@
         border-color: #2a3a4a;
         transform: translateX(4px);
     }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+    .site-tech {
+        transition: all 0.2s ease;
+    }
+    .site-tech:hover {
+        transform: translateY(-2px);
+        border-color: #4A7FBF33;
+        background: rgba(74, 127, 191, 0.03);
+    }
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay border-b border-[#1e2a3a]">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
+    <div class="noise-overlay relative overflow-hidden border-b border-[#1e2a3a]">
+        {{-- Ambient glow --}}
+        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
             <div class="max-w-3xl">
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">/uses</h1>
+                {{-- Terminal prompt --}}
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0D1117] border border-[#1e2a3a] mb-8">
+                    <span class="text-green-400 text-xs font-mono">$</span>
+                    <span class="text-gray-400 text-xs font-mono">cat ~/.uses</span>
+                    <span class="w-1.5 h-4 bg-[#4A7FBF] ml-1" style="animation: blink 1s step-end infinite;"></span>
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-5 tracking-tight">
+                    <span class="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">/uses</span>
+                </h1>
                 <p class="text-gray-400 text-lg md:text-xl leading-relaxed">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" class="text-[#4A7FBF] hover:underline">uses.tech</a>.</p>
                 <p class="text-gray-500 text-sm mt-4">Last updated: February 2026</p>
             </div>
@@ -219,7 +243,7 @@
                                 ['icon' => '📧', 'name' => 'Resend', 'desc' => 'Email'],
                                 ['icon' => '⛰️', 'name' => 'Alpine.js', 'desc' => 'Interactivity'],
                             ] as $tech)
-                            <div class="p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50">
+                            <div class="site-tech p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50">
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="text-base">{{ $tech['icon'] }}</span>
                                     <p class="font-semibold text-sm">{{ $tech['name'] }}</p>
