@@ -568,6 +568,15 @@
     :root:not(.dark) .dot-grid-bg::before {
         display: none !important;
     }
+    :root:not(.dark) .section-divider {
+        display: none !important;
+    }
+    :root {
+        --project-title-color: #1f2328;
+    }
+    .dark {
+        --project-title-color: #ffffff;
+    }
 
     /* Keep hero dark in light mode */
     :root:not(.dark) .hero-mesh {
@@ -919,7 +928,7 @@
                 </div>
                 @endif
                 <div class="p-6">
-                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} text-gray-900 dark:text-white mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
+                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} mb-2 group-hover:text-brand-400 transition-colors" style="color: var(--project-title-color);">{{ $project->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
