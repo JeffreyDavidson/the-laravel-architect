@@ -69,11 +69,20 @@
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay border-b border-[#1e2a3a]">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
+    <div class="noise-overlay relative overflow-hidden border-b border-[#1e2a3a]">
+        {{-- Ambient glow --}}
+        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
             <div class="max-w-3xl">
-                <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">Get In Touch</p>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    Available for Projects
+                </div>
                 <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
                 <p class="text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
             </div>
@@ -150,7 +159,7 @@
                             <textarea id="message" name="message" rows="6" required class="contact-input" placeholder="Tell me about your project, timeline, and any specific requirements..."></textarea>
                         </div>
 
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors">
+                        <button type="submit" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                             Send Message
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
