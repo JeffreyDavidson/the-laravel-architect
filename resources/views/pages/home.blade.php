@@ -532,6 +532,38 @@
         background-image: radial-gradient(circle, #000000 1px, transparent 1px);
         opacity: 0.03;
     }
+    :root:not(.dark) .marquee-item {
+        color: #8b949e;
+    }
+    :root:not(.dark) .marquee-item:hover {
+        color: #424a53;
+    }
+    :root:not(.dark) .marquee-item svg,
+    :root:not(.dark) .marquee-item img {
+        opacity: 0.3;
+    }
+    :root:not(.dark) .marquee-item:hover svg,
+    :root:not(.dark) .marquee-item:hover img {
+        opacity: 0.7;
+    }
+    :root:not(.dark) .glass-card:hover {
+        border-color: rgba(74, 127, 191, 0.3);
+        box-shadow: 0 0 30px rgba(74, 127, 191, 0.08), 0 10px 30px rgba(0,0,0,0.05);
+    }
+    :root:not(.dark) .service-card-v2 {
+        border-color: rgba(0,0,0,0.08);
+    }
+    :root:not(.dark) .service-card-v2:hover {
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow);
+    }
+    :root:not(.dark) .stat-divider {
+        background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1), transparent);
+    }
+    /* Keep hero dark in light mode */
+    :root:not(.dark) .hero-mesh {
+        background: linear-gradient(-45deg, #0D1117, #1a1040, #0d2847, #1a0d30, #0D1117);
+        background-size: 400% 400%;
+    }
 </style>
 
 {{-- ===== HERO ===== --}}
@@ -769,6 +801,9 @@
     </div>
 </section>
 
+{{-- Hero to light transition --}}
+<div class="dark:hidden h-20 bg-gradient-to-b from-[#0D1117] to-white"></div>
+
 {{-- ===== TECH STACK MARQUEE ===== --}}
 <section class="py-8 overflow-hidden relative bg-white dark:bg-[#0D1117]">
     <div class="marquee-fade-left"></div>
@@ -879,7 +914,7 @@
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
                         @foreach($project->tech_stack as $tech)
-                        <span class="px-2.5 py-1 bg-brand-800/80 text-brand-300 text-xs font-medium rounded-md border border-brand-700/50">{{ $tech }}</span>
+                        <span class="px-2.5 py-1 bg-brand-100 dark:bg-brand-800/80 text-brand-600 dark:text-brand-300 text-xs font-medium rounded-md border border-brand-200 dark:border-brand-700/50">{{ $tech }}</span>
                         @endforeach
                     </div>
                     @endif
