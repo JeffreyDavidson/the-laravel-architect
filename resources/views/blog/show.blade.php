@@ -55,13 +55,20 @@
 
         {{-- Related Posts --}}
         @if($relatedPosts->count())
-        <div class="mt-16 pt-10 border-t border-gray-200 dark:border-gray-800">
-            <h2 class="text-xl font-bold mb-6">Related Posts</h2>
+        <div class="mt-16 pt-10 border-t border-gray-700/50">
+            <h2 class="text-xl font-bold mb-8 text-white">Continue Reading</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 @foreach($relatedPosts as $related)
-                <a href="{{ route('blog.show', $related) }}" class="group block">
-                    <h3 class="font-semibold group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ $related->title }}</h3>
-                    <p class="text-sm text-gray-500 mt-1">{{ $related->published_at->format('M d, Y') }}</p>
+                <a href="{{ route('blog.show', $related) }}" class="group block bg-gray-800/50 border border-gray-700/50 rounded-xl p-5 hover:border-blue-500/30 hover:bg-gray-800/80 transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        @if($related->category)
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-400">{{ $related->category->name }}</span>
+                        @endif
+                        <span class="text-xs text-gray-500">{{ $related->reading_time }} min read</span>
+                    </div>
+                    <h3 class="font-semibold text-white group-hover:text-blue-400 transition-colors leading-snug mb-2">{{ $related->title }}</h3>
+                    <p class="text-sm text-gray-400 line-clamp-2">{{ $related->excerpt }}</p>
+                    <div class="mt-3 text-xs text-gray-500">{{ $related->published_at->format('M d, Y') }}</div>
                 </a>
                 @endforeach
             </div>
