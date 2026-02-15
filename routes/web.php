@@ -6,6 +6,7 @@ use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
@@ -20,8 +21,9 @@ Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->name('ne
 Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 Route::get('/uses', [PageController::class, 'uses'])->name('uses');
 
-// RSS
+// RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
