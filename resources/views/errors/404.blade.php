@@ -10,12 +10,12 @@
 
     <div class="relative text-center px-4">
         {{-- Big 404 --}}
-        <div class="font-mono text-[8rem] md:text-[12rem] font-extrabold leading-none select-none" style="background: linear-gradient(180deg, #1e2a3a 0%, #0D1117 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        <div class="font-mono text-[10rem] md:text-[14rem] font-extrabold leading-none select-none mb-6" style="background: linear-gradient(180deg, #2a3a4f 0%, #1a2535 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
             404
         </div>
 
         {{-- Terminal style message --}}
-        <div class="inline-block bg-[#0D1117] border border-[#1e2a3a] rounded-xl px-6 py-4 mb-8 -mt-8 relative">
+        <div class="inline-block bg-[#0D1117] border border-[#1e2a3a] rounded-xl px-6 py-4 mb-10 relative">
             <div class="flex items-center gap-1.5 mb-3">
                 <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
                 <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
@@ -28,8 +28,8 @@
             </div>
         </div>
 
-        <h1 class="text-2xl md:text-3xl font-extrabold mb-3">This page doesn't exist.</h1>
-        <p class="text-gray-400 mb-8 max-w-md mx-auto">Looks like you hit a dead route. Let's get you back on track.</p>
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-4">This page doesn't exist.</h1>
+        <p class="text-gray-400 text-lg mb-10 max-w-md mx-auto">Looks like you hit a dead route. Let's get you back on track.</p>
 
         <div class="flex flex-wrap gap-4 justify-center">
             <a href="{{ route('home') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors">
