@@ -127,8 +127,11 @@
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay border-b border-[#1e2a3a]">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#4A7FBF]/5 via-transparent to-[#9D5175]/5"></div>
+    <div class="noise-overlay relative overflow-hidden border-b border-[#1e2a3a]">
+        {{-- Ambient glow --}}
+        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
@@ -309,7 +312,10 @@
     {{-- What I Believe In --}}
     <div class="border-t border-[#1e2a3a]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            <h2 class="text-2xl font-extrabold mb-10 text-center">What I Believe In</h2>
+            <div class="text-center mb-14">
+                <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Core Values</p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white">What I Believe In</h2>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="value-card p-6 rounded-2xl border border-[#1e2a3a] bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
@@ -360,7 +366,10 @@
     {{-- Tech Stack --}}
     <div class="border-t border-[#1e2a3a] dot-grid-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            <h2 class="text-2xl font-extrabold mb-10 text-center">What I Work With</h2>
+            <div class="text-center mb-14">
+                <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Toolbox</p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white">What I Work With</h2>
+            </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach([
                     ['name' => 'Laravel', 'desc' => 'My framework of choice since 2014'],
@@ -376,7 +385,7 @@
                     ['name' => 'Git', 'desc' => 'Version everything, always'],
                     ['name' => 'SQLite', 'desc' => 'Perfect for the right project'],
                 ] as $tech)
-                <div class="p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50">
+                <div class="value-card p-4 rounded-xl border border-[#1e2a3a] bg-[#0D1117]/50 hover:border-[#4A7FBF]/20">
                     <p class="font-semibold text-sm mb-0.5">{{ $tech['name'] }}</p>
                     <p class="text-xs text-gray-500">{{ $tech['desc'] }}</p>
                 </div>
@@ -386,11 +395,22 @@
     </div>
 
     {{-- CTA --}}
-    <div class="border-t border-[#1e2a3a]">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-            <h2 class="text-3xl font-extrabold mb-4">Want to work together?</h2>
+    <div class="relative border-t border-[#1e2a3a] overflow-hidden">
+        {{-- Floating orbs --}}
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>
+
+        <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Available for Projects
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Want to work together?</h2>
             <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
-            <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors text-lg">
+            <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-colors text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                 Hire Me
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
