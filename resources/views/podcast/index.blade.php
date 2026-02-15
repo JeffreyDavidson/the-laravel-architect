@@ -221,16 +221,18 @@
                                 ? ['Laravel', 'Architecture', 'Testing', 'Career', 'Guest Interviews']
                                 : ['Mental Health', 'Parenting', 'Resilience', 'Vulnerability', 'Real Talk'];
                             @endphp
-                            <div class="flex flex-wrap gap-2 {{ $index % 2 !== 0 ? 'md:justify-end' : '' }} justify-center md:justify-start mb-6">
+                            <div class="flex flex-wrap gap-2 justify-center {{ $index % 2 === 0 ? 'md:justify-start' : 'md:justify-end' }} mb-6">
                                 @foreach($topics as $topic)
                                 <span class="topic-pill px-3 py-1 text-xs rounded-full border" style="border-color: {{ $podcast->color }}25; color: {{ $podcast->color }}; background: {{ $podcast->color }}08;">{{ $topic }}</span>
                                 @endforeach
                             </div>
 
                             {{-- Listen CTA --}}
-                            <div class="inline-flex items-center gap-2 text-sm font-semibold" style="color: {{ $podcast->color }};">
-                                <span>View Show</span>
-                                <svg class="w-4 h-4 showcase-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                            <div class="flex {{ $index % 2 === 0 ? 'justify-start' : 'md:justify-end' }} justify-center">
+                                <div class="inline-flex items-center gap-2 text-sm font-semibold" style="color: {{ $podcast->color }};">
+                                    <span>View Show</span>
+                                    <svg class="w-4 h-4 showcase-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </div>
                             </div>
                         </div>
                     </div>
