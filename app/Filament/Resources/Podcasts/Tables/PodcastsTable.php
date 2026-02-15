@@ -17,6 +17,8 @@ class PodcastsTable
         return $table
             ->columns([
                 ImageColumn::make('cover_image')
+                    ->disk('public')
+                    ->visibility('public')
                     ->circular()
                     ->label(''),
                 TextColumn::make('name')
