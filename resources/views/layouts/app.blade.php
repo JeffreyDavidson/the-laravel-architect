@@ -1,11 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
-<script>
-    // Sync theme before paint to prevent flash
-    if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-        document.documentElement.classList.remove('dark');
-    }
-</script>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,10 +48,7 @@
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
-                    <button id="theme-toggle" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800/50 transition-colors" title="Toggle theme">
-                        <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                        <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    </button>
+{{-- Theme toggle disabled while light mode is WIP --}}
                     <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors">Contact Me</a>
                 </div>
             </div>
@@ -71,10 +62,7 @@
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
-                    <button class="theme-toggle-mobile flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                        <span class="theme-toggle-label">Light Mode</span>
-                    </button>
+{{-- Mobile theme toggle disabled while light mode is WIP --}}
                     <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors w-fit">Contact Me</a>
                 </div>
             </div>
@@ -87,27 +75,7 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-        // Theme toggle
-        function updateThemeIcons() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('theme-icon-dark').classList.toggle('hidden', isDark);
-            document.getElementById('theme-icon-light').classList.toggle('hidden', !isDark);
-            document.querySelectorAll('.theme-toggle-label').forEach(el => {
-                el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-            });
-            // Update theme-color meta
-            document.querySelector('meta[name="theme-color"]').content = isDark ? '#0D1117' : '#ffffff';
-        }
-
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.theme = isDark ? 'dark' : 'light';
-            updateThemeIcons();
-        }
-
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.querySelectorAll('.theme-toggle-mobile').forEach(el => el.addEventListener('click', toggleTheme));
-        updateThemeIcons();
+        // Theme toggle disabled while light mode is WIP
     </script>
 
     {{-- Content --}}
