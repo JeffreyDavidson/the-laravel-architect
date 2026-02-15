@@ -32,12 +32,44 @@ class BlogController extends Controller
 
         $post->load(['category', 'tags', 'author']);
 
+        // Same category first
         $relatedPosts = Post::published()
             ->where('id', '!=', $post->id)
             ->where('category_id', $post->category_id)
+            ->with(['category', 'tags'])
             ->latest('published_at')
             ->take(3)
             ->get();
+
+        // Fill with shared-tag posts if needed
+        if ($relatedPosts->count() < 3 && $post->tags->count()) {
+            $tagIds = $post->tags->pluck('id');
+            $exclude = $relatedPosts->pluck('id')->push($post->id);
+
+            $tagRelated = Post::published()
+                ->whereNotIn('id', $exclude)
+                ->withAnyTags($post->tags->toArray())
+                ->with(['category', 'tags'])
+                ->latest('published_at')
+                ->take(3 - $relatedPosts->count())
+                ->get();
+
+            $relatedPosts = $relatedPosts->merge($tagRelated);
+        }
+
+        // Fill with latest posts as last resort
+        if ($relatedPosts->count() < 3) {
+            $exclude = $relatedPosts->pluck('id')->push($post->id);
+
+            $latest = Post::published()
+                ->whereNotIn('id', $exclude)
+                ->with(['category', 'tags'])
+                ->latest('published_at')
+                ->take(3 - $relatedPosts->count())
+                ->get();
+
+            $relatedPosts = $relatedPosts->merge($latest);
+        }
 
         return view('blog.show', compact('post', 'relatedPosts'));
     }
