@@ -49,7 +49,7 @@
             <div class="flex flex-col md:flex-row items-start gap-8">
                 {{-- Artwork --}}
                 @if($podcast->cover_image)
-                <img src="{{ Storage::url($podcast->cover_image) }}" alt="{{ $podcast->name }}" class="w-40 h-40 rounded-2xl object-cover flex-shrink-0 shadow-2xl">
+                <img src="{{ asset($podcast->cover_image) }}" alt="{{ $podcast->name }}" class="w-40 h-40 rounded-2xl object-cover flex-shrink-0 shadow-2xl">
                 @else
                 <div class="w-40 h-40 rounded-2xl flex-shrink-0 shadow-2xl flex items-center justify-center" style="background: linear-gradient(135deg, {{ $podcast->color }}44, {{ $podcast->color }}11);">
                     <svg class="w-16 h-16" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
