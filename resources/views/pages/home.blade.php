@@ -573,9 +573,83 @@
     }
     :root {
         --project-title-color: #1f2328;
+        --card-bg: #f6f8fa;
+        --card-border: #d0d7de;
+        --card-text: #1f2328;
+        --card-text-muted: #424a53;
+        --input-bg: #f6f8fa;
     }
     .dark {
         --project-title-color: #ffffff;
+        --card-bg: rgba(26, 29, 33, 0.6);
+        --card-border: rgba(74, 127, 191, 0.15);
+        --card-text: #ffffff;
+        --card-text-muted: #8b949e;
+        --input-bg: #222529;
+    }
+
+    /* Force light mode on all card types */
+    :root:not(.dark) .gradient-border-card {
+        background: var(--card-bg) !important;
+        border-color: var(--card-border) !important;
+    }
+    :root:not(.dark) .gradient-border-card h2,
+    :root:not(.dark) .gradient-border-card h3 {
+        color: var(--card-text) !important;
+    }
+    :root:not(.dark) .gradient-border-card p {
+        color: var(--card-text-muted) !important;
+    }
+
+    /* Service cards terminal commands keep dark bg */
+    :root:not(.dark) .service-card-v2 .font-mono {
+        background: #0d1117;
+    }
+
+    /* Blog post cards */
+    :root:not(.dark) .blog-featured,
+    :root:not(.dark) .blog-posts-rest article {
+        background: var(--card-bg) !important;
+        border-color: var(--card-border) !important;
+    }
+
+    /* Newsletter */
+    :root:not(.dark) .newsletter-input {
+        background: var(--input-bg) !important;
+        border-color: var(--card-border) !important;
+        color: var(--card-text) !important;
+    }
+
+    /* Testimonials */
+    :root:not(.dark) .testimonial-card p {
+        color: var(--card-text-muted) !important;
+    }
+    :root:not(.dark) .testimonial-card .text-sm.font-semibold {
+        color: var(--card-text) !important;
+    }
+
+    /* YouTube thumbnail cards */
+    :root:not(.dark) .thumbnail-card {
+        background: var(--card-bg) !important;
+        border-color: var(--card-border) !important;
+    }
+    :root:not(.dark) .thumbnail-card p.font-bold {
+        color: var(--card-text) !important;
+    }
+
+    /* Countdown digits */
+    :root:not(.dark) .countdown-digit {
+        background: var(--card-bg) !important;
+        border-color: var(--card-border) !important;
+    }
+    :root:not(.dark) .countdown-digit span {
+        color: var(--card-text) !important;
+        -webkit-text-fill-color: var(--card-text) !important;
+    }
+
+    /* CTA heading */
+    :root:not(.dark) .text-gray-300 {
+        color: #424a53;
     }
 
     /* Keep hero dark in light mode */
