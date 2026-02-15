@@ -40,4 +40,8 @@ return [
         'channel_id' => env('YOUTUBE_CHANNEL_ID', 'UC42H30o7l5QvvCzC86dSu_A'),
     ],
 
+    'fathom' => [
+        'site_id' => env('FATHOM_SITE_ID'),
+    ],
+
 ];
