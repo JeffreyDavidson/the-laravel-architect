@@ -718,9 +718,48 @@
         -webkit-text-fill-color: var(--card-text) !important;
     }
 
-    /* CTA heading */
-    :root:not(.dark) .text-gray-300 {
-        color: #424a53;
+    /* Podcast cards — override inline style backgrounds */
+    :root:not(.dark) .podcast-card-coffee,
+    :root:not(.dark) .podcast-card-cloudy {
+        background: #ffffff !important;
+        border-color: #e5e7eb !important;
+    }
+    :root:not(.dark) .podcast-card-coffee:hover {
+        border-color: rgba(74,127,191,0.4) !important;
+        box-shadow: 0 10px 30px rgba(74,127,191,0.08);
+    }
+    :root:not(.dark) .podcast-card-cloudy:hover {
+        border-color: rgba(196,112,136,0.4) !important;
+        box-shadow: 0 10px 30px rgba(196,112,136,0.08);
+    }
+
+    /* YouTube section light mode */
+    :root:not(.dark) .youtube-section .countdown-digit {
+        background: #f6f8fa !important;
+        border: 1px solid #d0d7de !important;
+    }
+    :root:not(.dark) .youtube-section .countdown-digit span {
+        color: #1f2328 !important;
+        -webkit-text-fill-color: #1f2328 !important;
+    }
+    :root:not(.dark) .youtube-section .text-gray-500,
+    :root:not(.dark) .youtube-section .text-gray-400 {
+        color: #656d76 !important;
+    }
+
+    /* YouTube video player area — keep dark */
+    :root:not(.dark) .youtube-section .bg-\[\#0a0e14\] {
+        background: #0a0e14 !important;
+    }
+
+    /* Grid pattern invisible on white bg */
+    :root:not(.dark) .cta-section > .absolute {
+        opacity: 0 !important;
+    }
+
+    /* CTA section "Let's Build" heading gradient works in both modes */
+    :root:not(.dark) .cta-section h2:first-of-type {
+        color: #1f2328;
     }
 
     /* Keep hero dark in light mode */
@@ -1449,7 +1488,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- Coffee podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-600/30 transition-all duration-300 hover:border-brand-600/50" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));" data-glow-card>
+            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-200 dark:border-brand-600/30 transition-all duration-300 hover:border-brand-600/50 bg-white dark:bg-transparent podcast-card-coffee" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));" data-glow-card>
                 <div class="flex items-start justify-between mb-4">
                     <img src="/images/podcast-coffee-logo.png" alt="Coffee With The Laravel Architect" class="w-16 h-16 rounded-xl object-cover">
                     <div class="flex items-end gap-1 h-8">
@@ -1468,7 +1507,7 @@
                 <span class="text-sm text-brand-400 group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
             </a>
             {{-- Cloudy Days podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-600/30 transition-all duration-300 hover:border-accent-600/50" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));" data-glow-card>
+            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-200 dark:border-accent-600/30 transition-all duration-300 hover:border-accent-600/50 bg-white dark:bg-transparent podcast-card-cloudy" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));" data-glow-card>
                 <div class="flex items-start justify-between mb-4">
                     <img src="/images/podcast-cloudy-logo-white.jpg" alt="Embracing Cloudy Days" class="w-16 h-16 rounded-xl object-cover">
                     <div class="flex items-end gap-1 h-8">
@@ -1555,38 +1594,38 @@
                 </span>
                 Launching March 2
             </div>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4 cursor-default">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 cursor-default">
                 Watch on <span class="glitch-text inline-block text-red-500">YouTube</span>
             </h2>
-            <p class="text-gray-400 max-w-xl mx-auto text-lg">
+            <p class="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
                 Tutorials, live coding, and honest conversations about building with Laravel.
             </p>
 
             {{-- Countdown timer --}}
             <div class="flex items-center justify-center gap-4 mt-8" x-data="countdown()" x-init="start()">
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="days">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Days</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="hours">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Hours</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="minutes">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Min</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-500 dark:text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
                         <span x-text="seconds">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Sec</p>
@@ -1596,7 +1635,7 @@
 
         {{-- Main video preview --}}
         <div class="relative">
-            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
+            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
                 <div class="relative aspect-video bg-[#0a0a0a]">
 
                     {{-- Mobile: Clean simple thumbnail --}}
@@ -1775,7 +1814,7 @@
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">12:34</div>
                     </div>
                     <div class="p-4">
-                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Testing Like You Mean It: 3 Suites, Zero Excuses</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Testing Like You Mean It: 3 Suites, Zero Excuses</p>
                         <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 2</p>
                     </div>
                 </div>
@@ -1787,7 +1826,7 @@
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">18:47</div>
                     </div>
                     <div class="p-4">
-                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Build a SaaS from Scratch with Laravel & Filament</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Build a SaaS from Scratch with Laravel & Filament</p>
                         <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 9</p>
                     </div>
                 </div>
@@ -1799,7 +1838,7 @@
                         <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">24:12</div>
                     </div>
                     <div class="p-4">
-                        <p class="text-sm font-bold text-white mb-1 line-clamp-2">Why I Left CodeIgniter (And Never Looked Back)</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Why I Left CodeIgniter (And Never Looked Back)</p>
                         <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 16</p>
                     </div>
                 </div>
@@ -1856,7 +1895,7 @@ function countdown() {
             <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 @csrf
                 <input type="email" name="email" placeholder="you@example.com" required
-                    class="newsletter-input flex-1 px-4 py-3 bg-brand-800 border border-brand-700/50 rounded-lg text-white placeholder-gray-500 text-sm transition-all">
+                    class="newsletter-input flex-1 px-4 py-3 bg-gray-100 dark:bg-brand-800 border border-gray-300 dark:border-brand-700/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 text-sm transition-all">
                 <button type="submit" class="magnetic-btn glow-btn px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg text-sm transition-all">
                     Subscribe
                 </button>
@@ -1887,14 +1926,14 @@ function countdown() {
                 @foreach($testimonials as $testimonial)
                 <div class="testimonial-card fade-up">
                     <div class="flex-1">
-                        <p class="text-gray-300 text-sm leading-relaxed">"{{ $testimonial->body }}"</p>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">"{{ $testimonial->body }}"</p>
                     </div>
-                    <div class="flex items-center gap-3 mt-auto pt-5 border-t border-white/5">
+                    <div class="flex items-center gap-3 mt-auto pt-5 border-t border-gray-200 dark:border-white/5">
                         <div class="w-10 h-10 rounded-full bg-[#4A7FBF]/20 flex items-center justify-center text-[#4A7FBF] font-bold text-sm flex-shrink-0">
                             {{ collect(explode(' ', $testimonial->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('') }}
                         </div>
                         <div>
-                            <p class="text-white text-sm font-semibold">{{ $testimonial->name }}</p>
+                            <p class="text-gray-900 dark:text-white text-sm font-semibold">{{ $testimonial->name }}</p>
                             @if($testimonial->role || $testimonial->company)
                             <p class="text-gray-500 text-xs">{{ collect([$testimonial->role, $testimonial->company])->filter()->join(', ') }}</p>
                             @endif
@@ -1990,7 +2029,7 @@ function countdown() {
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
-            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border border-gray-200 dark:border-[#1e2a3a] hover:border-[#4A7FBF]/50 text-gray-300 hover:text-white font-semibold rounded-xl transition-all text-lg">
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border border-gray-200 dark:border-[#1e2a3a] hover:border-[#4A7FBF]/50 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-semibold rounded-xl transition-all text-lg">
                 View My Work
             </a>
         </div>
