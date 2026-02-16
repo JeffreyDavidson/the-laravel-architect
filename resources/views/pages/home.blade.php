@@ -719,11 +719,26 @@
     :root:not(.dark) .service-card-v2 .font-mono .text-gray-500 {
         color: #656d76 !important;
     }
+    /* Light mode: "php artisan" colored text needs darker versions */
+    :root:not(.dark) .service-card-v2 .font-mono .text-brand-400 {
+        color: #2d6aa3 !important;
+    }
+    :root:not(.dark) .service-card-v2 .font-mono .text-accent-400 {
+        color: #a3456a !important;
+    }
     :root:not(.dark) .service-card-v2 .font-mono .text-green-400 {
         color: #1a7f37 !important;
     }
-    :root:not(.dark) .service-card-v2 .font-mono .font-bold {
+    :root:not(.dark) .service-card-v2 .font-mono [style*="color: #fbbf24"] {
+        color: #92600a !important;
+    }
+    /* Light mode: command word (build/modernize/teach/review) — was text-white */
+    :root:not(.dark) .service-card-v2 .font-mono .text-white {
         color: #1f2328 !important;
+    }
+    /* Light mode: cursor */
+    :root:not(.dark) .service-card-v2 .font-mono .animate-pulse {
+        opacity: 0.6;
     }
     
     /* YouTube video player area — always dark (it's simulating a video) */
