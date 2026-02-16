@@ -663,7 +663,29 @@
     
     /* Components that need CSS variables but also explicit overrides */
     :root:not(.dark) .service-card-v2 {
-        border-top: 3px solid var(--card-color);
+        background: #ffffff !important;
+        border: 1px solid rgba(0,0,0,0.08) !important;
+        border-top: 3px solid var(--card-color) !important;
+    }
+    :root:not(.dark) .service-card-v2:hover {
+        background: #f6f8fa !important;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.08), 0 0 40px var(--card-glow) !important;
+    }
+    :root:not(.dark) .service-card-v2 .service-number {
+        color: #000000 !important;
+        opacity: 0.04 !important;
+    }
+    :root:not(.dark) .service-card-v2 h3 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .service-card-v2 p {
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .service-card-v2 .service-orb {
+        opacity: 0.08 !important;
+    }
+    :root:not(.dark) .service-card-v2:hover .service-orb {
+        opacity: 0.15 !important;
     }
     
     /* Newsletter card special styling */
