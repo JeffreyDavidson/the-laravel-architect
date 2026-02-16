@@ -127,7 +127,7 @@
                     </div>
                 </div>
 
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-5 tracking-tight">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
                     <span class="bg-gradient-to-r from-gray-900 via-gray-900 to-gray-500 dark:from-white dark:via-white dark:to-gray-400 bg-clip-text text-transparent">Things I've Built</span>
                 </h1>
                 <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">From passion projects to production platforms — each one a lesson in architecture, testing, and building things that last.</p>
