@@ -882,6 +882,10 @@
         border-color: rgba(239,68,68,0.3) !important;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
+    :root:not(.dark) .yt-duration-badge {
+        background: rgba(0,0,0,0.6) !important;
+        color: #ffffff !important;
+    }
     
     /* Countdown digits use theme variables */
     .countdown-digit {
@@ -2062,11 +2066,25 @@
         <div class="mt-12">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Coming to the Channel</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {{-- Thumbnail 1 --}}
+                {{-- Thumbnail 1: Testing --}}
                 <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
                     <div class="aspect-video relative overflow-hidden">
-                        <img src="/images/yt-thumb-testing.png" alt="Testing Like You Mean It" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">12:34</div>
+                        {{-- Dark mode: actual thumbnail --}}
+                        <img src="/images/yt-thumb-testing.png" alt="Testing Like You Mean It" class="w-full h-full object-cover hidden dark:block">
+                        {{-- Light mode: branded card --}}
+                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7, #d1fae5);">
+                            <div class="absolute inset-0 flex flex-col justify-between p-5">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-green-600/10 text-green-700 border border-green-500/20">Testing</span>
+                                    <svg class="w-8 h-8 text-green-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-extrabold text-green-900 leading-tight">Testing Like<br>You Mean It</p>
+                                    <p class="text-xs text-green-700/60 mt-1">3 Suites, Zero Excuses</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">12:34</div>
                     </div>
                     <div class="p-4">
                         <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Testing Like You Mean It: 3 Suites, Zero Excuses</p>
@@ -2074,11 +2092,25 @@
                     </div>
                 </div>
 
-                {{-- Thumbnail 2 --}}
+                {{-- Thumbnail 2: SaaS --}}
                 <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
                     <div class="aspect-video relative overflow-hidden">
-                        <img src="/images/yt-thumb-saas.png" alt="Build a SaaS from Scratch" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">18:47</div>
+                        {{-- Dark mode: actual thumbnail --}}
+                        <img src="/images/yt-thumb-saas.png" alt="Build a SaaS from Scratch" class="w-full h-full object-cover hidden dark:block">
+                        {{-- Light mode: branded card --}}
+                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #eff6ff, #dbeafe, #bfdbfe);">
+                            <div class="absolute inset-0 flex flex-col justify-between p-5">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-blue-600/10 text-blue-700 border border-blue-500/20">Full Build</span>
+                                    <svg class="w-8 h-8 text-blue-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-extrabold text-blue-900 leading-tight">Build a SaaS<br>from Scratch</p>
+                                    <p class="text-xs text-blue-700/60 mt-1">Laravel & Filament</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">18:47</div>
                     </div>
                     <div class="p-4">
                         <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Build a SaaS from Scratch with Laravel & Filament</p>
@@ -2086,11 +2118,25 @@
                     </div>
                 </div>
 
-                {{-- Thumbnail 3 --}}
+                {{-- Thumbnail 3: CodeIgniter --}}
                 <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
                     <div class="aspect-video relative overflow-hidden">
-                        <img src="/images/yt-thumb-codeigniter.png" alt="Why I Left CodeIgniter" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-mono text-gray-400">24:12</div>
+                        {{-- Dark mode: actual thumbnail --}}
+                        <img src="/images/yt-thumb-codeigniter.png" alt="Why I Left CodeIgniter" class="w-full h-full object-cover hidden dark:block">
+                        {{-- Light mode: branded card --}}
+                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #fef2f2, #fecaca, #fca5a5);">
+                            <div class="absolute inset-0 flex flex-col justify-between p-5">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-700 border border-red-500/20">Story</span>
+                                    <svg class="w-8 h-8 text-red-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-extrabold text-red-900 leading-tight">Why I Left<br>CodeIgniter</p>
+                                    <p class="text-xs text-red-700/60 mt-1">And Never Looked Back</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">24:12</div>
                     </div>
                     <div class="p-4">
                         <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Why I Left CodeIgniter (And Never Looked Back)</p>
