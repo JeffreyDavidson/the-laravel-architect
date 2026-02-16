@@ -86,7 +86,7 @@
     <div class="hidden dark:block absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #E47A9D, transparent 70%);"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 w-full">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-28 w-full">
         <div class="flex flex-col lg:flex-row items-start justify-between gap-12">
             <div class="max-w-2xl">
                 {{-- Mini terminal --}}
@@ -123,7 +123,7 @@
 
 {{-- ===== PROJECTS ===== --}}
 <section class="dot-grid-bg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-20">
         <div x-data="{ filter: 'all' }">
             {{-- Filter Tabs --}}
             <x-projects.filter-tabs />
