@@ -17,12 +17,27 @@
     }
     .dot-grid-bg > * { position: relative; z-index: 1; }
     .blog-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
     }
     .blog-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
         border-color: #4A7FBF33;
+    }
+    .blog-card-wrapper {
+        display: grid;
+        grid-template-rows: 1fr;
+        opacity: 1;
+        transition: grid-template-rows 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+    }
+    .blog-card-wrapper.collapsed {
+        grid-template-rows: 0fr;
+        opacity: 0;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    .blog-card-wrapper > div {
+        overflow: hidden;
     }
     .category-pill {
         transition: all 0.2s ease;
@@ -42,6 +57,9 @@
     :root:not(.dark) .blog-card:hover {
         box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
         border-color: rgba(74, 127, 191, 0.2);
+    }
+    :root:not(.dark) .blog-card-wrapper.collapsed {
+        margin-top: 0 !important;
     }
 </style>
 
@@ -117,16 +135,12 @@
         </div>
 
         {{-- Posts --}}
-        <div class="space-y-6">
+        <div class="flex flex-col gap-6">
             @forelse($posts as $post)
-            <div x-show="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' })"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
-                class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
+            <div :class="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' }) ? 'blog-card-wrapper' : 'blog-card-wrapper collapsed'"
+                class="blog-card-wrapper">
+              <div>
+                <div class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
                         @if($post->category)
@@ -150,6 +164,8 @@
                         @endforeach
                     </div>
                 </div>
+                </div>
+              </div>
             </div>
             @empty
             <div class="text-center py-20">
