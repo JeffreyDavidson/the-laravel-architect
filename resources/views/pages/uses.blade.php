@@ -73,7 +73,7 @@
                 <div class="flex items-center gap-3 mb-4">
                     <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
                         <span class="text-[#4A7FBF]">$</span>
-                        <span>cat ~/.uses</span>
+                        <span>php artisan uses:list</span>
                         <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
                     </div>
                 </div>
