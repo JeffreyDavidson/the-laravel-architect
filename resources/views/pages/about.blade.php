@@ -209,7 +209,7 @@
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
                     <div class="holo-border relative">
-                        <div class="trading-card-inner relative w-[260px] md:w-[280px] lg:w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
+                        <div class="trading-card-inner relative w-[220px] md:w-[240px] lg:w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
 
                             {{-- Top holographic stripe --}}
                             <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
