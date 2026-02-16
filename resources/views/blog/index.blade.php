@@ -33,10 +33,20 @@
         border-color: #4A7FBF;
         color: #4A7FBF;
     }
+    
+    /* Light mode overrides */
+    :root:not(.dark) .noise-overlay::after,
+    :root:not(.dark) .dot-grid-bg::before {
+        display: none !important;
+    }
+    :root:not(.dark) .blog-card:hover {
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+        border-color: rgba(74, 127, 191, 0.2);
+    }
 </style>
 
 {{-- Hero --}}
-<div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
+<div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
     <div class="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
@@ -54,7 +64,7 @@
 </div>
 
 {{-- Content --}}
-<div class="dot-grid-bg" x-data="{
+<div class="dot-grid-bg bg-gray-50 dark:bg-transparent" x-data="{
     activeCategory: 'all',
     search: '',
     posts: [

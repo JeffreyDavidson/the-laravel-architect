@@ -580,6 +580,68 @@
     :root:not(.dark) .section-divider {
         display: none !important;
     }
+    /* Light mode service cards */
+    :root:not(.dark) .service-card-v2 {
+        background: rgba(255,255,255,0.9) !important;
+        border: 1px solid rgba(0,0,0,0.08) !important;
+    }
+    :root:not(.dark) .service-card-v2:hover {
+        background: rgba(255,255,255,0.95) !important;
+        border-color: var(--card-color) !important;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow) !important;
+    }
+    :root:not(.dark) .service-card-v2 h3 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .service-card-v2 p {
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .service-number {
+        color: rgba(0,0,0,0.04) !important;
+    }
+    /* Light mode podcast cards */
+    :root:not(.dark) .podcasts a[data-glow-card] {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.9)) !important;
+        border-color: rgba(0,0,0,0.08) !important;
+    }
+    :root:not(.dark) .podcasts a[data-glow-card] h3 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .podcasts a[data-glow-card] p {
+        color: #424a53 !important;
+    }
+    /* Light mode YouTube section */
+    :root:not(.dark) .youtube-section h2 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .youtube-section p {
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .youtube-section .countdown-digit span {
+        color: #1f2328 !important;
+    }
+    /* Light mode testimonials */
+    :root:not(.dark) .testimonials blockquote {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .testimonials .testimonial-card {
+        background: rgba(255,255,255,0.9) !important;
+        border: 1px solid rgba(0,0,0,0.08) !important;
+    }
+    :root:not(.dark) .testimonials .testimonial-card .border-t {
+        border-color: rgba(0,0,0,0.05) !important;
+    }
+    :root:not(.dark) .testimonials .rounded-2xl {
+        background: white !important;
+        border-color: rgba(0,0,0,0.08) !important;
+    }
+    /* Light mode CTA section */
+    :root:not(.dark) .cta-section h2 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .cta-section p {
+        color: #424a53 !important;
+    }
     :root {
         --project-title-color: #1f2328;
         --card-bg: #f6f8fa;
@@ -947,7 +1009,7 @@
 <div class="dark:hidden h-20 bg-gradient-to-b from-[#0D1117] to-white"></div>
 
 {{-- ===== TECH STACK MARQUEE ===== --}}
-<section class="py-8 overflow-hidden relative bg-white dark:bg-[#0D1117]">
+<section class="py-8 overflow-hidden relative bg-gray-50 dark:bg-[#0D1117]">
     <div class="marquee-fade-left"></div>
     <div class="marquee-fade-right"></div>
     <div class="marquee-track">
@@ -1005,7 +1067,7 @@
 </section>
 
 {{-- ===== STATS BAR ===== --}}
-<section class="py-10 sm:py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50">
+<section class="py-10 sm:py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50 bg-white dark:bg-transparent">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 gap-8 sm:flex sm:items-center sm:justify-between fade-up">
             <div class="text-center">
@@ -1036,7 +1098,7 @@
 
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
-<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
+<section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
@@ -1203,7 +1265,7 @@
     }
 </style>
 
-<section class="py-12 sm:py-20 noise-overlay">
+<section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14 fade-up">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
@@ -1323,7 +1385,7 @@
 
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
-<section class="py-12 sm:py-20 dot-grid-bg">
+<section class="py-12 sm:py-20 dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
@@ -1379,7 +1441,7 @@
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== PODCASTS ===== --}}
-<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
+<section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
@@ -1476,7 +1538,7 @@
     }
 </style>
 
-<section class="relative py-12 sm:py-24 overflow-hidden">
+<section class="youtube-section relative py-12 sm:py-24 overflow-hidden bg-gray-50 dark:bg-transparent">
     {{-- Red ambient glow --}}
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
 
@@ -1771,7 +1833,7 @@ function countdown() {
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== NEWSLETTER ===== --}}
-<section class="py-12 sm:py-20 fade-up dot-grid-bg">
+<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="bg-gray-50 dark:bg-brand-900/50 border border-gray-200 dark:border-brand-800/50 rounded-2xl p-6 sm:p-10">
             <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -1804,7 +1866,7 @@ function countdown() {
 </section>
 
 {{-- ===== TESTIMONIALS ===== --}}
-<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
+<section class="testimonials py-12 sm:py-20 noise-overlay dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Personal Quote --}}
         <div class="text-center mb-16 fade-up">
@@ -1894,7 +1956,7 @@ function countdown() {
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== FINAL CTA ===== --}}
-<section class="relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a]">
+<section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
     {{-- Animated gradient orbs --}}
     <div class="hidden dark:block absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.07] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 4s;"></div>
     <div class="hidden dark:block absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 6s;"></div>

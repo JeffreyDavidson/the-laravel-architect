@@ -3,7 +3,7 @@
 @section('title', '404 — Page Not Found')
 
 @section('content')
-<div class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+<div class="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-white dark:bg-transparent">
     {{-- Ambient glow --}}
     <div class="hidden dark:block absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="hidden dark:block absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
