@@ -1962,21 +1962,21 @@ function countdown() {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
                             @error('name') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <input type="text" name="company" placeholder="Company" value="{{ old('company') }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
                         </div>
                     </div>
                     <div>
                         <input type="text" name="role" placeholder="Your role (e.g. CTO, Developer)" value="{{ old('role') }}"
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
                     </div>
                     <div>
                         <textarea name="body" rows="4" placeholder="What was it like working with me? *" required
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-white text-sm placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors resize-none">{{ old('body') }}</textarea>
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors resize-none">{{ old('body') }}</textarea>
                         @error('body') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="text-center">
@@ -2014,7 +2014,7 @@ function countdown() {
         </div>
 
         {{-- Headline with gradient text --}}
-        <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight">
+        <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
             Let's Build Something
             <span class="bg-gradient-to-r from-[#4A7FBF] via-[#E47A9D] to-[#4A7FBF] bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">Together</span>
         </h2>
