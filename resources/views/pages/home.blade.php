@@ -824,7 +824,7 @@
         --tw-ring-color: rgba(239,68,68,0.15) !important;
     }
     /* Subscribe button keeps white text on red */
-    :root:not(.dark) .yt-video-player .yt-subscribe {
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .yt-subscribe.text-white {
         color: #ffffff !important;
     }
     /* REC indicator */
