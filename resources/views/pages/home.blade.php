@@ -696,6 +696,15 @@
         background: #eaf3fa !important;
         border-color: #a8cce8 !important;
     }
+    :root:not(.dark) .newsletter-card h3 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .newsletter-card p {
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .newsletter-card svg {
+        color: #4a7fbf !important;
+    }
     :root:not(.dark) .newsletter-input {
         background: #ffffff !important;
         border-color: #a8cce8 !important;
