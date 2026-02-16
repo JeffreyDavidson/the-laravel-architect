@@ -225,8 +225,8 @@
                                 <div class="aspect-[4/3] bg-white">
                                     <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                 </div>
-                                {{-- Gradient overlay at bottom of image --}}
-                                <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-white dark:from-[#111820] to-transparent"></div>
+                                {{-- Gradient overlay at bottom of image (dark mode only) --}}
+                                <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-transparent dark:from-[#111820] dark:to-transparent"></div>
                             </div>
 
                             {{-- Name plate --}}
