@@ -693,28 +693,68 @@
                 </div>
 
                 {{-- Mobile Code Editor Preview --}}
-                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono" style="animation:none;">
+                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono" style="animation:none;" x-data="{ mobileTab: 'routes' }">
                     <div class="code-editor-bar px-3 py-2 flex items-center gap-2">
                         <div class="flex gap-1">
                             <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
                             <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
                             <span class="w-2 h-2 rounded-full bg-green-500/80"></span>
                         </div>
-                        <span class="code-editor-tab px-2 py-0.5 text-[10px] text-gray-300">Architect.php</span>
+                        <div class="flex items-center overflow-x-auto">
+                            <button @click="mobileTab = 'routes'" :class="mobileTab === 'routes' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                                <svg class="w-3 h-3 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
+                                web.php
+                            </button>
+                            <button @click="mobileTab = 'architect'" :class="mobileTab === 'architect' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                                <svg class="w-3 h-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
+                                Architect.php
+                            </button>
+                            <button @click="mobileTab = 'test'" :class="mobileTab === 'test' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                Test.php
+                            </button>
+                        </div>
                     </div>
-                    <div class="p-3 space-y-0.5">
+                    {{-- web.php --}}
+                    <div x-show="mobileTab === 'routes'" class="p-3 space-y-0.5">
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">ArchitectController</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 3</span><span>&nbsp;</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 4</span><span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 5</span><span>&nbsp;&nbsp;-><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>,</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'share'</span>]);</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/podcasts'</span>,</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'discuss'</span>]);</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
+                    </div>
+                    {{-- Architect.php --}}
+                    <div x-show="mobileTab === 'architect'" class="p-3 space-y-0.5">
                         <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span> <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$available_for_hire</span> = <span class="syn-keyword">true</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$skills</span> = [<span class="syn-string">'Laravel'</span>, <span class="syn-string">'PHP'</span>, ...];</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;<span class="syn-variable">$available</span> = <span class="syn-keyword">true</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;<span class="syn-variable">$skills</span> = [<span class="syn-string">'Laravel'</span>, ...];</span></div>
                         <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">philosophy</span>(): <span class="syn-class">string</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-string">'Build it clean, build it right,'</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. <span class="syn-string">' then teach someone how.'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">12</span><span><span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">philosophy</span>()</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span> <span class="syn-keyword">return</span> <span class="syn-string">'Build it</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">clean, build it right.'</span>;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
+                    </div>
+                    {{-- ArchitectTest.php --}}
+                    <div x-show="mobileTab === 'test'" class="p-3 space-y-0.5">
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">ArchitectTest</span> <span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">builds_clean</span>()</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span> = <span class="syn-class">Architect</span>::<span class="syn-method">hire</span>();</span></div>
+                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span>-><span class="syn-method">build</span>(<span class="syn-variable">$project</span>);</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$project</span>)</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeClean</span>()</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeTested</span>();</span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
+                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
                     </div>
                 </div>
 
