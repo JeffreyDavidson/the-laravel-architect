@@ -2207,17 +2207,18 @@ function countdown() {
 </section>
 
 {{-- ===== TESTIMONIALS ===== --}}
-<section class="testimonials py-12 sm:py-20 noise-overlay dot-grid-bg bg-gray-50 dark:bg-transparent">
+<section class="testimonials py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Personal Quote --}}
         <div class="text-center mb-16 fade-up">
-            <div class="inline-block mb-6">
-                <svg class="w-10 h-10 text-[#4A7FBF]/30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+            <div class="relative inline-block max-w-3xl mx-auto rounded-2xl border border-[#4A7FBF]/15 dark:border-[#4A7FBF]/10 bg-gradient-to-br from-[#4A7FBF]/[0.04] to-[#9D5175]/[0.03] dark:from-[#4A7FBF]/[0.06] dark:to-transparent p-10 md:p-14">
+                {{-- Decorative quote marks --}}
+                <svg class="w-14 h-14 text-[#4A7FBF]/20 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-6 leading-snug">
+                    Clean architecture, tested code, and honest conversations — that's what I bring to every project.
+                </blockquote>
+                <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
             </div>
-            <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-4 max-w-3xl mx-auto leading-snug">
-                Clean architecture, tested code, and honest conversations — that's what I bring to every project.
-            </blockquote>
-            <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
         </div>
 
         {{-- Approved Testimonials --}}
@@ -2249,12 +2250,15 @@ function countdown() {
 
         {{-- Submit Testimonial Form --}}
         <div class="max-w-2xl mx-auto fade-up">
-            <div class="rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8">
+            <div class="relative rounded-2xl border-t-[3px] border-t-[#4A7FBF] border border-[#4A7FBF]/10 dark:border-[#1e2a3a] dark:border-t-[#4A7FBF] bg-[#f0f6fc] dark:bg-[#0D1117] p-8 shadow-sm">
+                {{-- Subtle corner accent --}}
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#4A7FBF]/[0.06] to-transparent rounded-bl-full pointer-events-none"></div>
+
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h3>
-                <p class="text-gray-500 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
 
                 @if(session('testimonial_success'))
-                <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+                <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm text-center">
                     {{ session('testimonial_success') }}
                 </div>
                 @endif
@@ -2264,25 +2268,25 @@ function countdown() {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
-                            @error('name') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
+                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
+                            @error('name') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <input type="text" name="company" placeholder="Company" value="{{ old('company') }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
                         </div>
                     </div>
                     <div>
                         <input type="text" name="role" placeholder="Your role (e.g. CTO, Developer)" value="{{ old('role') }}"
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors">
+                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
                     </div>
                     <div>
                         <textarea name="body" rows="4" placeholder="What was it like working with me? *" required
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:outline-none transition-colors resize-none">{{ old('body') }}</textarea>
-                        @error('body') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
+                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all resize-none">{{ old('body') }}</textarea>
+                        @error('body') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
-                    <div class="text-center">
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-lg transition-colors text-sm">
+                    <div class="text-center pt-2">
+                        <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#4A7FBF] hover:bg-[#3a6faf] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                             Submit Testimonial
                         </button>
