@@ -424,7 +424,7 @@
     {{-- Fun Facts --}}
     <div class="border-t border-gray-200 dark:border-[#1e2a3a]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
                 <div>
                     <span class="text-2xl mb-1 block">☕</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Daily Coffee</p>
@@ -449,6 +449,11 @@
                     <span class="text-2xl mb-1 block">🏫</span>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Alma Mater</p>
                     <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Full Sail University</p>
+                </div>
+                <div>
+                    <span class="text-2xl mb-1 block">🏀</span>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Forever Fan</p>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1">Rock Chalk</p>
                 </div>
             </div>
         </div>
