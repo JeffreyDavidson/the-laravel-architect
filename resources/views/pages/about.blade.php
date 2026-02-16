@@ -202,14 +202,14 @@
         <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+            <div class="flex flex-col md:flex-row gap-12 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card --}}
                 <div class="flex-shrink-0 trading-card-tilt relative">
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
                     <div class="holo-border relative">
-                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
+                        <div class="trading-card-inner relative w-[260px] md:w-[280px] lg:w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
 
                             {{-- Top holographic stripe --}}
                             <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
@@ -243,27 +243,27 @@
                             <div class="px-4 pt-3 pb-4">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">PHP</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2008</span>
                                     </div>
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Laravel</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
                                     </div>
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Test Suites</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Test Suites</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">3</span>
                                     </div>
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Experience</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Experience</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">15+ yrs</span>
                                     </div>
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Location</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Location</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Florida</span>
                                     </div>
                                     <div class="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                        <span class="text-[10px] uppercase tracking-wider text-gray-600 block">Podcasts</span>
+                                        <span class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Podcasts</span>
                                         <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2</span>
                                     </div>
                                 </div>
@@ -276,8 +276,8 @@
                 </div>
 
                 {{-- Intro Text --}}
-                <div class="flex-1 text-center lg:text-left">
-                    <div class="flex items-center gap-3 mb-4 justify-center lg:justify-start">
+                <div class="flex-1 text-center md:text-left">
+                    <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
                         <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
                             <span class="text-[#4A7FBF]">$</span>
                             <span>php artisan about:me</span>
@@ -288,11 +288,11 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
-                    <div class="flex flex-wrap gap-4 justify-center lg:justify-start mt-6">
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start mt-6">
                         <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             Get in Touch
