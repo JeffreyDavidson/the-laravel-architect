@@ -24,8 +24,21 @@
     }
     .filter-tab.active {
         color: white;
-        background: rgba(74, 127, 191, 0.15);
+        background: #4A7FBF;
         border-color: #4A7FBF;
+    }
+    :root:not(.dark) .filter-tab {
+        color: #374151;
+        border-color: #d1d5db;
+    }
+    :root:not(.dark) .filter-tab.active {
+        color: white;
+        background: #4A7FBF;
+        border-color: #4A7FBF;
+    }
+    :root:not(.dark) .filter-tab:not(.active):hover {
+        border-color: #4A7FBF;
+        color: #4A7FBF;
     }
 
     /* Featured card */
@@ -42,7 +55,6 @@
     /* Light mode */
     :root:not(.dark) .featured-card:hover {
         box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
-    }
     }
     .featured-card:hover .card-arrow {
         transform: translateX(4px);
@@ -76,6 +88,18 @@
         background: rgba(74, 127, 191, 0.12);
         color: #4A7FBF;
         border-color: rgba(74, 127, 191, 0.3);
+    }
+    :root:not(.dark) .tech-pill {
+        color: #4b5563;
+        border-color: #d1d5db;
+        background: #f9fafb;
+    }
+    :root:not(.dark) .project-card,
+    :root:not(.dark) .featured-card {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    :root:not(.dark) .project-card:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
     }
 
     /* Terminal cursor blink */
