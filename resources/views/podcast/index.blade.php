@@ -125,7 +125,7 @@
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden min-h-[40vh] lg:min-h-[50vh] flex items-center border-b border-gray-200 dark:border-[#1e2a3a]">
+<section class="noise-overlay relative overflow-hidden flex items-center border-b border-gray-200 dark:border-[#1e2a3a]">
     {{-- Background gradients --}}
     <div class="absolute inset-0">
         <div class="hidden dark:block absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
@@ -178,9 +178,9 @@
 
 {{-- ===== PODCAST SHOWCASES ===== --}}
 <section class="dot-grid-bg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         @if($podcasts->count())
-        <div class="space-y-16">
+        <div class="space-y-10">
             @foreach($podcasts as $index => $podcast)
             <a href="{{ route('podcast.show', $podcast) }}" class="podcast-showcase group relative block rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
                 {{-- Glow --}}
