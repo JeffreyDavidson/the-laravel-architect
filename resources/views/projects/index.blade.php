@@ -115,36 +115,33 @@
     <div class="hidden dark:block absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #E47A9D, transparent 70%);"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 w-full">
-        <div class="flex flex-col lg:flex-row items-start justify-between gap-12">
-            <div class="max-w-2xl">
-                {{-- Mini terminal --}}
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
-                        <span class="text-[#4A7FBF]">$</span>
-                        <span>php artisan project:list</span>
-                        <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
-                    </div>
-                </div>
-
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Things I've Built</h1>
-                <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms — each one a lesson in architecture, testing, and building things that last.</p>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
+                <span class="text-[#4A7FBF]">$</span>
+                <span>php artisan project:list</span>
+                <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
             </div>
+        </div>
 
-            {{-- Stats cards --}}
-            <div class="flex gap-4 lg:pt-16">
-                <div class="px-6 py-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] text-center min-w-[100px]">
-                    <div class="text-3xl font-extrabold text-[#4A7FBF] font-mono">{{ $projects->count() }}</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">Projects</div>
-                </div>
-                <div class="px-6 py-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] text-center min-w-[100px]">
-                    <div class="text-3xl font-extrabold text-[#4A7FBF] font-mono">{{ $projects->where('is_featured', true)->count() }}</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">Featured</div>
-                </div>
-                <div class="px-6 py-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] text-center min-w-[100px]">
-                    <div class="text-3xl font-extrabold text-[#4A7FBF] font-mono">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">Technologies</div>
-                </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Things I've Built</h1>
+        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms — each one a lesson in architecture, testing, and building things that last.</p>
+
+        {{-- Stats --}}
+        <div class="flex items-center gap-6 mt-6 text-sm">
+            <div class="flex items-center gap-2 text-gray-500">
+                <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->count() }}</span>
+                <span>Projects</span>
+            </div>
+            <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+            <div class="flex items-center gap-2 text-gray-500">
+                <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->where('is_featured', true)->count() }}</span>
+                <span>Featured</span>
+            </div>
+            <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+            <div class="flex items-center gap-2 text-gray-500">
+                <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</span>
+                <span>Technologies</span>
             </div>
         </div>
     </div>
