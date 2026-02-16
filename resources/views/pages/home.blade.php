@@ -897,11 +897,7 @@
     }
     
     /* Podcast cards styling */
-    .podcast-card-coffee,
-    .podcast-card-cloudy {
-        background: var(--podcast-card-bg) !important;
-        border: 1px solid var(--podcast-card-border) !important;
-    }
+    /* Podcast card base — only override in light mode (dark mode uses inline gradient styles) */
     :root:not(.dark) .podcast-card-coffee {
         background: linear-gradient(135deg, rgba(74,127,191,0.06), rgba(74,127,191,0.02)) !important;
         border: 1px solid rgba(74,127,191,0.15) !important;
