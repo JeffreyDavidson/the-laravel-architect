@@ -747,11 +747,99 @@
         opacity: 0.6;
     }
     
-    /* YouTube video player area — always dark (it's simulating a video) */
-    .yt-video-player {
-        background: #0a0a0a !important;
-        color: #ffffff !important;
+    /* YouTube video player — light mode inversion */
+    :root:not(.dark) .yt-video-player {
+        background: #f6f8fa !important;
+        color: #1f2328 !important;
     }
+    /* Left: webcam/presenter side */
+    :root:not(.dark) .yt-video-player .yt-presenter {
+        background: #ffffff !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-presenter p.text-white\/60 {
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-presenter .border-white\/10 {
+        border-color: rgba(0,0,0,0.08) !important;
+    }
+    /* Divider */
+    :root:not(.dark) .yt-video-player .yt-divider {
+        background: #d0d7de !important;
+    }
+    /* Right: browser/editor side */
+    :root:not(.dark) .yt-video-player .yt-browser {
+        background: #ffffff !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-browser-chrome {
+        background: #f6f8fa !important;
+        border-bottom-color: #d0d7de !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-address-bar {
+        background: #eaeef2 !important;
+    }
+    /* Light syntax for the YouTube code preview */
+    :root:not(.dark) .yt-video-player .text-\[\#ff7b72\] { color: #cf222e !important; }
+    :root:not(.dark) .yt-video-player .text-\[\#d2a8ff\] { color: #8250df !important; }
+    :root:not(.dark) .yt-video-player .text-\[\#79c0ff\] { color: #0550ae !important; }
+    :root:not(.dark) .yt-video-player .text-\[\#a5d6ff\] { color: #0a3069 !important; }
+    :root:not(.dark) .yt-video-player .text-\[\#ffa657\] { color: #953800 !important; }
+    :root:not(.dark) .yt-video-player .text-gray-600 { color: #656d76 !important; }
+    :root:not(.dark) .yt-video-player .text-gray-500 { color: #656d76 !important; }
+    /* Terminal strip */
+    :root:not(.dark) .yt-video-player .yt-terminal {
+        background: #eaeef2 !important;
+        border-top-color: #d0d7de !important;
+        color: #424a53 !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-terminal .text-\[\#1e2a3a\] {
+        color: #d0d7de !important;
+    }
+    /* Cursor */
+    :root:not(.dark) .yt-video-player .bg-\[\#4A7FBF\] {
+        background: #0550ae !important;
+    }
+    /* Bottom overlay — keep dark gradient for video bar feel */
+    :root:not(.dark) .yt-video-player .yt-bottom-bar {
+        background: linear-gradient(to top, rgba(0,0,0,0.06), transparent) !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-white {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-400 {
+        color: #656d76 !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-500 {
+        color: #8b949e !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .bg-white\/10 {
+        background: rgba(0,0,0,0.08) !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .ring-red-500\/30 {
+        --tw-ring-color: rgba(239,68,68,0.2) !important;
+    }
+    /* REC indicator */
+    :root:not(.dark) .yt-video-player .text-red-500 {
+        color: #cf222e !important;
+    }
+    /* Coming Soon badge */
+    :root:not(.dark) .yt-video-player .text-red-400 {
+        color: #cf222e !important;
+    }
+    :root:not(.dark) .yt-video-player .bg-red-600\/10 {
+        background: rgba(207,34,46,0.08) !important;
+    }
+    /* Mobile thumbnail */
+    :root:not(.dark) .yt-video-player .text-white\/80 {
+        color: #1f2328 !important;
+    }
+    /* Play button glow toned down */
+    :root:not(.dark) .yt-video-player .bg-red-600 {
+        box-shadow: 0 0 30px rgba(239,68,68,0.2), 0 0 60px rgba(239,68,68,0.08) !important;
+    }
+    /* Ping rings more subtle */
+    :root:not(.dark) .yt-video-player .border-red-500\/10 { border-color: rgba(239,68,68,0.06) !important; }
+    :root:not(.dark) .yt-video-player .border-red-500\/15 { border-color: rgba(239,68,68,0.08) !important; }
+    :root:not(.dark) .yt-video-player .border-red-500\/20 { border-color: rgba(239,68,68,0.1) !important; }
     /* YouTube section light mode */
     :root:not(.dark) .youtube-section .absolute[style*="radial-gradient(circle, #ff0000"] {
         opacity: 0.03 !important;
@@ -1803,7 +1891,7 @@
                     {{-- Desktop: Split screen layout --}}
                     <div class="absolute inset-0 hidden md:flex">
                         {{-- Left: Presenter/webcam side --}}
-                        <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden">
+                        <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden yt-presenter">
                             {{-- Subtle grid pattern --}}
                             <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 20px 20px;"></div>
 
@@ -1827,19 +1915,19 @@
                         </div>
 
                         {{-- Divider --}}
-                        <div class="w-px bg-[#1e2a3a]"></div>
+                        <div class="w-px bg-[#1e2a3a] yt-divider"></div>
 
                         {{-- Right: Browser/editor side --}}
-                        <div class="flex-1 relative bg-[#0D1117] overflow-hidden flex flex-col">
+                        <div class="flex-1 relative bg-[#0D1117] overflow-hidden flex flex-col yt-browser">
                             {{-- Browser chrome --}}
-                            <div class="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-[#1e2a3a]">
+                            <div class="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-[#1e2a3a] yt-browser-chrome">
                                 <div class="flex gap-1.5">
                                     <div class="w-2.5 h-2.5 rounded-full bg-[#f85149]/60"></div>
                                     <div class="w-2.5 h-2.5 rounded-full bg-[#d29922]/60"></div>
                                     <div class="w-2.5 h-2.5 rounded-full bg-[#3fb950]/60"></div>
                                 </div>
                                 <div class="flex-1 mx-3">
-                                    <div class="bg-[#0D1117] rounded-md px-3 py-1 flex items-center gap-2">
+                                    <div class="bg-[#0D1117] rounded-md px-3 py-1 flex items-center gap-2 yt-address-bar">
                                         <svg class="w-3 h-3 text-green-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                         <span class="text-[10px] text-gray-500 font-mono">thelaravelarchitect.com</span>
                                     </div>
@@ -1883,7 +1971,7 @@
                             </div>
 
                             {{-- Terminal strip at bottom --}}
-                            <div class="px-4 py-2 bg-[#161b22] border-t border-[#1e2a3a] font-mono text-[10px] text-gray-600 flex items-center gap-3">
+                            <div class="px-4 py-2 bg-[#161b22] border-t border-[#1e2a3a] font-mono text-[10px] text-gray-600 flex items-center gap-3 yt-terminal">
                                 <span class="text-green-500">●</span>
                                 <span>PHP 8.4</span>
                                 <span class="text-[#1e2a3a]">|</span>
@@ -1917,7 +2005,7 @@
                     </div>
 
                     {{-- Video title overlay --}}
-                    <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
+                    <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10 yt-bottom-bar">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 md:gap-3 min-w-0">
                                 <img src="/images/logo-color.svg" alt="" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
