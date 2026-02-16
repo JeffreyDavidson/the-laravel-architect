@@ -798,9 +798,9 @@
     :root:not(.dark) .yt-video-player .bg-\[\#4A7FBF\] {
         background: #0550ae !important;
     }
-    /* Bottom overlay — keep dark gradient for video bar feel */
+    /* Bottom overlay — light frosted bar */
     :root:not(.dark) .yt-video-player .yt-bottom-bar {
-        background: linear-gradient(to top, rgba(0,0,0,0.06), transparent) !important;
+        background: linear-gradient(to top, rgba(246,248,250,0.95), rgba(246,248,250,0.7), transparent) !important;
     }
     :root:not(.dark) .yt-video-player .yt-bottom-bar .text-white {
         color: #1f2328 !important;
@@ -815,7 +815,12 @@
         background: rgba(0,0,0,0.08) !important;
     }
     :root:not(.dark) .yt-video-player .yt-bottom-bar .ring-red-500\/30 {
-        --tw-ring-color: rgba(239,68,68,0.2) !important;
+        --tw-ring-color: rgba(239,68,68,0.15) !important;
+    }
+    /* Subscribe button keeps white text on red */
+    :root:not(.dark) .yt-video-player .yt-bottom-bar .bg-red-600 .text-white,
+    :root:not(.dark) .yt-video-player .yt-bottom-bar span.bg-red-600 {
+        color: #ffffff !important;
     }
     /* REC indicator */
     :root:not(.dark) .yt-video-player .text-red-500 {
@@ -831,6 +836,10 @@
     /* Mobile thumbnail */
     :root:not(.dark) .yt-video-player .text-white\/80 {
         color: #1f2328 !important;
+    }
+    /* Progress bar track */
+    :root:not(.dark) .yt-video-player .yt-progress-track {
+        background: rgba(0,0,0,0.1) !important;
     }
     /* Play button glow toned down */
     :root:not(.dark) .yt-video-player .bg-red-600 {
@@ -2022,7 +2031,7 @@
                         {{-- Progress bar (desktop only) --}}
                         <div class="mt-3 hidden md:flex items-center gap-3">
                             <span class="text-[10px] text-gray-500 font-mono">0:00</span>
-                            <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                            <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden yt-progress-track">
                                 <div class="h-full w-0 rounded-full bg-red-600"></div>
                             </div>
                             <span class="text-[10px] text-gray-500 font-mono">2:47</span>
