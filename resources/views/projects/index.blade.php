@@ -125,7 +125,7 @@
         </div>
 
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Things I've Built</h1>
-        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms — each one a lesson in architecture, testing, and building things that last.</p>
+        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms. Each one a lesson in architecture, testing, and building things that last.</p>
 
         {{-- Stats --}}
         <div class="flex items-center gap-6 mt-6 text-sm">

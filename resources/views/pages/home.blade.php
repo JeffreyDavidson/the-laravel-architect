@@ -1581,7 +1581,7 @@
                 Services
             </div>
             <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">What I Do</h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues — I help teams build software they can be proud of.</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues, I help teams build software they can be proud of.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- Laravel Development --}}
@@ -1771,7 +1771,7 @@
                     </div>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life — one cup at a time.</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life. One cup at a time.</p>
                 @if(isset($coffeeEpisodeCount) && $coffeeEpisodeCount > 0)
                     <span class="text-xs text-brand-600 dark:text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
                 @endif
@@ -2228,7 +2228,7 @@ function countdown() {
                 {{-- Decorative quote marks --}}
                 <svg class="w-14 h-14 text-[#4A7FBF]/20 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
                 <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-6 leading-snug">
-                    Clean architecture, tested code, and honest conversations — that's what I bring to every project.
+                    Clean architecture, tested code, and honest conversations. That's what I bring to every project.
                 </blockquote>
                 <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
             </div>
