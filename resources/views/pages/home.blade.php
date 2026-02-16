@@ -52,9 +52,12 @@
 
     /* ===== Section Dividers ===== */
     .section-divider {
-        height: 80px;
+        height: 40px;
         position: relative;
         overflow: hidden;
+    }
+    @media (min-width: 640px) {
+        .section-divider { height: 80px; }
     }
     .section-divider-hero {
         background: linear-gradient(to bottom, transparent, #0D1117);
@@ -321,13 +324,16 @@
     /* ===== Stats Counter ===== */
     .stat-number {
         font-family: 'JetBrains Mono', ui-monospace, monospace;
-        font-size: 3rem;
+        font-size: 2rem;
         font-weight: 800;
         line-height: 1;
         background: linear-gradient(135deg, #ffffff 0%, #8b949e 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+    @media (min-width: 640px) {
+        .stat-number { font-size: 3rem; }
     }
     .stat-divider {
         width: 1px;
@@ -996,25 +1002,25 @@
 </section>
 
 {{-- ===== STATS BAR ===== --}}
-<section class="py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50">
+<section class="py-10 sm:py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between fade-up">
-            <div class="flex-1 text-center">
+        <div class="grid grid-cols-2 gap-8 sm:flex sm:items-center sm:justify-between fade-up">
+            <div class="text-center">
                 <div class="stat-number count-up" data-target="15">0</div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Years Experience</div>
             </div>
             <div class="stat-divider hidden sm:block"></div>
-            <div class="flex-1 text-center">
+            <div class="text-center">
                 <div class="stat-number count-up" data-target="4">0</div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Open Source Projects</div>
             </div>
             <div class="stat-divider hidden sm:block"></div>
-            <div class="flex-1 text-center">
+            <div class="text-center">
                 <div class="stat-number count-up" data-target="2">0</div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Podcasts Launching</div>
             </div>
             <div class="stat-divider hidden sm:block"></div>
-            <div class="flex-1 text-center">
+            <div class="text-center">
                 <div class="stat-number"><span class="count-up" data-target="1000">0</span><span style="background:linear-gradient(135deg,#fff,#8b949e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">+</span></div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Cups of Coffee</div>
             </div>
@@ -1027,10 +1033,10 @@
 
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
-<section class="py-20 noise-overlay dot-grid-bg">
+<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="bento-projects">
@@ -1192,7 +1198,7 @@
     }
 </style>
 
-<section class="py-20 noise-overlay">
+<section class="py-12 sm:py-20 noise-overlay">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14 fade-up">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
@@ -1287,10 +1293,10 @@
 
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
-<section class="py-20 dot-grid-bg">
+<section class="py-12 sm:py-20 dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="blog-posts-grid">
@@ -1343,10 +1349,10 @@
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== PODCASTS ===== --}}
-<section class="py-20 noise-overlay dot-grid-bg">
+<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1440,7 +1446,7 @@
     }
 </style>
 
-<section class="relative py-24 overflow-hidden">
+<section class="relative py-12 sm:py-24 overflow-hidden">
     {{-- Red ambient glow --}}
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
 
@@ -1467,28 +1473,28 @@
             {{-- Countdown timer --}}
             <div class="flex items-center justify-center gap-4 mt-8" x-data="countdown()" x-init="start()">
                 <div class="text-center">
-                    <div class="countdown-digit w-16 h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="days">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Days</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-16 h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="hours">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Hours</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-16 h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
                         <span x-text="minutes">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Min</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-16 h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-2xl font-mono font-bold text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
                         <span x-text="seconds">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Sec</p>
@@ -1726,9 +1732,9 @@ function countdown() {
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== NEWSLETTER ===== --}}
-<section class="py-20 fade-up dot-grid-bg">
+<section class="py-12 sm:py-20 fade-up dot-grid-bg">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="bg-gray-50 dark:bg-brand-900/50 border border-gray-200 dark:border-brand-800/50 rounded-2xl p-10">
+        <div class="bg-gray-50 dark:bg-brand-900/50 border border-gray-200 dark:border-brand-800/50 rounded-2xl p-6 sm:p-10">
             <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
             </svg>
@@ -1759,7 +1765,7 @@ function countdown() {
 </section>
 
 {{-- ===== TESTIMONIALS ===== --}}
-<section class="py-20 noise-overlay dot-grid-bg">
+<section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Personal Quote --}}
         <div class="text-center mb-16 fade-up">
