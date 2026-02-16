@@ -84,7 +84,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] mt-8 sm:mt-12 overflow-hidden">
+    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
         {{-- Subtle grid background --}}
         <div class="absolute inset-0 opacity-[0.015]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
 
