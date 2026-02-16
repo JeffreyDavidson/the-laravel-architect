@@ -322,8 +322,8 @@
                     </div>
                 </div>
 
-                {{-- Timeline sidebar --}}
-                <div class="lg:w-80 flex-shrink-0">
+                {{-- Timeline sidebar (vertical on mobile & large) --}}
+                <div class="lg:w-80 flex-shrink-0 hidden lg:block">
                     <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3">
                         <span class="w-8 h-8 rounded-lg bg-[#4A7FBF]/10 flex items-center justify-center">
                             <svg class="w-4 h-4 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -361,6 +361,94 @@
                             <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">The Laravel Architect</p>
                             <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube — building in public</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Horizontal timeline (md only) --}}
+            <div class="hidden md:block lg:hidden mt-16">
+                <h2 class="text-2xl font-extrabold mb-10 text-center text-gray-900 dark:text-white">Timeline</h2>
+                <div class="relative">
+                    {{-- Horizontal line --}}
+                    <div class="absolute left-0 right-0 top-1/2 h-0.5 bg-gradient-to-r from-transparent via-[#4A7FBF]/40 to-transparent"></div>
+
+                    <div class="grid grid-cols-6 gap-2">
+                        @php
+                            $timelineItems = [
+                                ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building for fun'],
+                                ['year' => '2012', 'title' => 'Full Sail University', 'desc' => 'B.S. Web Design & Dev'],
+                                ['year' => '2014', 'title' => 'Discovered Laravel 4.2', 'desc' => 'Everything clicked'],
+                                ['year' => '2015', 'title' => 'Moved to Florida', 'desc' => 'Packed up Kansas'],
+                                ['year' => '2017', 'title' => 'Daughter Viola born', 'desc' => 'Changed everything'],
+                                ['year' => '2026', 'title' => 'The Laravel Architect', 'desc' => 'Building in public'],
+                            ];
+                        @endphp
+
+                        @foreach($timelineItems as $i => $item)
+                            <div class="relative flex flex-col items-center {{ $i % 2 === 0 ? 'pt-0 pb-20' : 'pt-20 pb-0' }}">
+                                {{-- Content above or below --}}
+                                @if($i % 2 === 0)
+                                    <div class="text-center mb-4">
+                                        <span class="text-xs font-bold text-[#4A7FBF]">{{ $item['year'] }}</span>
+                                        <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1">{{ $item['title'] }}</p>
+                                        <p class="text-[10px] text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                    </div>
+                                @endif
+
+                                {{-- Dot --}}
+                                <div class="w-3 h-3 rounded-full bg-[#4A7FBF] shadow-[0_0_10px_rgba(74,127,191,0.4)] z-10 flex-shrink-0"></div>
+
+                                @if($i % 2 !== 0)
+                                    <div class="text-center mt-4">
+                                        <span class="text-xs font-bold text-[#4A7FBF]">{{ $item['year'] }}</span>
+                                        <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1">{{ $item['title'] }}</p>
+                                        <p class="text-[10px] text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- Vertical timeline (mobile only) --}}
+            <div class="md:hidden mt-12">
+                <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-[#4A7FBF]/10 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </span>
+                    Timeline
+                </h2>
+                <div class="space-y-6">
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">~2008</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Started writing PHP</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Self-taught, building things for fun</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">2012</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Full Sail University</p>
+                        <p class="text-xs text-gray-500 mt-0.5">B.S. in Web Design & Development</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">2014</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Discovered Laravel 4.2</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Everything clicked</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">2015</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Moved to Florida</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Packed up Kansas, headed south</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">2017</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">Daughter Viola born</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Changed everything</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="text-xs font-bold text-[#4A7FBF]">2026</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">The Laravel Architect</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube — building in public</p>
                     </div>
                 </div>
             </div>
