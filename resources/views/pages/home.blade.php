@@ -2302,20 +2302,20 @@ function countdown() {
 <div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== FINAL CTA ===== --}}
-<section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
+<section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
     {{-- Animated gradient orbs --}}
-    <div class="hidden dark:block absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.07] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 4s;"></div>
-    <div class="hidden dark:block absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 6s;"></div>
+    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.10] dark:opacity-[0.07] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 4s;"></div>
+    <div class="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.08] dark:opacity-[0.05] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 6s;"></div>
 
     {{-- Grid pattern --}}
-    <div class="absolute inset-0 opacity-[0.02]" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 60px 60px;"></div>
+    <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]" style="background-image: linear-gradient(#4A7FBF 1px, transparent 1px), linear-gradient(90deg, #4A7FBF 1px, transparent 1px); background-size: 60px 60px;"></div>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center relative z-10">
         {{-- Available badge --}}
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-400 text-xs font-semibold uppercase tracking-widest mb-8">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 dark:border-green-500/20 bg-green-500/10 dark:bg-green-500/5 text-green-600 dark:text-green-400 text-xs font-semibold uppercase tracking-widest mb-8">
             <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 dark:bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500 dark:bg-green-400"></span>
             </span>
             Available for Projects
         </div>
@@ -2323,7 +2323,7 @@ function countdown() {
         {{-- Headline with gradient text --}}
         <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
             Let's Build Something
-            <span class="bg-gradient-to-r from-[#4A7FBF] via-[#E47A9D] to-[#4A7FBF] bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">Together</span>
+            <span class="bg-gradient-to-r from-[#2d6aa3] via-[#c74b7a] to-[#2d6aa3] dark:from-[#4A7FBF] dark:via-[#E47A9D] dark:to-[#4A7FBF] bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">Together</span>
         </h2>
 
         <p class="text-gray-600 dark:text-gray-400 mb-12 max-w-lg mx-auto text-lg leading-relaxed">
@@ -2332,11 +2332,11 @@ function countdown() {
 
         {{-- Buttons --}}
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('contact') }}" class="magnetic-btn group inline-flex items-center gap-2 px-8 py-4 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <a href="{{ route('contact') }}" class="magnetic-btn group inline-flex items-center gap-2 px-8 py-4 bg-[#4A7FBF] hover:bg-[#3a6faf] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
-            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border border-gray-200 dark:border-[#1e2a3a] hover:border-[#4A7FBF]/50 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-semibold rounded-xl transition-all text-lg">
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-[#1e2a3a] hover:border-[#4A7FBF] dark:hover:border-[#4A7FBF]/50 text-gray-700 dark:text-gray-300 hover:text-[#4A7FBF] dark:hover:text-white font-semibold rounded-xl transition-all text-lg">
                 View My Work
             </a>
         </div>
