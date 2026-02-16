@@ -2,6 +2,116 @@
 
 @section('content')
 <style>
+    /* ===== CSS CUSTOM PROPERTIES - THEME SYSTEM ===== */
+    :root {
+        /* Backgrounds */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f6f8fa;
+        --bg-tertiary: #eaeef2;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f6f8fa;
+        --bg-inset: #f0f3f6;
+        
+        /* Text */
+        --text-primary: #1f2328;
+        --text-secondary: #424a53;
+        --text-tertiary: #656d76;
+        --text-muted: #8b949e;
+        
+        /* Borders */
+        --border-primary: #d0d7de;
+        --border-secondary: #e5e7eb;
+        --border-subtle: rgba(0,0,0,0.06);
+        
+        /* Brand colors for pills/links */
+        --brand-pill-text: #2d6aa3;
+        --brand-pill-bg: rgba(74,127,191,0.1);
+        --brand-pill-border: rgba(74,127,191,0.25);
+        --accent-pill-text: #a3456a;
+        --accent-pill-bg: rgba(196,112,136,0.1);
+        --accent-pill-border: rgba(196,112,136,0.25);
+        --green-pill-text: #16794a;
+        --green-pill-bg: rgba(22,121,74,0.08);
+        --green-pill-border: rgba(22,121,74,0.25);
+        --amber-pill-text: #a16207;
+        --amber-pill-bg: rgba(161,98,7,0.08);
+        --amber-pill-border: rgba(161,98,7,0.25);
+        
+        /* Specific components */
+        --newsletter-bg: #eaf3fa;
+        --newsletter-border: #a8cce8;
+        --testimonial-bg: #ffffff;
+        --testimonial-border: rgba(0,0,0,0.08);
+        --glass-card-bg: rgba(246,248,250,0.9);
+        --glass-card-border: rgba(0,0,0,0.1);
+        --podcast-card-bg: #ffffff;
+        --podcast-card-border: #e5e7eb;
+        --stat-gradient-from: #1f2328;
+        --stat-gradient-to: #656d76;
+        --marquee-bg: #f6f8fa;
+        --marquee-fade: #f6f8fa;
+        --section-divider-color: linear-gradient(to right, transparent, rgba(74,127,191,0.2), rgba(196,112,136,0.15), transparent);
+        --service-card-bg: #ffffff;
+        --service-card-border: rgba(0,0,0,0.08);
+        --service-card-hover-bg: #f6f8fa;
+        --countdown-bg: #f6f8fa;
+        --countdown-border: #d0d7de;
+        --youtube-card-bg: #ffffff;
+        --youtube-card-border: #e5e7eb;
+    }
+    
+    .dark {
+        --bg-primary: #0D1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #1a1d21;
+        --bg-card: rgba(26, 29, 33, 0.6);
+        --bg-card-hover: rgba(26, 29, 33, 0.8);
+        --bg-inset: #222529;
+        
+        --text-primary: #ffffff;
+        --text-secondary: #c9d1d9;
+        --text-tertiary: #8b949e;
+        --text-muted: #484f58;
+        
+        --border-primary: rgba(74, 127, 191, 0.15);
+        --border-secondary: rgba(255,255,255,0.06);
+        --border-subtle: rgba(255,255,255,0.03);
+        
+        --brand-pill-text: #7eb0dc;
+        --brand-pill-bg: rgba(74,127,191,0.1);
+        --brand-pill-border: rgba(74,127,191,0.2);
+        --accent-pill-text: #e0a0aa;
+        --accent-pill-bg: rgba(196,112,136,0.1);
+        --accent-pill-border: rgba(196,112,136,0.2);
+        --green-pill-text: #86efac;
+        --green-pill-bg: rgba(34,197,94,0.1);
+        --green-pill-border: rgba(34,197,94,0.2);
+        --amber-pill-text: #fcd34d;
+        --amber-pill-bg: rgba(245,158,11,0.1);
+        --amber-pill-border: rgba(245,158,11,0.2);
+        
+        --newsletter-bg: rgba(26, 29, 33, 0.5);
+        --newsletter-border: rgba(74, 127, 191, 0.15);
+        --testimonial-bg: rgba(22, 27, 34, 0.5);
+        --testimonial-border: rgba(74, 127, 191, 0.1);
+        --glass-card-bg: rgba(26, 29, 33, 0.6);
+        --glass-card-border: rgba(74, 127, 191, 0.15);
+        --podcast-card-bg: transparent;
+        --podcast-card-border: transparent;
+        --stat-gradient-from: #ffffff;
+        --stat-gradient-to: #8b949e;
+        --marquee-bg: #0D1117;
+        --marquee-fade: #0D1117;
+        --section-divider-color: linear-gradient(to bottom, #0D1117, rgba(13,17,23,0.95));
+        --service-card-bg: rgba(22, 27, 34, 0.6);
+        --service-card-border: rgba(74, 127, 191, 0.12);
+        --service-card-hover-bg: rgba(26, 29, 33, 0.8);
+        --countdown-bg: #111111;
+        --countdown-border: rgba(255,255,255,0.1);
+        --youtube-card-bg: rgba(26, 29, 33, 0.6);
+        --youtube-card-border: rgba(74, 127, 191, 0.15);
+    }
+
     /* ===== Gradient Mesh Hero Background ===== */
     @keyframes meshShift {
         0%, 100% { background-position: 0% 50%; }
@@ -60,13 +170,23 @@
         .section-divider { height: 80px; }
     }
     .section-divider-hero {
-        background: linear-gradient(to bottom, transparent, #0D1117);
+        background: linear-gradient(to bottom, transparent, var(--bg-primary));
     }
     .section-divider-dark {
-        background: linear-gradient(to bottom, #0D1117, rgba(13,17,23,0.95));
+        background: var(--section-divider-color);
     }
     .section-divider-cta {
-        background: linear-gradient(to bottom, #0D1117, #4A7FBF);
+        background: linear-gradient(to bottom, var(--bg-primary), #4A7FBF);
+    }
+    /* Light mode: thin divider lines instead of thick bands */
+    :root:not(.dark) .section-divider {
+        height: 1px !important;
+        background: var(--section-divider-color) !important;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+    :root:not(.dark) .section-divider-hero {
+        background: linear-gradient(to bottom, transparent, var(--bg-primary));
     }
 
     /* ===== Laravel Gradient Glow Text ===== */
@@ -193,10 +313,10 @@
 
     /* ===== Glassmorphism Cards with Cursor Glow ===== */
     .glass-card {
-        background: rgba(26, 29, 33, 0.6);
+        background: var(--glass-card-bg);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(74, 127, 191, 0.15);
+        border: 1px solid var(--glass-card-border);
         transition: all 0.4s ease;
         transform-style: preserve-3d;
         perspective: 800px;
@@ -214,13 +334,19 @@
         pointer-events: none;
         z-index: 1;
     }
-    .glass-card:hover::after {
+    /* Light mode: hide glow effect */
+    .dark .glass-card:hover::after {
         opacity: 1;
     }
     .glass-card:hover {
         border-color: rgba(74, 127, 191, 0.5);
         box-shadow: 0 0 30px rgba(74, 127, 191, 0.15), inset 0 0 30px rgba(74, 127, 191, 0.03);
         transform: rotateY(-2deg) rotateX(2deg) scale(1.02);
+    }
+    /* Light mode hover: different shadow */
+    :root:not(.dark) .glass-card:hover {
+        border-color: rgba(74, 127, 191, 0.3);
+        box-shadow: 0 0 30px rgba(74, 127, 191, 0.08), 0 10px 30px rgba(0,0,0,0.05);
     }
 
     /* ===== Gradient Top Border Cards with Cursor Glow ===== */
@@ -283,14 +409,14 @@
         gap: 0.75rem;
         padding: 0 2.5rem;
         white-space: nowrap;
-        color: #484f58;
+        color: var(--text-muted);
         font-size: 0.875rem;
         font-weight: 600;
         letter-spacing: 0.05em;
         transition: color 0.3s ease;
     }
     .marquee-item:hover {
-        color: #c9d1d9;
+        color: var(--text-secondary);
     }
     .marquee-item svg,
     .marquee-item img {
@@ -314,11 +440,11 @@
     }
     .marquee-fade-left {
         left: 0;
-        background: linear-gradient(to right, #0D1117, transparent);
+        background: linear-gradient(to right, var(--marquee-fade), transparent);
     }
     .marquee-fade-right {
         right: 0;
-        background: linear-gradient(to left, #0D1117, transparent);
+        background: linear-gradient(to left, var(--marquee-fade), transparent);
     }
 
     /* ===== Stats Counter ===== */
@@ -327,7 +453,7 @@
         font-size: 2rem;
         font-weight: 800;
         line-height: 1;
-        background: linear-gradient(135deg, #ffffff 0%, #8b949e 100%);
+        background: linear-gradient(135deg, var(--stat-gradient-from) 0%, var(--stat-gradient-to) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -338,14 +464,14 @@
     .stat-divider {
         width: 1px;
         height: 60px;
-        background: linear-gradient(to bottom, transparent, rgba(74,127,191,0.3), transparent);
+        background: linear-gradient(to bottom, transparent, var(--border-primary), transparent);
     }
 
     /* ===== Service Cards ===== */
     .service-card {
         position: relative;
-        background: rgba(22, 27, 34, 0.6);
-        border: 1px solid rgba(74, 127, 191, 0.12);
+        background: var(--service-card-bg);
+        border: 1px solid var(--service-card-border);
         border-radius: 1rem;
         padding: 2rem;
         transition: all 0.4s ease;
@@ -368,6 +494,11 @@
         transform: translateY(-4px);
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
+    /* Light mode service card hover */
+    :root:not(.dark) .service-card:hover {
+        background: var(--service-card-hover-bg);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow);
+    }
     .service-icon {
         width: 48px;
         height: 48px;
@@ -385,8 +516,8 @@
 
     /* ===== Testimonials ===== */
     .testimonial-card {
-        background: rgba(22, 27, 34, 0.5);
-        border: 1px solid rgba(74, 127, 191, 0.1);
+        background: var(--testimonial-bg);
+        border: 1px solid var(--testimonial-border);
         border-radius: 1rem;
         padding: 2rem;
         position: relative;
@@ -504,50 +635,15 @@
         }
     }
 
-    /* ===== Light Mode Overrides ===== */
-    :root:not(.dark) .section-divider-hero {
-        background: linear-gradient(to bottom, transparent, #ffffff);
-    }
-    :root:not(.dark) .section-divider-dark {
-        background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.95));
-    }
-    :root:not(.dark) .marquee-fade-left {
-        background: linear-gradient(to right, #ffffff, transparent);
-    }
-    :root:not(.dark) .marquee-fade-right {
-        background: linear-gradient(to left, #ffffff, transparent);
-    }
-    :root:not(.dark) .glass-card {
-        background: rgba(246,248,250,0.9) !important;
-        border: 1px solid rgba(0,0,0,0.1) !important;
-        backdrop-filter: none;
-    }
-    :root:not(.dark) .service-card-v2 {
-        background: rgba(255,255,255,0.9);
-    }
-    :root:not(.dark) .testimonial-card {
-        background: rgba(255,255,255,0.8);
-        border: 1px solid rgba(0,0,0,0.08);
-    }
-    :root:not(.dark) .stat-number {
-        background: linear-gradient(135deg, #1f2328 0%, #656d76 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    :root:not(.dark) .noise-overlay::after {
-        opacity: 0.02;
-    }
+    /* ===== CLEAN LIGHT MODE OVERRIDES ===== */
+    
+    /* Hide decorative elements in light mode */
+    :root:not(.dark) .noise-overlay::after,
     :root:not(.dark) .dot-grid-bg::before {
-        background-image: radial-gradient(circle, #000000 1px, transparent 1px);
-        opacity: 0.03;
+        display: none;
     }
-    :root:not(.dark) .marquee-item {
-        color: #8b949e;
-    }
-    :root:not(.dark) .marquee-item:hover {
-        color: #424a53;
-    }
+    
+    /* Light mode: marquee icon opacity adjustment */
     :root:not(.dark) .marquee-item svg,
     :root:not(.dark) .marquee-item img {
         opacity: 0.3;
@@ -556,288 +652,104 @@
     :root:not(.dark) .marquee-item:hover img {
         opacity: 0.7;
     }
-    :root:not(.dark) .glass-card:hover {
-        border-color: rgba(74, 127, 191, 0.3);
-        box-shadow: 0 0 30px rgba(74, 127, 191, 0.08), 0 10px 30px rgba(0,0,0,0.05);
+    
+    /* Light mode: alternating section backgrounds */
+    :root:not(.dark) section:nth-child(even):not(.hero-mesh) {
+        background: var(--bg-secondary) !important;
     }
+    :root:not(.dark) section:nth-child(odd):not(.hero-mesh) {
+        background: var(--bg-primary) !important;
+    }
+    
+    /* Components that need CSS variables but also explicit overrides */
     :root:not(.dark) .service-card-v2 {
-        border-color: rgba(0,0,0,0.08);
+        border-top: 3px solid var(--card-color);
     }
-    :root:not(.dark) .service-card-v2:hover {
-        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow);
+    
+    /* Newsletter card special styling */
+    .newsletter-card {
+        background: var(--newsletter-bg);
+        border: 1px solid var(--newsletter-border);
     }
-    :root:not(.dark) .stat-divider {
-        background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.1), transparent);
+    
+    /* Newsletter input styling */
+    .newsletter-input {
+        background: var(--bg-primary);
+        border: 1px solid var(--newsletter-border);
+        color: var(--text-primary);
     }
-    /* Light mode section backgrounds */
-    :root:not(.dark) section:not(.hero-mesh) {
-        background-color: #ffffff !important;
+    .newsletter-input:focus {
+        box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
+        outline: none;
     }
-    :root:not(.dark) .noise-overlay::after,
-    :root:not(.dark) .dot-grid-bg::before {
-        display: none !important;
-    }
-    :root:not(.dark) .section-divider {
-        display: none !important;
-    }
-    :root:not(.dark) .section-divider-light {
-        display: block !important;
-        height: 1px;
-        background: linear-gradient(to right, transparent, rgba(74,127,191,0.2), rgba(196,112,136,0.15), transparent);
-        max-width: 1280px;
-        margin: 0 auto;
-    }
-    /* Light mode service cards */
-    :root:not(.dark) .service-card-v2 {
-        background: rgba(255,255,255,0.9) !important;
-        border: 1px solid rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .service-card-v2:hover {
-        background: rgba(255,255,255,0.95) !important;
-        border-color: var(--card-color) !important;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow) !important;
-    }
-    :root:not(.dark) .service-card-v2 h3 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .service-card-v2 p {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .service-number {
-        color: rgba(0,0,0,0.04) !important;
-    }
-    /* Light mode podcast cards */
-    :root:not(.dark) .podcasts a[data-glow-card] {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.9)) !important;
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .podcasts a[data-glow-card] h3 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .podcasts a[data-glow-card] p {
-        color: #424a53 !important;
-    }
-    /* Light mode YouTube section */
-    :root:not(.dark) .youtube-section h2 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .youtube-section p {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .youtube-section .countdown-digit span {
-        color: #1f2328 !important;
-    }
-    /* Light mode testimonials */
-    :root:not(.dark) .testimonials blockquote {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .testimonials .testimonial-card {
-        background: rgba(255,255,255,0.9) !important;
-        border: 1px solid rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .testimonials .testimonial-card .border-t {
-        border-color: rgba(0,0,0,0.05) !important;
-    }
-    :root:not(.dark) .testimonials .rounded-2xl {
-        background: white !important;
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-    /* Light mode CTA section */
-    :root:not(.dark) .cta-section h2 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .cta-section p {
-        color: #424a53 !important;
-    }
-    :root {
-        --project-title-color: #1f2328;
-        --card-bg: #f6f8fa;
-        --card-border: #d0d7de;
-        --card-text: #1f2328;
-        --card-text-muted: #424a53;
-        --input-bg: #f6f8fa;
-    }
-    .dark {
-        --project-title-color: #ffffff;
-        --card-bg: rgba(26, 29, 33, 0.6);
-        --card-border: rgba(74, 127, 191, 0.15);
-        --card-text: #ffffff;
-        --card-text-muted: #8b949e;
-        --input-bg: #222529;
-    }
-
-    /* Force light mode on all card types */
-    :root:not(.dark) .gradient-border-card {
-        background: var(--card-bg) !important;
-        border-color: var(--card-border) !important;
-    }
-    :root:not(.dark) .gradient-border-card h2,
-    :root:not(.dark) .gradient-border-card h3 {
-        color: var(--card-text) !important;
-    }
-    :root:not(.dark) .gradient-border-card p {
-        color: var(--card-text-muted) !important;
-    }
-
+    
     /* Service cards terminal commands keep dark bg */
-    :root:not(.dark) .service-card-v2 .font-mono {
-        background: #0d1117;
+    .service-card-v2 .font-mono {
+        background: #0d1117 !important;
+        color: #c9d1d9 !important;
     }
-
-    /* Blog post cards */
-    :root:not(.dark) .blog-featured,
-    :root:not(.dark) .blog-posts-rest article {
-        background: var(--card-bg) !important;
-        border-color: var(--card-border) !important;
-    }
-
-    /* Newsletter card */
-    :root:not(.dark) .newsletter-card {
-        background: #eaf3fa !important;
-        border-color: #a8cce8 !important;
-    }
-    :root:not(.dark) .newsletter-card h3 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .newsletter-card p {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .newsletter-card svg {
-        color: #4a7fbf !important;
-    }
-    :root:not(.dark) .newsletter-input {
-        background: #ffffff !important;
-        border-color: #a8cce8 !important;
-        color: #1f2328 !important;
-    }
-
-    /* Testimonials */
-    :root:not(.dark) .testimonial-card p {
-        color: var(--card-text-muted) !important;
-    }
-    :root:not(.dark) .testimonial-card .text-sm.font-semibold {
-        color: var(--card-text) !important;
-    }
-
-    /* YouTube thumbnail cards */
-    :root:not(.dark) .thumbnail-card {
-        background: var(--card-bg) !important;
-        border-color: var(--card-border) !important;
-    }
-    :root:not(.dark) .thumbnail-card p.font-bold {
-        color: var(--card-text) !important;
-    }
-
-    /* Countdown digits */
-    :root:not(.dark) .countdown-digit {
-        background: var(--card-bg) !important;
-        border-color: var(--card-border) !important;
-    }
-    :root:not(.dark) .countdown-digit span {
-        color: var(--card-text) !important;
-        -webkit-text-fill-color: var(--card-text) !important;
-    }
-
-    /* Force section headings visible in light mode */
-    :root:not(.dark) h2.text-gray-900 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) p.text-gray-600 {
-        color: #424a53 !important;
-    }
-
-    /* Service card colored top border in light mode */
-    :root:not(.dark) .service-card-v2 {
-        border-top: 3px solid var(--card-color) !important;
-    }
-
-    /* Service card pills — unified color per card theme */
-    :root:not(.dark) .service-card-v2 .flex-wrap span {
-        font-weight: 700 !important;
-    }
-    :root:not(.dark) .service-card-v2 span[class*="text-brand-600"] {
-        color: #2d6aa3 !important;
-        background: rgba(74,127,191,0.1) !important;
-        border-color: rgba(74,127,191,0.25) !important;
-    }
-    :root:not(.dark) .service-card-v2 span[class*="text-accent-600"] {
-        color: #a3456a !important;
-        background: rgba(196,112,136,0.1) !important;
-        border-color: rgba(196,112,136,0.25) !important;
-    }
-    :root:not(.dark) .service-card-v2 span[class*="text-green-700"] {
-        color: #16794a !important;
-        background: rgba(22,121,74,0.08) !important;
-        border-color: rgba(22,121,74,0.25) !important;
-    }
-    :root:not(.dark) .service-card-v2 span[style*="color: #fcd34d"] {
-        color: #a16207 !important;
-        background: rgba(161,98,7,0.08) !important;
-        border-color: rgba(161,98,7,0.25) !important;
-    }
-
-    /* Service card CTA links — match pill color exactly */
-    :root:not(.dark) .service-arrow.text-brand-400 {
-        color: #2d6aa3 !important;
-    }
-    :root:not(.dark) .service-arrow.text-accent-400 {
-        color: #a3456a !important;
-    }
-    :root:not(.dark) .service-arrow.text-green-400 {
-        color: #16794a !important;
-    }
-    :root:not(.dark) .service-arrow[style*="color: #fbbf24"] {
-        color: #a16207 !important;
-    }
-
-    /* Podcast cards — override inline style backgrounds */
-    :root:not(.dark) .podcast-card-coffee,
-    :root:not(.dark) .podcast-card-cloudy {
-        background: #ffffff !important;
-        border-color: #e5e7eb !important;
-    }
-    :root:not(.dark) .podcast-card-coffee:hover {
-        border-color: rgba(74,127,191,0.4) !important;
-        box-shadow: 0 10px 30px rgba(74,127,191,0.08);
-    }
-    :root:not(.dark) .podcast-card-cloudy:hover {
-        border-color: rgba(196,112,136,0.4) !important;
-        box-shadow: 0 10px 30px rgba(196,112,136,0.08);
-    }
-
-    /* YouTube section light mode */
-    :root:not(.dark) .youtube-section .countdown-digit {
-        background: #f6f8fa !important;
-        border: 1px solid #d0d7de !important;
-    }
-    :root:not(.dark) .youtube-section .countdown-digit span {
-        color: #1f2328 !important;
-        -webkit-text-fill-color: #1f2328 !important;
-    }
-    :root:not(.dark) .youtube-section .text-gray-500,
-    :root:not(.dark) .youtube-section .text-gray-400 {
-        color: #656d76 !important;
-    }
-
+    
     /* YouTube video player area — keep dark */
-    :root:not(.dark) .youtube-section .bg-\[\#0a0e14\] {
-        background: #0a0e14 !important;
+    .youtube-section .bg-\[\#0a0a0a\],
+    .youtube-section .bg-\[\#0a0e14\] {
+        background: #0a0a0a !important;
     }
-
-    /* Grid pattern invisible on white bg */
+    
+    /* Countdown digits use theme variables */
+    .countdown-digit {
+        background: var(--countdown-bg);
+        border: 1px solid var(--countdown-border);
+    }
+    .countdown-digit span {
+        color: var(--text-primary);
+    }
+    
+    /* Podcast cards styling */
+    .podcast-card-coffee,
+    .podcast-card-cloudy {
+        background: var(--podcast-card-bg) !important;
+        border: 1px solid var(--podcast-card-border) !important;
+    }
+    
+    /* YouTube thumbnail cards */
+    .thumbnail-card {
+        background: var(--youtube-card-bg);
+        border: 1px solid var(--youtube-card-border);
+    }
+    
+    /* Grid pattern hidden on light bg */
     :root:not(.dark) .cta-section > .absolute {
         opacity: 0 !important;
     }
-
-    /* CTA section "Let's Build" heading gradient works in both modes */
-    :root:not(.dark) .cta-section h2:first-of-type {
-        color: #1f2328;
+    
+    /* Keep hero, footer, code editor dark in both modes */
+    .hero-mesh,
+    .code-editor,
+    footer {
+        background: #0D1117 !important;
+        color: #ffffff !important;
     }
-
-    /* Keep hero dark in light mode */
-    :root:not(.dark) .hero-mesh {
-        background: linear-gradient(-45deg, #0D1117, #1a1040, #0d2847, #1a0d30, #0D1117);
-        background-size: 400% 400%;
+    
+    /* Ensure pill colors use CSS variables */
+    .pill-brand {
+        color: var(--brand-pill-text);
+        background: var(--brand-pill-bg);
+        border-color: var(--brand-pill-border);
+    }
+    .pill-accent {
+        color: var(--accent-pill-text);
+        background: var(--accent-pill-bg);
+        border-color: var(--accent-pill-border);
+    }
+    .pill-green {
+        color: var(--green-pill-text);
+        background: var(--green-pill-bg);
+        border-color: var(--green-pill-border);
+    }
+    .pill-amber {
+        color: var(--amber-pill-text);
+        background: var(--amber-pill-bg);
+        border-color: var(--amber-pill-border);
     }
 </style>
 
