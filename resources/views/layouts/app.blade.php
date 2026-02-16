@@ -88,7 +88,7 @@
         {{-- Subtle grid background --}}
         <div class="absolute inset-0 opacity-[0.015]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-8">
 
             {{-- Top section: Brand + Newsletter --}}
             <div class="flex flex-col lg:flex-row justify-between gap-10 mb-14">
