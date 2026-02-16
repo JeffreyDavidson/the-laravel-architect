@@ -23,7 +23,7 @@ class PodcastSeeder extends Seeder
             'sort_order' => 1,
         ]);
 
-        $coverPath = public_path('images/podcasts/podcast-coffee-logo.png');
+        $coverPath = public_path('images/podcast-coffee-logo.png');
         if (file_exists($coverPath)) {
             $coffee->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
         }
@@ -42,7 +42,7 @@ class PodcastSeeder extends Seeder
             'sort_order' => 2,
         ]);
 
-        $coverPath = public_path('images/podcasts/podcast-cloudy-logo.png');
+        $coverPath = public_path('images/podcast-cloudy-logo.png');
         if (file_exists($coverPath)) {
             $cloudy->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
         }

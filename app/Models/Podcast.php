@@ -48,6 +48,22 @@ class Podcast extends Model implements HasMedia
         return $query->where('is_active', true);
     }
 
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        if ($this->hasMedia('cover_image')) {
+            return $this->getFirstMediaUrl('cover_image');
+        }
+
+        // Fallback to static files
+        $slug = $this->slug;
+        $map = [
+            'coffee-with-the-laravel-architect' => '/images/podcast-coffee-logo.png',
+            'embracing-cloudy-days' => '/images/podcast-cloudy-logo.png',
+        ];
+
+        return $map[$slug] ?? null;
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('cover_image')->singleFile();
