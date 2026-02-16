@@ -55,7 +55,7 @@
             <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
                 <span class="text-[#4A7FBF]">$</span>
                 <span>php artisan blog:latest</span>
-                <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF]">▊</span>
+                <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
             </div>
         </div>
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Blog</h1>
