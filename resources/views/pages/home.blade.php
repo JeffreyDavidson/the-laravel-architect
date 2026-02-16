@@ -818,8 +818,7 @@
         --tw-ring-color: rgba(239,68,68,0.15) !important;
     }
     /* Subscribe button keeps white text on red */
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .bg-red-600 .text-white,
-    :root:not(.dark) .yt-video-player .yt-bottom-bar span.bg-red-600 {
+    :root:not(.dark) .yt-video-player .yt-subscribe {
         color: #ffffff !important;
     }
     /* REC indicator */
@@ -2023,7 +2022,7 @@
                                     <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">The Laravel Architect · Channel Trailer</p>
                                 </div>
                             </div>
-                            <span class="px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
+                            <span class="yt-subscribe px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
                                 Subscribe
                             </span>
                         </div>
