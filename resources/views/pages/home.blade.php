@@ -468,9 +468,12 @@
     .bento-projects {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
+        gap: 1.5rem;
     }
     .bento-projects > :first-child {
+        grid-column: span 2;
+    }
+    .bento-projects > :nth-child(2):last-child {
         grid-column: span 2;
     }
     @media (max-width: 767px) {
@@ -1035,7 +1038,7 @@
 @if($featuredProjects->count())
 <section class="py-12 sm:py-20 noise-overlay dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-center justify-between mb-8">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
