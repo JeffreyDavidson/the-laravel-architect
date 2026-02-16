@@ -1041,7 +1041,7 @@
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="hero-mesh noise-overlay relative overflow-hidden min-h-screen flex items-center">
+<section class="hero-mesh noise-overlay relative overflow-hidden min-h-[70vh] lg:min-h-screen flex items-center">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
