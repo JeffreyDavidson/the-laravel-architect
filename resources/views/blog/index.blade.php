@@ -117,7 +117,7 @@
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-2"
                 class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
-                <div class="p-6 md:p-8">
+                <div class="p-5 md:p-6">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
                         @if($post->category)
                         <span class="text-xs font-semibold uppercase tracking-wider" style="color: #4A7FBF;">{{ $post->category->name }}</span>
