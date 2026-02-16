@@ -1411,7 +1411,7 @@
 @if($featuredProjects->count())
 <section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
@@ -1853,16 +1853,16 @@
     }
 </style>
 
-<section class="youtube-section relative py-12 sm:py-24 overflow-hidden bg-gray-50 dark:bg-transparent">
+<section class="youtube-section relative py-12 sm:py-20 overflow-hidden bg-gray-50 dark:bg-transparent">
     {{-- Red ambient glow --}}
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
 
     {{-- Scanlines --}}
     <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, #ffffff 2px, #ffffff 3px);"></div>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Section header with glitch --}}
-        <div class="text-center mb-14 yt-heading">
+        <div class="text-center mb-12 yt-heading">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
                 <span class="relative flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
@@ -2242,7 +2242,7 @@ function countdown() {
         @if($testimonials->count())
         <div class="mb-16">
             <h3 class="text-center text-sm font-semibold uppercase tracking-widest text-gray-600 mb-10">Kind Words from Colleagues & Collaborators</h3>
-            <div class="grid grid-cols-1 md:grid-cols-{{ min($testimonials->count(), 3) }} gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-{{ min($testimonials->count(), 3) }} gap-8">
                 @foreach($testimonials as $testimonial)
                 <div class="testimonial-card fade-up">
                     <div class="flex-1">
