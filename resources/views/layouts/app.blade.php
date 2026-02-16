@@ -116,9 +116,9 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-white dark:bg-brand-950">
+    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-brand-950 dark:to-brand-950">
         {{-- Subtle grid background --}}
-        <div class="absolute inset-0 opacity-[0.015]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.015]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 24px 24px;"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-8">
 
@@ -161,7 +161,7 @@
                 {{-- Links columns --}}
                 <div class="flex gap-10 sm:gap-16">
                     <div>
-                        <h4 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Navigate</h4>
+                        <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Navigate</h4>
                         <ul class="space-y-2 text-sm">
                             <li><a href="{{ route('blog.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a></li>
                             <li><a href="{{ route('podcast.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Podcasts</a></li>
@@ -171,7 +171,7 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Resources</h4>
+                        <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Resources</h4>
                         <ul class="space-y-2 text-sm">
                             <li><a href="{{ route('contact') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a></li>
                             <li><a href="/rss" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a></li>
@@ -182,7 +182,7 @@
             </div>
 
             {{-- Gradient line --}}
-            <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #4A7FBF33, #9D517533, #4A7FBF33, transparent);"></div>
+            <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #4A7FBF55, #9D517544, #4A7FBF55, transparent);"></div>
 
             {{-- Bottom bar --}}
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
