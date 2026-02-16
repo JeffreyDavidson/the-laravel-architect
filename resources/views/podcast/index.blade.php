@@ -29,6 +29,9 @@
         animation: waveform var(--dur, 1.2s) ease-in-out infinite;
         animation-delay: var(--delay, 0s);
     }
+    /* Light mode */
+    :root:not(.dark) .hero-bg { background: white !important; }
+    }
 
     /* Equalizer */
     .eq-bar {

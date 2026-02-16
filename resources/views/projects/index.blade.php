@@ -39,6 +39,11 @@
     .featured-card:hover .card-glow {
         opacity: 1;
     }
+    /* Light mode */
+    :root:not(.dark) .featured-card:hover {
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+    }
+    }
     .featured-card:hover .card-arrow {
         transform: translateX(4px);
     }
