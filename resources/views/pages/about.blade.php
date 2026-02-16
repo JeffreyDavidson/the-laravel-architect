@@ -260,7 +260,7 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl">
+                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
