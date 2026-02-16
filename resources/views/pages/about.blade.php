@@ -264,7 +264,7 @@
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
-                    <div class="font-mono text-sm text-gray-500 mt-6 mb-8 flex items-center gap-2 flex-wrap">
+                    <div class="font-mono text-sm text-gray-500 mt-6 mb-8 flex items-center justify-center lg:justify-start gap-2 flex-wrap">
                         <span class="text-[#4A7FBF]">$</span>
                         <span>whoami</span>
                         <span class="text-gray-600">→</span>
