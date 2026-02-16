@@ -1094,6 +1094,8 @@
         overflow: hidden;
         transition: all 0.4s ease;
         border: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        flex-direction: column;
     }
     .service-card-v2::before {
         content: '';
@@ -1226,7 +1228,7 @@
                     <span class="text-gray-500">$</span> <span class="text-brand-400">php artisan</span> <span class="text-white">build</span><span class="animate-pulse text-brand-400">▊</span>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Laravel Development</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">SaaS</span>
@@ -1252,7 +1254,7 @@
                     <span class="text-gray-500">$</span> <span class="text-accent-400">php artisan</span> <span class="text-white">modernize</span><span class="animate-pulse text-accent-400">▊</span>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Legacy Modernization</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Refactoring</span>
@@ -1277,7 +1279,7 @@
                     <span class="text-gray-500">$</span> <span class="text-green-400">php artisan</span> <span class="text-white">teach</span><span class="animate-pulse text-green-400">▊</span>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Content & Teaching</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
