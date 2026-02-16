@@ -1680,9 +1680,9 @@
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Consulting & Code Review</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Architecture audits, code reviews, and technical consulting to help your team ship better Laravel applications faster.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full" style="color: #fcd34d; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">Architecture</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full" style="color: #fcd34d; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">Code Review</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full" style="color: #fcd34d; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">Strategy</span>
+                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Architecture</span>
+                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Code Review</span>
+                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Strategy</span>
                 </div>
                 <a href="{{ route('contact') }}" class="service-arrow relative z-10" style="color: #fbbf24;">
                     Book a session <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
