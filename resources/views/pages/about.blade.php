@@ -279,21 +279,20 @@
 
                 {{-- Intro Text --}}
                 <div class="flex-1 text-center lg:text-left">
-                    <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">About Me</p>
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
+                    <div class="flex items-center gap-3 mb-4 justify-center lg:justify-start">
+                        <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
+                            <span class="text-[#4A7FBF]">$</span>
+                            <span>php artisan about:me</span>
+                            <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
+                        </div>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
-
-                    <div class="font-mono text-sm text-gray-500 mt-6 mb-8 flex items-center justify-center lg:justify-start gap-2 flex-wrap">
-                        <span class="text-[#4A7FBF]">$</span>
-                        <span>whoami</span>
-                        <span class="text-gray-600">→</span>
-                        <span class="text-gray-600 dark:text-gray-400">Laravel developer, dad, podcaster</span>
-                        <span class="animate-pulse text-[#4A7FBF]">▊</span>
-                    </div>
 
                     <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
                         <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
