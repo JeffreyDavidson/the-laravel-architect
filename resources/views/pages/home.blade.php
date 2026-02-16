@@ -1507,8 +1507,17 @@
             <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
                 <div class="relative aspect-video bg-[#0a0a0a]">
 
-                    {{-- Split screen layout --}}
-                    <div class="absolute inset-0 flex">
+                    {{-- Mobile: Clean simple thumbnail --}}
+                    <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
+                        <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-10 blur-[80px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
+                        <img src="/images/logo-color.svg" alt="" class="w-20 h-20 opacity-60 mb-4 relative z-10">
+                        <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
+                        <p class="text-gray-500 text-xs mt-1 relative z-10">Channel Trailer · 2:47</p>
+                    </div>
+
+                    {{-- Desktop: Split screen layout --}}
+                    <div class="absolute inset-0 hidden md:flex">
                         {{-- Left: Presenter/webcam side --}}
                         <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden">
                             {{-- Subtle grid pattern --}}
@@ -1601,8 +1610,8 @@
                         </div>
                     </div>
 
-                    {{-- REC indicator --}}
-                    <div class="absolute top-4 left-4 flex items-center gap-2 z-10">
+                    {{-- REC indicator (desktop only) --}}
+                    <div class="absolute top-4 left-4 hidden md:flex items-center gap-2 z-10">
                         <span class="rec-dot w-2.5 h-2.5 rounded-full bg-red-600"></span>
                         <span class="text-red-500 text-[11px] font-mono font-bold tracking-wider">REC</span>
                     </div>
@@ -1614,32 +1623,32 @@
 
                     {{-- Center play button with rings --}}
                     <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="absolute w-36 h-36 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 2.5s;"></div>
-                        <div class="absolute w-28 h-28 rounded-full border border-red-500/15 animate-ping" style="animation-duration: 3.5s;"></div>
-                        <div class="absolute w-20 h-20 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
+                        <div class="absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 2.5s;"></div>
+                        <div class="absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15 animate-ping" style="animation-duration: 3.5s;"></div>
+                        <div class="absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
 
-                        <div class="relative w-20 h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.15);">
-                            <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <div class="relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.15);">
+                            <svg class="w-6 h-6 md:w-8 md:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
 
                     {{-- Video title overlay --}}
-                    <div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
+                    <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <img src="/images/logo-color.svg" alt="" class="w-9 h-9 rounded-full ring-2 ring-red-500/30">
-                                <div>
-                                    <p class="text-white font-bold text-sm">Welcome to The Laravel Architect</p>
-                                    <p class="text-gray-400 text-xs">The Laravel Architect · Channel Trailer</p>
+                            <div class="flex items-center gap-2 md:gap-3 min-w-0">
+                                <img src="/images/logo-color.svg" alt="" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <p class="text-white font-bold text-xs md:text-sm truncate">Welcome to The Laravel Architect</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">The Laravel Architect · Channel Trailer</p>
                                 </div>
                             </div>
-                            <span class="px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors">
+                            <span class="px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
                                 Subscribe
                             </span>
                         </div>
 
-                        {{-- Progress bar --}}
-                        <div class="mt-3 flex items-center gap-3">
+                        {{-- Progress bar (desktop only) --}}
+                        <div class="mt-3 hidden md:flex items-center gap-3">
                             <span class="text-[10px] text-gray-500 font-mono">0:00</span>
                             <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
                                 <div class="h-full w-0 rounded-full bg-red-600"></div>
