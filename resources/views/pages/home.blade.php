@@ -689,10 +689,17 @@
         color: #c9d1d9 !important;
     }
     
-    /* YouTube video player area — keep dark */
-    .youtube-section .bg-\[\#0a0a0a\],
-    .youtube-section .bg-\[\#0a0e14\] {
+    /* YouTube video player area — always dark (it's simulating a video) */
+    .yt-video-player {
         background: #0a0a0a !important;
+        color: #ffffff !important;
+    }
+    /* YouTube section light mode */
+    :root:not(.dark) .youtube-section .absolute[style*="radial-gradient(circle, #ff0000"] {
+        opacity: 0.03 !important;
+    }
+    :root:not(.dark) .youtube-section .absolute[style*="repeating-linear-gradient"] {
+        display: none !important;
     }
     
     /* Countdown digits use theme variables */
@@ -1703,7 +1710,7 @@
         {{-- Main video preview --}}
         <div class="relative">
             <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
-                <div class="relative aspect-video bg-[#0a0a0a]">
+                <div class="relative aspect-video bg-[#0a0a0a] yt-video-player">
 
                     {{-- Mobile: Clean simple thumbnail --}}
                     <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
