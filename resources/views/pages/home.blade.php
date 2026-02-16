@@ -759,6 +759,22 @@
     :root:not(.dark) .youtube-section .absolute[style*="repeating-linear-gradient"] {
         display: none !important;
     }
+    /* Video player embed — clean framing on white */
+    :root:not(.dark) .yt-video-wrapper {
+        border: 1px solid #d0d7de !important;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+    }
+    :root:not(.dark) .yt-video-wrapper:hover {
+        border-color: rgba(239,68,68,0.3) !important;
+        box-shadow: 0 8px 32px rgba(239,68,68,0.08), 0 4px 12px rgba(0,0,0,0.06);
+    }
+    /* Subscriber goal bar light mode */
+    :root:not(.dark) .subscriber-bar-bg {
+        background: #f0f3f6 !important;
+        border-color: #d0d7de !important;
+    }
     
     /* Countdown digits use theme variables */
     .countdown-digit {
@@ -1767,7 +1783,7 @@
 
         {{-- Main video preview --}}
         <div class="relative">
-            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
+            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="yt-video-wrapper group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
                 <div class="relative aspect-video bg-[#0a0a0a] yt-video-player">
 
                     {{-- Mobile: Clean simple thumbnail --}}
