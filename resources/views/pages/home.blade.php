@@ -2207,10 +2207,10 @@ function countdown() {
 </section>
 
 {{-- ===== TESTIMONIALS ===== --}}
-<section class="testimonials py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
+<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Personal Quote --}}
-        <div class="text-center mb-16 fade-up">
+        <div class="text-center mb-10 fade-up">
             <div class="relative inline-block max-w-3xl mx-auto rounded-2xl border border-[#4A7FBF]/15 dark:border-[#4A7FBF]/10 bg-gradient-to-br from-[#4A7FBF]/[0.04] to-[#9D5175]/[0.03] dark:from-[#4A7FBF]/[0.06] dark:to-transparent p-10 md:p-14">
                 {{-- Decorative quote marks --}}
                 <svg class="w-14 h-14 text-[#4A7FBF]/20 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
@@ -2287,7 +2287,7 @@ function countdown() {
                     </div>
                     <div class="text-center pt-2">
                         <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#4A7FBF] hover:bg-[#3a6faf] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
                             Submit Testimonial
                         </button>
                     </div>
