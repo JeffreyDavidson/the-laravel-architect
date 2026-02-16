@@ -41,7 +41,7 @@
                 </a>
 
                 {{-- Mobile hamburger --}}
-                <button id="mobile-menu-btn" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-brand-800 transition-colors" aria-label="Toggle menu">
+                <button id="mobile-menu-btn" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800 transition-colors" aria-label="Toggle menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -65,12 +65,12 @@
             {{-- Mobile menu --}}
             <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-brand-800/50 py-4">
                 <div class="flex flex-col gap-3">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
-                    <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcasts</a>
-                    <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
-                    <a href="{{ route('about') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
-                    <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
+                    <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
+                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcasts</a>
+                    <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
+                    <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
+                    <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
                     <button class="theme-toggle-mobile flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors px-2 py-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <span class="theme-toggle-label">Light Mode</span>

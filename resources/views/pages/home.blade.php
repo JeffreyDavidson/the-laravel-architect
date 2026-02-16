@@ -722,9 +722,8 @@
         opacity: 0 !important;
     }
     
-    /* Keep code editor and footer dark in both modes */
-    .code-editor,
-    footer {
+    /* Keep code editor dark in both modes */
+    .code-editor {
         background: #0D1117 !important;
         color: #ffffff !important;
     }
@@ -733,6 +732,10 @@
     :root:not(.dark) .hero-mesh {
         background: #ffffff !important;
         animation: none !important;
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) .hero-mesh h1 {
+        color: #1f2328 !important;
     }
     :root:not(.dark) .hero-mesh .noise-overlay::after {
         opacity: 0.015 !important;
