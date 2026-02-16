@@ -718,6 +718,11 @@
         -webkit-text-fill-color: var(--card-text) !important;
     }
 
+    /* Service card amber pills — override inline yellow text */
+    :root:not(.dark) .service-card-v2 span[style*="color: #fcd34d"] {
+        color: #92400e !important;
+    }
+
     /* Podcast cards — override inline style backgrounds */
     :root:not(.dark) .podcast-card-coffee,
     :root:not(.dark) .podcast-card-cloudy {
@@ -1331,10 +1336,10 @@
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Laravel Development</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">SaaS</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Filament</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Livewire</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">SaaS</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Filament</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Livewire</span>
                 </div>
                 <a href="{{ route('contact') }}" class="service-arrow text-brand-400 relative z-10">
                     Start a project <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -1357,9 +1362,9 @@
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Legacy Modernization</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Refactoring</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Testing</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Refactoring</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Testing</span>
                 </div>
                 <a href="{{ route('contact') }}" class="service-arrow text-accent-400 relative z-10">
                     Modernize now <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -1382,9 +1387,9 @@
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Content & Teaching</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-300 bg-green-500/10 rounded-full border border-green-500/20">YouTube</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
+                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">YouTube</span>
                 </div>
                 <a href="{{ route('blog.index') }}" class="service-arrow text-green-400 relative z-10">
                     Start learning <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
