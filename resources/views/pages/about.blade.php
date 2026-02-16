@@ -172,10 +172,33 @@
     @keyframes shimmer {
         to { background-position: 200% center; }
     }
+    
+    /* Light mode overrides */
+    :root:not(.dark) .noise-overlay::after,
+    :root:not(.dark) .dot-grid-bg::before {
+        display: none !important;
+    }
+    :root:not(.dark) .dot-grid-bg::before {
+        background-image: radial-gradient(circle, #000000 1px, transparent 1px);
+        opacity: 0.02;
+    }
+    :root:not(.dark) .timeline-item::after {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+    }
+    :root:not(.dark) .value-card {
+        background: rgba(255,255,255,0.9) !important;
+        border-color: rgba(0,0,0,0.08) !important;
+    }
+    :root:not(.dark) .value-card:hover {
+        border-color: rgba(74,127,191,0.2) !important;
+    }
+    :root:not(.dark) .trading-card-inner {
+        background: white !important;
+    }
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
+    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
         {{-- Ambient glow --}}
         <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
         <div class="hidden dark:block absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
@@ -288,7 +311,7 @@
     </div>
 
     {{-- The Story --}}
-    <div class="dot-grid-bg">
+    <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="flex flex-col lg:flex-row gap-16">
                 {{-- Main story --}}
@@ -456,7 +479,7 @@
     </div>
 
     {{-- What I Believe In --}}
-    <div class="border-t border-gray-200 dark:border-[#1e2a3a]">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Core Values</p>
@@ -510,7 +533,7 @@
     </div>
 
     {{-- Fun Facts --}}
-    <div class="border-t border-gray-200 dark:border-[#1e2a3a]">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a] bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
                 <div>
@@ -548,7 +571,7 @@
     </div>
 
     {{-- Tech Stack --}}
-    <div class="border-t border-gray-200 dark:border-[#1e2a3a] dot-grid-bg">
+    <div class="border-t border-gray-200 dark:border-[#1e2a3a] dot-grid-bg bg-white dark:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Toolbox</p>
@@ -580,7 +603,7 @@
     </div>
 
     {{-- CTA --}}
-    <div class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
+    <div class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-gray-50 dark:bg-transparent">
         {{-- Floating orbs --}}
         <div class="hidden dark:block absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
         <div class="hidden dark:block absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>

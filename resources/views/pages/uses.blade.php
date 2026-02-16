@@ -46,10 +46,27 @@
         border-color: #4A7FBF33;
         background: rgba(74, 127, 191, 0.03);
     }
+    
+    /* Light mode overrides */
+    :root:not(.dark) .noise-overlay::after,
+    :root:not(.dark) .dot-grid-bg::before {
+        display: none !important;
+    }
+    :root:not(.dark) .uses-item:hover {
+        background: rgba(74, 127, 191, 0.02);
+        border-color: rgba(74, 127, 191, 0.15);
+    }
+    :root:not(.dark) .site-tech {
+        background: white !important;
+    }
+    :root:not(.dark) .site-tech:hover {
+        background: rgba(74, 127, 191, 0.02) !important;
+        border-color: rgba(74, 127, 191, 0.15) !important;
+    }
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
+    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
         {{-- Ambient glow --}}
         <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
         <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
@@ -73,7 +90,7 @@
     </div>
 
     {{-- Content --}}
-    <div class="dot-grid-bg">
+    <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <div class="flex flex-col lg:flex-row gap-12">
 
