@@ -97,7 +97,7 @@
                 {{-- Mini terminal --}}
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-[#1e2a3a] mb-8">
                     <span class="text-green-400 text-xs font-mono">$</span>
-                    <span class="text-gray-600 dark:text-gray-400 text-xs font-mono">ls ~/projects</span>
+                    <span class="text-gray-600 dark:text-gray-400 text-xs font-mono"><span class="text-[#4A7FBF]">$</span> ls ~/projects</span>
                     <span class="w-1.5 h-4 bg-[#4A7FBF] ml-1" style="animation: blink 1s step-end infinite;"></span>
                 </div>
 
