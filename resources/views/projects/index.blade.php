@@ -110,7 +110,7 @@
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden flex items-center border-b border-gray-200 dark:border-[#1e2a3a]">
+<div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
     {{-- Ambient glow --}}
     <div class="hidden dark:block absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #E47A9D, transparent 70%);"></div>
@@ -145,7 +145,7 @@
             </div>
         </div>
     </div>
-</section>
+</div>
 
 {{-- ===== PROJECTS ===== --}}
 <section class="dot-grid-bg">
