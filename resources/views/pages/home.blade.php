@@ -722,11 +722,53 @@
         opacity: 0 !important;
     }
     
-    /* Keep code editor dark in both modes */
-    .code-editor {
-        background: #0D1117 !important;
-        color: #ffffff !important;
+    /* Light mode code editor — VS Code Light theme */
+    :root:not(.dark) .code-editor {
+        background: #ffffff !important;
+        color: #1f2328 !important;
+        border-color: #d0d7de !important;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06) !important;
     }
+    :root:not(.dark) .code-editor:hover {
+        border-color: #4A7FBF !important;
+        box-shadow: 0 8px 32px rgba(74,127,191,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
+    }
+    :root:not(.dark) .code-editor-bar {
+        background: #f6f8fa !important;
+        border-bottom-color: #d0d7de !important;
+    }
+    :root:not(.dark) .code-editor-tab {
+        background: #ffffff !important;
+        border-top-color: #4A7FBF !important;
+        border-right-color: #d0d7de !important;
+    }
+    :root:not(.dark) .code-editor-tab-inactive {
+        background: #f6f8fa !important;
+        border-right-color: #d0d7de !important;
+    }
+    :root:not(.dark) .code-line-number {
+        color: #8b949e !important;
+    }
+    :root:not(.dark) .code-line-highlight {
+        background: rgba(74, 127, 191, 0.06) !important;
+        border-left-color: #4A7FBF !important;
+    }
+    /* Light syntax colors (VS Code / GitHub Light) */
+    :root:not(.dark) .syn-keyword { color: #cf222e !important; }
+    :root:not(.dark) .syn-string { color: #0a3069 !important; }
+    :root:not(.dark) .syn-class { color: #0550ae !important; }
+    :root:not(.dark) .syn-method { color: #8250df !important; }
+    :root:not(.dark) .syn-comment { color: #6e7781 !important; }
+    :root:not(.dark) .syn-variable { color: #953800 !important; }
+    :root:not(.dark) .syn-function { color: #8250df !important; }
+    :root:not(.dark) .syn-arrow { color: #cf222e !important; }
+    :root:not(.dark) .syn-bracket { color: #1f2328 !important; }
+    :root:not(.dark) .syn-text { color: #1f2328 !important; }
+    :root:not(.dark) .syn-param { color: #953800 !important; }
+    /* Light mode tab text */
+    :root:not(.dark) .code-editor .text-gray-300 { color: #1f2328 !important; }
+    :root:not(.dark) .code-editor .text-gray-500 { color: #656d76 !important; }
+    :root:not(.dark) .code-editor .text-gray-600 { color: #656d76 !important; }
 
     /* Light mode hero — clean white with subtle texture */
     :root:not(.dark) .hero-mesh {
