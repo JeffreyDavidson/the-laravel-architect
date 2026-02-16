@@ -212,7 +212,7 @@
                             </span>
                             @endif
 
-                            <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 dark:text-white group-hover:text-gray-900 dark:text-white/90 transition-colors">{{ $podcast->name }}</h2>
+                            <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 dark:text-white transition-colors">{{ $podcast->name }}</h2>
                             <p class="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-6 max-w-xl {{ $index % 2 !== 0 ? 'md:ml-auto' : '' }}">{{ $podcast->description }}</p>
 
                             {{-- Topic pills --}}
