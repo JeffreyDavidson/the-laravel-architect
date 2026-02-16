@@ -902,6 +902,26 @@
         background: var(--podcast-card-bg) !important;
         border: 1px solid var(--podcast-card-border) !important;
     }
+    :root:not(.dark) .podcast-card-coffee {
+        background: linear-gradient(135deg, rgba(74,127,191,0.06), rgba(74,127,191,0.02)) !important;
+        border: 1px solid rgba(74,127,191,0.15) !important;
+        border-top: 3px solid #4A7FBF !important;
+        box-shadow: 0 2px 12px rgba(74,127,191,0.06);
+    }
+    :root:not(.dark) .podcast-card-coffee:hover {
+        border-color: rgba(74,127,191,0.3) !important;
+        box-shadow: 0 4px 20px rgba(74,127,191,0.12);
+    }
+    :root:not(.dark) .podcast-card-cloudy {
+        background: linear-gradient(135deg, rgba(157,81,117,0.06), rgba(157,81,117,0.02)) !important;
+        border: 1px solid rgba(157,81,117,0.15) !important;
+        border-top: 3px solid #9D5175 !important;
+        box-shadow: 0 2px 12px rgba(157,81,117,0.06);
+    }
+    :root:not(.dark) .podcast-card-cloudy:hover {
+        border-color: rgba(157,81,117,0.3) !important;
+        box-shadow: 0 4px 20px rgba(157,81,117,0.12);
+    }
     
     /* YouTube thumbnail cards */
     .thumbnail-card {
@@ -909,10 +929,7 @@
         border: 1px solid var(--youtube-card-border);
     }
     
-    /* Grid pattern hidden on light bg */
-    :root:not(.dark) .cta-section > .absolute {
-        opacity: 0 !important;
-    }
+    /* Grid pattern — already handled inline with dark: classes */
     
     /* Light mode code editor — VS Code Light theme */
     :root:not(.dark) .code-editor {
@@ -1742,7 +1759,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-12">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
-            <a href="{{ route('podcast.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
+            <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- Coffee podcast --}}
@@ -1757,12 +1774,12 @@
                         <span class="eq-bar bg-brand-400"></span>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life — one cup at a time.</p>
                 @if(isset($coffeeEpisodeCount) && $coffeeEpisodeCount > 0)
-                    <span class="text-xs text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
+                    <span class="text-xs text-brand-600 dark:text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
                 @endif
-                <span class="text-sm text-brand-400 group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
+                <span class="text-sm text-brand-600 dark:text-brand-400 group-hover:text-brand-500 dark:group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
             </a>
             {{-- Cloudy Days podcast --}}
             <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-200 dark:border-accent-600/30 transition-all duration-300 hover:border-accent-600/50 bg-white dark:bg-transparent podcast-card-cloudy" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));" data-glow-card>
@@ -1776,12 +1793,12 @@
                         <span class="eq-bar bg-accent-500"></span>
                     </div>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Real talk about mental health, burnout, work-life balance, and finding your way through the fog.</p>
                 @if(isset($cloudyEpisodeCount) && $cloudyEpisodeCount > 0)
-                    <span class="text-xs text-accent-400 mb-2 inline-block">{{ $cloudyEpisodeCount }} episodes</span>
+                    <span class="text-xs text-accent-700 dark:text-accent-400 mb-2 inline-block">{{ $cloudyEpisodeCount }} episodes</span>
                 @endif
-                <span class="text-sm text-accent-500 group-hover:text-accent-400 font-medium transition-colors block">Listen now →</span>
+                <span class="text-sm text-accent-700 dark:text-accent-500 group-hover:text-accent-600 dark:group-hover:text-accent-400 font-medium transition-colors block">Listen now →</span>
             </a>
         </div>
     </div>
