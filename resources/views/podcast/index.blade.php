@@ -129,6 +129,15 @@
     <div class="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
     <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
+    {{-- Waveform background --}}
+    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.04] pointer-events-none">
+        <div class="flex items-end gap-[3px] h-32 w-full max-w-4xl px-8">
+            @for($i = 0; $i < 80; $i++)
+            <div class="wave-bar flex-1 rounded-full" style="--dur: {{ 0.8 + ($i % 7) * 0.15 }}s; --delay: {{ $i * 0.03 }}s; background: linear-gradient(to top, #4A7FBF, #9D5175);"></div>
+            @endfor
+        </div>
+    </div>
+
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div class="flex items-center gap-3 mb-4">
             <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
@@ -141,7 +150,7 @@
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Podcasts</h1>
         <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Two shows. One about code, one about life. Both unfiltered.</p>
 
-        {{-- Stats --}}
+        {{-- Stats with equalizer --}}
         <div class="flex items-center gap-6 mt-6 text-sm">
             <div class="flex items-center gap-2 text-gray-500">
                 <svg class="w-4 h-4 text-[#4A7FBF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -154,6 +163,14 @@
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
                 <span>Launching Soon</span>
+            </div>
+            <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+            <div class="inline-flex items-end gap-[2px] h-4">
+                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.8s;"></span>
+                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.6s;"></span>
+                <span class="eq-bar w-[3px] h-full bg-[#9D5175] rounded-full" style="--dur: 0.9s;"></span>
+                <span class="eq-bar w-[3px] h-full bg-[#9D5175] rounded-full" style="--dur: 0.7s;"></span>
+                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.5s;"></span>
             </div>
         </div>
     </div>
