@@ -761,19 +761,24 @@
     }
     /* Video player embed — clean framing on white */
     :root:not(.dark) .yt-video-wrapper {
-        border: 1px solid #d0d7de !important;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+        border: 2px solid #d0d7de !important;
+        border-radius: 1rem !important;
+        overflow: hidden !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
     }
     :root:not(.dark) .yt-video-wrapper:hover {
-        border-color: rgba(239,68,68,0.3) !important;
-        box-shadow: 0 8px 32px rgba(239,68,68,0.08), 0 4px 12px rgba(0,0,0,0.06);
+        border-color: rgba(239,68,68,0.4) !important;
+        box-shadow: 0 12px 40px rgba(239,68,68,0.1), 0 4px 16px rgba(0,0,0,0.08) !important;
     }
-    /* Subscriber goal bar light mode */
-    :root:not(.dark) .subscriber-bar-bg {
-        background: #f0f3f6 !important;
-        border-color: #d0d7de !important;
+    /* Thumbnail cards light mode */
+    :root:not(.dark) .thumbnail-card {
+        border: 1px solid #d0d7de !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+        background: #ffffff !important;
+    }
+    :root:not(.dark) .thumbnail-card:hover {
+        border-color: rgba(239,68,68,0.3) !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
     
     /* Countdown digits use theme variables */
