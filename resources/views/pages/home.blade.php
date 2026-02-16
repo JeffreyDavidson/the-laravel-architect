@@ -580,6 +580,13 @@
     :root:not(.dark) .section-divider {
         display: none !important;
     }
+    :root:not(.dark) .section-divider-light {
+        display: block !important;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(74,127,191,0.2), rgba(196,112,136,0.15), transparent);
+        max-width: 1280px;
+        margin: 0 auto;
+    }
     /* Light mode service cards */
     :root:not(.dark) .service-card-v2 {
         background: rgba(255,255,255,0.9) !important;
@@ -1186,6 +1193,7 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
@@ -1223,6 +1231,7 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== WHAT I DO ===== --}}
 <style>
@@ -1473,6 +1482,7 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
@@ -1530,6 +1540,7 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== PODCASTS ===== --}}
 <section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
@@ -1583,6 +1594,7 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== YOUTUBE ===== --}}
 <style>
@@ -1922,6 +1934,7 @@ function countdown() {
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== NEWSLETTER ===== --}}
 <section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
@@ -2045,6 +2058,7 @@ function countdown() {
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
+<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== FINAL CTA ===== --}}
 <section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
