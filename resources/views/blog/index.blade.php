@@ -120,12 +120,12 @@
         <div class="space-y-6">
             @forelse($posts as $post)
             <div x-show="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' })"
-                x-transition:enter="transition ease-out duration-500 delay-[{{ $loop->index * 75 }}ms]"
-                x-transition:enter-start="opacity-0 translate-y-4 scale-[0.98]"
-                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
                 x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0"
-                x-transition:leave-end="opacity-0 -translate-y-2"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
                 class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
