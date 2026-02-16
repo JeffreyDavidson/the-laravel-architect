@@ -81,8 +81,11 @@
     font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-:root:not(.dark) .prose code {
+:root:not(.dark) .prose :not(pre) > code {
     color: #1a56a8;
+}
+:root:not(.dark) .prose pre code {
+    color: #c9d1d9;
 }
 
 .prose :not(pre) > code {
