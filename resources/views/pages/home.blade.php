@@ -2076,10 +2076,10 @@
                             <div class="absolute inset-0 flex flex-col justify-between p-5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-green-600/10 text-green-700 border border-green-500/20">Testing</span>
-                                    <svg class="w-8 h-8 text-green-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg class="w-10 h-10 text-green-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-extrabold text-green-900 leading-tight">Testing Like<br>You Mean It</p>
+                                    <p class="text-xl font-extrabold text-green-900 leading-tight">Testing Like<br>You Mean It</p>
                                     <p class="text-xs text-green-700/60 mt-1">3 Suites, Zero Excuses</p>
                                 </div>
                             </div>
@@ -2102,10 +2102,10 @@
                             <div class="absolute inset-0 flex flex-col justify-between p-5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-blue-600/10 text-blue-700 border border-blue-500/20">Full Build</span>
-                                    <svg class="w-8 h-8 text-blue-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg class="w-10 h-10 text-blue-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-extrabold text-blue-900 leading-tight">Build a SaaS<br>from Scratch</p>
+                                    <p class="text-xl font-extrabold text-blue-900 leading-tight">Build a SaaS<br>from Scratch</p>
                                     <p class="text-xs text-blue-700/60 mt-1">Laravel & Filament</p>
                                 </div>
                             </div>
@@ -2128,10 +2128,10 @@
                             <div class="absolute inset-0 flex flex-col justify-between p-5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-700 border border-red-500/20">Story</span>
-                                    <svg class="w-8 h-8 text-red-600/20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg class="w-10 h-10 text-red-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-extrabold text-red-900 leading-tight">Why I Left<br>CodeIgniter</p>
+                                    <p class="text-xl font-extrabold text-red-900 leading-tight">Why I Left<br>CodeIgniter</p>
                                     <p class="text-xs text-red-700/60 mt-1">And Never Looked Back</p>
                                 </div>
                             </div>
