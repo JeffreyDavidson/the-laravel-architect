@@ -1666,7 +1666,7 @@
         {{-- Upcoming video thumbnails --}}
         <div class="mt-12">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Coming to the Channel</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {{-- Thumbnail 1 --}}
                 <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
                     <div class="aspect-video relative overflow-hidden">
