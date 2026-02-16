@@ -718,9 +718,37 @@
         -webkit-text-fill-color: var(--card-text) !important;
     }
 
-    /* Service card amber pills — override inline yellow text */
+    /* Force section headings visible in light mode */
+    :root:not(.dark) h2.text-gray-900 {
+        color: #1f2328 !important;
+    }
+    :root:not(.dark) p.text-gray-600 {
+        color: #424a53 !important;
+    }
+
+    /* Service card pill improvements for light mode */
+    :root:not(.dark) .service-card-v2 .flex-wrap span {
+        border-width: 1px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Service card pills — stronger backgrounds in light mode */
+    :root:not(.dark) .service-card-v2 span[class*="text-brand-600"] {
+        background: rgba(74,127,191,0.12) !important;
+        border-color: rgba(74,127,191,0.3) !important;
+    }
+    :root:not(.dark) .service-card-v2 span[class*="text-accent-600"] {
+        background: rgba(196,112,136,0.12) !important;
+        border-color: rgba(196,112,136,0.3) !important;
+    }
+    :root:not(.dark) .service-card-v2 span[class*="text-green-700"] {
+        background: rgba(34,197,94,0.1) !important;
+        border-color: rgba(34,197,94,0.3) !important;
+    }
     :root:not(.dark) .service-card-v2 span[style*="color: #fcd34d"] {
         color: #92400e !important;
+        background: rgba(245,158,11,0.12) !important;
+        border-color: rgba(245,158,11,0.3) !important;
     }
 
     /* Podcast cards — override inline style backgrounds */
