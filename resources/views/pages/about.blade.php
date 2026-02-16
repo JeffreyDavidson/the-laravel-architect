@@ -216,8 +216,8 @@
 
                             {{-- Card header --}}
                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                <span class="text-[10px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-widest">Developer Card</span>
-                                <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
+                                <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Developer Card</span>
+                                <span class="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
                             </div>
 
                             {{-- Avatar frame --}}
