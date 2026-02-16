@@ -722,12 +722,45 @@
         opacity: 0 !important;
     }
     
-    /* Keep hero, footer, code editor dark in both modes */
-    .hero-mesh,
+    /* Keep code editor and footer dark in both modes */
     .code-editor,
     footer {
         background: #0D1117 !important;
         color: #ffffff !important;
+    }
+
+    /* Light mode hero — clean white with subtle texture */
+    :root:not(.dark) .hero-mesh {
+        background: #ffffff !important;
+        animation: none !important;
+    }
+    :root:not(.dark) .hero-mesh .noise-overlay::after {
+        opacity: 0.015 !important;
+    }
+    :root:not(.dark) .laravel-glow {
+        background: linear-gradient(135deg, #2d6aa3, #4A7FBF, #2d6aa3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: none;
+    }
+    :root:not(.dark) .scramble-char-resolved {
+        color: #4A7FBF;
+    }
+    :root:not(.dark) .scramble-char-random {
+        color: rgba(74, 127, 191, 0.3);
+    }
+    :root:not(.dark) .glow-btn:hover {
+        box-shadow: 0 4px 20px rgba(74, 127, 191, 0.2);
+    }
+    :root:not(.dark) .glow-btn-outline {
+        border-color: #d0d7de;
+        color: #424a53;
+    }
+    :root:not(.dark) .glow-btn-outline:hover {
+        border-color: #4A7FBF;
+        color: #2d6aa3;
+        box-shadow: 0 4px 20px rgba(74, 127, 191, 0.15);
     }
     
     /* Ensure pill colors use CSS variables */
@@ -759,7 +792,7 @@
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
-                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-2 text-white">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-2 text-gray-900 dark:text-white">
                     I don't just write code—
                     <br>
                     I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it.
@@ -768,11 +801,11 @@
                     <span class="laravel-glow text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide">Laravel</span>
                 </div>
 
-                <div class="text-xl sm:text-2xl text-gray-400 mb-4">
+                <div class="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-4">
                     Crafting <span class="scramble-wrapper"><span class="scramble-text text-brand-300" id="scramble-text"></span></span>
                 </div>
 
-                <p class="text-xl text-gray-500 mb-10 max-w-2xl">
+                <p class="text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
                     15 years of building Laravel applications that scale. I write about the craft,
                     I'm launching two podcasts, and I help developers build things they're proud of.
                 </p>
@@ -781,7 +814,7 @@
                     <a href="{{ route('blog.index') }}" class="magnetic-btn glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
                         Read the Blog
                     </a>
-                    <a href="{{ route('projects.index') }}" class="magnetic-btn glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-brand-700 text-gray-300 font-semibold rounded-lg transition-all">
+                    <a href="{{ route('projects.index') }}" class="magnetic-btn glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-gray-300 dark:border-brand-700 text-gray-600 dark:text-gray-300 font-semibold rounded-lg transition-all">
                         View Projects
                     </a>
                 </div>
@@ -860,7 +893,7 @@
                     <a href="https://instagram.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-pink-500 transition-colors" title="Instagram">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
                     </a>
-                    <a href="https://twitter.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-white transition-colors" title="X / Twitter">
+                    <a href="https://twitter.com/thelaravelarch" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-brand-600 dark:hover:text-white transition-colors" title="X / Twitter">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                     </a>
                     <a href="https://bsky.app/profile/thelaravelarch" target="_blank" class="text-gray-500 hover:text-blue-400 transition-colors" title="Bluesky">
@@ -1029,7 +1062,7 @@
 </section>
 
 {{-- Hero to light transition --}}
-<div class="dark:hidden h-20 bg-gradient-to-b from-[#0D1117] to-white"></div>
+<div class="hidden h-20 bg-gradient-to-b from-[#0D1117] to-white"></div>
 
 {{-- ===== TECH STACK MARQUEE ===== --}}
 <section class="py-8 overflow-hidden relative bg-gray-50 dark:bg-[#0D1117]">
