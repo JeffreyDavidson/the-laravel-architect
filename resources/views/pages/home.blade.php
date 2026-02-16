@@ -794,6 +794,12 @@
     :root:not(.dark) .yt-video-player .yt-terminal .text-\[\#1e2a3a\] {
         color: #d0d7de !important;
     }
+    :root:not(.dark) .yt-video-player .yt-terminal .text-green-400\/60 {
+        color: #1a7f37 !important;
+    }
+    :root:not(.dark) .yt-video-player .yt-terminal .text-green-500 {
+        color: #1a7f37 !important;
+    }
     /* Cursor */
     :root:not(.dark) .yt-video-player .bg-\[\#4A7FBF\] {
         background: #0550ae !important;
