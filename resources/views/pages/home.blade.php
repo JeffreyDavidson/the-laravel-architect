@@ -832,11 +832,11 @@
         color: #cf222e !important;
     }
     /* Coming Soon badge */
-    :root:not(.dark) .yt-video-player .text-red-400 {
+    :root:not(.dark) .yt-video-player .yt-coming-soon {
         color: #cf222e !important;
-    }
-    :root:not(.dark) .yt-video-player .bg-red-600\/10 {
-        background: rgba(207,34,46,0.08) !important;
+        background: rgba(207,34,46,0.12) !important;
+        border-color: rgba(207,34,46,0.25) !important;
+        backdrop-filter: blur(8px);
     }
     /* Mobile thumbnail */
     :root:not(.dark) .yt-video-player .text-white\/80 {
@@ -2004,7 +2004,7 @@
 
                     {{-- Coming Soon badge --}}
                     <div class="absolute top-4 right-4 z-10">
-                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20 backdrop-blur-sm">Coming Soon</span>
+                        <span class="yt-coming-soon px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20 backdrop-blur-sm">Coming Soon</span>
                     </div>
 
                     {{-- Center play button with rings --}}
