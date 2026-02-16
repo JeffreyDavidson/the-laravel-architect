@@ -1310,7 +1310,7 @@
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-300 bg-amber-500/10 rounded-full border border-amber-500/20">Code Review</span>
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-300 bg-amber-500/10 rounded-full border border-amber-500/20">Strategy</span>
                 </div>
-                <a href="{{ route('contact') }}" class="service-arrow text-amber-400 relative z-10">
+                <a href="{{ route('contact') }}" class="service-arrow relative z-10" style="color: #fbbf24;">
                     Book a session <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
             </div>
