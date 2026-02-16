@@ -31,6 +31,18 @@
     }
     /* Light mode */
     :root:not(.dark) .hero-bg { background: white !important; }
+
+    /* Darken podcast accent colors in light mode */
+    :root:not(.dark) .topic-pill {
+        filter: brightness(0.7) saturate(1.3);
+        border-color: currentColor !important;
+        background: transparent !important;
+    }
+    :root:not(.dark) .podcast-showcase {
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    :root:not(.dark) .podcast-showcase:hover {
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
     }
 
     /* Equalizer */
@@ -113,7 +125,7 @@
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden min-h-[60vh] flex items-center border-b border-gray-200 dark:border-[#1e2a3a]">
+<section class="noise-overlay relative overflow-hidden min-h-[40vh] lg:min-h-[50vh] flex items-center border-b border-gray-200 dark:border-[#1e2a3a]">
     {{-- Background gradients --}}
     <div class="absolute inset-0">
         <div class="hidden dark:block absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
@@ -129,7 +141,7 @@
         </div>
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center w-full">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 text-center w-full">
         {{-- Live equalizer --}}
         <div class="inline-flex items-end gap-[3px] mb-8 h-8">
             <span class="eq-bar w-[4px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.8s;"></span>
@@ -166,7 +178,7 @@
 
 {{-- ===== PODCAST SHOWCASES ===== --}}
 <section class="dot-grid-bg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         @if($podcasts->count())
         <div class="space-y-16">
             @foreach($podcasts as $index => $podcast)
@@ -263,7 +275,7 @@
     <div class="absolute top-20 left-10 w-32 h-32 rounded-full opacity-[0.04] blur-[60px] bg-[#4A7FBF]" style="animation: float 8s ease-in-out infinite;"></div>
     <div class="absolute bottom-20 right-10 w-40 h-40 rounded-full opacity-[0.04] blur-[60px] bg-[#9D5175]" style="animation: float 10s ease-in-out infinite reverse;"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div class="text-center mb-14">
             <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">What You'll Get</p>
             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">Every Episode, Every Show</h2>
