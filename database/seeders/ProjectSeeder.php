@@ -68,7 +68,10 @@ class ProjectSeeder extends Seeder
             $tags = $data['tags'] ?? [];
             unset($data['tags']);
 
-            $project = Project::create($data);
+            $project = Project::updateOrCreate(
+                ['slug' => $data['slug']],
+                $data
+            );
 
             if (!empty($tags)) {
                 $project->attachTags($tags);
