@@ -119,10 +119,12 @@
         <div class="flex flex-col lg:flex-row items-start justify-between gap-12">
             <div class="max-w-2xl">
                 {{-- Mini terminal --}}
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-[#1e2a3a] mb-8">
-                    <span class="text-green-400 text-xs font-mono">$</span>
-                    <span class="text-gray-600 dark:text-gray-400 text-xs font-mono"><span class="text-[#4A7FBF]">$</span> ls ~/projects</span>
-                    <span class="w-1.5 h-4 bg-[#4A7FBF] ml-1" style="animation: blink 1s step-end infinite;"></span>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
+                        <span class="text-[#4A7FBF]">$</span>
+                        <span>ls ~/projects</span>
+                        <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
+                    </div>
                 </div>
 
                 <h1 class="text-4xl md:text-6xl font-extrabold mb-5 tracking-tight">
