@@ -33,9 +33,9 @@
         --green-pill-text: #16794a;
         --green-pill-bg: rgba(22,121,74,0.08);
         --green-pill-border: rgba(22,121,74,0.25);
-        --amber-pill-text: #a16207;
-        --amber-pill-bg: rgba(161,98,7,0.08);
-        --amber-pill-border: rgba(161,98,7,0.25);
+        --amber-pill-text: #854d0e;
+        --amber-pill-bg: rgba(133,77,14,0.1);
+        --amber-pill-border: rgba(133,77,14,0.3);
         
         /* Specific components */
         --newsletter-bg: #eaf3fa;
@@ -705,10 +705,25 @@
         outline: none;
     }
     
-    /* Service cards terminal commands keep dark bg */
-    .service-card-v2 .font-mono {
+    /* Service cards terminal commands - dark in dark mode */
+    .dark .service-card-v2 .font-mono {
         background: #0d1117 !important;
         color: #c9d1d9 !important;
+    }
+    /* Light mode: light gray terminal */
+    :root:not(.dark) .service-card-v2 .font-mono {
+        background: #f0f3f6 !important;
+        color: #1f2328 !important;
+        border: 1px solid #d0d7de !important;
+    }
+    :root:not(.dark) .service-card-v2 .font-mono .text-gray-500 {
+        color: #656d76 !important;
+    }
+    :root:not(.dark) .service-card-v2 .font-mono .text-green-400 {
+        color: #1a7f37 !important;
+    }
+    :root:not(.dark) .service-card-v2 .font-mono .font-bold {
+        color: #1f2328 !important;
     }
     
     /* YouTube video player area — always dark (it's simulating a video) */
