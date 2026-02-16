@@ -103,12 +103,12 @@
                         </div>
                         <div class="space-y-3">
                             @foreach([
-                                ['icon' => '💻', 'name' => 'MacBook Pro 16" (Nov 2024)', 'desc' => 'Apple M4 Max, 48GB RAM. The daily driver for everything — development, content creation, and life.', 'tag' => 'Laptop'],
+                                ['icon' => '💻', 'name' => 'MacBook Pro 16" (Nov 2024)', 'desc' => 'Apple M4 Max, 48GB RAM. The daily driver for everything: development, content creation, and life.', 'tag' => 'Laptop'],
                                 ['icon' => '🖥️', 'name' => 'LG 39GS95QE', 'desc' => '39" ultrawide OLED gaming monitor. Gorgeous colors, plenty of real estate for code + browser side by side.', 'tag' => 'Monitor', 'url' => 'https://www.lg.com/us/monitors/lg-39gs95qe-b-gaming-monitor'],
-                                ['icon' => '⌨️', 'name' => 'Apple Magic Keyboard', 'desc' => 'Simple, reliable, and matches the ecosystem. No mechanical keyboard phase — yet.', 'tag' => 'Keyboard'],
+                                ['icon' => '⌨️', 'name' => 'Apple Magic Keyboard', 'desc' => 'Simple, reliable, and matches the ecosystem. No mechanical keyboard phase. Yet.', 'tag' => 'Keyboard'],
                                 ['icon' => '🖱️', 'name' => 'Apple Magic Trackpad', 'desc' => 'Gestures are too good to give up. The trackpad stays.', 'tag' => 'Trackpad'],
-                                ['icon' => '🔌', 'name' => 'CalDigit TS3 Plus', 'desc' => 'Thunderbolt dock. One cable to rule them all — monitor, peripherals, power, everything.', 'tag' => 'Dock', 'url' => 'https://www.caldigit.com/ts3-plus/'],
-                                ['icon' => '🔊', 'name' => 'Kanto YU2', 'desc' => 'Compact powered desktop speakers. Big sound from a small footprint — perfect for the desk setup.', 'tag' => 'Speakers', 'url' => 'https://www.kantoaudio.com/powered-speakers/yu2/'],
+                                ['icon' => '🔌', 'name' => 'CalDigit TS3 Plus', 'desc' => 'Thunderbolt dock. One cable to rule them all. Monitor, peripherals, power, everything.', 'tag' => 'Dock', 'url' => 'https://www.caldigit.com/ts3-plus/'],
+                                ['icon' => '🔊', 'name' => 'Kanto YU2', 'desc' => 'Compact powered desktop speakers. Big sound from a small footprint. Perfect for the desk setup.', 'tag' => 'Speakers', 'url' => 'https://www.kantoaudio.com/powered-speakers/yu2/'],
                                 ['icon' => '🪑', 'name' => 'Secretlab Chair', 'desc' => 'Comfortable for long coding sessions. Worth the investment.', 'tag' => 'Chair'],
                                 ['icon' => '🪵', 'name' => 'Fully Jarvis 72×30', 'desc' => 'Black bamboo standing desk. Sit-stand with plenty of room for the ultrawide and all the gear.', 'tag' => 'Desk', 'url' => 'https://www.fully.com/standing-desks/jarvis.html'],
                             ] as $item)
@@ -149,7 +149,7 @@
                         <div class="space-y-3">
                             @foreach([
                                 ['icon' => '📝', 'name' => 'Visual Studio Code', 'desc' => 'My editor of choice. Fast, extensible, and the ecosystem of extensions is unbeatable.', 'tag' => 'Editor', 'url' => 'https://code.visualstudio.com'],
-                                ['icon' => '🐚', 'name' => 'Warp', 'desc' => 'Modern terminal with AI built in. Getting a little bloated though — eyeing Ghostty as a leaner alternative.', 'tag' => 'Terminal', 'url' => 'https://www.warp.dev'],
+                                ['icon' => '🐚', 'name' => 'Warp', 'desc' => 'Modern terminal with AI built in. Getting a little bloated though. Eyeing Ghostty as a leaner alternative.', 'tag' => 'Terminal', 'url' => 'https://www.warp.dev'],
                                 ['icon' => '🦙', 'name' => 'Laravel Herd', 'desc' => 'Local development environment. Zero-config PHP, nginx, and dnsmasq on macOS.', 'tag' => 'Local Dev', 'url' => 'https://herd.laravel.com'],
                                 ['icon' => '🔨', 'name' => 'Laravel Forge', 'desc' => 'Server management and deployment. Push to main and it\'s live.', 'tag' => 'Hosting', 'url' => 'https://forge.laravel.com'],
                                 ['icon' => '🐙', 'name' => 'GitHub', 'desc' => 'Version control, CI/CD, and open source home.', 'tag' => 'Git', 'url' => 'https://github.com/JeffreyDavidson'],

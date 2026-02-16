@@ -328,16 +328,16 @@
                             After a couple semesters at community college learning table-based layouts (seriously), I enrolled at <strong class="text-gray-900 dark:text-gray-200">Full Sail University</strong> and earned my Bachelor of Science in Web Design and Development. That gave me the structure I'd been missing as a self-taught developer.
                         </p>
                         <p>
-                            I found <strong class="text-gray-900 dark:text-gray-200">Laravel</strong> in 2014 — version 4.2 — and everything clicked. Here was a framework that was opinionated in all the right ways, that made PHP feel modern, that actually cared about developer experience. I've been building with it ever since.
+                            I found <strong class="text-gray-900 dark:text-gray-200">Laravel</strong> in 2014, specifically version 4.2, and everything clicked. Here was a framework that was opinionated in all the right ways, that made PHP feel modern, that actually cared about developer experience. I've been building with it ever since.
                         </p>
                         <p>
-                            A big part of my career has been <strong class="text-gray-900 dark:text-gray-200">modernization work</strong> — taking legacy codebases written in CodeIgniter, Yii2, CakePHP, and ExpressionEngine and rewriting them in Laravel. Every migration taught me something about untangling technical debt and building something clean from the wreckage.
+                            A big part of my career has been <strong class="text-gray-900 dark:text-gray-200">modernization work</strong>: taking legacy codebases written in CodeIgniter, Yii2, CakePHP, and ExpressionEngine and rewriting them in Laravel. Every migration taught me something about untangling technical debt and building something clean from the wreckage.
                         </p>
                         <p>
                             In 2015, my wife Cassie and I packed up our Kansas lives and moved to <strong class="text-gray-900 dark:text-gray-200">Florida</strong>. In 2017, our daughter <strong class="text-gray-900 dark:text-gray-200">Viola</strong> came along, and being her dad has reshaped my priorities, my patience, and my entire perspective on what matters.
                         </p>
                         <p>
-                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love. <strong class="text-gray-900 dark:text-gray-200">Embracing Cloudy Days</strong> is the personal side — mental health, parenting, and the messier parts of life. And <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
+                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love. <strong class="text-gray-900 dark:text-gray-200">Embracing Cloudy Days</strong> is the personal side, covering mental health, parenting, and the messier parts of life. And <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
                         </p>
                     </div>
                 </div>
@@ -379,7 +379,7 @@
                         <div class="timeline-item">
                             <span class="text-xs font-bold text-[#4A7FBF]">2026</span>
                             <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">The Laravel Architect</p>
-                            <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube — building in public</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube. Building in public</p>
                         </div>
                     </div>
                 </div>
@@ -468,7 +468,7 @@
                     <div class="timeline-item">
                         <span class="text-xs font-bold text-[#4A7FBF]">2026</span>
                         <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold mt-1">The Laravel Architect</p>
-                        <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube — building in public</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Blog, podcasts, YouTube. Building in public</p>
                     </div>
                 </div>
             </div>
@@ -495,14 +495,14 @@
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Tests Are Not Optional</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">I run three test suites on every project: Feature, Integration, and Unit. Tests aren't overhead — they're how you ship with confidence and sleep at night.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">I run three test suites on every project: Feature, Integration, and Unit. Tests aren't overhead. They're how you ship with confidence and sleep at night.</p>
                 </div>
                 <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Teach What You Learn</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">The best way to solidify knowledge is to share it. Every blog post, podcast episode, and tutorial is me learning out loud — and hopefully making someone else's path easier.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">The best way to solidify knowledge is to share it. Every blog post, podcast episode, and tutorial is me learning out loud, and hopefully making someone else's path easier.</p>
                 </div>
                 <div class="value-card value-card-pink p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
@@ -516,7 +516,7 @@
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                     </div>
                     <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Embrace the Cloudy Days</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Not every day is sunshine. I talk openly about mental health, burnout, and the hard parts of being a developer and a parent. Vulnerability isn't weakness — it's honesty.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Not every day is sunshine. I talk openly about mental health, burnout, and the hard parts of being a developer and a parent. Vulnerability isn't weakness. It's honesty.</p>
                 </div>
                 <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">
