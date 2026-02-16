@@ -257,14 +257,14 @@
                 {{-- Intro Text --}}
                 <div class="flex-1 text-center lg:text-left">
                     <p class="text-[#4A7FBF] text-sm font-semibold uppercase tracking-widest mb-4">About Me</p>
-                    <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
-                    <div class="font-mono text-sm text-gray-500 mb-8 flex items-center gap-2">
+                    <div class="font-mono text-sm text-gray-500 mt-6 mb-8 flex items-center gap-2 flex-wrap">
                         <span class="text-[#4A7FBF]">$</span>
                         <span>whoami</span>
                         <span class="text-gray-600">→</span>
