@@ -33,9 +33,9 @@
         --green-pill-text: #16794a;
         --green-pill-bg: rgba(22,121,74,0.08);
         --green-pill-border: rgba(22,121,74,0.25);
-        --amber-pill-text: #854d0e;
-        --amber-pill-bg: rgba(133,77,14,0.1);
-        --amber-pill-border: rgba(133,77,14,0.3);
+        --amber-pill-text: #6b3a00;
+        --amber-pill-bg: rgba(133,77,14,0.15);
+        --amber-pill-border: rgba(133,77,14,0.4);
         
         /* Specific components */
         --newsletter-bg: #eaf3fa;
