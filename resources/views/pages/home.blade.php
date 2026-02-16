@@ -1213,7 +1213,7 @@
             <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">What I Do</h2>
             <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues — I help teams build software they can be proud of.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {{-- Laravel Development --}}
             <div class="service-card-v2 fade-up" style="--card-color: #4A7FBF; --card-glow: rgba(74,127,191,0.15);">
                 <div class="service-orb" style="background: #4A7FBF; top: -20px; right: -20px;"></div>
