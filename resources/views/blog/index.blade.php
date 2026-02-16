@@ -71,7 +71,7 @@
         return this.posts.filter(p => this.isVisible(p)).length;
     }
 }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 md:pt-12 md:pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6 md:pt-12 md:pb-8">
 
         {{-- Search + Category filters --}}
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
