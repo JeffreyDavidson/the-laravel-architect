@@ -4,37 +4,19 @@
 
 @section('content')
 <style>
-    .noise-overlay {
-        position: relative;
-    }
-    .noise-overlay::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0.04;
-        pointer-events: none;
-        z-index: 1;
+    .noise-overlay { position: relative; }
+    .dark .noise-overlay::after {
+        content: ''; position: absolute; inset: 0; opacity: 0.04; pointer-events: none; z-index: 1;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        background-repeat: repeat;
-        background-size: 256px 256px;
+        background-repeat: repeat; background-size: 256px 256px;
     }
-    .dot-grid-bg {
-        position: relative;
-    }
-    .dot-grid-bg::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0.03;
-        pointer-events: none;
+    .dot-grid-bg { position: relative; }
+    .dark .dot-grid-bg::before {
+        content: ''; position: absolute; inset: 0; opacity: 0.03; pointer-events: none;
         background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-        background-size: 24px 24px;
-        z-index: 0;
+        background-size: 24px 24px; z-index: 0;
     }
-    .dot-grid-bg > * {
-        position: relative;
-        z-index: 1;
-    }
+    .dot-grid-bg > * { position: relative; z-index: 1; }
     .timeline-item {
         position: relative;
         padding-left: 2rem;
@@ -174,51 +156,67 @@
     }
     
     /* Light mode overrides */
-    :root:not(.dark) .noise-overlay::after,
-    :root:not(.dark) .dot-grid-bg::before {
-        display: none !important;
-    }
-    :root:not(.dark) .dot-grid-bg::before {
-        background-image: radial-gradient(circle, #000000 1px, transparent 1px);
-        opacity: 0.02;
-    }
     :root:not(.dark) .timeline-item::after {
         background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
     }
+    :root:not(.dark) .timeline-item::before {
+        box-shadow: 0 0 10px rgba(74, 127, 191, 0.2);
+    }
     :root:not(.dark) .value-card {
-        background: rgba(255,255,255,0.9) !important;
+        background: white !important;
         border-color: rgba(0,0,0,0.08) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     :root:not(.dark) .value-card:hover {
         border-color: rgba(74,127,191,0.2) !important;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
     }
     :root:not(.dark) .trading-card-inner {
         background: white !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    :root:not(.dark) .trading-card-inner .stat-cell {
+        background: #f9fafb !important;
+        border-color: #e5e7eb !important;
+    }
+    :root:not(.dark) .holo-border::before {
+        opacity: 0.25 !important;
+    }
+    :root:not(.dark) .trading-card-glow {
+        display: none;
+    }
+    :root:not(.dark) .cta-shimmer {
+        background: linear-gradient(90deg, #1f2937 0%, #4A7FBF 50%, #1f2937 100%) !important;
+        background-size: 200% auto !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        animation: shimmer 3s linear infinite !important;
     }
 </style>
 
     {{-- Hero --}}
     <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
         {{-- Ambient glow --}}
-        <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
-        <div class="hidden dark:block absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+        <div class="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
                 {{-- Trading Card --}}
                 <div class="flex-shrink-0 trading-card-tilt relative">
                     {{-- Pulsing ambient glow --}}
-                    <div class="hidden dark:block trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px]" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
+                    <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
                     <div class="holo-border relative">
-                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-transparent" style="background: linear-gradient(165deg, #111820 0%, #0a0e14 50%, #0f1520 100%);">
+                        <div class="trading-card-inner relative w-[300px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
 
                             {{-- Top holographic stripe --}}
                             <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
 
                             {{-- Card header --}}
                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                <span class="text-[10px] font-mono text-gray-500 dark:text-gray-600 uppercase tracking-widest">Developer Card</span>
+                                <span class="text-[10px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-widest">Developer Card</span>
                                 <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
                             </div>
 
@@ -228,7 +226,7 @@
                                     <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                 </div>
                                 {{-- Gradient overlay at bottom of image --}}
-                                <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[#111820] to-transparent"></div>
+                                <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-white dark:from-[#111820] to-transparent"></div>
                             </div>
 
                             {{-- Name plate --}}
@@ -311,7 +309,7 @@
 
     {{-- The Story --}}
     <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="flex flex-col lg:flex-row gap-16">
                 {{-- Main story --}}
                 <div class="flex-1">
@@ -479,7 +477,7 @@
 
     {{-- What I Believe In --}}
     <div class="border-t border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Core Values</p>
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">What I Believe In</h2>
@@ -571,7 +569,7 @@
 
     {{-- Tech Stack --}}
     <div class="border-t border-gray-200 dark:border-[#1e2a3a] dot-grid-bg bg-white dark:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Toolbox</p>
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">What I Work With</h2>
@@ -604,11 +602,11 @@
     {{-- CTA --}}
     <div class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-gray-50 dark:bg-transparent">
         {{-- Floating orbs --}}
-        <div class="hidden dark:block absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
-        <div class="hidden dark:block absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.08] dark:opacity-[0.06] blur-[80px] bg-[#4A7FBF]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] dark:opacity-[0.06] blur-[80px] bg-[#9D5175]"></div>
 
         <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
                 <span class="relative flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -616,7 +614,7 @@
                 Available for Projects
             </div>
             <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
-                <span style="background: linear-gradient(90deg, #fff 0%, #4A7FBF 50%, #fff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite;">Want to work together?</span>
+                <span class="cta-shimmer" style="background: linear-gradient(90deg, #fff 0%, #4A7FBF 50%, #fff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite;">Want to work together?</span>
             </h2>
             <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-colors text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
