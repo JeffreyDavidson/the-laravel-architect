@@ -90,10 +90,10 @@
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-8">
 
-            {{-- Top section: Brand + Newsletter --}}
-            <div class="flex flex-col lg:flex-row justify-between gap-10 mb-14">
+            {{-- Top section: Brand + Links --}}
+            <div class="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 mb-8 lg:mb-14">
                 <div class="max-w-sm">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 mb-4 group">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 mb-3 group">
                         <img src="/images/logo-color.svg" alt="The Laravel Architect" class="w-10 h-10 rounded-full">
                         <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-[#4A7FBF] transition-colors">
                             <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
@@ -101,7 +101,7 @@
                             <span class="text-[10px] font-semibold tracking-widest uppercase">Architect</span>
                         </span>
                     </a>
-                    <p class="text-sm text-gray-500 leading-relaxed mb-6">Building elegant web applications with Laravel. Writing about code, architecture, and the developer life.</p>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-4">Building elegant web applications with Laravel. Writing about code, architecture, and the developer life.</p>
 
                     {{-- Social icons --}}
                     <div class="flex items-center gap-3">
@@ -127,10 +127,10 @@
                 </div>
 
                 {{-- Links columns --}}
-                <div class="flex gap-16">
+                <div class="flex gap-10 sm:gap-16">
                     <div>
-                        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Navigate</h4>
-                        <ul class="space-y-3 text-sm">
+                        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Navigate</h4>
+                        <ul class="space-y-2 text-sm">
                             <li><a href="{{ route('blog.index') }}" class="text-gray-500 hover:text-white transition-colors">Blog</a></li>
                             <li><a href="{{ route('podcast.index') }}" class="text-gray-500 hover:text-white transition-colors">Podcasts</a></li>
                             <li><a href="{{ route('projects.index') }}" class="text-gray-500 hover:text-white transition-colors">Projects</a></li>
@@ -139,8 +139,8 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Resources</h4>
-                        <ul class="space-y-3 text-sm">
+                        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Resources</h4>
+                        <ul class="space-y-2 text-sm">
                             <li><a href="{{ route('contact') }}" class="text-gray-500 hover:text-white transition-colors">Contact</a></li>
                             <li><a href="/rss" class="text-gray-500 hover:text-white transition-colors">RSS Feed</a></li>
                             <li><a href="https://uses.tech" target="_blank" class="text-gray-500 hover:text-white transition-colors">uses.tech</a></li>
@@ -153,7 +153,7 @@
             <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #4A7FBF33, #9D517533, #4A7FBF33, transparent);"></div>
 
             {{-- Bottom bar --}}
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
                 <p class="text-xs text-gray-600">
                     &copy; {{ date('Y') }} Jeffrey Davidson. Built with
                     <a href="https://laravel.com" target="_blank" class="text-gray-500 hover:text-[#4A7FBF] transition-colors">Laravel</a> &
