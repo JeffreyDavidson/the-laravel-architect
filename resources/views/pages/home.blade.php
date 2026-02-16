@@ -1042,7 +1042,7 @@
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
-        <div class="bento-projects">
+        <div class="space-y-6">
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent" data-glow-card>
                 @if($project->hasMedia('featured_image'))
@@ -1051,7 +1051,7 @@
                 </div>
                 @endif
                 <div class="p-6">
-                    <h3 class="font-semibold {{ $index === 0 ? 'text-xl' : 'text-lg' }} mb-2 group-hover:text-brand-400 transition-colors" style="color: var(--project-title-color);">{{ $project->title }}</h3>
+                    <h3 class="font-semibold text-lg mb-2 group-hover:text-brand-400 transition-colors" style="color: var(--project-title-color);">{{ $project->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
