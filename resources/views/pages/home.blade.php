@@ -726,29 +726,48 @@
         color: #424a53 !important;
     }
 
-    /* Service card pill improvements for light mode */
-    :root:not(.dark) .service-card-v2 .flex-wrap span {
-        border-width: 1px !important;
-        font-weight: 700 !important;
+    /* Service card colored top border in light mode */
+    :root:not(.dark) .service-card-v2 {
+        border-top: 3px solid var(--card-color) !important;
     }
 
-    /* Service card pills — stronger backgrounds in light mode */
+    /* Service card pills — unified color per card theme */
+    :root:not(.dark) .service-card-v2 .flex-wrap span {
+        font-weight: 700 !important;
+    }
     :root:not(.dark) .service-card-v2 span[class*="text-brand-600"] {
-        background: rgba(74,127,191,0.12) !important;
-        border-color: rgba(74,127,191,0.3) !important;
+        color: #2d6aa3 !important;
+        background: rgba(74,127,191,0.1) !important;
+        border-color: rgba(74,127,191,0.25) !important;
     }
     :root:not(.dark) .service-card-v2 span[class*="text-accent-600"] {
-        background: rgba(196,112,136,0.12) !important;
-        border-color: rgba(196,112,136,0.3) !important;
+        color: #a3456a !important;
+        background: rgba(196,112,136,0.1) !important;
+        border-color: rgba(196,112,136,0.25) !important;
     }
     :root:not(.dark) .service-card-v2 span[class*="text-green-700"] {
-        background: rgba(34,197,94,0.1) !important;
-        border-color: rgba(34,197,94,0.3) !important;
+        color: #16794a !important;
+        background: rgba(22,121,74,0.08) !important;
+        border-color: rgba(22,121,74,0.25) !important;
     }
     :root:not(.dark) .service-card-v2 span[style*="color: #fcd34d"] {
-        color: #92400e !important;
-        background: rgba(245,158,11,0.12) !important;
-        border-color: rgba(245,158,11,0.3) !important;
+        color: #a16207 !important;
+        background: rgba(161,98,7,0.08) !important;
+        border-color: rgba(161,98,7,0.25) !important;
+    }
+
+    /* Service card CTA links — match pill color exactly */
+    :root:not(.dark) .service-arrow.text-brand-400 {
+        color: #2d6aa3 !important;
+    }
+    :root:not(.dark) .service-arrow.text-accent-400 {
+        color: #a3456a !important;
+    }
+    :root:not(.dark) .service-arrow.text-green-400 {
+        color: #16794a !important;
+    }
+    :root:not(.dark) .service-arrow[style*="color: #fbbf24"] {
+        color: #a16207 !important;
     }
 
     /* Podcast cards — override inline style backgrounds */
