@@ -65,6 +65,7 @@ class AdminPanelProvider extends PanelProvider
                     ->excludes([
                         \App\Filament\Resources\Subscribers\SubscriberResource::class,
                         \App\Filament\Resources\Videos\VideoResource::class,
+                        \App\Filament\Resources\Users\UserResource::class,
                     ]),
                 VersionsPlugin::make(),
             ])
