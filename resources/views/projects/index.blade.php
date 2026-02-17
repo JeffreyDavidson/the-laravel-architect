@@ -150,16 +150,16 @@
                                 <div class="flex items-start justify-between mb-5">
                                     <div class="flex items-center gap-3">
                                         <div class="card-icon w-11 h-11 rounded-xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#4A7FBF]/5 flex items-center justify-center">
-                                            <x-icon name="folder" class="w-5 h-5 text-[#4A7FBF]" />
+                                            <x-svg-icon name="folder" class="w-5 h-5 text-[#4A7FBF]" />
                                         </div>
                                         <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-[#4A7FBF] bg-[#4A7FBF]/10 rounded-full border border-[#4A7FBF]/20">Featured</span>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         @if($project->github_url)
-                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-icon name="github" class="w-5 h-5" /></span>
+                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-svg-icon name="github" class="w-5 h-5" /></span>
                                         @endif
                                         @if($project->url)
-                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-icon name="external-link" class="w-5 h-5" /></span>
+                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-svg-icon name="external-link" class="w-5 h-5" /></span>
                                         @endif
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@
                                 {{-- CTA --}}
                                 <div class="flex items-center gap-2 text-sm font-semibold text-[#4A7FBF] mt-2">
                                     <span>View Project</span>
-                                    <x-icon name="arrow-long-right" class="w-4 h-4 card-arrow" />
+                                    <x-svg-icon name="arrow-long-right" class="w-4 h-4 card-arrow" />
                                 </div>
                             </div>
                         </a>
@@ -208,14 +208,14 @@
                                 {{-- Header --}}
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4A7FBF]/15 to-[#4A7FBF]/5 flex items-center justify-center flex-shrink-0">
-                                        <x-icon name="folder" class="w-4.5 h-4.5 text-[#4A7FBF]" />
+                                        <x-svg-icon name="folder" class="w-4.5 h-4.5 text-[#4A7FBF]" />
                                     </div>
                                     <div class="flex items-center gap-2">
                                         @if($project->github_url)
-                                        <x-icon name="github" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
+                                        <x-svg-icon name="github" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
                                         @endif
                                         @if($project->url)
-                                        <x-icon name="external-link" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
+                                        <x-svg-icon name="external-link" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
                                         @endif
                                     </div>
                                 </div>

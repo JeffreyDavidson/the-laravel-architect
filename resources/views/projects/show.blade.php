@@ -34,7 +34,7 @@
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
             <a href="{{ route('projects.index') }}" class="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Projects</a>
-            <x-icon name="chevron-right" class="w-3.5 h-3.5 text-gray-600" />
+            <x-svg-icon name="chevron-right" class="w-3.5 h-3.5 text-gray-600" />
             <span class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
         </nav>
 
@@ -104,16 +104,16 @@
                     <div class="space-y-3">
                         @if($project->url)
                         <a href="{{ $project->url }}" target="_blank" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">
-                            <x-icon name="globe" class="w-4 h-4 flex-shrink-0" />
+                            <x-svg-icon name="globe" class="w-4 h-4 flex-shrink-0" />
                             <span class="truncate">{{ parse_url($project->url, PHP_URL_HOST) }}</span>
-                            <x-icon name="external-link" class="w-3 h-3 flex-shrink-0 ml-auto" />
+                            <x-svg-icon name="external-link" class="w-3 h-3 flex-shrink-0 ml-auto" />
                         </a>
                         @endif
                         @if($project->github_url)
                         <a href="{{ $project->github_url }}" target="_blank" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">
-                            <x-icon name="github" class="w-4 h-4 flex-shrink-0" />
+                            <x-svg-icon name="github" class="w-4 h-4 flex-shrink-0" />
                             <span class="truncate">{{ str_replace('https://github.com/', '', $project->github_url) }}</span>
-                            <x-icon name="external-link" class="w-3 h-3 flex-shrink-0 ml-auto" />
+                            <x-svg-icon name="external-link" class="w-3 h-3 flex-shrink-0 ml-auto" />
                         </a>
                         @endif
                     </div>
@@ -143,7 +143,7 @@
         @else
         <div class="text-center py-16">
             <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                <x-icon name="document" class="w-8 h-8 text-[#4A7FBF]" />
+                <x-svg-icon name="document" class="w-8 h-8 text-[#4A7FBF]" />
             </div>
             <p class="text-gray-600 dark:text-gray-400 text-lg font-medium mb-2">Detailed write-up coming soon</p>
             <p class="text-gray-500 text-sm">Check back later for a full breakdown of the architecture and decisions behind this project.</p>
@@ -162,7 +162,7 @@
             <a href="{{ route('projects.show', $other) }}" class="related-card group block p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]/50">
                 <div class="flex items-start justify-between mb-3">
                     <div class="w-9 h-9 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center flex-shrink-0">
-                        <x-icon name="folder" class="w-4 h-4 text-[#4A7FBF]" />
+                        <x-svg-icon name="folder" class="w-4 h-4 text-[#4A7FBF]" />
                     </div>
                     @if($other->is_featured)
                     <span class="text-[10px] font-bold text-[#4A7FBF]">⭐</span>
@@ -179,7 +179,7 @@
 <section class="border-t border-gray-200 dark:border-[#1e2a3a]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
-            <x-icon name="chevron-left" class="w-4 h-4" />
+            <x-svg-icon name="chevron-left" class="w-4 h-4" />
             Back to all projects
         </a>
     </div>

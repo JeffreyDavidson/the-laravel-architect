@@ -14,7 +14,7 @@
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <a href="{{ route('blog.index') }}" class="text-sm text-[#4A7FBF] hover:text-[#5A8FD0] transition-colors mb-4 inline-flex items-center gap-1">
-            <x-icon name="chevron-left" class="w-4 h-4" />
+            <x-svg-icon name="chevron-left" class="w-4 h-4" />
             All Posts
         </a>
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">{{ $category->name }}</h1>
