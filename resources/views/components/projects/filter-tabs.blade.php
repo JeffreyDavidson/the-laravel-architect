@@ -5,7 +5,7 @@
     ['key' => 'client', 'label' => 'Client Work'],
 ]])
 
-<div class="flex overflow-x-auto gap-2 pb-2 -mb-2 scrollbar-hide">
+<div class="flex flex-wrap sm:flex-nowrap sm:overflow-x-auto gap-2 pb-2 -mb-2 scrollbar-hide">
     @foreach($filters as $filter)
         <button
             @click="filter = '{{ $filter['key'] }}'"
