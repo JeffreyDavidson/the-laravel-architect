@@ -1,4 +1,4 @@
-<div>
+<x-filament-widgets::widget>
     <div class="rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-5">
         <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-3 flex items-center gap-2">
             <span class="w-1 h-4 rounded-full bg-[#4A7FBF]"></span>
@@ -47,4 +47,4 @@
             </a>
         </div>
     </div>
-</div>
+</x-filament-widgets::widget>
