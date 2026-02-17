@@ -1,11 +1,11 @@
 <div>
-    <div class="relative overflow-hidden rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-6">
+    <div class="relative overflow-hidden rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-5">
         {{-- Gradient accent top --}}
         <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, #4A7FBF, #c74b7a);"></div>
 
         <div class="relative">
             {{-- Top row: greeting + live badge --}}
-            <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center justify-between mb-4">
                 <div>
                     <div class="flex items-center gap-2 mb-0.5">
                         <span class="text-xs font-mono text-gray-400 dark:text-gray-500">$ php artisan dashboard</span>

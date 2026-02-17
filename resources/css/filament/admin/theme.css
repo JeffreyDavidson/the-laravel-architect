@@ -11,6 +11,11 @@
 |--------------------------------------------------------------------------
 */
 
+/* ── Dashboard widget grid spacing ── */
+.fi-wi {
+    gap: 1rem;
+}
+
 /* ── Nav group labels ── */
 .dark .fi-sidebar-group-label {
     color: #4A7FBF;
