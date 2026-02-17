@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<div>
     <div class="rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-5">
         <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-4 flex items-center gap-2">
             <span class="w-1 h-4 rounded-full" style="background: linear-gradient(180deg, #4A7FBF, #c74b7a);"></span>
@@ -23,4 +23,4 @@
             </div>
         @endif
     </div>
-</x-filament-widgets::widget>
+</div>
