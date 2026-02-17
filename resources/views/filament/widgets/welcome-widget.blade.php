@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<div>
     <div class="relative overflow-hidden rounded-xl border border-[#1e2a3a] bg-[#161b22] p-6">
         {{-- Gradient accent top --}}
         <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, #4A7FBF, #c74b7a);"></div>
@@ -58,4 +58,4 @@
             </div>
         </div>
     </div>
-</x-filament-widgets::widget>
+</div>
