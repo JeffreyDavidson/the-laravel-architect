@@ -29,7 +29,7 @@ class ProjectSeeder extends Seeder
                 'description' => 'My personal website and content platform. Blog, podcasts, projects, and a hire-me page, all built from scratch with Laravel and Filament.',
                 'content' => "<h2>Building My Own Platform</h2><p>Instead of using WordPress or a static site generator, I built my personal site from scratch with Laravel. It's a content hub for everything I create: blog posts, podcast episodes, project showcases, and a contact form for freelance inquiries.</p><h2>Technical Highlights</h2><ul><li>Laravel 12 with Filament 5 admin panel for content management</li><li>Multi-podcast support with episode management and show notes</li><li>Markdown blog with Prism.js syntax highlighting</li><li>Newsletter subscriber system</li><li>Contact form powered by Resend</li><li>Modern dark theme with micro-interactions and CSS animations</li></ul><h2>Design Philosophy</h2><p>I wanted something that felt like a developer's site. Dark, clean, and fast. The homepage features a VS Code-style code editor mockup that doubles as an introduction. No bloat, no page builders, just Blade templates and Tailwind.</p>",
                 'url' => 'https://thelaravelarchitect.com',
-                'github_url' => 'https://github.com/JeffreyDavidson/personal-website',
+                'github_url' => 'https://github.com/JeffreyDavidson/the-laravel-architect',
                 'tech_stack' => ['Laravel', 'Filament', 'Tailwind CSS', 'Blade', 'SQLite', 'Resend'],
                 'is_featured' => true,
                 'sort_order' => 2,
