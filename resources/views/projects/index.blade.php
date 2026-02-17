@@ -128,7 +128,7 @@
         <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms. Each one a lesson in architecture, testing, and building things that last.</p>
 
         {{-- Stats --}}
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-6 mt-6 text-sm">
+        <div class="grid grid-cols-3 sm:flex sm:items-center sm:gap-6 mt-6 text-sm">
             <div class="flex items-center gap-2 text-gray-500">
                 <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->count() }}</span>
                 <span>Projects</span>
@@ -141,7 +141,7 @@
             <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
             <div class="flex items-center gap-2 text-gray-500">
                 <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</span>
-                <span>Technologies</span>
+                <span>Tech</span>
             </div>
         </div>
     </div>
