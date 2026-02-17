@@ -31,7 +31,7 @@
             @forelse($posts as $post)
             <x-blog-card :post="$post" :showCategory="false" :showTags="false" />
             @empty
-            <div class="text-center py-20 text-gray-500">No posts in this category yet.</div>
+            <x-empty-state message="No posts in this category yet." />
             @endforelse
 
             @if($posts->hasPages())

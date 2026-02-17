@@ -28,7 +28,7 @@
             @forelse($posts as $post)
             <x-blog-card :post="$post" :showTags="false" />
             @empty
-            <div class="text-center py-20 text-gray-500">No posts with this tag yet.</div>
+            <x-empty-state message="No posts with this tag yet." />
             @endforelse
 
             @if($posts->hasPages())

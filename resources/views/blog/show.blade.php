@@ -77,16 +77,16 @@
         @endif
 
         {{-- Content --}}
-        <div class="prose dark:prose-invert prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-brand-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-code:text-brand-300">
+        <x-prose class="prose-a:text-brand-400 prose-code:text-brand-300">
             <x-markdown>{!! $post->content !!}</x-markdown>
-        </div>
+        </x-prose>
 
         {{-- Tags --}}
         @if($post->tags->count())
         <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800">
             <div class="flex flex-wrap gap-2">
                 @foreach($post->tags as $tag)
-                <a href="{{ route('blog.tag', $tag) }}" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-sm rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">{{ $tag->name }}</a>
+                <x-tag-pill :tag="$tag" />
                 @endforeach
             </div>
         </div>
