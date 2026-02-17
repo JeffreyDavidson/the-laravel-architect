@@ -113,31 +113,7 @@
             <div :class="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' }) ? 'blog-card-wrapper' : 'blog-card-wrapper collapsed'"
                 class="blog-card-wrapper">
               <div>
-                <div class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <div class="flex flex-wrap items-center gap-3 mb-3">
-                        @if($post->category)
-                        <span class="text-xs font-semibold uppercase tracking-wider" style="color: #4A7FBF;">{{ $post->category->name }}</span>
-                        <span class="text-gray-300 dark:text-gray-700">·</span>
-                        @endif
-                        <span class="text-xs text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
-                        <span class="text-gray-300 dark:text-gray-700">·</span>
-                        <span class="text-xs text-gray-500">{{ $post->reading_time }} min read</span>
-                    </div>
-
-                    <a href="{{ route('blog.show', $post) }}">
-                        <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#4A7FBF] transition-colors">{{ $post->title }}</h2>
-                    </a>
-
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">{{ $post->excerpt }}</p>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        @foreach($post->tags as $tag)
-                        <a href="{{ route('blog.tag', $tag) }}" class="px-2.5 py-1 text-xs rounded-full border border-gray-200 dark:border-[#1e2a3a] text-gray-500 bg-gray-50 dark:bg-[#161b22] hover:border-[#4A7FBF]/50 hover:text-[#4A7FBF] transition-colors relative z-10">{{ $tag->name }}</a>
-                        @endforeach
-                    </div>
-                </div>
-                </div>
+                <x-blog-card :post="$post" />
               </div>
             </div>
             @empty
