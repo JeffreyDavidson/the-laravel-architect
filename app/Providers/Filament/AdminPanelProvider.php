@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Awcodes\QuickCreate\QuickCreatePlugin;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Awcodes\Versions\VersionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -58,6 +59,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Newsletter')->icon(Heroicon::OutlinedEnvelope),
             ])
             ->plugins([
+                FilamentShieldPlugin::make(),
                 FilamentSpatieLaravelBackupPlugin::make(),
                 QuickCreatePlugin::make()
                     ->excludes([

@@ -24,7 +24,13 @@ class Post extends Model implements HasMedia
 
     protected $casts = [
         'published_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
+
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
 
     protected static function booted(): void
     {

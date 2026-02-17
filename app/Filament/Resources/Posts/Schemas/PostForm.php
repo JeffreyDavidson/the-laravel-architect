@@ -62,6 +62,7 @@ class PostForm
                         Select::make('status')
                             ->options([
                                 'draft' => 'Draft',
+                                'in_review' => 'In Review',
                                 'published' => 'Published',
                                 'scheduled' => 'Scheduled',
                             ])
@@ -72,6 +73,17 @@ class PostForm
                         Hidden::make('user_id')
                             ->default(fn () => auth()->id()),
                     ])->columns(2),
+
+                Section::make('Review')
+                    ->schema([
+                        Textarea::make('review_notes')
+                            ->label('Review Notes')
+                            ->rows(3)
+                            ->helperText('Feedback from the reviewer')
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible()
+                    ->collapsed(fn ($record) => $record?->review_notes === null),
 
                 Section::make('SEO')
                     ->schema([
