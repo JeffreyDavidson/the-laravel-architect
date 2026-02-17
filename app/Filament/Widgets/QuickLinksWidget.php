@@ -13,5 +13,5 @@ class QuickLinksWidget extends Widget
         'lg' => 1,
     ];
 
-    protected static ?int $sort = -5;
+    protected static ?int $sort = -6;
 }
