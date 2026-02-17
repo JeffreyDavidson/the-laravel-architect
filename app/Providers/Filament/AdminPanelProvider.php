@@ -73,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon(Heroicon::OutlinedGlobeAlt),
                 MenuItem::make()
                     ->label('GitHub')
-                    ->url('https://github.com/JeffreyDavidson/personal-website', shouldOpenInNewTab: true)
+                    ->url('https://github.com/JeffreyDavidson/the-laravel-architect', shouldOpenInNewTab: true)
                     ->icon(Heroicon::OutlinedCodeBracket),
             ])
             ->renderHook(
