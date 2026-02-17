@@ -1097,19 +1097,19 @@
                 {{-- Social links --}}
                 <div class="flex items-center justify-center lg:justify-start gap-6">
                     <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors" title="YouTube">
-                        <x-icon name="youtube" class="w-5 h-5" />
+                        <x-svg-icon name="youtube" class="w-5 h-5" />
                     </a>
                     <a href="https://instagram.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-pink-500 transition-colors" title="Instagram">
-                        <x-icon name="instagram" class="w-5 h-5" />
+                        <x-svg-icon name="instagram" class="w-5 h-5" />
                     </a>
                     <a href="https://twitter.com/thelaravelarch" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-brand-600 dark:hover:text-white transition-colors" title="X / Twitter">
-                        <x-icon name="x-twitter" class="w-5 h-5" />
+                        <x-svg-icon name="x-twitter" class="w-5 h-5" />
                     </a>
                     <a href="https://bsky.app/profile/thelaravelarch" target="_blank" class="text-gray-500 hover:text-blue-400 transition-colors" title="Bluesky">
-                        <x-icon name="bluesky" class="w-5 h-5" />
+                        <x-svg-icon name="bluesky" class="w-5 h-5" />
                     </a>
                     <a href="https://facebook.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-blue-500 transition-colors" title="Facebook">
-                        <x-icon name="facebook" class="w-5 h-5" />
+                        <x-svg-icon name="facebook" class="w-5 h-5" />
                     </a>
                 </div>
             </div>

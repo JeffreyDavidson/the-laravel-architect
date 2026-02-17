@@ -129,7 +129,7 @@
 
                         <x-button type="submit" class="px-8 py-3.5" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                             Send Message
-                            <x-icon name="arrow-right" class="w-4 h-4" />
+                            <x-svg-icon name="arrow-right" class="w-4 h-4" />
                         </x-button>
                     </form>
                 </div>
@@ -139,24 +139,24 @@
                     {{-- What to Expect --}}
                     <x-card class="p-6">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                            <x-icon name="info" class="w-4 h-4 text-[#4A7FBF]" />
+                            <x-svg-icon name="info" class="w-4 h-4 text-[#4A7FBF]" />
                             What to Expect
                         </h3>
                         <ul class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                             <li class="flex items-start gap-2">
-                                <x-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
+                                <x-svg-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
                                 I'll respond within 24–48 hours
                             </li>
                             <li class="flex items-start gap-2">
-                                <x-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
+                                <x-svg-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
                                 Free initial consultation call
                             </li>
                             <li class="flex items-start gap-2">
-                                <x-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
+                                <x-svg-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
                                 Detailed project scope & estimate
                             </li>
                             <li class="flex items-start gap-2">
-                                <x-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
+                                <x-svg-icon name="check" class="w-4 h-4 text-[#4A7FBF] mt-0.5 flex-shrink-0" />
                                 No obligation, no pressure
                             </li>
                         </ul>
@@ -165,7 +165,7 @@
                     {{-- Services --}}
                     <x-card class="p-6">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                            <x-icon name="settings" class="w-4 h-4 text-[#4A7FBF]" />
+                            <x-svg-icon name="settings" class="w-4 h-4 text-[#4A7FBF]" />
                             Services
                         </h3>
                         <div class="space-y-3">
@@ -191,7 +191,7 @@
                     {{-- Connect --}}
                     <x-card class="p-6">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                            <x-icon name="chat" class="w-4 h-4 text-[#4A7FBF]" />
+                            <x-svg-icon name="chat" class="w-4 h-4 text-[#4A7FBF]" />
                             Other Ways to Connect
                         </h3>
                         <x-social-links variant="list" />
