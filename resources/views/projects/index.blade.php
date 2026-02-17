@@ -128,7 +128,7 @@
         <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms. Each one a lesson in architecture, testing, and building things that last.</p>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-3 gap-3 mt-6">
+        <div class="grid grid-cols-3 gap-3 mt-6 max-w-md">
             <div class="text-center px-2 sm:px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-gray-50 dark:bg-[#0D1117]/50">
                 <span class="block text-xl font-mono font-bold text-[#4A7FBF]">{{ $projects->count() }}</span>
                 <span class="text-[11px] text-gray-500 uppercase tracking-wider">Projects</span>
