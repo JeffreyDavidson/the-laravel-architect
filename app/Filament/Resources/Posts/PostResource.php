@@ -27,6 +27,18 @@ class PostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('status', 'draft')->count();
+
+        return $count > 0 ? (string) $count . ' draft' . ($count > 1 ? 's' : '') : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'gray';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PostForm::configure($schema);

@@ -8,12 +8,15 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 // AccountWidget replaced by WelcomeWidget
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -63,6 +66,28 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 VersionsPlugin::make(),
             ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('View Site')
+                    ->url('/', shouldOpenInNewTab: true)
+                    ->icon(Heroicon::OutlinedGlobeAlt),
+                MenuItem::make()
+                    ->label('GitHub')
+                    ->url('https://github.com/JeffreyDavidson/personal-website', shouldOpenInNewTab: true)
+                    ->icon(Heroicon::OutlinedCodeBracket),
+            ])
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_AFTER,
+                fn (): HtmlString => new HtmlString('<div style="height:2px;background:linear-gradient(90deg,#4A7FBF,#c74b7a,transparent);opacity:0.4;"></div>'),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): HtmlString => new HtmlString('
+                    <div class="text-center mb-2">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-mono">$ php artisan login</p>
+                    </div>
+                '),
+            )
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
