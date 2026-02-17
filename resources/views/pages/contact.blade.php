@@ -4,31 +4,6 @@
 
 @section('content')
 <style>
-    .dark .noise-overlay { position: relative; }
-    .dark .noise-overlay::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0.04;
-        pointer-events: none;
-        z-index: 1;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        background-repeat: repeat;
-        background-size: 256px 256px;
-    }
-    .dark .dot-grid-bg { position: relative; }
-    .dark .dot-grid-bg::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        opacity: 0.03;
-        pointer-events: none;
-        background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-        background-size: 24px 24px;
-        z-index: 0;
-    }
-    .dark .dot-grid-bg > * { position: relative; z-index: 1; }
-
     .contact-input {
         width: 100%;
         padding: 0.75rem 1rem;
@@ -75,36 +50,21 @@
 </style>
 
     {{-- Hero --}}
-    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
-        {{-- Ambient glow --}}
-        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
-        <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
-
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-            <div class="max-w-3xl">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
-                        <span class="text-[#4A7FBF]">$</span>
-                        <span>php artisan contact:new</span>
-                        <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
-                    </div>
-                </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
-                <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
-                <p class="text-green-600 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    Available for Projects
-                </p>
-            </div>
-        </div>
-    </div>
+    <x-hero-section>
+        <x-terminal-prompt command="contact:new" />
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
+        <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
+        <p class="text-green-600 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            Available for Projects
+        </p>
+    </x-hero-section>
 
     {{-- Content --}}
-    <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <x-page-section>
             <div class="flex flex-col lg:flex-row gap-16">
 
                 {{-- Form --}}
@@ -260,6 +220,5 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+    </x-page-section>
 @endsection

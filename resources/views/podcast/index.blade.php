@@ -4,20 +4,6 @@
 
 @section('content')
 <style>
-    .noise-overlay { position: relative; }
-    .dark .noise-overlay::after {
-        content: ''; position: absolute; inset: 0; opacity: 0.04; pointer-events: none; z-index: 1;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        background-repeat: repeat; background-size: 256px 256px;
-    }
-    .dot-grid-bg { position: relative; }
-    .dark .dot-grid-bg::before {
-        content: ''; position: absolute; inset: 0; opacity: 0.03; pointer-events: none;
-        background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-        background-size: 24px 24px; z-index: 0;
-    }
-    .dot-grid-bg > * { position: relative; z-index: 1; }
-
     /* Waveform animation */
     @keyframes waveform {
         0%, 100% { height: 20%; }
@@ -139,13 +125,7 @@
     </div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
-                <span class="text-[#4A7FBF]">$</span>
-                <span>php artisan podcast:list</span>
-                <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
-            </div>
-        </div>
+        <x-terminal-prompt command="podcast:list" />
 
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Podcasts</h1>
         <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Two shows. One about code, one about life. Both unfiltered.</p>
