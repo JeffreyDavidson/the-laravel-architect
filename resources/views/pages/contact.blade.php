@@ -82,8 +82,12 @@
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <div class="max-w-3xl">
-                <div class="font-mono text-sm text-gray-400 dark:text-gray-500 mb-6">
-                    <span class="text-green-600 dark:text-green-400">$</span> php artisan contact:new <span class="inline-block w-2 h-4 bg-gray-400 dark:bg-[#4A7FBF] animate-pulse relative -top-px"></span>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
+                        <span class="text-[#4A7FBF]">$</span>
+                        <span>php artisan contact:new</span>
+                        <span class="animate-pulse text-gray-400 dark:text-[#4A7FBF] relative -top-px">▊</span>
+                    </div>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
                 <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
