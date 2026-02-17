@@ -14,7 +14,7 @@
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <a href="{{ route('blog.index') }}" class="text-sm text-[#4A7FBF] hover:text-[#5A8FD0] transition-colors mb-4 inline-flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <x-icon name="chevron-left" class="w-4 h-4" />
             All Posts
         </a>
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Tagged: <span class="text-[#4A7FBF]">{{ $tag->name }}</span></h1>
@@ -26,19 +26,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div class="space-y-6">
             @forelse($posts as $post)
-            <a href="{{ route('blog.show', $post) }}" class="blog-card group block rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-3">
-                        @if($post->category)
-                        <span class="text-xs font-semibold uppercase tracking-wider" style="color: #4A7FBF;">{{ $post->category->name }}</span>
-                        <span class="text-gray-300 dark:text-gray-700">·</span>
-                        @endif
-                        <span class="text-xs text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
-                    </div>
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#4A7FBF] transition-colors">{{ $post->title }}</h2>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2">{{ $post->excerpt }}</p>
-                </div>
-            </a>
+            <x-blog-card :post="$post" :showTags="false" />
             @empty
             <div class="text-center py-20 text-gray-500">No posts with this tag yet.</div>
             @endforelse
