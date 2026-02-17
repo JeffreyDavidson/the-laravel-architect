@@ -141,7 +141,7 @@
             <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
             <div class="flex items-center gap-2 text-gray-500">
                 <span class="font-mono font-bold text-[#4A7FBF]">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</span>
-                <span>Tech</span>
+                <span>Technologies</span>
             </div>
         </div>
     </div>
