@@ -69,12 +69,7 @@
 
                 {{-- Form --}}
                 <div class="flex-1">
-                    <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg bg-[#4A7FBF]/10 flex items-center justify-center">
-                            <x-icon name="mail" class="w-4 h-4 text-[#4A7FBF]" />
-                        </span>
-                        Send a Message
-                    </h2>
+                    <x-section-heading icon="mail" class="mb-8">Send a Message</x-section-heading>
 
                     @if(session('success'))
                     <div class="mb-6 p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-400 text-sm">
@@ -132,10 +127,10 @@
                             <textarea id="message" name="message" rows="6" required class="contact-input" placeholder="Tell me about your project, timeline, and any specific requirements..."></textarea>
                         </div>
 
-                        <button type="submit" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
+                        <x-button type="submit" class="px-8 py-3.5" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                             Send Message
                             <x-icon name="arrow-right" class="w-4 h-4" />
-                        </button>
+                        </x-button>
                     </form>
                 </div>
 

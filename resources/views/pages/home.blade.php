@@ -1980,7 +1980,7 @@
 
                     {{-- Coming Soon badge --}}
                     <div class="absolute top-4 right-4 z-10">
-                        <span class="yt-coming-soon px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-400 border border-red-500/20 backdrop-blur-sm">Coming Soon</span>
+                        <x-coming-soon-badge class="yt-coming-soon backdrop-blur-sm" />
                     </div>
 
                     {{-- Center play button with rings --}}

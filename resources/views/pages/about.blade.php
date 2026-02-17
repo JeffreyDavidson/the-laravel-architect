@@ -604,10 +604,10 @@
                 <span class="cta-shimmer" style="background: linear-gradient(90deg, #fff 0%, #4A7FBF 50%, #fff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite;">Want to work together?</span>
             </h2>
             <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
-            <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white font-bold rounded-xl transition-colors text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
+            <x-button href="{{ route('contact') }}" class="px-8 py-3.5 text-lg" style="box-shadow: 0 0 30px rgba(74,127,191,0.3);">
                 Contact Me
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
+            </x-button>
         </div>
     </div>
 @endsection
