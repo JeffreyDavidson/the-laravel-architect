@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Amber,
             ])
-            ->darkMode()
+            ->darkMode(isForced: true)
             ->brandName('The Laravel Architect')
             ->brandLogo(asset('images/logo-color.svg'))
             ->brandLogoHeight('2rem')
