@@ -8,10 +8,7 @@ class QuickLinksWidget extends Widget
 {
     protected string $view = 'filament.widgets.quick-links-widget';
 
-    protected int | string | array $columnSpan = [
-        'default' => 'full',
-        'lg' => 1,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
     protected static ?int $sort = -6;
 }
