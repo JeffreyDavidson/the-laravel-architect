@@ -150,7 +150,7 @@
                                 <div class="flex items-start justify-between mb-5">
                                     <div class="flex items-center gap-3">
                                         <div class="card-icon w-11 h-11 rounded-xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#4A7FBF]/5 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                            <x-icon name="folder" class="w-5 h-5 text-[#4A7FBF]" />
                                         </div>
                                         <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-[#4A7FBF] bg-[#4A7FBF]/10 rounded-full border border-[#4A7FBF]/20">Featured</span>
                                     </div>
@@ -180,7 +180,7 @@
                                 {{-- CTA --}}
                                 <div class="flex items-center gap-2 text-sm font-semibold text-[#4A7FBF] mt-2">
                                     <span>View Project</span>
-                                    <svg class="w-4 h-4 card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                    <x-icon name="arrow-long-right" class="w-4 h-4 card-arrow" />
                                 </div>
                             </div>
                         </a>
@@ -208,7 +208,7 @@
                                 {{-- Header --}}
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4A7FBF]/15 to-[#4A7FBF]/5 flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-4.5 h-4.5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                        <x-icon name="folder" class="w-4.5 h-4.5 text-[#4A7FBF]" />
                                     </div>
                                     <div class="flex items-center gap-2">
                                         @if($project->github_url)
