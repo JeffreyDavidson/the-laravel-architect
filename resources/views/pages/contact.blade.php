@@ -4,8 +4,8 @@
 
 @section('content')
 <style>
-    .noise-overlay { position: relative; }
-    .noise-overlay::after {
+    .dark .noise-overlay { position: relative; }
+    .dark .noise-overlay::after {
         content: '';
         position: absolute;
         inset: 0;
@@ -16,8 +16,8 @@
         background-repeat: repeat;
         background-size: 256px 256px;
     }
-    .dot-grid-bg { position: relative; }
-    .dot-grid-bg::before {
+    .dark .dot-grid-bg { position: relative; }
+    .dark .dot-grid-bg::before {
         content: '';
         position: absolute;
         inset: 0;
@@ -27,7 +27,7 @@
         background-size: 24px 24px;
         z-index: 0;
     }
-    .dot-grid-bg > * { position: relative; z-index: 1; }
+    .dark .dot-grid-bg > * { position: relative; z-index: 1; }
 
     .contact-input {
         width: 100%;
@@ -72,37 +72,35 @@
         border-color: #4A7FBF44;
     }
     
-    /* Light mode overrides */
-    :root:not(.dark) .noise-overlay::after,
-    :root:not(.dark) .dot-grid-bg::before {
-        display: none !important;
-    }
 </style>
 
     {{-- Hero --}}
     <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
         {{-- Ambient glow --}}
-        <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
-        <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+        <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+        <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
                     <span class="relative flex h-2 w-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                     </span>
                     Available for Projects
                 </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">Let's Build Something <span class="text-[#4A7FBF]">Together</span></h1>
                 <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
+                <div class="mt-6 font-mono text-sm text-gray-400 dark:text-gray-500">
+                    <span class="text-green-600 dark:text-green-400">$</span> php artisan contact:new <span class="inline-block w-2 h-4 bg-gray-400 dark:bg-[#4A7FBF] animate-pulse relative -top-px"></span>
+                </div>
             </div>
         </div>
     </div>
 
     {{-- Content --}}
     <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="flex flex-col lg:flex-row gap-16">
 
                 {{-- Form --}}
