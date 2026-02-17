@@ -35,7 +35,9 @@ class PostsTable
                     ->color(fn (string $state): string => match ($state) {
                         'published' => 'success',
                         'draft' => 'gray',
+                        'in_review' => 'info',
                         'scheduled' => 'warning',
+                        default => 'gray',
                     }),
                 TextColumn::make('published_at')
                     ->dateTime()
@@ -49,6 +51,7 @@ class PostsTable
                 SelectFilter::make('status')
                     ->options([
                         'draft' => 'Draft',
+                        'in_review' => 'In Review',
                         'published' => 'Published',
                         'scheduled' => 'Scheduled',
                     ]),

@@ -29,14 +29,21 @@ class PostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = static::getModel()::where('status', 'draft')->count();
+        $reviewCount = static::getModel()::where('status', 'in_review')->count();
+        $draftCount = static::getModel()::where('status', 'draft')->count();
 
-        return $count > 0 ? (string) $count . ' draft' . ($count > 1 ? 's' : '') : null;
+        if ($reviewCount > 0) {
+            return $reviewCount . ' to review';
+        }
+
+        return $draftCount > 0 ? $draftCount . ' draft' . ($draftCount > 1 ? 's' : '') : null;
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return 'gray';
+        $reviewCount = static::getModel()::where('status', 'in_review')->count();
+
+        return $reviewCount > 0 ? 'info' : 'gray';
     }
 
     public static function form(Schema $schema): Schema
