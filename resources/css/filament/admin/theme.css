@@ -2,3 +2,114 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+/*
+|--------------------------------------------------------------------------
+| The Laravel Architect — Admin Theme
+|--------------------------------------------------------------------------
+*/
+
+:root.dark {
+    /* Sidebar */
+    --sidebar-bg: #0d1117;
+    --sidebar-border: #1e2a3a;
+
+    /* Top bar */
+    --header-bg: #0d1117;
+}
+
+/* Sidebar dark background */
+.dark .fi-sidebar {
+    background-color: #0d1117 !important;
+    border-right-color: #1e2a3a !important;
+}
+
+/* Sidebar nav items */
+.dark .fi-sidebar-nav .fi-sidebar-item a {
+    border-radius: 0.5rem;
+}
+
+.dark .fi-sidebar-nav .fi-sidebar-item a:hover {
+    background-color: rgba(74, 127, 191, 0.08) !important;
+}
+
+.dark .fi-sidebar-nav .fi-sidebar-item.fi-active a {
+    background-color: rgba(74, 127, 191, 0.12) !important;
+    color: #4A7FBF !important;
+}
+
+/* Topbar */
+.dark .fi-topbar {
+    background-color: #0d1117 !important;
+    border-bottom-color: #1e2a3a !important;
+}
+
+/* Main content area */
+.dark .fi-main {
+    background-color: #111820 !important;
+}
+
+/* Cards / sections */
+.dark .fi-section,
+.dark .fi-ta-ctn,
+.dark .fi-wi {
+    background-color: #161b22 !important;
+    border-color: #1e2a3a !important;
+}
+
+/* Table rows */
+.dark .fi-ta-row:hover td {
+    background-color: rgba(74, 127, 191, 0.04) !important;
+}
+
+/* Login page */
+.dark .fi-simple-main {
+    background-color: #161b22 !important;
+    border-color: #1e2a3a !important;
+}
+
+.dark .fi-simple-layout {
+    background-color: #0d1117 !important;
+}
+
+/* Brand accent on login button */
+.dark .fi-simple-main .fi-btn-primary {
+    background-color: #4A7FBF !important;
+}
+
+.dark .fi-simple-main .fi-btn-primary:hover {
+    background-color: #3d6da8 !important;
+}
+
+/* Versions widget */
+.dark .versions-nav-widget {
+    background-color: #0d1117 !important;
+    border-top-color: #1e2a3a !important;
+    color: #6b7280 !important;
+}
+
+/* Navigation group labels */
+.dark .fi-sidebar-group-label {
+    color: #6b7280 !important;
+}
+
+/* Input fields */
+.dark .fi-input {
+    background-color: #0d1117 !important;
+    border-color: #1e2a3a !important;
+}
+
+.dark .fi-input:focus {
+    border-color: #4A7FBF !important;
+    box-shadow: 0 0 0 1px rgba(74, 127, 191, 0.3) !important;
+}
+
+/* Breadcrumbs */
+.dark .fi-breadcrumbs ol li {
+    color: #6b7280;
+}
+
+/* Dashboard widgets */
+.dark .fi-widget {
+    background-color: #161b22 !important;
+}
