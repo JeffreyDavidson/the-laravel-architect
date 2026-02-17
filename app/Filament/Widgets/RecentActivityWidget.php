@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Post;
-use App\Models\Project;
 use App\Models\Testimonial;
 use Filament\Widgets\Widget;
 
@@ -11,7 +10,10 @@ class RecentActivityWidget extends Widget
 {
     protected string $view = 'filament.widgets.recent-activity-widget';
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 1,
+    ];
 
     protected static ?int $sort = -4;
 
@@ -19,7 +21,6 @@ class RecentActivityWidget extends Widget
     {
         $activities = collect();
 
-        // Recent posts
         Post::latest('updated_at')->take(3)->get()->each(function ($post) use ($activities) {
             $activities->push([
                 'icon' => '📝',
@@ -30,7 +31,6 @@ class RecentActivityWidget extends Widget
             ]);
         });
 
-        // Recent testimonials
         Testimonial::latest('created_at')->take(2)->get()->each(function ($testimonial) use ($activities) {
             $statusLabel = match ($testimonial->status) {
                 'pending' => 'Pending Review',
@@ -38,18 +38,17 @@ class RecentActivityWidget extends Widget
                 'rejected' => 'Rejected',
                 default => $testimonial->status,
             };
-            $color = match ($testimonial->status) {
-                'pending' => 'text-amber-400',
-                'approved' => 'text-emerald-400',
-                'rejected' => 'text-red-400',
-                default => 'text-gray-400',
-            };
             $activities->push([
                 'icon' => '💬',
                 'label' => 'Testimonial from ' . $testimonial->name,
                 'meta' => $statusLabel,
                 'time' => $testimonial->created_at->diffForHumans(),
-                'color' => $color,
+                'color' => match ($testimonial->status) {
+                    'pending' => 'text-amber-400',
+                    'approved' => 'text-emerald-400',
+                    'rejected' => 'text-red-400',
+                    default => 'text-gray-400',
+                },
             ]);
         });
 
