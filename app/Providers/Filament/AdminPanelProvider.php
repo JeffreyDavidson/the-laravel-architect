@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Awcodes\QuickCreate\QuickCreatePlugin;
+use Awcodes\Versions\VersionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -50,6 +53,15 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Showcase')->icon(Heroicon::OutlinedCodeBracket),
                 NavigationGroup::make('Taxonomy')->icon(Heroicon::OutlinedTag),
                 NavigationGroup::make('Newsletter')->icon(Heroicon::OutlinedEnvelope),
+            ])
+            ->plugins([
+                FilamentSpatieLaravelBackupPlugin::make(),
+                QuickCreatePlugin::make()
+                    ->excludes([
+                        \App\Filament\Resources\Subscribers\SubscriberResource::class,
+                        \App\Filament\Resources\Videos\VideoResource::class,
+                    ]),
+                VersionsPlugin::make(),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
