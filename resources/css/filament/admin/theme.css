@@ -7,33 +7,11 @@
 /*
 |--------------------------------------------------------------------------
 | The Laravel Architect — Admin Theme
-| Minimal, safe overrides only — no layout-breaking rules
+| Safe cosmetic overrides only — no layout-breaking rules
 |--------------------------------------------------------------------------
 */
 
-/* Sidebar background */
-.dark .fi-sidebar-nav {
-    background: linear-gradient(180deg, #0d1117 0%, #0a0e14 100%);
-}
-
-/* Sidebar header gradient accent */
-.dark .fi-sidebar-header {
-    position: relative;
-}
-
-.dark .fi-sidebar-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #4A7FBF, #c74b7a, transparent);
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-/* Nav group labels — brand blue uppercase */
+/* ── Nav group labels ── */
 .dark .fi-sidebar-group-label {
     color: #4A7FBF;
     font-size: 0.65rem;
@@ -42,44 +20,61 @@
     opacity: 0.7;
 }
 
-/* Active nav — blue left border */
+/* ── Active nav item accent ── */
 .dark .fi-sidebar-item.fi-active > a {
     border-left: 2px solid #4A7FBF;
+    padding-left: calc(0.75rem - 2px);
 }
 
-/* Table header styling */
+/* ── Nav item hover tint ── */
+.dark .fi-sidebar-item > a:hover {
+    background-color: rgba(74, 127, 191, 0.05);
+}
+
+/* ── Table header ── */
 .dark .fi-ta-header-cell {
     font-size: 0.7rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
-/* Table row hover */
+/* ── Table row hover ── */
 .dark .fi-ta-row:hover td {
     background-color: rgba(74, 127, 191, 0.04);
 }
 
-/* Input focus glow */
-.dark .fi-input-wrp:focus-within {
+/* ── Input focus glow ── */
+.fi-input-wrp:focus-within {
     border-color: #4A7FBF;
     box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.15);
 }
 
-/* Primary buttons */
-.dark .fi-btn-primary {
-    background-color: #4A7FBF;
+.fi-textarea-wrp:focus-within {
+    border-color: #4A7FBF;
+    box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.15);
 }
 
-.dark .fi-btn-primary:hover {
-    background-color: #3d6da8;
-}
-
-/* Breadcrumb hover */
+/* ── Breadcrumb hover ── */
 .dark .fi-breadcrumbs a:hover {
     color: #4A7FBF;
 }
 
-/* Versions widget pills */
+/* ── Pagination active ── */
+.dark .fi-pagination-item-active {
+    background-color: #4A7FBF;
+}
+
+/* ── Tabs active ── */
+.dark .fi-tabs-tab-active {
+    border-color: #4A7FBF;
+}
+
+/* ── Toggle switch ── */
+.fi-toggle-on {
+    background-color: #4A7FBF;
+}
+
+/* ── Versions widget pills ── */
 .dark .versions-nav-widget li {
     background-color: rgba(74, 127, 191, 0.08);
     color: #6b7280;
@@ -89,17 +84,42 @@
     border: 1px solid rgba(74, 127, 191, 0.12);
 }
 
-/* Scrollbar */
+/* ── Dropdown hover ── */
+.dark .fi-dropdown-list-item:hover {
+    background-color: rgba(74, 127, 191, 0.06);
+}
+
+/* ── Custom scrollbar ── */
 .dark ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
 .dark ::-webkit-scrollbar-track {
-    background: #0d1117;
+    background: transparent;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-    background: #1e2a3a;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
 }
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Empty state text ── */
+.dark .fi-ta-empty-state-heading {
+    color: #9ca3af;
+}
+
+/* ── Section header label ── */
+.dark .fi-section-header-heading {
+    color: #e5e7eb;
+}
+
+/* ── Stats widget utility ── */
+.stat-card-blue { border-top: 2px solid #4A7FBF; }
+.stat-card-pink { border-top: 2px solid #c74b7a; }
+.stat-card-green { border-top: 2px solid #10b981; }
+.stat-card-amber { border-top: 2px solid #f59e0b; }
