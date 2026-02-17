@@ -10,7 +10,7 @@ class RecentActivityWidget extends Widget
 {
     protected string $view = 'filament.widgets.recent-activity-widget';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 2;
 
     protected static ?int $sort = -4;
 
