@@ -17,9 +17,6 @@
         pre:hover .copy-btn { opacity: 1; }
         .copy-btn:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
         .copy-btn.copied { color: #4ade80; border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.1); }
-        /* Light mode */
-        :root:not(.dark) .noise-overlay::after,
-        :root:not(.dark) .dot-grid-bg::before { display: none !important; }
     </style>
 @endpush
 
