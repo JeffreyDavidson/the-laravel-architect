@@ -25,15 +25,15 @@
 </style>
 
 {{-- ===== PROJECT HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
+<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
     {{-- Ambient glow --}}
-    <div class="hidden dark:block absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%); animation: glowPulse 5s ease-in-out infinite;"></div>
-    <div class="hidden dark:block absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #E47A9D, transparent 70%);"></div>
+    <div class="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%); animation: glowPulse 5s ease-in-out infinite;"></div>
+    <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #E47A9D, transparent 70%);"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
-            <a href="{{ route('projects.index') }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">Projects</a>
+            <a href="{{ route('projects.index') }}" class="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Projects</a>
             <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             <span class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
         </nav>
@@ -46,14 +46,14 @@
                     <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#4A7FBF] bg-[#4A7FBF]/10 rounded-full border border-[#4A7FBF]/20">⭐ Featured</span>
                     @endif
                     @if($project->status === 'published')
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-400 bg-green-500/10 rounded-full border border-green-500/20">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-600 dark:text-green-400 bg-green-500/10 rounded-full border border-green-500/20">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
                         Active
                     </span>
                     @endif
                 </div>
 
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5 leading-tight">{{ $project->title }}</h1>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5 leading-tight text-gray-900 dark:text-white">{{ $project->title }}</h1>
                 <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-8 max-w-3xl">{{ $project->description }}</p>
 
                 {{-- Action buttons --}}
@@ -80,7 +80,7 @@
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Tech Stack</h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach($project->tech_stack as $tech)
-                        <span class="tech-tag px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 bg-[#1e2a3a]/30">{{ $tech }}</span>
+                        <span class="tech-tag px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#1e2a3a]/30">{{ $tech }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -134,7 +134,7 @@
 @endif
 
 {{-- ===== CONTENT ===== --}}
-<section class="dot-grid-bg">
+<section class="dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         @if($project->content)
         <x-prose class="prose-headings:font-extrabold prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-[#1e2a3a] prose-a:no-underline hover:prose-a:underline prose-code:text-[#E47A9D] prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a] prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-strong:text-gray-800 dark:prose-strong:text-gray-200">
@@ -178,7 +178,7 @@
 @else
 <section class="border-t border-gray-200 dark:border-[#1e2a3a]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
+        <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Back to all projects
         </a>
