@@ -28,24 +28,24 @@
 
             {{-- Stats grid --}}
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <a href="{{ route('filament.admin.resources.posts.posts.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
+                <a href="{{ route('filament.admin.resources.posts.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
                     <div class="text-2xl font-bold text-white group-hover:text-[#4A7FBF] transition-colors">{{ $posts }}</div>
                     <div class="text-xs text-gray-500 mt-1">Blog Posts</div>
                 </a>
-                <a href="{{ route('filament.admin.resources.projects.projects.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
+                <a href="{{ route('filament.admin.resources.projects.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
                     <div class="text-2xl font-bold text-white group-hover:text-[#4A7FBF] transition-colors">{{ $projects }}</div>
                     <div class="text-xs text-gray-500 mt-1">Projects</div>
                 </a>
-                <a href="{{ route('filament.admin.resources.subscribers.subscribers.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
+                <a href="{{ route('filament.admin.resources.subscribers.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
                     <div class="text-2xl font-bold text-white group-hover:text-[#4A7FBF] transition-colors">{{ $subscribers }}</div>
                     <div class="text-xs text-gray-500 mt-1">Subscribers</div>
                 </a>
-                <a href="{{ route('filament.admin.resources.videos.videos.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
+                <a href="{{ route('filament.admin.resources.videos.index') }}" class="group rounded-lg border border-[#1e2a3a] bg-[#0d1117] p-4 transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
                     <div class="text-2xl font-bold text-white group-hover:text-[#4A7FBF] transition-colors">{{ $videos }}</div>
                     <div class="text-xs text-gray-500 mt-1">Videos</div>
                 </a>
                 @if($pendingTestimonials > 0)
-                <a href="{{ route('filament.admin.resources.testimonials.testimonials.index') }}" class="group rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 transition-all hover:border-amber-500/40 hover:bg-amber-500/10">
+                <a href="{{ route('filament.admin.resources.testimonials.index') }}" class="group rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 transition-all hover:border-amber-500/40 hover:bg-amber-500/10">
                     <div class="text-2xl font-bold text-amber-400">{{ $pendingTestimonials }}</div>
                     <div class="text-xs text-amber-500/70 mt-1">Pending Reviews</div>
                 </a>
