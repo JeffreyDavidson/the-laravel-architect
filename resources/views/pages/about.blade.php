@@ -258,7 +258,7 @@
         <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center md:items-start md:pt-4">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
                 <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
@@ -377,10 +377,10 @@
                         </div>
                     </div>
 
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
+                    <h1 class="text-3xl md:text-4xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    <p class="text-gray-600 dark:text-gray-400 text-base leading-relaxed max-w-xl mx-auto md:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
