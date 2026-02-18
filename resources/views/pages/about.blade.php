@@ -73,42 +73,46 @@
         inherits: false;
     }
 
-    /* Trading Card Duo */
-    .card-spread {
-        position: relative;
-        width: 340px;
-        height: 520px;
+    /* Trading Card Flip */
+    .card-flip-container {
         perspective: 1200px;
+        cursor: pointer;
     }
-    .card-spread-item {
-        position: absolute;
-        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+    .card-flip {
+        position: relative;
         transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    /* Portrait card: rotated left */
-    .card-portrait {
-        left: 0; top: 0; z-index: 2;
-        transform: rotate(-4deg) translateX(-10px);
+    .card-flip.flipped {
+        transform: rotateY(180deg);
     }
-    /* Stats card: rotated right */
-    .card-stats {
-        right: 0; top: 10px; z-index: 1;
-        transform: rotate(5deg) translateX(10px);
+    .card-front, .card-back {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
-    /* Hover: fan apart */
-    .card-spread:hover .card-portrait {
-        transform: rotate(-6deg) translateX(-24px) translateY(-6px) scale(1.02);
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    .card-back {
+        position: absolute;
+        inset: 0;
+        transform: rotateY(180deg);
     }
-    .card-spread:hover .card-stats {
-        transform: rotate(7deg) translateX(24px) translateY(-4px) scale(1.02);
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    /* Subtle hover lift */
+    .card-flip-container:hover .card-flip:not(.flipped) {
+        transform: rotateY(-5deg) scale(1.02);
+    }
+    .card-flip-container:hover .card-flip.flipped {
+        transform: rotateY(175deg) scale(1.02);
     }
 
     .trading-card-inner {
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        transition: box-shadow 0.4s ease;
         transform-style: preserve-3d;
     }
+
+    /* Flip hint */
+    .flip-hint {
+        transition: opacity 0.4s ease;
+    }
+    .flip-hint.hidden { opacity: 0; pointer-events: none; }
 
     /* Holographic shimmer */
     .holo-border {
@@ -193,14 +197,7 @@
     :root:not(.dark) .trading-card-glow {
         display: none;
     }
-    @media (max-width: 767px) {
-        .card-spread {
-            width: 260px;
-            height: 440px;
-        }
-        .card-portrait { transform: rotate(-3deg) translateX(-6px); }
-        .card-stats { transform: rotate(4deg) translateX(6px); }
-    }
+    /* removed */
     :root:not(.dark) .cta-shimmer {
         background: linear-gradient(90deg, #1f2937 0%, #4A7FBF 50%, #1f2937 100%) !important;
         background-size: 200% auto !important;
@@ -220,84 +217,110 @@
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
-                {{-- Trading Card Duo --}}
-                <div class="flex-shrink-0 relative">
+                {{-- Trading Card (Flip) --}}
+                <div class="flex-shrink-0 relative" x-data="{ flipped: false, hinted: true }">
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
 
-                    <div class="card-spread">
-                        {{-- CARD 1: Portrait --}}
-                        <div class="card-spread-item card-portrait">
-                            <div class="holo-border relative">
-                                <div class="trading-card-inner relative w-[200px] md:w-[200px] lg:w-[230px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
-                                    <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
-                                    <div class="flex items-center justify-between px-4 pt-2 pb-1">
-                                        <span class="text-[8px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Developer Card</span>
-                                        <span class="px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
-                                    </div>
-                                    <div class="mx-3 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-[#1e2a3a] relative">
-                                        <div class="aspect-[3/4] bg-white">
-                                            <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pt-2 pb-1 text-center">
-                                        <h2 class="text-base font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
-                                        <div class="flex items-center justify-center gap-2 mt-0.5">
-                                            <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#4A7FBF]/30"></div>
-                                            <p class="text-[10px] font-semibold uppercase tracking-[0.2em]" style="color: #4A7FBF;">Laravel Architect</p>
-                                            <div class="h-px flex-1 bg-gradient-to-l from-transparent to-[#4A7FBF]/30"></div>
-                                        </div>
-                                    </div>
-                                    <div class="h-1 mt-2" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="card-flip-container" @click="flipped = !flipped; hinted = false">
+                        <div class="card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
-                        {{-- CARD 2: Stats --}}
-                        <div class="card-spread-item card-stats">
-                            <div class="holo-border relative">
-                                <div class="trading-card-inner relative w-[200px] md:w-[200px] lg:w-[230px] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
-                                    <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
-                                    <div class="flex items-center justify-between px-4 pt-2 pb-1">
-                                        <span class="text-[8px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Stat Sheet</span>
-                                        <span class="text-[8px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">#001</span>
-                                    </div>
-                                    <div class="px-3 pt-1 pb-3">
-                                        <div class="grid grid-cols-2 gap-1.5">
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2008</span>
-                                            </div>
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
-                                            </div>
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Test Suites</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">3</span>
-                                            </div>
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Experience</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">15+ yrs</span>
-                                            </div>
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Location</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Florida</span>
-                                            </div>
-                                            <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Podcasts</span>
-                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2</span>
+                            {{-- FRONT: Portrait --}}
+                            <div class="card-front">
+                                <div class="holo-border relative">
+                                    <div class="trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
+                                        <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
+                                        <div class="flex items-center justify-between px-5 pt-3 pb-2">
+                                            <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Developer Card</span>
+                                            <span class="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
+                                        </div>
+                                        <div class="mx-4 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-[#1e2a3a] relative">
+                                            <div class="aspect-[3/4] bg-white">
+                                                <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                             </div>
                                         </div>
-                                        {{-- Flavor text --}}
-                                        <div class="mt-3 px-1 pt-2 border-t border-gray-200 dark:border-[#1e2a3a]/50">
-                                            <p class="text-[10px] italic text-gray-400 dark:text-gray-500 leading-relaxed">"Writes tests before coffee. Believes every application deserves clean architecture."</p>
+                                        <div class="px-5 pt-3 pb-1 text-center">
+                                            <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
+                                            <div class="flex items-center justify-center gap-2 mt-1">
+                                                <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#4A7FBF]/30"></div>
+                                                <p class="text-[11px] font-semibold uppercase tracking-[0.2em]" style="color: #4A7FBF;">Laravel Architect</p>
+                                                <div class="h-px flex-1 bg-gradient-to-l from-transparent to-[#4A7FBF]/30"></div>
+                                            </div>
                                         </div>
+                                        <div class="h-1 mt-3" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
                                     </div>
-                                    <div class="h-1" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
+                                </div>
+                            </div>
+
+                            {{-- BACK: Stats --}}
+                            <div class="card-back">
+                                <div class="holo-border relative">
+                                    <div class="trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
+                                        <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
+                                        <div class="flex items-center justify-between px-5 pt-3 pb-2">
+                                            <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Stat Sheet</span>
+                                            <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">#001</span>
+                                        </div>
+
+                                        {{-- Name plate on back too --}}
+                                        <div class="px-5 pb-3 text-center">
+                                            <h2 class="text-lg font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
+                                            <div class="flex items-center justify-center gap-2 mt-0.5">
+                                                <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#9D5175]/30"></div>
+                                                <p class="text-[10px] font-semibold uppercase tracking-[0.2em]" style="color: #9D5175;">Stats &amp; Specs</p>
+                                                <div class="h-px flex-1 bg-gradient-to-l from-transparent to-[#9D5175]/30"></div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Stats grid --}}
+                                        <div class="px-4 pb-3">
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2008</span>
+                                                </div>
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
+                                                </div>
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Test Suites</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">3</span>
+                                                </div>
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Experience</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">15+ yrs</span>
+                                                </div>
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Location</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Florida</span>
+                                                </div>
+                                                <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Podcasts</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2</span>
+                                                </div>
+                                            </div>
+                                            {{-- Flavor text --}}
+                                            <div class="mt-3 px-1 pt-3 border-t border-gray-200 dark:border-[#1e2a3a]/50">
+                                                <p class="text-[11px] italic text-gray-400 dark:text-gray-500 leading-relaxed text-center">"Writes tests before coffee. Believes every application deserves clean architecture."</p>
+                                            </div>
+                                        </div>
+                                        <div class="h-1" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Flip hint --}}
+                    <div class="flip-hint flex items-center justify-center gap-2 mt-4" :class="{ 'hidden': !hinted }">
+                        <svg class="w-4 h-4 text-gray-400 dark:text-gray-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+                        </svg>
+                        <span class="text-[11px] text-gray-400 dark:text-gray-600 font-medium tracking-wide">Click card to flip</span>
+                        <svg class="w-3.5 h-3.5 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+                        </svg>
                     </div>
                 </div>
 
