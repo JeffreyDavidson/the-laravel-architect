@@ -126,6 +126,7 @@
     /* Ghost cards behind (deck effect) */
     .card-deck {
         position: relative;
+        margin-bottom: 16px; /* account for ghost card offset */
     }
     .ghost-card {
         position: absolute;
@@ -260,7 +261,7 @@
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
-                <div class="flex-shrink-0 relative pb-8 md:pb-0" x-data="{ flipped: false }">
+                <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
 
