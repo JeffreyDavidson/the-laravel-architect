@@ -323,11 +323,11 @@
 
                     {{-- Flip hint --}}
                     <div class="flip-hint flex items-center justify-center gap-2 mt-4" :class="{ 'hidden': !hinted }">
-                        <svg class="w-4 h-4 text-gray-400 dark:text-gray-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
-                        <span class="text-[11px] text-gray-400 dark:text-gray-600 font-medium tracking-wide">Click card to flip</span>
-                        <svg class="w-3.5 h-3.5 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <span class="text-[12px] text-gray-500 dark:text-gray-400 font-medium tracking-wide">Click card to flip</span>
+                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
                         </svg>
                     </div>
