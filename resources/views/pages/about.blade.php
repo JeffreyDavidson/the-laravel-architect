@@ -83,9 +83,7 @@
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .card-flip.flipped {
-        transform: rotateY(180deg);
-    }
+    /* .flipped class is a marker only — JS handles the transform */
     .card-front, .card-back {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
@@ -110,13 +108,7 @@
         flex-direction: column;
         justify-content: center;
     }
-    /* Subtle hover lift */
-    .card-flip-container:hover .card-flip:not(.flipped) {
-        transform: rotateY(-5deg) scale(1.02);
-    }
-    .card-flip-container:hover .card-flip.flipped {
-        transform: rotateY(175deg) scale(1.02);
-    }
+    /* Tilt handled by JS — remove CSS hover transforms */
 
     .trading-card-inner {
         transition: box-shadow 0.4s ease;
@@ -237,7 +229,7 @@
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
 
-                    <div class="card-flip-container" @click="flipped = !flipped; hinted = false">
+                    <div class="card-flip-container" @click="flipped = !flipped; hinted = false; $dispatch('card-flip', { flipped })">
                         <div class="card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
@@ -689,4 +681,47 @@
             </x-button>
         </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.card-flip-container');
+    const card = document.querySelector('.card-flip');
+    if (!container || !card) return;
+
+    const maxTilt = 15;
+    let isFlipped = false;
+    let isAnimating = false;
+
+    // Listen for flip events from Alpine
+    container.addEventListener('card-flip', (e) => {
+        isFlipped = e.detail.flipped;
+        isAnimating = true;
+        const flipBase = isFlipped ? 180 : 0;
+        card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        card.style.transform = `rotateX(0deg) rotateY(${flipBase}deg) scale(1)`;
+        setTimeout(() => { isAnimating = false; }, 800);
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (isAnimating) return;
+
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        const tiltX = (0.5 - y) * maxTilt;
+        const tiltY = (x - 0.5) * maxTilt;
+        const flipBase = isFlipped ? 180 : 0;
+
+        card.style.transition = 'transform 0.1s ease-out';
+        card.style.transform = `rotateX(${tiltX}deg) rotateY(${flipBase + tiltY}deg) scale(1.02)`;
+    });
+
+    container.addEventListener('mouseleave', () => {
+        if (isAnimating) return;
+        const flipBase = isFlipped ? 180 : 0;
+        card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        card.style.transform = `rotateX(0deg) rotateY(${flipBase}deg) scale(1)`;
+    });
+});
+</script>
 @endsection
