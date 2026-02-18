@@ -269,7 +269,7 @@
                         <div class="ghost-card ghost-card-2"></div>
                         <div class="ghost-card ghost-card-1"></div>
                     <div class="card-flip-container" @click="flipped = !flipped; $dispatch('card-flip', { flipped })">
-                        <div class="card-flip w-[250px] md:w-[270px] lg:w-[300px]" :class="{ 'flipped': flipped }">
+                        <div class="card-flip w-[250px] md:w-[280px] lg:w-[310px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
                             <div class="card-front">
@@ -377,10 +377,10 @@
                         </div>
                     </div>
 
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-3 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    <p class="text-gray-600 dark:text-gray-400 text-base leading-relaxed max-w-2xl mx-auto md:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
