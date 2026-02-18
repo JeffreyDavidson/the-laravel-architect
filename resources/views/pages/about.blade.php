@@ -96,8 +96,11 @@
         top: 0; left: 0; right: 0; bottom: 0;
         transform: rotateY(180deg);
     }
-    .card-back .trading-card-inner {
+    .card-back .holo-border,
+    .card-back .holo-border .trading-card-inner {
         height: 100%;
+    }
+    .card-back .trading-card-inner {
         display: flex;
         flex-direction: column;
     }
