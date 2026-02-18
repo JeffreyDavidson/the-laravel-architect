@@ -319,15 +319,15 @@
                                             <div class="grid grid-cols-2 gap-2">
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2008</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v5.2+</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Test Suites</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">3</span>
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Stack</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">TALL</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Experience</span>
