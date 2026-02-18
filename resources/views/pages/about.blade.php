@@ -319,32 +319,32 @@
                                             <div class="grid grid-cols-2 gap-2">
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v5.2+</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">8.4</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">v4.2+</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">12</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
                                                     <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Stack</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">TALL</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Experience</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">15+ yrs</span>
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Specialty</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Architecture</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Location</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Florida</span>
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Works</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Remote</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Podcasts</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">2</span>
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Role</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Pinch Hitter</span>
                                                 </div>
                                             </div>
                                             {{-- Flavor text --}}
                                             <div class="mt-3 px-1 pt-3 border-t border-gray-200 dark:border-[#1e2a3a]/50">
-                                                <p class="text-[11px] italic text-gray-400 dark:text-gray-500 leading-relaxed text-center">"Writes tests before coffee. Believes every application deserves clean architecture."</p>
+                                                <p class="text-[11px] italic text-gray-400 dark:text-gray-500 leading-relaxed text-center">"The one you call when the codebase is on fire and nobody else can untangle it."</p>
                                             </div>
                                         </div>
                                         </div>
