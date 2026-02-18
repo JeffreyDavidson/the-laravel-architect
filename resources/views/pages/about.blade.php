@@ -269,7 +269,7 @@
                         <div class="ghost-card ghost-card-2"></div>
                         <div class="ghost-card ghost-card-1"></div>
                     <div class="card-flip-container" @click="flipped = !flipped; $dispatch('card-flip', { flipped })">
-                        <div class="card-flip w-[280px] md:w-[300px] lg:w-[340px]" :class="{ 'flipped': flipped }">
+                        <div class="card-flip w-[250px] md:w-[270px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
                             <div class="card-front">
