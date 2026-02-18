@@ -338,8 +338,8 @@
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Remote</span>
                                                 </div>
                                                 <div class="stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-[#0D1117]/80 border border-gray-200 dark:border-[#1e2a3a]/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Style</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Pinch Hitter</span>
+                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Call Me When</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
                                                 </div>
                                             </div>
                                             {{-- Flavor text --}}
