@@ -82,12 +82,14 @@
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        /* 5:7 trading card ratio */
+        aspect-ratio: 5 / 7;
     }
-    /* .flipped class is a marker only — JS handles the transform */
     .card-front, .card-back {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         width: 100%;
+        height: 100%;
     }
     .card-back {
         position: absolute;
@@ -108,11 +110,45 @@
         flex-direction: column;
         justify-content: center;
     }
-    /* Tilt handled by JS — remove CSS hover transforms */
+    .card-front .holo-border,
+    .card-front .holo-border .trading-card-inner {
+        height: 100%;
+    }
+    .card-front .trading-card-inner {
+        display: flex;
+        flex-direction: column;
+    }
 
     .trading-card-inner {
         transition: box-shadow 0.4s ease;
         transform-style: preserve-3d;
+    }
+
+    /* Ghost cards behind (deck effect) */
+    .card-deck {
+        position: relative;
+    }
+    .ghost-card {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 1.25rem;
+        border: 2px solid rgba(74, 127, 191, 0.15);
+        background: linear-gradient(135deg, rgba(17,24,32,0.8), rgba(17,24,32,0.6));
+        pointer-events: none;
+    }
+    .ghost-card-1 {
+        transform: translateY(8px) translateX(4px) scale(0.97);
+        opacity: 0.4;
+        z-index: -1;
+    }
+    .ghost-card-2 {
+        transform: translateY(16px) translateX(8px) scale(0.94);
+        opacity: 0.2;
+        z-index: -2;
+    }
+    :root:not(.dark) .ghost-card {
+        background: linear-gradient(135deg, rgba(230,230,235,0.9), rgba(240,240,245,0.7));
+        border-color: rgba(74, 127, 191, 0.1);
     }
 
     /* Flip hint */
@@ -128,7 +164,7 @@
     .holo-border::before {
         content: '';
         position: absolute;
-        inset: -2px;
+        inset: -3px;
         border-radius: 1.25rem;
         background: conic-gradient(
             from var(--holo-angle, 0deg),
@@ -138,7 +174,7 @@
             #E47A9D 75%,
             #4A7FBF 100%
         );
-        opacity: 0.4;
+        opacity: 0.6;
         z-index: -1;
         transition: opacity 0.4s ease;
         animation: holoSpin 6s linear infinite;
@@ -229,6 +265,9 @@
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
 
+                    <div class="card-deck">
+                        <div class="ghost-card ghost-card-2"></div>
+                        <div class="ghost-card ghost-card-1"></div>
                     <div class="card-flip-container" @click="flipped = !flipped; $dispatch('card-flip', { flipped })">
                         <div class="card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
@@ -236,17 +275,14 @@
                             <div class="card-front">
                                 <div class="holo-border relative">
                                     <div class="trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
-                                        <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
                                         <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                            <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">Developer Card</span>
+                                            <span class="text-[9px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-wider">Developer Card</span>
                                             <span class="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap" style="color: #E47A9D; border: 1px solid #E47A9D33; background: #E47A9D08;">✦ Legendary</span>
                                         </div>
-                                        <div class="mx-4 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-[#1e2a3a] relative">
-                                            <div class="aspect-[3/4] bg-white">
-                                                <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
-                                            </div>
+                                        <div class="mx-4 rounded-xl overflow-hidden border-4 border-gray-300 dark:border-[#2a3a4e] relative flex-1">
+                                            <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                         </div>
-                                        <div class="px-5 pt-3 pb-1 text-center">
+                                        <div class="px-5 pt-3 pb-3 text-center">
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-1">
                                                 <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#4A7FBF]/30"></div>
@@ -254,7 +290,6 @@
                                                 <div class="h-px flex-1 bg-gradient-to-l from-transparent to-[#4A7FBF]/30"></div>
                                             </div>
                                         </div>
-                                        <div class="h-1 mt-3" style="background: linear-gradient(90deg, #4A7FBF, #E47A9D, #4A7FBF, #9D5175, #4A7FBF);"></div>
                                     </div>
                                 </div>
                             </div>
@@ -263,7 +298,6 @@
                             <div class="card-back">
                                 <div class="holo-border relative">
                                     <div class="trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-[#111820]">
-                                        <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
                                         <div class="flex items-center justify-between px-5 pt-3 pb-2">
                                             <span class="text-[9px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stat Sheet</span>
                                             <span class="text-[9px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">#001</span>
@@ -314,11 +348,11 @@
                                             </div>
                                         </div>
                                         </div>
-                                        <div class="h-1 mt-auto" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     </div>
 
                     {{-- Flip hint --}}
@@ -688,16 +722,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container || !card) return;
 
     const maxTilt = 15;
-    let isFlipped = false;
+    let flipCount = 0; // always increment (always rotate right)
     let isAnimating = false;
 
     // Listen for flip events from Alpine
     container.addEventListener('card-flip', (e) => {
-        isFlipped = e.detail.flipped;
+        flipCount++;
         isAnimating = true;
-        const flipBase = isFlipped ? 180 : 0;
+        const targetY = flipCount * 180;
         card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-        card.style.transform = `rotateX(0deg) rotateY(${flipBase}deg) scale(1)`;
+        card.style.transform = `rotateX(0deg) rotateY(${targetY}deg) scale(1)`;
         setTimeout(() => { isAnimating = false; }, 800);
     });
 
@@ -710,17 +744,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tiltX = (0.5 - y) * maxTilt;
         const tiltY = (x - 0.5) * maxTilt;
-        const flipBase = isFlipped ? 180 : 0;
+        const baseY = flipCount * 180;
 
         card.style.transition = 'transform 0.1s ease-out';
-        card.style.transform = `rotateX(${tiltX}deg) rotateY(${flipBase + tiltY}deg) scale(1.02)`;
+        card.style.transform = `rotateX(${tiltX}deg) rotateY(${baseY + tiltY}deg) scale(1.02)`;
     });
 
     container.addEventListener('mouseleave', () => {
         if (isAnimating) return;
-        const flipBase = isFlipped ? 180 : 0;
+        const baseY = flipCount * 180;
         card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-        card.style.transform = `rotateX(0deg) rotateY(${flipBase}deg) scale(1)`;
+        card.style.transform = `rotateX(0deg) rotateY(${baseY}deg) scale(1)`;
     });
 });
 </script>
