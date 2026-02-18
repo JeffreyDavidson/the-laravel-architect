@@ -258,7 +258,7 @@
         <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16 items-center">
 
                 {{-- Trading Card (Flip) --}}
                 <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
@@ -269,7 +269,7 @@
                         <div class="ghost-card ghost-card-2"></div>
                         <div class="ghost-card ghost-card-1"></div>
                     <div class="card-flip-container" @click="flipped = !flipped; $dispatch('card-flip', { flipped })">
-                        <div class="card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
+                        <div class="card-flip w-[280px] md:w-[300px] lg:w-[340px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
                             <div class="card-front">
