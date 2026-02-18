@@ -210,7 +210,7 @@
                             {{-- Avatar frame --}}
                             <div class="mx-4 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-[#1e2a3a] relative">
                                 <div class="aspect-[4/3] bg-white">
-                                    <img src="/images/logo-alternate.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
+                                    <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
                                 </div>
                                 {{-- Gradient overlay at bottom of image (dark mode only) --}}
                                 <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-transparent dark:from-[#111820] dark:to-transparent"></div>
