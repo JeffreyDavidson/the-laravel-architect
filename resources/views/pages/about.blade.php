@@ -258,7 +258,7 @@
         <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center md:items-start md:pt-4">
 
                 {{-- Trading Card (Flip) --}}
                 <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
