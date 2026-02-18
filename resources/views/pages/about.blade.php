@@ -89,11 +89,23 @@
     .card-front, .card-back {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
+        width: 100%;
     }
     .card-back {
         position: absolute;
-        inset: 0;
+        top: 0; left: 0; right: 0; bottom: 0;
         transform: rotateY(180deg);
+    }
+    .card-back .trading-card-inner {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-back .stats-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     /* Subtle hover lift */
     .card-flip-container:hover .card-flip:not(.flipped) {
@@ -262,8 +274,9 @@
                                             <span class="text-[9px] font-mono text-gray-400 dark:text-gray-600 uppercase tracking-wider">#001</span>
                                         </div>
 
+                                        <div class="stats-content">
                                         {{-- Name plate on back too --}}
-                                        <div class="px-5 pb-3 text-center">
+                                        <div class="px-5 pb-3 pt-2 text-center">
                                             <h2 class="text-lg font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-0.5">
                                                 <div class="h-px flex-1 bg-gradient-to-r from-transparent to-[#9D5175]/30"></div>
@@ -305,7 +318,8 @@
                                                 <p class="text-[11px] italic text-gray-400 dark:text-gray-500 leading-relaxed text-center">"Writes tests before coffee. Believes every application deserves clean architecture."</p>
                                             </div>
                                         </div>
-                                        <div class="h-1" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
+                                        </div>
+                                        <div class="h-1 mt-auto" style="background: linear-gradient(90deg, #9D5175, #4A7FBF, #E47A9D, #4A7FBF, #9D5175);"></div>
                                     </div>
                                 </div>
                             </div>
