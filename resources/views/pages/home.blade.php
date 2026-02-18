@@ -2276,8 +2276,8 @@ function countdown() {
 {{-- ===== FINAL CTA ===== --}}
 <section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
     {{-- Animated gradient orbs --}}
-    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.10] dark:opacity-[0.07] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 4s;"></div>
-    <div class="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.08] dark:opacity-[0.05] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 6s;"></div>
+    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.06] dark:opacity-[0.04] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 8s;"></div>
+    <div class="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.05] dark:opacity-[0.03] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 12s;"></div>
 
     {{-- Grid pattern --}}
     <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]" style="background-image: linear-gradient(#4A7FBF 1px, transparent 1px), linear-gradient(90deg, #4A7FBF 1px, transparent 1px); background-size: 60px 60px;"></div>
