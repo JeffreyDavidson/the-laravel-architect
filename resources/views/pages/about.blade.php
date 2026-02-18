@@ -82,8 +82,7 @@
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        /* 5:7 trading card ratio */
-        aspect-ratio: 5 / 7;
+        /* natural height from content */
     }
     .card-front, .card-back {
         backface-visibility: hidden;
@@ -258,7 +257,7 @@
         <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-            <div class="flex flex-col gap-10 items-center">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
                 <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
@@ -269,7 +268,7 @@
                         <div class="ghost-card ghost-card-2"></div>
                         <div class="ghost-card ghost-card-1"></div>
                     <div class="card-flip-container" @click="flipped = !flipped; $dispatch('card-flip', { flipped })">
-                        <div class="card-flip w-[280px] md:w-[300px] lg:w-[320px]" :class="{ 'flipped': flipped }">
+                        <div class="card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
                             <div class="card-front">
@@ -368,8 +367,8 @@
                 </div>
 
                 {{-- Intro Text --}}
-                <div class="flex-1 text-center">
-                    <div class="flex items-center gap-3 mb-4 justify-center">
+                <div class="flex-1 text-center md:text-left">
+                    <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
                         <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
                             <span class="text-[#4A7FBF]">$</span>
                             <span>php artisan about:me</span>
@@ -380,11 +379,11 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-900 dark:text-white">
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto">
+                    <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
-                    <div class="flex flex-wrap gap-4 justify-center mt-6">
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start mt-6">
                         <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4A7FBF] hover:bg-[#5A8FD0] text-white text-sm font-semibold rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             Get in Touch
