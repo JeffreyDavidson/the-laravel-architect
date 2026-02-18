@@ -260,7 +260,7 @@
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
-                <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
+                <div class="flex-shrink-0 relative pb-8 md:pb-0" x-data="{ flipped: false }">
                     {{-- Pulsing ambient glow --}}
                     <div class="trading-card-glow absolute inset-0 -m-8 rounded-full blur-[60px] opacity-0 dark:opacity-100" style="background: radial-gradient(circle, #4A7FBF 0%, #9D5175 50%, transparent 70%);"></div>
 
@@ -355,7 +355,7 @@
                     </div>
 
                     {{-- Flip hint --}}
-                    <div class="flip-hint flex items-center justify-center gap-2 mt-4">
+                    <div class="flip-hint flex items-center justify-center gap-2 mt-4 md:absolute md:bottom-[-36px] md:left-1/2 md:-translate-x-1/2 md:whitespace-nowrap">
                         <svg class="w-4 h-4 text-gray-600 dark:text-gray-300 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
