@@ -138,7 +138,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         @if($project->content)
         <x-prose class="prose-headings:font-extrabold prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-[#1e2a3a] prose-a:no-underline hover:prose-a:underline prose-code:text-[#E47A9D] prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a] prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-strong:text-gray-800 dark:prose-strong:text-gray-200">
-            {!! $project->content !!}
+            {!! Str::markdown($project->content) !!}
         </x-prose>
         @else
         <div class="text-center py-16">
