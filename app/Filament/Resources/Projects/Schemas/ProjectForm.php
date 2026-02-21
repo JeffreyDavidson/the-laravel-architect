@@ -51,6 +51,7 @@ class ProjectForm
                             ->url(),
                         SpatieMediaLibraryFileUpload::make('featured_image')
                             ->collection('featured_image')
+                            ->disk('public')
                             ->image(),
                         TagsInput::make('tech_stack')
                             ->helperText('e.g. Laravel, Vue.js, Tailwind CSS'),
