@@ -117,4 +117,11 @@ return [
 
     'contact_to' => env('MAIL_CONTACT_TO', 'thelaravelarchitect@gmail.com'),
 
+    'markdown' => [
+        'theme' => 'architect',
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];
