@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('head')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    @vite(["resources/css/prism.css", "resources/js/prism.js"])
     <style>
         pre { position: relative; }
         .copy-btn {
@@ -21,12 +21,6 @@
 @endpush
 
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('pre').forEach(function(pre) {
