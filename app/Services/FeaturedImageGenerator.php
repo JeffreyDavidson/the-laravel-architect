@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Post;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
 class FeaturedImageGenerator
 {
     private ImageManager $manager;
+
     private int $width = 1200;
+
     private int $height = 630;
 
     // Category color schemes: [primary, secondary, accent]
@@ -154,7 +158,7 @@ class FeaturedImageGenerator
         $path = 'featured-images/' . $post->slug . '.png';
         $storagePath = storage_path('app/public/' . $path);
 
-        if (!is_dir(dirname($storagePath))) {
+        if (! is_dir(dirname($storagePath))) {
             mkdir(dirname($storagePath), 0755, true);
         }
 
@@ -200,7 +204,7 @@ class FeaturedImageGenerator
         // Top accent line (partial)
         $image->drawLine(function (LineFactory $line) use ($colors) {
             $line->from(0, 2);
-            $line->to((int)($this->width * 0.3), 2);
+            $line->to((int) ($this->width * 0.3), 2);
             $line->color($colors[0]);
             $line->width(4);
         });
@@ -208,7 +212,7 @@ class FeaturedImageGenerator
         // Right side vertical accent
         $image->drawLine(function (LineFactory $line) use ($colors) {
             $line->from($this->width - 2, 0);
-            $line->to($this->width - 2, (int)($this->height * 0.25));
+            $line->to($this->width - 2, (int) ($this->height * 0.25));
             $line->color($colors[2] . '80');
             $line->width(2);
         });
@@ -227,10 +231,12 @@ class FeaturedImageGenerator
             $y = $startY + ($i * $lineHeight);
 
             // Don't draw past the bottom
-            if ($y > $this->height - 80) break;
+            if ($y > $this->height - 80) {
+                break;
+            }
 
             // Line number
-            $lineNum = str_pad((string)($i + 1), 2, ' ', STR_PAD_LEFT);
+            $lineNum = mb_str_pad((string) ($i + 1), 2, ' ', STR_PAD_LEFT);
             $image->text($lineNum, $startX, $y, function (FontFactory $font) use ($monoFont) {
                 $font->filename($monoFont);
                 $font->size(15);
@@ -258,8 +264,13 @@ class FeaturedImageGenerator
             [$text, $type] = $snippet;
             $y = $startY2 + ($i * $lineHeight);
 
-            if ($y > $this->height - 60) break;
-            if (!$text || !$type) continue;
+            if ($y > $this->height - 60) {
+                break;
+            }
+
+            if (! $text || ! $type) {
+                continue;
+            }
 
             $color = $this->syntaxColors[$type] ?? '#c9d1d9';
             $image->text($text, $startX2, $y, function (FontFactory $font) use ($monoFont, $color) {
@@ -274,7 +285,7 @@ class FeaturedImageGenerator
     {
         $monoFont = $this->getMonoFont();
 
-        $image->text(strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color) {
+        $image->text(mb_strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color) {
             $font->filename($monoFont);
             $font->size(11);
             $font->color($color . 'a0');

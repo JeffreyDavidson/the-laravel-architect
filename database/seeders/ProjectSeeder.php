@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Project;
@@ -14,7 +16,7 @@ class ProjectSeeder extends Seeder
                 'title' => 'Ringside',
                 'slug' => 'ringside',
                 'description' => 'A wrestling promotion management platform for booking events, managing rosters, tracking championships, and organizing storylines.',
-                'content' => "<h2>What It Does</h2><p>Ringside is a full-featured management platform built for wrestling promotions. It handles everything from roster management and contract tracking to event booking, championship lineage, and storyline planning, replacing the spreadsheets and disjointed tools most promotions rely on.</p><h2>Technical Details</h2><ul><li>Laravel 12 with Livewire for reactive UI components</li><li>Action-based architecture using lorisleiva/laravel-actions</li><li>Complex Eloquent relationships for championship histories, faction memberships, and event cards</li><li>Full test coverage with Pest 4 (including browser tests)</li><li>Static analysis with Larastan and automated refactoring with Rector</li></ul><h2>The Challenge</h2><p>Wrestling promotions have surprisingly intricate domain logic: title vacancies, multi-person matches, faction dynamics, contract windows, and suspension tracking. Modeling all of that cleanly without the codebase becoming a mess was the real architecture challenge. This project is where I sharpened my skills with action classes and domain-driven design patterns.</p>",
+                'content' => '<h2>What It Does</h2><p>Ringside is a full-featured management platform built for wrestling promotions. It handles everything from roster management and contract tracking to event booking, championship lineage, and storyline planning, replacing the spreadsheets and disjointed tools most promotions rely on.</p><h2>Technical Details</h2><ul><li>Laravel 12 with Livewire for reactive UI components</li><li>Action-based architecture using lorisleiva/laravel-actions</li><li>Complex Eloquent relationships for championship histories, faction memberships, and event cards</li><li>Full test coverage with Pest 4 (including browser tests)</li><li>Static analysis with Larastan and automated refactoring with Rector</li></ul><h2>The Challenge</h2><p>Wrestling promotions have surprisingly intricate domain logic: title vacancies, multi-person matches, faction dynamics, contract windows, and suspension tracking. Modeling all of that cleanly without the codebase becoming a mess was the real architecture challenge. This project is where I sharpened my skills with action classes and domain-driven design patterns.</p>',
                 'url' => 'https://theringside.app',
                 'github_url' => 'https://github.com/JeffreyDavidson/Ringside',
                 'tech_stack' => ['Laravel', 'Livewire', 'PHP', 'Pest', 'Larastan', 'Tailwind CSS', 'MySQL'],
@@ -40,7 +42,7 @@ class ProjectSeeder extends Seeder
                 'title' => 'Campus Sync',
                 'slug' => 'campus-sync',
                 'description' => 'An admissions and grading application for educational institutions. Student enrollment, course management, and academic record tracking.',
-                'content' => "<h2>The Project</h2><p>Campus Sync is a Laravel application designed to streamline the admissions process and academic grading for educational institutions. It brings student enrollment, course management, grading, and transcript generation into a single unified platform.</p><h2>Key Features</h2><ul><li>Admissions pipeline with application tracking and status management</li><li>Course and section management with instructor assignment</li><li>Grade entry and GPA calculation</li><li>Student academic record and transcript generation</li><li>Role-based access for administrators, faculty, and students</li></ul><h2>Status</h2><p>Currently in active development. Building out the core domain models and admissions workflow first, with grading and reporting to follow.</p>",
+                'content' => '<h2>The Project</h2><p>Campus Sync is a Laravel application designed to streamline the admissions process and academic grading for educational institutions. It brings student enrollment, course management, grading, and transcript generation into a single unified platform.</p><h2>Key Features</h2><ul><li>Admissions pipeline with application tracking and status management</li><li>Course and section management with instructor assignment</li><li>Grade entry and GPA calculation</li><li>Student academic record and transcript generation</li><li>Role-based access for administrators, faculty, and students</li></ul><h2>Status</h2><p>Currently in active development. Building out the core domain models and admissions workflow first, with grading and reporting to follow.</p>',
                 'url' => null,
                 'github_url' => 'https://github.com/JeffreyDavidson/campus-sync',
                 'tech_stack' => ['Laravel', 'PHP', 'Tailwind CSS'],
@@ -73,7 +75,7 @@ class ProjectSeeder extends Seeder
                 $data
             );
 
-            if (!empty($tags)) {
+            if (! empty($tags)) {
                 $project->attachTags($tags);
             }
         }

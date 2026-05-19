@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Episode;
@@ -33,6 +35,7 @@ class EpisodeSeeder extends Seeder
             ['name' => 'Resilience', 'slug' => 'resilience'],
         ])->mapWithKeys(function ($t) {
             $tag = Tag::firstOrCreate(['slug' => $t['slug']], $t);
+
             return [$t['slug'] => $tag];
         });
 
@@ -85,7 +88,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'The Architecture Nobody Talks About',
                 'slug' => 'the-architecture-nobody-talks-about',
                 'episode_number' => 2,
-                'description' => "Everyone talks about clean architecture in the abstract. Jeffrey breaks down what it actually looks like in a real Laravel project — actions, DTOs, form requests, and where most developers overcomplicate things.",
+                'description' => 'Everyone talks about clean architecture in the abstract. Jeffrey breaks down what it actually looks like in a real Laravel project — actions, DTOs, form requests, and where most developers overcomplicate things.',
                 'duration_minutes' => 45,
                 'published_at' => '2026-01-13 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -151,7 +154,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'Legacy Code Isn\'t a Dirty Word',
                 'slug' => 'legacy-code-isnt-a-dirty-word',
                 'episode_number' => 4,
-                'description' => "After migrating codebases from CodeIgniter, Yii2, CakePHP, and ExpressionEngine into Laravel, Jeffrey shares the patterns that make legacy rewrites survivable — and even enjoyable.",
+                'description' => 'After migrating codebases from CodeIgniter, Yii2, CakePHP, and ExpressionEngine into Laravel, Jeffrey shares the patterns that make legacy rewrites survivable — and even enjoyable.',
                 'duration_minutes' => 51,
                 'published_at' => '2026-01-27 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -249,7 +252,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'Deploying Laravel Without Losing Sleep',
                 'slug' => 'deploying-laravel-without-losing-sleep',
                 'episode_number' => 7,
-                'description' => "From Forge to Envoyer to GitHub Actions — Jeffrey walks through his deployment setup, zero-downtime strategies, and the checklist he runs before every production push.",
+                'description' => 'From Forge to Envoyer to GitHub Actions — Jeffrey walks through his deployment setup, zero-downtime strategies, and the checklist he runs before every production push.',
                 'duration_minutes' => 34,
                 'published_at' => '2026-02-17 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -315,7 +318,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'APIs That Don\'t Make People Cry',
                 'slug' => 'apis-that-dont-make-people-cry',
                 'episode_number' => 9,
-                'description' => "Designing APIs that other developers actually want to use. Resource classes, consistent error handling, versioning strategies, and why your API is a product whether you think of it that way or not.",
+                'description' => 'Designing APIs that other developers actually want to use. Resource classes, consistent error handling, versioning strategies, and why your API is a product whether you think of it that way or not.',
                 'duration_minutes' => 39,
                 'published_at' => '2026-03-03 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -559,7 +562,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'The Loneliness of Remote Work',
                 'slug' => 'the-loneliness-of-remote-work',
                 'episode_number' => 6,
-                'description' => "Working from home sounds like a dream until the walls start closing in. Jeffrey explores the isolation that comes with remote work and the small things that keep him connected.",
+                'description' => 'Working from home sounds like a dream until the walls start closing in. Jeffrey explores the isolation that comes with remote work and the small things that keep him connected.',
                 'duration_minutes' => 33,
                 'published_at' => '2026-02-12 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -591,7 +594,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'Anxiety and the Keyboard',
                 'slug' => 'anxiety-and-the-keyboard',
                 'episode_number' => 7,
-                'description' => "That feeling before you push to production. The dread before a code review. Jeffrey talks about anxiety as a developer — where it shows up, how it disguises itself, and what helps.",
+                'description' => 'That feeling before you push to production. The dread before a code review. Jeffrey talks about anxiety as a developer — where it shows up, how it disguises itself, and what helps.',
                 'duration_minutes' => 36,
                 'published_at' => '2026-02-19 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -656,7 +659,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'The Things We Don\'t Say Out Loud',
                 'slug' => 'the-things-we-dont-say-out-loud',
                 'episode_number' => 9,
-                'description' => "There are thoughts every parent of a special needs child has that they never say out loud. Jeffrey says some of them. Raw, honest, and necessary.",
+                'description' => 'There are thoughts every parent of a special needs child has that they never say out loud. Jeffrey says some of them. Raw, honest, and necessary.',
                 'duration_minutes' => 38,
                 'published_at' => '2026-03-05 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>
@@ -688,7 +691,7 @@ class EpisodeSeeder extends Seeder
                 'title' => 'Small Wins and Why They Matter',
                 'slug' => 'small-wins-and-why-they-matter',
                 'episode_number' => 10,
-                'description' => "When the big picture feels overwhelming, small wins keep you going. Jeffrey talks about celebrating the tiny victories — in code, in parenting, and in getting through the day.",
+                'description' => 'When the big picture feels overwhelming, small wins keep you going. Jeffrey talks about celebrating the tiny victories — in code, in parenting, and in getting through the day.',
                 'duration_minutes' => 31,
                 'published_at' => '2026-03-12 09:00:00',
                 'show_notes' => '<h3>Topics Covered</h3>

@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Http;
+use RuntimeException;
 
 class YouTubeService
 {
     protected string $apiKey;
+
     protected string $channelId;
+
     protected string $baseUrl = 'https://www.googleapis.com/youtube/v3';
 
     public function __construct()
@@ -29,7 +35,7 @@ class YouTubeService
             ]);
 
             return (int) ($response->json('items.0.statistics.subscriberCount') ?? 0);
-        } catch (\Exception) {
+        } catch (Exception) {
             return 0;
         }
     }
@@ -51,7 +57,7 @@ class YouTubeService
             ]));
 
             if ($response->failed()) {
-                throw new \RuntimeException('YouTube API error: ' . $response->body());
+                throw new RuntimeException('YouTube API error: ' . $response->body());
             }
 
             $data = $response->json();
@@ -77,7 +83,7 @@ class YouTubeService
         ]);
 
         if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: ' . $response->body());
+            throw new RuntimeException('YouTube API error: ' . $response->body());
         }
 
         return collect($response->json('items', []))->map(function ($item) {
@@ -107,7 +113,7 @@ class YouTubeService
         ]);
 
         if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: ' . $response->body());
+            throw new RuntimeException('YouTube API error: ' . $response->body());
         }
 
         return collect($response->json('items', []))->mapWithKeys(function ($item) {

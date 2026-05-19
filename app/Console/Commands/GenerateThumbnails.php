@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Typography\FontFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Typography\FontFactory;
 
 class GenerateThumbnails extends Command
 {
     protected $signature = 'thumbnails:generate';
+
     protected $description = 'Generate YouTube thumbnail placeholders';
 
     private int $width = 1280;
+
     private int $height = 720;
 
     public function handle(): int
@@ -146,6 +150,7 @@ class GenerateThumbnails extends Command
         }
 
         $this->info('All thumbnails generated!');
+
         return self::SUCCESS;
     }
 
@@ -157,8 +162,11 @@ class GenerateThumbnails extends Command
             public_path('fonts/empera/Empera-Regular.ttf'),
         ];
         foreach ($fonts as $font) {
-            if (file_exists($font)) return $font;
+            if (file_exists($font)) {
+                return $font;
+            }
         }
+
         return public_path('fonts/empera/Empera-Regular.ttf');
     }
 
@@ -169,8 +177,11 @@ class GenerateThumbnails extends Command
             '/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf',
         ];
         foreach ($fonts as $font) {
-            if (file_exists($font)) return $font;
+            if (file_exists($font)) {
+                return $font;
+            }
         }
+
         return $this->getBoldFont();
     }
 }

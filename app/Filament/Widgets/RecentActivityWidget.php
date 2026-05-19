@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets;
 
 use App\Models\Post;
@@ -10,7 +12,7 @@ class RecentActivityWidget extends Widget
 {
     protected string $view = 'filament.widgets.recent-activity-widget';
 
-    protected int | string | array $columnSpan = 2;
+    protected int|string|array $columnSpan = 2;
 
     protected static ?int $sort = -4;
 

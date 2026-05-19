@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
@@ -47,16 +48,19 @@ class Episode extends Model implements HasMedia
 
     public function getFormattedDurationAttribute(): string
     {
-        if (!$this->duration_minutes) return '';
+        if (! $this->duration_minutes) {
+            return '';
+        }
         $hours = intdiv($this->duration_minutes, 60);
         $mins = $this->duration_minutes % 60;
+
         return $hours > 0 ? "{$hours}h {$mins}m" : "{$mins} min";
     }
 
     public function getEpisodeCodeAttribute(): string
     {
-        return 'S' . str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
-            . 'E' . str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
+        return 'S' . mb_str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
+            . 'E' . mb_str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
     }
 
     public function registerMediaCollections(): void
@@ -74,6 +78,7 @@ class Episode extends Model implements HasMedia
             description: $this->description,
         );
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
