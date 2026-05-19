@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 
 // This migration is now a no-op. Tags are handled by spatie/laravel-tags.

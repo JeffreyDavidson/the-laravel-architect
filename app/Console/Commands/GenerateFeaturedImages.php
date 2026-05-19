@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Post;
 use App\Services\FeaturedImageGenerator;
+use Exception;
 use Illuminate\Console\Command;
 
 class GenerateFeaturedImages extends Command
 {
     protected $signature = 'posts:generate-images {--force : Regenerate even if image exists}';
+
     protected $description = 'Generate featured images for posts that don\'t have one';
 
     public function handle(): int
@@ -19,7 +23,7 @@ class GenerateFeaturedImages extends Command
         $generated = 0;
 
         foreach ($posts as $post) {
-            if ($post->featured_image && !$this->option('force')) {
+            if ($post->featured_image && ! $this->option('force')) {
                 $this->line("  Skipping: {$post->title} (already has image)");
                 continue;
             }
@@ -31,7 +35,7 @@ class GenerateFeaturedImages extends Command
                 $post->update(['featured_image' => $path]);
                 $generated++;
                 $this->info("  ✓ Saved: {$path}");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->error("  ✗ Failed: {$e->getMessage()}");
             }
         }

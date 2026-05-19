@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -22,7 +24,7 @@ class ContactController extends Controller
             "Name: {$validated['name']}\n" .
             "Email: {$validated['email']}\n" .
             "Type: {$validated['type']}\n" .
-            "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
+            'Budget: ' . ($validated['budget'] ?? 'Not specified') . "\n\n" .
             "Message:\n{$validated['message']}",
             function ($message) use ($validated) {
                 $message->to(config('mail.contact_to', config('mail.from.address')))
@@ -37,7 +39,7 @@ class ContactController extends Controller
             "Thanks for reaching out! Here's a copy of your message. I'll get back to you within 24–48 hours.\n\n" .
             "---\n\n" .
             "Type: {$validated['type']}\n" .
-            "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
+            'Budget: ' . ($validated['budget'] ?? 'Not specified') . "\n\n" .
             "Message:\n{$validated['message']}\n\n" .
             "---\n\n" .
             "Jeffrey Davidson\nThe Laravel Architect\nhttps://thelaravelarchitect.com",

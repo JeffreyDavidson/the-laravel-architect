@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Post;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\Geometry\Factories\RectangleFactory;
-use Intervention\Image\Geometry\Factories\CircleFactory;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
 class OgImageGenerator
 {
     protected ImageManager $manager;
+
     protected string $fontBold;
+
     protected string $fontRegular;
+
     protected string $fontSemiBold;
 
     public function __construct()
@@ -68,7 +73,7 @@ class OgImageGenerator
 
         // Category label
         $categoryName = $post->category?->name ?? 'Blog';
-        $image->text(strtoupper($categoryName), 80, 180, function (FontFactory $font) {
+        $image->text(mb_strtoupper($categoryName), 80, 180, function (FontFactory $font) {
             $font->filename($this->fontSemiBold);
             $font->size(18);
             $font->color('4A7FBF');
@@ -113,15 +118,16 @@ class OgImageGenerator
         $current = '';
 
         foreach ($words as $word) {
-            if (strlen($current . ' ' . $word) > $maxChars && $current !== '') {
-                $lines[] = trim($current);
+            if (mb_strlen($current . ' ' . $word) > $maxChars && $current !== '') {
+                $lines[] = mb_trim($current);
                 $current = $word;
             } else {
                 $current .= ($current ? ' ' : '') . $word;
             }
         }
+
         if ($current) {
-            $lines[] = trim($current);
+            $lines[] = mb_trim($current);
         }
 
         return array_slice($lines, 0, 4); // Max 4 lines

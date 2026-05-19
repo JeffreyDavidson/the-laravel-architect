@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Category;
@@ -8,6 +10,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class BlogSeeder extends Seeder
 {
@@ -34,7 +37,8 @@ class BlogSeeder extends Seeder
             'Refactoring', 'Legacy Code', 'API Design', 'Content Creation',
         ])->mapWithKeys(function ($name) {
             $tag = Tag::findOrCreate($name);
-            return [\Illuminate\Support\Str::slug($name) => $tag];
+
+            return [Str::slug($name) => $tag];
         });
 
         // Post 1
@@ -53,7 +57,7 @@ class BlogSeeder extends Seeder
         // Post 2
         $post2 = Post::updateOrCreate(['slug' => 'from-kansas-to-florida-a-developers-journey'], [
             'title' => "From Kansas to Florida: A Developer's Journey",
-            'excerpt' => "I grew up in Kansas, discovered the web in the late 2000s, and somehow ended up writing code full-time in Florida. This is that story.",
+            'excerpt' => 'I grew up in Kansas, discovered the web in the late 2000s, and somehow ended up writing code full-time in Florida. This is that story.',
             'content' => self::post2(),
             'category_id' => $personal->id,
             'user_id' => $user->id,
@@ -66,7 +70,7 @@ class BlogSeeder extends Seeder
         // Post 3
         $post3 = Post::updateOrCreate(['slug' => 'what-15-years-of-web-development-taught-me'], [
             'title' => 'What 15 Years of Web Development Taught Me',
-            'excerpt' => "Fifteen years is a long time to do anything. Here are the lessons, technical and otherwise, that I wish someone had told me on day one.",
+            'excerpt' => 'Fifteen years is a long time to do anything. Here are the lessons, technical and otherwise, that I wish someone had told me on day one.',
             'content' => self::post3(),
             'category_id' => $career->id,
             'user_id' => $user->id,
@@ -92,7 +96,7 @@ class BlogSeeder extends Seeder
         // Post 5
         $post5 = Post::updateOrCreate(['slug' => 'how-i-structure-every-laravel-project'], [
             'title' => 'How I Structure Every Laravel Project',
-            'excerpt' => "After years of iteration, this is the project structure I reach for on every new Laravel app. Actions, services, form requests, and Pest tests. All of it.",
+            'excerpt' => 'After years of iteration, this is the project structure I reach for on every new Laravel app. Actions, services, form requests, and Pest tests. All of it.',
             'content' => self::post5(),
             'category_id' => $laravel->id,
             'user_id' => $user->id,

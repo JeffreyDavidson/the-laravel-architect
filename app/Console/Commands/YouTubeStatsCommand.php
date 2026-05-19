@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Video;
 use App\Services\YouTubeService;
 use Illuminate\Console\Command;
+use RuntimeException;
 
 class YouTubeStatsCommand extends Command
 {
     protected $signature = 'youtube:stats';
+
     protected $description = 'Update view/like/comment counts for all synced videos';
 
     public function handle(YouTubeService $youtube): int
@@ -17,6 +21,7 @@ class YouTubeStatsCommand extends Command
 
         if ($videos->isEmpty()) {
             $this->info('No videos to update. Run youtube:sync first.');
+
             return self::SUCCESS;
         }
 
@@ -30,8 +35,9 @@ class YouTubeStatsCommand extends Command
         foreach ($chunks as $chunk) {
             try {
                 $stats = $youtube->getStatsForVideos($chunk->toArray());
-            } catch (\RuntimeException $e) {
+            } catch (RuntimeException $e) {
                 $this->error($e->getMessage());
+
                 return self::FAILURE;
             }
 

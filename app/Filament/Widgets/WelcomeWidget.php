@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets;
 
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Subscriber;
-use App\Models\Video;
 use App\Models\Testimonial;
+use App\Models\Video;
 use Filament\Widgets\Widget;
 
 class WelcomeWidget extends Widget
 {
     protected string $view = 'filament.widgets.welcome-widget';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = -10;
 

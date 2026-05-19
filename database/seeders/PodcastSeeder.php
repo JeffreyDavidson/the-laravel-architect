@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Podcast;
@@ -24,6 +26,7 @@ class PodcastSeeder extends Seeder
         ]);
 
         $coverPath = public_path('images/podcast-coffee-logo.png');
+
         if (file_exists($coverPath)) {
             $coffee->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
         }
@@ -43,6 +46,7 @@ class PodcastSeeder extends Seeder
         ]);
 
         $coverPath = public_path('images/podcast-cloudy-logo.png');
+
         if (file_exists($coverPath)) {
             $cloudy->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
         }

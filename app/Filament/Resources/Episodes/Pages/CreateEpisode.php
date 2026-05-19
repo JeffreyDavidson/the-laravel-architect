@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Episodes\Pages;
 
 use App\Filament\Resources\Episodes\EpisodeResource;

@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\Subscribers\SubscriberResource;
+use App\Filament\Resources\Users\UserResource;
+use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Awcodes\Versions\VersionsPlugin;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -15,15 +20,15 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+// AccountWidget replaced by WelcomeWidget
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\HtmlString;
-// AccountWidget replaced by WelcomeWidget
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
@@ -63,9 +68,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelBackupPlugin::make(),
                 QuickCreatePlugin::make()
                     ->excludes([
-                        \App\Filament\Resources\Subscribers\SubscriberResource::class,
-                        \App\Filament\Resources\Videos\VideoResource::class,
-                        \App\Filament\Resources\Users\UserResource::class,
+                        SubscriberResource::class,
+                        VideoResource::class,
+                        UserResource::class,
                     ]),
                 VersionsPlugin::make(),
             ])

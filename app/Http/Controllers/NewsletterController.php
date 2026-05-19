@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Subscriber;
@@ -16,8 +18,10 @@ class NewsletterController extends Controller
         if ($subscriber = Subscriber::where('email', $validated['email'])->first()) {
             if ($subscriber->unsubscribed_at) {
                 $subscriber->update(['unsubscribed_at' => null, 'subscribed_at' => now()]);
+
                 return back()->with('newsletter_success', 'Welcome back! You\'ve been re-subscribed.');
             }
+
             return back()->with('newsletter_success', 'You\'re already subscribed!');
         }
 

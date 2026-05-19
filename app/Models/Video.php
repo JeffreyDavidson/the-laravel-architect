@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use DateInterval;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -48,19 +52,19 @@ class Video extends Model
 
         // Parse ISO 8601 duration (PT1H2M3S)
         try {
-            $interval = new \DateInterval($this->duration);
+            $interval = new DateInterval($this->duration);
             $parts = [];
 
             if ($interval->h > 0) {
-                $parts[] = $interval->h . ':' . str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
+                $parts[] = $interval->h . ':' . mb_str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
             } else {
                 $parts[] = (string) $interval->i;
             }
 
-            $parts[] = str_pad((string) $interval->s, 2, '0', STR_PAD_LEFT);
+            $parts[] = mb_str_pad((string) $interval->s, 2, '0', STR_PAD_LEFT);
 
             return implode(':', $parts);
-        } catch (\Exception) {
+        } catch (Exception) {
             return $this->duration;
         }
     }
