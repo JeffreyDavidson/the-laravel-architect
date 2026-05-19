@@ -26,6 +26,8 @@
     }
     .blog-card-wrapper > div {
         overflow: hidden;
+        padding: 2px;
+        margin: -2px;
     }
     .category-pill {
         transition: all 0.2s ease;
