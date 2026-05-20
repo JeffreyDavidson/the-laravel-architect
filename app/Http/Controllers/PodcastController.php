@@ -10,17 +10,17 @@ class PodcastController extends Controller
 {
     public function index()
     {
-        $podcasts = Podcast::active()
+        $podcast = Podcast::active()
             ->withCount('publishedEpisodes')
             ->orderBy('sort_order')
-            ->get();
+            ->first();
 
         seo()->for(new SEOData(
-            title: 'Podcasts',
+            title: 'Podcast',
             description: 'Coffee with The Laravel Architect from Jeffrey Davidson — deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.',
         ));
 
-        return view('podcast.index', compact('podcasts'));
+        return view('podcast.index', compact('podcast'));
     }
 
     public function show(Podcast $podcast)

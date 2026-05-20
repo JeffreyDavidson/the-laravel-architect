@@ -1,140 +1,33 @@
 @extends('layouts.app')
 
-@section('title', 'Podcasts')
+@section('title', 'Podcast')
 
 @section('content')
-<style>
-    /* Waveform animation */
-    @keyframes waveform {
-        0%, 100% { height: 20%; }
-        25% { height: 80%; }
-        50% { height: 40%; }
-        75% { height: 90%; }
-    }
-    .wave-bar {
-        animation: waveform var(--dur, 1.2s) ease-in-out infinite;
-        animation-delay: var(--delay, 0s);
-    }
-    /* Light mode */
-    :root:not(.dark) .hero-bg { background: white !important; }
-
-    /* Darken podcast accent colors in light mode */
-    :root:not(.dark) .topic-pill {
-        filter: brightness(0.7) saturate(1.3);
-        border-color: currentColor !important;
-        background: transparent !important;
-    }
-    :root:not(.dark) .podcast-showcase {
-        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    }
-    :root:not(.dark) .podcast-showcase:hover {
-        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    }
-
-    /* Equalizer */
-    .eq-bar {
-        animation: equalize var(--dur) ease-in-out infinite alternate;
-        transform-origin: bottom;
-    }
-    @keyframes equalize {
-        0% { transform: scaleY(0.15); }
-        50% { transform: scaleY(1); }
-        100% { transform: scaleY(0.3); }
-    }
-
-    /* Podcast showcase card */
-    .podcast-showcase {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .podcast-showcase:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
-    }
-    .podcast-showcase:hover .showcase-glow {
-        opacity: 1;
-    }
-    .podcast-showcase:hover .showcase-artwork {
-        transform: scale(1.05) rotate(-1deg);
-    }
-    .podcast-showcase:hover .showcase-arrow {
-        transform: translateX(4px);
-    }
-    .showcase-artwork {
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .showcase-arrow {
-        transition: transform 0.3s ease;
-    }
-
-    /* Spinning vinyl */
-    @keyframes spin-slow {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    .vinyl-spin {
-        animation: spin-slow 8s linear infinite;
-    }
-    .podcast-showcase:hover .vinyl-spin {
-        animation-duration: 3s;
-    }
-
-    /* Topic pill hover */
-    .topic-pill {
-        transition: all 0.2s ease;
-    }
-    .topic-pill:hover {
-        transform: translateY(-1px);
-    }
-
-    /* Format card */
-    .format-card {
-        transition: all 0.3s ease;
-    }
-    .format-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(255,255,255,0.1);
-    }
-    .format-card:hover .format-icon {
-        transform: scale(1.1);
-    }
-    .format-icon {
-        transition: transform 0.3s ease;
-    }
-
-    /* Floating orbs */
-    @keyframes float {
-        0%, 100% { transform: translate(0, 0); }
-        25% { transform: translate(10px, -15px); }
-        50% { transform: translate(-5px, -25px); }
-        75% { transform: translate(-15px, -10px); }
-    }
-</style>
-
 {{-- ===== HERO ===== --}}
-<div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent">
-    <div class="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
-    <div class="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, #9D5175, transparent 70%);"></div>
+<div class="noise-overlay podcast-page-border relative overflow-hidden border-b bg-white dark:bg-transparent">
+    <div class="podcast-orb-brand absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-0 dark:opacity-[0.06] blur-[120px]"></div>
+    <div class="podcast-orb-brand absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-0 dark:opacity-[0.04] blur-[100px]"></div>
 
     {{-- Waveform background --}}
     <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.04] pointer-events-none">
         <div class="flex items-end gap-[3px] h-32 w-full max-w-4xl px-8">
             @for($i = 0; $i < 80; $i++)
-            <div class="wave-bar flex-1 rounded-full" style="--dur: {{ 0.8 + ($i % 7) * 0.15 }}s; --delay: {{ $i * 0.03 }}s; background: linear-gradient(to top, #4A7FBF, #9D5175);"></div>
+            <div class="podcast-wave-bar flex-1 rounded-full" style="--dur: {{ 0.8 + ($i % 7) * 0.15 }}s; --delay: {{ $i * 0.03 }}s;"></div>
             @endfor
         </div>
     </div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <x-terminal-prompt command="podcast:list" />
+        <x-terminal-prompt command="podcast:episode-list" />
 
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Podcasts</h1>
-        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Two shows. One about code, one about life. Both unfiltered.</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Podcast</h1>
+        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Coffee with The Laravel Architect is where Laravel, architecture, and the developer life meet.</p>
 
         {{-- Stats with equalizer --}}
         <div class="flex items-center gap-6 mt-6 text-sm">
             <div class="flex items-center gap-2 text-gray-500">
-                <svg class="w-4 h-4 text-[#4A7FBF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
-                <span>{{ $podcasts->count() }} Shows</span>
+                <svg class="podcast-brand-text w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                <span>{{ $podcast ? '1 Show' : 'No Show Yet' }}</span>
             </div>
             <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
             <div class="flex items-center gap-2 text-gray-500">
@@ -146,11 +39,11 @@
             </div>
             <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
             <div class="inline-flex items-end gap-[2px] h-4">
-                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.8s;"></span>
-                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.6s;"></span>
-                <span class="eq-bar w-[3px] h-full bg-[#9D5175] rounded-full" style="--dur: 0.9s;"></span>
-                <span class="eq-bar w-[3px] h-full bg-[#9D5175] rounded-full" style="--dur: 0.7s;"></span>
-                <span class="eq-bar w-[3px] h-full bg-[#4A7FBF] rounded-full" style="--dur: 0.5s;"></span>
+                <span class="podcast-eq-bar podcast-brand-bg w-[3px] h-full rounded-full" style="--dur: 0.8s;"></span>
+                <span class="podcast-eq-bar podcast-brand-bg w-[3px] h-full rounded-full" style="--dur: 0.6s;"></span>
+                <span class="podcast-eq-bar podcast-brand-bg w-[3px] h-full rounded-full" style="--dur: 0.9s;"></span>
+                <span class="podcast-eq-bar podcast-brand-bg w-[3px] h-full rounded-full" style="--dur: 0.7s;"></span>
+                <span class="podcast-eq-bar podcast-brand-bg w-[3px] h-full rounded-full" style="--dur: 0.5s;"></span>
             </div>
         </div>
     </div>
@@ -159,72 +52,67 @@
 {{-- ===== PODCAST SHOWCASES ===== --}}
 <section class="dot-grid-bg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        @if($podcasts->count())
+        @if($podcast)
         <div class="space-y-10">
-            @foreach($podcasts as $index => $podcast)
-            <a href="{{ route('podcast.show', $podcast) }}" class="podcast-showcase group relative block rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
+            <a href="{{ route('podcast.show', $podcast) }}" class="podcast-showcase podcast-surface group relative block rounded-2xl border overflow-hidden" style="--podcast-color: {{ $podcast->color }};">
                 {{-- Glow --}}
-                <div class="showcase-glow absolute inset-0 rounded-2xl opacity-0" style="box-shadow: inset 0 0 80px {{ $podcast->color }}12, 0 0 60px {{ $podcast->color }}08;"></div>
+                <div class="podcast-showcase-glow showcase-glow absolute inset-0 rounded-2xl opacity-0"></div>
 
                 {{-- Top gradient bar --}}
-                <div class="h-[2px] w-full" style="background: linear-gradient(90deg, transparent, {{ $podcast->color }}, transparent);"></div>
+                <div class="podcast-showcase-rule h-[2px] w-full"></div>
 
                 <div class="relative p-8 md:p-12">
-                    <div class="flex flex-col {{ $index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse' }} items-center gap-12 md:gap-16">
+                    <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
 
                         {{-- Artwork with vinyl record effect --}}
                         <div class="relative flex-shrink-0 w-48 h-48 md:w-60 md:h-60">
                             {{-- Vinyl disc behind artwork --}}
-                            <div class="absolute top-1/2 {{ $index % 2 === 0 ? 'left-1/2 -translate-x-[30%]' : 'right-1/2 translate-x-[30%]' }} -translate-y-1/2 w-44 h-44 md:w-52 md:h-52 rounded-full bg-gray-200 dark:bg-[#111] border border-gray-300 dark:border-[#222] vinyl-spin">
-                                <div class="absolute inset-0 rounded-full" style="background: repeating-radial-gradient(circle at center, transparent 0px, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);"></div>
-                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full" style="background: {{ $podcast->color }}33; border: 2px solid {{ $podcast->color }}44;"></div>
+                            <div class="podcast-vinyl absolute top-1/2 left-1/2 -translate-x-[30%] -translate-y-1/2 w-44 h-44 md:w-52 md:h-52 rounded-full border vinyl-spin">
+                                <div class="podcast-vinyl-grooves absolute inset-0 rounded-full"></div>
+                                <div class="podcast-vinyl-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full"></div>
                             </div>
 
                             {{-- Cover art --}}
                             <div class="showcase-artwork relative z-10">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="w-40 h-40 md:w-48 md:h-48 rounded-2xl object-cover shadow-2xl" style="box-shadow: 0 20px 40px {{ $podcast->color }}20;">
+                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="podcast-cover-shadow w-40 h-40 md:w-48 md:h-48 rounded-2xl object-cover shadow-2xl">
                                 @else
-                                <div class="w-40 h-40 md:w-48 md:h-48 rounded-2xl shadow-2xl flex items-center justify-center" style="background: linear-gradient(135deg, {{ $podcast->color }}44, {{ $podcast->color }}11); box-shadow: 0 20px 40px {{ $podcast->color }}20;">
-                                    <svg class="w-16 h-16" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                                <div class="podcast-cover-placeholder w-40 h-40 md:w-48 md:h-48 rounded-2xl shadow-2xl flex items-center justify-center">
+                                    <svg class="podcast-accent-text w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                                 </div>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Content --}}
-                        <div class="flex-1 min-w-0 text-center {{ $index % 2 === 0 ? 'md:text-left' : 'md:text-right' }}">
+                        <div class="flex-1 min-w-0 text-center md:text-left">
                             {{-- Badge --}}
                             @if($podcast->published_episodes_count > 0)
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
+                            <span class="podcast-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
                                 {{ $podcast->published_episodes_count }} {{ Str::plural('Episode', $podcast->published_episodes_count) }}
                             </span>
                             @else
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide mb-4" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
-                                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: {{ $podcast->color }};"></span>
+                            <span class="podcast-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide mb-4">
+                                <span class="podcast-live-dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
                                 Coming Soon
                             </span>
                             @endif
 
                             <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 dark:text-white transition-colors">{{ $podcast->name }}</h2>
-                            <p class="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-6 max-w-xl {{ $index % 2 !== 0 ? 'md:ml-auto' : '' }}">{{ $podcast->description }}</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed mb-6 max-w-xl">{{ $podcast->description }}</p>
 
                             {{-- Topic pills --}}
-                            @php
-                            $topics = $index === 0
-                                ? ['Laravel', 'Architecture', 'Testing', 'Career', 'Guest Interviews']
-                                : ['Mental Health', 'Parenting', 'Resilience', 'Vulnerability', 'Real Talk'];
-                            @endphp
-                            <div class="flex flex-wrap gap-2 justify-center {{ $index % 2 === 0 ? 'md:justify-start' : 'md:justify-end' }} mb-6">
+                            <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-6">
+                                @php($topics = ['Laravel', 'Architecture', 'Testing', 'Career', 'Guest Interviews'])
                                 @foreach($topics as $topic)
-                                <span class="topic-pill px-3 py-1 text-xs rounded-full border" style="border-color: {{ $podcast->color }}25; color: {{ $podcast->color }}; background: {{ $podcast->color }}08;">{{ $topic }}</span>
+                                <span class="topic-pill px-3 py-1 text-xs rounded-full border">{{ $topic }}</span>
                                 @endforeach
                             </div>
 
                             {{-- Listen CTA --}}
-                            <div class="flex {{ $index % 2 === 0 ? 'justify-start' : 'md:justify-end' }} justify-center">
-                                <div class="inline-flex items-center gap-2 text-sm font-semibold" style="color: {{ $podcast->color }};">
+                            <div class="flex justify-center md:justify-start">
+                                <div class="podcast-accent-text inline-flex items-center gap-2 text-sm font-semibold">
                                     <span>View Show</span>
                                     <svg class="w-4 h-4 showcase-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                                 </div>
@@ -233,27 +121,26 @@
                     </div>
                 </div>
             </a>
-            @endforeach
         </div>
         @else
         <div class="text-center py-20">
             <div class="inline-flex items-end gap-[3px] mb-4 h-8 opacity-30">
                 @for($i = 0; $i < 5; $i++)
-                <span class="eq-bar w-[3px] h-full bg-gray-500 rounded-full" style="--dur: {{ 0.5 + $i * 0.1 }}s;"></span>
+                <span class="podcast-eq-bar w-[3px] h-full bg-gray-500 rounded-full" style="--dur: {{ 0.5 + $i * 0.1 }}s;"></span>
                 @endfor
             </div>
-            <p class="text-gray-500 text-lg">Podcasts launching soon. Stay tuned.</p>
+            <p class="text-gray-500 text-lg">Podcast launching soon. Stay tuned.</p>
         </div>
         @endif
     </div>
 </section>
 
 {{-- ===== WHAT TO EXPECT ===== --}}
-@if($podcasts->count())
-<section class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
+@if($podcast)
+<section class="podcast-page-border relative border-t overflow-hidden">
     {{-- Floating orbs --}}
-    <div class="absolute top-20 left-10 w-32 h-32 rounded-full opacity-[0.04] blur-[60px] bg-[#4A7FBF]" style="animation: float 8s ease-in-out infinite;"></div>
-    <div class="absolute bottom-20 right-10 w-40 h-40 rounded-full opacity-[0.04] blur-[60px] bg-[#4A7FBF]" style="animation: float 10s ease-in-out infinite reverse;"></div>
+    <div class="podcast-float podcast-brand-bg absolute top-20 left-10 w-32 h-32 rounded-full opacity-[0.04] blur-[60px]"></div>
+    <div class="podcast-float-reverse podcast-brand-bg absolute bottom-20 right-10 w-40 h-40 rounded-full opacity-[0.04] blur-[60px]"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div class="text-center mb-14">
@@ -263,16 +150,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{-- Format card 1 --}}
-            <div class="format-card rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8 text-center">
-                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#4A7FBF]/5 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <div class="format-card podcast-surface rounded-2xl border p-8 text-center">
+                <div class="format-icon podcast-brand-icon w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center">
+                    <svg class="podcast-brand-text w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
                 </div>
                 <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Architecture Deep Dives</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Real-world Laravel patterns, testing strategies, and the decisions behind production code. No toy examples.</p>
             </div>
 
             {{-- Format card 2 --}}
-            <div class="format-card rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8 text-center">
+            <div class="format-card podcast-surface rounded-2xl border p-8 text-center">
                 <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center">
                     <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                 </div>
@@ -281,8 +168,8 @@
             </div>
 
             {{-- Format card 3 --}}
-            <div class="format-card rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8 text-center">
-                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#4A7FBF]/5 flex items-center justify-center">
+            <div class="format-card podcast-surface rounded-2xl border p-8 text-center">
+                <div class="format-icon podcast-brand-icon w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center">
                     <svg class="w-7 h-7 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Guest Conversations</h3>
