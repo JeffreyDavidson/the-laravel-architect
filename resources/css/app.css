@@ -10,6 +10,7 @@
 @import './components/home.css';
 @import './components/podcast.css';
 @import './components/about.css';
+@import './components/listings.css';
 
 @font-face {
     font-family: 'Empera';

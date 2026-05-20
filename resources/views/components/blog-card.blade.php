@@ -1,10 +1,10 @@
 @props(['post', 'showCategory' => true, 'showTags' => true, 'showExcerpt' => true])
-<div class="blog-card group rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden">
+<div class="blog-card group overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-brand-700 dark:bg-brand-950">
     <div class="p-6 md:p-8">
         <x-post-meta :post="$post" :showCategory="$showCategory" class="mb-3" />
 
         <a href="{{ route('blog.show', $post) }}">
-            <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#4A7FBF] transition-colors">{{ $post->title }}</h2>
+            <h2 class="mb-3 text-xl font-bold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white md:text-2xl">{{ $post->title }}</h2>
         </a>
 
         @if($showExcerpt && $post->excerpt)

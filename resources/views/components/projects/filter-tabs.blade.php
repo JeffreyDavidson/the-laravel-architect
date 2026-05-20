@@ -10,7 +10,7 @@
     <button
         @click="filter = 'all'"
         :class="filter === 'all' ? 'active' : ''"
-        class="filter-tab w-full px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-600"
+        class="filter-tab w-full rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900 dark:border-brand-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-white"
     >
         All Projects
     </button>
@@ -19,7 +19,7 @@
             <button
                 @click="filter = '{{ $key }}'"
                 :class="filter === '{{ $key }}' ? 'active' : ''"
-                class="filter-tab px-2 py-2 text-xs font-medium rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-600 text-center"
+                class="filter-tab rounded-lg border border-gray-200 px-2 py-2 text-center text-xs font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900 dark:border-brand-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-white"
             >
                 {{ $label }}
             </button>
@@ -33,7 +33,7 @@
         <button
             @click="filter = '{{ $filter['key'] }}'"
             :class="filter === '{{ $filter['key'] }}' ? 'active' : ''"
-            class="filter-tab px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-600 whitespace-nowrap"
+            class="filter-tab whitespace-nowrap rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-900 dark:border-brand-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-white"
         >
             {{ $filter['label'] }}
         </button>
