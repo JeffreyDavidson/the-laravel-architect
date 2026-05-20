@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -22,7 +23,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'thelaravelarchitect@gmail.com'],
             [
                 'name' => 'Jeffrey Davidson',
-                'password' => \Illuminate\Support\Facades\Hash::make('change-me-immediately'),
+                'password' => Hash::make('change-me-immediately'),
             ]
         );
         $jeffrey->assignRole('super_admin');
