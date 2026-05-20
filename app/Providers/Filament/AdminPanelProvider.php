@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\Subscribers\SubscriberResource;
+use App\Filament\Resources\Users\UserResource;
+use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
 use Awcodes\Versions\VersionsPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -15,10 +18,10 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+// AccountWidget replaced by WelcomeWidget
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-// AccountWidget replaced by WelcomeWidget
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -63,9 +66,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelBackupPlugin::make(),
                 QuickCreatePlugin::make()
                     ->excludes([
-                        \App\Filament\Resources\Subscribers\SubscriberResource::class,
-                        \App\Filament\Resources\Videos\VideoResource::class,
-                        \App\Filament\Resources\Users\UserResource::class,
+                        SubscriberResource::class,
+                        VideoResource::class,
+                        UserResource::class,
                     ]),
                 VersionsPlugin::make(),
             ])

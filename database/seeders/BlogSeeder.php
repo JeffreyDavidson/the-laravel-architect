@@ -8,6 +8,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class BlogSeeder extends Seeder
 {
@@ -35,7 +36,7 @@ class BlogSeeder extends Seeder
         ])->mapWithKeys(function ($name) {
             $tag = Tag::findOrCreate($name);
 
-            return [\Illuminate\Support\Str::slug($name) => $tag];
+            return [Str::slug($name) => $tag];
         });
 
         // Post 1
