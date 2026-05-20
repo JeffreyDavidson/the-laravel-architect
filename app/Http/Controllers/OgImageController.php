@@ -10,6 +10,8 @@ class OgImageController extends Controller
 {
     public function __invoke(Post $post, OgImageGenerator $generator): Response
     {
+        abort_unless($post->isPublished(), 404);
+
         $png = $generator->generate($post);
 
         return response($png, 200, [

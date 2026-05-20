@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
+use App\Enums\PublishStatus;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
@@ -32,13 +33,7 @@ class PostsTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'published' => 'success',
-                        'draft' => 'gray',
-                        'in_review' => 'info',
-                        'scheduled' => 'warning',
-                        default => 'gray',
-                    }),
+                    ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),
@@ -49,12 +44,7 @@ class PostsTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'in_review' => 'In Review',
-                        'published' => 'Published',
-                        'scheduled' => 'Scheduled',
-                    ]),
+                    ->options(PublishStatus::labels()),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
             ])

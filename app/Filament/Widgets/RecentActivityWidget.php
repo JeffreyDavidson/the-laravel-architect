@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Models\Testimonial;
 use Filament\Widgets\Widget;
@@ -22,7 +23,7 @@ class RecentActivityWidget extends Widget
             $activities->push([
                 'icon' => '📝',
                 'label' => $post->title,
-                'meta' => $post->status === 'published' ? 'Published' : 'Draft',
+                'meta' => $post->status === PublishStatus::Published ? 'Published' : 'Draft',
                 'time' => $post->updated_at->diffForHumans(),
                 'kind' => 'post',
                 'timestamp' => $post->updated_at,

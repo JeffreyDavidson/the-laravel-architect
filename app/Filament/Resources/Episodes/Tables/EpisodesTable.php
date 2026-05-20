@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
+use App\Enums\PublishStatus;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -30,22 +31,14 @@ class EpisodesTable
                     ->label('Duration'),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'published' => 'success',
-                        'draft' => 'gray',
-                        'scheduled' => 'warning',
-                    }),
+                    ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'scheduled' => 'Scheduled',
-                    ]),
+                    ->options(PublishStatus::labels(includeInReview: false)),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
