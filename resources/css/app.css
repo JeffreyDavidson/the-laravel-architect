@@ -8,6 +8,7 @@
 @source '../**/*.js';
 
 @import './components/home.css';
+@import './components/podcast.css';
 
 @font-face {
     font-family: 'Empera';

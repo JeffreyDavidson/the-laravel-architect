@@ -29,7 +29,7 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/uses', 'Uses'],
     ['/blog', 'Blog'],
     ['/projects', 'Projects'],
-    ['/podcasts', 'Podcasts'],
+    ['/podcasts', 'Podcast'],
 ]);
 
 it('keeps the admin panel behind authentication', function () {
