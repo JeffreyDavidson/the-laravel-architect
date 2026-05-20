@@ -2,23 +2,25 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Typography\FontFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Typography\FontFactory;
 
+#[Signature('thumbnails:generate')]
+#[Description('Generate YouTube thumbnail placeholders')]
 class GenerateThumbnails extends Command
 {
-    protected $signature = 'thumbnails:generate';
-    protected $description = 'Generate YouTube thumbnail placeholders';
-
     private int $width = 1280;
+
     private int $height = 720;
 
     public function handle(): int
     {
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
 
         $thumbnails = [
             [
@@ -53,13 +55,13 @@ class GenerateThumbnails extends Command
             for ($r = 350; $r > 0; $r -= 3) {
                 $image->drawCircle(1050, 200, function ($circle) use ($r, $thumb) {
                     $circle->radius($r);
-                    $circle->background($thumb['colors'][0] . '03');
+                    $circle->background($thumb['colors'][0].'03');
                 });
             }
             for ($r = 250; $r > 0; $r -= 3) {
                 $image->drawCircle(200, 550, function ($circle) use ($r, $thumb) {
                     $circle->radius($r);
-                    $circle->background($thumb['colors'][1] . '03');
+                    $circle->background($thumb['colors'][1].'03');
                 });
             }
 
@@ -85,7 +87,7 @@ class GenerateThumbnails extends Command
             $image->drawLine(function (LineFactory $line) use ($thumb) {
                 $line->from(880, $this->height - 3);
                 $line->to($this->width, $this->height - 3);
-                $line->color($thumb['colors'][0] . '80');
+                $line->color($thumb['colors'][0].'80');
                 $line->width(4);
             });
 
@@ -93,7 +95,7 @@ class GenerateThumbnails extends Command
             $image->drawLine(function (LineFactory $line) use ($thumb) {
                 $line->from($this->width - 3, 0);
                 $line->to($this->width - 3, 200);
-                $line->color($thumb['colors'][0] . '60');
+                $line->color($thumb['colors'][0].'60');
                 $line->width(3);
             });
 
@@ -129,23 +131,24 @@ class GenerateThumbnails extends Command
             // Decorative shapes
             $image->drawRectangle(900, 150, function ($rect) use ($thumb) {
                 $rect->size(120, 120);
-                $rect->border($thumb['colors'][0] . '15', 1);
+                $rect->border($thumb['colors'][0].'15', 1);
             });
             $image->drawCircle(1050, 400, function ($circle) use ($thumb) {
                 $circle->radius(40);
-                $circle->border($thumb['colors'][0] . '10', 1);
+                $circle->border($thumb['colors'][0].'10', 1);
             });
             $image->drawRectangle(950, 480, function ($rect) use ($thumb) {
                 $rect->size(80, 80);
-                $rect->border($thumb['colors'][0] . '12', 1);
+                $rect->border($thumb['colors'][0].'12', 1);
             });
 
-            $path = $outputDir . '/' . $thumb['filename'];
+            $path = $outputDir.'/'.$thumb['filename'];
             $image->toPng()->save($path);
             $this->info("Generated: {$thumb['filename']}");
         }
 
         $this->info('All thumbnails generated!');
+
         return self::SUCCESS;
     }
 
@@ -157,8 +160,11 @@ class GenerateThumbnails extends Command
             public_path('fonts/empera/Empera-Regular.ttf'),
         ];
         foreach ($fonts as $font) {
-            if (file_exists($font)) return $font;
+            if (file_exists($font)) {
+                return $font;
+            }
         }
+
         return public_path('fonts/empera/Empera-Regular.ttf');
     }
 
@@ -169,8 +175,11 @@ class GenerateThumbnails extends Command
             '/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf',
         ];
         foreach ($fonts as $font) {
-            if (file_exists($font)) return $font;
+            if (file_exists($font)) {
+                return $font;
+            }
         }
+
         return $this->getBoldFont();
     }
 }

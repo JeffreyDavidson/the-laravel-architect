@@ -33,10 +33,10 @@ class PostResource extends Resource
         $draftCount = static::getModel()::where('status', 'draft')->count();
 
         if ($reviewCount > 0) {
-            return $reviewCount . ' to review';
+            return $reviewCount.' to review';
         }
 
-        return $draftCount > 0 ? $draftCount . ' draft' . ($draftCount > 1 ? 's' : '') : null;
+        return $draftCount > 0 ? $draftCount.' draft'.($draftCount > 1 ? 's' : '') : null;
     }
 
     public static function getNavigationBadgeColor(): ?string

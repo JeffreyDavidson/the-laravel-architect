@@ -2,27 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+#[Unguarded]
 class Project extends Model implements HasMedia
 {
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
 
-    protected $guarded = [];
-
-    protected $casts = [
-        'tech_stack' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'tech_stack' => 'array',
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -55,6 +57,7 @@ class Project extends Model implements HasMedia
             description: $this->description,
         );
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

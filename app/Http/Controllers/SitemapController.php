@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Post;
 use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Http\Response;
 
@@ -31,17 +31,17 @@ class SitemapController extends Controller
             ['url' => route('projects.index'), 'priority' => '0.8', 'freq' => 'monthly'],
         ] as $page) {
             $xml .= '<url>';
-            $xml .= '<loc>' . $page['url'] . '</loc>';
-            $xml .= '<changefreq>' . $page['freq'] . '</changefreq>';
-            $xml .= '<priority>' . $page['priority'] . '</priority>';
+            $xml .= '<loc>'.$page['url'].'</loc>';
+            $xml .= '<changefreq>'.$page['freq'].'</changefreq>';
+            $xml .= '<priority>'.$page['priority'].'</priority>';
             $xml .= '</url>';
         }
 
         // Blog posts
         foreach ($posts as $post) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('blog.show', $post) . '</loc>';
-            $xml .= '<lastmod>' . $post->updated_at->toW3cString() . '</lastmod>';
+            $xml .= '<loc>'.route('blog.show', $post).'</loc>';
+            $xml .= '<lastmod>'.$post->updated_at->toW3cString().'</lastmod>';
             $xml .= '<changefreq>monthly</changefreq>';
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
@@ -50,7 +50,7 @@ class SitemapController extends Controller
         // Categories
         foreach ($categories as $category) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('blog.category', $category) . '</loc>';
+            $xml .= '<loc>'.route('blog.category', $category).'</loc>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.5</priority>';
             $xml .= '</url>';
@@ -59,15 +59,15 @@ class SitemapController extends Controller
         // Podcasts
         foreach ($podcasts as $podcast) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('podcast.show', $podcast) . '</loc>';
+            $xml .= '<loc>'.route('podcast.show', $podcast).'</loc>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
 
             foreach ($podcast->episodes as $episode) {
                 $xml .= '<url>';
-                $xml .= '<loc>' . route('podcast.episode', [$podcast, $episode]) . '</loc>';
-                $xml .= '<lastmod>' . $episode->updated_at->toW3cString() . '</lastmod>';
+                $xml .= '<loc>'.route('podcast.episode', [$podcast, $episode]).'</loc>';
+                $xml .= '<lastmod>'.$episode->updated_at->toW3cString().'</lastmod>';
                 $xml .= '<changefreq>monthly</changefreq>';
                 $xml .= '<priority>0.6</priority>';
                 $xml .= '</url>';
@@ -77,8 +77,8 @@ class SitemapController extends Controller
         // Projects
         foreach ($projects as $project) {
             $xml .= '<url>';
-            $xml .= '<loc>' . route('projects.show', $project) . '</loc>';
-            $xml .= '<lastmod>' . $project->updated_at->toW3cString() . '</lastmod>';
+            $xml .= '<loc>'.route('projects.show', $project).'</loc>';
+            $xml .= '<lastmod>'.$project->updated_at->toW3cString().'</lastmod>';
             $xml .= '<changefreq>monthly</changefreq>';
             $xml .= '<priority>0.6</priority>';
             $xml .= '</url>';

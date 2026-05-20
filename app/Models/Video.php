@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+#[Unguarded]
 class Video extends Model
 {
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [
@@ -52,7 +52,7 @@ class Video extends Model
             $parts = [];
 
             if ($interval->h > 0) {
-                $parts[] = $interval->h . ':' . str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
+                $parts[] = $interval->h.':'.str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
             } else {
                 $parts[] = (string) $interval->i;
             }

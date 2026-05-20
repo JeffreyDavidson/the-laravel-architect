@@ -38,7 +38,7 @@ class RecentActivityWidget extends Widget
             };
             $activities->push([
                 'icon' => '💬',
-                'label' => 'Testimonial from ' . $testimonial->name,
+                'label' => 'Testimonial from '.$testimonial->name,
                 'meta' => $statusLabel,
                 'time' => $testimonial->created_at->diffForHumans(),
                 'kind' => 'testimonial',

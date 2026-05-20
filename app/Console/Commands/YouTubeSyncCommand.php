@@ -4,14 +4,15 @@ namespace App\Console\Commands;
 
 use App\Models\Video;
 use App\Services\YouTubeService;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
+#[Signature('youtube:sync {--limit=50 : Maximum videos to fetch}')]
+#[Description('Sync videos from YouTube channel')]
 class YouTubeSyncCommand extends Command
 {
-    protected $signature = 'youtube:sync {--limit=50 : Maximum videos to fetch}';
-    protected $description = 'Sync videos from YouTube channel';
-
     public function handle(YouTubeService $youtube): int
     {
         $this->info('Fetching videos from YouTube...');
@@ -20,6 +21,7 @@ class YouTubeSyncCommand extends Command
             $videos = $youtube->getChannelVideos((int) $this->option('limit'));
         } catch (\RuntimeException $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
 

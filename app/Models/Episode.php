@@ -2,28 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+#[Unguarded]
 class Episode extends Model implements HasMedia
 {
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
 
-    protected $guarded = [];
-
-    protected $casts = [
-        'published_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'published_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -47,16 +49,19 @@ class Episode extends Model implements HasMedia
 
     public function getFormattedDurationAttribute(): string
     {
-        if (!$this->duration_minutes) return '';
+        if (! $this->duration_minutes) {
+            return '';
+        }
         $hours = intdiv($this->duration_minutes, 60);
         $mins = $this->duration_minutes % 60;
+
         return $hours > 0 ? "{$hours}h {$mins}m" : "{$mins} min";
     }
 
     public function getEpisodeCodeAttribute(): string
     {
-        return 'S' . str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
-            . 'E' . str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
+        return 'S'.str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
+            .'E'.str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
     }
 
     public function registerMediaCollections(): void
@@ -70,10 +75,11 @@ class Episode extends Model implements HasMedia
         $podcast = $this->podcast;
 
         return new SEOData(
-            title: $this->title . ' — ' . ($podcast?->name ?? 'Podcast'),
+            title: $this->title.' — '.($podcast?->name ?? 'Podcast'),
             description: $this->description,
         );
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

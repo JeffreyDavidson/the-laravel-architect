@@ -83,7 +83,7 @@ class BlogController extends Controller
             ->paginate(10);
 
         seo()->for(new SEOData(
-            title: $category->name . ' Articles',
+            title: $category->name.' Articles',
             description: "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.",
         ));
 
@@ -99,7 +99,7 @@ class BlogController extends Controller
             ->paginate(10);
 
         seo()->for(new SEOData(
-            title: $tag->name . ' Articles',
+            title: $tag->name.' Articles',
             description: "Articles tagged with {$tag->name} on The Laravel Architect.",
         ));
 

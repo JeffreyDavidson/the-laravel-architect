@@ -3,23 +3,26 @@
 namespace App\Services;
 
 use App\Models\Post;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\Geometry\Factories\RectangleFactory;
-use Intervention\Image\Geometry\Factories\CircleFactory;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
 class OgImageGenerator
 {
     protected ImageManager $manager;
+
     protected string $fontBold;
+
     protected string $fontRegular;
+
     protected string $fontSemiBold;
 
     public function __construct()
     {
-        $this->manager = new ImageManager(new Driver());
+        $this->manager = new ImageManager(new Driver);
         $this->fontBold = resource_path('fonts/Inter-Bold.ttf');
         $this->fontRegular = resource_path('fonts/Inter-Regular.ttf');
         $this->fontSemiBold = resource_path('fonts/Inter-SemiBold.ttf');
@@ -113,11 +116,11 @@ class OgImageGenerator
         $current = '';
 
         foreach ($words as $word) {
-            if (strlen($current . ' ' . $word) > $maxChars && $current !== '') {
+            if (strlen($current.' '.$word) > $maxChars && $current !== '') {
                 $lines[] = trim($current);
                 $current = $word;
             } else {
-                $current .= ($current ? ' ' : '') . $word;
+                $current .= ($current ? ' ' : '').$word;
             }
         }
         if ($current) {

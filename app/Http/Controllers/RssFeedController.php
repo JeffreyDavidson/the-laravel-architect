@@ -19,8 +19,8 @@ class RssFeedController extends Controller
         $feedUrl = url('/rss');
         $lastBuild = $posts->first()?->published_at?->toRssString() ?? now()->toRssString();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
         $xml .= "<channel>\n";
         $xml .= "<title>The Laravel Architect</title>\n";
         $xml .= "<link>{$siteUrl}</link>\n";

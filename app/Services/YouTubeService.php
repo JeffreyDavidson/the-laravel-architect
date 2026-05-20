@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Http;
 class YouTubeService
 {
     protected string $apiKey;
+
     protected string $channelId;
+
     protected string $baseUrl = 'https://www.googleapis.com/youtube/v3';
 
     public function __construct()
@@ -51,7 +53,7 @@ class YouTubeService
             ]));
 
             if ($response->failed()) {
-                throw new \RuntimeException('YouTube API error: ' . $response->body());
+                throw new \RuntimeException('YouTube API error: '.$response->body());
             }
 
             $data = $response->json();
@@ -77,7 +79,7 @@ class YouTubeService
         ]);
 
         if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: ' . $response->body());
+            throw new \RuntimeException('YouTube API error: '.$response->body());
         }
 
         return collect($response->json('items', []))->map(function ($item) {
@@ -107,7 +109,7 @@ class YouTubeService
         ]);
 
         if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: ' . $response->body());
+            throw new \RuntimeException('YouTube API error: '.$response->body());
         }
 
         return collect($response->json('items', []))->mapWithKeys(function ($item) {
