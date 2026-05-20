@@ -1,0 +1,121 @@
+.blog-card,
+.project-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.blog-card:hover,
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+    border-color: rgba(74, 127, 191, 0.2);
+}
+
+:root:not(.dark) .blog-card:hover,
+:root:not(.dark) .project-card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.blog-card-wrapper {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+}
+
+.blog-card-wrapper.collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.blog-card-wrapper > div {
+    overflow: hidden;
+}
+
+.category-pill,
+.filter-tab,
+.tech-pill {
+    transition: all 0.2s ease;
+}
+
+.category-pill {
+    cursor: pointer;
+}
+
+.category-pill:hover,
+.category-pill.active {
+    background: rgba(74, 127, 191, 0.13);
+    border-color: var(--color-brand-600);
+    color: var(--color-brand-600);
+}
+
+.filter-tab.active {
+    color: white;
+    background: var(--color-brand-600);
+    border-color: var(--color-brand-600);
+}
+
+:root:not(.dark) .filter-tab {
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+:root:not(.dark) .filter-tab:not(.active):hover {
+    border-color: var(--color-brand-600);
+    color: var(--color-brand-600);
+}
+
+.featured-card {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+}
+
+.featured-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
+}
+
+:root:not(.dark) .featured-card,
+:root:not(.dark) .project-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+:root:not(.dark) .featured-card:hover {
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+}
+
+.featured-card:hover .card-glow,
+.project-card:hover .project-glow {
+    opacity: 1;
+}
+
+.featured-card:hover .card-arrow {
+    transform: translateX(4px);
+}
+
+.featured-card:hover .card-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.card-glow,
+.project-glow {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-arrow,
+.card-icon {
+    transition: transform 0.3s ease;
+}
+
+.tech-pill:hover {
+    background: rgba(74, 127, 191, 0.12);
+    color: var(--color-brand-600);
+    border-color: rgba(74, 127, 191, 0.3);
+}
+
+:root:not(.dark) .tech-pill {
+    color: #4b5563;
+    border-color: #d1d5db;
+    background: #f9fafb;
+}
