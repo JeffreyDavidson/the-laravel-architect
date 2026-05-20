@@ -253,12 +253,12 @@
 <section class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
     {{-- Floating orbs --}}
     <div class="absolute top-20 left-10 w-32 h-32 rounded-full opacity-[0.04] blur-[60px] bg-[#4A7FBF]" style="animation: float 8s ease-in-out infinite;"></div>
-    <div class="absolute bottom-20 right-10 w-40 h-40 rounded-full opacity-[0.04] blur-[60px] bg-[#9D5175]" style="animation: float 10s ease-in-out infinite reverse;"></div>
+    <div class="absolute bottom-20 right-10 w-40 h-40 rounded-full opacity-[0.04] blur-[60px] bg-[#4A7FBF]" style="animation: float 10s ease-in-out infinite reverse;"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div class="text-center mb-14">
             <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">What You'll Get</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">Every Episode, Every Show</h2>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">Every Episode, Every Conversation</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -273,16 +273,16 @@
 
             {{-- Format card 2 --}}
             <div class="format-card rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8 text-center">
-                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#9D5175]/20 to-[#9D5175]/5 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                 </div>
-                <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Real Talk on Hard Days</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Honest conversations about burnout, parenting, and finding strength when everything feels heavy. No performance.</p>
+                <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Practical Takeaways</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Clear explanations, tradeoffs, and decisions you can use in real Laravel projects without sitting through filler.</p>
             </div>
 
             {{-- Format card 3 --}}
             <div class="format-card rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] p-8 text-center">
-                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#9D5175]/5 flex items-center justify-center">
+                <div class="format-icon w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#4A7FBF]/20 to-[#4A7FBF]/5 flex items-center justify-center">
                     <svg class="w-7 h-7 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Guest Conversations</h3>

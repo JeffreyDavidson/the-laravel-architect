@@ -42,7 +42,7 @@ class BlogSeeder extends Seeder
         // Post 1
         $post1 = Post::updateOrCreate(['slug' => 'hello-world-why-im-starting-this-blog'], [
             'title' => "Hello World: Why I'm Starting This Blog",
-            'excerpt' => "After 15 years of building things with PHP and Laravel (with two podcasts and a YouTube channel on the way), I figured it was time to start writing things down. Here's why.",
+            'excerpt' => "After 15 years of building things with PHP and Laravel (with a podcast and a YouTube channel on the way), I figured it was time to start writing things down. Here's why.",
             'content' => self::post1(),
             'category_id' => $personal->id,
             'user_id' => $user->id,
@@ -111,7 +111,7 @@ class BlogSeeder extends Seeder
 
 Alright, let's get this out of the way. My name is Jeffrey Davidson. I've been building things on the web for over fifteen years now, mostly with PHP, and for the last decade-plus, almost exclusively with Laravel. I live in Florida with my wife Cassie and our daughter Viola. I'm a Jayhawks fan stuck in Gator country, I play way too much poker, and I'm pretty sure I've been to Walt Disney World more times than some of the cast members.
 
-I'm also launching a YouTube channel and two podcasts, *Coffee with The Laravel Architect* and *Embracing Cloudy Days*, and this site is where it all comes together. Blog posts, video tutorials, and everything in between.
+I'm also launching a YouTube channel and *Coffee with The Laravel Architect*, and this site is where it all comes together. Blog posts, video tutorials, podcast episodes, and everything in between.
 
 ## Why a Blog? Why Now?
 
@@ -162,7 +162,7 @@ I'm a photographer. I'm a poker player. I'm a dad who will absolutely destroy yo
 
 ## Let's Do This
 
-I'm genuinely excited about this. I've spent years consuming content from developers I admire, from podcasts to YouTube to blogs. Now it's my turn to contribute. The YouTube channel and both podcasts are in the works, and I can't wait to share them with you.
+I'm genuinely excited about this. I've spent years consuming content from developers I admire, from podcasts to YouTube to blogs. Now it's my turn to contribute. The YouTube channel and podcast are in the works, and I can't wait to share them with you.
 
 This blog is the first piece of the puzzle. Another format, another avenue, another chance to be useful to someone.
 
@@ -215,7 +215,7 @@ A big part of my career has been modernization work: taking legacy PHP applicati
 
 I've also been feeling the pull to create content. For years I've learned from other developers who put themselves out there (on blogs, YouTube, podcasts) and I want to do the same. I remember how confusing everything was when I was starting out, and I want to make it less confusing for the next person.
 
-That's the driving force behind everything I'm building now. *Coffee with The Laravel Architect* is exactly what it sounds like: me drinking coffee and talking about Laravel. *Embracing Cloudy Days* is more personal, more philosophical. Less code and more life. And the YouTube channel will bring tutorials and live coding to the mix. None of it has launched yet, but it's all in the works and I couldn't be more excited about it.
+That's the driving force behind everything I'm building now. *Coffee with The Laravel Architect* is exactly what it sounds like: me drinking coffee and talking about Laravel. And the YouTube channel will bring tutorials and live coding to the mix. None of it has launched yet, but it's all in the works and I couldn't be more excited about it.
 
 ## The Move South
 

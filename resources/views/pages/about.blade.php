@@ -381,7 +381,7 @@
                         I've spent 15 years learning how to write code that my future self <span class="text-[#4A7FBF]">won't hate.</span>
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 text-base leading-relaxed max-w-xl mx-auto md:mx-0">
-                        Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on two podcasts, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
+                        Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on a podcast, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
                     <div class="flex flex-wrap gap-4 justify-center md:justify-start mt-6">
@@ -429,7 +429,7 @@
                             In 2015, my wife Cassie and I packed up our Kansas lives and moved to <strong class="text-gray-900 dark:text-gray-200">Florida</strong>. In 2017, our daughter <strong class="text-gray-900 dark:text-gray-200">Viola</strong> came along, and being her dad has reshaped my priorities, my patience, and my entire perspective on what matters.
                         </p>
                         <p>
-                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love. <strong class="text-gray-900 dark:text-gray-200">Embracing Cloudy Days</strong> is the personal side, covering mental health, parenting, and the messier parts of life. And <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
+                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love, and <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
                         </p>
                     </div>
                 </div>
@@ -607,8 +607,8 @@
                     <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center mb-4">
                         <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
                     </div>
-                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Embrace the Cloudy Days</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Not every day is sunshine. I talk openly about mental health, burnout, and the hard parts of being a developer and a parent. Vulnerability isn't weakness. It's honesty.</p>
+                    <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Build With Clarity</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Good software should be understandable, maintainable, and useful. I care about architecture that makes the next change easier instead of showing off how clever the last one was.</p>
                 </div>
                 <div class="value-card p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center mb-4">

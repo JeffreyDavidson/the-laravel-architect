@@ -17,7 +17,7 @@ class PodcastController extends Controller
 
         seo()->for(new SEOData(
             title: 'Podcasts',
-            description: 'Two podcasts from Jeffrey Davidson — Coffee with The Laravel Architect (deep dives into Laravel and PHP) and Embracing Cloudy Days (mental health and real talk).',
+            description: 'Coffee with The Laravel Architect from Jeffrey Davidson — deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.',
         ));
 
         return view('podcast.index', compact('podcasts'));
@@ -25,6 +25,8 @@ class PodcastController extends Controller
 
     public function show(Podcast $podcast)
     {
+        abort_unless($podcast->is_active, 404);
+
         $episodes = $podcast->publishedEpisodes()
             ->with('tags')
             ->latest('published_at')
@@ -37,6 +39,7 @@ class PodcastController extends Controller
 
     public function episode(Podcast $podcast, Episode $episode)
     {
+        abort_unless($podcast->is_active, 404);
         abort_unless($episode->isPublished(), 404);
         abort_unless($episode->podcast_id === $podcast->id, 404);
 
