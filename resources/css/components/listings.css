@@ -1,17 +1,20 @@
 .blog-card,
-.project-card {
+.project-card,
+.related-card {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .blog-card:hover,
-.project-card:hover {
+.project-card:hover,
+.related-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
     border-color: rgba(74, 127, 191, 0.2);
 }
 
 :root:not(.dark) .blog-card:hover,
-:root:not(.dark) .project-card:hover {
+:root:not(.dark) .project-card:hover,
+:root:not(.dark) .related-card:hover {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -112,6 +115,23 @@
     background: rgba(74, 127, 191, 0.12);
     color: var(--color-brand-600);
     border-color: rgba(74, 127, 191, 0.3);
+}
+
+.project-hero-glow {
+    animation: projectGlowPulse 5s ease-in-out infinite;
+}
+
+.link-btn {
+    transition: transform 0.2s ease;
+}
+
+.link-btn:hover {
+    transform: translateY(-2px);
+}
+
+@keyframes projectGlowPulse {
+    0%, 100% { opacity: 0.06; }
+    50% { opacity: 0.1; }
 }
 
 :root:not(.dark) .tech-pill {
