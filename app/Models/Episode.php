@@ -51,6 +51,7 @@ class Episode extends Model implements HasMedia
         if (! $this->duration_minutes) {
             return '';
         }
+
         $hours = intdiv($this->duration_minutes, 60);
         $mins = $this->duration_minutes % 60;
 

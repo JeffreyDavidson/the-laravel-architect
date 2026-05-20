@@ -46,6 +46,7 @@ class OgImageGenerator
                 $line->width(1);
             });
         }
+
         for ($y = 0; $y < $height; $y += 60) {
             $image->drawLine(function (LineFactory $line) use ($y, $width) {
                 $line->from(0, $y);

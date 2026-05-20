@@ -42,7 +42,7 @@ jobs:
         run: cp .env.example .env && php artisan key:generate
 
       - name: Check code style
-        run: ./vendor/bin/pint --test
+        run: composer format:test
 
       - name: Build assets
         run: npm run build

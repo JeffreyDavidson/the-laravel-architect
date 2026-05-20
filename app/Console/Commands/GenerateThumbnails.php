@@ -60,6 +60,7 @@ class GenerateThumbnails extends Command
                     $circle->background($thumb['colors'][0] . '03');
                 });
             }
+
             for ($r = 250; $r > 0; $r -= 3) {
                 $image->drawCircle(200, 550, function ($circle) use ($r, $thumb) {
                     $circle->radius($r);
