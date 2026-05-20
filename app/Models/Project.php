@@ -19,7 +19,6 @@ class Project extends Model implements HasMedia
     use HasTags;
     use InteractsWithMedia;
 
-
     protected function casts(): array
     {
         return [
