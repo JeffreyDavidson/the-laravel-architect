@@ -3,45 +3,11 @@
 @section('title', 'Uses')
 
 @section('content')
-<style>
-    .uses-item { transition: all 0.2s ease; }
-    .uses-item:hover {
-        background: rgba(74, 127, 191, 0.03);
-        border-color: #2a3a4a;
-        transform: translateX(4px);
-    }
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-    }
-    .site-tech {
-        transition: all 0.2s ease;
-    }
-    .site-tech:hover {
-        transform: translateY(-2px);
-        border-color: #4A7FBF33;
-        background: rgba(74, 127, 191, 0.03);
-    }
-    
-    /* Light mode overrides */
-    :root:not(.dark) .uses-item:hover {
-        background: rgba(74, 127, 191, 0.02);
-        border-color: rgba(74, 127, 191, 0.15);
-    }
-    :root:not(.dark) .site-tech {
-        background: white !important;
-    }
-    :root:not(.dark) .site-tech:hover {
-        background: rgba(74, 127, 191, 0.02) !important;
-        border-color: rgba(74, 127, 191, 0.15) !important;
-    }
-</style>
-
     {{-- Hero --}}
     <x-hero-section>
         <x-terminal-prompt command="uses:list" />
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">/uses</h1>
-        <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" class="text-[#4A7FBF] hover:underline">uses.tech</a>.</p>
+        <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" class="text-brand-600 hover:underline">uses.tech</a>.</p>
         <p class="text-gray-500 text-sm mt-4">Last updated: February 2026</p>
     </x-hero-section>
 
@@ -56,9 +22,7 @@
                     {{-- Hardware --}}
                     <section id="hardware" class="mb-16 scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            </div>
+                            <x-public.section-icon><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Hardware</h2>
                         </div>
                         <div class="space-y-3">
@@ -72,28 +36,7 @@
                                 ['icon' => '🪑', 'name' => 'Secretlab Chair', 'desc' => 'Comfortable for long coding sessions. Worth the investment.', 'tag' => 'Chair'],
                                 ['icon' => '🪵', 'name' => 'Fully Jarvis 72×30', 'desc' => 'Black bamboo standing desk. Sit-stand with plenty of room for the ultrawide and all the gear.', 'tag' => 'Desk', 'url' => 'https://www.fully.com/standing-desks/jarvis.html'],
                             ] as $item)
-                            @if(isset($item['url']))
-                            <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="font-semibold text-sm group-hover:text-[#4A7FBF] transition-colors">{{ $item['name'] }}</h3>
-                                        <svg class="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </a>
-                            @else
-                            <div class="uses-item flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-sm">{{ $item['name'] }}</h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </div>
-                            @endif
+                            <x-uses.item :item="$item" />
                             @endforeach
                         </div>
                     </section>
@@ -101,9 +44,7 @@
                     {{-- Development --}}
                     <section id="development" class="mb-16 scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                            </div>
+                            <x-public.section-icon><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Development</h2>
                         </div>
                         <div class="space-y-3">
@@ -118,17 +59,7 @@
                                 ['icon' => '🔦', 'name' => 'Ray', 'desc' => 'By Spatie. A beautiful debugging tool that replaced dd() in my workflow.', 'tag' => 'Debugging', 'url' => 'https://myray.app'],
                                 ['icon' => '🧪', 'name' => 'Pest', 'desc' => 'Testing framework for PHP. Elegant syntax, powerful assertions. Three suites: Feature, Integration, Unit.', 'tag' => 'Testing', 'url' => 'https://pestphp.com'],
                             ] as $item)
-                            <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="font-semibold text-sm group-hover:text-[#4A7FBF] transition-colors">{{ $item['name'] }}</h3>
-                                        <svg class="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </a>
+                            <x-uses.item :item="$item" />
                             @endforeach
                         </div>
                     </section>
@@ -136,9 +67,7 @@
                     {{-- Content Creation --}}
                     <section id="content-creation" class="mb-16 scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#9D5175]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#9D5175]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                            </div>
+                            <x-public.section-icon variant="accent"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Content Creation</h2>
                         </div>
                         <div class="space-y-3">
@@ -150,17 +79,7 @@
                                 ['icon' => '🎮', 'name' => 'Elgato Stream Deck XL', 'desc' => '32 programmable LCD keys. Scene switching, shortcuts, and macros for streaming and productivity.', 'tag' => 'Control', 'url' => 'https://www.elgato.com/us/en/p/stream-deck-xl'],
                                 ['icon' => '🕹️', 'name' => 'Elgato Stream Deck MK.2', 'desc' => '15-key companion to the XL. Extra controls for when one deck isn\'t enough.', 'tag' => 'Control', 'url' => 'https://www.elgato.com/us/en/p/stream-deck-mk2-black'],
                             ] as $item)
-                            <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="font-semibold text-sm group-hover:text-[#4A7FBF] transition-colors">{{ $item['name'] }}</h3>
-                                        <svg class="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </a>
+                            <x-uses.item :item="$item" />
                             @endforeach
                         </div>
                     </section>
@@ -168,9 +87,7 @@
                     {{-- Productivity --}}
                     <section id="productivity" class="mb-16 scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                            </div>
+                            <x-public.section-icon><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Productivity</h2>
                         </div>
                         <div class="space-y-3">
@@ -179,17 +96,7 @@
                                 ['icon' => '💬', 'name' => 'Slack', 'desc' => 'Work communication and Laravel community channels.', 'tag' => 'Chat', 'url' => 'https://slack.com'],
                                 ['icon' => '🎮', 'name' => 'Discord', 'desc' => 'Dev communities, podcast listeners, and gaming.', 'tag' => 'Community', 'url' => 'https://discord.com'],
                             ] as $item)
-                            <a href="{{ $item['url'] }}" target="_blank" class="uses-item group flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a]">
-                                <span class="text-xl flex-shrink-0 mt-0.5">{{ $item['icon'] }}</span>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="font-semibold text-sm group-hover:text-[#4A7FBF] transition-colors">{{ $item['name'] }}</h3>
-                                        <svg class="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-600 flex-shrink-0 mt-1">{{ $item['tag'] }}</span>
-                            </a>
+                            <x-uses.item :item="$item" />
                             @endforeach
                         </div>
                     </section>
@@ -197,9 +104,7 @@
                     {{-- This Site --}}
                     <section id="this-site" class="scroll-mt-24">
                         <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-[#4A7FBF]/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-[#4A7FBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                            </div>
+                            <x-public.section-icon><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">This Site Is Built With</h2>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -216,13 +121,7 @@
                                 ['icon' => '📧', 'name' => 'Resend', 'desc' => 'Email'],
                                 ['icon' => '⛰️', 'name' => 'Alpine.js', 'desc' => 'Interactivity'],
                             ] as $tech)
-                            <div class="site-tech p-4 rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-gray-50 dark:bg-[#0D1117]/50">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-base">{{ $tech['icon'] }}</span>
-                                    <p class="font-semibold text-sm text-gray-900 dark:text-white">{{ $tech['name'] }}</p>
-                                </div>
-                                <p class="text-[11px] text-gray-500">{{ $tech['desc'] }}</p>
-                            </div>
+                            <x-uses.site-tech :tech="$tech" />
                             @endforeach
                         </div>
                     </section>
@@ -232,26 +131,26 @@
                 <div class="lg:w-72 flex-shrink-0">
                     <div class="lg:sticky lg:top-24 space-y-6">
                         {{-- Quick nav --}}
-                        <div class="p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
+                        <x-public.surface-card class="p-5">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Jump To</h3>
                             <nav class="space-y-2">
-                                <a href="#hardware" class="block text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">🖥️ Hardware</a>
-                                <a href="#development" class="block text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">💻 Development</a>
-                                <a href="#content-creation" class="block text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">🎬 Content Creation</a>
-                                <a href="#productivity" class="block text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">📋 Productivity</a>
-                                <a href="#this-site" class="block text-sm text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">🧪 This Site</a>
+                                <a href="#hardware" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🖥️ Hardware</a>
+                                <a href="#development" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">💻 Development</a>
+                                <a href="#content-creation" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🎬 Content Creation</a>
+                                <a href="#productivity" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">📋 Productivity</a>
+                                <a href="#this-site" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🧪 This Site</a>
                             </nav>
-                        </div>
+                        </x-public.surface-card>
 
                         {{-- uses.tech --}}
-                        <div class="p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
+                        <x-public.surface-card class="p-5">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Inspired By</h3>
-                            <a href="https://uses.tech" target="_blank" class="inline-flex items-center gap-1.5 text-sm text-[#4A7FBF] hover:underline">
+                            <a href="https://uses.tech" target="_blank" class="inline-flex items-center gap-1.5 text-sm text-brand-600 hover:underline">
                                 uses.tech
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
                             <p class="text-xs text-gray-500 mt-1.5">A directory of developer /uses pages.</p>
-                        </div>
+                        </x-public.surface-card>
                     </div>
                 </div>
             </div>
