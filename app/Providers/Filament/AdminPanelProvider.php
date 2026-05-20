@@ -81,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::TOPBAR_AFTER,
-                fn (): HtmlString => new HtmlString('<div style="height:2px;background:linear-gradient(90deg,#4A7FBF,#c74b7a,transparent);opacity:0.4;"></div>'),
+                fn (): HtmlString => new HtmlString('<div class="tla-admin-rail" aria-hidden="true"></div>'),
             )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,

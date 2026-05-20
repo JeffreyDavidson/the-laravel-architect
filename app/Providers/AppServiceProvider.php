@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
+        FilamentView::registerRenderHook(
+            'panels::body.end',
+            fn () => Blade::render(<<<'HTML'
+                <script>
+                    document.addEventListener("livewire:navigating", () => {
+                        const sidebar = document.querySelector(".fi-sidebar-nav");
+                        if (sidebar) window.__sidebarScroll = sidebar.scrollTop;
+                    });
+                    document.addEventListener("livewire:navigated", () => {
+                        const sidebar = document.querySelector(".fi-sidebar-nav");
+                        if (sidebar && window.__sidebarScroll) sidebar.scrollTop = window.__sidebarScroll;
+                    });
+                </script>
+            HTML),
+        );
     }
 }
