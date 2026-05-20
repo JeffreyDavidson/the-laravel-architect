@@ -18,7 +18,7 @@
     </div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <x-terminal-prompt command="podcast:show coffee" />
+        <x-terminal-prompt command="podcast:episode-list" />
 
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Podcast</h1>
         <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Coffee with The Laravel Architect is where Laravel, architecture, and the developer life meet.</p>
