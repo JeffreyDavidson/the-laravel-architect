@@ -20,9 +20,13 @@ class Episode extends Model implements HasMedia
     use HasTags;
     use InteractsWithMedia;
 
-    protected $casts = [
-        'published_at' => 'datetime',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'published_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {

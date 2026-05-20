@@ -21,10 +21,14 @@ class Post extends Model implements HasMedia
     use HasTags;
     use InteractsWithMedia;
 
-    protected $casts = [
-        'published_at' => 'datetime',
-        'reviewed_at' => 'datetime',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'published_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+        ];
+    }
 
     public function reviewer(): BelongsTo
     {

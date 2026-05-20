@@ -19,9 +19,13 @@ class Project extends Model implements HasMedia
     use HasTags;
     use InteractsWithMedia;
 
-    protected $casts = [
-        'tech_stack' => 'array',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'tech_stack' => 'array',
+        ];
+    }
 
     protected static function booted(): void
     {
