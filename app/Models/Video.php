@@ -52,7 +52,7 @@ class Video extends Model
             $parts = [];
 
             if ($interval->h > 0) {
-                $parts[] = $interval->h . ':' . str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
+                $parts[] = $interval->h.':'.str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
             } else {
                 $parts[] = (string) $interval->i;
             }

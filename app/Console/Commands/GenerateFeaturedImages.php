@@ -9,18 +9,20 @@ use Illuminate\Console\Command;
 class GenerateFeaturedImages extends Command
 {
     protected $signature = 'posts:generate-images {--force : Regenerate even if image exists}';
+
     protected $description = 'Generate featured images for posts that don\'t have one';
 
     public function handle(): int
     {
-        $generator = new FeaturedImageGenerator();
+        $generator = new FeaturedImageGenerator;
 
         $posts = Post::with('category')->get();
         $generated = 0;
 
         foreach ($posts as $post) {
-            if ($post->featured_image && !$this->option('force')) {
+            if ($post->featured_image && ! $this->option('force')) {
                 $this->line("  Skipping: {$post->title} (already has image)");
+
                 continue;
             }
 

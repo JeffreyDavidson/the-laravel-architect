@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class YouTubeSyncCommand extends Command
 {
     protected $signature = 'youtube:sync {--limit=50 : Maximum videos to fetch}';
+
     protected $description = 'Sync videos from YouTube channel';
 
     public function handle(YouTubeService $youtube): int
@@ -20,6 +21,7 @@ class YouTubeSyncCommand extends Command
             $videos = $youtube->getChannelVideos((int) $this->option('limit'));
         } catch (\RuntimeException $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
 

@@ -3,15 +3,17 @@
 namespace App\Services;
 
 use App\Models\Post;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
 class FeaturedImageGenerator
 {
     private ImageManager $manager;
+
     private int $width = 1200;
+
     private int $height = 630;
 
     // Category color schemes: [primary, secondary, accent]
@@ -119,7 +121,7 @@ class FeaturedImageGenerator
 
     public function __construct()
     {
-        $this->manager = new ImageManager(new Driver());
+        $this->manager = new ImageManager(new Driver);
     }
 
     public function generate(Post $post): string
@@ -151,10 +153,10 @@ class FeaturedImageGenerator
         $this->drawBrandMark($image, $colors[0]);
 
         // Save
-        $path = 'featured-images/' . $post->slug . '.png';
-        $storagePath = storage_path('app/public/' . $path);
+        $path = 'featured-images/'.$post->slug.'.png';
+        $storagePath = storage_path('app/public/'.$path);
 
-        if (!is_dir(dirname($storagePath))) {
+        if (! is_dir(dirname($storagePath))) {
             mkdir(dirname($storagePath), 0755, true);
         }
 
@@ -169,7 +171,7 @@ class FeaturedImageGenerator
         for ($r = 300; $r > 0; $r -= 3) {
             $image->drawCircle(1000, 100, function ($circle) use ($r, $colors) {
                 $circle->radius($r);
-                $circle->background($colors[0] . '02');
+                $circle->background($colors[0].'02');
             });
         }
 
@@ -177,7 +179,7 @@ class FeaturedImageGenerator
         for ($r = 200; $r > 0; $r -= 3) {
             $image->drawCircle(200, 530, function ($circle) use ($r, $colors) {
                 $circle->radius($r);
-                $circle->background($colors[1] . '02');
+                $circle->background($colors[1].'02');
             });
         }
     }
@@ -200,7 +202,7 @@ class FeaturedImageGenerator
         // Top accent line (partial)
         $image->drawLine(function (LineFactory $line) use ($colors) {
             $line->from(0, 2);
-            $line->to((int)($this->width * 0.3), 2);
+            $line->to((int) ($this->width * 0.3), 2);
             $line->color($colors[0]);
             $line->width(4);
         });
@@ -208,8 +210,8 @@ class FeaturedImageGenerator
         // Right side vertical accent
         $image->drawLine(function (LineFactory $line) use ($colors) {
             $line->from($this->width - 2, 0);
-            $line->to($this->width - 2, (int)($this->height * 0.25));
-            $line->color($colors[2] . '80');
+            $line->to($this->width - 2, (int) ($this->height * 0.25));
+            $line->color($colors[2].'80');
             $line->width(2);
         });
     }
@@ -227,10 +229,12 @@ class FeaturedImageGenerator
             $y = $startY + ($i * $lineHeight);
 
             // Don't draw past the bottom
-            if ($y > $this->height - 80) break;
+            if ($y > $this->height - 80) {
+                break;
+            }
 
             // Line number
-            $lineNum = str_pad((string)($i + 1), 2, ' ', STR_PAD_LEFT);
+            $lineNum = str_pad((string) ($i + 1), 2, ' ', STR_PAD_LEFT);
             $image->text($lineNum, $startX, $y, function (FontFactory $font) use ($monoFont) {
                 $font->filename($monoFont);
                 $font->size(15);
@@ -244,7 +248,7 @@ class FeaturedImageGenerator
                 $image->text($text, $startX + $lineNumberWidth, $y, function (FontFactory $font) use ($monoFont, $color) {
                     $font->filename($monoFont);
                     $font->size(16);
-                    $font->color($color . '90');
+                    $font->color($color.'90');
                 });
             }
         }
@@ -258,14 +262,18 @@ class FeaturedImageGenerator
             [$text, $type] = $snippet;
             $y = $startY2 + ($i * $lineHeight);
 
-            if ($y > $this->height - 60) break;
-            if (!$text || !$type) continue;
+            if ($y > $this->height - 60) {
+                break;
+            }
+            if (! $text || ! $type) {
+                continue;
+            }
 
             $color = $this->syntaxColors[$type] ?? '#c9d1d9';
             $image->text($text, $startX2, $y, function (FontFactory $font) use ($monoFont, $color) {
                 $font->filename($monoFont);
                 $font->size(14);
-                $font->color($color . '40');
+                $font->color($color.'40');
             });
         }
     }
@@ -277,7 +285,7 @@ class FeaturedImageGenerator
         $image->text(strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color) {
             $font->filename($monoFont);
             $font->size(11);
-            $font->color($color . 'a0');
+            $font->color($color.'a0');
         });
     }
 

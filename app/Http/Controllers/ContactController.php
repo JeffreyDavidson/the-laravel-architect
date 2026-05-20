@@ -19,10 +19,10 @@ class ContactController extends Controller
 
         // Send to Jeffrey
         Mail::raw(
-            "Name: {$validated['name']}\n" .
-            "Email: {$validated['email']}\n" .
-            "Type: {$validated['type']}\n" .
-            "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
+            "Name: {$validated['name']}\n".
+            "Email: {$validated['email']}\n".
+            "Type: {$validated['type']}\n".
+            'Budget: '.($validated['budget'] ?? 'Not specified')."\n\n".
             "Message:\n{$validated['message']}",
             function ($message) use ($validated) {
                 $message->to(config('mail.contact_to', config('mail.from.address')))
@@ -33,13 +33,13 @@ class ContactController extends Controller
 
         // Send confirmation copy to submitter
         Mail::raw(
-            "Hi {$validated['name']},\n\n" .
-            "Thanks for reaching out! Here's a copy of your message. I'll get back to you within 24–48 hours.\n\n" .
-            "---\n\n" .
-            "Type: {$validated['type']}\n" .
-            "Budget: " . ($validated['budget'] ?? 'Not specified') . "\n\n" .
-            "Message:\n{$validated['message']}\n\n" .
-            "---\n\n" .
+            "Hi {$validated['name']},\n\n".
+            "Thanks for reaching out! Here's a copy of your message. I'll get back to you within 24–48 hours.\n\n".
+            "---\n\n".
+            "Type: {$validated['type']}\n".
+            'Budget: '.($validated['budget'] ?? 'Not specified')."\n\n".
+            "Message:\n{$validated['message']}\n\n".
+            "---\n\n".
             "Jeffrey Davidson\nThe Laravel Architect\nhttps://thelaravelarchitect.com",
             function ($message) use ($validated) {
                 $message->to($validated['email'], $validated['name'])

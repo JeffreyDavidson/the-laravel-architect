@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\Storage;
 class GeneratePostImages extends Command
 {
     protected $signature = 'posts:generate-images {--force : Regenerate all images}';
+
     protected $description = 'Generate featured images for posts that don\'t have one';
 
     public function handle(FeaturedImageGenerator $generator): int
     {
         $query = Post::with('category');
 
-        if (!$this->option('force')) {
+        if (! $this->option('force')) {
             $query->whereNull('featured_image');
         }
 
@@ -24,6 +25,7 @@ class GeneratePostImages extends Command
 
         if ($posts->isEmpty()) {
             $this->info('No posts need images generated.');
+
             return 0;
         }
 
@@ -38,6 +40,7 @@ class GeneratePostImages extends Command
         }
 
         $this->info("Done! Generated images for {$posts->count()} posts.");
+
         return 0;
     }
 }

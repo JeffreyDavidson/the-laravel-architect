@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class YouTubeStatsCommand extends Command
 {
     protected $signature = 'youtube:stats';
+
     protected $description = 'Update view/like/comment counts for all synced videos';
 
     public function handle(YouTubeService $youtube): int
@@ -17,6 +18,7 @@ class YouTubeStatsCommand extends Command
 
         if ($videos->isEmpty()) {
             $this->info('No videos to update. Run youtube:sync first.');
+
             return self::SUCCESS;
         }
 
@@ -32,6 +34,7 @@ class YouTubeStatsCommand extends Command
                 $stats = $youtube->getStatsForVideos($chunk->toArray());
             } catch (\RuntimeException $e) {
                 $this->error($e->getMessage());
+
                 return self::FAILURE;
             }
 

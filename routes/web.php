@@ -5,11 +5,11 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PodcastController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\PodcastController;
-use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 // Pages
