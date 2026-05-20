@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+#[Unguarded]
 class Video extends Model
 {
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [

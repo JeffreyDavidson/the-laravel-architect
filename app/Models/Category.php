@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+#[Unguarded]
 class Category extends Model
 {
-    protected $guarded = [];
-
     protected static function booted(): void
     {
         static::creating(function (Category $category) {

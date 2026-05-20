@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 
+#[Unguarded]
 class Testimonial extends Model
 {
-    protected $guarded = [];
-
     public function scopeApproved($query)
     {
         return $query->where('status', 'approved');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -13,13 +14,12 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
 
+#[Unguarded]
 class Post extends Model implements HasMedia
 {
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
-
-    protected $guarded = [];
 
     protected $casts = [
         'published_at' => 'datetime',

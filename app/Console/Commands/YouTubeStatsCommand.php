@@ -4,14 +4,14 @@ namespace App\Console\Commands;
 
 use App\Models\Video;
 use App\Services\YouTubeService;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Signature('youtube:stats')]
+#[Description('Update view/like/comment counts for all synced videos')]
 class YouTubeStatsCommand extends Command
 {
-    protected $signature = 'youtube:stats';
-
-    protected $description = 'Update view/like/comment counts for all synced videos';
-
     public function handle(YouTubeService $youtube): int
     {
         $videos = Video::all();

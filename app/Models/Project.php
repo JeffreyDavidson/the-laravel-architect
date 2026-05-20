@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -11,13 +12,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+#[Unguarded]
 class Project extends Model implements HasMedia
 {
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
-
-    protected $guarded = [];
 
     protected $casts = [
         'tech_stack' => 'array',

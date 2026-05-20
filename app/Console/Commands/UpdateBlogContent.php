@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Signature('posts:refresh')]
+#[Description('Re-run BlogSeeder to update post content (uses updateOrCreate, safe to run)')]
 class UpdateBlogContent extends Command
 {
-    protected $signature = 'posts:refresh';
-
-    protected $description = 'Re-run BlogSeeder to update post content (uses updateOrCreate, safe to run)';
-
     public function handle(): void
     {
         $this->info('Refreshing blog post content from seeder...');

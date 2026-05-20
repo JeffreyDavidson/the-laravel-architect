@@ -2,18 +2,18 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
+#[Signature('thumbnails:generate')]
+#[Description('Generate YouTube thumbnail placeholders')]
 class GenerateThumbnails extends Command
 {
-    protected $signature = 'thumbnails:generate';
-
-    protected $description = 'Generate YouTube thumbnail placeholders';
-
     private int $width = 1280;
 
     private int $height = 720;

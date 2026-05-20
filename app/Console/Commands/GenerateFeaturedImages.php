@@ -4,14 +4,14 @@ namespace App\Console\Commands;
 
 use App\Models\Post;
 use App\Services\FeaturedImageGenerator;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Signature('posts:generate-images {--force : Regenerate even if image exists}')]
+#[Description('Generate featured images for posts that don\'t have one')]
 class GenerateFeaturedImages extends Command
 {
-    protected $signature = 'posts:generate-images {--force : Regenerate even if image exists}';
-
-    protected $description = 'Generate featured images for posts that don\'t have one';
-
     public function handle(): int
     {
         $generator = new FeaturedImageGenerator;
