@@ -867,16 +867,6 @@
         border-color: rgba(74,127,191,0.3) !important;
         box-shadow: 0 4px 20px rgba(74,127,191,0.12);
     }
-    :root:not(.dark) .podcast-card-cloudy {
-        background: linear-gradient(135deg, rgba(157,81,117,0.06), rgba(157,81,117,0.02)) !important;
-        border: 1px solid rgba(157,81,117,0.15) !important;
-        border-top: 3px solid #9D5175 !important;
-        box-shadow: 0 2px 12px rgba(157,81,117,0.06);
-    }
-    :root:not(.dark) .podcast-card-cloudy:hover {
-        border-color: rgba(157,81,117,0.3) !important;
-        box-shadow: 0 4px 20px rgba(157,81,117,0.12);
-    }
     
     /* YouTube thumbnail cards */
     .thumbnail-card {
@@ -1016,7 +1006,7 @@
 
                 <p class="text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
                     15 years of building Laravel applications that scale. I write about the craft,
-                    I'm launching two podcasts, and I help developers build things they're proud of.
+                    I'm launching a podcast, and I help developers build things they're proud of.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
@@ -1202,14 +1192,11 @@
                         <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Teaching Others'</span>,</span></div>
                         <div class="flex gap-4"><span class="code-line-number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>;</span></div>
                         <div class="flex gap-4"><span class="code-line-number">23</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$podcasts</span> = <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Coffee With The Laravel Architect'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Embracing Cloudy Days'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">28</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">29</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">experience</span>(): <span class="syn-class">int</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">30</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">31</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-class">Carbon</span>::<span class="syn-method">parse</span>(<span class="syn-string">'2011'</span>)</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$podcast</span> = <span class="syn-string">'Coffee With The Laravel Architect'</span>;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">experience</span>(): <span class="syn-class">int</span></span></div>
+                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
+                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">28</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-class">Carbon</span>::<span class="syn-method">parse</span>(<span class="syn-string">'2011'</span>)</span></div>
                         <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">32</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">diffInYears</span>(<span class="syn-method">now</span>()); <span class="syn-comment">// 15+</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;</span></div>
@@ -1257,7 +1244,7 @@
                         <div class="flex gap-4"><span class="code-line-number">32</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect never stops learning'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">find</span>(<span class="syn-string">'jeffrey'</span>);</span></div>
                         <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">podcasts</span>)<span class="syn-arrow">-></span><span class="syn-method">toHaveCount</span>(<span class="syn-variable">2</span>);</span></div>
+                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">podcasts</span>)<span class="syn-arrow">-></span><span class="syn-method">toHaveCount</span>(<span class="syn-variable">1</span>);</span></div>
                         <div class="flex gap-4"><span class="code-line-number">36</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">youtube</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
                         <div class="flex gap-4"><span class="code-line-number">37</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">blog</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
                         <div class="flex gap-4"><span class="code-line-number">38</span><span><span class="syn-bracket">}</span>);</span></div>
@@ -1608,7 +1595,7 @@
                     <span class="text-gray-500">$</span> <span class="text-green-400">php artisan</span> <span class="text-white">teach</span><span class="animate-pulse text-green-400 relative -top-px">▊</span>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Content & Teaching</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Blog posts, two podcasts, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Blog posts, podcast episodes, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
                 <div class="flex flex-wrap gap-2 relative z-10">
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
                     <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
@@ -1716,7 +1703,7 @@
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 gap-8">
             {{-- Coffee podcast --}}
             <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-200 dark:border-brand-600/30 transition-all duration-300 hover:border-brand-600/50 bg-white dark:bg-transparent podcast-card-coffee" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));" data-glow-card>
                 <div class="flex items-start justify-between mb-4">
@@ -1735,25 +1722,6 @@
                     <span class="text-xs text-brand-600 dark:text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
                 @endif
                 <span class="text-sm text-brand-600 dark:text-brand-400 group-hover:text-brand-500 dark:group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
-            </a>
-            {{-- Cloudy Days podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-accent-200 dark:border-accent-600/30 transition-all duration-300 hover:border-accent-600/50 bg-white dark:bg-transparent podcast-card-cloudy" style="background: linear-gradient(135deg, rgba(196,112,136,0.12), rgba(13,17,23,0.9));" data-glow-card>
-                <div class="flex items-start justify-between mb-4">
-                    <img src="/images/podcast-cloudy-logo-white.jpg" alt="Embracing Cloudy Days" class="w-16 h-16 rounded-xl object-cover">
-                    <div class="flex items-end gap-1 h-8">
-                        <span class="eq-bar bg-accent-500"></span>
-                        <span class="eq-bar bg-accent-500"></span>
-                        <span class="eq-bar bg-accent-500"></span>
-                        <span class="eq-bar bg-accent-500"></span>
-                        <span class="eq-bar bg-accent-500"></span>
-                    </div>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">Embracing Cloudy Days</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Real talk about mental health, burnout, work-life balance, and finding your way through the fog.</p>
-                @if(isset($cloudyEpisodeCount) && $cloudyEpisodeCount > 0)
-                    <span class="text-xs text-accent-700 dark:text-accent-400 mb-2 inline-block">{{ $cloudyEpisodeCount }} episodes</span>
-                @endif
-                <span class="text-sm text-accent-700 dark:text-accent-500 group-hover:text-accent-600 dark:group-hover:text-accent-400 font-medium transition-colors block">Listen now →</span>
             </a>
         </div>
     </div>

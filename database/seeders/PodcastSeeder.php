@@ -38,7 +38,7 @@ class PodcastSeeder extends Seeder
             'spotify_url' => null,
             'rss_url' => null,
             'youtube_url' => null,
-            'is_active' => true,
+            'is_active' => false,
             'sort_order' => 2,
         ]);
 
