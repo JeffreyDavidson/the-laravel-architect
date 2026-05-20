@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
+use App\Enums\PublishStatus;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
@@ -60,13 +61,8 @@ class PostForm
                 Section::make('Publishing')
                     ->schema([
                         Select::make('status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'in_review' => 'In Review',
-                                'published' => 'Published',
-                                'scheduled' => 'Scheduled',
-                            ])
-                            ->default('draft')
+                            ->options(PublishStatus::labels())
+                            ->default(PublishStatus::Draft)
                             ->required(),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),

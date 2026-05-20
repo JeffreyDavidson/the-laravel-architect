@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Episodes\Schemas;
 
+use App\Enums\PublishStatus;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -92,12 +93,8 @@ class EpisodeForm
                     ->schema([
                         SpatieTagsInput::make('tags'),
                         Select::make('status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Published',
-                                'scheduled' => 'Scheduled',
-                            ])
-                            ->default('draft')
+                            ->options(PublishStatus::labels(includeInReview: false))
+                            ->default(PublishStatus::Draft)
                             ->required(),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),

@@ -37,7 +37,7 @@ class PodcastController extends Controller
 
     public function episode(Podcast $podcast, Episode $episode)
     {
-        abort_unless($episode->status === 'published', 404);
+        abort_unless($episode->isPublished(), 404);
         abort_unless($episode->podcast_id === $podcast->id, 404);
 
         $episode->load('tags');

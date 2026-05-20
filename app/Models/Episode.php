@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Publishable;
+use App\Enums\PublishStatus;
+use App\Models\Concerns\HasPublishingStatus;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,8 +17,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
 #[Unguarded]
-class Episode extends Model implements HasMedia
+class Episode extends Model implements HasMedia, Publishable
 {
+    use HasPublishingStatus;
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
@@ -23,6 +27,7 @@ class Episode extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'status' => PublishStatus::class,
             'published_at' => 'datetime',
         ];
     }
@@ -39,12 +44,6 @@ class Episode extends Model implements HasMedia
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where('status', 'published')
-            ->where('published_at', '<=', now());
     }
 
     public function getFormattedDurationAttribute(): string

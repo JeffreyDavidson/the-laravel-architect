@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Publishable;
+use App\Enums\PublishStatus;
+use App\Models\Concerns\HasPublishingStatus;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,8 +18,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Tags\HasTags;
 
 #[Unguarded]
-class Post extends Model implements HasMedia
+class Post extends Model implements HasMedia, Publishable
 {
+    use HasPublishingStatus;
     use HasSEO;
     use HasTags;
     use InteractsWithMedia;
@@ -24,6 +28,7 @@ class Post extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'status' => PublishStatus::class,
             'published_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];
@@ -51,12 +56,6 @@ class Post extends Model implements HasMedia
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where('status', 'published')
-            ->where('published_at', '<=', now());
     }
 
     public function getReadingTimeAttribute(): int

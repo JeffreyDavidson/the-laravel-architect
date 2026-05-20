@@ -14,8 +14,8 @@ class SitemapController extends Controller
     {
         $posts = Post::published()->latest('published_at')->get();
         $categories = Category::has('posts')->get();
-        $podcasts = Podcast::where('is_active', true)->with('episodes')->get();
-        $projects = Project::all();
+        $podcasts = Podcast::where('is_active', true)->get();
+        $projects = Project::published()->get();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -64,7 +64,7 @@ class SitemapController extends Controller
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
 
-            foreach ($podcast->episodes as $episode) {
+            foreach ($podcast->publishedEpisodes()->get() as $episode) {
                 $xml .= '<url>';
                 $xml .= '<loc>'.route('podcast.episode', [$podcast, $episode]).'</loc>';
                 $xml .= '<lastmod>'.$episode->updated_at->toW3cString().'</lastmod>';

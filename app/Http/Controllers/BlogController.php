@@ -28,7 +28,7 @@ class BlogController extends Controller
 
     public function show(Post $post)
     {
-        abort_unless($post->status === 'published', 404);
+        abort_unless($post->isPublished(), 404);
 
         $post->load(['category', 'tags', 'author']);
 

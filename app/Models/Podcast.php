@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PublishStatus;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,7 +36,7 @@ class Podcast extends Model implements HasMedia
     public function publishedEpisodes(): HasMany
     {
         return $this->episodes()
-            ->where('status', 'published')
+            ->where('status', PublishStatus::Published)
             ->where('published_at', '<=', now());
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts;
 
+use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
@@ -29,8 +30,8 @@ class PostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $reviewCount = static::getModel()::where('status', 'in_review')->count();
-        $draftCount = static::getModel()::where('status', 'draft')->count();
+        $reviewCount = static::getModel()::where('status', PublishStatus::InReview)->count();
+        $draftCount = static::getModel()::where('status', PublishStatus::Draft)->count();
 
         if ($reviewCount > 0) {
             return $reviewCount.' to review';
@@ -41,7 +42,7 @@ class PostResource extends Resource
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $reviewCount = static::getModel()::where('status', 'in_review')->count();
+        $reviewCount = static::getModel()::where('status', PublishStatus::InReview)->count();
 
         return $reviewCount > 0 ? 'info' : 'gray';
     }
