@@ -25,42 +25,7 @@ class PageController extends Controller
             ->get();
 
         $youtubeSubscribers = YouTubeService::subscriberCount();
-
-        $upcomingVideos = [
-            [
-                'variant' => 'testing',
-                'thumbnail' => '/images/yt-thumb-testing.png',
-                'imageAlt' => 'Testing Like You Mean It',
-                'badge' => 'Testing',
-                'previewTitle' => ['Testing Like', 'You Mean It'],
-                'previewSubtitle' => '3 Suites, Zero Excuses',
-                'duration' => '12:34',
-                'title' => 'Testing Like You Mean It: 3 Suites, Zero Excuses',
-                'meta' => 'The Laravel Architect · Coming Mar 2',
-            ],
-            [
-                'variant' => 'saas',
-                'thumbnail' => '/images/yt-thumb-saas.png',
-                'imageAlt' => 'Build a SaaS from Scratch',
-                'badge' => 'Full Build',
-                'previewTitle' => ['Build a SaaS', 'from Scratch'],
-                'previewSubtitle' => 'Laravel & Filament',
-                'duration' => '18:47',
-                'title' => 'Build a SaaS from Scratch with Laravel & Filament',
-                'meta' => 'The Laravel Architect · Coming Mar 9',
-            ],
-            [
-                'variant' => 'codeigniter',
-                'thumbnail' => '/images/yt-thumb-codeigniter.png',
-                'imageAlt' => 'Why I Left CodeIgniter',
-                'badge' => 'Story',
-                'previewTitle' => ['Why I Left', 'CodeIgniter'],
-                'previewSubtitle' => 'And Never Looked Back',
-                'duration' => '24:12',
-                'title' => 'Why I Left CodeIgniter (And Never Looked Back)',
-                'meta' => 'The Laravel Architect · Coming Mar 16',
-            ],
-        ];
+        $upcomingVideos = YouTubeService::upcomingVideos();
 
         $testimonials = Testimonial::approved()
             ->orderBy('sort_order')
