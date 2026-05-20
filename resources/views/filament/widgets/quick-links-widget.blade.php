@@ -1,50 +1,52 @@
 <x-filament-widgets::widget>
-    <div class="rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-5">
-        <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-3 flex items-center gap-2">
-            <span class="w-1 h-4 rounded-full bg-[#4A7FBF]"></span>
-            Quick Actions
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
-            <a href="{{ route('filament.admin.resources.posts.create') }}"
-               class="group flex items-center gap-3 rounded-lg border border-gray-950/5 dark:border-white/5 px-4 py-3 text-sm transition-all hover:border-[#4A7FBF]/30 hover:bg-[#4A7FBF]/5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#4A7FBF]/10 text-[#4A7FBF] group-hover:bg-[#4A7FBF]/20 transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+    <section class="tla-dashboard-panel">
+        <div class="tla-dashboard-panel__header">
+            <div>
+                <span>Shortcuts</span>
+                <h3>Start the next thing</h3>
+            </div>
+        </div>
+
+        <div class="tla-dashboard-actions">
+            <a href="{{ route('filament.admin.resources.posts.create') }}" class="tla-dashboard-action">
+                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--blue">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.862 4.487 18.55 2.8a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
                 </span>
-                <div class="min-w-0 text-left">
-                    <span class="text-gray-700 dark:text-gray-300 font-medium block leading-tight">Write a Post</span>
-                    <span class="text-xs text-gray-400 dark:text-gray-500 leading-tight">New blog content</span>
-                </div>
+                <span>
+                    <strong>Write post</strong>
+                    <small>Draft new Laravel article</small>
+                </span>
             </a>
-            <a href="{{ route('filament.admin.resources.projects.create') }}"
-               class="group flex items-center gap-3 rounded-lg border border-gray-950/5 dark:border-white/5 px-4 py-3 text-sm transition-all hover:border-[#c74b7a]/30 hover:bg-[#c74b7a]/5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#c74b7a]/10 text-[#c74b7a] group-hover:bg-[#c74b7a]/20 transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+
+            <a href="{{ route('filament.admin.resources.projects.create') }}" class="tla-dashboard-action">
+                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--pink">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.25 6.75 21 10.5l-3.75 3.75M6.75 17.25 3 13.5l3.75-3.75M14.25 4.5l-4.5 15" /></svg>
                 </span>
-                <div class="min-w-0 text-left">
-                    <span class="text-gray-700 dark:text-gray-300 font-medium block leading-tight">Add Project</span>
-                    <span class="text-xs text-gray-400 dark:text-gray-500 leading-tight">Showcase work</span>
-                </div>
+                <span>
+                    <strong>Add project</strong>
+                    <small>Showcase client or product work</small>
+                </span>
             </a>
-            <a href="{{ route('filament.admin.resources.podcasts.create') }}"
-               class="group flex items-center gap-3 rounded-lg border border-gray-950/5 dark:border-white/5 px-4 py-3 text-sm transition-all hover:border-emerald-500/30 hover:bg-emerald-500/5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500/20 transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+
+            <a href="{{ route('filament.admin.resources.podcasts.create') }}" class="tla-dashboard-action">
+                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--green">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-12 0v1.5a6 6 0 0 0 6 6Zm0 0v3m-3 0h6M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" /></svg>
                 </span>
-                <div class="min-w-0 text-left">
-                    <span class="text-gray-700 dark:text-gray-300 font-medium block leading-tight">New Podcast</span>
-                    <span class="text-xs text-gray-400 dark:text-gray-500 leading-tight">Start a show</span>
-                </div>
+                <span>
+                    <strong>New podcast</strong>
+                    <small>Plan a show or episode track</small>
+                </span>
             </a>
-            <a href="/" target="_blank"
-               class="group flex items-center gap-3 rounded-lg border border-gray-950/5 dark:border-white/5 px-4 py-3 text-sm transition-all hover:border-amber-500/30 hover:bg-amber-500/5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 group-hover:bg-amber-500/20 transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+
+            <a href="/" target="_blank" class="tla-dashboard-action">
+                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--amber">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5M15 3h6m0 0v6m0-6L10.5 13.5" /></svg>
                 </span>
-                <div class="min-w-0 text-left">
-                    <span class="text-gray-700 dark:text-gray-300 font-medium block leading-tight">View Site</span>
-                    <span class="text-xs text-gray-400 dark:text-gray-500 leading-tight">thelaravelarchitect.com</span>
-                </div>
+                <span>
+                    <strong>View site</strong>
+                    <small>Open the public homepage</small>
+                </span>
             </a>
         </div>
-    </div>
+    </section>
 </x-filament-widgets::widget>

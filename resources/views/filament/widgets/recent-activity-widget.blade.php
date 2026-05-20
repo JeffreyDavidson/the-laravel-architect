@@ -1,55 +1,44 @@
 <x-filament-widgets::widget>
-    <div class="rounded-xl border border-gray-950/5 dark:border-white/10 bg-white dark:bg-gray-900 p-5">
-        <h3 class="text-sm font-semibold text-gray-950 dark:text-white mb-3 flex items-center gap-2">
-            <span class="w-1 h-4 rounded-full" style="background: linear-gradient(180deg, #4A7FBF, #c74b7a);"></span>
-            Recent Activity
-        </h3>
+    <section class="tla-dashboard-panel">
+        <div class="tla-dashboard-panel__header">
+            <div>
+                <span>Latest movement</span>
+                <h3>Recent activity</h3>
+            </div>
+        </div>
+
         @if($activities->isEmpty())
-            <div class="flex items-center gap-3 py-4 justify-center">
-                <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div class="text-left">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">No activity yet</p>
-                    <p class="text-xs text-gray-400 dark:text-gray-500">Start creating content to see updates here</p>
+            <div class="tla-dashboard-empty">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <div>
+                    <strong>No activity yet</strong>
+                    <span>Published posts and testimonial reviews will show up here.</span>
                 </div>
             </div>
         @else
-            <div class="divide-y divide-gray-950/5 dark:divide-white/5">
+            <div class="tla-dashboard-timeline">
                 @foreach($activities as $activity)
-                <div class="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0
-                        @if($activity['meta'] === 'Published' || $activity['meta'] === 'Approved') bg-emerald-500/10
-                        @elseif($activity['meta'] === 'Pending Review') bg-amber-500/10
-                        @elseif($activity['meta'] === 'Rejected') bg-red-500/10
-                        @else bg-gray-100 dark:bg-white/10
-                        @endif">
-                        @if($activity['meta'] === 'Published' || $activity['meta'] === 'Approved')
-                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        @elseif($activity['meta'] === 'Draft')
-                            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        @elseif($activity['meta'] === 'Pending Review')
-                            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        @else
-                            <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        @endif
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm text-gray-700 dark:text-gray-300">{{ $activity['label'] }}</p>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <span class="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider
-                            @if($activity['meta'] === 'Published' || $activity['meta'] === 'Approved') bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
-                            @elseif($activity['meta'] === 'Draft') bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-gray-400
-                            @elseif($activity['meta'] === 'Pending Review') bg-amber-500/10 text-amber-600 dark:text-amber-400
-                            @else bg-red-500/10 text-red-600 dark:text-red-400
+                    <div class="tla-dashboard-timeline__item">
+                        <div class="tla-dashboard-timeline__marker {{ $activity['meta'] === 'Published' || $activity['meta'] === 'Approved' ? 'is-good' : ($activity['meta'] === 'Pending Review' ? 'is-warning' : 'is-muted') }}">
+                            @if($activity['kind'] === 'post')
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H8.25m0 12.75h7.5m-7.5 3h4.5m-4.5-15H9A2.25 2.25 0 0 1 11.25 6v1.5A2.25 2.25 0 0 0 13.5 9.75H15a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 15 21.75H6.75A2.25 2.25 0 0 1 4.5 19.5V5.25A2.25 2.25 0 0 1 6.75 3Z" /></svg>
+                            @else
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7.5 8.25h9m-9 3H12m-9.75 1.5c0 1.6 1.123 2.994 2.707 3.227 1.086.16 2.185.283 3.293.369V21l4.184-4.184c.166-.166.391-.26.626-.261 1.573-.013 3.14-.13 4.683-.352 1.584-.227 2.707-1.626 2.707-3.228V6.75c0-1.602-1.123-3.001-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.522C3.373 3.75 2.25 5.148 2.25 6.75v6Z" /></svg>
                             @endif
-                        ">{{ $activity['meta'] }}</span>
-                        <span class="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">{{ $activity['time'] }}</span>
+                        </div>
+
+                        <div class="tla-dashboard-timeline__body">
+                            <p>{{ $activity['label'] }}</p>
+                            <div>
+                                <span>{{ $activity['meta'] }}</span>
+                                <small>{{ $activity['time'] }}</small>
+                            </div>
+                        </div>
                     </div>
-                </div>
                 @endforeach
             </div>
         @endif
-    </div>
+    </section>
 </x-filament-widgets::widget>

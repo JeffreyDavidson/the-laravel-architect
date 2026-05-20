@@ -10,7 +10,7 @@ class RecentActivityWidget extends Widget
 {
     protected string $view = 'filament.widgets.recent-activity-widget';
 
-    protected int | string | array $columnSpan = 2;
+    protected int|string|array $columnSpan = 1;
 
     protected static ?int $sort = -4;
 
@@ -24,7 +24,8 @@ class RecentActivityWidget extends Widget
                 'label' => $post->title,
                 'meta' => $post->status === 'published' ? 'Published' : 'Draft',
                 'time' => $post->updated_at->diffForHumans(),
-                'color' => $post->status === 'published' ? 'text-emerald-400' : 'text-gray-400',
+                'kind' => 'post',
+                'timestamp' => $post->updated_at,
             ]);
         });
 
@@ -40,17 +41,13 @@ class RecentActivityWidget extends Widget
                 'label' => 'Testimonial from ' . $testimonial->name,
                 'meta' => $statusLabel,
                 'time' => $testimonial->created_at->diffForHumans(),
-                'color' => match ($testimonial->status) {
-                    'pending' => 'text-amber-400',
-                    'approved' => 'text-emerald-400',
-                    'rejected' => 'text-red-400',
-                    default => 'text-gray-400',
-                },
+                'kind' => 'testimonial',
+                'timestamp' => $testimonial->created_at,
             ]);
         });
 
         return [
-            'activities' => $activities->sortByDesc('time')->take(5)->values(),
+            'activities' => $activities->sortByDesc('timestamp')->take(5)->values(),
         ];
     }
 }
