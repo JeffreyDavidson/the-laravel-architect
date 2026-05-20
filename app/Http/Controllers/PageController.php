@@ -25,6 +25,7 @@ class PageController extends Controller
             ->get();
 
         $youtubeSubscribers = YouTubeService::subscriberCount();
+        $upcomingVideos = YouTubeService::upcomingVideos();
 
         $testimonials = Testimonial::approved()
             ->orderBy('sort_order')
@@ -36,7 +37,7 @@ class PageController extends Controller
             description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
         ));
 
-        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'testimonials'));
+        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'upcomingVideos', 'testimonials'));
     }
 
     public function about()
