@@ -70,7 +70,7 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 relative z-10">
-            <a href="{{ route('podcast.index') }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">Podcasts</a>
+            <a href="{{ route('podcast.index') }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">Podcast</a>
             <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             <a href="{{ route('podcast.show', $podcast) }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ $podcast->name }}</a>
             <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

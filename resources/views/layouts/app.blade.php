@@ -31,12 +31,11 @@
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" class="w-9 h-9 rounded-full">
-                    <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-brand-400 transition-colors">
-                        <span class="text-xs font-semibold tracking-widest uppercase">The</span>
-                        <span class="text-xl font-empera tracking-wide">Laravel</span>
-                        <span class="text-xs font-semibold tracking-widest uppercase">Architect</span>
+                <a href="{{ route('home') }}" class="group flex items-center gap-3">
+                    <img src="/images/logo-color.svg" alt="The Laravel Architect" class="h-10 w-10 rounded-full">
+                    <span class="flex flex-col leading-none">
+                        <span class="text-[10px] font-semibold uppercase tracking-[0.32em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
+                        <span class="mt-1 text-sm font-black uppercase tracking-[0.24em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
                     </span>
                 </a>
 
@@ -50,7 +49,7 @@
                 <div class="hidden md:flex items-center gap-8">
                     <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
                     <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcasts</a>
+                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
@@ -67,7 +66,7 @@
                 <div class="flex flex-col gap-3">
                     <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
                     <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcasts</a>
+                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
                     <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
                     <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
@@ -145,7 +144,7 @@
                         <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Navigate</h4>
                         <ul class="space-y-2 text-sm">
                             <li><a href="{{ route('blog.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a></li>
-                            <li><a href="{{ route('podcast.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Podcasts</a></li>
+                            <li><a href="{{ route('podcast.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Podcast</a></li>
                             <li><a href="{{ route('projects.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Projects</a></li>
                             <li><a href="{{ route('about') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</a></li>
                             <li><a href="{{ route('uses') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Uses</a></li>
