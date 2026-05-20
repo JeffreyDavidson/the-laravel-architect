@@ -7,6 +7,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@import './components/home.css';
+
 @font-face {
     font-family: 'Empera';
     src: url('../fonts/empera/Empera-Regular.ttf') format('truetype');

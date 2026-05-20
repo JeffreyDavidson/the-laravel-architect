@@ -507,18 +507,6 @@
     }
 
     /* ===== Equalizer Bars ===== */
-    @keyframes eq1 { 0%,100% { height: 8px; } 50% { height: 24px; } }
-    @keyframes eq2 { 0%,100% { height: 16px; } 50% { height: 8px; } }
-    @keyframes eq3 { 0%,100% { height: 12px; } 50% { height: 28px; } }
-    @keyframes eq4 { 0%,100% { height: 20px; } 50% { height: 10px; } }
-    @keyframes eq5 { 0%,100% { height: 6px; } 50% { height: 22px; } }
-    .eq-bar { width: 3px; border-radius: 2px; display: inline-block; vertical-align: bottom; }
-    .eq-bar:nth-child(1) { animation: eq1 1.2s ease-in-out infinite; }
-    .eq-bar:nth-child(2) { animation: eq2 1.0s ease-in-out infinite 0.1s; }
-    .eq-bar:nth-child(3) { animation: eq3 1.4s ease-in-out infinite 0.2s; }
-    .eq-bar:nth-child(4) { animation: eq4 0.9s ease-in-out infinite 0.3s; }
-    .eq-bar:nth-child(5) { animation: eq5 1.1s ease-in-out infinite 0.15s; }
-
     /* ===== Browser Frame ===== */
     .browser-frame {
         border: 1px solid rgba(255,255,255,0.1);
@@ -620,39 +608,6 @@
         background: var(--bg-primary) !important;
     }
     
-    /* Components that need CSS variables but also explicit overrides */
-    :root:not(.dark) .service-card-v2 {
-        background: #ffffff !important;
-        border: 1px solid rgba(0,0,0,0.1) !important;
-        border-top: 3px solid var(--card-color) !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
-    }
-    :root:not(.dark) .service-card-v2:hover {
-        background: #ffffff !important;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 0 30px var(--card-glow) !important;
-        border-color: var(--card-color) !important;
-        border-top: 3px solid var(--card-color) !important;
-    }
-    :root:not(.dark) .service-card-v2 .service-number {
-        color: #000000 !important;
-        opacity: 0.04 !important;
-    }
-    :root:not(.dark) .service-card-v2 h3 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .service-card-v2 p {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .service-card-v2 .service-orb {
-        opacity: 0.12 !important;
-        filter: blur(40px) !important;
-        width: 150px !important;
-        height: 150px !important;
-    }
-    :root:not(.dark) .service-card-v2:hover .service-orb {
-        opacity: 0.22 !important;
-    }
-    
     /* Newsletter card special styling */
     .newsletter-card {
         background: var(--newsletter-bg);
@@ -668,42 +623,6 @@
     .newsletter-input:focus {
         box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
         outline: none;
-    }
-    
-    /* Service cards terminal commands - dark in dark mode */
-    .dark .service-card-v2 .font-mono {
-        background: #0d1117 !important;
-        color: #c9d1d9 !important;
-    }
-    /* Light mode: light gray terminal */
-    :root:not(.dark) .service-card-v2 .font-mono {
-        background: #f0f3f6 !important;
-        color: #1f2328 !important;
-        border: 1px solid #d0d7de !important;
-    }
-    :root:not(.dark) .service-card-v2 .font-mono .text-gray-500 {
-        color: #656d76 !important;
-    }
-    /* Light mode: "php artisan" colored text needs darker versions */
-    :root:not(.dark) .service-card-v2 .font-mono .text-brand-400 {
-        color: #2d6aa3 !important;
-    }
-    :root:not(.dark) .service-card-v2 .font-mono .text-accent-400 {
-        color: #a3456a !important;
-    }
-    :root:not(.dark) .service-card-v2 .font-mono .text-green-400 {
-        color: #1a7f37 !important;
-    }
-    :root:not(.dark) .service-card-v2 .font-mono [style*="color: #fbbf24"] {
-        color: #92600a !important;
-    }
-    /* Light mode: command word (build/modernize/teach/review) — was text-white */
-    :root:not(.dark) .service-card-v2 .font-mono .text-white {
-        color: #1f2328 !important;
-    }
-    /* Light mode: cursor */
-    :root:not(.dark) .service-card-v2 .font-mono .animate-pulse {
-        opacity: 0.6;
     }
     
     /* YouTube video player — light mode inversion */
@@ -855,18 +774,6 @@
         color: var(--text-primary);
     }
     
-    /* Podcast cards styling */
-    /* Podcast card base — only override in light mode (dark mode uses inline gradient styles) */
-    :root:not(.dark) .podcast-card-coffee {
-        background: linear-gradient(135deg, rgba(74,127,191,0.06), rgba(74,127,191,0.02)) !important;
-        border: 1px solid rgba(74,127,191,0.15) !important;
-        border-top: 3px solid #4A7FBF !important;
-        box-shadow: 0 2px 12px rgba(74,127,191,0.06);
-    }
-    :root:not(.dark) .podcast-card-coffee:hover {
-        border-color: rgba(74,127,191,0.3) !important;
-        box-shadow: 0 4px 20px rgba(74,127,191,0.12);
-    }
     
     /* YouTube thumbnail cards */
     .thumbnail-card {
@@ -1019,7 +926,7 @@
                 </div>
 
                 {{-- Mobile Code Editor Preview --}}
-                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono" style="animation:none;" x-data="{ mobileTab: 'routes' }">
+                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono !animate-none" x-data="{ mobileTab: 'routes' }">
                     <div class="code-editor-bar px-3 py-2 flex items-center gap-2">
                         <div class="flex gap-1">
                             <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
@@ -1338,7 +1245,7 @@
             </div>
             <div class="stat-divider hidden sm:block"></div>
             <div class="text-center">
-                <div class="stat-number"><span class="count-up" data-target="1000">0</span><span style="background:linear-gradient(135deg,#fff,#8b949e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">+</span></div>
+                <div class="stat-number"><span class="count-up" data-target="1000">0</span><span class="stat-number-suffix">+</span></div>
                 <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Cups of Coffee</div>
             </div>
         </div>
@@ -1366,7 +1273,7 @@
                 </div>
                 @endif
                 <div class="p-6">
-                    <h3 class="font-semibold text-lg mb-2 group-hover:text-brand-400 transition-colors" style="color: var(--project-title-color);">{{ $project->title }}</h3>
+                    <h3 class="project-card-title font-semibold text-lg mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
@@ -1388,137 +1295,6 @@
 <div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== WHAT I DO ===== --}}
-<style>
-    @keyframes serviceGlow {
-        0%, 100% { opacity: 0.4; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.15); }
-    }
-    @keyframes serviceBorderSpin {
-        0% { --service-angle: 0deg; }
-        100% { --service-angle: 360deg; }
-    }
-    @property --service-angle {
-        syntax: '<angle>';
-        initial-value: 0deg;
-        inherits: false;
-    }
-    .service-card-v2 {
-        position: relative;
-        background: rgba(13, 17, 23, 0.8);
-        border-radius: 1rem;
-        padding: 2.5rem;
-        overflow: hidden;
-        transition: all 0.4s ease;
-        border: 1px solid rgba(255,255,255,0.06);
-        display: flex;
-        flex-direction: column;
-    }
-    .service-card-v2::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        border-radius: 1rem;
-        padding: 1px;
-        background: conic-gradient(from var(--service-angle), transparent 60%, var(--card-color) 80%, transparent 100%);
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        animation: serviceBorderSpin 4s linear infinite;
-    }
-    .service-card-v2:hover::before {
-        opacity: 1;
-    }
-    .service-card-v2:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 40px var(--card-glow);
-        border-color: transparent;
-    }
-    .service-orb {
-        position: absolute;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        filter: blur(50px);
-        opacity: 0.15;
-        animation: serviceGlow 3s ease-in-out infinite;
-        pointer-events: none;
-    }
-    .service-card-v2:hover .service-orb {
-        opacity: 0.3;
-    }
-    .service-number {
-        font-family: 'JetBrains Mono', ui-monospace, monospace;
-        font-size: 5rem;
-        font-weight: 900;
-        position: absolute;
-        top: -0.5rem;
-        right: 1rem;
-        line-height: 1;
-        opacity: 0.04;
-        pointer-events: none;
-    }
-    .service-card-v2:hover .service-number {
-        opacity: 0.08;
-    }
-    .service-icon-v2 {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        position: relative;
-        z-index: 1;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .service-card-v2:hover .service-icon-v2 {
-        transform: scale(1.1) rotate(-5deg);
-        box-shadow: 0 0 25px var(--card-glow);
-    }
-    .service-arrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 1.25rem;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    .service-arrow svg {
-        transition: transform 0.3s ease;
-    }
-    .service-card-v2:hover .service-arrow svg {
-        transform: translateX(4px);
-    }
-    /* Floating dots */
-    .service-dots {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        pointer-events: none;
-    }
-    .service-dots span {
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        border-radius: 50%;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-    .service-card-v2:hover .service-dots span {
-        opacity: 0.3;
-        animation: floatDot 3s ease-in-out infinite;
-    }
-    @keyframes floatDot {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-</style>
-
 <section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14 fade-up">
@@ -1530,106 +1306,49 @@
             <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues, I help teams build software they can be proud of.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {{-- Laravel Development --}}
-            <div class="service-card-v2 fade-up" style="--card-color: #4A7FBF; --card-glow: rgba(74,127,191,0.15);">
-                <div class="service-orb" style="background: #4A7FBF; top: -20px; right: -20px;"></div>
-                <div class="service-dots">
-                    <span class="bg-brand-400" style="top:20%;left:80%;animation-delay:0s;"></span>
-                    <span class="bg-brand-400" style="top:60%;left:90%;animation-delay:0.5s;"></span>
-                    <span class="bg-brand-400" style="top:40%;left:15%;animation-delay:1s;"></span>
-                    <span class="bg-brand-400" style="top:80%;left:70%;animation-delay:1.5s;"></span>
-                </div>
-                <span class="service-number text-brand-400">01</span>
-                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-brand-500/20 font-mono text-sm">
-                    <span class="text-gray-500">$</span> <span class="text-brand-400">php artisan</span> <span class="text-white">build</span><span class="animate-pulse text-brand-400 relative -top-px">▊</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Laravel Development</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament.</p>
-                <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">APIs</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">SaaS</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Filament</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300 bg-brand-500/10 rounded-full border border-brand-500/20">Livewire</span>
-                </div>
-                <a href="{{ route('contact') }}" class="service-arrow text-brand-400 relative z-10">
-                    Start a project <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
-            </div>
+            <x-home.service-card
+                variant="brand"
+                number="01"
+                command="build"
+                title="Laravel Development"
+                description="Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament."
+                :tags="['APIs', 'SaaS', 'Filament', 'Livewire']"
+                :href="route('contact')"
+                cta="Start a project"
+            />
 
-            {{-- Legacy Modernization --}}
-            <div class="service-card-v2 fade-up" style="--card-color: #E47A9D; --card-glow: rgba(228,122,157,0.15);">
-                <div class="service-orb" style="background: #E47A9D; top: -20px; right: -20px;"></div>
-                <div class="service-dots">
-                    <span class="bg-accent-400" style="top:25%;left:85%;animation-delay:0.3s;"></span>
-                    <span class="bg-accent-400" style="top:55%;left:10%;animation-delay:0.8s;"></span>
-                    <span class="bg-accent-400" style="top:75%;left:75%;animation-delay:1.3s;"></span>
-                    <span class="bg-accent-400" style="top:15%;left:20%;animation-delay:1.8s;"></span>
-                </div>
-                <span class="service-number text-accent-400">02</span>
-                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-accent-500/20 font-mono text-sm">
-                    <span class="text-gray-500">$</span> <span class="text-accent-400">php artisan</span> <span class="text-white">modernize</span><span class="animate-pulse text-accent-400 relative -top-px">▊</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Legacy Modernization</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD.</p>
-                <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Migration</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Refactoring</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-600 dark:text-accent-300 bg-accent-500/10 rounded-full border border-accent-500/20">Testing</span>
-                </div>
-                <a href="{{ route('contact') }}" class="service-arrow text-accent-400 relative z-10">
-                    Modernize now <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
-            </div>
+            <x-home.service-card
+                variant="accent"
+                number="02"
+                command="modernize"
+                title="Legacy Modernization"
+                description="Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD."
+                :tags="['Migration', 'Refactoring', 'Testing']"
+                :href="route('contact')"
+                cta="Modernize now"
+            />
 
-            {{-- Content & Teaching --}}
-            <div class="service-card-v2 fade-up" style="--card-color: #22c55e; --card-glow: rgba(34,197,94,0.15);">
-                <div class="service-orb" style="background: #22c55e; top: -20px; right: -20px;"></div>
-                <div class="service-dots">
-                    <span class="bg-green-400" style="top:30%;left:80%;animation-delay:0.2s;"></span>
-                    <span class="bg-green-400" style="top:65%;left:15%;animation-delay:0.7s;"></span>
-                    <span class="bg-green-400" style="top:45%;left:90%;animation-delay:1.2s;"></span>
-                    <span class="bg-green-400" style="top:85%;left:60%;animation-delay:1.7s;"></span>
-                </div>
-                <span class="service-number text-green-400">03</span>
-                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] border border-green-500/20 font-mono text-sm">
-                    <span class="text-gray-500">$</span> <span class="text-green-400">php artisan</span> <span class="text-white">teach</span><span class="animate-pulse text-green-400 relative -top-px">▊</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Content & Teaching</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Blog posts, podcast episodes, and a YouTube channel dedicated to helping developers level up their Laravel skills.</p>
-                <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Blog</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">Podcasts</span>
-                    <span class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-green-700 dark:text-green-300 bg-green-500/10 rounded-full border border-green-500/20">YouTube</span>
-                </div>
-                <a href="{{ route('blog.index') }}" class="service-arrow text-green-400 relative z-10">
-                    Start learning <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
-            </div>
+            <x-home.service-card
+                variant="green"
+                number="03"
+                command="teach"
+                title="Content & Teaching"
+                description="Blog posts, podcast episodes, and a YouTube channel dedicated to helping developers level up their Laravel skills."
+                :tags="['Blog', 'Podcasts', 'YouTube']"
+                :href="route('blog.index')"
+                cta="Start learning"
+            />
 
-            {{-- Consulting & Code Review --}}
-            <div class="service-card-v2 fade-up" style="--card-color: #f59e0b; --card-glow: rgba(245,158,11,0.15);">
-                <div class="service-orb" style="background: #f59e0b; top: -20px; right: -20px;"></div>
-                <div class="service-dots">
-                    <span class="bg-amber-400" style="top:20%;left:75%;animation-delay:0.1s;"></span>
-                    <span class="bg-amber-400" style="top:50%;left:12%;animation-delay:0.6s;"></span>
-                    <span class="bg-amber-400" style="top:70%;left:85%;animation-delay:1.1s;"></span>
-                    <span class="bg-amber-400" style="top:35%;left:60%;animation-delay:1.6s;"></span>
-                </div>
-                <span class="service-number text-amber-400">04</span>
-                <div class="relative z-10 mb-5 inline-block px-4 py-2.5 rounded-lg bg-[#0a0e14] font-mono text-sm" style="border: 1px solid rgba(245,158,11,0.2);">
-                    <span class="text-gray-500">$</span> <span style="color: #fbbf24;">php artisan</span> <span class="text-white">review</span><span class="animate-pulse relative -top-px" style="color: #fbbf24;">▊</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 relative z-10">Consulting & Code Review</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5 relative z-10 flex-grow">Architecture audits, code reviews, and technical consulting to help your team ship better Laravel applications faster.</p>
-                <div class="flex flex-wrap gap-2 relative z-10">
-                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Architecture</span>
-                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Code Review</span>
-                    <span class="pill-amber px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border">Strategy</span>
-                </div>
-                <a href="{{ route('contact') }}" class="service-arrow relative z-10" style="color: #fbbf24;">
-                    Book a session <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
-            </div>
+            <x-home.service-card
+                variant="amber"
+                number="04"
+                command="review"
+                title="Consulting & Code Review"
+                description="Architecture audits, code reviews, and technical consulting to help your team ship better Laravel applications faster."
+                :tags="['Architecture', 'Code Review', 'Strategy']"
+                :href="route('contact')"
+                cta="Book a session"
+            />
         </div>
     </div>
 </section>
@@ -1704,25 +1423,14 @@
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="grid grid-cols-1 gap-8">
-            {{-- Coffee podcast --}}
-            <a href="{{ route('podcast.index') }}" class="fade-up group relative rounded-xl p-8 overflow-hidden border border-brand-200 dark:border-brand-600/30 transition-all duration-300 hover:border-brand-600/50 bg-white dark:bg-transparent podcast-card-coffee" style="background: linear-gradient(135deg, rgba(74,127,191,0.15), rgba(13,17,23,0.9));" data-glow-card>
-                <div class="flex items-start justify-between mb-4">
-                    <img src="/images/podcast-coffee-logo.png" alt="Coffee With The Laravel Architect" class="w-16 h-16 rounded-xl object-cover">
-                    <div class="flex items-end gap-1 h-8">
-                        <span class="eq-bar bg-brand-400"></span>
-                        <span class="eq-bar bg-brand-400"></span>
-                        <span class="eq-bar bg-brand-400"></span>
-                        <span class="eq-bar bg-brand-400"></span>
-                        <span class="eq-bar bg-brand-400"></span>
-                    </div>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors">Coffee With The Laravel Architect</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Conversations about Laravel, web development, and the developer life. One cup at a time.</p>
-                @if(isset($coffeeEpisodeCount) && $coffeeEpisodeCount > 0)
-                    <span class="text-xs text-brand-600 dark:text-brand-300 mb-2 inline-block">{{ $coffeeEpisodeCount }} episodes</span>
-                @endif
-                <span class="text-sm text-brand-600 dark:text-brand-400 group-hover:text-brand-500 dark:group-hover:text-brand-300 font-medium transition-colors block">Listen now →</span>
-            </a>
+            <x-home.podcast-card
+                title="Coffee With The Laravel Architect"
+                description="Conversations about Laravel, web development, and the developer life. One cup at a time."
+                image="/images/podcast-coffee-logo.png"
+                image-alt="Coffee With The Laravel Architect"
+                :episode-count="$coffeeEpisodeCount ?? null"
+                :href="route('podcast.index')"
+            />
         </div>
     </div>
 </section>
@@ -1732,56 +1440,12 @@
 <div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== YOUTUBE ===== --}}
-<style>
-    @keyframes glitch {
-        0%, 100% { transform: translate(0); filter: none; }
-        20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
-        40% { transform: translate(2px, -1px); filter: hue-rotate(-90deg); }
-        60% { transform: translate(-1px, -1px); }
-        80% { transform: translate(1px, 2px); }
-    }
-    .yt-heading:hover .glitch-text {
-        animation: glitch 0.3s ease-in-out;
-    }
-    @keyframes flipIn {
-        0% { transform: rotateX(90deg); opacity: 0; }
-        100% { transform: rotateX(0); opacity: 1; }
-    }
-    .countdown-digit {
-        perspective: 200px;
-    }
-    .countdown-digit span {
-        display: inline-block;
-        animation: flipIn 0.6s ease-out both;
-    }
-    .rec-dot {
-        animation: pulse 1.5s ease-in-out infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-    }
-    .thumbnail-card {
-        transition: all 0.3s ease;
-    }
-    .thumbnail-card:hover {
-        transform: translateY(-4px) scale(1.02);
-        border-color: rgba(239, 68, 68, 0.3);
-    }
-    .subscriber-bar-fill {
-        animation: fillBar 2s ease-out 0.5s both;
-    }
-    @keyframes fillBar {
-        from { width: 0%; }
-    }
-</style>
-
 <section class="youtube-section relative py-12 sm:py-20 overflow-hidden bg-gray-50 dark:bg-transparent">
     {{-- Red ambient glow --}}
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
+    <div class="youtube-ambient-glow absolute top-1/2 left-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.06] blur-[120px]"></div>
 
     {{-- Scanlines --}}
-    <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, #ffffff 2px, #ffffff 3px);"></div>
+    <div class="youtube-scanlines pointer-events-none absolute inset-0 opacity-[0.02]"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Section header with glitch --}}
@@ -1803,28 +1467,28 @@
             {{-- Countdown timer --}}
             <div class="flex items-center justify-center gap-4 mt-8" x-data="countdown()" x-init="start()">
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
                         <span x-text="days">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Days</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
                         <span x-text="hours">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Hours</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white" style="box-shadow: 0 0 20px rgba(239,68,68,0.05);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
                         <span x-text="minutes">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Min</p>
                 </div>
                 <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
                 <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-500 dark:text-red-400" style="box-shadow: 0 0 20px rgba(239,68,68,0.08);">
+                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-500 dark:text-red-400 [--countdown-glow:0.08]">
                         <span x-text="seconds">00</span>
                     </div>
                     <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Sec</p>
@@ -1839,8 +1503,8 @@
 
                     {{-- Mobile: Clean simple thumbnail --}}
                     <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
-                        <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 20px 20px;"></div>
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-10 blur-[80px]" style="background: radial-gradient(circle, #ff0000, transparent 70%);"></div>
+                        <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
+                        <div class="yt-red-glow absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[80px]"></div>
                         <img src="/images/logo-color.svg" alt="" class="w-20 h-20 opacity-60 mb-4 relative z-10">
                         <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
                         <p class="text-gray-500 text-xs mt-1 relative z-10">Channel Trailer · 2:47</p>
@@ -1851,10 +1515,10 @@
                         {{-- Left: Presenter/webcam side --}}
                         <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden yt-presenter">
                             {{-- Subtle grid pattern --}}
-                            <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
 
                             {{-- Ambient glow --}}
-                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full opacity-15 blur-[80px]" style="background: radial-gradient(circle, #4A7FBF, transparent 70%);"></div>
+                            <div class="yt-brand-glow absolute top-1/2 left-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-15 blur-[80px]"></div>
 
                             {{-- Center content --}}
                             <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
@@ -1953,11 +1617,11 @@
 
                     {{-- Center play button with rings --}}
                     <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10 animate-ping" style="animation-duration: 2.5s;"></div>
-                        <div class="absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15 animate-ping" style="animation-duration: 3.5s;"></div>
-                        <div class="absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20 animate-ping" style="animation-duration: 2s;"></div>
+                        <div class="yt-play-ring-medium absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10 animate-ping"></div>
+                        <div class="yt-play-ring-slow absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15 animate-ping"></div>
+                        <div class="yt-play-ring-fast absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20 animate-ping"></div>
 
-                        <div class="relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 0 60px rgba(239,68,68,0.4), 0 0 120px rgba(239,68,68,0.15);">
+                        <div class="yt-play-button relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-6 h-6 md:w-8 md:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
@@ -1997,7 +1661,7 @@
                 <span class="text-red-400 font-mono font-bold">{{ $youtubeSubscribers }} / 100</span>
             </div>
             <div class="h-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
-                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="width: {{ min($youtubeSubscribers, 100) }}%;"></div>
+                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="--subscriber-progress: {{ min($youtubeSubscribers, 100) }}%;"></div>
             </div>
             <p class="text-[10px] text-gray-600 mt-2 text-center">Help us hit 100 subscribers before launch day 🚀</p>
         </div>
@@ -2006,83 +1670,19 @@
         <div class="mt-12">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Coming to the Channel</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {{-- Thumbnail 1: Testing --}}
-                <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video relative overflow-hidden">
-                        {{-- Dark mode: actual thumbnail --}}
-                        <img src="/images/yt-thumb-testing.png" alt="Testing Like You Mean It" class="w-full h-full object-cover hidden dark:block">
-                        {{-- Light mode: branded card --}}
-                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7, #d1fae5);">
-                            <div class="absolute inset-0 flex flex-col justify-between p-5">
-                                <div class="flex items-center justify-between">
-                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-green-600/10 text-green-700 border border-green-500/20">Testing</span>
-                                    <svg class="w-10 h-10 text-green-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xl font-extrabold text-green-900 leading-tight">Testing Like<br>You Mean It</p>
-                                    <p class="text-xs text-green-700/60 mt-1">3 Suites, Zero Excuses</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">12:34</div>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Testing Like You Mean It: 3 Suites, Zero Excuses</p>
-                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 2</p>
-                    </div>
-                </div>
-
-                {{-- Thumbnail 2: SaaS --}}
-                <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video relative overflow-hidden">
-                        {{-- Dark mode: actual thumbnail --}}
-                        <img src="/images/yt-thumb-saas.png" alt="Build a SaaS from Scratch" class="w-full h-full object-cover hidden dark:block">
-                        {{-- Light mode: branded card --}}
-                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #eff6ff, #dbeafe, #bfdbfe);">
-                            <div class="absolute inset-0 flex flex-col justify-between p-5">
-                                <div class="flex items-center justify-between">
-                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-blue-600/10 text-blue-700 border border-blue-500/20">Full Build</span>
-                                    <svg class="w-10 h-10 text-blue-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xl font-extrabold text-blue-900 leading-tight">Build a SaaS<br>from Scratch</p>
-                                    <p class="text-xs text-blue-700/60 mt-1">Laravel & Filament</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">18:47</div>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Build a SaaS from Scratch with Laravel & Filament</p>
-                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 9</p>
-                    </div>
-                </div>
-
-                {{-- Thumbnail 3: CodeIgniter --}}
-                <div class="thumbnail-card rounded-xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden cursor-default">
-                    <div class="aspect-video relative overflow-hidden">
-                        {{-- Dark mode: actual thumbnail --}}
-                        <img src="/images/yt-thumb-codeigniter.png" alt="Why I Left CodeIgniter" class="w-full h-full object-cover hidden dark:block">
-                        {{-- Light mode: branded card --}}
-                        <div class="dark:hidden w-full h-full relative" style="background: linear-gradient(135deg, #fef2f2, #fecaca, #fca5a5);">
-                            <div class="absolute inset-0 flex flex-col justify-between p-5">
-                                <div class="flex items-center justify-between">
-                                    <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-red-600/10 text-red-700 border border-red-500/20">Story</span>
-                                    <svg class="w-10 h-10 text-red-600/30" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-xl font-extrabold text-red-900 leading-tight">Why I Left<br>CodeIgniter</p>
-                                    <p class="text-xs text-red-700/60 mt-1">And Never Looked Back</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 dark:bg-black/80 rounded text-[10px] font-mono text-white dark:text-gray-400 yt-duration-badge">24:12</div>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">Why I Left CodeIgniter (And Never Looked Back)</p>
-                        <p class="text-[11px] text-gray-500">The Laravel Architect · Coming Mar 16</p>
-                    </div>
-                </div>
+                @foreach($upcomingVideos as $video)
+                    <x-home.youtube-thumbnail-card
+                        :variant="$video['variant']"
+                        :thumbnail="$video['thumbnail']"
+                        :image-alt="$video['imageAlt']"
+                        :badge="$video['badge']"
+                        :preview-title="$video['previewTitle']"
+                        :preview-subtitle="$video['previewSubtitle']"
+                        :duration="$video['duration']"
+                        :title="$video['title']"
+                        :meta="$video['meta']"
+                    />
+                @endforeach
             </div>
         </div>
     </div>
@@ -2244,11 +1844,11 @@ function countdown() {
 {{-- ===== FINAL CTA ===== --}}
 <section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
     {{-- Animated gradient orbs --}}
-    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.06] dark:opacity-[0.04] blur-[100px] animate-pulse" style="background: #4A7FBF; animation-duration: 8s;"></div>
-    <div class="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.05] dark:opacity-[0.03] blur-[100px] animate-pulse" style="background: #9D5175; animation-duration: 12s;"></div>
+    <div class="cta-orb-brand absolute top-1/2 left-1/4 h-[500px] w-[500px] -translate-y-1/2 rounded-full opacity-[0.06] blur-[100px] animate-pulse dark:opacity-[0.04]"></div>
+    <div class="cta-orb-accent absolute top-1/2 right-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-[0.05] blur-[100px] animate-pulse dark:opacity-[0.03]"></div>
 
     {{-- Grid pattern --}}
-    <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]" style="background-image: linear-gradient(#4A7FBF 1px, transparent 1px), linear-gradient(90deg, #4A7FBF 1px, transparent 1px); background-size: 60px 60px;"></div>
+    <div class="cta-grid absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"></div>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center relative z-10">
         {{-- Available badge --}}
