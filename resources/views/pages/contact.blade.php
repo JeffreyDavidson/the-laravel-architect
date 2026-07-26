@@ -43,6 +43,10 @@
 
                     <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
                         @csrf
+                        {{-- Honeypot: hidden from humans, bots fill it --}}
+                        <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                            <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+                        </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>

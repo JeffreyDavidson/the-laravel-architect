@@ -4,11 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 
 class ContactController extends Controller
 {
     public function submit(Request $request)
     {
+        $key = 'contact-form:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            return back()->withErrors(['message' => 'Too many submissions. Please try again later.']);
+        }
+
+        RateLimiter::hit($key, 3600);
+
+        if ($request->filled('website')) {
+            return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
