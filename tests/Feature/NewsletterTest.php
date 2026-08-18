@@ -23,7 +23,7 @@ it('creates an unverified subscriber and sends a confirmation message', function
         ->and($subscriber->verified_at)->toBeNull()
         ->and($subscriber->verification_token)->not->toBeNull();
 
-    Mail::assertSent(ConfirmNewsletterSubscription::class, 1);
+    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
 });
 
 it('shows an explicit confirmation step without changing subscriber state', function () {
@@ -123,5 +123,5 @@ it('does not disclose whether an email is already subscribed', function () {
     $this->post(route('newsletter.subscribe'), ['email' => 'reader@example.com'])
         ->assertSessionHas('newsletter_success', 'Check your email to confirm your subscription.');
 
-    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
 });

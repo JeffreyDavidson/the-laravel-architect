@@ -45,7 +45,7 @@ class NewsletterController extends Controller
             ['subscriber' => $subscriber, 'token' => $token],
         );
 
-        Mail::to($subscriber->email)->send(new ConfirmNewsletterSubscription($confirmationUrl));
+        Mail::to($subscriber->email)->queue(new ConfirmNewsletterSubscription($confirmationUrl));
 
         return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
     }
