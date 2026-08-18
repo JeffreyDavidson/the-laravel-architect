@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Subscribers\Tables;
 
+use App\Models\Subscriber;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
@@ -31,7 +32,7 @@ class SubscribersTable
                     ->placeholder('Active'),
                 IconColumn::make('is_active')
                     ->label('Status')
-                    ->state(fn ($record) => is_null($record->unsubscribed_at))
+                    ->state(fn (Subscriber $record): bool => is_null($record->unsubscribed_at))
                     ->boolean(),
             ])
             ->defaultSort('subscribed_at', 'desc')
