@@ -18,7 +18,7 @@ class BlogController extends Controller
             ->get();
 
         $categories = Category::query()
-            ->withCount(['posts' => fn ($query) => $query->published()])
+            ->withCount(['publishedPosts as posts_count'])
             ->get();
 
         seo()->for(new SEOData(
