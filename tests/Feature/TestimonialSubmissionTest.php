@@ -26,3 +26,15 @@ it('silently discards testimonial honeypot submissions', function () {
 
     expect(Testimonial::query()->count())->toBe(0);
 });
+
+it('validates testimonial submissions', function () {
+    $this->from(route('home'))
+        ->post(route('testimonials.store'), [
+            'name' => '',
+            'body' => '',
+        ])
+        ->assertRedirect(route('home'))
+        ->assertSessionHasErrors(['name', 'body']);
+
+    expect(Testimonial::query()->count())->toBe(0);
+});
