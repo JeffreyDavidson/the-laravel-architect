@@ -11,6 +11,16 @@ use Spatie\Backup\Tasks\Cleanup\Strategies\DefaultStrategy;
 use Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays;
 use Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes;
 
+$backupDisks = array_values(array_filter(array_map(
+    'trim',
+    explode(',', (string) env('BACKUP_DISKS', 'local')),
+)));
+
+$backupSourcePaths = array_values(array_filter([
+    base_path(),
+    env('BACKUP_MEDIA_PATH'),
+]));
+
 return [
 
     'backup' => [
@@ -26,7 +36,7 @@ return [
                  * The list of directories and files that will be included in the backup.
                  */
                 'include' => [
-                    base_path(),
+                    ...$backupSourcePaths,
                 ],
 
                 /*
@@ -162,7 +172,7 @@ return [
              * The disk names on which the backups will be stored.
              */
             'disks' => [
-                'local',
+                ...$backupDisks,
             ],
 
             /*
@@ -227,7 +237,7 @@ return [
         'notifiable' => Notifiable::class,
 
         'mail' => [
-            'to' => 'your@example.com',
+            'to' => env('BACKUP_NOTIFICATION_EMAIL', env('MAIL_CONTACT_TO', 'thelaravelarchitect@gmail.com')),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
@@ -271,7 +281,7 @@ return [
     'monitor_backups' => [
         [
             'name' => env('APP_NAME', 'laravel-backup'),
-            'disks' => ['local'],
+            'disks' => $backupDisks,
             'health_checks' => [
                 MaximumAgeInDays::class => 1,
                 MaximumStorageInMegabytes::class => 5000,
@@ -288,6 +298,12 @@ return [
             ],
         ],
         */
+    ],
+
+    'schedule' => [
+        'run_at' => env('BACKUP_RUN_AT', '02:00'),
+        'clean_at' => env('BACKUP_CLEAN_AT', '03:00'),
+        'monitor_at' => env('BACKUP_MONITOR_AT', '04:00'),
     ],
 
     'cleanup' => [
