@@ -17,7 +17,14 @@ class ContactController extends Controller
             return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
         }
 
-        $validated = $request->validated();
+        $validated = $request->safe();
+        $name = $validated->string('name')->toString();
+        $email = $validated->string('email')->toString();
+        $type = $validated->string('type')->toString();
+        $budget = $validated->has('budget')
+            ? $validated->string('budget')->toString()
+            : null;
+        $message = $validated->string('message')->toString();
         $key = 'contact-form:'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 3)) {
@@ -27,17 +34,17 @@ class ContactController extends Controller
         RateLimiter::hit($key, 3600);
 
         Mail::to(config('mail.contact_to', config('mail.from.address')))->queue(new ContactMessageReceived(
-            senderName: $validated['name'],
-            senderEmail: $validated['email'],
-            contactType: $validated['type'],
-            budget: $validated['budget'] ?? null,
-            contactMessage: $validated['message'],
+            senderName: $name,
+            senderEmail: $email,
+            contactType: $type,
+            budget: $budget,
+            contactMessage: $message,
         ));
-        Mail::to($validated['email'], $validated['name'])->queue(new ContactMessageConfirmation(
-            senderName: $validated['name'],
-            contactType: $validated['type'],
-            budget: $validated['budget'] ?? null,
-            contactMessage: $validated['message'],
+        Mail::to($email, $name)->queue(new ContactMessageConfirmation(
+            senderName: $name,
+            contactType: $type,
+            budget: $budget,
+            contactMessage: $message,
         ));
 
         return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
