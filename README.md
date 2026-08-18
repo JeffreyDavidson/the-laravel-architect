@@ -44,11 +44,18 @@ Newsletter subscriptions use a signed, expiring double-opt-in link. Contact, new
 
 The production scheduler must run every minute. It dispatches:
 
+- application and database backups daily
+- backup cleanup weekly
+- backup health monitoring daily
 - `youtube:stats` daily
 - `youtube:sync` weekly
 - Filament Excel pruning daily
 
 YouTube tasks prevent overlapping execution. The homepage caches the subscriber count and retains the last successful value when YouTube is unavailable.
+
+Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS` to a comma-separated list that includes an off-server disk, such as `local,s3`, configure that disk's credentials, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `BACKUP_NOTIFICATION_EMAIL` must point to a monitored mailbox.
+
+After changing backup configuration, run `php artisan backup:run`, `php artisan backup:monitor`, and restore a copy of the resulting SQLite dump and media archive in a temporary location. A successful backup notification is not a substitute for validating the archive contents and restored database.
 
 ## Deployment
 
