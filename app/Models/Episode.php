@@ -5,24 +5,23 @@ namespace App\Models;
 use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
-#[Unguarded]
-class Episode extends Model implements HasMedia, Publishable
+#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
+class Episode extends Model implements Publishable
 {
     use HasPublishingStatus;
     use HasSEO;
     use HasTags;
-    use InteractsWithMedia;
+    use LogsActivity;
 
     protected function casts(): array
     {
@@ -63,12 +62,6 @@ class Episode extends Model implements HasMedia, Publishable
             .'E'.str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
     }
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('featured_image')->singleFile();
-        $this->addMediaCollection('audio')->singleFile();
-    }
-
     public function getDynamicSEOData(): SEOData
     {
         $podcast = $this->podcast;
@@ -83,6 +76,7 @@ class Episode extends Model implements HasMedia, Publishable
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logFillable();
+            ->logAll()
+            ->dontLogEmptyChanges();
     }
 }

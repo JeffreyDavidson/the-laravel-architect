@@ -1267,9 +1267,9 @@
         <div class="space-y-6">
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent" data-glow-card>
-                @if($project->hasMedia('featured_image'))
+                @if($project->featured_image_url)
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ $project->getFirstMediaUrl('featured_image') }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 @endif
                 <div class="p-6">
@@ -1736,6 +1736,9 @@ function countdown() {
             @enderror
             <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 @csrf
+                <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+                </div>
                 <input type="email" name="email" placeholder="you@example.com" required
                     class="newsletter-input flex-1 px-4 py-3 bg-white dark:bg-brand-800 border border-brand-200 dark:border-brand-700/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm transition-all shadow-sm dark:shadow-none">
                 <button type="submit" class="magnetic-btn glow-btn px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg text-sm transition-all">
@@ -1805,6 +1808,9 @@ function countdown() {
 
                 <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-4">
                     @csrf
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
