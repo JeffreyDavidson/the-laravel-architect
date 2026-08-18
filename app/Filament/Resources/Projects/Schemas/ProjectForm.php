@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
+use App\Enums\ProjectStatus;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -49,9 +50,9 @@ class ProjectForm
                         TextInput::make('github_url')
                             ->label('GitHub URL')
                             ->url(),
-                        SpatieMediaLibraryFileUpload::make('featured_image')
-                            ->collection('featured_image')
+                        FileUpload::make('featured_image_path')
                             ->disk('public')
+                            ->directory('projects')
                             ->image(),
                         TagsInput::make('tech_stack')
                             ->helperText('e.g. Laravel, Vue.js, Tailwind CSS'),
@@ -66,11 +67,8 @@ class ProjectForm
                             ->numeric()
                             ->default(0),
                         Select::make('status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Published',
-                            ])
-                            ->default('draft')
+                            ->options(ProjectStatus::labels())
+                            ->default(ProjectStatus::Draft)
                             ->required(),
                     ])->columns(2),
 

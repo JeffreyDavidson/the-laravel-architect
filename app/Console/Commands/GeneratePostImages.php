@@ -7,7 +7,6 @@ use App\Services\FeaturedImageGenerator;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 #[Signature('posts:generate-images {--force : Regenerate all images}')]
 #[Description('Generate featured images for posts that don\'t have one')]
@@ -18,7 +17,7 @@ class GeneratePostImages extends Command
         $query = Post::with('category');
 
         if (! $this->option('force')) {
-            $query->whereNull('featured_image');
+            $query->whereNull('featured_image_path');
         }
 
         $posts = $query->get();
@@ -29,13 +28,9 @@ class GeneratePostImages extends Command
             return 0;
         }
 
-        Storage::disk('public')->makeDirectory('posts');
-
         foreach ($posts as $post) {
-            $image = $generator->generate($post);
-            $filename = "posts/{$post->slug}.png";
-            Storage::disk('public')->put($filename, $image->toPng()->toString());
-            $post->update(['featured_image' => $filename]);
+            $filename = $generator->generate($post);
+            $post->update(['featured_image_path' => $filename]);
             $this->info("Generated: {$filename}");
         }
 

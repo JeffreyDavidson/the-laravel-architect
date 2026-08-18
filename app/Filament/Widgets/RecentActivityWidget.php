@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\PublishStatus;
+use App\Enums\TestimonialStatus;
 use App\Models\Post;
 use App\Models\Testimonial;
 use Filament\Widgets\Widget;
@@ -32,10 +33,9 @@ class RecentActivityWidget extends Widget
 
         Testimonial::latest('created_at')->take(2)->get()->each(function ($testimonial) use ($activities) {
             $statusLabel = match ($testimonial->status) {
-                'pending' => 'Pending Review',
-                'approved' => 'Approved',
-                'rejected' => 'Rejected',
-                default => $testimonial->status,
+                TestimonialStatus::Pending => 'Pending Review',
+                TestimonialStatus::Approved => 'Approved',
+                TestimonialStatus::Rejected => 'Rejected',
             };
             $activities->push([
                 'icon' => '💬',

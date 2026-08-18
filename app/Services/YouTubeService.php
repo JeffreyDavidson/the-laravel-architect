@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class YouTubeService
@@ -20,19 +22,30 @@ class YouTubeService
 
     public static function subscriberCount(): int
     {
+        $cacheKey = 'youtube.subscriber_count';
+
+        if (Cache::has($cacheKey)) {
+            return (int) Cache::get($cacheKey);
+        }
+
         try {
             $apiKey = config('services.youtube.api_key');
             $channelId = config('services.youtube.channel_id');
 
-            $response = Http::get('https://www.googleapis.com/youtube/v3/channels', [
+            $response = self::client()->get('https://www.googleapis.com/youtube/v3/channels', [
                 'key' => $apiKey,
                 'id' => $channelId,
                 'part' => 'statistics',
             ]);
 
-            return (int) ($response->json('items.0.statistics.subscriberCount') ?? 0);
+            $count = (int) ($response->json('items.0.statistics.subscriberCount') ?? 0);
+
+            Cache::put($cacheKey, $count, now()->addHours(6));
+            Cache::put("{$cacheKey}.last_known", $count, now()->addDays(30));
+
+            return $count;
         } catch (\Exception) {
-            return 0;
+            return (int) Cache::get("{$cacheKey}.last_known", 0);
         }
     }
 
@@ -81,7 +94,7 @@ class YouTubeService
         $pageToken = null;
 
         do {
-            $response = Http::get("{$this->baseUrl}/search", array_filter([
+            $response = self::client()->get("{$this->baseUrl}/search", array_filter([
                 'key' => $this->apiKey,
                 'channelId' => $this->channelId,
                 'part' => 'snippet',
@@ -111,7 +124,7 @@ class YouTubeService
 
     public function getVideoDetails(array $videoIds): array
     {
-        $response = Http::get("{$this->baseUrl}/videos", [
+        $response = self::client()->get("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'snippet,contentDetails,statistics',
@@ -141,7 +154,7 @@ class YouTubeService
 
     public function getStatsForVideos(array $videoIds): array
     {
-        $response = Http::get("{$this->baseUrl}/videos", [
+        $response = self::client()->get("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'statistics',
@@ -158,5 +171,13 @@ class YouTubeService
                 'comment_count' => (int) ($item['statistics']['commentCount'] ?? 0),
             ]];
         })->toArray();
+    }
+
+    private static function client(): PendingRequest
+    {
+        return Http::connectTimeout(2)
+            ->timeout(5)
+            ->retry(2, 100)
+            ->throw();
     }
 }
