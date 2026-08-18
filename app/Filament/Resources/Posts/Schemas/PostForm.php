@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PublishStatus;
+use App\Models\Post;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -81,7 +82,7 @@ class PostForm
                             ->columnSpanFull(),
                     ])
                     ->collapsible()
-                    ->collapsed(fn ($record) => $record?->review_notes === null),
+                    ->collapsed(fn (?Post $record): bool => $record?->review_notes === null),
 
                 Section::make('SEO')
                     ->schema([
