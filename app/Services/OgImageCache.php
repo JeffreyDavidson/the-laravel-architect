@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
@@ -50,10 +51,12 @@ class OgImageCache
 
     private function signature(Post $post): string
     {
+        $category = $post->getRelation('category');
+
         return hash('sha256', json_encode([
             'version' => self::RENDERER_VERSION,
             'title' => $post->title,
-            'category' => $post->category?->name,
+            'category' => $category instanceof Category ? $category->name : null,
         ], JSON_THROW_ON_ERROR));
     }
 

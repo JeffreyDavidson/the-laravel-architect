@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Post;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
@@ -126,10 +127,11 @@ class FeaturedImageGenerator
 
     public function generate(Post $post): string
     {
-        $categorySlug = $post->category?->slug ?? 'default';
+        $category = $post->getRelation('category');
+        $categorySlug = $category instanceof Category ? $category->slug : 'default';
         $colors = $this->categoryColors[$categorySlug] ?? $this->categoryColors['default'];
         $snippets = $this->codeSnippets[$categorySlug] ?? $this->codeSnippets['laravel'];
-        $categoryName = $post->category?->name ?? 'Blog';
+        $categoryName = $category instanceof Category ? $category->name : 'Blog';
 
         $image = $this->manager->create($this->width, $this->height);
         $image = $image->fill('#0D1117');

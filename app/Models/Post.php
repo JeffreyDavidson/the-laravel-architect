@@ -10,6 +10,7 @@ use App\Services\OgImageCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -19,6 +20,11 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at')]
+/**
+ * @property PublishStatus $status
+ * @property Carbon|null $published_at
+ * @property-read Category|null $category
+ */
 class Post extends Model implements Publishable
 {
     use HasPublishingStatus;
@@ -59,6 +65,7 @@ class Post extends Model implements Publishable
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /** @return BelongsTo<Category, $this> */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -67,6 +74,16 @@ class Post extends Model implements Publishable
     public function getReadingTimeAttribute(): int
     {
         return max(1, (int) ceil(str_word_count(strip_tags($this->content)) / 250));
+    }
+
+    public function publishStatus(): PublishStatus
+    {
+        return $this->getAttribute('status');
+    }
+
+    public function publishedAt(): ?Carbon
+    {
+        return $this->getAttribute('published_at');
     }
 
     public function getFeaturedImageUrlAttribute(): ?string
