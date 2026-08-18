@@ -30,7 +30,13 @@ class Testimonial extends Model
 
     public function testimonialStatus(): TestimonialStatus
     {
-        return $this->getAttribute('status');
+        $status = $this->getAttribute('status');
+
+        if (! $status instanceof TestimonialStatus) {
+            throw new \UnexpectedValueException('Testimonial status was not cast to TestimonialStatus.');
+        }
+
+        return $status;
     }
 
     public function getActivitylogOptions(): LogOptions
