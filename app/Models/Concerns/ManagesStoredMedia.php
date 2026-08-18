@@ -2,14 +2,13 @@
 
 namespace App\Models\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 trait ManagesStoredMedia
 {
     public static function bootManagesStoredMedia(): void
     {
-        static::updated(function (Model $model): void {
+        static::updated(function (self $model): void {
             foreach ($model->storedMediaAttributes() as $attribute) {
                 if (! $model->wasChanged($attribute)) {
                     continue;
@@ -19,7 +18,7 @@ trait ManagesStoredMedia
             }
         });
 
-        static::deleted(function (Model $model): void {
+        static::deleted(function (self $model): void {
             $model->deleteStoredMediaFiles();
         });
     }

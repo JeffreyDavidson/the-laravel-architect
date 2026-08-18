@@ -17,7 +17,7 @@ class RssFeedController extends Controller
 
         $siteUrl = url('/');
         $feedUrl = url('/rss');
-        $lastBuild = $posts->first()?->published_at?->toRssString() ?? now()->toRssString();
+        $lastBuild = $posts->first()?->publishedAt()?->toRssString() ?? now()->toRssString();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
@@ -33,7 +33,7 @@ class RssFeedController extends Controller
             $title = htmlspecialchars($post->title, ENT_XML1, 'UTF-8');
             $link = route('blog.show', $post);
             $description = htmlspecialchars($post->excerpt ?? '', ENT_XML1, 'UTF-8');
-            $pubDate = $post->published_at->toRssString();
+            $pubDate = $post->publishedAt()?->toRssString() ?? now()->toRssString();
 
             $xml .= "<item>\n";
             $xml .= "<title>{$title}</title>\n";

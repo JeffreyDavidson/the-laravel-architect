@@ -9,6 +9,7 @@ use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -17,6 +18,11 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
+/**
+ * @property PublishStatus $status
+ * @property Carbon|null $published_at
+ * @property-read Podcast $podcast
+ */
 class Episode extends Model implements Publishable
 {
     use HasPublishingStatus;
@@ -42,6 +48,7 @@ class Episode extends Model implements Publishable
         });
     }
 
+    /** @return BelongsTo<Podcast, $this> */
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
@@ -60,8 +67,8 @@ class Episode extends Model implements Publishable
 
     public function getEpisodeCodeAttribute(): string
     {
-        return 'S'.str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
-            .'E'.str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
+        return 'S'.str_pad((string) $this->season_number, 2, '0', STR_PAD_LEFT)
+            .'E'.str_pad((string) ($this->episode_number ?? 0), 2, '0', STR_PAD_LEFT);
     }
 
     public function getDynamicSEOData(): SEOData
@@ -69,7 +76,7 @@ class Episode extends Model implements Publishable
         $podcast = $this->podcast;
 
         return new SEOData(
-            title: $this->title.' — '.($podcast?->name ?? 'Podcast'),
+            title: $this->title.' — '.$podcast->name,
             description: $this->description,
         );
     }

@@ -38,11 +38,13 @@ class Podcast extends Model
         });
     }
 
+    /** @return HasMany<Episode, $this> */
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);
     }
 
+    /** @return HasMany<Episode, $this> */
     public function publishedEpisodes(): HasMany
     {
         return $this->episodes()

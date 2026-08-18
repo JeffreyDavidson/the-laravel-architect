@@ -19,8 +19,15 @@ class Category extends Model
         });
     }
 
+    /** @return HasMany<Post, $this> */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /** @return HasMany<Post, $this> */
+    public function publishedPosts(): HasMany
+    {
+        return $this->posts()->published();
     }
 }

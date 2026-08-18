@@ -24,7 +24,7 @@ class RecentActivityWidget extends Widget
             $activities->push([
                 'icon' => '📝',
                 'label' => $post->title,
-                'meta' => $post->status === PublishStatus::Published ? 'Published' : 'Draft',
+                'meta' => $post->publishStatus() === PublishStatus::Published ? 'Published' : 'Draft',
                 'time' => $post->updated_at->diffForHumans(),
                 'kind' => 'post',
                 'timestamp' => $post->updated_at,
@@ -32,7 +32,7 @@ class RecentActivityWidget extends Widget
         });
 
         Testimonial::latest('created_at')->take(2)->get()->each(function ($testimonial) use ($activities) {
-            $statusLabel = match ($testimonial->status) {
+            $statusLabel = match ($testimonial->testimonialStatus()) {
                 TestimonialStatus::Pending => 'Pending Review',
                 TestimonialStatus::Approved => 'Approved',
                 TestimonialStatus::Rejected => 'Rejected',

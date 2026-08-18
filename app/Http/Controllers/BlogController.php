@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
-use Illuminate\Database\Eloquent\Builder;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class BlogController extends Controller
@@ -18,7 +17,7 @@ class BlogController extends Controller
             ->get();
 
         $categories = Category::query()
-            ->withCount(['posts' => fn (Builder $query) => $query->published()])
+            ->withCount(['posts' => fn ($query) => $query->published()])
             ->get();
 
         seo()->for(new SEOData(

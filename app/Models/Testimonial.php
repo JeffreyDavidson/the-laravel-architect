@@ -11,6 +11,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('name', 'role', 'company', 'body', 'status', 'sort_order')]
+/** @property TestimonialStatus $status */
 class Testimonial extends Model
 {
     use LogsActivity;
@@ -24,6 +25,11 @@ class Testimonial extends Model
     protected function approved(Builder $query): void
     {
         $query->where('status', TestimonialStatus::Approved);
+    }
+
+    public function testimonialStatus(): TestimonialStatus
+    {
+        return $this->getAttribute('status');
     }
 
     public function getActivitylogOptions(): LogOptions
