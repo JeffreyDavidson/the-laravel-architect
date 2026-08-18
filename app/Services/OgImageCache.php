@@ -38,17 +38,28 @@ class OgImageCache
 
     public function forget(Post $post): void
     {
-        Storage::disk('local')->deleteDirectory("og-images/{$post->getKey()}");
+        Storage::disk('local')->deleteDirectory($this->cacheDirectory($post));
     }
 
     private function imagePath(Post $post): string
     {
-        return "og-images/{$post->getKey()}/image.png";
+        return $this->cacheDirectory($post).'/image.png';
     }
 
     private function signaturePath(Post $post): string
     {
-        return "og-images/{$post->getKey()}/signature";
+        return $this->cacheDirectory($post).'/signature';
+    }
+
+    private function cacheDirectory(Post $post): string
+    {
+        $postKey = $post->getKey();
+
+        if (! is_int($postKey) && ! is_string($postKey)) {
+            throw new \UnexpectedValueException('An OG image cannot be cached for a post without a scalar key.');
+        }
+
+        return "og-images/{$postKey}";
     }
 
     private function signature(Post $post): string

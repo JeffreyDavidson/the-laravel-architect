@@ -4,6 +4,7 @@ use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use App\Services\OgImageCache;
 use App\Services\OgImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -70,6 +71,11 @@ it('deletes the cached OG image with its post', function () {
     $post->delete();
 
     Storage::disk('local')->assertMissing("og-images/{$post->id}");
+});
+
+it('rejects cache operations for a post without a scalar key', function () {
+    expect(fn () => app(OgImageCache::class)->forget(new Post))
+        ->toThrow(UnexpectedValueException::class, 'without a scalar key');
 });
 
 function createPublishedPost(): Post
