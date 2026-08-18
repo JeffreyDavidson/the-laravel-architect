@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class NewsletterController extends Controller
 {
@@ -49,13 +50,19 @@ class NewsletterController extends Controller
         return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
     }
 
+    public function showConfirmation(Request $request, Subscriber $subscriber, string $token): View
+    {
+        $this->ensureValidConfirmationToken($subscriber, $token);
+
+        return view('newsletter.confirm', [
+            'actionUrl' => $request->fullUrl(),
+            'subscriber' => $subscriber,
+        ]);
+    }
+
     public function confirm(Subscriber $subscriber, string $token): RedirectResponse
     {
-        abort_unless(
-            $subscriber->verification_token
-                && hash_equals($subscriber->verification_token, hash('sha256', $token)),
-            403,
-        );
+        $this->ensureValidConfirmationToken($subscriber, $token);
 
         $subscriber->update([
             'verified_at' => now(),
@@ -64,5 +71,32 @@ class NewsletterController extends Controller
         ]);
 
         return redirect()->route('home')->with('newsletter_success', 'You\'re subscribed. Thanks for confirming!');
+    }
+
+    public function showUnsubscribe(Request $request, Subscriber $subscriber): View
+    {
+        return view('newsletter.unsubscribe', [
+            'actionUrl' => $request->fullUrl(),
+            'subscriber' => $subscriber,
+        ]);
+    }
+
+    public function unsubscribe(Subscriber $subscriber): RedirectResponse
+    {
+        $subscriber->update([
+            'verification_token' => null,
+            'unsubscribed_at' => now(),
+        ]);
+
+        return redirect()->route('home')->with('newsletter_success', 'You have been unsubscribed.');
+    }
+
+    private function ensureValidConfirmationToken(Subscriber $subscriber, string $token): void
+    {
+        abort_unless(
+            $subscriber->verification_token
+                && hash_equals($subscriber->verification_token, hash('sha256', $token)),
+            403,
+        );
     }
 }
