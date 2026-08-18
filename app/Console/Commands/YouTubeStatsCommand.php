@@ -24,10 +24,15 @@ class YouTubeStatsCommand extends Command
 
         $this->info("Updating stats for {$videos->count()} videos...");
 
-        $videoIds = $videos->pluck('youtube_id')
-            ->filter(is_string(...))
-            ->values()
-            ->all();
+        $videoIds = [];
+
+        foreach ($videos as $video) {
+            $videoId = $video->getAttribute('youtube_id');
+
+            if (is_string($videoId)) {
+                $videoIds[] = $videoId;
+            }
+        }
 
         $updated = 0;
 
