@@ -36,7 +36,7 @@ Public pages are server-rendered Blade views. Route-model binding uses content s
 
 The Filament panel is available at `/admin`. Panel admission requires an approved role, and app-based multi-factor authentication is required in production. Filament Shield manages resource permissions.
 
-Uploaded images and audio are stored through Laravel's `public` filesystem disk. Models store explicit file paths; run `php artisan storage:link` on a new environment.
+Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Run `php artisan storage:link` on a new environment.
 
 Newsletter subscriptions use a signed, expiring double-opt-in link. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 

@@ -40,7 +40,8 @@ class PodcastForm
                         FileUpload::make('cover_image_path')
                             ->disk('public')
                             ->directory('podcasts')
-                            ->image(),
+                            ->image()
+                            ->maxSize(10240),
                         ColorPicker::make('color')
                             ->default('#6366f1')
                             ->helperText('Brand color for this show'),

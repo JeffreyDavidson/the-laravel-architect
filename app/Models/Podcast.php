@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PublishStatus;
+use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +21,7 @@ class Podcast extends Model
 {
     use HasSEO;
     use LogsActivity;
+    use ManagesStoredMedia;
 
     protected static function booted(): void
     {
@@ -27,6 +29,12 @@ class Podcast extends Model
             if (empty($podcast->slug)) {
                 $podcast->slug = Str::slug($podcast->name);
             }
+        });
+
+        static::deleting(function (Podcast $podcast): void {
+            $podcast->episodes()->each(
+                fn (Episode $episode) => $episode->deleteStoredMediaFiles(),
+            );
         });
     }
 
@@ -83,5 +91,10 @@ class Podcast extends Model
             ->logOnlyDirty()
             ->logAll()
             ->dontLogEmptyChanges();
+    }
+
+    protected function storedMediaAttributes(): array
+    {
+        return ['cover_image_path'];
     }
 }

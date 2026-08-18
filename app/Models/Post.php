@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class Post extends Model implements Publishable
     use HasSEO;
     use HasTags;
     use LogsActivity;
+    use ManagesStoredMedia;
 
     protected function casts(): array
     {
@@ -84,5 +86,10 @@ class Post extends Model implements Publishable
             ->logOnlyDirty()
             ->logAll()
             ->dontLogEmptyChanges();
+    }
+
+    protected function storedMediaAttributes(): array
+    {
+        return ['featured_image_path'];
     }
 }
