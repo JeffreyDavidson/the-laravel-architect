@@ -38,7 +38,7 @@ The Filament panel is available at `/admin`. Panel admission requires an approve
 
 Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Run `php artisan storage:link` on a new environment.
 
-Newsletter subscriptions use a signed, expiring double-opt-in link. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
+Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
 ## Scheduled work
 
