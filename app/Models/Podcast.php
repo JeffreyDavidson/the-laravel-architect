@@ -3,21 +3,23 @@
 namespace App\Models;
 
 use App\Enums\PublishStatus;
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
-#[Unguarded]
-class Podcast extends Model implements HasMedia
+#[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
+class Podcast extends Model
 {
     use HasSEO;
-    use InteractsWithMedia;
+    use LogsActivity;
 
     protected static function booted(): void
     {
@@ -45,15 +47,16 @@ class Podcast extends Model implements HasMedia
         return $this->publishedEpisodes()->latest('published_at')->first();
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
     public function getCoverImageUrlAttribute(): ?string
     {
-        if ($this->hasMedia('cover_image')) {
-            return $this->getFirstMediaUrl('cover_image');
+        if ($this->cover_image_path) {
+            return Storage::disk('public')->url($this->cover_image_path);
         }
 
         // Fallback to static files
@@ -64,11 +67,6 @@ class Podcast extends Model implements HasMedia
         ];
 
         return $map[$slug] ?? null;
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('cover_image')->singleFile();
     }
 
     public function getDynamicSEOData(): SEOData
@@ -83,6 +81,7 @@ class Podcast extends Model implements HasMedia
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logFillable();
+            ->logAll()
+            ->dontLogEmptyChanges();
     }
 }

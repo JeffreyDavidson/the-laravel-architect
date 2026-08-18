@@ -6,7 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -16,8 +16,8 @@ class PodcastsTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('cover_image')
-                    ->collection('cover_image')
+                ImageColumn::make('cover_image_path')
+                    ->disk('public')
                     ->circular()
                     ->label(''),
                 TextColumn::make('name')
