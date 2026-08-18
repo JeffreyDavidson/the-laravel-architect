@@ -22,8 +22,10 @@ class OgImageCache
         $signaturePath = $this->signaturePath($post);
         $signature = $this->signature($post);
 
-        if ($this->isCurrent($disk, $imagePath, $signaturePath, $signature)) {
-            return $disk->get($imagePath);
+        $cachedImage = $this->currentImage($disk, $imagePath, $signaturePath, $signature);
+
+        if ($cachedImage !== null) {
+            return $cachedImage;
         }
 
         $png = $this->generator->generate($post);
@@ -60,16 +62,22 @@ class OgImageCache
         ], JSON_THROW_ON_ERROR));
     }
 
-    private function isCurrent(
+    private function currentImage(
         FilesystemAdapter $disk,
         string $imagePath,
         string $signaturePath,
         string $signature,
-    ): bool {
+    ): ?string {
         if (! $disk->exists($imagePath) || ! $disk->exists($signaturePath)) {
-            return false;
+            return null;
         }
 
-        return hash_equals($signature, trim($disk->get($signaturePath)));
+        $cachedSignature = $disk->get($signaturePath);
+
+        if ($cachedSignature === null || ! hash_equals($signature, trim($cachedSignature))) {
+            return null;
+        }
+
+        return $disk->get($imagePath);
     }
 }
