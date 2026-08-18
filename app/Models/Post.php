@@ -6,6 +6,7 @@ use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Services\OgImageCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,6 +47,10 @@ class Post extends Model implements Publishable
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
             }
+        });
+
+        static::deleted(function (Post $post): void {
+            app(OgImageCache::class)->forget($post);
         });
     }
 

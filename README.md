@@ -34,6 +34,8 @@ CI runs dependency auditing, formatting, static analysis, asset compilation, and
 
 Public pages are server-rendered Blade views. Route-model binding uses content slugs, while publication scopes keep drafts and future content off public pages, feeds, and the sitemap.
 
+Generated post OG images are cached on the private local filesystem. Cache validity is based on the rendered title, category name, and an explicit renderer version; deleting a post removes its cached image.
+
 The Filament panel is available at `/admin`. Panel admission requires an approved role, and app-based multi-factor authentication is required in production. Filament Shield manages resource permissions.
 
 Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Run `php artisan storage:link` on a new environment.
