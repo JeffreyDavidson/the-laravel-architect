@@ -18,30 +18,26 @@ class WelcomeWidget extends Widget
 
     protected static ?int $sort = -10;
 
+    /**
+     * @return array{
+     *     posts: int,
+     *     publishedPosts: int,
+     *     draftPosts: int,
+     *     projects: int,
+     *     featuredProjects: int,
+     *     subscribers: int,
+     *     videos: int,
+     *     pendingTestimonials: int
+     * }
+     */
     protected function getViewData(): array
     {
-        $postStats = Post::query()
-            ->selectRaw(
-                'count(*) as total, '.
-                'sum(case when status = ? then 1 else 0 end) as published, '.
-                'sum(case when status = ? then 1 else 0 end) as draft',
-                [PublishStatus::Published->value, PublishStatus::Draft->value],
-            )
-            ->first();
-
-        $projectStats = Project::query()
-            ->selectRaw(
-                'count(*) as total, '.
-                'sum(case when is_featured = 1 then 1 else 0 end) as featured',
-            )
-            ->first();
-
         return [
-            'posts' => (int) ($postStats->total ?? 0),
-            'publishedPosts' => (int) ($postStats->published ?? 0),
-            'draftPosts' => (int) ($postStats->draft ?? 0),
-            'projects' => (int) ($projectStats->total ?? 0),
-            'featuredProjects' => (int) ($projectStats->featured ?? 0),
+            'posts' => Post::query()->count(),
+            'publishedPosts' => Post::query()->where('status', PublishStatus::Published)->count(),
+            'draftPosts' => Post::query()->where('status', PublishStatus::Draft)->count(),
+            'projects' => Project::query()->count(),
+            'featuredProjects' => Project::query()->where('is_featured', true)->count(),
             'subscribers' => Subscriber::count(),
             'videos' => Video::count(),
             'pendingTestimonials' => Testimonial::where('status', 'pending')->count(),
