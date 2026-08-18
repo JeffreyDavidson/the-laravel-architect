@@ -42,6 +42,7 @@ class Post extends Model implements Publishable
         ];
     }
 
+    /** @return BelongsTo<User, $this> */
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
@@ -60,6 +61,7 @@ class Post extends Model implements Publishable
         });
     }
 
+    /** @return BelongsTo<User, $this> */
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

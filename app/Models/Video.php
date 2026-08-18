@@ -67,12 +67,14 @@ class Video extends Model
         }
     }
 
+    /** @param Builder<Video> $query */
     #[Scope]
     protected function published(Builder $query): void
     {
         $query->whereNotNull('published_at')->where('published_at', '<=', now());
     }
 
+    /** @param Builder<Video> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {

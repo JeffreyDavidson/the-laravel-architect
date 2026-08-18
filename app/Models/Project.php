@@ -42,12 +42,14 @@ class Project extends Model
         });
     }
 
+    /** @param Builder<Project> $query */
     #[Scope]
     protected function published(Builder $query): void
     {
         $query->where('status', ProjectStatus::Published);
     }
 
+    /** @param Builder<Project> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {
