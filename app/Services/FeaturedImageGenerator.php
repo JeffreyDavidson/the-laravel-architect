@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\Post;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
@@ -176,7 +177,7 @@ class FeaturedImageGenerator
     {
         // Large orb top-right
         for ($r = 300; $r > 0; $r -= 3) {
-            $image->drawCircle(1000, 100, function ($circle) use ($r, $colors) {
+            $image->drawCircle(1000, 100, function (CircleFactory $circle) use ($r, $colors) {
                 $circle->radius($r);
                 $circle->background($colors[0].'02');
             });
@@ -184,7 +185,7 @@ class FeaturedImageGenerator
 
         // Smaller orb bottom-left
         for ($r = 200; $r > 0; $r -= 3) {
-            $image->drawCircle(200, 530, function ($circle) use ($r, $colors) {
+            $image->drawCircle(200, 530, function (CircleFactory $circle) use ($r, $colors) {
                 $circle->radius($r);
                 $circle->background($colors[1].'02');
             });
@@ -196,7 +197,7 @@ class FeaturedImageGenerator
         $spacing = 32;
         for ($x = 0; $x < $this->width; $x += $spacing) {
             for ($y = 0; $y < $this->height; $y += $spacing) {
-                $image->drawCircle($x, $y, function ($circle) {
+                $image->drawCircle($x, $y, function (CircleFactory $circle) {
                     $circle->radius(1);
                     $circle->background('#ffffff05');
                 });
