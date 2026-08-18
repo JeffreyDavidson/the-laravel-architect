@@ -21,6 +21,7 @@ class Testimonial extends Model
         return ['status' => TestimonialStatus::class];
     }
 
+    /** @param Builder<Testimonial> $query */
     #[Scope]
     protected function approved(Builder $query): void
     {

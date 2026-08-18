@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait HasPublishingStatus
 {
+    /** @param Builder<static> $query */
     #[Scope]
     protected function published(Builder $query): void
     {

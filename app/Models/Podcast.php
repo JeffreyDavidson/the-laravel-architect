@@ -52,11 +52,12 @@ class Podcast extends Model
             ->where('published_at', '<=', now());
     }
 
-    public function latestEpisode()
+    public function latestEpisode(): ?Episode
     {
         return $this->publishedEpisodes()->latest('published_at')->first();
     }
 
+    /** @param Builder<Podcast> $query */
     #[Scope]
     protected function active(Builder $query): void
     {
