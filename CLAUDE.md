@@ -2,14 +2,13 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-Personal website and blog for "The Laravel Architect", a Laravel 13 application with a Filament v5 admin panel. Content types: blog posts, projects, podcasts/episodes, videos (synced from YouTube), testimonials, and newsletter subscribers.
+Personal website and blog for "The Laravel Architect" — a Laravel 12 application with a Filament v5 admin panel. Content types: blog posts, projects, podcasts/episodes, videos (synced from YouTube), testimonials, and newsletter subscribers.
 
 Live at https://thelaravelarchitect.com. Admin at /admin.
 
 ## Common Commands
 - Dev server: `composer dev` — runs PHP server, queue worker, Pail logs, and Vite concurrently
-- Run all tests: `composer test` (clears config first, then runs Pest)
-- Static analysis: `composer test:types`
+- Run all tests: `composer test` (clears config first, then runs `php artisan test`)
 - Run a single test: `php artisan test --filter=TestName`
 - Lint/format PHP: `./vendor/bin/pint`
 - Build frontend: `npm run build`
@@ -61,7 +60,7 @@ All models use `$guarded = []` and auto-generate slugs on creation via `booted()
 
 Common traits:
 - HasSEO + getDynamicSEOData() (from `ralphjsmit/laravel-seo`) — on Post, Project, Podcast
-- Native Laravel filesystem paths for post/project images, podcast covers, and episode media
+- InteractsWithMedia / HasMedia (from `spatie/laravel-medialibrary`) — on Post, Project, Podcast
 - HasTags (from `spatie/laravel-tags`) — on Post, Project
 - LogsActivity (from `spatie/laravel-activitylog`) — on Post, Project, Testimonial, Episode, Podcast
 - Posts and Projects use `scopePublished()` for filtering published content
@@ -73,7 +72,7 @@ app/Services/ contains service classes:
 
 ### Key Packages
 - Filament v5 — admin panel framework
-- Laravel filesystem and Filament FileUpload — managed uploads
+- Spatie Media Library — file uploads and image conversions
 - Spatie Tags — polymorphic tagging
 - Spatie Backup — database/file backups
 - Spatie Activity Log — model change tracking

@@ -3,23 +3,21 @@
 namespace App\Models;
 
 use App\Enums\PublishStatus;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\Models\Concerns\LogsActivity;
-use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\LogOptions;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-#[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
-class Podcast extends Model
+#[Unguarded]
+class Podcast extends Model implements HasMedia
 {
     use HasSEO;
-    use LogsActivity;
+    use InteractsWithMedia;
 
     protected static function booted(): void
     {
@@ -47,16 +45,15 @@ class Podcast extends Model
         return $this->publishedEpisodes()->latest('published_at')->first();
     }
 
-    #[Scope]
-    protected function active(Builder $query): void
+    public function scopeActive($query)
     {
-        $query->where('is_active', true);
+        return $query->where('is_active', true);
     }
 
     public function getCoverImageUrlAttribute(): ?string
     {
-        if ($this->cover_image_path) {
-            return Storage::disk('public')->url($this->cover_image_path);
+        if ($this->hasMedia('cover_image')) {
+            return $this->getFirstMediaUrl('cover_image');
         }
 
         // Fallback to static files
@@ -67,6 +64,11 @@ class Podcast extends Model
         ];
 
         return $map[$slug] ?? null;
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover_image')->singleFile();
     }
 
     public function getDynamicSEOData(): SEOData
@@ -81,7 +83,6 @@ class Podcast extends Model
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logAll()
-            ->dontLogEmptyChanges();
+            ->logFillable();
     }
 }

@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Enums\PublishStatus;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -59,9 +59,8 @@ class EpisodeForm
                             ->label('Audio URL')
                             ->url()
                             ->helperText('Link to hosted audio (Buzzsprout, Anchor, etc.)'),
-                        FileUpload::make('audio_path')
-                            ->disk('public')
-                            ->directory('episodes/audio')
+                        SpatieMediaLibraryFileUpload::make('audio')
+                            ->collection('audio')
                             ->acceptedFileTypes(['audio/mpeg', 'audio/mp3', 'audio/wav']),
                         TextInput::make('embed_url')
                             ->label('Embed URL')
@@ -71,9 +70,8 @@ class EpisodeForm
                             ->label('YouTube URL')
                             ->url()
                             ->helperText('If episode is also on YouTube'),
-                        FileUpload::make('featured_image_path')
-                            ->disk('public')
-                            ->directory('episodes/images')
+                        SpatieMediaLibraryFileUpload::make('featured_image')
+                            ->collection('featured_image')
                             ->image(),
                         TextInput::make('duration_minutes')
                             ->numeric()

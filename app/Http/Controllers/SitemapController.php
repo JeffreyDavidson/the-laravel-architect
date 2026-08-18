@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
@@ -14,9 +13,7 @@ class SitemapController extends Controller
     public function __invoke(): Response
     {
         $posts = Post::published()->latest('published_at')->get();
-        $categories = Category::query()
-            ->whereHas('posts', fn (Builder $query) => $query->published())
-            ->get();
+        $categories = Category::has('posts')->get();
         $podcasts = Podcast::where('is_active', true)->get();
         $projects = Project::published()->get();
 
