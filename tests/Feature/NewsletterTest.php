@@ -26,6 +26,15 @@ it('creates an unverified subscriber and sends a confirmation message', function
     Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
 });
 
+it('silently accepts newsletter honeypot submissions without subscribing', function () {
+    $this->post(route('newsletter.subscribe'), [
+        'website' => 'filled-by-bot',
+    ])->assertSessionHas('newsletter_success');
+
+    expect(Subscriber::query()->count())->toBe(0);
+    Mail::assertNothingQueued();
+});
+
 it('shows an explicit confirmation step without changing subscriber state', function () {
     $token = 'valid-confirmation-token';
     $subscriber = Subscriber::query()->create([
