@@ -63,3 +63,47 @@ it('does not call YouTube when no channel videos are requested', function () {
 
     Http::assertNothingSent();
 });
+
+it('maps video details into the application payload', function () {
+    Http::fake([
+        'www.googleapis.com/youtube/v3/videos*' => Http::response([
+            'items' => [[
+                'id' => 'video-1',
+                'snippet' => [
+                    'title' => 'Typed payloads',
+                    'description' => 'A description',
+                    'publishedAt' => '2026-08-18T12:00:00Z',
+                    'thumbnails' => ['high' => ['url' => 'https://example.com/thumbnail.jpg']],
+                ],
+                'contentDetails' => ['duration' => 'PT5M'],
+                'statistics' => [
+                    'viewCount' => '120',
+                    'likeCount' => '12',
+                    'commentCount' => '3',
+                ],
+            ]],
+        ]),
+    ]);
+
+    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBe([[
+        'youtube_id' => 'video-1',
+        'title' => 'Typed payloads',
+        'description' => 'A description',
+        'thumbnail_url' => 'https://example.com/thumbnail.jpg',
+        'duration' => 'PT5M',
+        'view_count' => 120,
+        'like_count' => 12,
+        'comment_count' => 3,
+        'published_at' => '2026-08-18T12:00:00Z',
+    ]]);
+});
+
+it('skips malformed video detail items', function () {
+    Http::fake([
+        'www.googleapis.com/youtube/v3/videos*' => Http::response([
+            'items' => [null, 'invalid', ['id' => 'missing-title']],
+        ]),
+    ]);
+
+    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBe([]);
+});

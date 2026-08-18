@@ -3,12 +3,27 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use UnexpectedValueException;
 
+/**
+ * @phpstan-type VideoPayload array{
+ *     youtube_id: string,
+ *     title: string,
+ *     description: string|null,
+ *     thumbnail_url: string|null,
+ *     duration: string|null,
+ *     view_count: int,
+ *     like_count: int,
+ *     comment_count: int,
+ *     published_at: string|null
+ * }
+ * @phpstan-type VideoStats array{view_count: int, like_count: int, comment_count: int}
+ */
 class YouTubeService
 {
     protected string $apiKey;
@@ -64,6 +79,7 @@ class YouTubeService
         }
     }
 
+    /** @return list<VideoPayload> */
     public function getChannelVideos(int $maxResults = 50): array
     {
         if ($maxResults < 1) {
@@ -85,19 +101,33 @@ class YouTubeService
             ]));
 
             $data = $response->json();
-            $videoIds = collect($data['items'] ?? [])->pluck('id.videoId')->filter()->toArray();
+            $data = is_array($data) ? $data : [];
+            $videoIds = [];
+
+            foreach ($this->responseItems($response) as $item) {
+                $videoId = data_get($item, 'id.videoId');
+
+                if (is_string($videoId) && $videoId !== '') {
+                    $videoIds[] = $videoId;
+                }
+            }
 
             if (! empty($videoIds)) {
                 $details = $this->getVideoDetails($videoIds);
                 $videos = array_merge($videos, $details);
             }
 
-            $pageToken = $data['nextPageToken'] ?? null;
+            $nextPageToken = $data['nextPageToken'] ?? null;
+            $pageToken = is_string($nextPageToken) && $nextPageToken !== '' ? $nextPageToken : null;
         } while ($pageToken && count($videos) < $maxResults);
 
         return $videos;
     }
 
+    /**
+     * @param  list<string>  $videoIds
+     * @return list<VideoPayload>
+     */
     public function getVideoDetails(array $videoIds): array
     {
         $response = self::client()->get("{$this->baseUrl}/videos", [
@@ -106,24 +136,40 @@ class YouTubeService
             'part' => 'snippet,contentDetails,statistics',
         ]);
 
-        return collect($response->json('items', []))->map(function ($item) {
-            return [
-                'youtube_id' => $item['id'],
-                'title' => $item['snippet']['title'],
-                'description' => $item['snippet']['description'] ?? null,
-                'thumbnail_url' => $item['snippet']['thumbnails']['high']['url']
-                    ?? $item['snippet']['thumbnails']['medium']['url']
-                    ?? $item['snippet']['thumbnails']['default']['url']
-                    ?? null,
-                'duration' => $item['contentDetails']['duration'] ?? null,
-                'view_count' => (int) ($item['statistics']['viewCount'] ?? 0),
-                'like_count' => (int) ($item['statistics']['likeCount'] ?? 0),
-                'comment_count' => (int) ($item['statistics']['commentCount'] ?? 0),
-                'published_at' => $item['snippet']['publishedAt'] ?? null,
+        $videos = [];
+
+        foreach ($this->responseItems($response) as $item) {
+            $videoId = data_get($item, 'id');
+            $title = data_get($item, 'snippet.title');
+
+            if (! is_string($videoId) || ! is_string($title)) {
+                continue;
+            }
+
+            $videos[] = [
+                'youtube_id' => $videoId,
+                'title' => $title,
+                'description' => $this->nullableString(data_get($item, 'snippet.description')),
+                'thumbnail_url' => $this->nullableString(
+                    data_get($item, 'snippet.thumbnails.high.url')
+                        ?? data_get($item, 'snippet.thumbnails.medium.url')
+                        ?? data_get($item, 'snippet.thumbnails.default.url'),
+                ),
+                'duration' => $this->nullableString(data_get($item, 'contentDetails.duration')),
+                'view_count' => (int) data_get($item, 'statistics.viewCount', 0),
+                'like_count' => (int) data_get($item, 'statistics.likeCount', 0),
+                'comment_count' => (int) data_get($item, 'statistics.commentCount', 0),
+                'published_at' => $this->nullableString(data_get($item, 'snippet.publishedAt')),
             ];
-        })->toArray();
+        }
+
+        return $videos;
     }
 
+    /**
+     * @param  list<string>  $videoIds
+     * @return array<string, VideoStats>
+     */
     public function getStatsForVideos(array $videoIds): array
     {
         $response = self::client()->get("{$this->baseUrl}/videos", [
@@ -132,13 +178,40 @@ class YouTubeService
             'part' => 'statistics',
         ]);
 
-        return collect($response->json('items', []))->mapWithKeys(function ($item) {
-            return [$item['id'] => [
-                'view_count' => (int) ($item['statistics']['viewCount'] ?? 0),
-                'like_count' => (int) ($item['statistics']['likeCount'] ?? 0),
-                'comment_count' => (int) ($item['statistics']['commentCount'] ?? 0),
-            ]];
-        })->toArray();
+        $stats = [];
+
+        foreach ($this->responseItems($response) as $item) {
+            $videoId = data_get($item, 'id');
+
+            if (! is_string($videoId)) {
+                continue;
+            }
+
+            $stats[$videoId] = [
+                'view_count' => (int) data_get($item, 'statistics.viewCount', 0),
+                'like_count' => (int) data_get($item, 'statistics.likeCount', 0),
+                'comment_count' => (int) data_get($item, 'statistics.commentCount', 0),
+            ];
+        }
+
+        return $stats;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function responseItems(Response $response): array
+    {
+        $items = $response->json('items', []);
+
+        if (! is_array($items)) {
+            return [];
+        }
+
+        return array_values(array_filter($items, is_array(...)));
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
     }
 
     private static function client(): PendingRequest
