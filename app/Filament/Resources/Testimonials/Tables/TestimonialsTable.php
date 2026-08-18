@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials\Tables;
 
+use App\Enums\TestimonialStatus;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -25,11 +26,7 @@ class TestimonialsTable
                     ->limit(60),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'approved' => 'success',
-                        'rejected' => 'danger',
-                    }),
+                    ->color(fn (TestimonialStatus $state): string => $state->color()),
                 TextColumn::make('created_at')
                     ->dateTime('M j, Y')
                     ->sortable(),
@@ -37,11 +34,7 @@ class TestimonialsTable
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ]),
+                    ->options(TestimonialStatus::labels()),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
