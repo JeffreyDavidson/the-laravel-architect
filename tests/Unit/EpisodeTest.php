@@ -12,6 +12,18 @@ it('formats an episode code when its optional episode number is missing', functi
     expect($episode->episode_code)->toBe('S02E00');
 });
 
+it('generates SEO data when its podcast is missing', function () {
+    $episode = new Episode([
+        'title' => 'Orphaned Episode',
+        'description' => 'An episode without an available podcast.',
+    ]);
+
+    $seo = $episode->getDynamicSEOData();
+
+    expect($seo->title)->toBe('Orphaned Episode — Podcast')
+        ->and($seo->description)->toBe('An episode without an available podcast.');
+});
+
 it('knows whether it is publicly published', function (?PublishStatus $status, mixed $publishedAt, bool $expected) {
     $episode = new Episode([
         'status' => $status,
