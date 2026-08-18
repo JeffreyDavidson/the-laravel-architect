@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -78,6 +79,10 @@ it('only includes public content in the sitemap', function () {
     $draftOnlyCategory = Category::query()->create(['name' => 'Private', 'slug' => 'private']);
     $scheduledPost->update(['category_id' => $draftOnlyCategory->id]);
 
+    DB::table('posts')->where('id', $publishedPost->id)->update(['updated_at' => null]);
+    DB::table('projects')->where('id', $publishedProject->id)->update(['updated_at' => null]);
+    DB::table('episodes')->where('id', $publishedEpisode->id)->update(['updated_at' => null]);
+
     $this->get('/sitemap.xml')
         ->assertOk()
         ->assertSee(route('blog.show', $publishedPost), false)
@@ -86,5 +91,6 @@ it('only includes public content in the sitemap', function () {
         ->assertDontSee(route('projects.show', $draftProject), false)
         ->assertDontSee(route('blog.category', $draftOnlyCategory), false)
         ->assertSee(route('podcast.episode', [$podcast, $publishedEpisode]), false)
-        ->assertDontSee(route('podcast.episode', [$podcast, $draftEpisode]), false);
+        ->assertDontSee(route('podcast.episode', [$podcast, $draftEpisode]), false)
+        ->assertDontSee('<lastmod>', false);
 });
