@@ -54,3 +54,16 @@ it('only allows directly viewing posts that are published now', function () {
     $this->get(route('blog.show', $draft))->assertNotFound();
     $this->get(route('blog.show', $scheduled))->assertNotFound();
 });
+
+it('counts only published posts in blog categories', function () {
+    $published = createBlogPost();
+    createBlogPost([
+        'category_id' => $published->category_id,
+        'status' => PublishStatus::Draft,
+        'published_at' => null,
+    ]);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertViewHas('categories', fn ($categories) => $categories->sole()->posts_count === 1);
+});

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -74,12 +75,16 @@ it('only includes public content in the sitemap', function () {
         'status' => PublishStatus::Draft,
     ]);
 
+    $draftOnlyCategory = Category::query()->create(['name' => 'Private', 'slug' => 'private']);
+    $scheduledPost->update(['category_id' => $draftOnlyCategory->id]);
+
     $this->get('/sitemap.xml')
         ->assertOk()
         ->assertSee(route('blog.show', $publishedPost), false)
         ->assertDontSee(route('blog.show', $scheduledPost), false)
         ->assertSee(route('projects.show', $publishedProject), false)
         ->assertDontSee(route('projects.show', $draftProject), false)
+        ->assertDontSee(route('blog.category', $draftOnlyCategory), false)
         ->assertSee(route('podcast.episode', [$podcast, $publishedEpisode]), false)
         ->assertDontSee(route('podcast.episode', [$podcast, $draftEpisode]), false);
 });
