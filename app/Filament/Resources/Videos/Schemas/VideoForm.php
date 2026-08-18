@@ -30,13 +30,13 @@ class VideoForm
                 ->schema([
                     Placeholder::make('view_count')
                         ->label('Views')
-                        ->content(fn ($record) => number_format($record?->view_count ?? 0)),
+                        ->content(fn ($record) => number_format($record->view_count ?? 0)),
                     Placeholder::make('like_count')
                         ->label('Likes')
-                        ->content(fn ($record) => number_format($record?->like_count ?? 0)),
+                        ->content(fn ($record) => number_format($record->like_count ?? 0)),
                     Placeholder::make('comment_count')
                         ->label('Comments')
-                        ->content(fn ($record) => number_format($record?->comment_count ?? 0)),
+                        ->content(fn ($record) => number_format($record->comment_count ?? 0)),
                     Placeholder::make('synced_at')
                         ->label('Last Synced')
                         ->content(fn ($record) => $record?->synced_at?->diffForHumans() ?? 'Never'),

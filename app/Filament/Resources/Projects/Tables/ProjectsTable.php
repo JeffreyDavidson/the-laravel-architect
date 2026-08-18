@@ -6,7 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -20,8 +20,8 @@ class ProjectsTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                SpatieMediaLibraryImageColumn::make('featured_image')
-                    ->collection('featured_image'),
+                ImageColumn::make('featured_image_path')
+                    ->disk('public'),
                 TextColumn::make('url')
                     ->searchable(),
                 TextColumn::make('github_url')
