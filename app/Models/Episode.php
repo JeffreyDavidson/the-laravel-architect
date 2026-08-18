@@ -21,7 +21,7 @@ use Spatie\Tags\HasTags;
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
- * @property-read Podcast $podcast
+ * @property-read Podcast|null $podcast
  */
 class Episode extends Model implements Publishable
 {
@@ -73,10 +73,11 @@ class Episode extends Model implements Publishable
 
     public function getDynamicSEOData(): SEOData
     {
-        $podcast = $this->podcast;
+        $podcast = $this->getRelationValue('podcast');
+        $podcastName = $podcast instanceof Podcast ? $podcast->name : 'Podcast';
 
         return new SEOData(
-            title: $this->title.' — '.$podcast->name,
+            title: $this->title.' — '.$podcastName,
             description: $this->description,
         );
     }
