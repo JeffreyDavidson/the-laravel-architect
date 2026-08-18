@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubscribeNewsletterRequest;
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
 use Illuminate\Http\RedirectResponse;
@@ -13,17 +14,15 @@ use Illuminate\View\View;
 
 class NewsletterController extends Controller
 {
-    public function subscribe(Request $request): RedirectResponse
+    public function subscribe(SubscribeNewsletterRequest $request): RedirectResponse
     {
         if ($request->filled('website')) {
             return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
         }
 
-        $validated = $request->validate([
-            'email' => ['required', 'email', 'max:255'],
-        ]);
+        $email = $request->safe()->string('email')->lower()->toString();
 
-        $subscriber = Subscriber::query()->firstOrNew(['email' => Str::lower($validated['email'])]);
+        $subscriber = Subscriber::query()->firstOrNew(['email' => $email]);
 
         if ($subscriber->verified_at && ! $subscriber->unsubscribed_at) {
             return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
