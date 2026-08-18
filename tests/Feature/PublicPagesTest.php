@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
@@ -35,6 +36,32 @@ it('renders the core public pages', function (string $uri, string $copy) {
 it('keeps the admin panel behind authentication', function () {
     $this->get('/admin')->assertRedirect('/admin/login');
     $this->get('/admin/login')->assertOk();
+});
+
+it('shows synced published YouTube videos without stale launch content', function () {
+    $publishedVideo = Video::query()->create([
+        'youtube_id' => 'published-video',
+        'title' => 'Modern Laravel Architecture',
+        'slug' => 'modern-laravel-architecture',
+        'thumbnail_url' => 'https://example.com/video.jpg',
+        'duration' => 'PT12M34S',
+        'published_at' => now()->subDay(),
+    ]);
+    $futureVideo = Video::query()->create([
+        'youtube_id' => 'future-video',
+        'title' => 'Future Laravel Video',
+        'slug' => 'future-laravel-video',
+        'published_at' => now()->addDay(),
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee($publishedVideo->title)
+        ->assertSee($publishedVideo->youtube_url)
+        ->assertDontSee($futureVideo->title)
+        ->assertDontSee('Launching March 2')
+        ->assertDontSee('Coming to the Channel')
+        ->assertDontSee('before launch day');
 });
 
 it('hides inactive podcasts from public podcast surfaces', function () {

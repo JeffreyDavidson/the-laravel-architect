@@ -51,7 +51,7 @@ The production scheduler must run every minute. It dispatches:
 - `youtube:sync` weekly
 - Filament Excel pruning daily
 
-YouTube tasks prevent overlapping execution. The homepage caches the subscriber count and retains the last successful value when YouTube is unavailable.
+YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
 
 Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS` to a comma-separated list that includes an off-server disk, such as `local,s3`, configure that disk's credentials, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `BACKUP_NOTIFICATION_EMAIL` must point to a monitored mailbox.
 
