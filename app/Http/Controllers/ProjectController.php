@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $projects = Project::published()
             ->with('tags')
@@ -23,7 +24,7 @@ class ProjectController extends Controller
         return view('projects.index', compact('projects'));
     }
 
-    public function show(Project $project)
+    public function show(Project $project): View
     {
         abort_unless($project->status === ProjectStatus::Published, 404);
 

@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Episode;
 use App\Models\Podcast;
+use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PodcastController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $podcast = Podcast::active()
             ->withCount('publishedEpisodes')
@@ -23,7 +24,7 @@ class PodcastController extends Controller
         return view('podcast.index', compact('podcast'));
     }
 
-    public function show(Podcast $podcast)
+    public function show(Podcast $podcast): View
     {
         abort_unless($podcast->is_active, 404);
 
@@ -37,7 +38,7 @@ class PodcastController extends Controller
         return view('podcast.show', compact('podcast', 'episodes', 'latestEpisode'));
     }
 
-    public function episode(Podcast $podcast, Episode $episode)
+    public function episode(Podcast $podcast, Episode $episode): View
     {
         abort_unless($podcast->is_active, 404);
         abort_unless($episode->isPublished(), 404);
