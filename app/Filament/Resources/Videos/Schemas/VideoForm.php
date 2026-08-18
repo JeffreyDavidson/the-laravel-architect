@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Videos\Schemas;
 
+use App\Models\Video;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -22,7 +23,7 @@ class VideoForm
                         ->disabled(),
                     Placeholder::make('youtube_url')
                         ->label('YouTube URL')
-                        ->content(fn ($record) => $record ? "https://youtube.com/watch?v={$record->youtube_id}" : ''),
+                        ->content(fn (Video $record): string => "https://youtube.com/watch?v={$record->youtube_id}"),
                     Toggle::make('is_featured')
                         ->label('Featured on homepage'),
                 ]),
@@ -30,16 +31,16 @@ class VideoForm
                 ->schema([
                     Placeholder::make('view_count')
                         ->label('Views')
-                        ->content(fn ($record) => number_format($record->view_count ?? 0)),
+                        ->content(fn (Video $record): string => number_format($record->view_count)),
                     Placeholder::make('like_count')
                         ->label('Likes')
-                        ->content(fn ($record) => number_format($record->like_count ?? 0)),
+                        ->content(fn (Video $record): string => number_format($record->like_count)),
                     Placeholder::make('comment_count')
                         ->label('Comments')
-                        ->content(fn ($record) => number_format($record->comment_count ?? 0)),
+                        ->content(fn (Video $record): string => number_format($record->comment_count)),
                     Placeholder::make('synced_at')
                         ->label('Last Synced')
-                        ->content(fn ($record) => $record?->synced_at?->diffForHumans() ?? 'Never'),
+                        ->content(fn (Video $record): string => $record->synced_at?->diffForHumans() ?? 'Never'),
                 ]),
         ]);
     }
