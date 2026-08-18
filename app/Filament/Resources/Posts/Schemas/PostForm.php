@@ -47,6 +47,7 @@ class PostForm
                             ->disk('public')
                             ->directory('posts')
                             ->image()
+                            ->maxSize(10240)
                             ->columnSpanFull(),
                         Select::make('category_id')
                             ->relationship('category', 'name')

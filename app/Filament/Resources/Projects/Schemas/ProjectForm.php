@@ -53,7 +53,8 @@ class ProjectForm
                         FileUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('projects')
-                            ->image(),
+                            ->image()
+                            ->maxSize(10240),
                         TagsInput::make('tech_stack')
                             ->helperText('e.g. Laravel, Vue.js, Tailwind CSS'),
                     ])->columns(2),
