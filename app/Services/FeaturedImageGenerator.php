@@ -7,6 +7,7 @@ use App\Models\Post;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Typography\FontFactory;
 
 class FeaturedImageGenerator
@@ -18,6 +19,7 @@ class FeaturedImageGenerator
     private int $height = 630;
 
     // Category color schemes: [primary, secondary, accent]
+    /** @var array<string, array{string, string, string}> */
     private array $categoryColors = [
         'personal' => ['#3d6a9e', '#2d5078', '#5a86b5'],
         'career' => ['#8b5a6b', '#6b4555', '#a07080'],
@@ -28,6 +30,7 @@ class FeaturedImageGenerator
     ];
 
     // Code snippets per category - these get rendered as syntax-highlighted text
+    /** @var array<string, list<array{string, string}>> */
     private array $codeSnippets = [
         'personal' => [
             ['$architect = new Developer();', 'keyword'],
@@ -110,6 +113,7 @@ class FeaturedImageGenerator
     ];
 
     // Syntax colors matching the hero code editor
+    /** @var array<string, string> */
     private array $syntaxColors = [
         'keyword' => '#ff7b72',
         'string' => '#a5d6ff',
@@ -167,7 +171,8 @@ class FeaturedImageGenerator
         return $path;
     }
 
-    private function drawGradientOrbs($image, array $colors): void
+    /** @param array{string, string, string} $colors */
+    private function drawGradientOrbs(ImageInterface $image, array $colors): void
     {
         // Large orb top-right
         for ($r = 300; $r > 0; $r -= 3) {
@@ -186,7 +191,7 @@ class FeaturedImageGenerator
         }
     }
 
-    private function drawDotGrid($image): void
+    private function drawDotGrid(ImageInterface $image): void
     {
         $spacing = 32;
         for ($x = 0; $x < $this->width; $x += $spacing) {
@@ -199,7 +204,8 @@ class FeaturedImageGenerator
         }
     }
 
-    private function drawAccentLines($image, array $colors): void
+    /** @param array{string, string, string} $colors */
+    private function drawAccentLines(ImageInterface $image, array $colors): void
     {
         // Top accent line (partial)
         $image->drawLine(function (LineFactory $line) use ($colors) {
@@ -218,7 +224,8 @@ class FeaturedImageGenerator
         });
     }
 
-    private function drawCodeSnippets($image, array $snippets): void
+    /** @param list<array{string, string}> $snippets */
+    private function drawCodeSnippets(ImageInterface $image, array $snippets): void
     {
         $monoFont = $this->getMonoFont();
         $startX = 60;
@@ -280,7 +287,7 @@ class FeaturedImageGenerator
         }
     }
 
-    private function drawCategoryBadge($image, string $categoryName, string $color): void
+    private function drawCategoryBadge(ImageInterface $image, string $categoryName, string $color): void
     {
         $monoFont = $this->getMonoFont();
 
@@ -291,7 +298,7 @@ class FeaturedImageGenerator
         });
     }
 
-    private function drawBrandMark($image, string $color): void
+    private function drawBrandMark(ImageInterface $image, string $color): void
     {
         $monoFont = $this->getMonoFont();
 

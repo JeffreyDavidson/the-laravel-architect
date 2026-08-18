@@ -111,6 +111,7 @@ class OgImageGenerator
         return $image->toPng()->toString();
     }
 
+    /** @return list<string> */
     protected function wordWrap(string $text, int $maxChars): array
     {
         $words = explode(' ', $text);
