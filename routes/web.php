@@ -17,9 +17,8 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->middleware('throttle:newsletter')->name('newsletter.subscribe');
-Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'confirm'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.confirm');
-Route::post('/testimonials', [TestimonialController::class, 'store'])->middleware('throttle:testimonials')->name('testimonials.store');
+Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 Route::get('/uses', [PageController::class, 'uses'])->name('uses');
 
 // RSS & Sitemap

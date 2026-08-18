@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-#[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
+#[Unguarded]
 class Video extends Model
 {
     protected function casts(): array
@@ -32,7 +30,7 @@ class Video extends Model
         });
     }
 
-    public function getYoutubeUrlAttribute(): string
+    public function getYoutubUrlAttribute(): string
     {
         return "https://www.youtube.com/watch?v={$this->youtube_id}";
     }
@@ -67,15 +65,13 @@ class Video extends Model
         }
     }
 
-    #[Scope]
-    protected function published(Builder $query): void
+    public function scopePublished($query)
     {
-        $query->whereNotNull('published_at')->where('published_at', '<=', now());
+        return $query->whereNotNull('published_at')->where('published_at', '<=', now());
     }
 
-    #[Scope]
-    protected function featured(Builder $query): void
+    public function scopeFeatured($query)
     {
-        $query->where('is_featured', true);
+        return $query->where('is_featured', true);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
-use Illuminate\Database\Eloquent\Builder;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class BlogController extends Controller
@@ -17,9 +16,7 @@ class BlogController extends Controller
             ->latest('published_at')
             ->get();
 
-        $categories = Category::query()
-            ->withCount(['posts' => fn (Builder $query) => $query->published()])
-            ->get();
+        $categories = Category::withCount('posts')->get();
 
         seo()->for(new SEOData(
             title: 'Blog',
@@ -46,6 +43,7 @@ class BlogController extends Controller
 
         // Fill with shared-tag posts if needed
         if ($relatedPosts->count() < 3 && $post->tags->count()) {
+            $tagIds = $post->tags->pluck('id');
             $exclude = $relatedPosts->pluck('id')->push($post->id);
 
             $tagRelated = Post::published()

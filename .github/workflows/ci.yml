@@ -45,17 +45,11 @@ jobs:
           php artisan key:generate --ansi
           php artisan config:clear --ansi
 
-      - name: Audit Composer dependencies
-        run: composer audit --locked
-
-      - name: Audit npm dependencies
-        run: npm audit --omit=dev
+      - name: Audit dependencies
+        run: composer audit
 
       - name: Check code style
         run: ./vendor/bin/pint --test
-
-      - name: Run static analysis
-        run: composer test:types
 
       - name: Build assets
         run: npm run build

@@ -2,32 +2,27 @@
 
 namespace App\Models;
 
-use App\Enums\ProjectStatus;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\Models\Concerns\LogsActivity;
-use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\LogOptions;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
-#[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
-class Project extends Model
+#[Unguarded]
+class Project extends Model implements HasMedia
 {
     use HasSEO;
     use HasTags;
-    use LogsActivity;
+    use InteractsWithMedia;
 
     protected function casts(): array
     {
         return [
             'tech_stack' => 'array',
-            'is_featured' => 'boolean',
-            'status' => ProjectStatus::class,
         ];
     }
 
@@ -40,23 +35,19 @@ class Project extends Model
         });
     }
 
-    #[Scope]
-    protected function published(Builder $query): void
+    public function scopePublished($query)
     {
-        $query->where('status', ProjectStatus::Published);
+        return $query->where('status', 'published');
     }
 
-    #[Scope]
-    protected function featured(Builder $query): void
+    public function scopeFeatured($query)
     {
-        $query->where('is_featured', true);
+        return $query->where('is_featured', true);
     }
 
-    public function getFeaturedImageUrlAttribute(): ?string
+    public function registerMediaCollections(): void
     {
-        return $this->featured_image_path
-            ? Storage::disk('public')->url($this->featured_image_path)
-            : null;
+        $this->addMediaCollection('featured_image')->singleFile();
     }
 
     public function getDynamicSEOData(): SEOData
@@ -71,7 +62,6 @@ class Project extends Model
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logAll()
-            ->dontLogEmptyChanges();
+            ->logFillable();
     }
 }

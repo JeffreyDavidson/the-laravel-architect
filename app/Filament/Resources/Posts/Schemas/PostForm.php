@@ -4,10 +4,10 @@ namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PublishStatus;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -43,9 +43,8 @@ class PostForm
 
                 Section::make('Media & Metadata')
                     ->schema([
-                        FileUpload::make('featured_image_path')
-                            ->disk('public')
-                            ->directory('posts')
+                        SpatieMediaLibraryFileUpload::make('featured_image')
+                            ->collection('featured_image')
                             ->image()
                             ->columnSpanFull(),
                         Select::make('category_id')

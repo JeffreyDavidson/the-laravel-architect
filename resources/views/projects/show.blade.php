@@ -91,10 +91,10 @@
 </section>
 
 {{-- ===== FEATURED IMAGE ===== --}}
-@if($project->featured_image_url)
+@if($project->hasMedia('featured_image'))
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-8 relative z-10">
     <div class="mt-[-2rem] overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
-        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" class="w-full">
+        <img src="{{ $project->getFirstMediaUrl('featured_image') }}" alt="{{ $project->title }}" class="w-full">
     </div>
 </div>
 @endif

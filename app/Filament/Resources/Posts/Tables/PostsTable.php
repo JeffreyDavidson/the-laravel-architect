@@ -6,7 +6,7 @@ use App\Enums\PublishStatus;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -17,8 +17,8 @@ class PostsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('featured_image_path')
-                    ->disk('public')
+                SpatieMediaLibraryImageColumn::make('featured_image')
+                    ->collection('featured_image')
                     ->circular()
                     ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
                 TextColumn::make('title')
