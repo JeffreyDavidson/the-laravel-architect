@@ -41,9 +41,13 @@ class SitemapController extends Controller
 
         // Blog posts
         foreach ($posts as $post) {
+            $updatedAt = $post->updated_at;
+
             $xml .= '<url>';
             $xml .= '<loc>'.route('blog.show', $post).'</loc>';
-            $xml .= '<lastmod>'.$post->updated_at->toW3cString().'</lastmod>';
+            if ($updatedAt !== null) {
+                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
+            }
             $xml .= '<changefreq>monthly</changefreq>';
             $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
@@ -67,9 +71,13 @@ class SitemapController extends Controller
             $xml .= '</url>';
 
             foreach ($podcast->publishedEpisodes()->get() as $episode) {
+                $updatedAt = $episode->updated_at;
+
                 $xml .= '<url>';
                 $xml .= '<loc>'.route('podcast.episode', [$podcast, $episode]).'</loc>';
-                $xml .= '<lastmod>'.$episode->updated_at->toW3cString().'</lastmod>';
+                if ($updatedAt !== null) {
+                    $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
+                }
                 $xml .= '<changefreq>monthly</changefreq>';
                 $xml .= '<priority>0.6</priority>';
                 $xml .= '</url>';
@@ -78,9 +86,13 @@ class SitemapController extends Controller
 
         // Projects
         foreach ($projects as $project) {
+            $updatedAt = $project->updated_at;
+
             $xml .= '<url>';
             $xml .= '<loc>'.route('projects.show', $project).'</loc>';
-            $xml .= '<lastmod>'.$project->updated_at->toW3cString().'</lastmod>';
+            if ($updatedAt !== null) {
+                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
+            }
             $xml .= '<changefreq>monthly</changefreq>';
             $xml .= '<priority>0.6</priority>';
             $xml .= '</url>';
