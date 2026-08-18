@@ -80,12 +80,24 @@ class Post extends Model implements Publishable
 
     public function publishStatus(): PublishStatus
     {
-        return $this->getAttribute('status');
+        $status = $this->getAttribute('status');
+
+        if (! $status instanceof PublishStatus) {
+            throw new \UnexpectedValueException('Post status was not cast to PublishStatus.');
+        }
+
+        return $status;
     }
 
     public function publishedAt(): ?Carbon
     {
-        return $this->getAttribute('published_at');
+        $publishedAt = $this->getAttribute('published_at');
+
+        if ($publishedAt !== null && ! $publishedAt instanceof Carbon) {
+            throw new \UnexpectedValueException('Post published_at was not cast to Carbon.');
+        }
+
+        return $publishedAt;
     }
 
     public function getFeaturedImageUrlAttribute(): ?string
