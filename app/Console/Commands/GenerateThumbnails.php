@@ -6,7 +6,9 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
+use Intervention\Image\Geometry\Factories\RectangleFactory;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
@@ -53,13 +55,13 @@ class GenerateThumbnails extends Command
 
             // Background gradient orbs
             for ($r = 350; $r > 0; $r -= 3) {
-                $image->drawCircle(1050, 200, function ($circle) use ($r, $thumb) {
+                $image->drawCircle(1050, 200, function (CircleFactory $circle) use ($r, $thumb) {
                     $circle->radius($r);
                     $circle->background($thumb['colors'][0].'03');
                 });
             }
             for ($r = 250; $r > 0; $r -= 3) {
-                $image->drawCircle(200, 550, function ($circle) use ($r, $thumb) {
+                $image->drawCircle(200, 550, function (CircleFactory $circle) use ($r, $thumb) {
                     $circle->radius($r);
                     $circle->background($thumb['colors'][1].'03');
                 });
@@ -68,7 +70,7 @@ class GenerateThumbnails extends Command
             // Dot grid
             for ($x = 0; $x < $this->width; $x += 30) {
                 for ($y = 0; $y < $this->height; $y += 30) {
-                    $image->drawCircle($x, $y, function ($circle) {
+                    $image->drawCircle($x, $y, function (CircleFactory $circle) {
                         $circle->radius(1);
                         $circle->background('#ffffff05');
                     });
@@ -129,15 +131,15 @@ class GenerateThumbnails extends Command
             });
 
             // Decorative shapes
-            $image->drawRectangle(900, 150, function ($rect) use ($thumb) {
+            $image->drawRectangle(900, 150, function (RectangleFactory $rect) use ($thumb) {
                 $rect->size(120, 120);
                 $rect->border($thumb['colors'][0].'15', 1);
             });
-            $image->drawCircle(1050, 400, function ($circle) use ($thumb) {
+            $image->drawCircle(1050, 400, function (CircleFactory $circle) use ($thumb) {
                 $circle->radius(40);
                 $circle->border($thumb['colors'][0].'10', 1);
             });
-            $image->drawRectangle(950, 480, function ($rect) use ($thumb) {
+            $image->drawRectangle(950, 480, function (RectangleFactory $rect) use ($thumb) {
                 $rect->size(80, 80);
                 $rect->border($thumb['colors'][0].'12', 1);
             });
