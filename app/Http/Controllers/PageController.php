@@ -7,11 +7,12 @@ use App\Models\Project;
 use App\Models\Testimonial;
 use App\Models\Video;
 use App\Services\YouTubeService;
+use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PageController extends Controller
 {
-    public function home()
+    public function home(): View
     {
         $latestPosts = Post::published()
             ->with(['category', 'tags'])
@@ -44,7 +45,7 @@ class PageController extends Controller
         return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'latestYouTubeVideos', 'testimonials'));
     }
 
-    public function about()
+    public function about(): View
     {
         seo()->for(new SEOData(
             title: 'About',
@@ -54,7 +55,7 @@ class PageController extends Controller
         return view('pages.about');
     }
 
-    public function contact()
+    public function contact(): View
     {
         seo()->for(new SEOData(
             title: 'Contact',
@@ -64,7 +65,7 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
-    public function uses()
+    public function uses(): View
     {
         seo()->for(new SEOData(
             title: 'Uses',

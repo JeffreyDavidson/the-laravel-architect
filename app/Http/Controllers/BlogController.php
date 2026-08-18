@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
+use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $posts = Post::published()
             ->with(['category', 'tags', 'author'])
@@ -28,7 +29,7 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'categories'));
     }
 
-    public function show(Post $post)
+    public function show(Post $post): View
     {
         abort_unless($post->isPublished(), 404);
 
@@ -75,7 +76,7 @@ class BlogController extends Controller
         return view('blog.show', compact('post', 'relatedPosts'));
     }
 
-    public function category(Category $category)
+    public function category(Category $category): View
     {
         $posts = $category->posts()
             ->published()
@@ -91,7 +92,7 @@ class BlogController extends Controller
         return view('blog.category', compact('category', 'posts'));
     }
 
-    public function tag(Tag $tag)
+    public function tag(Tag $tag): View
     {
         $posts = Post::published()
             ->withAnyTags([$tag])
