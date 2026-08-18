@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Podcasts\Schemas;
 
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -37,8 +37,9 @@ class PodcastForm
                             ->rows(5)
                             ->helperText('Full about section for the podcast page')
                             ->columnSpanFull(),
-                        SpatieMediaLibraryFileUpload::make('cover_image')
-                            ->collection('cover_image')
+                        FileUpload::make('cover_image_path')
+                            ->disk('public')
+                            ->directory('podcasts')
                             ->image(),
                         ColorPicker::make('color')
                             ->default('#6366f1')

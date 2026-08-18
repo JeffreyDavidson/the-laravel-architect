@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatus;
 use App\Models\Project;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -24,7 +25,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        abort_unless($project->status === 'published', 404);
+        abort_unless($project->status === ProjectStatus::Published, 404);
 
         $project->load('tags');
 

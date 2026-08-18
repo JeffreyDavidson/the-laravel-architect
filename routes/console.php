@@ -2,5 +2,5 @@
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('youtube:stats')->daily();
-Schedule::command('youtube:sync')->weekly();
+Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
+Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();

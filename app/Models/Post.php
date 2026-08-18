@@ -5,25 +5,24 @@ namespace App\Models;
 use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
-#[Unguarded]
-class Post extends Model implements HasMedia, Publishable
+#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at')]
+class Post extends Model implements Publishable
 {
     use HasPublishingStatus;
     use HasSEO;
     use HasTags;
-    use InteractsWithMedia;
+    use LogsActivity;
 
     protected function casts(): array
     {
@@ -63,22 +62,11 @@ class Post extends Model implements HasMedia, Publishable
         return max(1, (int) ceil(str_word_count(strip_tags($this->content)) / 250));
     }
 
-    public function registerMediaCollections(): void
+    public function getFeaturedImageUrlAttribute(): ?string
     {
-        $this->addMediaCollection('featured_image')->singleFile();
-    }
-
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(400)
-            ->height(300)
-            ->nonQueued();
-
-        $this->addMediaConversion('og')
-            ->width(1200)
-            ->height(630)
-            ->nonQueued();
+        return $this->featured_image_path
+            ? Storage::disk('public')->url($this->featured_image_path)
+            : null;
     }
 
     public function getDynamicSEOData(): SEOData
@@ -86,7 +74,7 @@ class Post extends Model implements HasMedia, Publishable
         return new SEOData(
             title: $this->title,
             description: $this->excerpt,
-            image: $this->getFirstMediaUrl('featured_image') ?: null,
+            image: $this->featured_image_url,
         );
     }
 
@@ -94,6 +82,7 @@ class Post extends Model implements HasMedia, Publishable
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logFillable();
+            ->logAll()
+            ->dontLogEmptyChanges();
     }
 }

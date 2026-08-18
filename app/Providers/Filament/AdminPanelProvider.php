@@ -8,6 +8,7 @@ use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
 use Awcodes\Versions\VersionsPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +40,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
+            ->multiFactorAuthentication(AppAuthentication::make(), isRequired: fn (): bool => app()->isProduction())
             ->colors([
                 'primary' => Color::hex('#4a7fbf'),
                 'gray' => Color::hex('#1a1d21'),

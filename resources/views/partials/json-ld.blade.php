@@ -29,7 +29,7 @@ if (request()->routeIs('blog.show') && isset($post)) {
         ],
         'description' => $post->excerpt ?? '',
     ];
-    $featuredImage = $post->getFirstMediaUrl('featured_image');
+    $featuredImage = $post->featured_image_url;
     if ($featuredImage) {
         $article['image'] = $featuredImage;
     }

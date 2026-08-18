@@ -2,22 +2,35 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use App\Enums\TestimonialStatus;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
-#[Unguarded]
+#[Fillable('name', 'role', 'company', 'body', 'status', 'sort_order')]
 class Testimonial extends Model
 {
-    public function scopeApproved($query)
+    use LogsActivity;
+
+    protected function casts(): array
     {
-        return $query->where('status', 'approved');
+        return ['status' => TestimonialStatus::class];
+    }
+
+    #[Scope]
+    protected function approved(Builder $query): void
+    {
+        $query->where('status', TestimonialStatus::Approved);
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnlyDirty()
-            ->logFillable();
+            ->logAll()
+            ->dontLogEmptyChanges();
     }
 }

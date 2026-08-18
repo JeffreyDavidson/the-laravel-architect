@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Podcast;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class PodcastSeeder extends Seeder
 {
@@ -25,7 +26,8 @@ class PodcastSeeder extends Seeder
 
         $coverPath = public_path('images/podcast-coffee-logo.png');
         if (file_exists($coverPath)) {
-            $coffee->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
+            Storage::disk('public')->put('podcasts/podcast-coffee-logo.png', file_get_contents($coverPath));
+            $coffee->update(['cover_image_path' => 'podcasts/podcast-coffee-logo.png']);
         }
 
         $cloudy = Podcast::create([
@@ -44,7 +46,8 @@ class PodcastSeeder extends Seeder
 
         $coverPath = public_path('images/podcast-cloudy-logo.png');
         if (file_exists($coverPath)) {
-            $cloudy->addMedia($coverPath)->preservingOriginal()->toMediaCollection('cover_image');
+            Storage::disk('public')->put('podcasts/podcast-cloudy-logo.png', file_get_contents($coverPath));
+            $cloudy->update(['cover_image_path' => 'podcasts/podcast-cloudy-logo.png']);
         }
     }
 }
