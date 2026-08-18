@@ -29,6 +29,13 @@ it('uses the last known subscriber count when YouTube is unavailable', function 
     expect(YouTubeService::subscriberCount())->toBe(9876);
 });
 
+it('uses zero when the last known subscriber count is malformed', function () {
+    Cache::put('youtube.subscriber_count.last_known', ['invalid'], now()->addDay());
+    Http::fake(fn () => throw new RuntimeException('Unavailable'));
+
+    expect(YouTubeService::subscriberCount())->toBe(0);
+});
+
 it('does not replace the last known count when YouTube returns malformed data', function () {
     Cache::put('youtube.subscriber_count.last_known', 9876, now()->addDay());
     Log::spy();
@@ -101,9 +108,56 @@ it('maps video details into the application payload', function () {
 it('skips malformed video detail items', function () {
     Http::fake([
         'www.googleapis.com/youtube/v3/videos*' => Http::response([
-            'items' => [null, 'invalid', ['id' => 'missing-title']],
+            'items' => [null, 'invalid', ['id' => 'missing-title'], ['numeric-key']],
         ]),
     ]);
 
     expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBe([]);
+});
+
+it('uses zero for malformed video statistics', function () {
+    Http::fake([
+        'www.googleapis.com/youtube/v3/videos*' => Http::response([
+            'items' => [[
+                'id' => 'video-1',
+                'snippet' => ['title' => 'Malformed statistics'],
+                'statistics' => [
+                    'viewCount' => ['invalid'],
+                    'likeCount' => new stdClass,
+                    'commentCount' => null,
+                ],
+            ]],
+        ]),
+    ]);
+
+    $videos = app(YouTubeService::class)->getVideoDetails(['video-1']);
+
+    expect($videos)->toHaveCount(1)
+        ->and($videos[0]['view_count'])->toBe(0)
+        ->and($videos[0]['like_count'])->toBe(0)
+        ->and($videos[0]['comment_count'])->toBe(0);
+});
+
+it('maps valid video statistics and skips malformed items', function () {
+    Http::fake([
+        'www.googleapis.com/youtube/v3/videos*' => Http::response([
+            'items' => [
+                ['id' => 'video-1', 'statistics' => [
+                    'viewCount' => '120',
+                    'likeCount' => ['invalid'],
+                    'commentCount' => '3',
+                ]],
+                ['id' => ['invalid']],
+                ['numeric-key'],
+            ],
+        ]),
+    ]);
+
+    expect(app(YouTubeService::class)->getStatsForVideos(['video-1']))->toBe([
+        'video-1' => [
+            'view_count' => 120,
+            'like_count' => 0,
+            'comment_count' => 3,
+        ],
+    ]);
 });

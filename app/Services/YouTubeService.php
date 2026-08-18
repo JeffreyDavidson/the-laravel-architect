@@ -34,8 +34,11 @@ class YouTubeService
 
     public function __construct()
     {
-        $this->apiKey = (string) config('services.youtube.api_key');
-        $this->channelId = (string) config('services.youtube.channel_id');
+        $apiKey = config('services.youtube.api_key');
+        $channelId = config('services.youtube.channel_id');
+
+        $this->apiKey = is_string($apiKey) ? $apiKey : '';
+        $this->channelId = is_string($channelId) ? $channelId : '';
     }
 
     public static function subscriberCount(): int
@@ -75,7 +78,7 @@ class YouTubeService
                 'exception' => $exception,
             ]);
 
-            return (int) Cache::get("{$cacheKey}.last_known", 0);
+            return self::integer(Cache::get("{$cacheKey}.last_known", 0));
         }
     }
 
@@ -156,9 +159,9 @@ class YouTubeService
                         ?? data_get($item, 'snippet.thumbnails.default.url'),
                 ),
                 'duration' => $this->nullableString(data_get($item, 'contentDetails.duration')),
-                'view_count' => (int) data_get($item, 'statistics.viewCount', 0),
-                'like_count' => (int) data_get($item, 'statistics.likeCount', 0),
-                'comment_count' => (int) data_get($item, 'statistics.commentCount', 0),
+                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
                 'published_at' => $this->nullableString(data_get($item, 'snippet.publishedAt')),
             ];
         }
@@ -188,9 +191,9 @@ class YouTubeService
             }
 
             $stats[$videoId] = [
-                'view_count' => (int) data_get($item, 'statistics.viewCount', 0),
-                'like_count' => (int) data_get($item, 'statistics.likeCount', 0),
-                'comment_count' => (int) data_get($item, 'statistics.commentCount', 0),
+                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
             ];
         }
 
@@ -206,12 +209,37 @@ class YouTubeService
             return [];
         }
 
-        return array_values(array_filter($items, is_array(...)));
+        $validItems = [];
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $validItem = [];
+
+            foreach ($item as $key => $value) {
+                if (! is_string($key)) {
+                    continue 2;
+                }
+
+                $validItem[$key] = $value;
+            }
+
+            $validItems[] = $validItem;
+        }
+
+        return $validItems;
     }
 
     private function nullableString(mixed $value): ?string
     {
         return is_string($value) ? $value : null;
+    }
+
+    private static function integer(mixed $value): int
+    {
+        return is_numeric($value) ? (int) $value : 0;
     }
 
     private static function client(): PendingRequest
