@@ -29,7 +29,9 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('newsletter-confirm', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('testimonials', fn (Request $request) => Limit::perHour(3)->by($request->ip()));
 
-        if (str_starts_with((string) config('app.url'), 'https://')) {
+        $appUrl = config('app.url');
+
+        if (is_string($appUrl) && str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
 
