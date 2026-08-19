@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
-#[Fillable('name', 'slug')]
+#[Fillable('name', 'slug', 'description')]
 class Category extends Model
 {
     protected static function booted(): void
