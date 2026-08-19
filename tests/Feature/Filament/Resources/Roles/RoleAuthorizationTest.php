@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Database\Seeders\ShieldSeeder;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -41,27 +41,7 @@ it('migrates legacy permissions without losing role assignments', function () {
         ->and($role->fresh()->hasPermissionTo('ViewAny:User'))->toBeTrue();
 });
 
-it('allows a super administrator to manage roles', function () {
-    $administrator = User::factory()->create();
-    $administrator->assignRole('super_admin');
-
-    $this->actingAs($administrator)
-        ->get(RoleResource::getUrl('index'))
-        ->assertOk();
-
-    $this->get(RoleResource::getUrl('create'))
-        ->assertOk();
-});
-
-it('prevents a reviewer from managing roles', function () {
-    Role::query()->create(['name' => 'reviewer', 'guard_name' => 'web']);
-    $reviewer = User::factory()->create();
-    $reviewer->assignRole('reviewer');
-
-    $this->actingAs($reviewer)
-        ->get(RoleResource::getUrl('index'))
-        ->assertForbidden();
-
-    $this->get(RoleResource::getUrl('create'))
-        ->assertForbidden();
+it('does not register role management in the admin panel', function () {
+    expect(Filament::getPanel('admin')->getResources())
+        ->not->toContain(RoleResource::class);
 });
