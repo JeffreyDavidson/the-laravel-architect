@@ -17,7 +17,6 @@
         "intervention/image": "^3.0",
         "laravel/framework": "^13.26",
         "laravel/tinker": "^3.0",
-        "pxlrbt/filament-activity-log": "^3.1",
         "ralphjsmit/laravel-filament-seo": "^2.2",
         "ralphjsmit/laravel-seo": "^1.8",
         "resend/resend-laravel": "^1.3",
