@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PublishStatus;
+use App\Models\Category;
 use App\Models\Post;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -61,7 +62,8 @@ class PostForm
                                 TextInput::make('slug')
                                     ->required()
                                     ->maxLength(255)
-                                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/'),
+                                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
+                                    ->unique(Category::class),
                             ]),
                         SpatieTagsInput::make('tags'),
                     ])->columns(2),
