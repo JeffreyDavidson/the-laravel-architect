@@ -27,3 +27,14 @@ it('rejects a non-administrator at the admin panel boundary', function () {
         ->get($panel->getUrl())
         ->assertForbidden();
 });
+
+it('allows an administrator to manage their profile', function () {
+    $administrator = User::factory()->create(['is_admin' => true]);
+    $profileUrl = Filament::getPanel('admin')->getProfileUrl();
+
+    expect($profileUrl)->not->toBeNull();
+
+    $this->actingAs($administrator)
+        ->get($profileUrl)
+        ->assertOk();
+});
