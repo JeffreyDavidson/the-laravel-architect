@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Illuminate\Database\Seeder;
-use LogicException;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -53,18 +52,6 @@ class ShieldSeeder extends Seeder
 
     private function permissionName(string $action, string $subject): string
     {
-        $separator = config('filament-shield.permissions.separator');
-        $case = config('filament-shield.permissions.case');
-
-        if (! is_string($separator) || ! is_string($case)) {
-            throw new LogicException('Filament Shield permission formatting must be configured with strings.');
-        }
-
-        return FilamentShield::defaultPermissionKeyBuilder(
-            affix: $action,
-            separator: $separator,
-            subject: $subject,
-            case: $case,
-        );
+        return Str::pascal($action).':'.Str::pascal($subject);
     }
 }
