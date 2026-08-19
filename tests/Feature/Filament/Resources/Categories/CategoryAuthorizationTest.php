@@ -7,8 +7,9 @@ use App\Models\Post;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
@@ -30,7 +31,7 @@ beforeEach(function () {
 });
 
 it('allows a super administrator to manage categories', function () {
-    $administrator = User::factory()->create();
+    $administrator = User::factory()->create(['is_admin' => true]);
     $administrator->assignRole('super_admin');
 
     expect($administrator->can('viewAny', Category::class))->toBeTrue()
@@ -50,7 +51,7 @@ it('allows a super administrator to manage categories', function () {
         ->get(CategoryResource::getUrl('index'))
         ->assertOk();
 
-    Livewire::test(EditPost::class, ['record' => $this->post->getRouteKey()])
+    livewire(EditPost::class, ['record' => $this->post->getRouteKey()])
         ->assertFormComponentActionVisible('category_id', 'createOption');
 });
 

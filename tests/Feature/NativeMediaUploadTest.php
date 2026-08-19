@@ -12,7 +12,8 @@ use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
@@ -20,13 +21,13 @@ beforeEach(function () {
     Storage::fake('public');
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('stores a validated image through the Filament project form', function () {
-    Livewire::test(CreateProject::class)
+    livewire(CreateProject::class)
         ->fillForm([
             'title' => 'Project',
             'slug' => 'project',
@@ -44,7 +45,7 @@ it('stores a validated image through the Filament project form', function () {
 });
 
 it('rejects an oversized image through the Filament project form', function () {
-    Livewire::test(CreateProject::class)
+    livewire(CreateProject::class)
         ->fillForm([
             'title' => 'Project',
             'slug' => 'project',
@@ -65,7 +66,7 @@ it('stores validated audio through the Filament episode form', function () {
         'description' => 'Description',
     ]);
 
-    Livewire::test(CreateEpisode::class)
+    livewire(CreateEpisode::class)
         ->fillForm([
             'podcast_id' => $podcast->id,
             'title' => 'Episode',
@@ -90,7 +91,7 @@ it('rejects non-audio files through the Filament episode form', function () {
         'description' => 'Description',
     ]);
 
-    Livewire::test(CreateEpisode::class)
+    livewire(CreateEpisode::class)
         ->fillForm([
             'podcast_id' => $podcast->id,
             'title' => 'Episode',

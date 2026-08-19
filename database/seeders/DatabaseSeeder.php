@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Str::random(64),
             ]
         );
+        $jeffrey->forceFill(['is_admin' => true])->save();
         $jeffrey->assignRole('super_admin');
 
         $this->call([

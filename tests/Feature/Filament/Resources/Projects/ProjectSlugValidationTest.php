@@ -7,20 +7,21 @@ use App\Models\Project;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('rejects non-normalized project slugs when creating a project', function (string $slug) {
-    Livewire::test(CreateProject::class)
+    livewire(CreateProject::class)
         ->fillForm([
             'title' => 'Project title',
             'slug' => $slug,
@@ -41,7 +42,7 @@ it('rejects non-normalized project slugs when creating a project', function (str
 ]);
 
 it('accepts a normalized project slug when creating a project', function () {
-    Livewire::test(CreateProject::class)
+    livewire(CreateProject::class)
         ->fillForm([
             'title' => 'Project title',
             'slug' => 'project-title-2',
@@ -62,7 +63,7 @@ it('rejects a non-normalized project slug when editing a project', function () {
         'status' => ProjectStatus::Draft,
     ]);
 
-    Livewire::test(EditProject::class, ['record' => $project->getRouteKey()])
+    livewire(EditProject::class, ['record' => $project->getRouteKey()])
         ->fillForm(['slug' => '../project-title'])
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);

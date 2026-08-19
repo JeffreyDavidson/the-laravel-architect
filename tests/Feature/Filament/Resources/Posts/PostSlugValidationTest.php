@@ -8,20 +8,21 @@ use App\Models\Post;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('rejects non-normalized post slugs when creating a post', function (string $slug) {
-    Livewire::test(CreatePost::class)
+    livewire(CreatePost::class)
         ->fillForm([
             'title' => 'Post title',
             'slug' => $slug,
@@ -42,7 +43,7 @@ it('rejects non-normalized post slugs when creating a post', function (string $s
 ]);
 
 it('accepts a normalized post slug when creating a post', function () {
-    Livewire::test(CreatePost::class)
+    livewire(CreatePost::class)
         ->fillForm([
             'title' => 'Post title',
             'slug' => 'post-title-2',
@@ -64,7 +65,7 @@ it('rejects a non-normalized post slug when editing a post', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    Livewire::test(EditPost::class, ['record' => $post->getRouteKey()])
+    livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['slug' => '../post-title'])
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);
@@ -73,7 +74,7 @@ it('rejects a non-normalized post slug when editing a post', function () {
 });
 
 it('rejects a non-normalized slug when creating a category inline', function () {
-    Livewire::test(CreatePost::class)
+    livewire(CreatePost::class)
         ->callFormComponentAction('category_id', 'createOption', [
             'name' => 'Category name',
             'slug' => '../category-name',
