@@ -1,10 +1,13 @@
 <?php
 
+use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
@@ -45,3 +48,14 @@ it('prevents non-administrator panel roles from managing users', function (strin
     $this->get(UserResource::getUrl('edit', ['record' => $user]))
         ->assertForbidden();
 })->with(['reviewer', 'panel_user']);
+
+it('does not expose role assignment in user management', function () {
+    $administrator = User::factory()->create();
+    $administrator->assignRole('super_admin');
+    $this->actingAs($administrator);
+
+    livewire(EditUser::class, ['record' => $administrator->getRouteKey()])
+        ->assertFormFieldExists('name')
+        ->assertFormFieldExists('email')
+        ->assertFormFieldDoesNotExist('roles');
+});

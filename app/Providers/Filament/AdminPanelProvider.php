@@ -7,7 +7,6 @@ use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
 use Awcodes\Versions\VersionsPlugin;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -65,7 +64,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Newsletter')->icon(Heroicon::OutlinedEnvelope),
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
                 FilamentSpatieLaravelBackupPlugin::make(),
                 QuickCreatePlugin::make()
                     ->excludes([

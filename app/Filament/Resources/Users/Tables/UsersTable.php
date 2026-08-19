@@ -18,13 +18,6 @@ class UsersTable
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('roles.name')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'super_admin' => 'danger',
-                        'reviewer' => 'info',
-                        default => 'gray',
-                    }),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
