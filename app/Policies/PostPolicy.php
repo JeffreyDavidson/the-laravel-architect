@@ -12,61 +12,61 @@ class PostPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('ViewAny:Post');
+        return $user->is_admin;
     }
 
     public function view(User $user, Post $post): bool
     {
-        return $user->can('View:Post');
+        return $user->is_admin;
     }
 
     public function create(User $user): bool
     {
-        return $user->can('Create:Post');
+        return $user->is_admin;
     }
 
     public function update(User $user, Post $post): bool
     {
-        return $user->can('Update:Post');
+        return $user->is_admin;
     }
 
     public function delete(User $user, Post $post): bool
     {
-        return $user->can('Delete:Post');
+        return $user->is_admin;
     }
 
     public function deleteAny(User $user): bool
     {
-        return $user->can('DeleteAny:Post');
+        return $user->is_admin;
     }
 
     public function restore(User $user, Post $post): bool
     {
-        return $user->can('Restore:Post');
+        return $user->is_admin;
     }
 
     public function restoreAny(User $user): bool
     {
-        return $user->can('RestoreAny:Post');
+        return $user->is_admin;
     }
 
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->can('ForceDelete:Post');
+        return $user->is_admin;
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('ForceDeleteAny:Post');
+        return $user->is_admin;
     }
 
     public function replicate(User $user, Post $post): bool
     {
-        return $user->can('Replicate:Post');
+        return $user->is_admin;
     }
 
     public function reorder(User $user): bool
     {
-        return $user->can('Reorder:Post');
+        return $user->is_admin;
     }
 }

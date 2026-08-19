@@ -3,15 +3,12 @@
 use App\Filament\Resources\Posts\PostResource;
 use App\Models\Post;
 use App\Models\User;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(ShieldSeeder::class);
-
     $this->author = User::factory()->create();
     $this->post = Post::query()->create([
         'title' => 'Authorization boundaries',
@@ -23,7 +20,6 @@ beforeEach(function () {
 
 it('allows a super administrator to manage posts', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
-    $administrator->assignRole('super_admin');
 
     expect($administrator->can('viewAny', Post::class))->toBeTrue()
         ->and($administrator->can('view', $this->post))->toBeTrue()

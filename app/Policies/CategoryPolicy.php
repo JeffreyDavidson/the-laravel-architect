@@ -12,61 +12,61 @@ class CategoryPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('ViewAny:Category');
+        return $user->is_admin;
     }
 
     public function view(User $user, Category $category): bool
     {
-        return $user->can('View:Category');
+        return $user->is_admin;
     }
 
     public function create(User $user): bool
     {
-        return $user->can('Create:Category');
+        return $user->is_admin;
     }
 
     public function update(User $user, Category $category): bool
     {
-        return $user->can('Update:Category');
+        return $user->is_admin;
     }
 
     public function delete(User $user, Category $category): bool
     {
-        return $user->can('Delete:Category');
+        return $user->is_admin;
     }
 
     public function deleteAny(User $user): bool
     {
-        return $user->can('DeleteAny:Category');
+        return $user->is_admin;
     }
 
     public function restore(User $user, Category $category): bool
     {
-        return $user->can('Restore:Category');
+        return $user->is_admin;
     }
 
     public function restoreAny(User $user): bool
     {
-        return $user->can('RestoreAny:Category');
+        return $user->is_admin;
     }
 
     public function forceDelete(User $user, Category $category): bool
     {
-        return $user->can('ForceDelete:Category');
+        return $user->is_admin;
     }
 
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('ForceDeleteAny:Category');
+        return $user->is_admin;
     }
 
     public function replicate(User $user, Category $category): bool
     {
-        return $user->can('Replicate:Category');
+        return $user->is_admin;
     }
 
     public function reorder(User $user): bool
     {
-        return $user->can('Reorder:Category');
+        return $user->is_admin;
     }
 }

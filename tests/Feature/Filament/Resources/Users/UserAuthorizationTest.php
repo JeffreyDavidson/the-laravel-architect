@@ -3,7 +3,6 @@
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 
@@ -11,13 +10,8 @@ use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
-    $this->seed(ShieldSeeder::class);
-});
-
 it('allows a super administrator to manage users', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
-    $administrator->assignRole('super_admin');
     $user = User::factory()->create();
 
     $this->actingAs($administrator)
@@ -51,7 +45,6 @@ it('prevents non-administrator panel roles from managing users', function (strin
 
 it('does not expose role assignment in user management', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
-    $administrator->assignRole('super_admin');
     $this->actingAs($administrator);
 
     livewire(EditUser::class, ['record' => $administrator->getRouteKey()])

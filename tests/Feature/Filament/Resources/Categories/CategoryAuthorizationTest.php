@@ -5,7 +5,6 @@ use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 
@@ -14,8 +13,6 @@ use function Pest\Livewire\livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(ShieldSeeder::class);
-
     $this->author = User::factory()->create();
     $this->category = Category::query()->create([
         'name' => 'Architecture',
@@ -32,7 +29,6 @@ beforeEach(function () {
 
 it('allows a super administrator to manage categories', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
-    $administrator->assignRole('super_admin');
 
     expect($administrator->can('viewAny', Category::class))->toBeTrue()
         ->and($administrator->can('view', $this->category))->toBeTrue()
