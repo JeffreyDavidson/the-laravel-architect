@@ -6,7 +6,8 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
@@ -35,7 +36,7 @@ it('renders the publishing and project statistics', function () {
         'description' => 'Description',
     ]);
 
-    Livewire::test(WelcomeWidget::class)
+    livewire(WelcomeWidget::class)
         ->assertSee('4')
         ->assertSee('2 published / 1 drafts')
         ->assertSee('2')
