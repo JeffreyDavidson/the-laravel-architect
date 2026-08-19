@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Services\OgImageGenerator;
+use App\Services\OgImageCache;
 use Illuminate\Http\Response;
 
 class OgImageController extends Controller
 {
-    public function __invoke(Post $post, OgImageGenerator $generator): Response
+    public function __invoke(Post $post, OgImageCache $cache): Response
     {
         abort_unless($post->isPublished(), 404);
 
-        $png = $generator->generate($post);
+        $png = $cache->generate($post);
 
         return response($png, 200, [
             'Content-Type' => 'image/png',

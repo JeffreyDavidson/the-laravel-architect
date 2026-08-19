@@ -3,9 +3,27 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+use UnexpectedValueException;
 
+/**
+ * @phpstan-type VideoPayload array{
+ *     youtube_id: string,
+ *     title: string,
+ *     description: string|null,
+ *     thumbnail_url: string|null,
+ *     duration: string|null,
+ *     view_count: int,
+ *     like_count: int,
+ *     comment_count: int,
+ *     published_at: string|null
+ * }
+ * @phpstan-type VideoStats array{view_count: int, like_count: int, comment_count: int}
+ */
 class YouTubeService
 {
     protected string $apiKey;
@@ -16,16 +34,21 @@ class YouTubeService
 
     public function __construct()
     {
-        $this->apiKey = config('services.youtube.api_key');
-        $this->channelId = config('services.youtube.channel_id');
+        $apiKey = config('services.youtube.api_key');
+        $channelId = config('services.youtube.channel_id');
+
+        $this->apiKey = is_string($apiKey) ? $apiKey : '';
+        $this->channelId = is_string($channelId) ? $channelId : '';
     }
 
     public static function subscriberCount(): int
     {
         $cacheKey = 'youtube.subscriber_count';
 
-        if (Cache::has($cacheKey)) {
-            return (int) Cache::get($cacheKey);
+        $cachedCount = Cache::get($cacheKey);
+
+        if (is_numeric($cachedCount)) {
+            return (int) $cachedCount;
         }
 
         try {
@@ -38,58 +61,34 @@ class YouTubeService
                 'part' => 'statistics',
             ]);
 
-            $count = (int) ($response->json('items.0.statistics.subscriberCount') ?? 0);
+            $subscriberCount = $response->json('items.0.statistics.subscriberCount');
+
+            if (! is_numeric($subscriberCount)) {
+                throw new UnexpectedValueException('YouTube returned no subscriber count.');
+            }
+
+            $count = (int) $subscriberCount;
 
             Cache::put($cacheKey, $count, now()->addHours(6));
             Cache::put("{$cacheKey}.last_known", $count, now()->addDays(30));
 
             return $count;
-        } catch (\Exception) {
-            return (int) Cache::get("{$cacheKey}.last_known", 0);
+        } catch (Throwable $exception) {
+            Log::warning('Unable to refresh the YouTube subscriber count.', [
+                'exception' => $exception,
+            ]);
+
+            return self::integer(Cache::get("{$cacheKey}.last_known", 0));
         }
     }
 
-    public static function upcomingVideos(): array
-    {
-        return [
-            [
-                'variant' => 'testing',
-                'thumbnail' => '/images/yt-thumb-testing.png',
-                'imageAlt' => 'Testing Like You Mean It',
-                'badge' => 'Testing',
-                'previewTitle' => ['Testing Like', 'You Mean It'],
-                'previewSubtitle' => '3 Suites, Zero Excuses',
-                'duration' => '12:34',
-                'title' => 'Testing Like You Mean It: 3 Suites, Zero Excuses',
-                'meta' => 'The Laravel Architect · Coming Mar 2',
-            ],
-            [
-                'variant' => 'saas',
-                'thumbnail' => '/images/yt-thumb-saas.png',
-                'imageAlt' => 'Build a SaaS from Scratch',
-                'badge' => 'Full Build',
-                'previewTitle' => ['Build a SaaS', 'from Scratch'],
-                'previewSubtitle' => 'Laravel & Filament',
-                'duration' => '18:47',
-                'title' => 'Build a SaaS from Scratch with Laravel & Filament',
-                'meta' => 'The Laravel Architect · Coming Mar 9',
-            ],
-            [
-                'variant' => 'codeigniter',
-                'thumbnail' => '/images/yt-thumb-codeigniter.png',
-                'imageAlt' => 'Why I Left CodeIgniter',
-                'badge' => 'Story',
-                'previewTitle' => ['Why I Left', 'CodeIgniter'],
-                'previewSubtitle' => 'And Never Looked Back',
-                'duration' => '24:12',
-                'title' => 'Why I Left CodeIgniter (And Never Looked Back)',
-                'meta' => 'The Laravel Architect · Coming Mar 16',
-            ],
-        ];
-    }
-
+    /** @return list<VideoPayload> */
     public function getChannelVideos(int $maxResults = 50): array
     {
+        if ($maxResults < 1) {
+            return [];
+        }
+
         $videos = [];
         $pageToken = null;
 
@@ -104,24 +103,34 @@ class YouTubeService
                 'pageToken' => $pageToken,
             ]));
 
-            if ($response->failed()) {
-                throw new \RuntimeException('YouTube API error: '.$response->body());
-            }
-
             $data = $response->json();
-            $videoIds = collect($data['items'] ?? [])->pluck('id.videoId')->filter()->toArray();
+            $data = is_array($data) ? $data : [];
+            $videoIds = [];
+
+            foreach ($this->responseItems($response) as $item) {
+                $videoId = data_get($item, 'id.videoId');
+
+                if (is_string($videoId) && $videoId !== '') {
+                    $videoIds[] = $videoId;
+                }
+            }
 
             if (! empty($videoIds)) {
                 $details = $this->getVideoDetails($videoIds);
                 $videos = array_merge($videos, $details);
             }
 
-            $pageToken = $data['nextPageToken'] ?? null;
+            $nextPageToken = $data['nextPageToken'] ?? null;
+            $pageToken = is_string($nextPageToken) && $nextPageToken !== '' ? $nextPageToken : null;
         } while ($pageToken && count($videos) < $maxResults);
 
         return $videos;
     }
 
+    /**
+     * @param  list<string>  $videoIds
+     * @return list<VideoPayload>
+     */
     public function getVideoDetails(array $videoIds): array
     {
         $response = self::client()->get("{$this->baseUrl}/videos", [
@@ -130,28 +139,40 @@ class YouTubeService
             'part' => 'snippet,contentDetails,statistics',
         ]);
 
-        if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: '.$response->body());
+        $videos = [];
+
+        foreach ($this->responseItems($response) as $item) {
+            $videoId = data_get($item, 'id');
+            $title = data_get($item, 'snippet.title');
+
+            if (! is_string($videoId) || ! is_string($title)) {
+                continue;
+            }
+
+            $videos[] = [
+                'youtube_id' => $videoId,
+                'title' => $title,
+                'description' => $this->nullableString(data_get($item, 'snippet.description')),
+                'thumbnail_url' => $this->nullableString(
+                    data_get($item, 'snippet.thumbnails.high.url')
+                        ?? data_get($item, 'snippet.thumbnails.medium.url')
+                        ?? data_get($item, 'snippet.thumbnails.default.url'),
+                ),
+                'duration' => $this->nullableString(data_get($item, 'contentDetails.duration')),
+                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
+                'published_at' => $this->nullableString(data_get($item, 'snippet.publishedAt')),
+            ];
         }
 
-        return collect($response->json('items', []))->map(function ($item) {
-            return [
-                'youtube_id' => $item['id'],
-                'title' => $item['snippet']['title'],
-                'description' => $item['snippet']['description'] ?? null,
-                'thumbnail_url' => $item['snippet']['thumbnails']['high']['url']
-                    ?? $item['snippet']['thumbnails']['medium']['url']
-                    ?? $item['snippet']['thumbnails']['default']['url']
-                    ?? null,
-                'duration' => $item['contentDetails']['duration'] ?? null,
-                'view_count' => (int) ($item['statistics']['viewCount'] ?? 0),
-                'like_count' => (int) ($item['statistics']['likeCount'] ?? 0),
-                'comment_count' => (int) ($item['statistics']['commentCount'] ?? 0),
-                'published_at' => $item['snippet']['publishedAt'] ?? null,
-            ];
-        })->toArray();
+        return $videos;
     }
 
+    /**
+     * @param  list<string>  $videoIds
+     * @return array<string, VideoStats>
+     */
     public function getStatsForVideos(array $videoIds): array
     {
         $response = self::client()->get("{$this->baseUrl}/videos", [
@@ -160,17 +181,65 @@ class YouTubeService
             'part' => 'statistics',
         ]);
 
-        if ($response->failed()) {
-            throw new \RuntimeException('YouTube API error: '.$response->body());
+        $stats = [];
+
+        foreach ($this->responseItems($response) as $item) {
+            $videoId = data_get($item, 'id');
+
+            if (! is_string($videoId)) {
+                continue;
+            }
+
+            $stats[$videoId] = [
+                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
+            ];
         }
 
-        return collect($response->json('items', []))->mapWithKeys(function ($item) {
-            return [$item['id'] => [
-                'view_count' => (int) ($item['statistics']['viewCount'] ?? 0),
-                'like_count' => (int) ($item['statistics']['likeCount'] ?? 0),
-                'comment_count' => (int) ($item['statistics']['commentCount'] ?? 0),
-            ]];
-        })->toArray();
+        return $stats;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function responseItems(Response $response): array
+    {
+        $items = $response->json('items', []);
+
+        if (! is_array($items)) {
+            return [];
+        }
+
+        $validItems = [];
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $validItem = [];
+
+            foreach ($item as $key => $value) {
+                if (! is_string($key)) {
+                    continue 2;
+                }
+
+                $validItem[$key] = $value;
+            }
+
+            $validItems[] = $validItem;
+        }
+
+        return $validItems;
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
+    }
+
+    private static function integer(mixed $value): int
+    {
+        return is_numeric($value) ? (int) $value : 0;
     }
 
     private static function client(): PendingRequest

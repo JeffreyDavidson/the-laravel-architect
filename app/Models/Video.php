@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+/** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
 class Video extends Model
 {
@@ -67,12 +69,14 @@ class Video extends Model
         }
     }
 
+    /** @param Builder<Video> $query */
     #[Scope]
     protected function published(Builder $query): void
     {
         $query->whereNotNull('published_at')->where('published_at', '<=', now());
     }
 
+    /** @param Builder<Video> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {

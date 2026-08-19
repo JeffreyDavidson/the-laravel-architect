@@ -7,7 +7,6 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class BlogSeeder extends Seeder
@@ -19,14 +18,14 @@ class BlogSeeder extends Seeder
             ['email' => 'jeffrey@thelaravelarchitect.com'],
             [
                 'name' => 'Jeffrey Davidson',
-                'password' => Hash::make('temporary-password-change-me'),
+                'password' => Str::random(64),
             ]
         );
 
         // Create categories
-        $personal = Category::firstOrCreate(['name' => 'Personal'], ['slug' => 'personal', 'description' => 'Personal stories, reflections, and life updates.']);
-        $career = Category::firstOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
-        $laravel = Category::firstOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
+        $personal = Category::updateOrCreate(['name' => 'Personal'], ['slug' => 'personal', 'description' => 'Personal stories, reflections, and life updates.']);
+        $career = Category::updateOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
+        $laravel = Category::updateOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
 
         // Create tags
         $tags = collect([

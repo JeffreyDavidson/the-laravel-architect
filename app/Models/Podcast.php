@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PublishStatus;
+use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +21,7 @@ class Podcast extends Model
 {
     use HasSEO;
     use LogsActivity;
+    use ManagesStoredMedia;
 
     protected static function booted(): void
     {
@@ -28,13 +30,21 @@ class Podcast extends Model
                 $podcast->slug = Str::slug($podcast->name);
             }
         });
+
+        static::deleting(function (Podcast $podcast): void {
+            $podcast->episodes()->each(
+                fn (Episode $episode) => $episode->deleteStoredMediaFiles(),
+            );
+        });
     }
 
+    /** @return HasMany<Episode, $this> */
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);
     }
 
+    /** @return HasMany<Episode, $this> */
     public function publishedEpisodes(): HasMany
     {
         return $this->episodes()
@@ -42,11 +52,12 @@ class Podcast extends Model
             ->where('published_at', '<=', now());
     }
 
-    public function latestEpisode()
+    public function latestEpisode(): ?Episode
     {
         return $this->publishedEpisodes()->latest('published_at')->first();
     }
 
+    /** @param Builder<Podcast> $query */
     #[Scope]
     protected function active(Builder $query): void
     {
@@ -83,5 +94,10 @@ class Podcast extends Model
             ->logOnlyDirty()
             ->logAll()
             ->dontLogEmptyChanges();
+    }
+
+    protected function storedMediaAttributes(): array
+    {
+        return ['cover_image_path'];
     }
 }

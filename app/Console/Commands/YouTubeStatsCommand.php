@@ -24,14 +24,22 @@ class YouTubeStatsCommand extends Command
 
         $this->info("Updating stats for {$videos->count()} videos...");
 
-        // YouTube API allows up to 50 IDs per request
-        $chunks = $videos->pluck('youtube_id')->chunk(50);
+        $videoIds = [];
+
+        foreach ($videos as $video) {
+            $videoId = $video->getAttribute('youtube_id');
+
+            if (is_string($videoId)) {
+                $videoIds[] = $videoId;
+            }
+        }
 
         $updated = 0;
 
-        foreach ($chunks as $chunk) {
+        // YouTube API allows up to 50 IDs per request
+        foreach (array_chunk($videoIds, 50) as $chunk) {
             try {
-                $stats = $youtube->getStatsForVideos($chunk->toArray());
+                $stats = $youtube->getStatsForVideos($chunk);
             } catch (\RuntimeException $e) {
                 $this->error($e->getMessage());
 

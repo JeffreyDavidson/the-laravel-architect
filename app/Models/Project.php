@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
+use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,7 @@ class Project extends Model
     use HasSEO;
     use HasTags;
     use LogsActivity;
+    use ManagesStoredMedia;
 
     protected function casts(): array
     {
@@ -40,12 +42,14 @@ class Project extends Model
         });
     }
 
+    /** @param Builder<Project> $query */
     #[Scope]
     protected function published(Builder $query): void
     {
         $query->where('status', ProjectStatus::Published);
     }
 
+    /** @param Builder<Project> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {
@@ -73,5 +77,10 @@ class Project extends Model
             ->logOnlyDirty()
             ->logAll()
             ->dontLogEmptyChanges();
+    }
+
+    protected function storedMediaAttributes(): array
+    {
+        return ['featured_image_path'];
     }
 }

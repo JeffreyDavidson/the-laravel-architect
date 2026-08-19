@@ -1455,7 +1455,7 @@
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                 </span>
-                Launching March 2
+                Laravel videos
             </div>
             <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 cursor-default">
                 Watch on <span class="glitch-text inline-block text-red-500">YouTube</span>
@@ -1463,37 +1463,6 @@
             <p class="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
                 Tutorials, live coding, and honest conversations about building with Laravel.
             </p>
-
-            {{-- Countdown timer --}}
-            <div class="flex items-center justify-center gap-4 mt-8" x-data="countdown()" x-init="start()">
-                <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
-                        <span x-text="days">00</span>
-                    </div>
-                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Days</p>
-                </div>
-                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
-                <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
-                        <span x-text="hours">00</span>
-                    </div>
-                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Hours</p>
-                </div>
-                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
-                <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-gray-900 dark:text-white [--countdown-glow:0.05]">
-                        <span x-text="minutes">00</span>
-                    </div>
-                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Min</p>
-                </div>
-                <span class="text-red-500/40 text-2xl font-bold mt-[-1rem]">:</span>
-                <div class="text-center">
-                    <div class="countdown-digit w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gray-100 dark:bg-[#111111] border border-red-500/20 flex items-center justify-center text-xl sm:text-2xl font-mono font-bold text-red-500 dark:text-red-400 [--countdown-glow:0.08]">
-                        <span x-text="seconds">00</span>
-                    </div>
-                    <p class="text-[10px] text-gray-600 uppercase tracking-widest mt-2">Sec</p>
-                </div>
-            </div>
         </div>
 
         {{-- Main video preview --}}
@@ -1507,7 +1476,7 @@
                         <div class="yt-red-glow absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[80px]"></div>
                         <img src="/images/logo-color.svg" alt="" class="w-20 h-20 opacity-60 mb-4 relative z-10">
                         <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
-                        <p class="text-gray-500 text-xs mt-1 relative z-10">Channel Trailer · 2:47</p>
+                        <p class="text-gray-500 text-xs mt-1 relative z-10">Tutorials, live coding, and architecture</p>
                     </div>
 
                     {{-- Desktop: Split screen layout --}}
@@ -1597,7 +1566,7 @@
                                 <span class="text-green-500">●</span>
                                 <span>PHP 8.4</span>
                                 <span class="text-[#1e2a3a]">|</span>
-                                <span>Laravel 12</span>
+                                <span>Laravel 13</span>
                                 <span class="text-[#1e2a3a]">|</span>
                                 <span class="text-green-400/60">✓ 42 tests passing</span>
                             </div>
@@ -1608,11 +1577,6 @@
                     <div class="absolute top-4 left-4 hidden md:flex items-center gap-2 z-10">
                         <span class="rec-dot w-2.5 h-2.5 rounded-full bg-red-600"></span>
                         <span class="text-red-500 text-[11px] font-mono font-bold tracking-wider">REC</span>
-                    </div>
-
-                    {{-- Coming Soon badge --}}
-                    <div class="absolute top-4 right-4 z-10">
-                        <x-coming-soon-badge class="yt-coming-soon backdrop-blur-sm" />
                     </div>
 
                     {{-- Center play button with rings --}}
@@ -1632,22 +1596,13 @@
                             <div class="flex items-center gap-2 md:gap-3 min-w-0">
                                 <img src="/images/logo-color.svg" alt="" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
                                 <div class="min-w-0">
-                                    <p class="text-white font-bold text-xs md:text-sm truncate">Welcome to The Laravel Architect</p>
-                                    <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">The Laravel Architect · Channel Trailer</p>
+                                    <p class="text-white font-bold text-xs md:text-sm truncate">The Laravel Architect on YouTube</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">Tutorials, live coding, and architecture</p>
                                 </div>
                             </div>
                             <span class="yt-subscribe px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
                                 Subscribe
                             </span>
-                        </div>
-
-                        {{-- Progress bar (desktop only) --}}
-                        <div class="mt-3 hidden md:flex items-center gap-3">
-                            <span class="text-[10px] text-gray-500 font-mono">0:00</span>
-                            <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden yt-progress-track">
-                                <div class="h-full w-0 rounded-full bg-red-600"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 font-mono">2:47</span>
                         </div>
                     </div>
                 </div>
@@ -1663,51 +1618,21 @@
             <div class="h-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
                 <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="--subscriber-progress: {{ min($youtubeSubscribers, 100) }}%;"></div>
             </div>
-            <p class="text-[10px] text-gray-600 mt-2 text-center">Help us hit 100 subscribers before launch day 🚀</p>
+            <p class="text-[10px] text-gray-600 mt-2 text-center">Subscribe for practical Laravel videos and architecture discussions.</p>
         </div>
 
-        {{-- Upcoming video thumbnails --}}
-        <div class="mt-12">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Coming to the Channel</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                @foreach($upcomingVideos as $video)
-                    <x-home.youtube-thumbnail-card
-                        :variant="$video['variant']"
-                        :thumbnail="$video['thumbnail']"
-                        :image-alt="$video['imageAlt']"
-                        :badge="$video['badge']"
-                        :preview-title="$video['previewTitle']"
-                        :preview-subtitle="$video['previewSubtitle']"
-                        :duration="$video['duration']"
-                        :title="$video['title']"
-                        :meta="$video['meta']"
-                    />
-                @endforeach
+        @if($latestYouTubeVideos->isNotEmpty())
+            <div class="mt-12">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Latest Videos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    @foreach($latestYouTubeVideos as $video)
+                        <x-home.youtube-thumbnail-card :video="$video" />
+                    @endforeach
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 </section>
-
-<script>
-function countdown() {
-    return {
-        days: '00', hours: '00', minutes: '00', seconds: '00',
-        start() {
-            const target = new Date('2026-03-02T12:00:00-05:00').getTime();
-            const tick = () => {
-                const now = Date.now();
-                const diff = Math.max(0, target - now);
-                this.days = String(Math.floor(diff / 86400000)).padStart(2, '0');
-                this.hours = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-                this.minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-                this.seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-            };
-            tick();
-            setInterval(tick, 1000);
-        }
-    };
-}
-</script>
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>

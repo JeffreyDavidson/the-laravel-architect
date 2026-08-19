@@ -28,9 +28,11 @@ class ProjectForm
                         TextInput::make('title')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
                             ->required()
+                            ->maxLength(255)
+                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                             ->unique(ignoreRecord: true),
                         Textarea::make('description')
                             ->required()
@@ -53,7 +55,8 @@ class ProjectForm
                         FileUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('projects')
-                            ->image(),
+                            ->image()
+                            ->maxSize(10240),
                         TagsInput::make('tech_stack')
                             ->helperText('e.g. Laravel, Vue.js, Tailwind CSS'),
                     ])->columns(2),

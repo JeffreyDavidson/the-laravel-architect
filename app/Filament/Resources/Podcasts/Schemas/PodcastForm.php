@@ -24,9 +24,11 @@ class PodcastForm
                         TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
                             ->required()
+                            ->maxLength(255)
+                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                             ->unique(ignoreRecord: true),
                         Textarea::make('description')
                             ->required()
@@ -40,7 +42,8 @@ class PodcastForm
                         FileUpload::make('cover_image_path')
                             ->disk('public')
                             ->directory('podcasts')
-                            ->image(),
+                            ->image()
+                            ->maxSize(10240),
                         ColorPicker::make('color')
                             ->default('#6366f1')
                             ->helperText('Brand color for this show'),

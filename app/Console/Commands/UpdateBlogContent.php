@@ -10,10 +10,22 @@ use Illuminate\Console\Command;
 #[Description('Re-run BlogSeeder to update post content (uses updateOrCreate, safe to run)')]
 class UpdateBlogContent extends Command
 {
-    public function handle(): void
+    public function handle(): int
     {
         $this->info('Refreshing blog post content from seeder...');
-        $this->call('db:seed', ['--class' => 'Database\\Seeders\\BlogSeeder', '--force' => true]);
+        $exitCode = $this->call('db:seed', [
+            '--class' => 'Database\\Seeders\\BlogSeeder',
+            '--force' => true,
+        ]);
+
+        if ($exitCode !== self::SUCCESS) {
+            $this->error('Blog post refresh failed.');
+
+            return $exitCode;
+        }
+
         $this->info('Done! Blog posts updated.');
+
+        return self::SUCCESS;
     }
 }

@@ -15,7 +15,10 @@ class CategoryForm
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('slug')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255)
+                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
+                    ->unique(ignoreRecord: true),
                 Textarea::make('description')
                     ->columnSpanFull(),
             ]);

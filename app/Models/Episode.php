@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\ManagesStoredMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -16,12 +18,18 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
+/**
+ * @property PublishStatus $status
+ * @property Carbon|null $published_at
+ * @property-read Podcast|null $podcast
+ */
 class Episode extends Model implements Publishable
 {
     use HasPublishingStatus;
     use HasSEO;
     use HasTags;
     use LogsActivity;
+    use ManagesStoredMedia;
 
     protected function casts(): array
     {
@@ -40,6 +48,7 @@ class Episode extends Model implements Publishable
         });
     }
 
+    /** @return BelongsTo<Podcast, $this> */
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
@@ -58,16 +67,17 @@ class Episode extends Model implements Publishable
 
     public function getEpisodeCodeAttribute(): string
     {
-        return 'S'.str_pad($this->season_number, 2, '0', STR_PAD_LEFT)
-            .'E'.str_pad($this->episode_number, 2, '0', STR_PAD_LEFT);
+        return 'S'.str_pad((string) $this->season_number, 2, '0', STR_PAD_LEFT)
+            .'E'.str_pad((string) ($this->episode_number ?? 0), 2, '0', STR_PAD_LEFT);
     }
 
     public function getDynamicSEOData(): SEOData
     {
-        $podcast = $this->podcast;
+        $podcast = $this->getRelationValue('podcast');
+        $podcastName = $podcast instanceof Podcast ? $podcast->name : 'Podcast';
 
         return new SEOData(
-            title: $this->title.' — '.($podcast?->name ?? 'Podcast'),
+            title: $this->title.' — '.$podcastName,
             description: $this->description,
         );
     }
@@ -78,5 +88,10 @@ class Episode extends Model implements Publishable
             ->logOnlyDirty()
             ->logAll()
             ->dontLogEmptyChanges();
+    }
+
+    protected function storedMediaAttributes(): array
+    {
+        return ['featured_image_path', 'audio_path'];
     }
 }

@@ -33,9 +33,11 @@ class EpisodeForm
                         TextInput::make('title')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
                             ->required()
+                            ->maxLength(255)
+                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                             ->unique(ignoreRecord: true),
                         TextInput::make('episode_number')
                             ->numeric()
@@ -62,7 +64,8 @@ class EpisodeForm
                         FileUpload::make('audio_path')
                             ->disk('public')
                             ->directory('episodes/audio')
-                            ->acceptedFileTypes(['audio/mpeg', 'audio/mp3', 'audio/wav']),
+                            ->acceptedFileTypes(['audio/mpeg', 'audio/wav', 'audio/x-wav'])
+                            ->maxSize(256000),
                         TextInput::make('embed_url')
                             ->label('Embed URL')
                             ->url()
@@ -74,7 +77,8 @@ class EpisodeForm
                         FileUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('episodes/images')
-                            ->image(),
+                            ->image()
+                            ->maxSize(10240),
                         TextInput::make('duration_minutes')
                             ->numeric()
                             ->label('Duration (minutes)'),

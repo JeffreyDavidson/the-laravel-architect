@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PublishStatus;
+use App\Models\Category;
+use App\Models\Post;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -28,9 +31,11 @@ class PostForm
                         TextInput::make('title')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
                             ->required()
+                            ->maxLength(255)
+                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                             ->unique(ignoreRecord: true),
                         Textarea::make('excerpt')
                             ->rows(3)
@@ -47,14 +52,20 @@ class PostForm
                             ->disk('public')
                             ->directory('posts')
                             ->image()
+                            ->maxSize(10240)
                             ->columnSpanFull(),
                         Select::make('category_id')
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload()
+                            ->createOptionAction(fn (Action $action): Action => $action->authorize('create', Category::class))
                             ->createOptionForm([
                                 TextInput::make('name')->required(),
-                                TextInput::make('slug')->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
+                                    ->unique(Category::class),
                             ]),
                         SpatieTagsInput::make('tags'),
                     ])->columns(2),
@@ -80,7 +91,7 @@ class PostForm
                             ->columnSpanFull(),
                     ])
                     ->collapsible()
-                    ->collapsed(fn ($record) => $record?->review_notes === null),
+                    ->collapsed(fn (?Post $record): bool => $record?->review_notes === null),
 
                 Section::make('SEO')
                     ->schema([
