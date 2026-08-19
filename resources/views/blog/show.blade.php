@@ -72,7 +72,11 @@
 
         {{-- Content --}}
         <x-prose class="prose-a:text-brand-400 prose-code:text-brand-300">
-            <x-markdown>{!! $post->content !!}</x-markdown>
+            {!! Str::markdown(
+                $post->content,
+                ['heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => '']],
+                [new League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension],
+            ) !!}
         </x-prose>
 
         {{-- Tags --}}

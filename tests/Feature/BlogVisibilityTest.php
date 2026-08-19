@@ -55,6 +55,17 @@ it('only allows directly viewing posts that are published now', function () {
     $this->get(route('blog.show', $scheduled))->assertNotFound();
 });
 
+it('renders post content as markdown with anchored headings', function () {
+    $post = createBlogPost([
+        'content' => "## Native Markdown\n\nThis is **rendered** content.",
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')
+        ->assertSeeHtml('This is <strong>rendered</strong> content.');
+});
+
 it('counts only published posts in blog categories', function () {
     $published = createBlogPost();
     createBlogPost([
