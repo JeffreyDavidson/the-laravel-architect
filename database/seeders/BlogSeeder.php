@@ -24,9 +24,9 @@ class BlogSeeder extends Seeder
         );
 
         // Create categories
-        $personal = Category::firstOrCreate(['name' => 'Personal'], ['slug' => 'personal', 'description' => 'Personal stories, reflections, and life updates.']);
-        $career = Category::firstOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
-        $laravel = Category::firstOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
+        $personal = Category::updateOrCreate(['name' => 'Personal'], ['slug' => 'personal', 'description' => 'Personal stories, reflections, and life updates.']);
+        $career = Category::updateOrCreate(['name' => 'Career'], ['slug' => 'career', 'description' => 'Career advice, lessons learned, and professional growth.']);
+        $laravel = Category::updateOrCreate(['name' => 'Laravel'], ['slug' => 'laravel', 'description' => 'Laravel tutorials, opinions, and deep dives.']);
 
         // Create tags
         $tags = collect([
