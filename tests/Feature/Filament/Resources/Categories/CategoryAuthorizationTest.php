@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 use function Pest\Livewire\livewire;
 
@@ -51,10 +50,8 @@ it('allows a super administrator to manage categories', function () {
         ->assertFormComponentActionVisible('category_id', 'createOption');
 });
 
-it('prevents non-administrator panel roles from managing categories', function (string $role) {
-    Role::query()->firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+it('prevents a non-administrator from managing categories', function () {
     $panelUser = User::factory()->create();
-    $panelUser->assignRole($role);
 
     expect($panelUser->can('viewAny', Category::class))->toBeFalse()
         ->and($panelUser->can('view', $this->category))->toBeFalse()
@@ -65,4 +62,4 @@ it('prevents non-administrator panel roles from managing categories', function (
     $this->actingAs($panelUser)
         ->get(CategoryResource::getUrl('index'))
         ->assertForbidden();
-})->with(['reviewer', 'panel_user']);
+});

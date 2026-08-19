@@ -8,7 +8,6 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Project;
 use App\Models\User;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -19,10 +18,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('public');
-    $this->seed(ShieldSeeder::class);
 
     $user = User::factory()->create(['is_admin' => true]);
-    $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 

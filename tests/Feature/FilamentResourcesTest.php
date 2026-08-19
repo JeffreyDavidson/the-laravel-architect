@@ -12,15 +12,12 @@ use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Models\User;
 use App\Models\Video;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(ShieldSeeder::class);
     $user = User::factory()->create(['is_admin' => true]);
-    $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 

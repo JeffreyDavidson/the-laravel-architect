@@ -3,18 +3,12 @@
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
-it('only admits super administrators to the admin panel', function () {
+it('only admits administrators to the admin panel', function () {
     $user = User::factory()->create();
     $panel = Filament::getPanel('admin');
-
-    expect($user->canAccessPanel($panel))->toBeFalse();
-
-    Role::query()->create(['name' => 'super_admin', 'guard_name' => 'web']);
-    $user->assignRole('super_admin');
 
     expect($user->canAccessPanel($panel))->toBeFalse();
 
@@ -23,10 +17,8 @@ it('only admits super administrators to the admin panel', function () {
     expect($user->canAccessPanel($panel))->toBeTrue();
 });
 
-it('rejects non-administrator roles at the admin panel boundary', function (string $role) {
-    Role::query()->create(['name' => $role, 'guard_name' => 'web']);
+it('rejects a non-administrator at the admin panel boundary', function () {
     $user = User::factory()->create();
-    $user->assignRole($role);
     $panel = Filament::getPanel('admin');
 
     expect($user->canAccessPanel($panel))->toBeFalse();
@@ -34,4 +26,4 @@ it('rejects non-administrator roles at the admin panel boundary', function (stri
     $this->actingAs($user)
         ->get($panel->getUrl())
         ->assertForbidden();
-})->with(['reviewer', 'panel_user']);
+});

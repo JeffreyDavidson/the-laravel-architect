@@ -5,7 +5,6 @@ use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Project;
 use App\Models\User;
-use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -13,10 +12,7 @@ use function Pest\Livewire\livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(ShieldSeeder::class);
-
     $user = User::factory()->create(['is_admin' => true]);
-    $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 

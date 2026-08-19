@@ -4,7 +4,6 @@ use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
@@ -20,10 +19,7 @@ it('does not create users with the former known seeder passwords', function () {
 
     expect(Hash::check('change-me-immediately', $admin->password))->toBeFalse()
         ->and(Hash::check('temporary-password-change-me', $author->password))->toBeFalse()
-        ->and($admin->is_admin)->toBeTrue()
-        ->and($admin->hasRole('super_admin'))->toBeTrue()
-        ->and(Role::query()->where('name', 'reviewer')->exists())->toBeFalse()
-        ->and(Role::query()->where('name', 'panel_user')->exists())->toBeFalse();
+        ->and($admin->is_admin)->toBeTrue();
 });
 
 it('preserves existing user passwords when seeders run', function () {
@@ -40,6 +36,5 @@ it('preserves existing user passwords when seeders run', function () {
 
     expect(Hash::check('chosen-admin-password', $admin->refresh()->password))->toBeTrue()
         ->and(Hash::check('chosen-author-password', $author->refresh()->password))->toBeTrue()
-        ->and($admin->is_admin)->toBeTrue()
-        ->and($admin->hasRole('super_admin'))->toBeTrue();
+        ->and($admin->is_admin)->toBeTrue();
 });
