@@ -74,3 +74,5 @@ The application is hosted through Laravel Forge. A deployment should install loc
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 
 The media migration copies existing Media Library associations to native path columns before dropping the package table. Back up the database and `storage/app/public` before deploying that migration.
+
+See [`docs/operations.md`](docs/operations.md) for the ordered deployment, backup-validation, and rollback runbook.
