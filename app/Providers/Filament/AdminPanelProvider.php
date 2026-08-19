@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
-use Awcodes\Versions\VersionsPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -69,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
                         SubscriberResource::class,
                         VideoResource::class,
                     ]),
-                VersionsPlugin::make(),
             ])
             ->userMenuItems([
                 MenuItem::make()

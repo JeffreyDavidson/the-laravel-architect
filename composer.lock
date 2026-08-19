@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e3a263e492c03ca0b2a790e35d7ed2d",
+    "content-hash": "14ee32e74c6a1f2a9ef6d517fad6561d",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -142,77 +142,6 @@
                 }
             ],
             "time": "2026-07-21T19:22:21+00:00"
-        },
-        {
-            "name": "awcodes/filament-versions",
-            "version": "v4.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/awcodes/filament-versions.git",
-                "reference": "56290c93e3f337433dbaad0e1492c5953532236c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-versions/zipball/56290c93e3f337433dbaad0e1492c5953532236c",
-                "reference": "56290c93e3f337433dbaad0e1492c5953532236c",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^4.0|^5.0",
-                "php": "^8.2",
-                "spatie/laravel-package-tools": "^1.14.2"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.10",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^4.3",
-                "pestphp/pest-plugin-laravel": "^4.0",
-                "pestphp/pest-plugin-livewire": "^4.0",
-                "rector/rector": "^2.0"
-            },
-            "type": "package",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Awcodes\\Versions\\VersionsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Awcodes\\Versions\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adam Weston",
-                    "email": "awcodes1@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A mostly useless package to display framework versions at the bottom of the navigation panel.",
-            "keywords": [
-                "awcodes",
-                "filament",
-                "laravel",
-                "plugins",
-                "versions"
-            ],
-            "support": {
-                "issues": "https://github.com/awcodes/filament-versions/issues",
-                "source": "https://github.com/awcodes/filament-versions/tree/v4.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/awcodes",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-07-21T18:48:00+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
