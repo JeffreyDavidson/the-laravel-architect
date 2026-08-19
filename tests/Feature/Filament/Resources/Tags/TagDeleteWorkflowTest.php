@@ -5,11 +5,10 @@ use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 use function Pest\Livewire\livewire;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
