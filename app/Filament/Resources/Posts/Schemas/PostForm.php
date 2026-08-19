@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Posts\Schemas;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -57,6 +58,7 @@ class PostForm
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload()
+                            ->createOptionAction(fn (Action $action): Action => $action->authorize('create', Category::class))
                             ->createOptionForm([
                                 TextInput::make('name')->required(),
                                 TextInput::make('slug')
