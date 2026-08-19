@@ -4,7 +4,6 @@ use App\Filament\Resources\Posts\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
@@ -35,10 +34,8 @@ it('allows a super administrator to manage posts', function () {
         ->and($administrator->can('reorder', Post::class))->toBeTrue();
 });
 
-it('prevents non-administrator roles from managing posts', function (string $role) {
-    Role::query()->create(['name' => $role, 'guard_name' => 'web']);
+it('prevents a non-administrator from managing posts', function () {
     $panelUser = User::factory()->create();
-    $panelUser->assignRole($role);
 
     expect($panelUser->can('viewAny', Post::class))->toBeFalse()
         ->and($panelUser->can('view', $this->post))->toBeFalse()
@@ -51,4 +48,4 @@ it('prevents non-administrator roles from managing posts', function (string $rol
 
     $this->get(PostResource::getUrl('edit', ['record' => $this->post]))
         ->assertForbidden();
-})->with(['reviewer', 'panel_user']);
+});

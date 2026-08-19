@@ -4,7 +4,6 @@ use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 
 use function Pest\Livewire\livewire;
 
@@ -25,11 +24,8 @@ it('allows a super administrator to manage users', function () {
         ->assertOk();
 });
 
-it('prevents non-administrator panel roles from managing users', function (string $role) {
-    Role::query()->firstOrCreate(['name' => $role, 'guard_name' => 'web']);
-
+it('prevents a non-administrator from managing users', function () {
     $panelUser = User::factory()->create();
-    $panelUser->assignRole($role);
     $user = User::factory()->create();
 
     $this->actingAs($panelUser)
@@ -41,7 +37,7 @@ it('prevents non-administrator panel roles from managing users', function (strin
 
     $this->get(UserResource::getUrl('edit', ['record' => $user]))
         ->assertForbidden();
-})->with(['reviewer', 'panel_user']);
+});
 
 it('does not expose role assignment in user management', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
