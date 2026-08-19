@@ -2,9 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Resources\Subscribers\SubscriberResource;
-use App\Filament\Resources\Videos\VideoResource;
-use Awcodes\QuickCreate\QuickCreatePlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -63,11 +60,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentSpatieLaravelBackupPlugin::make(),
-                QuickCreatePlugin::make()
-                    ->excludes([
-                        SubscriberResource::class,
-                        VideoResource::class,
-                    ]),
             ])
             ->userMenuItems([
                 MenuItem::make()
