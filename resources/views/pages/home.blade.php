@@ -898,6 +898,10 @@
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
+                <div class="hero-eyebrow mb-5 inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-950/30 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brand-200">
+                    <span class="h-1.5 w-1.5 rounded-full bg-brand-300 shadow-[0_0_10px_rgba(126,176,220,0.9)]"></span>
+                    Laravel architecture, explained
+                </div>
                 <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-2 text-gray-900 dark:text-white">
                     I don't just write code—
                     <br>
@@ -1641,7 +1645,8 @@
 {{-- ===== NEWSLETTER ===== --}}
 <section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="newsletter-card bg-brand-50 dark:bg-brand-900/50 border border-brand-200 dark:border-brand-800/50 rounded-2xl p-6 sm:p-10 shadow-sm dark:shadow-none">
+        <div class="newsletter-card relative overflow-hidden bg-brand-50 dark:bg-brand-900/50 border border-brand-200 dark:border-brand-800/50 rounded-2xl p-6 sm:p-10 shadow-sm dark:shadow-none">
+            <div class="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-400/20 blur-3xl"></div>
             <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
             </svg>

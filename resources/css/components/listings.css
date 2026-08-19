@@ -12,6 +12,28 @@
     border-color: rgba(74, 127, 191, 0.2);
 }
 
+.blog-card {
+    position: relative;
+}
+
+.blog-card::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-brand-500), var(--color-accent-500));
+    content: '';
+    opacity: 0;
+    transform: scaleX(0.35);
+    transform-origin: left;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.blog-card:hover::before,
+.blog-card:focus-within::before {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
 :root:not(.dark) .blog-card:hover,
 :root:not(.dark) .project-card:hover,
 :root:not(.dark) .related-card:hover {

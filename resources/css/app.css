@@ -12,6 +12,38 @@
 @import './components/about.css';
 @import './components/listings.css';
 
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    position: absolute;
+    right: 0;
+    bottom: -0.45rem;
+    left: 0;
+    height: 2px;
+    border-radius: 9999px;
+    background: var(--color-brand-500);
+    content: '';
+    opacity: 0;
+    transform: scaleX(0.35);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.nav-link:hover::after,
+.nav-link.is-active::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+@media (max-width: 767px) {
+    .nav-link::after {
+        right: auto;
+        bottom: 0;
+        width: 1.5rem;
+    }
+}
+
 @font-face {
     font-family: 'Empera';
     src: url('../fonts/empera/Empera-Regular.ttf') format('truetype');
