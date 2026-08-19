@@ -49,16 +49,6 @@ class ShieldSeeder extends Seeder
         $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $superAdmin->syncPermissions(Permission::all());
 
-        // Reviewer role: can only view and update posts
-        $reviewer = Role::firstOrCreate(['name' => 'reviewer', 'guard_name' => 'web']);
-        $reviewerPermissions = [
-            $this->permissionName('viewAny', 'post'),
-            $this->permissionName('view', 'post'),
-            $this->permissionName('update', 'post'),
-            $this->permissionName('view', 'WelcomeWidget'),
-            $this->permissionName('view', 'RecentActivityWidget'),
-        ];
-        $reviewer->syncPermissions($reviewerPermissions);
     }
 
     private function permissionName(string $action, string $subject): string

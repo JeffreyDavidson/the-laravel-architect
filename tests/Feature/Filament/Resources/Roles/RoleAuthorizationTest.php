@@ -54,6 +54,7 @@ it('allows a super administrator to manage roles', function () {
 });
 
 it('prevents a reviewer from managing roles', function () {
+    Role::query()->create(['name' => 'reviewer', 'guard_name' => 'web']);
     $reviewer = User::factory()->create();
     $reviewer->assignRole('reviewer');
 

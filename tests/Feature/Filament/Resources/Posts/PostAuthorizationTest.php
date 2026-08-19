@@ -39,38 +39,10 @@ it('allows a super administrator to manage posts', function () {
         ->and($administrator->can('reorder', Post::class))->toBeTrue();
 });
 
-it('allows a reviewer to view and update posts', function () {
-    $reviewer = User::factory()->create();
-    $reviewer->assignRole('reviewer');
-
-    expect($reviewer->can('viewAny', Post::class))->toBeTrue()
-        ->and($reviewer->can('view', $this->post))->toBeTrue()
-        ->and($reviewer->can('update', $this->post))->toBeTrue()
-        ->and($reviewer->can('create', Post::class))->toBeFalse()
-        ->and($reviewer->can('delete', $this->post))->toBeFalse()
-        ->and($reviewer->can('deleteAny', Post::class))->toBeFalse()
-        ->and($reviewer->can('restore', $this->post))->toBeFalse()
-        ->and($reviewer->can('restoreAny', Post::class))->toBeFalse()
-        ->and($reviewer->can('forceDelete', $this->post))->toBeFalse()
-        ->and($reviewer->can('forceDeleteAny', Post::class))->toBeFalse()
-        ->and($reviewer->can('replicate', $this->post))->toBeFalse()
-        ->and($reviewer->can('reorder', Post::class))->toBeFalse();
-
-    $this->actingAs($reviewer)
-        ->get(PostResource::getUrl('index'))
-        ->assertOk();
-
-    $this->get(PostResource::getUrl('edit', ['record' => $this->post]))
-        ->assertOk();
-
-    $this->get(PostResource::getUrl('create'))
-        ->assertForbidden();
-});
-
-it('prevents a basic panel user from managing posts', function () {
-    Role::query()->create(['name' => 'panel_user', 'guard_name' => 'web']);
+it('prevents non-administrator roles from managing posts', function (string $role) {
+    Role::query()->create(['name' => $role, 'guard_name' => 'web']);
     $panelUser = User::factory()->create();
-    $panelUser->assignRole('panel_user');
+    $panelUser->assignRole($role);
 
     expect($panelUser->can('viewAny', Post::class))->toBeFalse()
         ->and($panelUser->can('view', $this->post))->toBeFalse()
@@ -83,4 +55,4 @@ it('prevents a basic panel user from managing posts', function () {
 
     $this->get(PostResource::getUrl('edit', ['record' => $this->post]))
         ->assertForbidden();
-});
+})->with(['reviewer', 'panel_user']);
