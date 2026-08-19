@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\Subscribers\SubscriberResource;
-use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\Videos\VideoResource;
 use Awcodes\QuickCreate\QuickCreatePlugin;
 use Awcodes\Versions\VersionsPlugin;
@@ -69,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
                     ->excludes([
                         SubscriberResource::class,
                         VideoResource::class,
-                        UserResource::class,
                     ]),
                 VersionsPlugin::make(),
             ])
