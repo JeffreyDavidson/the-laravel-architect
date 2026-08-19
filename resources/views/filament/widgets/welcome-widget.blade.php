@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="tla-dashboard-hero__actions">
-                    <a href="{{ route('filament.admin.resources.posts.create') }}">Write post</a>
+                    <a href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('create') }}">Write post</a>
                     <a href="/" target="_blank">
                         <span></span>
                         Public site
@@ -24,25 +24,25 @@
             </div>
 
             <div class="tla-dashboard-stats">
-                <a href="{{ route('filament.admin.resources.posts.index') }}" class="tla-dashboard-stat tla-dashboard-stat--blue">
+                <a href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index') }}" class="tla-dashboard-stat tla-dashboard-stat--blue">
                     <span>Posts</span>
                     <strong>{{ $posts }}</strong>
                     <small>{{ $publishedPosts }} published / {{ $draftPosts }} drafts</small>
                 </a>
 
-                <a href="{{ route('filament.admin.resources.projects.index') }}" class="tla-dashboard-stat tla-dashboard-stat--pink">
+                <a href="{{ \App\Filament\Resources\Projects\ProjectResource::getUrl('index') }}" class="tla-dashboard-stat tla-dashboard-stat--pink">
                     <span>Projects</span>
                     <strong>{{ $projects }}</strong>
                     <small>{{ $featuredProjects }} featured</small>
                 </a>
 
-                <a href="{{ route('filament.admin.resources.subscribers.index') }}" class="tla-dashboard-stat tla-dashboard-stat--green">
+                <a href="{{ \App\Filament\Resources\Subscribers\SubscriberResource::getUrl('index') }}" class="tla-dashboard-stat tla-dashboard-stat--green">
                     <span>Subscribers</span>
                     <strong>{{ $subscribers }}</strong>
                     <small>Newsletter list</small>
                 </a>
 
-                <a href="{{ route('filament.admin.resources.videos.index') }}" class="tla-dashboard-stat tla-dashboard-stat--amber">
+                <a href="{{ \App\Filament\Resources\Videos\VideoResource::getUrl('index') }}" class="tla-dashboard-stat tla-dashboard-stat--amber">
                     <span>Videos</span>
                     <strong>{{ $videos }}</strong>
                     <small>Publishing assets</small>
@@ -50,7 +50,7 @@
             </div>
 
             @if($pendingTestimonials > 0)
-                <a href="{{ route('filament.admin.resources.testimonials.index') }}" class="tla-dashboard-alert">
+                <a href="{{ \App\Filament\Resources\Testimonials\TestimonialResource::getUrl('index') }}" class="tla-dashboard-alert">
                     <span>{{ $pendingTestimonials }}</span>
                     {{ $pendingTestimonials === 1 ? 'testimonial needs' : 'testimonials need' }} review
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
