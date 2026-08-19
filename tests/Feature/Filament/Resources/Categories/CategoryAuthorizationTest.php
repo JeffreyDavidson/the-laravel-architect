@@ -26,7 +26,7 @@ beforeEach(function () {
     ]);
 });
 
-it('allows a super administrator to manage categories', function () {
+it('allows an administrator to manage categories', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
 
     expect($administrator->can('viewAny', Category::class))->toBeTrue()

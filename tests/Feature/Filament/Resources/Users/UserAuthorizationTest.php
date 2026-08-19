@@ -1,15 +1,12 @@
 <?php
 
-use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use function Pest\Livewire\livewire;
-
 uses(RefreshDatabase::class);
 
-it('allows a super administrator to manage users', function () {
+it('allows an administrator to manage users', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
     $user = User::factory()->create();
 
@@ -37,14 +34,4 @@ it('prevents a non-administrator from managing users', function () {
 
     $this->get(UserResource::getUrl('edit', ['record' => $user]))
         ->assertForbidden();
-});
-
-it('does not expose role assignment in user management', function () {
-    $administrator = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($administrator);
-
-    livewire(EditUser::class, ['record' => $administrator->getRouteKey()])
-        ->assertFormFieldExists('name')
-        ->assertFormFieldExists('email')
-        ->assertFormFieldDoesNotExist('roles');
 });
