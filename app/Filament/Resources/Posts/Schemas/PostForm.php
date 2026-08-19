@@ -32,6 +32,8 @@ class PostForm
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
                             ->required()
+                            ->maxLength(255)
+                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                             ->unique(ignoreRecord: true),
                         Textarea::make('excerpt')
                             ->rows(3)
@@ -56,7 +58,10 @@ class PostForm
                             ->preload()
                             ->createOptionForm([
                                 TextInput::make('name')->required(),
-                                TextInput::make('slug')->required(),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/'),
                             ]),
                         SpatieTagsInput::make('tags'),
                     ])->columns(2),
