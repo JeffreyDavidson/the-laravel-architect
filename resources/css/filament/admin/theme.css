@@ -82,16 +82,6 @@
     background-color: #4A7FBF;
 }
 
-/* ── Versions widget pills ── */
-.dark .versions-nav-widget li {
-    background-color: rgba(74, 127, 191, 0.08);
-    color: #6b7280;
-    padding: 0.15rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.65rem;
-    border: 1px solid rgba(74, 127, 191, 0.12);
-}
-
 /* ── Dropdown hover ── */
 .dark .fi-dropdown-list-item:hover {
     background-color: rgba(74, 127, 191, 0.06);
