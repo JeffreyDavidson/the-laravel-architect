@@ -17,7 +17,7 @@ beforeEach(function () {
     ]);
 });
 
-it('allows a super administrator to manage posts', function () {
+it('allows an administrator to manage posts', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
 
     expect($administrator->can('viewAny', Post::class))->toBeTrue()
