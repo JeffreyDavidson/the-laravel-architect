@@ -1,0 +1,66 @@
+<?php
+
+use App\Models\User;
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use Database\Seeders\ShieldSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->seed(ShieldSeeder::class);
+});
+
+it('seeds permissions using the configured Shield naming convention', function () {
+    expect(Permission::query()->where('name', 'ViewAny:User')->exists())->toBeTrue()
+        ->and(Permission::query()->where('name', 'Replicate:User')->exists())->toBeTrue()
+        ->and(Permission::query()->where('name', 'ViewAny:Role')->exists())->toBeTrue()
+        ->and(Permission::query()->where('name', 'View:WelcomeWidget')->exists())->toBeTrue()
+        ->and(Permission::query()->where('name', 'view_any_user')->exists())->toBeFalse();
+});
+
+it('migrates legacy permissions without losing role assignments', function () {
+    $legacyPermission = Permission::query()->create([
+        'name' => 'view_any_user',
+        'guard_name' => 'web',
+    ]);
+    $role = Role::query()->create([
+        'name' => 'legacy-role',
+        'guard_name' => 'web',
+    ]);
+    $role->givePermissionTo($legacyPermission);
+
+    $migration = require database_path('migrations/2026_08_18_120400_align_filament_shield_permissions.php');
+    $migration->up();
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    expect(Permission::query()->where('name', 'view_any_user')->exists())->toBeFalse()
+        ->and($role->fresh()->hasPermissionTo('ViewAny:User'))->toBeTrue();
+});
+
+it('allows a super administrator to manage roles', function () {
+    $administrator = User::factory()->create();
+    $administrator->assignRole('super_admin');
+
+    $this->actingAs($administrator)
+        ->get(RoleResource::getUrl('index'))
+        ->assertOk();
+
+    $this->get(RoleResource::getUrl('create'))
+        ->assertOk();
+});
+
+it('prevents a reviewer from managing roles', function () {
+    $reviewer = User::factory()->create();
+    $reviewer->assignRole('reviewer');
+
+    $this->actingAs($reviewer)
+        ->get(RoleResource::getUrl('index'))
+        ->assertForbidden();
+
+    $this->get(RoleResource::getUrl('create'))
+        ->assertForbidden();
+});
