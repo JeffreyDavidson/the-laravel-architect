@@ -7,20 +7,21 @@ use App\Models\Category;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('rejects non-normalized category slugs when creating a category', function (string $slug) {
-    Livewire::test(CreateCategory::class)
+    livewire(CreateCategory::class)
         ->fillForm([
             'name' => 'Category name',
             'slug' => $slug,
@@ -39,7 +40,7 @@ it('rejects non-normalized category slugs when creating a category', function (s
 ]);
 
 it('accepts a normalized category slug when creating a category', function () {
-    Livewire::test(CreateCategory::class)
+    livewire(CreateCategory::class)
         ->fillForm([
             'name' => 'Category name',
             'slug' => 'category-name-2',
@@ -56,7 +57,7 @@ it('rejects duplicate category slugs when creating a category', function () {
         'slug' => 'category-name',
     ]);
 
-    Livewire::test(CreateCategory::class)
+    livewire(CreateCategory::class)
         ->fillForm([
             'name' => 'Category name',
             'slug' => 'category-name',
@@ -77,7 +78,7 @@ it('rejects a duplicate category slug when editing a category', function () {
         'slug' => 'category-name',
     ]);
 
-    Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()])
+    livewire(EditCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm(['slug' => 'existing-category'])
         ->call('save')
         ->assertHasFormErrors(['slug' => 'unique']);
@@ -91,7 +92,7 @@ it('allows a category to retain its slug when editing', function () {
         'slug' => 'category-name',
     ]);
 
-    Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()])
+    livewire(EditCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm(['name' => 'Updated category name'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -107,7 +108,7 @@ it('rejects duplicate category slugs when creating a category inline', function 
         'slug' => 'category-name',
     ]);
 
-    Livewire::test(CreatePost::class)
+    livewire(CreatePost::class)
         ->callFormComponentAction('category_id', 'createOption', [
             'name' => 'Category name',
             'slug' => 'category-name',

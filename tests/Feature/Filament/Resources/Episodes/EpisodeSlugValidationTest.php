@@ -8,14 +8,15 @@ use App\Models\Podcast;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 
@@ -27,7 +28,7 @@ beforeEach(function () {
 });
 
 it('rejects non-normalized episode slugs when creating an episode', function (string $slug) {
-    Livewire::test(CreateEpisode::class)
+    livewire(CreateEpisode::class)
         ->fillForm([
             'podcast_id' => $this->podcast->id,
             'title' => 'Episode title',
@@ -49,7 +50,7 @@ it('rejects non-normalized episode slugs when creating an episode', function (st
 ]);
 
 it('accepts a normalized episode slug when creating an episode', function () {
-    Livewire::test(CreateEpisode::class)
+    livewire(CreateEpisode::class)
         ->fillForm([
             'podcast_id' => $this->podcast->id,
             'title' => 'Episode title',
@@ -72,7 +73,7 @@ it('rejects a non-normalized episode slug when editing an episode', function () 
         'status' => PublishStatus::Draft,
     ]);
 
-    Livewire::test(EditEpisode::class, ['record' => $episode->getRouteKey()])
+    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->fillForm(['slug' => '../episode-title'])
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);

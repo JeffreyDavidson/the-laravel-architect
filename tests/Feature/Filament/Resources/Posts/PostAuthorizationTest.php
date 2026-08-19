@@ -22,7 +22,7 @@ beforeEach(function () {
 });
 
 it('allows a super administrator to manage posts', function () {
-    $administrator = User::factory()->create();
+    $administrator = User::factory()->create(['is_admin' => true]);
     $administrator->assignRole('super_admin');
 
     expect($administrator->can('viewAny', Post::class))->toBeTrue()

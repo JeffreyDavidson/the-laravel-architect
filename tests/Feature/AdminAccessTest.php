@@ -16,6 +16,10 @@ it('only admits super administrators to the admin panel', function () {
     Role::query()->create(['name' => 'super_admin', 'guard_name' => 'web']);
     $user->assignRole('super_admin');
 
+    expect($user->canAccessPanel($panel))->toBeFalse();
+
+    $user->forceFill(['is_admin' => true])->save();
+
     expect($user->canAccessPanel($panel))->toBeTrue();
 });
 

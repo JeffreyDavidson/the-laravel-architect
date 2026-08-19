@@ -8,20 +8,21 @@ use App\Models\Tag;
 use App\Models\User;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('creates a tag with the normalized slug generated from its name', function () {
-    Livewire::test(CreateTag::class)
+    livewire(CreateTag::class)
         ->fillForm([
             'name' => 'Tag name',
             'slug' => 'tag-name',
@@ -33,7 +34,7 @@ it('creates a tag with the normalized slug generated from its name', function ()
 });
 
 it('rejects a name that cannot generate a valid slug', function (string $name) {
-    Livewire::test(CreateTag::class)
+    livewire(CreateTag::class)
         ->fillForm([
             'name' => $name,
             'slug' => 'spoofed-valid-slug',
@@ -53,7 +54,7 @@ it('rejects a duplicate localized tag slug across tag types', function () {
         'type' => 'topic',
     ]);
 
-    Livewire::test(CreateTag::class)
+    livewire(CreateTag::class)
         ->fillForm([
             'name' => 'Tag name',
             'slug' => 'spoofed-unique-slug',
@@ -75,7 +76,7 @@ it('rejects a duplicate localized tag slug when editing a tag', function () {
         'slug' => 'tag-name',
     ]);
 
-    Livewire::test(EditTag::class, ['record' => $tag->getRouteKey()])
+    livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm([
             'name' => 'Existing tag',
             'slug' => 'spoofed-unique-slug',
@@ -92,7 +93,7 @@ it('allows a tag to retain its localized slug when editing', function () {
         'slug' => 'tag-name',
     ]);
 
-    Livewire::test(EditTag::class, ['record' => $tag->getRouteKey()])
+    livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->call('save')
         ->assertHasNoFormErrors();
 

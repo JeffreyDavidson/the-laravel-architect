@@ -7,20 +7,21 @@ use App\Models\User;
 use Database\Seeders\BlogSeeder;
 use Database\Seeders\ShieldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(ShieldSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['is_admin' => true]);
     $user->assignRole('super_admin');
     $this->actingAs($user);
 });
 
 it('persists a category description when creating a category', function () {
-    Livewire::test(CreateCategory::class)
+    livewire(CreateCategory::class)
         ->fillForm([
             'name' => 'Architecture',
             'slug' => 'architecture',
@@ -40,7 +41,7 @@ it('persists a category description when editing a category', function () {
         'description' => 'Original description.',
     ]);
 
-    Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()])
+    livewire(EditCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm(['description' => 'Updated description.'])
         ->call('save')
         ->assertHasNoFormErrors();

@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 it('allows a super administrator to manage users', function () {
-    $administrator = User::factory()->create();
+    $administrator = User::factory()->create(['is_admin' => true]);
     $administrator->assignRole('super_admin');
     $user = User::factory()->create();
 
@@ -50,7 +50,7 @@ it('prevents non-administrator panel roles from managing users', function (strin
 })->with(['reviewer', 'panel_user']);
 
 it('does not expose role assignment in user management', function () {
-    $administrator = User::factory()->create();
+    $administrator = User::factory()->create(['is_admin' => true]);
     $administrator->assignRole('super_admin');
     $this->actingAs($administrator);
 
