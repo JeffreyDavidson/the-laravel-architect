@@ -1,7 +1,7 @@
 <?php
 
-use AppFilament\Resources\Projects\Pages\EditProject;
-use AppModels\Project;
+use App\Filament\Resources\Projects\Pages\EditProject;
+use App\Models\Project;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
