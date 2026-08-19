@@ -17,7 +17,7 @@ composer dev
 
 The setup script installs PHP and JavaScript dependencies, creates `.env`, generates an application key, runs migrations, and builds assets. The development command starts Laravel, the queue worker, Pail, and Vite.
 
-To bootstrap an administrator on a fresh environment, create the Filament user before running the database seeder so the seeder preserves the password you choose and assigns the existing account the `super_admin` role:
+To bootstrap an administrator on a fresh environment, create the Filament user before running the database seeder so the seeder preserves the password you choose and marks the existing account as an administrator:
 
 ```bash
 php artisan make:filament-user --panel=admin --email=thelaravelarchitect@gmail.com
@@ -45,7 +45,7 @@ Public pages are server-rendered Blade views. Route-model binding uses content s
 
 Generated post OG images are cached on the private local filesystem. Cache validity is based on the rendered title, category name, and an explicit renderer version; deleting a post removes its cached image.
 
-The Filament panel is available at `/admin`. Panel admission requires an approved role, and app-based multi-factor authentication is required in production. Filament Shield manages resource permissions.
+The Filament panel is available at `/admin`. Panel admission requires the native `is_admin` flag, resource actions are protected by Laravel policies, and app-based multi-factor authentication is required in production.
 
 Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Run `php artisan storage:link` on a new environment.
 
