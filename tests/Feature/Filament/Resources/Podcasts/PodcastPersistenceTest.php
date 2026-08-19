@@ -81,6 +81,6 @@ it('updates a podcast through the Filament form', function () {
     expect($podcast->refresh())
         ->name->toBe('Updated podcast')
         ->and($podcast->description)->toBe('Updated description.')
-        ->and($podcast->is_active)->toBeFalse()
+        ->and($podcast->is_active)->toBe(0)
         ->and($podcast->sort_order)->toBe(4);
 });
