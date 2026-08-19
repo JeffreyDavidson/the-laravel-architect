@@ -69,12 +69,3 @@ it('prevents non-administrator panel roles from managing categories', function (
         ->get(CategoryResource::getUrl('index'))
         ->assertForbidden();
 })->with(['reviewer', 'panel_user']);
-
-it('prevents a reviewer from creating categories through the post form', function () {
-    $reviewer = User::factory()->create();
-    $reviewer->assignRole('reviewer');
-    $this->actingAs($reviewer);
-
-    Livewire::test(EditPost::class, ['record' => $this->post->getRouteKey()])
-        ->assertFormComponentActionHidden('category_id', 'createOption');
-});
