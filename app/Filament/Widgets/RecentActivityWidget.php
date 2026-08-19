@@ -20,7 +20,7 @@ class RecentActivityWidget extends Widget
     {
         $activities = collect();
 
-        Post::latest('updated_at')->take(3)->get()->each(function ($post) use ($activities) {
+        Post::latest('updated_at')->take(3)->get()->each(function (Post $post) use ($activities) {
             $updatedAt = $post->updated_at;
 
             $activities->push([
@@ -33,7 +33,7 @@ class RecentActivityWidget extends Widget
             ]);
         });
 
-        Testimonial::latest('created_at')->take(2)->get()->each(function ($testimonial) use ($activities) {
+        Testimonial::latest('created_at')->take(2)->get()->each(function (Testimonial $testimonial) use ($activities) {
             $createdAt = $testimonial->created_at;
             $statusLabel = match ($testimonial->testimonialStatus()) {
                 TestimonialStatus::Pending => 'Pending Review',
