@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Typography\FontFactory;
+use RuntimeException;
+use UnexpectedValueException;
 
 class FeaturedImageGenerator
 {
@@ -132,7 +136,15 @@ class FeaturedImageGenerator
 
     public function generate(Post $post): string
     {
-        $category = $post->getRelation('category');
+        $slug = $post->getAttribute('slug');
+
+        if (! is_string($slug) || $slug === '' || Str::slug($slug) !== $slug) {
+            throw new UnexpectedValueException('Post slug must be a non-empty, normalized slug.');
+        }
+
+        $category = $post->relationLoaded('category')
+            ? $post->getRelation('category')
+            : null;
         $categorySlug = $category instanceof Category ? $category->slug : 'default';
         $colors = $this->categoryColors[$categorySlug] ?? $this->categoryColors['default'];
         $snippets = $this->codeSnippets[$categorySlug] ?? $this->codeSnippets['laravel'];
@@ -159,15 +171,14 @@ class FeaturedImageGenerator
         // Draw brand mark (bottom-right)
         $this->drawBrandMark($image, $colors[0]);
 
-        // Save
-        $path = 'featured-images/'.$post->slug.'.png';
-        $storagePath = storage_path('app/public/'.$path);
+        $path = "featured-images/{$slug}.png";
+        $disk = Storage::disk('public');
 
-        if (! is_dir(dirname($storagePath))) {
-            mkdir(dirname($storagePath), 0755, true);
+        if (! $disk->directoryExists('featured-images') && ! $disk->makeDirectory('featured-images')) {
+            throw new RuntimeException('Unable to create the featured image directory.');
         }
 
-        $image->toPng()->save($storagePath);
+        $image->toPng()->save($disk->path($path));
 
         return $path;
     }
@@ -315,6 +326,7 @@ class FeaturedImageGenerator
         $fonts = [
             '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf',
             '/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf',
+            resource_path('fonts/empera/Empera-Regular.ttf'),
         ];
 
         foreach ($fonts as $font) {
@@ -323,6 +335,6 @@ class FeaturedImageGenerator
             }
         }
 
-        return public_path('fonts/empera/Empera-Regular.ttf');
+        return resource_path('fonts/empera/Empera-Regular.ttf');
     }
 }
