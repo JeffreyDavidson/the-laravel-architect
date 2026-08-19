@@ -23,7 +23,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -57,9 +56,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Showcase')->icon(Heroicon::OutlinedCodeBracket),
                 NavigationGroup::make('Taxonomy')->icon(Heroicon::OutlinedTag),
                 NavigationGroup::make('Newsletter')->icon(Heroicon::OutlinedEnvelope),
-            ])
-            ->plugins([
-                FilamentSpatieLaravelBackupPlugin::make(),
             ])
             ->userMenuItems([
                 MenuItem::make()
