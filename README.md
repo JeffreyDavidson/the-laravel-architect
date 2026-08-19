@@ -60,7 +60,6 @@ The production scheduler must run every minute. It dispatches:
 - backup health monitoring daily
 - `youtube:stats` daily
 - `youtube:sync` weekly
-- Filament Excel pruning daily
 
 YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
 
