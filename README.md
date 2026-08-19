@@ -17,6 +17,15 @@ composer dev
 
 The setup script installs PHP and JavaScript dependencies, creates `.env`, generates an application key, runs migrations, and builds assets. The development command starts Laravel, the queue worker, Pail, and Vite.
 
+To bootstrap an administrator on a fresh environment, create the Filament user before running the database seeder so the seeder preserves the password you choose and assigns the existing account the `super_admin` role:
+
+```bash
+php artisan make:filament-user --panel=admin --email=thelaravelarchitect@gmail.com
+php artisan db:seed
+```
+
+Seeders generate unknown random passwords when they must create a user. They never reset an existing user's password.
+
 ## Quality checks
 
 ```bash

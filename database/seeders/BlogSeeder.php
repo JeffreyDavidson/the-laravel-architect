@@ -7,7 +7,6 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class BlogSeeder extends Seeder
@@ -19,7 +18,7 @@ class BlogSeeder extends Seeder
             ['email' => 'jeffrey@thelaravelarchitect.com'],
             [
                 'name' => 'Jeffrey Davidson',
-                'password' => Hash::make('temporary-password-change-me'),
+                'password' => Str::random(64),
             ]
         );
 
