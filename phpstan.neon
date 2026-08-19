@@ -4,5 +4,5 @@ includes:
 parameters:
     paths:
         - app
-    level: 9
+    level: max
     treatPhpDocTypesAsCertain: false
