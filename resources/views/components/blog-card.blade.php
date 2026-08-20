@@ -3,7 +3,7 @@
     <div class="p-6 md:p-8">
         <x-post-meta :post="$post" :showCategory="$showCategory" class="mb-3" />
 
-        <a href="{{ route('blog.show', $post) }}">
+        <a href="{{ route('blog.show', $post) }}" class="focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-brand-950">
             <h2 class="mb-3 text-xl font-bold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white md:text-2xl">{{ $post->title }}</h2>
         </a>
 

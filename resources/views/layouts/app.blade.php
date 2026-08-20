@@ -31,29 +31,29 @@
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="{{ route('home') }}" class="group flex items-center gap-3">
+                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3">
                     <img src="/images/logo-color.svg" alt="The Laravel Architect" class="h-10 w-10 rounded-full">
-                    <span class="flex flex-col leading-none">
-                        <span class="text-[10px] font-semibold uppercase tracking-[0.32em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
-                        <span class="mt-1 text-sm font-black uppercase tracking-[0.24em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
+                    <span class="flex flex-col gap-0.5 leading-none">
+                        <span class="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
+                        <span class="font-empera text-lg leading-none tracking-[0.08em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
                     </span>
                 </a>
 
                 {{-- Mobile hamburger --}}
-                <button id="mobile-menu-btn" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800 transition-colors" aria-label="Toggle menu">
+                <button id="mobile-menu-btn" class="md:hidden inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 dark:text-gray-400 dark:hover:bg-brand-800 dark:hover:text-white" aria-label="Toggle menu" aria-controls="mobile-menu" aria-expanded="false">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
 
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
-                    <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcast</a>
-                    <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
-                    <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
-                    <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
-                    <button id="theme-toggle" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800/50 transition-colors" title="Toggle theme">
+                    <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('home')) is-active text-gray-900 dark:text-white @endif">Home</a>
+                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Blog</a>
+                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
+                    <a href="{{ route('projects.index') }}" @if(request()->routeIs('projects.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) is-active text-gray-900 dark:text-white @endif">Projects</a>
+                    <a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif">About</a>
+                    <a href="{{ route('uses') }}" @if(request()->routeIs('uses')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif">Uses</a>
+                    <button id="theme-toggle" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800/50 transition-colors" title="Toggle theme" aria-label="Toggle theme">
                         <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
@@ -64,13 +64,13 @@
             {{-- Mobile menu --}}
             <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-brand-800/50 py-4">
                 <div class="flex flex-col gap-3">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) text-gray-900 dark:text-white @endif">Home</a>
-                    <a href="{{ route('blog.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) text-gray-900 dark:text-white @endif">Podcast</a>
-                    <a href="{{ route('projects.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) text-gray-900 dark:text-white @endif">Projects</a>
-                    <a href="{{ route('about') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) text-gray-900 dark:text-white @endif">About</a>
-                    <a href="{{ route('uses') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) text-gray-900 dark:text-white @endif">Uses</a>
-                    <button class="theme-toggle-mobile flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1">
+                    <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) is-active text-gray-900 dark:text-white @endif">Home</a>
+                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Blog</a>
+                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
+                    <a href="{{ route('projects.index') }}" @if(request()->routeIs('projects.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) is-active text-gray-900 dark:text-white @endif">Projects</a>
+                    <a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif">About</a>
+                    <a href="{{ route('uses') }}" @if(request()->routeIs('uses')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif">Uses</a>
+                    <button class="theme-toggle-mobile flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1" aria-label="Toggle theme">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <span class="theme-toggle-label">Light Mode</span>
                     </button>
@@ -83,7 +83,9 @@
     <script>
         // Mobile menu
         document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu.classList.toggle('hidden') === false;
+            this.setAttribute('aria-expanded', String(isOpen));
         });
 
         // Theme toggle
@@ -110,7 +112,7 @@
     </script>
 
     {{-- Content --}}
-    <main>
+    <main class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')
     </main>
 
@@ -124,7 +126,7 @@
             {{-- Top section: Brand + Links --}}
             <div class="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 mb-8 lg:mb-14">
                 <div class="max-w-sm">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 mb-3 group">
+                    <a href="{{ route('home') }}" aria-label="Homepage" class="flex items-center gap-3 mb-3 group">
                         <img src="/images/logo-color.svg" alt="The Laravel Architect" class="w-10 h-10 rounded-full">
                         <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-[#4A7FBF] transition-colors">
                             <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
@@ -142,7 +144,7 @@
                 <div class="flex gap-10 sm:gap-16">
                     <div>
                         <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Navigate</h4>
-                        <ul class="space-y-2 text-sm">
+                        <ul role="list" class="space-y-2 text-sm">
                             <li><a href="{{ route('blog.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Blog</a></li>
                             <li><a href="{{ route('podcast.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Podcast</a></li>
                             <li><a href="{{ route('projects.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Projects</a></li>
@@ -152,7 +154,7 @@
                     </div>
                     <div>
                         <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Resources</h4>
-                        <ul class="space-y-2 text-sm">
+                        <ul role="list" class="space-y-2 text-sm">
                             <li><a href="{{ route('contact') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a></li>
                             <li><a href="/rss" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a></li>
                             <li><a href="https://uses.tech" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>

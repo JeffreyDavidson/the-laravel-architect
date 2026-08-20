@@ -36,13 +36,13 @@
                 {{-- Action buttons --}}
                 <div class="flex flex-wrap gap-3">
                     @if($project->url)
-                    <x-button href="{{ $project->url }}" target="_blank" class="link-btn shadow-[0_0_20px_rgba(74,127,191,0.3)]">
+                    <x-button href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="link-btn shadow-[0_0_20px_rgba(74,127,191,0.3)]">
                         <x-svg-icon name="external-link" class="w-4 h-4" />
                         View Live
                     </x-button>
                     @endif
                     @if($project->github_url)
-                    <x-button variant="outline" href="{{ $project->github_url }}" target="_blank" class="link-btn hover:border-gray-500">
+                    <x-button variant="outline" href="{{ $project->github_url }}" target="_blank" rel="noopener noreferrer" class="link-btn hover:border-gray-500">
                         <x-svg-icon name="github" class="w-4 h-4" />
                         View Source
                     </x-button>

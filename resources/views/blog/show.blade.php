@@ -14,7 +14,8 @@
             transition: all 0.2s ease;
             z-index: 10;
         }
-        pre:hover .copy-btn { opacity: 1; }
+        pre:hover .copy-btn,
+        pre:focus-within .copy-btn { opacity: 1; }
         .copy-btn:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
         .copy-btn.copied { color: #4ade80; border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.1); }
     </style>
@@ -28,7 +29,9 @@
                 const btn = document.createElement('button');
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>';
                 btn.className = 'copy-btn';
+                btn.type = 'button';
                 btn.title = 'Copy code';
+                btn.setAttribute('aria-label', 'Copy code');
                 btn.addEventListener('click', function() {
                     const code = pre.querySelector('code');
                     navigator.clipboard.writeText(code.innerText).then(function() {
@@ -72,7 +75,11 @@
 
         {{-- Content --}}
         <x-prose class="prose-a:text-brand-400 prose-code:text-brand-300">
-            <x-markdown>{!! $post->content !!}</x-markdown>
+            {!! Str::markdown(
+                $post->content,
+                ['heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => '']],
+                [new League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension],
+            ) !!}
         </x-prose>
 
         {{-- Tags --}}
@@ -92,7 +99,7 @@
             <h2 class="text-xl font-bold mb-8 text-gray-900 dark:text-white">Continue Reading</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 @foreach($relatedPosts as $related)
-                <a href="{{ route('blog.show', $related) }}" class="group block bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-xl p-5 hover:border-blue-500/30 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-all duration-300">
+                <a href="{{ route('blog.show', $related) }}" class="group block bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-xl p-5 hover:border-blue-500/30 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-[color,border-color,background-color,box-shadow] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">
                     <div class="flex items-center gap-3 mb-3">
                         @if($related->category)
                         <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">{{ $related->category->name }}</span>

@@ -34,12 +34,13 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
             {{-- Search --}}
             <div class="relative flex-shrink-0 sm:w-72">
+                <label for="blog-search" class="sr-only">Search posts</label>
                 <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="text" x-model="search" placeholder="Search posts..."
+                <input id="blog-search" type="text" x-model="search" placeholder="Search posts..."
                     class="w-full rounded-xl border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 transition-colors placeholder-gray-500 focus:border-brand-600/50 focus:outline-none focus:ring-1 focus:ring-brand-600/20 dark:border-brand-700 dark:bg-brand-950 dark:text-white">
-                <button x-show="search.length > 0" @click="search = ''" class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <button x-show="search.length > 0" x-cloak type="button" aria-label="Clear search" @click="search = ''" class="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-400 dark:hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -49,12 +50,14 @@
             <div class="flex flex-wrap gap-2">
             <button @click="activeCategory = 'all'"
                 :class="activeCategory === 'all' ? 'active' : ''"
+                :aria-pressed="activeCategory === 'all'"
                 class="category-pill rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:border-brand-700 dark:text-gray-400">
                 All Posts <span class="text-gray-600 ml-1">{{ $posts->count() }}</span>
             </button>
             @foreach($categories as $category)
             <button @click="activeCategory = '{{ $category->slug }}'"
                 :class="activeCategory === '{{ $category->slug }}' ? 'active' : ''"
+                :aria-pressed="activeCategory === '{{ $category->slug }}'"
                 class="category-pill rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:border-brand-700 dark:text-gray-400">
                 {{ $category->name }} <span class="text-gray-600 ml-1">{{ $category->posts_count }}</span>
             </button>

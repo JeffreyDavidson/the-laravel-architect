@@ -87,7 +87,7 @@
                     </span>
                     @else
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
-                        <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: {{ $podcast->color }};"></span>
+                        <span class="w-1.5 h-1.5 rounded-full" style="background: {{ $podcast->color }};"></span>
                         Coming Soon
                     </span>
                     @endif
@@ -132,7 +132,7 @@
                     @endif
                     @unless($podcast->spotify_url || $podcast->apple_url || $podcast->youtube_url || $podcast->rss_url)
                     <span class="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm text-gray-500 border border-gray-200 dark:border-[#1e2a3a] rounded-xl">
-                        <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: {{ $podcast->color }};"></span>
+                        <span class="w-1.5 h-1.5 rounded-full" style="background: {{ $podcast->color }};"></span>
                         Subscribe links coming soon
                     </span>
                     @endunless

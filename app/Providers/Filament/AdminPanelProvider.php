@@ -2,11 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Resources\Subscribers\SubscriberResource;
-use App\Filament\Resources\Users\UserResource;
-use App\Filament\Resources\Videos\VideoResource;
-use Awcodes\QuickCreate\QuickCreatePlugin;
-use Awcodes\Versions\VersionsPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -28,7 +23,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -62,16 +56,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Showcase')->icon(Heroicon::OutlinedCodeBracket),
                 NavigationGroup::make('Taxonomy')->icon(Heroicon::OutlinedTag),
                 NavigationGroup::make('Newsletter')->icon(Heroicon::OutlinedEnvelope),
-            ])
-            ->plugins([
-                FilamentSpatieLaravelBackupPlugin::make(),
-                QuickCreatePlugin::make()
-                    ->excludes([
-                        SubscriberResource::class,
-                        VideoResource::class,
-                        UserResource::class,
-                    ]),
-                VersionsPlugin::make(),
             ])
             ->userMenuItems([
                 MenuItem::make()

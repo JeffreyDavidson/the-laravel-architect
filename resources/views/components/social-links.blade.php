@@ -19,9 +19,9 @@ $listLinks = [
 @endphp
 
 @if($variant === 'buttons')
-<div class="flex items-center gap-3">
+<div class="flex flex-wrap items-center gap-3">
     @foreach($buttonLinks as $link)
-    <a href="{{ $link['url'] }}" target="_blank" class="w-9 h-9 rounded-lg border border-gray-200 dark:border-[#1e2a3a] flex items-center justify-center text-gray-500 dark:text-gray-400 {{ $link['hover'] }} transition-all" title="{{ $link['label'] }}">
+    <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all dark:border-[#1e2a3a] dark:text-gray-400 {{ $link['hover'] }}" title="{{ $link['label'] }}" aria-label="{{ $link['label'] }}">
         <x-svg-icon :name="$link['name']" class="w-4 h-4" />
     </a>
     @endforeach
@@ -29,7 +29,7 @@ $listLinks = [
 @elseif($variant === 'list')
 <div class="space-y-3">
     @foreach($listLinks as $link)
-    <a href="{{ $link['url'] }}" target="_blank" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+    <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
         <x-svg-icon :name="$link['name']" class="w-5 h-5 flex-shrink-0" />
         {{ $link['label'] }}
     </a>

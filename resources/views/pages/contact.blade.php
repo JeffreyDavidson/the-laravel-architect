@@ -10,7 +10,6 @@
         <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
         <p class="text-green-600 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
             <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
             Available for Projects
@@ -100,7 +99,7 @@
                             <x-svg-icon name="info" class="h-4 w-4 text-brand-600" />
                             What to Expect
                         </h3>
-                        <ul class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+                        <ul role="list" class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                             <li class="flex items-start gap-2">
                                 <x-svg-icon name="check" class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-600" />
                                 I'll respond within 24–48 hours

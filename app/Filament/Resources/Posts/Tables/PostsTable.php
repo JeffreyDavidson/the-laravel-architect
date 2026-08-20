@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
+use App\Models\Post;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
@@ -53,7 +54,7 @@ class PostsTable
                 Action::make('view_on_site')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn ($record) => route('blog.show', $record))
+                    ->url(fn (Post $record): string => route('blog.show', $record))
                     ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc');
