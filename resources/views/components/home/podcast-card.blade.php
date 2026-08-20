@@ -7,7 +7,7 @@
     'href',
 ])
 
-<a href="{{ $href }}" {{ $attributes->class('podcast-card fade-up group relative overflow-hidden rounded-xl border border-brand-200 bg-white p-8 transition-all duration-300 hover:border-brand-600/50 dark:border-brand-600/30 dark:bg-transparent') }} data-glow-card>
+<a href="{{ $href }}" {{ $attributes->class('podcast-card fade-up group relative overflow-hidden rounded-xl border border-brand-200 bg-white p-8 transition-[border-color,background-color,box-shadow] duration-300 hover:border-brand-600/50 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:border-brand-600/30 dark:bg-transparent') }}>
     <div class="mb-4 flex items-start justify-between">
         <img src="{{ $image }}" alt="{{ $imageAlt }}" class="h-16 w-16 rounded-xl object-cover">
 
