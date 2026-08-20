@@ -105,7 +105,7 @@
         border-radius: 1rem;
         background: rgb(13 17 23 / 0.8);
         padding: 2.5rem;
-        transition: all 0.4s ease;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
     }
 
     .service-card-v2::before {
@@ -124,7 +124,6 @@
     }
 
     .service-card-v2:hover {
-        transform: translateY(-6px);
         border-color: transparent;
         box-shadow: 0 25px 50px rgb(0 0 0 / 0.4), 0 0 40px var(--card-glow);
     }
@@ -355,12 +354,11 @@
     }
 
     .thumbnail-card {
-        transition: all 0.3s ease;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .thumbnail-card:hover {
         border-color: rgb(239 68 68 / 0.3);
-        transform: translateY(-4px) scale(1.02);
     }
 
     .subscriber-bar-fill {

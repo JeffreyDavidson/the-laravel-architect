@@ -63,7 +63,7 @@
     <div class="relative z-10 mb-5 inline-block rounded-lg border {{ $colors['border'] }} bg-[#0a0e14] px-4 py-2.5 font-mono text-sm">
         <span class="text-gray-500">$</span>
         <span class="{{ $colors['text'] }}">php artisan</span>
-        <span class="text-white">{{ $command }}</span><span class="relative -top-px animate-pulse {{ $colors['text'] }}">▊</span>
+        <span class="text-white">{{ $command }}</span><span class="relative -top-px {{ $colors['text'] }}">▊</span>
     </div>
 
     <h3 class="relative z-10 mb-3 text-xl font-bold text-gray-900 dark:text-white">{{ $title }}</h3>

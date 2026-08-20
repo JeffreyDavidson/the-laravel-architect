@@ -32,7 +32,6 @@
             <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
             <div class="flex items-center gap-2 text-gray-500">
                 <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
                 <span>Launching Soon</span>
@@ -94,7 +93,7 @@
                             </span>
                             @else
                             <span class="podcast-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide mb-4">
-                                <span class="podcast-live-dot w-1.5 h-1.5 rounded-full animate-pulse"></span>
+                            <span class="podcast-live-dot w-1.5 h-1.5 rounded-full"></span>
                                 Coming Soon
                             </span>
                             @endif

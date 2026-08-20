@@ -31,9 +31,26 @@
 }
 
 .nav-link:hover::after,
+.nav-link:focus-visible::after,
 .nav-link.is-active::after {
     opacity: 1;
     transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-link,
+    .nav-link::after {
+        transition: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 @media (max-width: 767px) {

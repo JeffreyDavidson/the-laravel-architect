@@ -38,8 +38,6 @@
         --amber-pill-border: rgba(245,158,11,0.3);
         
         /* Specific components */
-        --newsletter-bg: #eaf3fa;
-        --newsletter-border: #a8cce8;
         --testimonial-bg: #ffffff;
         --testimonial-border: rgba(0,0,0,0.08);
         --glass-card-bg: rgba(246,248,250,0.9);
@@ -90,8 +88,6 @@
         --amber-pill-bg: rgba(245,158,11,0.1);
         --amber-pill-border: rgba(245,158,11,0.2);
         
-        --newsletter-bg: rgba(26, 29, 33, 0.5);
-        --newsletter-border: rgba(74, 127, 191, 0.15);
         --testimonial-bg: rgba(22, 27, 34, 0.5);
         --testimonial-border: rgba(74, 127, 191, 0.1);
         --glass-card-bg: rgba(26, 29, 33, 0.6);
@@ -113,26 +109,19 @@
     }
 
     /* ===== Gradient Mesh Hero Background ===== */
-    @keyframes meshShift {
-        0%, 100% { background-position: 0% 50%; }
-        25% { background-position: 50% 0%; }
-        50% { background-position: 100% 50%; }
-        75% { background-position: 50% 100%; }
-    }
     .hero-mesh {
-        background: linear-gradient(-45deg, #0D1117, #1a1040, #0d2847, #1a0d30, #0D1117);
-        background-size: 400% 400%;
-        animation: meshShift 20s ease infinite;
+        background: radial-gradient(circle at 72% 22%, rgba(74, 127, 191, 0.2), transparent 34%), #0D1117;
+        animation: none;
     }
 
     /* ===== Section Dividers ===== */
     .section-divider {
-        height: 40px;
+        height: 24px;
         position: relative;
         overflow: hidden;
     }
     @media (min-width: 640px) {
-        .section-divider { height: 80px; }
+        .section-divider { height: 40px; }
     }
     .section-divider-hero {
         background: linear-gradient(to bottom, transparent, var(--bg-primary));
@@ -161,7 +150,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 0 20px rgba(74, 127, 191, 0.5)) drop-shadow(0 0 40px rgba(74, 127, 191, 0.25));
+        filter: drop-shadow(0 0 12px rgba(74, 127, 191, 0.28));
     }
 
     /* ===== Text Scramble Effect ===== */
@@ -191,16 +180,13 @@
             0 0 30px rgba(74, 127, 191, 0.15),
             0 0 60px rgba(74, 127, 191, 0.08),
             0 25px 50px rgba(0, 0, 0, 0.5);
-        transition: all 0.4s ease;
-        will-change: transform;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
     }
     .code-editor:hover {
         border-color: rgba(74, 127, 191, 0.4);
         box-shadow:
-            0 0 40px rgba(74, 127, 191, 0.2),
-            0 0 80px rgba(74, 127, 191, 0.1),
+            0 0 36px rgba(74, 127, 191, 0.16),
             0 25px 50px rgba(0, 0, 0, 0.5);
-        transform: translateY(-4px);
     }
     .code-editor-bar {
         background: #161b22;
@@ -262,64 +248,37 @@
     /* ===== Glowing Buttons ===== */
     .glow-btn {
         position: relative;
-        transition: all 0.3s ease;
-        will-change: transform;
+        transition: box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
     }
     .glow-btn:hover {
-        box-shadow: 0 0 20px rgba(74, 127, 191, 0.4), 0 0 40px rgba(74, 127, 191, 0.2);
-        transform: translateY(-2px);
+        box-shadow: 0 0 18px rgba(74, 127, 191, 0.24);
     }
     .glow-btn-outline:hover {
-        box-shadow: 0 0 20px rgba(74, 127, 191, 0.3), 0 0 40px rgba(74, 127, 191, 0.15);
-        transform: translateY(-2px);
+        box-shadow: 0 0 16px rgba(74, 127, 191, 0.18);
         border-color: #4A7FBF;
         color: white;
     }
 
-    /* ===== Glassmorphism Cards with Cursor Glow ===== */
+    /* ===== Elevated Cards ===== */
     .glass-card {
         background: var(--glass-card-bg);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid var(--glass-card-border);
-        transition: all 0.4s ease;
-        transform-style: preserve-3d;
-        perspective: 800px;
-        --glow-x: 50%;
-        --glow-y: 50%;
-    }
-    .glass-card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        background: radial-gradient(600px circle at var(--glow-x) var(--glow-y), rgba(74, 127, 191, 0.12), transparent 40%);
-        pointer-events: none;
-        z-index: 1;
-    }
-    /* Light mode: hide glow effect */
-    .dark .glass-card:hover::after {
-        opacity: 1;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .glass-card:hover {
         border-color: rgba(74, 127, 191, 0.5);
-        box-shadow: 0 0 30px rgba(74, 127, 191, 0.15), inset 0 0 30px rgba(74, 127, 191, 0.03);
-        transform: rotateY(-2deg) rotateX(2deg) scale(1.02);
+        box-shadow: 0 12px 30px rgba(74, 127, 191, 0.1);
     }
     /* Light mode hover: different shadow */
     :root:not(.dark) .glass-card:hover {
         border-color: rgba(74, 127, 191, 0.3);
-        box-shadow: 0 0 30px rgba(74, 127, 191, 0.08), 0 10px 30px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 26px rgba(0,0,0,0.06);
     }
 
     /* ===== Gradient Top Border Cards with Cursor Glow ===== */
     .gradient-border-card {
         position: relative;
         overflow: hidden;
-        --glow-x: 50%;
-        --glow-y: 50%;
     }
     .gradient-border-card::before {
         content: '';
@@ -329,26 +288,40 @@
         background: linear-gradient(90deg, #4A7FBF, #E47A9D);
         z-index: 2;
     }
-    .gradient-border-card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        background: radial-gradient(600px circle at var(--glow-x) var(--glow-y), rgba(74, 127, 191, 0.1), transparent 40%);
-        pointer-events: none;
-        z-index: 1;
+    .gradient-border-card:hover { border-color: rgba(74, 127, 191, 0.42); }
+
+    .home-page h1,
+    .home-page h2,
+    .home-page h3 {
+        font-weight: 600;
+        text-wrap: balance;
     }
-    .gradient-border-card:hover::after {
-        opacity: 1;
+    .home-page h1,
+    .home-page h2 {
+        letter-spacing: -0.025em;
+    }
+    .home-page h1 { line-height: normal; }
+    .home-page p { text-wrap: pretty; }
+    .home-page .section-heading {
+        max-width: 42rem;
+    }
+    .home-page .section-heading h2 {
+        margin-bottom: 0.75rem;
+    }
+    .home-page .section-heading p {
+        max-width: 38rem;
+    }
+    .home-page .glass-card,
+    .home-page .gradient-border-card,
+    .home-page .newsletter-card {
+        border-radius: 1rem;
     }
 
     /* ===== Scroll Fade Up ===== */
     .fade-up {
         opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
+        transform: translateY(12px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
     }
     .fade-up.visible {
         opacity: 1;
@@ -542,12 +515,6 @@
         outline: none;
     }
 
-    /* ===== Magnetic Button ===== */
-    .magnetic-btn {
-        transition: transform 0.2s ease-out;
-        will-change: transform;
-    }
-
     /* ===== Bento Grid for Projects ===== */
     .bento-projects {
         display: grid;
@@ -598,31 +565,6 @@
     :root:not(.dark) .marquee-item:hover svg,
     :root:not(.dark) .marquee-item:hover img {
         opacity: 0.7;
-    }
-    
-    /* Light mode: alternating section backgrounds */
-    :root:not(.dark) section:nth-child(even):not(.hero-mesh) {
-        background: var(--bg-secondary) !important;
-    }
-    :root:not(.dark) section:nth-child(odd):not(.hero-mesh) {
-        background: var(--bg-primary) !important;
-    }
-    
-    /* Newsletter card special styling */
-    .newsletter-card {
-        background: var(--newsletter-bg);
-        border: 1px solid var(--newsletter-border);
-    }
-    
-    /* Newsletter input styling */
-    .newsletter-input {
-        background: var(--bg-primary);
-        border: 1px solid var(--newsletter-border);
-        color: var(--text-primary);
-    }
-    .newsletter-input:focus {
-        box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
-        outline: none;
     }
     
     /* YouTube video player — light mode inversion */
@@ -898,33 +840,27 @@
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
-                <div class="hero-eyebrow mb-5 inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-950/30 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brand-200">
-                    <span class="h-1.5 w-1.5 rounded-full bg-brand-300 shadow-[0_0_10px_rgba(126,176,220,0.9)]"></span>
-                    Laravel architecture, explained
-                </div>
-                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-2 text-gray-900 dark:text-white">
+                <x-home.hero-eyebrow class="mb-5" />
+                <h1 class="max-w-3xl text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-5 text-gray-900 dark:text-white">
                     I don't just write code—
                     <br>
                     I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it.
                 </h1>
-                <div class="mb-6">
-                    <span class="laravel-glow text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide">Laravel</span>
-                </div>
 
-                <div class="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-4">
+                <div class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4">
                     Crafting <span class="scramble-wrapper"><span class="scramble-text text-brand-300" id="scramble-text"></span></span>
                 </div>
 
-                <p class="text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
+                <p class="text-lg sm:text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
                     15 years of building Laravel applications that scale. I write about the craft,
                     I'm launching a podcast, and I help developers build things they're proud of.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
-                    <a href="{{ route('blog.index') }}" class="magnetic-btn glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
+                    <a href="{{ route('blog.index') }}" class="glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
                         Read the Blog
                     </a>
-                    <a href="{{ route('projects.index') }}" class="magnetic-btn glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-gray-300 dark:border-brand-700 text-gray-600 dark:text-gray-300 font-semibold rounded-lg transition-all">
+                    <a href="{{ route('projects.index') }}" class="glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-gray-300 dark:border-brand-700 text-gray-600 dark:text-gray-300 font-semibold rounded-lg transition-all">
                         View Projects
                     </a>
                 </div>
@@ -997,26 +933,26 @@
 
                 {{-- Social links --}}
                 <div class="flex items-center justify-center lg:justify-start gap-6">
-                    <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" class="text-gray-500 hover:text-red-500 transition-colors" title="YouTube">
+                    <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="YouTube">
                         <x-svg-icon name="youtube" class="w-5 h-5" />
                     </a>
-                    <a href="https://instagram.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-pink-500 transition-colors" title="Instagram">
+                    <a href="https://instagram.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-pink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Instagram">
                         <x-svg-icon name="instagram" class="w-5 h-5" />
                     </a>
-                    <a href="https://twitter.com/thelaravelarch" target="_blank" class="text-gray-400 dark:text-gray-500 hover:text-brand-600 dark:hover:text-white transition-colors" title="X / Twitter">
+                    <a href="https://twitter.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter" class="inline-flex rounded-md p-2 -m-2 text-gray-400 dark:text-gray-500 hover:text-brand-600 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="X / Twitter">
                         <x-svg-icon name="x-twitter" class="w-5 h-5" />
                     </a>
-                    <a href="https://bsky.app/profile/thelaravelarch" target="_blank" class="text-gray-500 hover:text-blue-400 transition-colors" title="Bluesky">
+                    <a href="https://bsky.app/profile/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Bluesky" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Bluesky">
                         <x-svg-icon name="bluesky" class="w-5 h-5" />
                     </a>
-                    <a href="https://facebook.com/thelaravelarch" target="_blank" class="text-gray-500 hover:text-blue-500 transition-colors" title="Facebook">
+                    <a href="https://facebook.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Facebook">
                         <x-svg-icon name="facebook" class="w-5 h-5" />
                     </a>
                 </div>
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0" id="code-editor-wrapper">
+            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0">
                 <div class="code-editor flex flex-col h-full" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
@@ -1258,19 +1194,18 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
 <section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-end justify-between gap-6 mb-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
             <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
         <div class="space-y-6">
             @foreach($featuredProjects as $index => $project)
-            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent" data-glow-card>
+            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
                 @if($project->featured_image_url)
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
                     <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -1296,12 +1231,11 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== WHAT I DO ===== --}}
 <section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14 fade-up">
+        <div class="section-heading mx-auto text-center mb-12 fade-up">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.38-5.38a1 1 0 010-1.41l.7-.7a1 1 0 011.41 0L12 11.5l3.85-3.85a1 1 0 011.41 0l.7.7a1 1 0 010 1.41l-5.38 5.38a1 1 0 01-1.16.04z"/></svg>
                 Services
@@ -1359,13 +1293,12 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
 <section class="py-12 sm:py-20 dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-end justify-between gap-6 mb-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
             <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
         </div>
@@ -1373,7 +1306,7 @@
             {{-- Featured post --}}
             @if($latestPosts->first())
             @php $featured = $latestPosts->first(); @endphp
-            <article class="blog-featured group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
+            <article class="blog-featured group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300">
                 <a href="{{ route('blog.show', $featured) }}" class="block p-8">
                     @if($featured->category)
                     <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
@@ -1393,7 +1326,7 @@
             @if($latestPosts->count() > 1)
             <div class="blog-posts-rest">
                 @foreach($latestPosts->skip(1) as $post)
-                <article class="group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300" data-glow-card>
+                <article class="group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300">
                     <a href="{{ route('blog.show', $post) }}" class="block p-6">
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
@@ -1417,12 +1350,11 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== PODCASTS ===== --}}
 <section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-end justify-between gap-6 mb-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
             <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
         </div>
@@ -1441,7 +1373,6 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== YOUTUBE ===== --}}
 <section class="youtube-section relative py-12 sm:py-20 overflow-hidden bg-gray-50 dark:bg-transparent">
@@ -1456,7 +1387,6 @@
         <div class="text-center mb-12 yt-heading">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
                 <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                 </span>
                 Laravel videos
@@ -1471,7 +1401,7 @@
 
         {{-- Main video preview --}}
         <div class="relative">
-            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" class="yt-video-wrapper group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
+            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" rel="noopener noreferrer" aria-label="Watch The Laravel Architect on YouTube" class="yt-video-wrapper group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
                 <div class="relative aspect-video bg-[#0a0a0a] yt-video-player">
 
                     {{-- Mobile: Clean simple thumbnail --}}
@@ -1561,7 +1491,7 @@
 
                                 {{-- Blinking cursor --}}
                                 <div class="absolute bottom-16 left-[4.5rem]">
-                                    <div class="w-[2px] h-4 bg-[#4A7FBF] animate-pulse"></div>
+                                    <div class="w-[2px] h-4 bg-[#4A7FBF] opacity-70"></div>
                                 </div>
                             </div>
 
@@ -1585,9 +1515,9 @@
 
                     {{-- Center play button with rings --}}
                     <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="yt-play-ring-medium absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10 animate-ping"></div>
-                        <div class="yt-play-ring-slow absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15 animate-ping"></div>
-                        <div class="yt-play-ring-fast absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20 animate-ping"></div>
+                        <div class="yt-play-ring-medium absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10"></div>
+                        <div class="yt-play-ring-slow absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15"></div>
+                        <div class="yt-play-ring-fast absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20"></div>
 
                         <div class="yt-play-button relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-6 h-6 md:w-8 md:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -1640,42 +1570,11 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== NEWSLETTER ===== --}}
 <section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="newsletter-card relative overflow-hidden bg-brand-50 dark:bg-brand-900/50 border border-brand-200 dark:border-brand-800/50 rounded-2xl p-6 sm:p-10 shadow-sm dark:shadow-none">
-            <div class="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-400/20 blur-3xl"></div>
-            <svg class="w-10 h-10 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-            </svg>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Get Laravel tips in your inbox</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">
-                A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam, unsubscribe anytime.
-            </p>
-            @if(session('newsletter_success'))
-            <div class="mb-4 p-3 rounded-lg border border-green-500/30 bg-green-500/10 text-green-400 text-sm max-w-md mx-auto">
-                {{ session('newsletter_success') }}
-            </div>
-            @endif
-            @error('email')
-            <div class="mb-4 p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm max-w-md mx-auto">
-                {{ $message }}
-            </div>
-            @enderror
-            <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                @csrf
-                <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
-                    <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
-                </div>
-                <input type="email" name="email" placeholder="you@example.com" required
-                    class="newsletter-input flex-1 px-4 py-3 bg-white dark:bg-brand-800 border border-brand-200 dark:border-brand-700/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm transition-all shadow-sm dark:shadow-none">
-                <button type="submit" class="magnetic-btn glow-btn px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg text-sm transition-all">
-                    Subscribe
-                </button>
-            </form>
-        </div>
+        <x-home.newsletter-signup />
     </div>
 </section>
 
@@ -1775,13 +1674,12 @@
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
-<div class="section-divider-light hidden dark:hidden my-2"></div>
 
 {{-- ===== FINAL CTA ===== --}}
 <section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
     {{-- Animated gradient orbs --}}
-    <div class="cta-orb-brand absolute top-1/2 left-1/4 h-[500px] w-[500px] -translate-y-1/2 rounded-full opacity-[0.06] blur-[100px] animate-pulse dark:opacity-[0.04]"></div>
-    <div class="cta-orb-accent absolute top-1/2 right-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-[0.05] blur-[100px] animate-pulse dark:opacity-[0.03]"></div>
+    <div class="cta-orb-brand absolute top-1/2 left-1/4 h-[500px] w-[500px] -translate-y-1/2 rounded-full opacity-[0.06] blur-[100px] dark:opacity-[0.04]"></div>
+    <div class="cta-orb-accent absolute top-1/2 right-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-[0.05] blur-[100px] dark:opacity-[0.03]"></div>
 
     {{-- Grid pattern --}}
     <div class="cta-grid absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"></div>
@@ -1790,7 +1688,6 @@
         {{-- Available badge --}}
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 dark:border-green-500/20 bg-green-500/10 dark:bg-green-500/5 text-green-600 dark:text-green-400 text-xs font-semibold uppercase tracking-widest mb-8">
             <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 dark:bg-green-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500 dark:bg-green-400"></span>
             </span>
             Available for Projects
@@ -1799,7 +1696,7 @@
         {{-- Headline with gradient text --}}
         <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
             Let's Build Something
-            <span class="bg-gradient-to-r from-[#2d6aa3] via-[#c74b7a] to-[#2d6aa3] dark:from-[#4A7FBF] dark:via-[#E47A9D] dark:to-[#4A7FBF] bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">Together</span>
+            <span class="bg-gradient-to-r from-[#2d6aa3] via-[#c74b7a] to-[#2d6aa3] dark:from-[#4A7FBF] dark:via-[#E47A9D] dark:to-[#4A7FBF] bg-clip-text text-transparent">Together</span>
         </h2>
 
         <p class="text-gray-600 dark:text-gray-400 mb-12 max-w-lg mx-auto text-lg leading-relaxed">
@@ -1808,7 +1705,7 @@
 
         {{-- Buttons --}}
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('contact') }}" class="magnetic-btn group inline-flex items-center gap-2 px-8 py-4 bg-[#4A7FBF] hover:bg-[#3a6faf] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 px-8 py-4 bg-[#4A7FBF] hover:bg-[#3a6faf] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
@@ -1920,51 +1817,5 @@ function switchTab(tab) {
     document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
 })();
 
-// Cursor-following glow on cards
-(function() {
-    document.querySelectorAll('[data-glow-card]').forEach(function(card) {
-        card.addEventListener('mousemove', function(e) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--glow-x', (e.clientX - rect.left) + 'px');
-            card.style.setProperty('--glow-y', (e.clientY - rect.top) + 'px');
-        }, { passive: true });
-    });
-})();
-
-// Magnetic effect on CTA buttons
-(function() {
-    document.querySelectorAll('.magnetic-btn').forEach(function(btn) {
-        btn.addEventListener('mousemove', function(e) {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
-        }, { passive: true });
-
-        btn.addEventListener('mouseleave', function() {
-            btn.style.transform = '';
-        }, { passive: true });
-    });
-})();
-
-// Smooth parallax on hero code editor
-(function() {
-    const wrapper = document.getElementById('code-editor-wrapper');
-    if (!wrapper) return;
-    let ticking = false;
-
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            requestAnimationFrame(function() {
-                const scrollY = window.scrollY;
-                if (scrollY < window.innerHeight) {
-                    wrapper.style.transform = 'translateY(' + (scrollY * 0.12) + 'px)';
-                }
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-})();
 </script>
 @endsection
