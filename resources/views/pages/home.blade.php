@@ -842,9 +842,9 @@
             <div class="flex-1 text-center lg:text-left">
                 <x-home.hero-eyebrow class="mb-5" />
                 <h1 class="max-w-3xl text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-5 text-gray-900 dark:text-white">
-                    I don't just write code—
+                    I don't just write code.
                     <br>
-                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it.
+                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it!
                 </h1>
 
                 <div class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4">
