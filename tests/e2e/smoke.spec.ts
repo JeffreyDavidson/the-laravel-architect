@@ -2,12 +2,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, Page, test } from '@playwright/test';
 
 const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/projects', '/uses'];
+const publicColorSchemes = ['light', 'dark'] as const;
 
 test.beforeEach(async ({ page }) => {
-    await page.emulateMedia({
-        colorScheme: 'light',
-        reducedMotion: 'reduce',
-    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
 async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<void> {
@@ -23,17 +21,23 @@ async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<vo
     }))).toEqual([]);
 }
 
-for (const route of publicRoutes) {
-    test(`${route} loads successfully without high-impact accessibility violations`, async ({ page }) => {
-        const response = await page.goto(route);
+for (const colorScheme of publicColorSchemes) {
+    for (const route of publicRoutes) {
+        test(`${route} loads in ${colorScheme} mode without high-impact accessibility violations`, async ({ page }) => {
+            await page.emulateMedia({ colorScheme });
 
-        expect(response?.ok()).toBeTruthy();
-        await expect(page.locator('body')).toBeVisible();
-        await assertNoHighImpactAccessibilityViolations(page);
-    });
+            const response = await page.goto(route);
+
+            expect(response?.ok()).toBeTruthy();
+            await expect(page.locator('body')).toBeVisible();
+            await assertNoHighImpactAccessibilityViolations(page);
+        });
+    }
 }
 
 test('admin login loads with labeled credentials without high-impact accessibility violations', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+
     const response = await page.goto('/admin/login');
 
     expect(response?.ok()).toBeTruthy();
@@ -45,6 +49,8 @@ test('admin login loads with labeled credentials without high-impact accessibili
 
 test('an administrator can reach the dashboard', async ({ page }) => {
     test.skip(!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD);
+
+    await page.emulateMedia({ colorScheme: 'dark' });
 
     await page.goto('/admin/login');
     await page.locator('input[type="email"]').fill(process.env.E2E_ADMIN_EMAIL!);

@@ -352,7 +352,7 @@
         gap: 0.75rem;
         padding: 0 2.5rem;
         white-space: nowrap;
-        color: var(--text-muted);
+        color: var(--text-tertiary);
         font-size: 0.875rem;
         font-weight: 600;
         letter-spacing: 0.05em;
