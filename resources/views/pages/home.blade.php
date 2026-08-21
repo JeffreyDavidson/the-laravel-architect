@@ -870,8 +870,7 @@
                 </div>
 
                 <p class="text-lg sm:text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
-                    15 years of building Laravel applications that scale. I write about the craft,
-                    I'm launching a podcast, and I help developers build things they're proud of.
+                    I help teams design, modernize, and ship maintainable Laravel applications—with clear architecture, useful tests, and fewer surprises.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
@@ -1183,32 +1182,12 @@
     </div>
 </section>
 
-{{-- ===== STATS BAR ===== --}}
-<section class="py-10 sm:py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50 bg-white dark:bg-transparent">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-8 sm:flex sm:items-center sm:justify-between fade-up">
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="15">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Years Experience</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="4">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Open Source Projects</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="2">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Podcasts Launching</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number"><span class="count-up" data-target="1000">0</span><span class="stat-number-suffix">+</span></div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Cups of Coffee</div>
-            </div>
-        </div>
-    </div>
-</section>
+<x-home.proof-strip
+    years="15"
+    :published-posts="$publishedPostCount"
+    :published-projects="$publishedProjectCount"
+    :recommendations="$testimonials->count()"
+/>
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
@@ -1217,10 +1196,13 @@
 @if($featuredProjects->count())
 <section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
-            <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Selected work"
+            title="Laravel systems built for the long term"
+            description="A selection of products and platforms shaped around maintainability, clear domain boundaries, and dependable delivery."
+            :href="route('projects.index')"
+            link-label="View all projects"
+        />
         <div class="space-y-6">
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
@@ -1247,20 +1229,20 @@
 </section>
 @endif
 
+<x-home.credibility :testimonials="$testimonials" />
+
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== WHAT I DO ===== --}}
 <section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="section-heading mx-auto text-center mb-12 fade-up">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.38-5.38a1 1 0 010-1.41l.7-.7a1 1 0 011.41 0L12 11.5l3.85-3.85a1 1 0 011.41 0l.7.7a1 1 0 010 1.41l-5.38 5.38a1 1 0 01-1.16.04z"/></svg>
-                Services
-            </div>
-            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">What I Do</h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues, I help teams build software they can be proud of.</p>
-        </div>
+        <x-home.section-header
+            class="fade-up"
+            eyebrow="Services"
+            title="How I help Laravel teams"
+            description="From greenfield applications to legacy rescues, I help teams make sound technical decisions and leave the codebase stronger."
+        />
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <x-home.service-card
                 variant="brand"
@@ -1316,10 +1298,13 @@
 @if($latestPosts->count())
 <section class="py-12 sm:py-20 dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
-            <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Latest writing"
+            title="Practical notes from the work"
+            description="Architecture decisions, Laravel techniques, and lessons from maintaining real applications."
+            :href="route('blog.index')"
+            link-label="Browse all articles"
+        />
         <div class="blog-posts-grid">
             {{-- Featured post --}}
             @if($latestPosts->first())
@@ -1369,13 +1354,26 @@
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
+{{-- ===== NEWSLETTER ===== --}}
+<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <x-home.newsletter-signup />
+    </div>
+</section>
+
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark hidden dark:block"></div>
+
 {{-- ===== PODCASTS ===== --}}
 <section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
-            <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Listen"
+            title="Long-form Laravel conversations"
+            description="Thoughtful discussions about architecture, web development, and the realities of building software."
+            :href="route('podcast.index')"
+            link-label="Browse the podcast"
+        />
         <div class="grid grid-cols-1 gap-8">
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
@@ -1589,62 +1587,16 @@
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
-{{-- ===== NEWSLETTER ===== --}}
-<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <x-home.newsletter-signup />
-    </div>
-</section>
-
-{{-- ===== TESTIMONIALS ===== --}}
-<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
+{{-- ===== FEEDBACK ===== --}}
+<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent" aria-labelledby="testimonial-form-title">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Personal Quote --}}
-        <div class="text-center mb-10 fade-up">
-            <div class="relative inline-block max-w-3xl mx-auto rounded-2xl border border-[#4A7FBF]/15 dark:border-[#4A7FBF]/10 bg-gradient-to-br from-[#4A7FBF]/[0.04] to-[#9D5175]/[0.03] dark:from-[#4A7FBF]/[0.06] dark:to-transparent p-10 md:p-14">
-                {{-- Decorative quote marks --}}
-                <svg class="w-14 h-14 text-[#4A7FBF]/20 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-6 leading-snug">
-                    Clean architecture, tested code, and honest conversations. That's what I bring to every project.
-                </blockquote>
-                <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
-            </div>
-        </div>
-
-        {{-- Approved Testimonials --}}
-        @if($testimonials->count())
-        <div class="mb-16">
-            <h3 class="text-center text-sm font-semibold uppercase tracking-widest text-gray-600 mb-10">Kind Words from Colleagues & Collaborators</h3>
-            <div class="grid grid-cols-1 md:grid-cols-{{ min($testimonials->count(), 3) }} gap-8">
-                @foreach($testimonials as $testimonial)
-                <div class="testimonial-card fade-up">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">"{{ $testimonial->body }}"</p>
-                    </div>
-                    <div class="flex items-center gap-3 mt-auto pt-5 border-t border-gray-200 dark:border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-[#4A7FBF]/20 flex items-center justify-center text-[#4A7FBF] font-bold text-sm flex-shrink-0">
-                            {{ collect(explode(' ', $testimonial->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('') }}
-                        </div>
-                        <div>
-                            <p class="text-gray-900 dark:text-white text-sm font-semibold">{{ $testimonial->name }}</p>
-                            @if($testimonial->role || $testimonial->company)
-                            <p class="text-gray-500 text-xs">{{ collect([$testimonial->role, $testimonial->company])->filter()->join(', ') }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
         {{-- Submit Testimonial Form --}}
         <div class="max-w-2xl mx-auto fade-up">
             <div class="relative rounded-2xl border-t-[3px] border-t-[#4A7FBF] border border-[#4A7FBF]/10 dark:border-[#1e2a3a] dark:border-t-[#4A7FBF] bg-[#f0f6fc] dark:bg-[#0D1117] p-8 shadow-sm">
                 {{-- Subtle corner accent --}}
                 <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#4A7FBF]/[0.06] to-transparent rounded-bl-full pointer-events-none"></div>
 
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h3>
+                <h2 id="testimonial-form-title" class="text-balance text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h2>
                 <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
 
                 @if(session('testimonial_success'))
