@@ -17,6 +17,8 @@ beforeEach(function () {
         'backup.backup.destination.disks' => ['local', 's3'],
         'backup.backup.password' => 'encrypted-archive-password',
         'backup.notifications.mail.to' => 'backups@thelaravelarchitect.com',
+        'health.runtime.enabled' => true,
+        'health.runtime.max_age_seconds' => 300,
     ]);
 });
 
@@ -36,6 +38,8 @@ it('reports every unsafe production setting without exposing its value', functio
         'database.connections.sqlite.database' => 'database/database.sqlite',
         'backup.backup.destination.disks' => ['local'],
         'backup.backup.password' => null,
+        'health.runtime.enabled' => false,
+        'health.runtime.max_age_seconds' => 30,
     ]);
 
     $this->artisan('app:verify-production')
@@ -48,6 +52,8 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('DB_DATABASE must be an absolute path.')
         ->expectsOutputToContain('BACKUP_DISKS must include an off-server disk.')
         ->expectsOutputToContain('BACKUP_ARCHIVE_PASSWORD must be configured.')
+        ->expectsOutputToContain('RUNTIME_HEALTH_ENABLED must be true.')
+        ->expectsOutputToContain('RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.')
         ->doesntExpectOutput('admin@example.test')
         ->assertFailed();
 });

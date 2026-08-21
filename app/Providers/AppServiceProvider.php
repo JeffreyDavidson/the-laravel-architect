@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\RuntimeHealth;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(DiagnosingHealth::class, function (): void {
             DB::table('migrations')->limit(1)->exists();
+
+            if (config('health.runtime.enabled') === true) {
+                app(RuntimeHealth::class)->ensureHealthy();
+            }
         });
 
         RateLimiter::for('newsletter', fn (Request $request) => Limit::perHour(5)->by($request->ip()));

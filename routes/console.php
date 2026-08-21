@@ -1,6 +1,17 @@
 <?php
 
+use App\Jobs\RecordQueueHeartbeat;
+use App\Support\RuntimeHealth;
 use Illuminate\Support\Facades\Schedule;
+
+Schedule::call(function (RuntimeHealth $runtimeHealth): void {
+    $runtimeHealth->recordSchedulerHeartbeat();
+    RecordQueueHeartbeat::dispatch();
+})
+    ->name('runtime-health:heartbeat')
+    ->everyMinute()
+    ->withoutOverlapping(5)
+    ->onOneServer();
 
 Schedule::command('backup:run')
     ->dailyAt(config('backup.schedule.run_at'))
