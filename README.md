@@ -60,6 +60,7 @@ The `/up` health endpoint verifies both the Laravel runtime and access to the mi
 
 The production scheduler must run every minute. It dispatches:
 
+- a runtime heartbeat every minute to verify both the scheduler and queue worker
 - application and database backups daily
 - backup cleanup weekly
 - backup health monitoring daily
@@ -69,6 +70,8 @@ The production scheduler must run every minute. It dispatches:
 YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
 
 Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS` to a comma-separated list that includes an off-server disk, such as `local,s3`, configure that disk's credentials, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `MAIL_CONTACT_TO` and `BACKUP_NOTIFICATION_EMAIL` must point to monitored mailboxes.
+
+Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
 After changing backup configuration, run `php artisan backup:run`, `php artisan backup:monitor`, and restore a copy of the resulting SQLite dump and media archive in a temporary location. A successful backup notification is not a substitute for validating the archive contents and restored database.
 
