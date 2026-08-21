@@ -10,6 +10,13 @@ on:
       - develop
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   laravel:
     name: Laravel
@@ -77,6 +84,15 @@ jobs:
           E2E_ADMIN_EMAIL: e2e-admin@example.test
           E2E_ADMIN_PASSWORD: e2e-password
         run: npm run test:e2e
+
+      - name: Upload browser failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures-${{ github.run_attempt }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Run tests
         run: vendor/bin/pest
