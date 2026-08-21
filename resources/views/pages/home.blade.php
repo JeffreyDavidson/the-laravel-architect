@@ -801,10 +801,20 @@
         filter: none;
     }
     :root:not(.dark) .scramble-char-resolved {
-        color: #4A7FBF;
+        color: #245b91;
     }
     :root:not(.dark) .scramble-char-random {
-        color: rgba(74, 127, 191, 0.3);
+        color: #245b91;
+    }
+
+    @media (min-width: 1024px) and (max-height: 800px) {
+        .hero-shell {
+            padding-block: 2rem;
+        }
+
+        .code-panel {
+            min-height: 480px;
+        }
     }
     :root:not(.dark) .glow-btn:hover {
         box-shadow: 0 4px 20px rgba(74, 127, 191, 0.2);
@@ -843,8 +853,8 @@
 </style>
 
 {{-- ===== HERO ===== --}}
-<section class="hero-mesh noise-overlay relative overflow-hidden min-h-[70vh] lg:min-h-screen flex items-center">
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
+<section class="hero-mesh noise-overlay relative flex min-h-[70vh] items-center overflow-hidden lg:min-h-[calc(100svh-4rem)]">
+    <div class="hero-shell relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-16">
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
