@@ -94,6 +94,16 @@
     border-color: #d1d5db;
 }
 
+:root:not(.dark) .category-pill.active {
+    color: #245b91;
+}
+
+:root:not(.dark) .filter-tab.active {
+    color: white;
+    background: #3f6fa8;
+    border-color: #3f6fa8;
+}
+
 :root:not(.dark) .filter-tab:not(.active):hover {
     border-color: var(--color-brand-600);
     color: var(--color-brand-600);
