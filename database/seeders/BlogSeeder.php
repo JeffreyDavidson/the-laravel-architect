@@ -15,7 +15,7 @@ class BlogSeeder extends Seeder
     {
         // Create or find the author
         $user = User::firstOrCreate(
-            ['email' => 'jeffrey@thelaravelarchitect.com'],
+            ['email' => (string) config('app.content_author_email')],
             [
                 'name' => 'Jeffrey Davidson',
                 'password' => Str::random(64),

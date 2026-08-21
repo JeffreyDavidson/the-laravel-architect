@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         // Create admin user
         $jeffrey = User::firstOrCreate(
-            ['email' => 'thelaravelarchitect@gmail.com'],
+            ['email' => (string) config('app.admin_email')],
             [
                 'name' => 'Jeffrey Davidson',
                 'password' => Str::random(64),
