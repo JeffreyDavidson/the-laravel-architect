@@ -47,6 +47,22 @@ test('admin login loads with labeled credentials without high-impact accessibili
     await assertNoHighImpactAccessibilityViolations(page);
 });
 
+test('homepage primary actions remain visible at a laptop viewport height', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/');
+
+    for (const name of ['Read the Blog', 'View Projects']) {
+        const link = page.getByRole('link', { name, exact: true });
+
+        await expect(link).toBeVisible();
+        await expect.poll(async () => {
+            const box = await link.boundingBox();
+
+            return box !== null && box.y + box.height <= 720;
+        }).toBeTruthy();
+    }
+});
+
 test('an administrator can reach the dashboard', async ({ page }) => {
     test.skip(!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD);
 
