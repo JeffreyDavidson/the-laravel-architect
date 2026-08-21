@@ -1106,6 +1106,25 @@
     background: rgba(91, 145, 206, 0.055);
 }
 
+.dark .fi-ta-empty-state {
+    min-height: 12rem;
+    padding: 2.5rem 1rem;
+}
+
+.dark .fi-ta-empty-state-icon {
+    color: var(--tla-accent);
+    opacity: 0.8;
+}
+
+.dark .fi-ta-empty-state-heading {
+    color: var(--tla-ink);
+    font-weight: 600;
+}
+
+.dark .fi-ta-empty-state-description {
+    color: var(--tla-subtle);
+}
+
 .dark .fi-section-header-heading {
     color: var(--tla-ink);
     font-weight: 600;
@@ -1186,5 +1205,28 @@
 
     .dark .fi-ta-content {
         overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scrollbar-width: thin;
+    }
+
+    .dark .fi-ta-table {
+        min-width: 42rem;
+    }
+
+    .dark .fi-page-header-actions {
+        width: 100%;
+    }
+
+    .dark .fi-page-header-actions .fi-btn {
+        min-height: 2.75rem;
+    }
+
+    .dark .fi-ta-header-toolbar,
+    .dark .fi-ta-footer {
+        gap: 0.65rem;
+    }
+
+    .dark .fi-modal-window {
+        margin-inline: 0.75rem;
     }
 }
