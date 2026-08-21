@@ -12,6 +12,34 @@
 @import './components/about.css';
 @import './components/listings.css';
 
+/* Keep muted dark-mode text readable against the site's deep surfaces. */
+.dark .text-gray-500 {
+    color: #a8b3c2 !important;
+}
+
+.dark .text-gray-600 {
+    color: #c5d0de !important;
+}
+
+.dark .text-gray-700 {
+    color: #dbe5f0 !important;
+}
+
+.dark .text-brand-600 {
+    color: #82acdc !important;
+}
+
+/* Preserve the same contrast guarantees when the public site is in light mode. */
+:root:not(.dark) .text-brand-400,
+:root:not(.dark) .text-brand-500,
+:root:not(.dark) .text-brand-600 {
+    color: #245b91 !important;
+}
+
+:root:not(.dark) .bg-brand-600 {
+    background-color: #3f6fa8 !important;
+}
+
 .nav-link {
     position: relative;
 }

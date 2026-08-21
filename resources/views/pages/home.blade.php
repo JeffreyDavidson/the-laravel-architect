@@ -202,7 +202,7 @@
         border-right: 1px solid rgba(255,255,255,0.06);
     }
     .code-line-number {
-        color: #484f58;
+        color: #8b949e;
         user-select: none;
         min-width: 2rem;
         text-align: right;
@@ -212,7 +212,7 @@
     .syn-string { color: #a5d6ff; }
     .syn-class { color: #79c0ff; }
     .syn-method { color: #d2a8ff; }
-    .syn-comment { color: #484f58; font-style: italic; }
+    .syn-comment { color: #8b949e; font-style: italic; }
     .syn-variable { color: #ffa657; }
     .syn-function { color: #d2a8ff; }
     .syn-arrow { color: #ff7b72; }
@@ -757,20 +757,20 @@
         border-left-color: #4A7FBF !important;
     }
     /* Light syntax colors (VS Code / GitHub Light) */
-    :root:not(.dark) .syn-keyword { color: #cf222e !important; }
-    :root:not(.dark) .syn-string { color: #0a3069 !important; }
-    :root:not(.dark) .syn-class { color: #0550ae !important; }
-    :root:not(.dark) .syn-method { color: #8250df !important; }
-    :root:not(.dark) .syn-comment { color: #6e7781 !important; }
-    :root:not(.dark) .syn-variable { color: #953800 !important; }
-    :root:not(.dark) .syn-function { color: #8250df !important; }
-    :root:not(.dark) .syn-arrow { color: #cf222e !important; }
-    :root:not(.dark) .syn-bracket { color: #1f2328 !important; }
-    :root:not(.dark) .syn-text { color: #1f2328 !important; }
-    :root:not(.dark) .syn-param { color: #953800 !important; }
+    :root:not(.dark) .syn-keyword { color: #ff7b72 !important; }
+    :root:not(.dark) .syn-string { color: #a5d6ff !important; }
+    :root:not(.dark) .syn-class { color: #79c0ff !important; }
+    :root:not(.dark) .syn-method { color: #d2a8ff !important; }
+    :root:not(.dark) .syn-comment { color: #8b949e !important; }
+    :root:not(.dark) .syn-variable { color: #ffa657 !important; }
+    :root:not(.dark) .syn-function { color: #d2a8ff !important; }
+    :root:not(.dark) .syn-arrow { color: #ff7b72 !important; }
+    :root:not(.dark) .syn-bracket { color: #c9d1d9 !important; }
+    :root:not(.dark) .syn-text { color: #c9d1d9 !important; }
+    :root:not(.dark) .syn-param { color: #ffa657 !important; }
     /* Light mode tab text */
     :root:not(.dark) .code-editor .text-gray-300 { color: #1f2328 !important; }
-    :root:not(.dark) .code-editor .text-gray-500 { color: #656d76 !important; }
+    :root:not(.dark) .code-editor .text-gray-500 { color: #8b949e !important; }
     :root:not(.dark) .code-editor .text-gray-600 { color: #656d76 !important; }
 
     /* Light mode hero — clean white with subtle texture */
