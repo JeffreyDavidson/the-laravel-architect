@@ -37,7 +37,7 @@ class TestimonialsTable
                 SelectFilter::make('status')
                     ->options(TestimonialStatus::labels()),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
