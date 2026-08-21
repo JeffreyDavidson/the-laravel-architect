@@ -39,12 +39,40 @@ class AppServiceProvider extends ServiceProvider
             'panels::body.end',
             fn () => Blade::render(<<<'HTML'
                 <script>
-                    document.addEventListener("livewire:navigating", () => {
-                        const sidebar = document.querySelector(".fi-sidebar-nav");
+                    const expandSidebarGroups = () => {
+                        window.localStorage.removeItem('collapsedGroups');
+
+                        document.querySelectorAll('.fi-sidebar-group').forEach((group) => {
+                            group.classList.remove('fi-collapsed');
+
+                            const items = group.querySelector('.fi-sidebar-group-items');
+
+                            if (! items) return;
+
+                            items.style.display = '';
+                            items.style.height = '';
+                            items.style.maxHeight = '';
+                        });
+
+                        const sidebar = window.Alpine?.store('sidebar');
+
+                        if (sidebar) sidebar.collapsedGroups = [];
+                    };
+
+                    document.addEventListener('alpine:initialized', () => {
+                        window.requestAnimationFrame(expandSidebarGroups);
+                    }, { once: true });
+
+                    document.addEventListener('livewire:navigated', () => {
+                        window.requestAnimationFrame(expandSidebarGroups);
+                    });
+
+                    document.addEventListener('livewire:navigating', () => {
+                        const sidebar = document.querySelector('.fi-sidebar-nav');
                         if (sidebar) window.__sidebarScroll = sidebar.scrollTop;
                     });
-                    document.addEventListener("livewire:navigated", () => {
-                        const sidebar = document.querySelector(".fi-sidebar-nav");
+                    document.addEventListener('livewire:navigated', () => {
+                        const sidebar = document.querySelector('.fi-sidebar-nav');
                         if (sidebar && window.__sidebarScroll) sidebar.scrollTop = window.__sidebarScroll;
                     });
                 </script>

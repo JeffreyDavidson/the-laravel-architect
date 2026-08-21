@@ -23,6 +23,7 @@ class TestimonialsTable
                 TextColumn::make('company')
                     ->searchable(),
                 TextColumn::make('body')
+                    ->label('Testimonial')
                     ->limit(60),
                 TextColumn::make('status')
                     ->badge()

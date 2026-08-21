@@ -16,7 +16,7 @@
 
                 <div class="tla-dashboard-hero__actions">
                     <a href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('create') }}">Write post</a>
-                    <a href="/" target="_blank">
+                    <a href="/" target="_blank" rel="noreferrer">
                         <span></span>
                         Public site
                     </a>
@@ -49,14 +49,24 @@
                 </a>
             </div>
 
-            @if($pendingTestimonials > 0)
-                <a href="{{ \App\Filament\Resources\Testimonials\TestimonialResource::getUrl('index') }}" class="tla-dashboard-alert">
-                    <span>{{ $pendingTestimonials }}</span>
-                    {{ $pendingTestimonials === 1 ? 'testimonial needs' : 'testimonials need' }} review
-                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.69l-3.22-3.22a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
-                    </svg>
-                </a>
+            @if($pendingTestimonials > 0 || $inReviewPosts > 0)
+                <div class="tla-dashboard-attention" aria-label="Needs attention">
+                    <span class="tla-dashboard-attention__label">Needs attention</span>
+
+                    @if($inReviewPosts > 0)
+                        <a href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index') }}">
+                            <strong>{{ $inReviewPosts }}</strong>
+                            {{ $inReviewPosts === 1 ? 'post is' : 'posts are' }} awaiting review
+                        </a>
+                    @endif
+
+                    @if($pendingTestimonials > 0)
+                        <a href="{{ \App\Filament\Resources\Testimonials\TestimonialResource::getUrl('index') }}">
+                            <strong>{{ $pendingTestimonials }}</strong>
+                            {{ $pendingTestimonials === 1 ? 'testimonial needs' : 'testimonials need' }} review
+                        </a>
+                    @endif
+                </div>
             @endif
         </div>
     </section>

@@ -19,7 +19,7 @@ class PodcastsTable
                 ImageColumn::make('cover_image_path')
                     ->disk('public')
                     ->circular()
-                    ->label(''),
+                    ->label('Cover'),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

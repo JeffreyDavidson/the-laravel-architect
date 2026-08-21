@@ -14,6 +14,23 @@
 /* ── Dashboard widget grid spacing ── */
 .fi-wi {
     gap: 1rem;
+    container-type: inline-size;
+}
+
+/* Filament uses x-cloak while Alpine hydrates floating panels. Keep that
+ * contract intact so filters, columns, and the user menu never flash open. */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Keep the admin surface in the same navy family as the public site. */
+.dark .fi-body,
+.dark .fi-simple-layout {
+    background-color: #0d1117;
+}
+
+.dark .fi-body {
+    color: #e5edf8;
 }
 
 /* ── Nav group labels ── */
@@ -35,15 +52,16 @@
 }
 
 /* ── Nav item hover tint ── */
-.dark .fi-sidebar-item > a:hover {
-    background-color: rgba(255, 255, 255, 0.045);
+.dark .fi-sidebar-item > a:hover:not([aria-current='page']) {
+    background-color: rgba(255, 255, 255, 0.025);
+    color: rgba(231, 238, 248, 0.86);
 }
 
 /* ── Table header ── */
 .dark .fi-ta-header-cell {
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
 }
 
 /* ── Table row hover ── */
@@ -121,7 +139,7 @@
     background:
         radial-gradient(circle at 15% 0%, rgba(74, 127, 191, 0.18), transparent 24rem),
         radial-gradient(circle at 82% 16%, rgba(245, 158, 11, 0.12), transparent 22rem),
-        linear-gradient(180deg, #181a1a 0%, #1f2221 34%, #151716 100%);
+        linear-gradient(180deg, #0d1117 0%, #111827 34%, #0d1117 100%);
 }
 
 .fi-main {
@@ -136,11 +154,11 @@
 .dark .fi-main-ctn {
     background:
         linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 34rem),
-        #202221;
+        #111827;
 }
 
 .dark .fi-topbar {
-    background: rgba(18, 20, 20, 0.96);
+    background: rgba(13, 17, 23, 0.96);
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
     box-shadow: none;
     backdrop-filter: blur(18px);
@@ -149,28 +167,117 @@
 .dark .fi-sidebar {
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18rem),
-        #202221;
+        #111827;
     border-right: 1px solid rgba(255, 255, 255, 0.075);
 }
 
 .dark .fi-sidebar-header {
-    background: #202221;
+    background: #111827;
     border-bottom: 1px solid rgba(255, 255, 255, 0.075);
 }
 
-.fi-topbar-open-collapse-sidebar-btn,
-.fi-topbar-close-collapse-sidebar-btn,
-.fi-sidebar-open-collapse-sidebar-btn,
-.fi-sidebar-close-collapse-sidebar-btn,
-.fi-layout-sidebar-toggle-btn-ctn {
-    display: none !important;
+/* ── Auth / simple pages ── */
+.dark .fi-simple-layout {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(74, 127, 191, 0.22), transparent 22rem),
+        radial-gradient(circle at 88% 88%, rgba(199, 75, 122, 0.14), transparent 24rem),
+        #0d1117;
 }
 
-.tla-admin-rail {
+.dark .fi-simple-layout::before {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(130, 172, 220, 0.18) 0.7px, transparent 0.7px);
+    background-size: 26px 26px;
+    content: '';
+    opacity: 0.16;
+    pointer-events: none;
+}
+
+.dark .fi-simple-main-ctn {
     position: relative;
-    z-index: 30;
-    height: 2px;
-    background: linear-gradient(90deg, #4A7FBF, #c74b7a 52%, #f59e0b);
+    z-index: 1;
+}
+
+.dark .fi-simple-main {
+    background: transparent;
+    box-shadow: none;
+    padding: 1rem;
+}
+
+.dark .fi-simple-page-content {
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 1rem;
+    background: rgba(17, 24, 39, 0.86);
+    box-shadow: none;
+    padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.dark .fi-simple-header {
+    gap: 0.7rem;
+    margin-bottom: 1.25rem;
+}
+
+.dark .fi-simple-header .fi-logo {
+    width: 4.25rem;
+    height: 4.25rem !important;
+    object-fit: contain;
+}
+
+.dark .fi-simple-header-heading {
+    color: #f8fafc;
+    font-size: 1.65rem;
+    letter-spacing: -0.035em;
+}
+
+.dark .fi-simple-header-subheading {
+    color: rgba(226, 232, 240, 0.64);
+}
+
+.tla-auth-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+    color: #82acdc;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.tla-auth-kicker__dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: #34d399;
+    box-shadow: 0 0 0 0.25rem rgba(52, 211, 153, 0.12);
+}
+
+.dark .fi-simple-page .fi-input-wrp {
+    background: rgba(13, 17, 23, 0.72);
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+.dark .fi-simple-page .fi-btn.fi-color-primary {
+    min-height: 2.75rem;
+    background: #4a7fbf;
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(74, 127, 191, 0.22);
+}
+
+.dark .fi-simple-page .fi-btn.fi-color-primary:hover {
+    background: #5b91ce;
+}
+
+/* Keep the primary action understandable if Alpine has not hydrated yet. */
+.dark .fi-simple-page .fi-btn.fi-color-primary span[x-show="! isProcessing"] {
+    display: inline !important;
+    visibility: visible !important;
 }
 
 .dark .fi-page-heading {
@@ -185,7 +292,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
-        #202322;
+        #111827;
     box-shadow: 0 26px 80px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -299,6 +406,15 @@
     color: #ffffff;
 }
 
+.tla-dashboard-hero__actions a:focus-visible,
+.tla-dashboard-stat:focus-visible,
+.tla-dashboard-attention a:focus-visible,
+.tla-dashboard-action:focus-visible,
+.tla-dashboard-timeline__item:focus-visible {
+    outline: 2px solid #82acdc;
+    outline-offset: 3px;
+}
+
 .tla-dashboard-hero__actions span {
     width: 0.42rem;
     height: 0.42rem;
@@ -349,11 +465,15 @@
 .tla-dashboard-stat--amber { --stat-color: #f59e0b; }
 
 .tla-dashboard-stat span {
+    display: block;
+    overflow: hidden;
     color: rgba(248, 250, 252, 0.58);
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.12em;
+    text-overflow: ellipsis;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .tla-dashboard-stat strong {
@@ -400,6 +520,43 @@
 .tla-dashboard-alert svg {
     width: 1rem;
     margin-left: auto;
+}
+
+.tla-dashboard-attention {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(245, 158, 11, 0.22);
+    padding-top: 0.85rem;
+}
+
+.tla-dashboard-attention__label {
+    color: rgba(248, 250, 252, 0.5);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tla-dashboard-attention a {
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 999px;
+    background: rgba(245, 158, 11, 0.08);
+    color: #fbbf24;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.tla-dashboard-attention a:hover {
+    border-color: rgba(245, 158, 11, 0.48);
+    background: rgba(245, 158, 11, 0.14);
+}
+
+.tla-dashboard-attention strong {
+    font-weight: 750;
 }
 
 .tla-dashboard-panel {
@@ -494,6 +651,14 @@
     border-radius: 0.68rem;
     background: rgba(0, 0, 0, 0.13);
     padding: 0.72rem;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.tla-dashboard-timeline__item:hover {
+    border-color: rgba(117, 167, 223, 0.38);
+    background: rgba(255, 255, 255, 0.045);
 }
 
 .tla-dashboard-timeline__marker,
@@ -569,30 +734,499 @@
     padding: 1rem;
 }
 
-@media (max-width: 1024px) {
+@container (max-width: 64rem) {
     .tla-dashboard-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 900px) {
+@container (max-width: 56rem) {
     .tla-dashboard-hero__main {
         align-items: flex-start;
         flex-direction: column;
     }
 }
 
-@media (max-width: 640px) {
+@container (max-width: 40rem) {
     .tla-dashboard-hero__actions {
         width: 100%;
     }
 
     .tla-dashboard-hero__actions a {
+        min-height: 2.75rem;
         flex: 1 1 0;
         text-align: center;
     }
 
     .tla-dashboard-stats {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ── Editorial Studio shell ── */
+:root {
+    --tla-ink: #f4f7fb;
+    --tla-muted: rgba(210, 222, 238, 0.62);
+    --tla-subtle: rgba(210, 222, 238, 0.42);
+    --tla-line: rgba(148, 163, 184, 0.16);
+    --tla-line-strong: rgba(148, 163, 184, 0.24);
+    --tla-surface: #121b2a;
+    --tla-surface-raised: #172235;
+    --tla-accent: #5b91ce;
+}
+
+.dark .fi-body {
+    background: #0b1018;
+    color: var(--tla-ink);
+}
+
+.dark .fi-main-ctn {
+    background: #0f1724;
+}
+
+.dark .fi-main {
+    max-width: none !important;
+    background: #0f1724;
+    padding-inline: clamp(1rem, 3vw, 3rem) !important;
+}
+
+.dark .fi-topbar {
+    background: #0b1018;
+    border-color: var(--tla-line);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.dark .fi-sidebar,
+.dark .fi-sidebar-header {
+    background: #101927;
+    border-color: var(--tla-line);
+}
+
+.dark .fi-sidebar-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 0;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Keep the brand in the rail, like the reference workspace layout. Filament
+ * normally hides this header on desktop when a topbar is enabled. */
+.dark .fi-body-has-topbar .fi-sidebar-header {
+    display: none !important;
+}
+
+.dark .fi-topbar-start {
+    align-items: center;
+    display: flex;
+    min-width: 0;
+}
+
+.dark .fi-topbar-start .fi-logo {
+    height: 2.5rem;
+    width: auto;
+}
+
+.dark .fi-sidebar-nav {
+    gap: 0;
+    padding: 0.6rem 1rem 1rem 1.2rem;
+    scrollbar-color: transparent transparent;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+}
+
+.dark .fi-sidebar-nav-groups {
+    gap: 0;
+}
+
+.dark .tla-sidebar-primary {
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    margin: 0.15rem 0.25rem 0.9rem;
+    border: 1px solid rgba(122, 169, 224, 0.38);
+    border-radius: 0.65rem;
+    background: linear-gradient(135deg, rgba(74, 127, 191, 0.95), rgba(104, 92, 186, 0.92));
+    box-shadow: 0 0.65rem 1.4rem rgba(35, 64, 108, 0.22);
+    color: #f7fbff;
+    display: flex;
+    font-size: 0.82rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    transition: filter 160ms ease, transform 160ms ease;
+}
+
+.dark .tla-sidebar-primary span:first-child {
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 1.05rem;
+    height: 1.25rem;
+    justify-content: center;
+    line-height: 1;
+    width: 1.25rem;
+}
+
+.dark .tla-sidebar-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.dark .tla-sidebar-primary:focus-visible {
+    outline: 2px solid rgba(180, 210, 246, 0.9);
+    outline-offset: 2px;
+}
+
+.dark .fi-sidebar-nav::-webkit-scrollbar {
+    width: 0.3rem;
+}
+
+.dark .fi-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dark .fi-sidebar-nav::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 999px;
+}
+
+.dark .fi-sidebar-nav:hover {
+    scrollbar-color: rgba(148, 163, 184, 0.26) transparent;
+}
+
+.dark .fi-sidebar-nav:hover::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.26);
+}
+
+.dark .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.48);
+}
+
+.dark .fi-sidebar-group {
+    gap: 0.1rem;
+    margin-block: 0.05rem;
+    padding-block: 0.1rem;
+}
+
+.dark .fi-sidebar-group + .fi-sidebar-group {
+    border-top: 0;
+    padding-top: 0.15rem;
+}
+
+.dark .fi-sidebar-group-btn {
+    min-height: 1.75rem;
+    padding-inline: 0.7rem;
+}
+
+/* The Editorial Studio navigation is intentionally always expanded. This also
+ * overrides the inline x-show state left behind by older Filament sessions. */
+.fi-sidebar-group-items {
+    display: block !important;
+}
+
+/* Filament still applies x-collapse to labelled groups even when the group is
+ * configured as non-collapsible. Keep those groups measurable so their links
+ * cannot remain at height: 0 from a previously persisted collapsed state. */
+.fi-sidebar-group:not(.fi-collapsible) > .fi-sidebar-group-items {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+.dark .fi-sidebar-group-label {
+    color: rgba(210, 222, 238, 0.58);
+    font-size: 0.72rem;
+    font-weight: 550;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.dark .fi-sidebar-group-items {
+    gap: 0.05rem;
+    margin-top: 0.1rem;
+}
+
+@media (min-width: 1024px) {
+    .dark .fi-sidebar-group-items,
+    .dark .fi-sidebar-group-items > .fi-sidebar-item,
+    .dark .fi-sidebar-group-items .fi-sidebar-item-label {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .dark .fi-sidebar-group-items {
+        flex-direction: column;
+    }
+}
+
+/* Floating panels are opened by Filament's Alpine plugin by applying an
+ * explicit inline display value. Keep the initial, unpositioned panels out of
+ * the layout while Alpine is hydrating the page. */
+.fi .fi-dropdown-panel:not([style*='display: block']) {
+    display: none !important;
+}
+
+.dark .fi-sidebar-item > a {
+    min-height: 1.9rem;
+    border-radius: 0.48rem;
+    color: rgba(231, 238, 248, 0.72);
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+    padding-inline: 0.5rem;
+}
+
+.dark .fi-sidebar-item > a:hover:not([aria-current='page']) {
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--tla-ink);
+}
+
+.dark .fi-sidebar-item > a:focus-visible {
+    outline: 2px solid rgba(122, 169, 224, 0.72);
+    outline-offset: -2px;
+}
+
+.dark .fi-sidebar-item.fi-active > a {
+    background: rgba(91, 145, 206, 0.14);
+    border: 1px solid rgba(91, 145, 206, 0.2);
+    box-shadow: none;
+    color: #d9ebff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dark .fi-sidebar-item > a {
+        transition: none;
+    }
+}
+
+/* Dashboard refinement: quieter surfaces and a clearer editorial hierarchy. */
+.dark .tla-dashboard-hero,
+.dark .tla-dashboard-panel {
+    border-color: rgba(148, 163, 184, 0.2);
+    background: #141e2d;
+    box-shadow: none;
+}
+
+.dark .tla-dashboard-hero::after {
+    opacity: 0.45;
+}
+
+.dark .tla-dashboard-hero__content {
+    padding: clamp(1rem, 1.8vw, 1.35rem);
+}
+
+.dark .tla-dashboard-hero h2 {
+    font-size: clamp(1.75rem, 2.6vw, 2.55rem);
+    line-height: 1.05;
+}
+
+.dark .tla-dashboard-stats {
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.dark .tla-dashboard-stat {
+    min-height: 6.8rem;
+    border-color: rgba(148, 163, 184, 0.2);
+    background: rgba(7, 12, 20, 0.28);
+    padding: 0.8rem;
+}
+
+.dark .tla-dashboard-stat:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.dark .tla-dashboard-stat strong {
+    margin-top: 0.55rem;
+    font-size: clamp(1.85rem, 3vw, 2.65rem);
+}
+
+.dark .tla-dashboard-panel {
+    padding: 0.9rem;
+}
+
+.dark .tla-dashboard-panel__header {
+    margin-bottom: 0.8rem;
+}
+
+.dark .tla-dashboard-action,
+.dark .tla-dashboard-timeline__item {
+    background: rgba(7, 12, 20, 0.22);
+    padding: 0.68rem;
+}
+
+.dark .fi-page-header {
+    padding-block: 0.25rem 0.5rem;
+}
+
+.dark .fi-page-heading {
+    color: var(--tla-ink);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+}
+
+.dark .fi-breadcrumbs {
+    color: var(--tla-subtle);
+}
+
+.dark .fi-ta-ctn,
+.dark .fi-section,
+.dark .fi-fo-component-ctn,
+.dark .fi-wi {
+    border: 1px solid var(--tla-line);
+    border-radius: 0.8rem;
+    background: var(--tla-surface);
+    box-shadow: none;
+}
+
+.dark .fi-ta-header-ctn,
+.dark .fi-ta-content-ctn,
+.dark .fi-ta-footer-ctn,
+.dark .fi-section-content-ctn {
+    background: transparent;
+}
+
+.dark .fi-ta-header-ctn,
+.dark .fi-ta-footer-ctn,
+.dark .fi-section-header {
+    border-color: var(--tla-line);
+}
+
+.dark .fi-ta-header-cell {
+    color: var(--tla-subtle);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.dark .fi-ta-row:hover td {
+    background: rgba(91, 145, 206, 0.055);
+}
+
+.dark .fi-ta-empty-state {
+    min-height: 12rem;
+    padding: 2.5rem 1rem;
+}
+
+.dark .fi-ta-empty-state-icon {
+    color: var(--tla-accent);
+    opacity: 0.8;
+}
+
+.dark .fi-ta-empty-state-heading {
+    color: var(--tla-ink);
+    font-weight: 600;
+}
+
+.dark .fi-ta-empty-state-description {
+    color: var(--tla-subtle);
+}
+
+.dark .fi-section-header-heading {
+    color: var(--tla-ink);
+    font-weight: 600;
+    text-wrap: balance;
+}
+
+.dark .fi-fo-field-wrp-label {
+    color: rgba(231, 238, 248, 0.84);
+}
+
+.dark .fi-input-wrp,
+.dark .fi-select-input,
+.dark .fi-textarea-wrp {
+    background: #0d1521;
+    border-color: var(--tla-line-strong);
+}
+
+.dark .fi-input-wrp:focus-within,
+.dark .fi-textarea-wrp:focus-within {
+    border-color: var(--tla-accent);
+    box-shadow: 0 0 0 3px rgba(91, 145, 206, 0.16);
+}
+
+.dark .fi-btn.fi-color-primary {
+    background: var(--tla-accent);
+    box-shadow: 0 8px 20px rgba(91, 145, 206, 0.18);
+}
+
+.dark .fi-btn.fi-color-primary:hover {
+    background: #6da1dc;
+}
+
+.tla-dashboard-hero h2 {
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: normal;
+    text-wrap: balance;
+}
+
+.tla-dashboard-hero p:not(.tla-dashboard-hero__command),
+.tla-dashboard-action small,
+.tla-dashboard-empty span {
+    font-size: 1rem;
+}
+
+.tla-dashboard-hero__kicker,
+.tla-dashboard-panel__header span,
+.tla-dashboard-stat span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.tla-dashboard-stat strong,
+.tla-dashboard-panel__header h3,
+.tla-dashboard-action strong {
+    font-weight: 600;
+}
+
+.dark .fi-modal-window,
+.dark .fi-dropdown-panel,
+.dark .fi-popover {
+    border: 1px solid var(--tla-line-strong);
+    background: var(--tla-surface-raised);
+    box-shadow: none;
+}
+
+.dark .fi-dropdown-list-item:hover {
+    background: rgba(91, 145, 206, 0.1);
+}
+
+@media (max-width: 767px) {
+    .dark .fi-main {
+        padding-inline: 1rem !important;
+    }
+
+    .dark .fi-page-header {
+        gap: 0.75rem;
+    }
+
+    .dark .fi-ta-content {
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scrollbar-width: thin;
+    }
+
+    .dark .fi-ta-table {
+        min-width: 42rem;
+    }
+
+    .dark .fi-page-header-actions {
+        width: 100%;
+    }
+
+    .dark .fi-page-header-actions .fi-btn {
+        min-height: 2.75rem;
+    }
+
+    .dark .fi-ta-header-toolbar,
+    .dark .fi-ta-footer {
+        gap: 0.65rem;
+    }
+
+    .dark .fi-modal-window {
+        margin-inline: 0.75rem;
     }
 }
