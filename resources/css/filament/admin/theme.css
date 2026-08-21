@@ -211,7 +211,7 @@
     border: 1px solid rgba(148, 163, 184, 0.16);
     border-radius: 1rem;
     background: rgba(17, 24, 39, 0.86);
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: none;
     padding: clamp(1.25rem, 3vw, 2rem);
 }
 
@@ -455,11 +455,15 @@
 .tla-dashboard-stat--amber { --stat-color: #f59e0b; }
 
 .tla-dashboard-stat span {
+    display: block;
+    overflow: hidden;
     color: rgba(248, 250, 252, 0.58);
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.12em;
+    text-overflow: ellipsis;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .tla-dashboard-stat strong {
@@ -1049,7 +1053,7 @@
     border: 1px solid var(--tla-line);
     border-radius: 0.8rem;
     background: var(--tla-surface);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
 }
 
 .dark .fi-ta-header-ctn,
@@ -1139,7 +1143,7 @@
 .dark .fi-popover {
     border: 1px solid var(--tla-line-strong);
     background: var(--tla-surface-raised);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+    box-shadow: none;
 }
 
 .dark .fi-dropdown-list-item:hover {
