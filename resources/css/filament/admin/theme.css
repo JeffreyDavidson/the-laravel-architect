@@ -52,8 +52,9 @@
 }
 
 /* ── Nav item hover tint ── */
-.dark .fi-sidebar-item > a:hover {
-    background-color: rgba(255, 255, 255, 0.045);
+.dark .fi-sidebar-item > a:hover:not([aria-current='page']) {
+    background-color: rgba(255, 255, 255, 0.025);
+    color: rgba(231, 238, 248, 0.86);
 }
 
 /* ── Table header ── */
@@ -976,8 +977,8 @@
     padding-inline: 0.5rem;
 }
 
-.dark .fi-sidebar-item > a:hover {
-    background: rgba(255, 255, 255, 0.045);
+.dark .fi-sidebar-item > a:hover:not([aria-current='page']) {
+    background: rgba(255, 255, 255, 0.025);
     color: var(--tla-ink);
 }
 
