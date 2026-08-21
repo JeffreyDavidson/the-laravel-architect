@@ -39,6 +39,12 @@ class AppServiceProvider extends ServiceProvider
             'panels::body.end',
             fn () => Blade::render(<<<'HTML'
                 <script>
+                    document.addEventListener('alpine:init', () => {
+                        // Navigation groups are intentionally non-collapsible in this panel.
+                        // Clear stale Filament state from sessions that used collapsible groups.
+                        window.localStorage.removeItem('collapsedGroups');
+                    }, { once: true });
+
                     document.addEventListener('livewire:navigating', () => {
                         const sidebar = document.querySelector('.fi-sidebar-nav');
                         if (sidebar) window.__sidebarScroll = sidebar.scrollTop;
