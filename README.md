@@ -31,6 +31,7 @@ Seeders generate unknown random passwords when they must create a user. They nev
 ```bash
 composer test
 composer test:types
+composer test:filament
 vendor/bin/pint --test
 npm run build
 composer audit --locked
