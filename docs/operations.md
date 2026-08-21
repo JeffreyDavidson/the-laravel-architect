@@ -16,6 +16,8 @@ For a migration that changes media or database structure, do not proceed without
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
 
+Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
+
 Do not run a standalone production migration unless the deployment itself cannot apply the migration and the release plan explicitly authorizes it.
 
 ## After deploying
