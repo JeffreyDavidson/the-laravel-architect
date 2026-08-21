@@ -52,6 +52,8 @@ Uploaded images and audio are validated and stored through Laravel's `public` fi
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
+Application responses set clickjacking, MIME-sniffing, referrer, and browser-feature policy headers globally. Content Security Policy is intentionally deferred until Filament and Vite assets can use a tested nonce-based policy.
+
 ## Scheduled work
 
 The production scheduler must run every minute. It dispatches:
