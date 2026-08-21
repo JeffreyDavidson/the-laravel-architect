@@ -38,7 +38,7 @@ class EpisodeForm
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
                         TextInput::make('episode_number')
                             ->numeric()
                             ->label('Episode #'),
@@ -109,7 +109,8 @@ class EpisodeForm
                 Section::make('SEO')
                     ->schema([
                         SEO::make(),
-                    ]),
+                    ])
+                    ->collapsed(),
             ]);
     }
 }

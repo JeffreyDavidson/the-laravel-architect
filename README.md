@@ -20,24 +20,25 @@ The setup script installs PHP and JavaScript dependencies, creates `.env`, gener
 To bootstrap an administrator on a fresh environment, create the Filament user before running the database seeder so the seeder preserves the password you choose and marks the existing account as an administrator:
 
 ```bash
-php artisan make:filament-user --panel=admin --email=thelaravelarchitect@gmail.com
+php artisan make:filament-user --panel=admin --email=admin@example.test
 php artisan db:seed
 ```
 
-Seeders generate unknown random passwords when they must create a user. They never reset an existing user's password.
+The email passed to the Filament command must match `ADMIN_EMAIL`. Seeders generate unknown random passwords when they must create a user, and they never reset an existing user's password. Set private production values for `ADMIN_EMAIL` and `CONTENT_AUTHOR_EMAIL` before seeding production data.
 
 ## Quality checks
 
 ```bash
 composer test
 composer test:types
+composer test:filament
 vendor/bin/pint --test
 npm run build
 composer audit --locked
 npm audit --omit=dev
 ```
 
-CI runs dependency auditing, formatting, static analysis, asset compilation, and the Pest suite on every pull request and push to `develop` or `main`.
+CI runs dependency auditing, formatting, static analysis, asset compilation, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
 ## Architecture
 
@@ -51,10 +52,15 @@ Uploaded images and audio are validated and stored through Laravel's `public` fi
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
+Application responses set clickjacking, MIME-sniffing, referrer, and browser-feature policy headers globally. Content Security Policy is intentionally deferred until Filament and Vite assets can use a tested nonce-based policy.
+
+The `/up` health endpoint verifies both the Laravel runtime and access to the migrated application database. Production monitoring should treat any non-200 response as unhealthy.
+
 ## Scheduled work
 
 The production scheduler must run every minute. It dispatches:
 
+- a runtime heartbeat every minute to verify both the scheduler and queue worker
 - application and database backups daily
 - backup cleanup weekly
 - backup health monitoring daily
@@ -63,13 +69,17 @@ The production scheduler must run every minute. It dispatches:
 
 YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
 
-Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS` to a comma-separated list that includes an off-server disk, such as `local,s3`, configure that disk's credentials, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `BACKUP_NOTIFICATION_EMAIL` must point to a monitored mailbox.
+Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS` to a comma-separated list that includes an off-server disk, such as `local,s3`, configure that disk's credentials, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `MAIL_CONTACT_TO` and `BACKUP_NOTIFICATION_EMAIL` must point to monitored mailboxes.
+
+Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
 After changing backup configuration, run `php artisan backup:run`, `php artisan backup:monitor`, and restore a copy of the resulting SQLite dump and media archive in a temporary location. A successful backup notification is not a substitute for validating the archive contents and restored database.
 
 ## Deployment
 
 The application is hosted through Laravel Forge. A deployment should install locked dependencies, build production assets, run forward-only migrations, refresh optimized caches, and ensure the scheduler and queue worker are active.
+
+Run `php artisan app:verify-production` after loading the production environment and before applying migrations. The command reports missing or unsafe settings without printing their configured values.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 

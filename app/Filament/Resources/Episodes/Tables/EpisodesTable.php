@@ -33,6 +33,7 @@ class EpisodesTable
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
+                    ->label('Published')
                     ->dateTime()
                     ->sortable(),
             ])
@@ -40,7 +41,7 @@ class EpisodesTable
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('episode_number', 'desc');

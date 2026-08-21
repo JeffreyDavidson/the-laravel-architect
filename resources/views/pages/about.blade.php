@@ -364,7 +364,7 @@
         <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] dark:opacity-[0.06] blur-[80px] bg-accent-600"></div>
 
         <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-800 dark:text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
                 <span class="relative flex h-2 w-2">
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>

@@ -18,9 +18,9 @@ class CategoryForm
                     ->required()
                     ->maxLength(255)
                     ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                    ->unique(ignoreRecord: true),
+                    ->unique(),
                 Textarea::make('description')
                     ->columnSpanFull(),
-            ]);
+            ])->columns(2);
     }
 }

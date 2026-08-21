@@ -7,14 +7,19 @@ use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function () {
+    config()->set('app.admin_email', 'admin@example.test');
+    config()->set('app.content_author_email', 'author@example.test');
+});
+
 it('does not create users with the former known seeder passwords', function () {
     $this->seed(DatabaseSeeder::class);
 
     $admin = User::query()
-        ->where('email', 'thelaravelarchitect@gmail.com')
+        ->where('email', 'admin@example.test')
         ->sole();
     $author = User::query()
-        ->where('email', 'jeffrey@thelaravelarchitect.com')
+        ->where('email', 'author@example.test')
         ->sole();
 
     expect(Hash::check('change-me-immediately', $admin->password))->toBeFalse()
@@ -24,11 +29,11 @@ it('does not create users with the former known seeder passwords', function () {
 
 it('preserves existing user passwords when seeders run', function () {
     $admin = User::factory()->create([
-        'email' => 'thelaravelarchitect@gmail.com',
+        'email' => 'admin@example.test',
         'password' => 'chosen-admin-password',
     ]);
     $author = User::factory()->create([
-        'email' => 'jeffrey@thelaravelarchitect.com',
+        'email' => 'author@example.test',
         'password' => 'chosen-author-password',
     ]);
 

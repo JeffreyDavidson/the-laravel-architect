@@ -10,6 +10,7 @@ use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -32,3 +33,22 @@ it('renders each registered resource index for an authorized user', function (st
     TestimonialResource::class,
     VideoResource::class,
 ]);
+
+it('registers visible navigation items for every admin section', function () {
+    $navigation = Filament::getPanel('admin')->getNavigation();
+
+    expect($navigation)->not->toBeEmpty();
+
+    foreach ($navigation as $group) {
+        expect($group->getItems())->not->toBeEmpty();
+    }
+
+    expect(collect($navigation)->map(fn ($group): ?string => $group->getLabel())->all())
+        ->toContain('Content', 'Podcasting', 'Showcase', 'Taxonomy', 'Newsletter', 'YouTube');
+});
+
+it('renders the publishing dashboard for an authorized user', function () {
+    $this->get(route('filament.admin.pages.dashboard'))
+        ->assertOk()
+        ->assertSee('Dashboard');
+});

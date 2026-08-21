@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum TestimonialStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum TestimonialStatus: string implements HasLabel
 {
     case Pending = 'pending';
     case Approved = 'approved';
@@ -25,5 +27,10 @@ enum TestimonialStatus: string
             self::Approved => 'success',
             self::Rejected => 'danger',
         };
+    }
+
+    public function getLabel(): string
+    {
+        return self::labels()[$this->value];
     }
 }

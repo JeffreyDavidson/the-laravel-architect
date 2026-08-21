@@ -3,6 +3,7 @@
 use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -21,6 +22,6 @@ it('links the view on site action to the public post URL', function () {
     ]);
 
     livewire(ListPosts::class)
-        ->assertTableActionHasUrl('view_on_site', route('blog.show', $post), $post)
-        ->assertTableActionShouldOpenUrlInNewTab('view_on_site', $post);
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($post), route('blog.show', $post))
+        ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($post));
 });

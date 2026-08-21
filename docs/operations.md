@@ -16,6 +16,10 @@ For a migration that changes media or database structure, do not proceed without
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
 
+Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
+
+After enabling runtime monitoring or clearing the application cache, run `php artisan schedule:run` and allow the queue worker to process the heartbeat probe before relying on `/up`.
+
 Do not run a standalone production migration unless the deployment itself cannot apply the migration and the release plan explicitly authorizes it.
 
 ## After deploying
@@ -27,6 +31,7 @@ Verify all of the following against the deployed commit:
 - The migration was recorded exactly once with a positive batch.
 - The expected schema is present and obsolete schema is absent.
 - `/` and `/admin` return the expected status codes.
+- `/up` returns HTTP 200, confirming the application can read its migrated database and both the scheduler and queue worker have fresh heartbeats.
 - Public media URLs return successful responses.
 - The queue worker and scheduler are active.
 - A reversible upload smoke test can create, read, and delete a temporary object.

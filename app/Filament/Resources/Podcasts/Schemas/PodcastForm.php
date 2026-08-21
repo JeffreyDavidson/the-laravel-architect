@@ -29,7 +29,7 @@ class PodcastForm
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
                         Textarea::make('description')
                             ->required()
                             ->rows(3)
@@ -66,7 +66,8 @@ class PodcastForm
                 Section::make('SEO')
                     ->schema([
                         SEO::make(),
-                    ]),
+                    ])
+                    ->collapsed(),
             ]);
     }
 }

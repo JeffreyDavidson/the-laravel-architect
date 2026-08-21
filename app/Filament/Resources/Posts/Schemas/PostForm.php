@@ -36,7 +36,7 @@ class PostForm
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
                         Textarea::make('excerpt')
                             ->rows(3)
                             ->helperText('Brief summary shown in post listings')
@@ -96,7 +96,8 @@ class PostForm
                 Section::make('SEO')
                     ->schema([
                         SEO::make(),
-                    ]),
+                    ])
+                    ->collapsed(),
             ]);
     }
 }

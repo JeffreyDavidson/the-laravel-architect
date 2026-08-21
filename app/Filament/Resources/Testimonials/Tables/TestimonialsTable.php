@@ -23,6 +23,7 @@ class TestimonialsTable
                 TextColumn::make('company')
                     ->searchable(),
                 TextColumn::make('body')
+                    ->label('Testimonial')
                     ->limit(60),
                 TextColumn::make('status')
                     ->badge()
@@ -36,7 +37,7 @@ class TestimonialsTable
                 SelectFilter::make('status')
                     ->options(TestimonialStatus::labels()),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

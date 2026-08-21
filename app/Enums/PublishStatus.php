@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum PublishStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PublishStatus: string implements HasLabel
 {
     case Draft = 'draft';
     case InReview = 'in_review';
@@ -45,5 +47,10 @@ enum PublishStatus: string
     public function label(): string
     {
         return self::labels()[$this->value];
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label();
     }
 }

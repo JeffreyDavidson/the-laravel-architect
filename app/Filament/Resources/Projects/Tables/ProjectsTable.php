@@ -21,23 +21,30 @@ class ProjectsTable
                 TextColumn::make('slug')
                     ->searchable(),
                 ImageColumn::make('featured_image_path')
+                    ->label('Image')
                     ->disk('public'),
                 TextColumn::make('url')
+                    ->label('Live URL')
                     ->searchable(),
                 TextColumn::make('github_url')
+                    ->label('GitHub URL')
                     ->searchable(),
                 IconColumn::make('is_featured')
+                    ->label('Featured')
                     ->boolean(),
                 TextColumn::make('sort_order')
+                    ->label('Order')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('status')
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Updated')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

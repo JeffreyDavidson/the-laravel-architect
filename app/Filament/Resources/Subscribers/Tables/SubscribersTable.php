@@ -42,7 +42,7 @@ class SubscribersTable
                     ->query(fn (Builder $query) => $query->whereNull('unsubscribed_at'))
                     ->default(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

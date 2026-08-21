@@ -33,7 +33,7 @@ class ProjectForm
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
                         Textarea::make('description')
                             ->required()
                             ->rows(3)
@@ -42,7 +42,7 @@ class ProjectForm
                         MarkdownEditor::make('content')
                             ->label('Full Write-up')
                             ->columnSpanFull(),
-                    ]),
+                    ])->columns(2),
 
                 Section::make('Links & Media')
                     ->schema([
@@ -78,7 +78,8 @@ class ProjectForm
                 Section::make('SEO')
                     ->schema([
                         SEO::make(),
-                    ]),
+                    ])
+                    ->collapsed(),
             ]);
     }
 }

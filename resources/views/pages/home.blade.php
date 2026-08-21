@@ -170,6 +170,11 @@
         color: #7bb8e0;
     }
 
+    :root:not(.dark) .scramble-char-random,
+    :root:not(.dark) .scramble-char-resolved {
+        color: #245b91;
+    }
+
     /* ===== Code Editor Window ===== */
     .code-editor {
         background: #0d1117;
@@ -202,7 +207,7 @@
         border-right: 1px solid rgba(255,255,255,0.06);
     }
     .code-line-number {
-        color: #484f58;
+        color: #8b949e;
         user-select: none;
         min-width: 2rem;
         text-align: right;
@@ -212,7 +217,7 @@
     .syn-string { color: #a5d6ff; }
     .syn-class { color: #79c0ff; }
     .syn-method { color: #d2a8ff; }
-    .syn-comment { color: #484f58; font-style: italic; }
+    .syn-comment { color: #8b949e; font-style: italic; }
     .syn-variable { color: #ffa657; }
     .syn-function { color: #d2a8ff; }
     .syn-arrow { color: #ff7b72; }
@@ -347,7 +352,7 @@
         gap: 0.75rem;
         padding: 0 2.5rem;
         white-space: nowrap;
-        color: var(--text-muted);
+        color: var(--text-tertiary);
         font-size: 0.875rem;
         font-weight: 600;
         letter-spacing: 0.05em;
@@ -562,6 +567,9 @@
     :root:not(.dark) .marquee-item img {
         opacity: 0.3;
     }
+    :root:not(.dark) .marquee-item {
+        color: #4a5565;
+    }
     :root:not(.dark) .marquee-item:hover svg,
     :root:not(.dark) .marquee-item:hover img {
         opacity: 0.7;
@@ -750,27 +758,27 @@
         border-right-color: #d0d7de !important;
     }
     :root:not(.dark) .code-line-number {
-        color: #8b949e !important;
+        color: #4b5563 !important;
     }
     :root:not(.dark) .code-line-highlight {
         background: rgba(74, 127, 191, 0.06) !important;
         border-left-color: #4A7FBF !important;
     }
     /* Light syntax colors (VS Code / GitHub Light) */
-    :root:not(.dark) .syn-keyword { color: #cf222e !important; }
-    :root:not(.dark) .syn-string { color: #0a3069 !important; }
-    :root:not(.dark) .syn-class { color: #0550ae !important; }
-    :root:not(.dark) .syn-method { color: #8250df !important; }
-    :root:not(.dark) .syn-comment { color: #6e7781 !important; }
-    :root:not(.dark) .syn-variable { color: #953800 !important; }
-    :root:not(.dark) .syn-function { color: #8250df !important; }
-    :root:not(.dark) .syn-arrow { color: #cf222e !important; }
-    :root:not(.dark) .syn-bracket { color: #1f2328 !important; }
-    :root:not(.dark) .syn-text { color: #1f2328 !important; }
-    :root:not(.dark) .syn-param { color: #953800 !important; }
+    :root:not(.dark) .syn-keyword { color: #9f1239 !important; }
+    :root:not(.dark) .syn-string { color: #075985 !important; }
+    :root:not(.dark) .syn-class { color: #075985 !important; }
+    :root:not(.dark) .syn-method { color: #6b21a8 !important; }
+    :root:not(.dark) .syn-comment { color: #4b5563 !important; }
+    :root:not(.dark) .syn-variable { color: #92400e !important; }
+    :root:not(.dark) .syn-function { color: #6b21a8 !important; }
+    :root:not(.dark) .syn-arrow { color: #9f1239 !important; }
+    :root:not(.dark) .syn-bracket { color: #374151 !important; }
+    :root:not(.dark) .syn-text { color: #374151 !important; }
+    :root:not(.dark) .syn-param { color: #92400e !important; }
     /* Light mode tab text */
     :root:not(.dark) .code-editor .text-gray-300 { color: #1f2328 !important; }
-    :root:not(.dark) .code-editor .text-gray-500 { color: #656d76 !important; }
+    :root:not(.dark) .code-editor .text-gray-500 { color: #4b5563 !important; }
     :root:not(.dark) .code-editor .text-gray-600 { color: #656d76 !important; }
 
     /* Light mode hero — clean white with subtle texture */
@@ -842,9 +850,9 @@
             <div class="flex-1 text-center lg:text-left">
                 <x-home.hero-eyebrow class="mb-5" />
                 <h1 class="max-w-3xl text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-5 text-gray-900 dark:text-white">
-                    I don't just write code—
+                    I don't just write code.
                     <br>
-                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it.
+                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it!
                 </h1>
 
                 <div class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4">
@@ -1661,7 +1669,7 @@
                         @error('body') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="text-center pt-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#4A7FBF] hover:bg-[#3a6faf] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
+                        <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#3f6fa8] hover:bg-[#345f91] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
                             Submit Testimonial
                         </button>
@@ -1705,7 +1713,7 @@
 
         {{-- Buttons --}}
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 px-8 py-4 bg-[#4A7FBF] hover:bg-[#3a6faf] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 px-8 py-4 bg-[#3f6fa8] hover:bg-[#345f91] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>

@@ -29,7 +29,7 @@ class TestimonialForm
                     TextInput::make('sort_order')
                         ->numeric()
                         ->default(0),
-                ]),
+                ])->columns(2),
         ]);
     }
 }

@@ -5,6 +5,7 @@ use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Models\Category;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -105,7 +106,7 @@ it('rejects duplicate category slugs when creating a category inline', function 
     ]);
 
     livewire(CreatePost::class)
-        ->callFormComponentAction('category_id', 'createOption', [
+        ->callAction(TestAction::make('createOption')->schemaComponent('category_id'), data: [
             'name' => 'Category name',
             'slug' => 'category-name',
         ])
