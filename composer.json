@@ -67,6 +67,7 @@
             "@php artisan config:clear --ansi",
             "vendor/bin/pest"
         ],
+        "test:filament": "vendor/bin/filacheck --detailed",
         "test:types": "vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

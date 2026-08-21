@@ -73,6 +73,9 @@ jobs:
       - name: Run static analysis
         run: composer test:types
 
+      - name: Check Filament code quality
+        run: composer test:filament
+
       - name: Build assets
         run: npm run build
 
