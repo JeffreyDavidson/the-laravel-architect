@@ -29,6 +29,10 @@
     color: #82acdc !important;
 }
 
+.dark .bg-brand-600 {
+    background-color: #3f6fa8 !important;
+}
+
 /* Preserve the same contrast guarantees when the public site is in light mode. */
 :root:not(.dark) .text-brand-400,
 :root:not(.dark) .text-brand-500,
