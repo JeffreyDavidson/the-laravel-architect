@@ -947,6 +947,20 @@
     margin-top: 0.1rem;
 }
 
+@media (min-width: 1024px) {
+    .dark .fi-sidebar-group-items,
+    .dark .fi-sidebar-group-items > .fi-sidebar-item,
+    .dark .fi-sidebar-group-items .fi-sidebar-item-label {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .dark .fi-sidebar-group-items {
+        flex-direction: column;
+    }
+}
+
 /* Floating panels are opened by Filament's Alpine plugin by applying an
  * explicit inline display value. Keep the initial, unpositioned panels out of
  * the layout while Alpine is hydrating the page. */
