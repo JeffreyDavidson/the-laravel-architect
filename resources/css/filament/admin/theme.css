@@ -405,6 +405,15 @@
     color: #ffffff;
 }
 
+.tla-dashboard-hero__actions a:focus-visible,
+.tla-dashboard-stat:focus-visible,
+.tla-dashboard-attention a:focus-visible,
+.tla-dashboard-action:focus-visible,
+.tla-dashboard-timeline__item:focus-visible {
+    outline: 2px solid #82acdc;
+    outline-offset: 3px;
+}
+
 .tla-dashboard-hero__actions span {
     width: 0.42rem;
     height: 0.42rem;
@@ -743,6 +752,7 @@
     }
 
     .tla-dashboard-hero__actions a {
+        min-height: 2.75rem;
         flex: 1 1 0;
         text-align: center;
     }
