@@ -66,7 +66,8 @@ class PodcastForm
                 Section::make('SEO')
                     ->schema([
                         SEO::make(),
-                    ]),
+                    ])
+                    ->collapsed(),
             ]);
     }
 }

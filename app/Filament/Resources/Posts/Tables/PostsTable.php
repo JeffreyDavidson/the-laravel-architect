@@ -19,6 +19,7 @@ class PostsTable
         return $table
             ->columns([
                 ImageColumn::make('featured_image_path')
+                    ->label('Image')
                     ->disk('public')
                     ->circular()
                     ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
@@ -36,9 +37,11 @@ class PostsTable
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
+                    ->label('Published')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

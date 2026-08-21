@@ -38,7 +38,7 @@
                 </span>
             </a>
 
-            <a href="/" target="_blank" class="tla-dashboard-action">
+            <a href="/" target="_blank" rel="noreferrer" class="tla-dashboard-action">
                 <span class="tla-dashboard-action__icon tla-dashboard-action__icon--amber">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5M15 3h6m0 0v6m0-6L10.5 13.5" /></svg>
                 </span>

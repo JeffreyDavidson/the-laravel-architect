@@ -4,6 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Enums\PublishStatus;
 use App\Enums\TestimonialStatus;
+use App\Filament\Resources\Posts\PostResource;
+use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Models\Post;
 use App\Models\Testimonial;
 use Filament\Widgets\Widget;
@@ -29,6 +31,7 @@ class RecentActivityWidget extends Widget
                 'meta' => $post->publishStatus() === PublishStatus::Published ? 'Published' : 'Draft',
                 'time' => $updatedAt?->diffForHumans() ?? 'Unknown',
                 'kind' => 'post',
+                'url' => PostResource::getUrl('edit', ['record' => $post]),
                 'timestamp' => $updatedAt,
             ]);
         });
@@ -46,6 +49,7 @@ class RecentActivityWidget extends Widget
                 'meta' => $statusLabel,
                 'time' => $createdAt?->diffForHumans() ?? 'Unknown',
                 'kind' => 'testimonial',
+                'url' => TestimonialResource::getUrl('edit', ['record' => $testimonial]),
                 'timestamp' => $createdAt,
             ]);
         });

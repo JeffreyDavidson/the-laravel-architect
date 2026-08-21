@@ -21,6 +21,6 @@ class CategoryForm
                     ->unique(ignoreRecord: true),
                 Textarea::make('description')
                     ->columnSpanFull(),
-            ]);
+            ])->columns(2);
     }
 }
