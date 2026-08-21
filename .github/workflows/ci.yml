@@ -33,6 +33,12 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Configure private Composer repository
+        env:
+          FILAMENTEXAMPLES_COMPOSER_USERNAME: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+          FILAMENTEXAMPLES_COMPOSER_PASSWORD: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+        run: composer config --global --auth http-basic.satis.filamentexamples.com "$FILAMENTEXAMPLES_COMPOSER_USERNAME" "$FILAMENTEXAMPLES_COMPOSER_PASSWORD"
+
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
@@ -44,6 +50,9 @@ jobs:
           cp .env.example .env
           php artisan key:generate --ansi
           php artisan config:clear --ansi
+          touch database/database.sqlite
+          php artisan migrate --force --seed
+          php artisan tinker --execute="\$user = App\\Models\\User::query()->updateOrCreate(['email' => 'e2e-admin@example.test'], ['name' => 'E2E Admin', 'password' => bcrypt('e2e-password')]); \$user->forceFill(['is_admin' => true])->save();"
 
       - name: Audit Composer dependencies
         run: composer audit --locked
@@ -59,6 +68,15 @@ jobs:
 
       - name: Build assets
         run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser smoke and accessibility checks
+        env:
+          E2E_ADMIN_EMAIL: e2e-admin@example.test
+          E2E_ADMIN_PASSWORD: e2e-password
+        run: npm run test:e2e
 
       - name: Run tests
         run: vendor/bin/pest
