@@ -6,6 +6,7 @@ use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -71,7 +72,7 @@ it('rejects a non-normalized post slug when editing a post', function () {
 
 it('rejects a non-normalized slug when creating a category inline', function () {
     livewire(CreatePost::class)
-        ->callFormComponentAction('category_id', 'createOption', [
+        ->callAction(TestAction::make('createOption')->schemaComponent('category_id'), data: [
             'name' => 'Category name',
             'slug' => '../category-name',
         ])

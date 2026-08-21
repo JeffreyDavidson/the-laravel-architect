@@ -5,6 +5,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,7 +49,8 @@ it('deletes selected episodes and their native media through the table bulk acti
     ]);
 
     livewire(ListEpisodes::class)
-        ->callTableBulkAction(DeleteBulkAction::class, $episodes);
+        ->selectTableRecords($episodes)
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
 
     expect(Episode::query()->whereKey($episodes->pluck('id'))->count())->toBe(0);
     Storage::disk('public')->assertMissing([

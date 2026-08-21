@@ -41,7 +41,7 @@ class EpisodesTable
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('episode_number', 'desc');

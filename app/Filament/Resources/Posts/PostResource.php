@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
 class PostResource extends Resource
@@ -30,8 +31,12 @@ class PostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $reviewCount = static::getModel()::where('status', PublishStatus::InReview)->count();
-        $draftCount = static::getModel()::where('status', PublishStatus::Draft)->count();
+        $counts = Cache::remember('filament.navigation.posts-status-counts', now()->addMinutes(5), fn (): array => [
+            'review' => static::getModel()::where('status', PublishStatus::InReview)->count(),
+            'draft' => static::getModel()::where('status', PublishStatus::Draft)->count(),
+        ]);
+        $reviewCount = $counts['review'];
+        $draftCount = $counts['draft'];
 
         if ($reviewCount > 0) {
             return $reviewCount.' to review';
@@ -42,7 +47,7 @@ class PostResource extends Resource
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $reviewCount = static::getModel()::where('status', PublishStatus::InReview)->count();
+        $reviewCount = Cache::remember('filament.navigation.posts-review-count', now()->addMinutes(5), fn (): int => static::getModel()::where('status', PublishStatus::InReview)->count());
 
         return $reviewCount > 0 ? 'info' : 'gray';
     }

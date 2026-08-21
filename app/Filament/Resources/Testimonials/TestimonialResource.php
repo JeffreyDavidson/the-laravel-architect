@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 
 class TestimonialResource extends Resource
 {
@@ -21,7 +22,7 @@ class TestimonialResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = static::getModel()::where('status', 'pending')->count();
+        $count = Cache::remember('filament.navigation.testimonials-pending-count', now()->addMinutes(5), fn (): int => static::getModel()::where('status', 'pending')->count());
 
         return $count > 0 ? (string) $count : null;
     }

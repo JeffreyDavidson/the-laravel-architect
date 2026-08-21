@@ -4,6 +4,7 @@ use App\Filament\Resources\Testimonials\Pages\ListTestimonials;
 use App\Models\Testimonial;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -35,7 +36,8 @@ it('deletes selected testimonials through the table bulk action', function () {
     ]);
 
     livewire(ListTestimonials::class)
-        ->callTableBulkAction(DeleteBulkAction::class, $testimonials);
+        ->selectTableRecords($testimonials)
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
 
     expect(Testimonial::query()->whereKey($testimonials->pluck('id'))->count())->toBe(0);
 });

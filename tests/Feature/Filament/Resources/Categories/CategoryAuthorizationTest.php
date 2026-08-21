@@ -5,6 +5,7 @@ use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -47,7 +48,7 @@ it('allows an administrator to manage categories', function () {
         ->assertOk();
 
     livewire(EditPost::class, ['record' => $this->post->getRouteKey()])
-        ->assertFormComponentActionVisible('category_id', 'createOption');
+        ->assertActionVisible(TestAction::make('createOption')->schemaComponent('category_id'));
 });
 
 it('prevents a non-administrator from managing categories', function () {

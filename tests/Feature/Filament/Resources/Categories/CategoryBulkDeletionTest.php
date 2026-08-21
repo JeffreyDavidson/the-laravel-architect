@@ -4,6 +4,7 @@ use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Models\Category;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -21,7 +22,8 @@ it('deletes selected categories through the table bulk action', function () {
     ]);
 
     livewire(ListCategories::class)
-        ->callTableBulkAction(DeleteBulkAction::class, $categories);
+        ->selectTableRecords($categories)
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
 
     expect(Category::query()->whereKey($categories->pluck('id'))->count())->toBe(0);
 });
