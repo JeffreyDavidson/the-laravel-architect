@@ -27,6 +27,7 @@ Verify all of the following against the deployed commit:
 - The migration was recorded exactly once with a positive batch.
 - The expected schema is present and obsolete schema is absent.
 - `/` and `/admin` return the expected status codes.
+- `/up` returns HTTP 200, confirming the application can read its migrated database.
 - Public media URLs return successful responses.
 - The queue worker and scheduler are active.
 - A reversible upload smoke test can create, read, and delete a temporary object.

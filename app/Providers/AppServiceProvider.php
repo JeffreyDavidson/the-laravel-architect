@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(DiagnosingHealth::class, function (): void {
+            DB::table('migrations')->limit(1)->exists();
+        });
+
         RateLimiter::for('newsletter', fn (Request $request) => Limit::perHour(5)->by($request->ip()));
         RateLimiter::for('newsletter-confirm', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('testimonials', fn (Request $request) => Limit::perHour(3)->by($request->ip()));
