@@ -3,36 +3,44 @@ import { expect, Page, test } from '@playwright/test';
 
 const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/projects', '/uses'];
 
-async function assertNoCriticalAccessibilityViolations(page: Page): Promise<void> {
+test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({
+        colorScheme: 'light',
+        reducedMotion: 'reduce',
+    });
+});
+
+async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<void> {
     const results = await new AxeBuilder({ page }).analyze();
-    const criticalViolations = results.violations.filter((violation) => violation.impact === 'critical');
-    const seriousViolations = results.violations.filter((violation) => violation.impact === 'serious');
+    const highImpactViolations = results.violations.filter(
+        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
+    );
 
-    if (seriousViolations.length > 0) {
-        console.warn(`Accessibility warning: ${seriousViolations.length} serious violation group(s) detected.`);
-    }
-
-    expect(criticalViolations).toEqual([]);
+    expect(highImpactViolations.map((violation) => ({
+        id: violation.id,
+        impact: violation.impact,
+        targets: violation.nodes.map((node) => node.target),
+    }))).toEqual([]);
 }
 
 for (const route of publicRoutes) {
-    test(`${route} loads successfully without critical accessibility violations`, async ({ page }) => {
+    test(`${route} loads successfully without high-impact accessibility violations`, async ({ page }) => {
         const response = await page.goto(route);
 
         expect(response?.ok()).toBeTruthy();
         await expect(page.locator('body')).toBeVisible();
-        await assertNoCriticalAccessibilityViolations(page);
+        await assertNoHighImpactAccessibilityViolations(page);
     });
 }
 
-test('admin login loads with labeled credentials without critical accessibility violations', async ({ page }) => {
+test('admin login loads with labeled credentials without high-impact accessibility violations', async ({ page }) => {
     const response = await page.goto('/admin/login');
 
     expect(response?.ok()).toBeTruthy();
     await expect(page.locator('input[type="email"]')).toHaveAccessibleName(/email/i);
     await expect(page.locator('input[type="password"]')).toHaveAccessibleName(/password/i);
 
-    await assertNoCriticalAccessibilityViolations(page);
+    await assertNoHighImpactAccessibilityViolations(page);
 });
 
 test('an administrator can reach the dashboard', async ({ page }) => {
@@ -45,7 +53,7 @@ test('an administrator can reach the dashboard', async ({ page }) => {
 
     await expect(page).toHaveURL(/\/admin\/?$/);
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Posts' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Posts', exact: true })).toBeVisible();
 
-    await assertNoCriticalAccessibilityViolations(page);
+    await assertNoHighImpactAccessibilityViolations(page);
 });

@@ -7,7 +7,7 @@
     <x-hero-section>
         <x-terminal-prompt command="uses:list" />
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">/uses</h1>
-        <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">uses.tech</a>.</p>
+        <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-brand-600 underline decoration-brand-600/50 underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">uses.tech</a>.</p>
         <p class="text-gray-500 text-sm mt-4">Last updated: February 2026</p>
     </x-hero-section>
 
