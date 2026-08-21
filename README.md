@@ -38,7 +38,7 @@ composer audit --locked
 npm audit --omit=dev
 ```
 
-CI runs dependency auditing, formatting, static analysis, asset compilation, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI runs dependency auditing, formatting, static analysis, asset compilation, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days. Workflow actions are pinned to immutable commits, with weekly Dependabot updates targeting `develop`.
 
 ## Architecture
 
