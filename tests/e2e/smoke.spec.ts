@@ -4,7 +4,10 @@ import { expect, Page, test } from '@playwright/test';
 const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/projects', '/uses'];
 
 test.beforeEach(async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.emulateMedia({
+        colorScheme: 'light',
+        reducedMotion: 'reduce',
+    });
 });
 
 async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<void> {

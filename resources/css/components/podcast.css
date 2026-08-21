@@ -217,7 +217,16 @@
     :root:not(.dark) .topic-pill {
         background: transparent !important;
         border-color: currentColor !important;
-        filter: brightness(0.7) saturate(1.3);
+        color: #245b91;
+    }
+
+    :root:not(.dark) .podcast-accent-text,
+    :root:not(.dark) .podcast-badge {
+        color: #245b91;
+    }
+
+    :root:not(.dark) .podcast-badge {
+        background: rgb(36 91 145 / 0.08);
     }
 
     :root:not(.dark) .podcast-showcase {
