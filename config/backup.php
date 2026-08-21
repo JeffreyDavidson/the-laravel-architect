@@ -237,7 +237,7 @@ return [
         'notifiable' => Notifiable::class,
 
         'mail' => [
-            'to' => env('BACKUP_NOTIFICATION_EMAIL', env('MAIL_CONTACT_TO', 'thelaravelarchitect@gmail.com')),
+            'to' => env('BACKUP_NOTIFICATION_EMAIL', env('MAIL_CONTACT_TO', env('MAIL_FROM_ADDRESS', 'hello@example.com'))),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),

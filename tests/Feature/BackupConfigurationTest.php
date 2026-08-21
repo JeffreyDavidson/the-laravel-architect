@@ -8,7 +8,7 @@ it('uses safe backup configuration defaults', function () {
         ->not->toContain(null)
         ->and(config('backup.backup.destination.disks'))->toBe(['local'])
         ->and(config('backup.monitor_backups.0.disks'))->toBe(['local'])
-        ->and(config('backup.notifications.mail.to'))->toBe('thelaravelarchitect@gmail.com');
+        ->and(config('backup.notifications.mail.to'))->toBe(config('mail.contact_to'));
 });
 
 it('schedules backup creation cleanup and monitoring', function () {
