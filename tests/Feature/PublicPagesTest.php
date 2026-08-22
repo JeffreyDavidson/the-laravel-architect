@@ -104,6 +104,32 @@ it('uses published work and approved recommendations as homepage proof', functio
         ]);
 });
 
+it('presents published projects as case studies without inferring product status', function () {
+    $project = Project::query()->create([
+        'title' => 'Architecture Decisions',
+        'slug' => 'architecture-decisions',
+        'description' => 'A project shaped by explicit technical tradeoffs.',
+        'content' => '## The challenge\n\nModel a complex domain without hiding its rules.',
+        'github_url' => 'https://github.com/example/architecture-decisions',
+        'tech_stack' => ['Laravel', 'Pest'],
+        'is_featured' => true,
+        'status' => ProjectStatus::Published,
+    ]);
+
+    $this->get(route('projects.index'))
+        ->assertOk()
+        ->assertSee('Laravel case studies, not just screenshots')
+        ->assertSee('Read the case study')
+        ->assertSee($project->title);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('Project case study')
+        ->assertSee('Decisions over decoration')
+        ->assertSee('The challenge')
+        ->assertDontSee('Active');
+});
+
 it('shows synced published YouTube videos without stale launch content', function () {
     $publishedVideo = Video::query()->create([
         'youtube_id' => 'published-video',
