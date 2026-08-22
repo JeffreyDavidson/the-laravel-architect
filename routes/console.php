@@ -25,5 +25,17 @@ Schedule::command('backup:monitor')
     ->dailyAt(config('backup.schedule.monitor_at'))
     ->withoutOverlapping()
     ->onOneServer();
+Schedule::command('app:monitor-failed-jobs')
+    ->hourly()
+    ->environments(['production'])
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
+Schedule::command('queue:prune-failed', [
+    '--hours' => config('health.failed_jobs.retention_hours'),
+])
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
 Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
 Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();
