@@ -3,151 +3,95 @@
 @section('title', 'Projects')
 
 @section('content')
-{{-- ===== HERO ===== --}}
-<div class="noise-overlay relative overflow-hidden border-b border-gray-200 bg-white dark:border-brand-700 dark:bg-transparent">
-    {{-- Ambient glow --}}
+<header class="noise-overlay relative overflow-hidden border-b border-gray-200 bg-white dark:border-brand-700 dark:bg-transparent">
     <div class="absolute left-1/4 top-1/4 h-[600px] w-[600px] rounded-full bg-brand-600 opacity-0 blur-[120px] dark:opacity-[0.06]"></div>
     <div class="absolute bottom-0 right-1/3 h-[400px] w-[400px] rounded-full bg-accent-400 opacity-0 blur-[100px] dark:opacity-[0.04]"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
         <x-terminal-prompt command="project:list" />
 
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Things I've Built</h1>
-        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">From passion projects to production platforms. Each one a lesson in architecture, testing, and building things that last.</p>
+        <p class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Selected work</p>
+        <h1 class="mb-4 max-w-4xl text-4xl font-extrabold text-gray-900 dark:text-white md:text-5xl">Laravel case studies, not just screenshots</h1>
+        <p class="max-w-3xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">A closer look at the domain problems, architecture decisions, and tradeoffs behind products I have built and maintained.</p>
 
-        {{-- Stats --}}
-        <div class="flex gap-3 mt-6 max-w-md">
-            <div class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-2 py-2.5 text-center dark:border-brand-700 dark:bg-brand-950/50 sm:px-3">
-                <span class="block font-mono text-xl font-bold text-brand-600">{{ $projects->count() }}</span>
-                <span class="text-[11px] text-gray-500 uppercase tracking-wider">Projects</span>
+        <dl class="mt-8 grid max-w-2xl grid-cols-3 gap-3">
+            <div class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 dark:border-brand-700 dark:bg-brand-950/50">
+                <dd class="font-mono text-2xl font-bold text-brand-600">{{ $projects->count() }}</dd>
+                <dt class="mt-1 text-[11px] uppercase tracking-wider text-gray-500">Case studies</dt>
             </div>
-            <div class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-2 py-2.5 text-center dark:border-brand-700 dark:bg-brand-950/50 sm:px-3">
-                <span class="block font-mono text-xl font-bold text-brand-600">{{ $projects->where('is_featured', true)->count() }}</span>
-                <span class="text-[11px] text-gray-500 uppercase tracking-wider">Featured</span>
+            <div class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 dark:border-brand-700 dark:bg-brand-950/50">
+                <dd class="font-mono text-2xl font-bold text-brand-600">{{ $projects->where('is_featured', true)->count() }}</dd>
+                <dt class="mt-1 text-[11px] uppercase tracking-wider text-gray-500">Featured</dt>
             </div>
-            <div class="flex-1 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-2 py-2.5 text-center dark:border-brand-700 dark:bg-brand-950/50 sm:px-3">
-                <span class="block font-mono text-xl font-bold text-brand-600">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</span>
-                <span class="text-[11px] text-gray-500 uppercase tracking-wider"><span class="sm:hidden">Tech</span><span class="hidden sm:inline">Technologies</span></span>
+            <div class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 dark:border-brand-700 dark:bg-brand-950/50">
+                <dd class="font-mono text-2xl font-bold text-brand-600">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</dd>
+                <dt class="mt-1 text-[11px] uppercase tracking-wider text-gray-500">Technologies</dt>
             </div>
-        </div>
+        </dl>
     </div>
-</div>
+</header>
 
-{{-- ===== PROJECTS ===== --}}
-<section class="dot-grid-bg bg-gray-50 dark:bg-transparent">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div x-data="{ filter: 'all' }">
-            {{-- Filter Tabs --}}
-            <x-projects.filter-tabs />
+<main class="dot-grid-bg bg-gray-50 dark:bg-transparent">
+    <div class="mx-auto max-w-7xl space-y-16 px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+        @if($projects->where('is_featured', true)->isNotEmpty())
+            <section aria-labelledby="featured-projects-heading">
+                <div class="mb-7 max-w-2xl">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Deep dives</p>
+                    <h2 id="featured-projects-heading" class="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">Featured case studies</h2>
+                </div>
 
-            <div class="mt-10 space-y-16">
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    @foreach($projects->where('is_featured', true) as $project)
+                        <article>
+                            <a href="{{ route('projects.show', $project) }}" class="featured-card group relative block h-full overflow-hidden rounded-2xl border border-gray-200 bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-brand-700 dark:bg-brand-950 dark:ring-offset-brand-950">
+                                <div class="card-glow absolute inset-0 rounded-2xl shadow-[inset_0_0_80px_rgba(74,127,191,0.06),0_0_40px_rgba(74,127,191,0.04)]"></div>
+                                <div class="h-[2px] w-full bg-gradient-to-r from-transparent via-brand-600 to-transparent"></div>
 
-                {{-- Featured Projects --}}
-                <x-projects.grid title="Featured Projects" show="filter === 'all' || filter === 'featured'">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        @foreach($projects->where('is_featured', true) as $project)
-                        <a href="{{ route('projects.show', $project) }}" class="featured-card group relative block overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-brand-700 dark:bg-brand-950">
-                            {{-- Glow --}}
-                            <div class="card-glow absolute inset-0 rounded-2xl shadow-[inset_0_0_80px_rgba(74,127,191,0.06),0_0_40px_rgba(74,127,191,0.04)]"></div>
-
-                            {{-- Top accent --}}
-                            <div class="h-[2px] w-full bg-gradient-to-r from-transparent via-brand-600 to-transparent"></div>
-
-                            <div class="relative p-8">
-                                {{-- Header --}}
-                                <div class="flex items-start justify-between mb-5">
-                                    <div class="flex items-center gap-3">
+                                <div class="relative flex h-full flex-col p-6 sm:p-8">
+                                    <div class="mb-6 flex items-start justify-between">
                                         <div class="card-icon flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600/20 to-brand-600/5">
                                             <x-svg-icon name="folder" class="h-5 w-5 text-brand-600" />
                                         </div>
-                                        <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-600">Featured</span>
+                                        <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-600">Case study</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        @if($project->github_url)
-                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-svg-icon name="github" class="w-5 h-5" /></span>
-                                        @endif
-                                        @if($project->url)
-                                        <span class="text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors"><x-svg-icon name="external-link" class="w-5 h-5" /></span>
-                                        @endif
-                                    </div>
+
+                                    <h3 class="mb-3 text-2xl font-extrabold transition-colors group-hover:text-brand-600">{{ $project->title }}</h3>
+                                    <p class="mb-6 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ $project->description }}</p>
+
+                                    @if($project->tech_stack)
+                                        <ul aria-label="Technology stack" class="mb-6 flex flex-wrap gap-1.5">
+                                            @foreach($project->tech_stack as $tech)
+                                                <li class="tech-pill rounded-md border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-500 dark:border-brand-700">{{ $tech }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+
+                                    <span class="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-brand-600">
+                                        Read the case study
+                                        <x-svg-icon name="arrow-long-right" class="card-arrow h-4 w-4" />
+                                    </span>
                                 </div>
+                            </a>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+        @endif
 
-                                {{-- Content --}}
-                                <h3 class="mb-3 text-2xl font-extrabold transition-colors group-hover:text-brand-600">{{ $project->title }}</h3>
-                                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">{{ $project->description }}</p>
+        @if($projects->where('is_featured', false)->isNotEmpty())
+            <section aria-labelledby="more-projects-heading">
+                <div class="mb-7 max-w-2xl">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">More work</p>
+                    <h2 id="more-projects-heading" class="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">Additional build notes</h2>
+                </div>
 
-                                {{-- Tech Stack --}}
-                                @if($project->tech_stack)
-                                <div class="flex flex-wrap gap-1.5 mb-4">
-                                    @foreach($project->tech_stack as $tech)
-                                    <span class="tech-pill rounded-md border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-500 dark:border-brand-700">{{ $tech }}</span>
-                                    @endforeach
-                                </div>
-                                @endif
-
-                                {{-- CTA --}}
-                                <div class="mt-2 flex items-center gap-2 text-sm font-semibold text-brand-600">
-                                    <span>View Project</span>
-                                    <x-svg-icon name="arrow-long-right" class="w-4 h-4 card-arrow" />
-                                </div>
-                            </div>
-                        </a>
-                        @endforeach
-                    </div>
-                </x-projects.grid>
-
-                {{-- Other Projects --}}
-                <x-projects.grid show="true">
-                    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6"
-                        x-show="filter === 'all' || filter === 'opensource' || filter === 'client'"
-                        x-text="filter === 'all' ? 'More Projects' : filter === 'opensource' ? 'Open Source' : 'Side Projects'">
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach($projects as $project)
-                        <a href="{{ route('projects.show', $project) }}"
-                           class="project-card group relative block overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-brand-700 dark:bg-brand-950/50"
-                           x-show="{{ $project->is_featured ? 'false' : "filter === 'all'" }}{{ $project->github_url ? " || filter === 'opensource'" : '' }}{{ !$project->github_url && !$project->is_featured ? " || filter === 'client'" : '' }}"
-                           x-transition
-                        >
-                            {{-- Glow --}}
-                            <div class="project-glow absolute inset-0 rounded-2xl shadow-[inset_0_0_60px_rgba(74,127,191,0.04)]"></div>
-
-                            <div class="relative p-6">
-                                {{-- Header --}}
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600/15 to-brand-600/5">
-                                        <x-svg-icon name="folder" class="h-4.5 w-4.5 text-brand-600" />
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        @if($project->github_url)
-                                        <x-svg-icon name="github" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
-                                        @endif
-                                        @if($project->url)
-                                        <x-svg-icon name="external-link" class="w-4 h-4 text-gray-600 group-hover:text-gray-600 dark:text-gray-400 transition-colors" />
-                                        @endif
-                                    </div>
-                                </div>
-
-                                {{-- Content --}}
-                                <h3 class="mb-2 text-lg font-bold transition-colors group-hover:text-brand-600">{{ $project->title }}</h3>
-                                <p class="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-2">{{ $project->description }}</p>
-
-                                {{-- Tech --}}
-                                @if($project->tech_stack)
-                                <div class="flex flex-wrap gap-1.5">
-                                    @foreach($project->tech_stack as $tech)
-                                    <span class="tech-pill rounded border border-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:border-brand-700">{{ $tech }}</span>
-                                    @endforeach
-                                </div>
-                                @endif
-                            </div>
-                        </a>
-                        @endforeach
-                    </div>
-                </x-projects.grid>
-
-            </div>
-        </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    @foreach($projects->where('is_featured', false) as $project)
+                        <x-projects.related-card :project="$project" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
-</section>
+</main>
 @endsection
