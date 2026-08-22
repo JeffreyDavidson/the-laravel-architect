@@ -11,11 +11,13 @@ it('uses safe backup configuration defaults', function () {
         ->and(config('backup.notifications.mail.to'))->toBe(config('mail.contact_to'));
 });
 
-it('schedules backup creation cleanup and monitoring', function () {
+it('schedules backup and failed-job operations', function () {
     Artisan::call('schedule:list');
 
     expect(Artisan::output())
         ->toContain('backup:run')
         ->toContain('backup:clean')
-        ->toContain('backup:monitor');
+        ->toContain('backup:monitor')
+        ->toContain('app:monitor-failed-jobs')
+        ->toContain('queue:prune-failed --hours=168');
 });

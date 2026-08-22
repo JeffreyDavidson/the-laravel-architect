@@ -10,6 +10,7 @@ use UnexpectedValueException;
 final class AddSecurityHeaders
 {
     private const array HEADERS = [
+        'Content-Security-Policy' => "base-uri 'self'; frame-ancestors 'self'; object-src 'none'",
         'Permissions-Policy' => 'camera=(), geolocation=(), microphone=()',
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
         'X-Content-Type-Options' => 'nosniff',
@@ -28,6 +29,10 @@ final class AddSecurityHeaders
             if (! $response->headers->has($name)) {
                 $response->headers->set($name, $value);
             }
+        }
+
+        if ($request->isSecure() && ! $response->headers->has('Strict-Transport-Security')) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
         return $response;

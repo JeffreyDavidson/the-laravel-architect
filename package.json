@@ -5,7 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "test:e2e": "playwright test"
+        "test:e2e": "playwright test",
+        "test:e2e:production": "playwright test --config=playwright.production.config.ts"
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
