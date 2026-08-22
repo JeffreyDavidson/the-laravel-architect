@@ -155,6 +155,7 @@
                         <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Resources</h4>
                         <ul role="list" class="space-y-2 text-sm">
                             <li><a href="{{ route('contact') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a></li>
+                            <li><a href="{{ route('privacy') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</a></li>
                             <li><a href="/rss" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a></li>
                             <li><a href="https://uses.tech" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>
                         </ul>

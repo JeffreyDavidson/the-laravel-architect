@@ -34,11 +34,26 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/', 'The Laravel Architect'],
     ['/about', 'About'],
     ['/contact', 'Contact'],
+    ['/privacy', 'Privacy'],
     ['/uses', 'Uses'],
     ['/blog', 'Blog'],
     ['/projects', 'Projects'],
     ['/podcasts', 'Podcast'],
 ]);
+
+it('links the privacy notice from public collection points', function () {
+    $privacyUrl = route('privacy');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee($privacyUrl, false)
+        ->assertSee('Approved submissions may be displayed publicly');
+
+    $this->get(route('contact'))
+        ->assertOk()
+        ->assertSee($privacyUrl, false)
+        ->assertSee('Your details are used to reply to this inquiry.');
+});
 
 it('loads public interactivity from the local Vite bundle', function () {
     $this->get(route('home'))
