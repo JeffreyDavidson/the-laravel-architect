@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, Page, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/projects', '/uses'];
+const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/privacy', '/projects', '/uses'];
 const publicColorSchemes = ['light', 'dark'] as const;
 
 test.beforeEach(async ({ page }) => {

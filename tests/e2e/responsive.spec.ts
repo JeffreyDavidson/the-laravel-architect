@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { devices, expect, Page, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/about', '/blog', '/contact', '/podcasts', '/projects', '/uses'];
+const publicRoutes = ['/', '/about', '/blog', '/contact', '/podcasts', '/privacy', '/projects', '/uses'];
 
 test.use({ ...devices['Pixel 5'] });
 

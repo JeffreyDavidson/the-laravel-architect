@@ -76,6 +76,16 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
+    public function privacy(): View
+    {
+        seo()->for(new SEOData(
+            title: 'Privacy',
+            description: 'How The Laravel Architect handles contact messages, newsletter subscriptions, testimonials, analytics, and essential site data.',
+        ));
+
+        return view('pages.privacy');
+    }
+
     public function uses(): View
     {
         seo()->for(new SEOData(

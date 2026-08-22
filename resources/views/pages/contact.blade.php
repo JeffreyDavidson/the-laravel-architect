@@ -88,6 +88,9 @@
                             Send Message
                             <x-svg-icon name="arrow-right" class="w-4 h-4" />
                         </x-button>
+                        <p class="text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+                            Your details are used to reply to this inquiry. Read the <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">privacy notice</a> for more information.
+                        </p>
                     </form>
                 </div>
 

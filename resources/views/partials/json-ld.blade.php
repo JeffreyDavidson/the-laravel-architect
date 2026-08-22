@@ -78,6 +78,8 @@ if (request()->routeIs('blog.index')) {
     $breadcrumbItems[] = ['name' => 'About', 'url' => route('about')];
 } elseif (request()->routeIs('contact')) {
     $breadcrumbItems[] = ['name' => 'Contact', 'url' => route('contact')];
+} elseif (request()->routeIs('privacy')) {
+    $breadcrumbItems[] = ['name' => 'Privacy', 'url' => route('privacy')];
 } elseif (request()->routeIs('uses')) {
     $breadcrumbItems[] = ['name' => 'Uses', 'url' => route('uses')];
 }
