@@ -84,7 +84,7 @@
                 <div class="artwork-glow absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[60px]" style="background: {{ $podcast->color }};"></div>
 
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
                 <div class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}33, {{ $podcast->color }}11);">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -115,7 +115,7 @@
                 {{-- Podcast name link --}}
                 <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
                     @if($podcast->cover_image_url)
-                    <img src="{{ $podcast->cover_image_url }}" alt="" class="w-5 h-5 rounded object-cover">
+                    <img src="{{ $podcast->cover_image_url }}" alt="" width="20" height="20" loading="lazy" decoding="async" class="w-5 h-5 rounded object-cover">
                     @else
                     <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                     @endif
@@ -206,7 +206,7 @@
                         <div class="flex items-center gap-3">
                             {{-- Podcast mini artwork --}}
                             @if($podcast->cover_image_url)
-                            <img src="{{ $podcast->cover_image_url }}" alt="" class="w-10 h-10 rounded-lg object-cover">
+                            <img src="{{ $podcast->cover_image_url }}" alt="" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-lg object-cover">
                             @endif
                             <div class="min-w-0">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $episode->title }}</p>
@@ -263,7 +263,7 @@
                     @endphp
                     @if($videoId)
                     <div class="relative w-full" style="padding-bottom: 56.25%;">
-                        <iframe src="https://www.youtube.com/embed/{{ $videoId }}" class="absolute inset-0 w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="{{ $episode->title }} on YouTube" class="absolute inset-0 h-full w-full border-0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                     @endif
                 </div>
@@ -274,19 +274,19 @@
                 <div class="flex flex-wrap gap-3 mb-10">
                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide self-center mr-2">Listen on</span>
                     @if($episode->spotify_url)
-                    <a href="{{ $episode->spotify_url }}" target="_blank" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-[#1DB954]/10 text-[#1DB954] text-sm font-medium rounded-lg border border-[#1DB954]/20 hover:bg-[#1DB954]/20 transition-colors">
+                    <a href="{{ $episode->spotify_url }}" target="_blank" rel="noopener noreferrer" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-[#1DB954]/10 text-[#1DB954] text-sm font-medium rounded-lg border border-[#1DB954]/20 hover:bg-[#1DB954]/20 transition-colors">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                         Spotify
                     </a>
                     @endif
                     @if($episode->apple_podcasts_url)
-                    <a href="{{ $episode->apple_podcasts_url }}" target="_blank" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-[#D56DFB]/10 text-[#D56DFB] text-sm font-medium rounded-lg border border-[#D56DFB]/20 hover:bg-[#D56DFB]/20 transition-colors">
+                    <a href="{{ $episode->apple_podcasts_url }}" target="_blank" rel="noopener noreferrer" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-[#D56DFB]/10 text-[#D56DFB] text-sm font-medium rounded-lg border border-[#D56DFB]/20 hover:bg-[#D56DFB]/20 transition-colors">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5.34 0A5.328 5.328 0 000 5.34v13.32A5.328 5.328 0 005.34 24h13.32A5.328 5.328 0 0024 18.66V5.34A5.328 5.328 0 0018.66 0H5.34z"/></svg>
                         Apple Podcasts
                     </a>
                     @endif
                     @if($episode->youtube_url)
-                    <a href="{{ $episode->youtube_url }}" target="_blank" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-400 text-sm font-medium rounded-lg border border-red-500/20 hover:bg-red-500/20 transition-colors">
+                    <a href="{{ $episode->youtube_url }}" target="_blank" rel="noopener noreferrer" class="share-btn inline-flex items-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-400 text-sm font-medium rounded-lg border border-red-500/20 hover:bg-red-500/20 transition-colors">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                         YouTube
                     </a>
@@ -308,7 +308,7 @@
                             <p class="text-gray-600 dark:text-gray-400 text-sm mt-0.5">{{ $episode->guest_title }}</p>
                             @endif
                             @if($episode->guest_url)
-                            <a href="{{ $episode->guest_url }}" target="_blank" class="inline-flex items-center gap-1.5 mt-2 text-sm hover:underline" style="color: {{ $podcast->color }};">
+                            <a href="{{ $episode->guest_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-2 text-sm hover:underline" style="color: {{ $podcast->color }};">
                                 {{ parse_url($episode->guest_url, PHP_URL_HOST) }}
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
@@ -370,7 +370,7 @@
                         <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                             <div class="flex items-center gap-3 mb-3">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="w-12 h-12 rounded-lg object-cover">
+                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="48" height="48" loading="lazy" decoding="async" class="w-12 h-12 rounded-lg object-cover">
                                 @else
                                 <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
                                     <svg class="w-6 h-6" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -422,14 +422,14 @@
                     <div class="p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Share Episode</h3>
                         <div class="flex gap-2">
-                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                             </a>
-                            <button onclick="navigator.clipboard.writeText('{{ route('podcast.episode', [$podcast, $episode]) }}').then(() => { this.innerHTML = '<svg class=\'w-4 h-4 text-green-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/></svg>'; setTimeout(() => { this.innerHTML = '<svg class=\'w-4 h-4\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3\'/></svg>'; }, 2000) })" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            <button type="button" data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}" aria-label="Copy episode link" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                             </button>
                         </div>
                     </div>

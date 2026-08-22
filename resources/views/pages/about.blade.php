@@ -55,7 +55,7 @@
                     <div class="about-card-deck">
                         <div class="about-ghost-card about-ghost-card-2"></div>
                         <div class="about-ghost-card about-ghost-card-1"></div>
-                    <div class="about-card-flip-container" @click="flipped = !flipped; $dispatch('about-card-flip', { flipped })">
+                    <div class="about-card-flip-container rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400" role="button" tabindex="0" aria-label="Flip Jeffrey Davidson developer card" :aria-pressed="flipped.toString()" @click="flipped = !flipped; $dispatch('about-card-flip')" @keydown.enter.prevent="$el.click()" @keydown.space.prevent="$el.click()">
                         <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
 
                             {{-- FRONT: Portrait --}}
@@ -67,7 +67,7 @@
                                             <span class="whitespace-nowrap rounded-full border border-accent-400/20 bg-accent-400/5 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-accent-400">Legendary</span>
                                         </div>
                                         <div class="mx-4 rounded-xl overflow-hidden border-4 border-gray-300 dark:border-brand-700 relative flex-1">
-                                            <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
+                                            <img src="{{ Vite::asset('resources/images/avatar-640.webp') }}" alt="Jeffrey Davidson" width="427" height="640" decoding="async" fetchpriority="high" class="w-full h-full object-cover object-top">
                                         </div>
                                         <div class="px-5 pt-3 pb-3 text-center">
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
@@ -380,47 +380,4 @@
             </x-button>
         </div>
     </div>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.about-card-flip-container');
-    const card = document.querySelector('.about-card-flip');
-    if (!container || !card) return;
-
-    const maxTilt = 15;
-    let flipCount = 0; // always increment (always rotate right)
-    let isAnimating = false;
-
-    // Listen for flip events from Alpine
-    container.addEventListener('about-card-flip', (e) => {
-        flipCount++;
-        isAnimating = true;
-        const targetY = flipCount * 180;
-        card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-        card.style.transform = `rotateX(0deg) rotateY(${targetY}deg) scale(1)`;
-        setTimeout(() => { isAnimating = false; }, 800);
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (isAnimating) return;
-
-        const rect = container.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-
-        const tiltX = (0.5 - y) * maxTilt;
-        const tiltY = (x - 0.5) * maxTilt;
-        const baseY = flipCount * 180;
-
-        card.style.transition = 'transform 0.1s ease-out';
-        card.style.transform = `rotateX(${tiltX}deg) rotateY(${baseY + tiltY}deg) scale(1.02)`;
-    });
-
-    container.addEventListener('mouseleave', () => {
-        if (isAnimating) return;
-        const baseY = flipCount * 180;
-        card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-        card.style.transform = `rotateX(0deg) rotateY(${baseY}deg) scale(1)`;
-    });
-});
-</script>
 @endsection

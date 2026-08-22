@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Podcast;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 
 class PodcastSeeder extends Seeder
 {
     public function run(): void
     {
-        $coffee = Podcast::create([
+        Podcast::query()->create([
             'name' => 'Coffee with The Laravel Architect',
             'slug' => 'coffee-with-the-laravel-architect',
             'description' => 'Deep dives into Laravel, PHP, architecture patterns, and conversations with the people building the modern web.',
@@ -24,13 +23,7 @@ class PodcastSeeder extends Seeder
             'sort_order' => 1,
         ]);
 
-        $coverPath = public_path('images/podcast-coffee-logo.png');
-        if (file_exists($coverPath)) {
-            Storage::disk('public')->put('podcasts/podcast-coffee-logo.png', file_get_contents($coverPath));
-            $coffee->update(['cover_image_path' => 'podcasts/podcast-coffee-logo.png']);
-        }
-
-        $cloudy = Podcast::create([
+        Podcast::query()->create([
             'name' => 'Embracing Cloudy Days',
             'slug' => 'embracing-cloudy-days',
             'description' => 'A mental health podcast about finding strength in the storms. Honest conversations about the hard days and how we get through them.',
@@ -44,10 +37,5 @@ class PodcastSeeder extends Seeder
             'sort_order' => 2,
         ]);
 
-        $coverPath = public_path('images/podcast-cloudy-logo.png');
-        if (file_exists($coverPath)) {
-            Storage::disk('public')->put('podcasts/podcast-cloudy-logo.png', file_get_contents($coverPath));
-            $cloudy->update(['cover_image_path' => 'podcasts/podcast-cloudy-logo.png']);
-        }
     }
 }

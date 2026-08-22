@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
-<script>
-    // Sync theme before paint to prevent flash
-    if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-        document.documentElement.classList.remove('dark');
-    }
-</script>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // Sync theme before paint to prevent a flash of the wrong color scheme.
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180x180.png">
@@ -16,7 +16,6 @@
     <meta name="theme-color" content="#0D1117">
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
     {!! seo() !!}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @if(config('services.fathom.site_id'))
     <script src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
     @endif
@@ -32,7 +31,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" class="h-10 w-10 rounded-full">
+                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" decoding="async" class="h-10 w-10 rounded-full">
                     <span class="flex flex-col gap-0.5 leading-none">
                         <span class="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
                         <span class="font-empera text-lg leading-none tracking-[0.08em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
@@ -80,37 +79,6 @@
         </div>
     </nav>
 
-    <script>
-        // Mobile menu
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            const isOpen = menu.classList.toggle('hidden') === false;
-            this.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        // Theme toggle
-        function updateThemeIcons() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('theme-icon-dark').classList.toggle('hidden', isDark);
-            document.getElementById('theme-icon-light').classList.toggle('hidden', !isDark);
-            document.querySelectorAll('.theme-toggle-label').forEach(el => {
-                el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-            });
-            // Update theme-color meta
-            document.querySelector('meta[name="theme-color"]').content = isDark ? '#0D1117' : '#ffffff';
-        }
-
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.theme = isDark ? 'dark' : 'light';
-            updateThemeIcons();
-        }
-
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.querySelectorAll('.theme-toggle-mobile').forEach(el => el.addEventListener('click', toggleTheme));
-        updateThemeIcons();
-    </script>
-
     {{-- Content --}}
     <main class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')
@@ -127,7 +95,7 @@
             <div class="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 mb-8 lg:mb-14">
                 <div class="max-w-sm">
                     <a href="{{ route('home') }}" aria-label="Homepage" class="flex items-center gap-3 mb-3 group">
-                        <img src="/images/logo-color.svg" alt="The Laravel Architect" class="w-10 h-10 rounded-full">
+                        <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-full">
                         <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-[#4A7FBF] transition-colors">
                             <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
                             <span class="text-xl font-empera tracking-wide">Laravel</span>
@@ -156,8 +124,9 @@
                         <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-3">Resources</h4>
                         <ul role="list" class="space-y-2 text-sm">
                             <li><a href="{{ route('contact') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a></li>
+                            <li><a href="{{ route('privacy') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</a></li>
                             <li><a href="/rss" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a></li>
-                            <li><a href="https://uses.tech" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>
+                            <li><a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>
                         </ul>
                     </div>
                 </div>
@@ -170,8 +139,8 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
                 <p class="text-xs text-gray-600 dark:text-gray-400">
                     &copy; {{ date('Y') }} Jeffrey Davidson. Built with
-                    <a href="https://laravel.com" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Laravel</a> &
-                    <a href="https://filamentphp.com" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Filament</a>.
+                    <a href="https://laravel.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Laravel</a> &
+                    <a href="https://filamentphp.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Filament</a>.
                 </p>
                 <p class="text-xs text-gray-600 dark:text-gray-400">
                     Designed with ☕ in Florida

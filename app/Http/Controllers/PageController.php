@@ -37,12 +37,23 @@ class PageController extends Controller
             ->latest()
             ->get();
 
+        $publishedPostCount = Post::published()->count();
+        $publishedProjectCount = Project::published()->count();
+
         seo()->for(new SEOData(
             title: 'The Laravel Architect — Jeffrey Davidson',
             description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
         ));
 
-        return view('pages.home', compact('latestPosts', 'featuredProjects', 'youtubeSubscribers', 'latestYouTubeVideos', 'testimonials'));
+        return view('pages.home', compact(
+            'latestPosts',
+            'featuredProjects',
+            'youtubeSubscribers',
+            'latestYouTubeVideos',
+            'testimonials',
+            'publishedPostCount',
+            'publishedProjectCount',
+        ));
     }
 
     public function about(): View
@@ -63,6 +74,16 @@ class PageController extends Controller
         ));
 
         return view('pages.contact');
+    }
+
+    public function privacy(): View
+    {
+        seo()->for(new SEOData(
+            title: 'Privacy',
+            description: 'How The Laravel Architect handles contact messages, newsletter subscriptions, testimonials, analytics, and essential site data.',
+        ));
+
+        return view('pages.privacy');
     }
 
     public function uses(): View

@@ -1,850 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    /* ===== CSS CUSTOM PROPERTIES - THEME SYSTEM ===== */
-    :root {
-        /* Backgrounds */
-        --bg-primary: #ffffff;
-        --bg-secondary: #f6f8fa;
-        --bg-tertiary: #eaeef2;
-        --bg-card: #ffffff;
-        --bg-card-hover: #f6f8fa;
-        --bg-inset: #f0f3f6;
-        
-        /* Text */
-        --text-primary: #1f2328;
-        --text-secondary: #424a53;
-        --text-tertiary: #656d76;
-        --text-muted: #8b949e;
-        
-        /* Borders */
-        --border-primary: #d0d7de;
-        --border-secondary: #e5e7eb;
-        --border-subtle: rgba(0,0,0,0.06);
-        
-        /* Brand colors for pills/links */
-        --brand-pill-text: #2d6aa3;
-        --brand-pill-bg: rgba(74,127,191,0.1);
-        --brand-pill-border: rgba(74,127,191,0.25);
-        --accent-pill-text: #a3456a;
-        --accent-pill-bg: rgba(196,112,136,0.1);
-        --accent-pill-border: rgba(196,112,136,0.25);
-        --green-pill-text: #16794a;
-        --green-pill-bg: rgba(22,121,74,0.08);
-        --green-pill-border: rgba(22,121,74,0.25);
-        --amber-pill-text: #78350f;
-        --amber-pill-bg: rgba(245,158,11,0.1);
-        --amber-pill-border: rgba(245,158,11,0.3);
-        
-        /* Specific components */
-        --testimonial-bg: #ffffff;
-        --testimonial-border: rgba(0,0,0,0.08);
-        --glass-card-bg: rgba(246,248,250,0.9);
-        --glass-card-border: rgba(0,0,0,0.1);
-        --podcast-card-bg: #ffffff;
-        --podcast-card-border: #e5e7eb;
-        --stat-gradient-from: #1f2328;
-        --stat-gradient-to: #656d76;
-        --marquee-bg: #f6f8fa;
-        --marquee-fade: #f6f8fa;
-        --section-divider-color: linear-gradient(to right, transparent, rgba(74,127,191,0.2), rgba(196,112,136,0.15), transparent);
-        --service-card-bg: #ffffff;
-        --service-card-border: rgba(0,0,0,0.08);
-        --service-card-hover-bg: #f6f8fa;
-        --countdown-bg: #f6f8fa;
-        --countdown-border: #d0d7de;
-        --youtube-card-bg: #ffffff;
-        --youtube-card-border: #e5e7eb;
-    }
-    
-    .dark {
-        --bg-primary: #0D1117;
-        --bg-secondary: #161b22;
-        --bg-tertiary: #1a1d21;
-        --bg-card: rgba(26, 29, 33, 0.6);
-        --bg-card-hover: rgba(26, 29, 33, 0.8);
-        --bg-inset: #222529;
-        
-        --text-primary: #ffffff;
-        --text-secondary: #c9d1d9;
-        --text-tertiary: #8b949e;
-        --text-muted: #484f58;
-        
-        --border-primary: rgba(74, 127, 191, 0.15);
-        --border-secondary: rgba(255,255,255,0.06);
-        --border-subtle: rgba(255,255,255,0.03);
-        
-        --brand-pill-text: #7eb0dc;
-        --brand-pill-bg: rgba(74,127,191,0.1);
-        --brand-pill-border: rgba(74,127,191,0.2);
-        --accent-pill-text: #e0a0aa;
-        --accent-pill-bg: rgba(196,112,136,0.1);
-        --accent-pill-border: rgba(196,112,136,0.2);
-        --green-pill-text: #86efac;
-        --green-pill-bg: rgba(34,197,94,0.1);
-        --green-pill-border: rgba(34,197,94,0.2);
-        --amber-pill-text: #fcd34d;
-        --amber-pill-bg: rgba(245,158,11,0.1);
-        --amber-pill-border: rgba(245,158,11,0.2);
-        
-        --testimonial-bg: rgba(22, 27, 34, 0.5);
-        --testimonial-border: rgba(74, 127, 191, 0.1);
-        --glass-card-bg: rgba(26, 29, 33, 0.6);
-        --glass-card-border: rgba(74, 127, 191, 0.15);
-        --podcast-card-bg: transparent;
-        --podcast-card-border: transparent;
-        --stat-gradient-from: #ffffff;
-        --stat-gradient-to: #8b949e;
-        --marquee-bg: #0D1117;
-        --marquee-fade: #0D1117;
-        --section-divider-color: linear-gradient(to bottom, #0D1117, rgba(13,17,23,0.95));
-        --service-card-bg: rgba(22, 27, 34, 0.6);
-        --service-card-border: rgba(74, 127, 191, 0.12);
-        --service-card-hover-bg: rgba(26, 29, 33, 0.8);
-        --countdown-bg: #111111;
-        --countdown-border: rgba(255,255,255,0.1);
-        --youtube-card-bg: rgba(26, 29, 33, 0.6);
-        --youtube-card-border: rgba(74, 127, 191, 0.15);
-    }
-
-    /* ===== Gradient Mesh Hero Background ===== */
-    .hero-mesh {
-        background: radial-gradient(circle at 72% 22%, rgba(74, 127, 191, 0.2), transparent 34%), #0D1117;
-        animation: none;
-    }
-
-    /* ===== Section Dividers ===== */
-    .section-divider {
-        height: 24px;
-        position: relative;
-        overflow: hidden;
-    }
-    @media (min-width: 640px) {
-        .section-divider { height: 40px; }
-    }
-    .section-divider-hero {
-        background: linear-gradient(to bottom, transparent, var(--bg-primary));
-    }
-    .section-divider-dark {
-        background: var(--section-divider-color);
-    }
-    .section-divider-cta {
-        background: linear-gradient(to bottom, var(--bg-primary), #4A7FBF);
-    }
-    /* Light mode: thin divider lines instead of thick bands */
-    :root:not(.dark) .section-divider {
-        height: 1px !important;
-        background: var(--section-divider-color) !important;
-        max-width: 1280px;
-        margin: 0 auto;
-    }
-    :root:not(.dark) .section-divider-hero {
-        background: linear-gradient(to bottom, transparent, var(--bg-primary));
-    }
-
-    /* ===== Laravel Gradient Glow Text ===== */
-    .laravel-glow {
-        font-family: 'Empera', serif;
-        background: linear-gradient(135deg, #4A7FBF, #6fa3d6, #4A7FBF);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        filter: drop-shadow(0 0 12px rgba(74, 127, 191, 0.28));
-    }
-
-    /* ===== Text Scramble Effect ===== */
-    .scramble-wrapper {
-        display: inline-flex;
-        align-items: center;
-        min-height: 1.5em;
-    }
-    .scramble-text {
-        white-space: nowrap;
-        font-family: 'JetBrains Mono', monospace, ui-monospace;
-    }
-    .scramble-char-random {
-        color: rgba(74, 127, 191, 0.4);
-    }
-    .scramble-char-resolved {
-        color: #7bb8e0;
-    }
-
-    :root:not(.dark) .scramble-char-random,
-    :root:not(.dark) .scramble-char-resolved {
-        color: #245b91;
-    }
-
-    /* ===== Code Editor Window ===== */
-    .code-editor {
-        background: #0d1117;
-        border: 1px solid rgba(74, 127, 191, 0.25);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow:
-            0 0 30px rgba(74, 127, 191, 0.15),
-            0 0 60px rgba(74, 127, 191, 0.08),
-            0 25px 50px rgba(0, 0, 0, 0.5);
-        transition: border-color 0.4s ease, box-shadow 0.4s ease;
-    }
-    .code-editor:hover {
-        border-color: rgba(74, 127, 191, 0.4);
-        box-shadow:
-            0 0 36px rgba(74, 127, 191, 0.16),
-            0 25px 50px rgba(0, 0, 0, 0.5);
-    }
-    .code-editor-bar {
-        background: #161b22;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .code-editor-tab {
-        background: #0d1117;
-        border-top: 2px solid #4A7FBF;
-        border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .code-editor-tab-inactive {
-        background: #161b22;
-        border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .code-line-number {
-        color: #8b949e;
-        user-select: none;
-        min-width: 2rem;
-        text-align: right;
-    }
-    /* Syntax colors */
-    .syn-keyword { color: #ff7b72; }
-    .syn-string { color: #a5d6ff; }
-    .syn-class { color: #79c0ff; }
-    .syn-method { color: #d2a8ff; }
-    .syn-comment { color: #8b949e; font-style: italic; }
-    .syn-variable { color: #ffa657; }
-    .syn-function { color: #d2a8ff; }
-    .syn-arrow { color: #ff7b72; }
-    .syn-bracket { color: #8b949e; }
-    .syn-text { color: #c9d1d9; }
-    .syn-param { color: #ffa657; }
-
-    @keyframes codeSlideIn {
-        from { opacity: 0; transform: translateX(30px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    .code-editor {
-        animation: codeSlideIn 0.8s ease 0.3s both;
-    }
-
-    /* Consistent code panel height */
-    .code-panel { min-height: 620px; }
-
-    /* Custom scrollbar for code editor */
-    .code-editor ::-webkit-scrollbar { width: 8px; }
-    .code-editor ::-webkit-scrollbar-track { background: transparent; }
-    .code-editor ::-webkit-scrollbar-thumb { background: rgba(74, 127, 191, 0.2); border-radius: 4px; }
-    .code-editor ::-webkit-scrollbar-thumb:hover { background: rgba(74, 127, 191, 0.4); }
-
-    /* Line highlight */
-    .code-line-highlight {
-        background: rgba(74, 127, 191, 0.08);
-        border-left: 2px solid #4A7FBF;
-        margin-left: -0.5rem;
-        padding-left: calc(0.5rem - 2px);
-    }
-
-    /* ===== Glowing Buttons ===== */
-    .glow-btn {
-        position: relative;
-        transition: box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-    }
-    .glow-btn:hover {
-        box-shadow: 0 0 18px rgba(74, 127, 191, 0.24);
-    }
-    .glow-btn-outline:hover {
-        box-shadow: 0 0 16px rgba(74, 127, 191, 0.18);
-        border-color: #4A7FBF;
-        color: white;
-    }
-
-    /* ===== Elevated Cards ===== */
-    .glass-card {
-        background: var(--glass-card-bg);
-        border: 1px solid var(--glass-card-border);
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-card:hover {
-        border-color: rgba(74, 127, 191, 0.5);
-        box-shadow: 0 12px 30px rgba(74, 127, 191, 0.1);
-    }
-    /* Light mode hover: different shadow */
-    :root:not(.dark) .glass-card:hover {
-        border-color: rgba(74, 127, 191, 0.3);
-        box-shadow: 0 10px 26px rgba(0,0,0,0.06);
-    }
-
-    /* ===== Gradient Top Border Cards with Cursor Glow ===== */
-    .gradient-border-card {
-        position: relative;
-        overflow: hidden;
-    }
-    .gradient-border-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #4A7FBF, #E47A9D);
-        z-index: 2;
-    }
-    .gradient-border-card:hover { border-color: rgba(74, 127, 191, 0.42); }
-
-    .home-page h1,
-    .home-page h2,
-    .home-page h3 {
-        font-weight: 600;
-        text-wrap: balance;
-    }
-    .home-page h1,
-    .home-page h2 {
-        letter-spacing: -0.025em;
-    }
-    .home-page h1 { line-height: normal; }
-    .home-page p { text-wrap: pretty; }
-    .home-page .section-heading {
-        max-width: 42rem;
-    }
-    .home-page .section-heading h2 {
-        margin-bottom: 0.75rem;
-    }
-    .home-page .section-heading p {
-        max-width: 38rem;
-    }
-    .home-page .glass-card,
-    .home-page .gradient-border-card,
-    .home-page .newsletter-card {
-        border-radius: 1rem;
-    }
-
-    /* ===== Scroll Fade Up ===== */
-    .fade-up {
-        opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-    .fade-up.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* ===== Infinite Marquee ===== */
-    @keyframes marqueeScroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-25%); }
-    }
-    .marquee-track {
-        display: flex;
-        width: max-content;
-        animation: marqueeScroll 30s linear infinite;
-    }
-    .marquee-track:hover {
-        animation-play-state: paused;
-    }
-    .marquee-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0 2.5rem;
-        white-space: nowrap;
-        color: var(--text-tertiary);
-        font-size: 0.875rem;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        transition: color 0.3s ease;
-    }
-    .marquee-item:hover {
-        color: var(--text-secondary);
-    }
-    .marquee-item svg,
-    .marquee-item img {
-        width: 28px;
-        height: 28px;
-        opacity: 0.4;
-        transition: opacity 0.3s ease, filter 0.3s ease;
-    }
-    .marquee-item:hover svg,
-    .marquee-item:hover img {
-        opacity: 0.9;
-    }
-    .marquee-fade-left,
-    .marquee-fade-right {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100px;
-        z-index: 2;
-        pointer-events: none;
-    }
-    .marquee-fade-left {
-        left: 0;
-        background: linear-gradient(to right, var(--marquee-fade), transparent);
-    }
-    .marquee-fade-right {
-        right: 0;
-        background: linear-gradient(to left, var(--marquee-fade), transparent);
-    }
-
-    /* ===== Stats Counter ===== */
-    .stat-number {
-        font-family: 'JetBrains Mono', ui-monospace, monospace;
-        font-size: 2rem;
-        font-weight: 800;
-        line-height: 1;
-        background: linear-gradient(135deg, var(--stat-gradient-from) 0%, var(--stat-gradient-to) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    @media (min-width: 640px) {
-        .stat-number { font-size: 3rem; }
-    }
-    .stat-divider {
-        width: 1px;
-        height: 60px;
-        background: linear-gradient(to bottom, transparent, var(--border-primary), transparent);
-    }
-
-    /* ===== Service Cards ===== */
-    .service-card {
-        position: relative;
-        background: var(--service-card-bg);
-        border: 1px solid var(--service-card-border);
-        border-radius: 1rem;
-        padding: 2rem;
-        transition: all 0.4s ease;
-        overflow: hidden;
-    }
-    .service-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: var(--service-gradient);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    .service-card:hover::before {
-        opacity: 1;
-    }
-    .service-card:hover {
-        border-color: rgba(74, 127, 191, 0.3);
-        transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    /* Light mode service card hover */
-    :root:not(.dark) .service-card:hover {
-        background: var(--service-card-hover-bg);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.1), 0 0 40px var(--card-glow);
-    }
-    .service-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 1.25rem;
-        transition: transform 0.3s ease;
-    }
-    .service-card:hover .service-icon {
-        transform: scale(1.1) rotate(-3deg);
-    }
-
-    /* ===== Testimonials ===== */
-    .testimonial-card {
-        background: var(--testimonial-bg);
-        border: 1px solid var(--testimonial-border);
-        border-radius: 1rem;
-        padding: 2rem;
-        position: relative;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        min-height: 280px;
-    }
-    .testimonial-card:hover {
-        border-color: rgba(74, 127, 191, 0.25);
-        transform: translateY(-2px);
-    }
-    .testimonial-card::before {
-        content: '"';
-        position: absolute;
-        top: 1rem;
-        right: 1.5rem;
-        font-size: 4rem;
-        font-family: Georgia, serif;
-        color: rgba(74, 127, 191, 0.1);
-        line-height: 1;
-    }
-
-    /* ===== Equalizer Bars ===== */
-    /* ===== Browser Frame ===== */
-    .browser-frame {
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 0 40px rgba(239, 68, 68, 0.2), 0 0 80px rgba(239, 68, 68, 0.1);
-        transition: box-shadow 0.3s;
-    }
-    .browser-frame:hover {
-        box-shadow: 0 0 60px rgba(239, 68, 68, 0.3), 0 0 100px rgba(239, 68, 68, 0.15);
-    }
-    .browser-dots span {
-        width: 10px; height: 10px; border-radius: 50%; display: inline-block;
-    }
-
-    /* ===== Count Up ===== */
-    .count-up { display: inline-block; }
-
-    /* Blog card art styles are in app.css */
-
-    /* ===== Tech Stack Icons ===== */
-    .tech-icon {
-        transition: all 0.3s ease;
-    }
-    .tech-icon:hover {
-        transform: translateY(-4px);
-        filter: brightness(1.3);
-    }
-
-    /* ===== Newsletter Glow ===== */
-    .newsletter-input:focus {
-        box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
-        outline: none;
-    }
-
-    /* ===== Bento Grid for Projects ===== */
-    .bento-projects {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    .bento-projects > :first-child {
-        grid-column: span 2;
-    }
-    .bento-projects > :nth-child(2):last-child {
-        grid-column: span 2;
-    }
-    @media (max-width: 767px) {
-        .bento-projects {
-            grid-template-columns: 1fr;
-        }
-        .bento-projects > :first-child {
-            grid-column: span 1;
-        }
-    }
-
-    /* ===== Blog Posts Layout ===== */
-    .blog-posts-grid {
-        display: grid;
-        gap: 1.5rem;
-    }
-    .blog-posts-grid .blog-featured {
-        grid-column: 1 / -1;
-    }
-    .blog-posts-rest {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    @media (max-width: 767px) {
-        .blog-posts-rest {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* ===== CLEAN LIGHT MODE OVERRIDES ===== */
-    
-    /* Light mode: marquee icon opacity adjustment */
-    :root:not(.dark) .marquee-item svg,
-    :root:not(.dark) .marquee-item img {
-        opacity: 0.3;
-    }
-    :root:not(.dark) .marquee-item {
-        color: #4a5565;
-    }
-    :root:not(.dark) .marquee-item:hover svg,
-    :root:not(.dark) .marquee-item:hover img {
-        opacity: 0.7;
-    }
-    
-    /* YouTube video player — light mode inversion */
-    :root:not(.dark) .yt-video-player {
-        background: #f6f8fa !important;
-        color: #1f2328 !important;
-    }
-    /* Left: webcam/presenter side */
-    :root:not(.dark) .yt-video-player .yt-presenter {
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-presenter p.text-white\/60 {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-presenter .border-white\/10 {
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-    /* Divider */
-    :root:not(.dark) .yt-video-player .yt-divider {
-        background: #d0d7de !important;
-    }
-    /* Right: browser/editor side */
-    :root:not(.dark) .yt-video-player .yt-browser {
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-browser-chrome {
-        background: #f6f8fa !important;
-        border-bottom-color: #d0d7de !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-address-bar {
-        background: #eaeef2 !important;
-    }
-    /* Light syntax for the YouTube code preview */
-    :root:not(.dark) .yt-video-player .text-\[\#ff7b72\] { color: #cf222e !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#d2a8ff\] { color: #8250df !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#79c0ff\] { color: #0550ae !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#a5d6ff\] { color: #0a3069 !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#ffa657\] { color: #953800 !important; }
-    :root:not(.dark) .yt-video-player .text-gray-600 { color: #656d76 !important; }
-    :root:not(.dark) .yt-video-player .text-gray-500 { color: #656d76 !important; }
-    /* Terminal strip */
-    :root:not(.dark) .yt-video-player .yt-terminal {
-        background: #eaeef2 !important;
-        border-top-color: #d0d7de !important;
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-\[\#1e2a3a\] {
-        color: #d0d7de !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-green-400\/60 {
-        color: #1a7f37 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-green-500 {
-        color: #1a7f37 !important;
-    }
-    /* Cursor */
-    :root:not(.dark) .yt-video-player .bg-\[\#4A7FBF\] {
-        background: #0550ae !important;
-    }
-    /* Bottom overlay — light frosted bar */
-    :root:not(.dark) .yt-video-player .yt-bottom-bar {
-        background: linear-gradient(to top, rgba(246,248,250,0.95), rgba(246,248,250,0.7), transparent) !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-white {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-400 {
-        color: #656d76 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-500 {
-        color: #8b949e !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .bg-white\/10 {
-        background: rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .ring-red-500\/30 {
-        --tw-ring-color: rgba(239,68,68,0.15) !important;
-    }
-    /* Subscribe button keeps white text on red */
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .yt-subscribe.text-white {
-        color: #ffffff !important;
-    }
-    /* REC indicator */
-    :root:not(.dark) .yt-video-player .text-red-500 {
-        color: #cf222e !important;
-    }
-    /* Coming Soon badge */
-    :root:not(.dark) .yt-video-player .yt-coming-soon {
-        color: #cf222e !important;
-        background: rgba(207,34,46,0.12) !important;
-        border-color: rgba(207,34,46,0.25) !important;
-        backdrop-filter: blur(8px);
-    }
-    /* Mobile thumbnail */
-    :root:not(.dark) .yt-video-player .text-white\/80 {
-        color: #1f2328 !important;
-    }
-    /* Progress bar track */
-    :root:not(.dark) .yt-video-player .yt-progress-track {
-        background: rgba(0,0,0,0.1) !important;
-    }
-    /* Play button glow toned down */
-    :root:not(.dark) .yt-video-player .bg-red-600 {
-        box-shadow: 0 0 30px rgba(239,68,68,0.2), 0 0 60px rgba(239,68,68,0.08) !important;
-    }
-    /* Ping rings more subtle */
-    :root:not(.dark) .yt-video-player .border-red-500\/10 { border-color: rgba(239,68,68,0.06) !important; }
-    :root:not(.dark) .yt-video-player .border-red-500\/15 { border-color: rgba(239,68,68,0.08) !important; }
-    :root:not(.dark) .yt-video-player .border-red-500\/20 { border-color: rgba(239,68,68,0.1) !important; }
-    /* YouTube section light mode */
-    :root:not(.dark) .youtube-section .absolute[style*="radial-gradient(circle, #ff0000"] {
-        opacity: 0.03 !important;
-    }
-    :root:not(.dark) .youtube-section .absolute[style*="repeating-linear-gradient"] {
-        display: none !important;
-    }
-    /* Video player embed — clean framing on white */
-    :root:not(.dark) .yt-video-wrapper {
-        border: 2px solid #d0d7de !important;
-        border-radius: 1rem !important;
-        overflow: hidden !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
-    }
-    :root:not(.dark) .yt-video-wrapper:hover {
-        border-color: rgba(239,68,68,0.4) !important;
-        box-shadow: 0 12px 40px rgba(239,68,68,0.1), 0 4px 16px rgba(0,0,0,0.08) !important;
-    }
-    /* Thumbnail cards light mode */
-    :root:not(.dark) .thumbnail-card {
-        border: 1px solid #d0d7de !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .thumbnail-card:hover {
-        border-color: rgba(239,68,68,0.3) !important;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .yt-duration-badge {
-        background: rgba(0,0,0,0.6) !important;
-        color: #ffffff !important;
-    }
-    
-    /* Countdown digits use theme variables */
-    .countdown-digit {
-        background: var(--countdown-bg);
-        border: 1px solid var(--countdown-border);
-    }
-    .countdown-digit span {
-        color: var(--text-primary);
-    }
-    
-    
-    /* YouTube thumbnail cards */
-    .thumbnail-card {
-        background: var(--youtube-card-bg);
-        border: 1px solid var(--youtube-card-border);
-    }
-    
-    /* Grid pattern — already handled inline with dark: classes */
-    
-    /* Light mode code editor — VS Code Light theme */
-    :root:not(.dark) .code-editor {
-        background: #ffffff !important;
-        color: #1f2328 !important;
-        border-color: #d0d7de !important;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06) !important;
-    }
-    :root:not(.dark) .code-editor:hover {
-        border-color: #4A7FBF !important;
-        box-shadow: 0 8px 32px rgba(74,127,191,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
-    }
-    :root:not(.dark) .code-editor-bar {
-        background: #f6f8fa !important;
-        border-bottom-color: #d0d7de !important;
-    }
-    :root:not(.dark) .code-editor-tab {
-        background: #ffffff !important;
-        border-top-color: #4A7FBF !important;
-        border-right-color: #d0d7de !important;
-    }
-    :root:not(.dark) .code-editor-tab-inactive {
-        background: #f6f8fa !important;
-        border-right-color: #d0d7de !important;
-    }
-    :root:not(.dark) .code-line-number {
-        color: #4b5563 !important;
-    }
-    :root:not(.dark) .code-line-highlight {
-        background: rgba(74, 127, 191, 0.06) !important;
-        border-left-color: #4A7FBF !important;
-    }
-    /* Light syntax colors (VS Code / GitHub Light) */
-    :root:not(.dark) .syn-keyword { color: #9f1239 !important; }
-    :root:not(.dark) .syn-string { color: #075985 !important; }
-    :root:not(.dark) .syn-class { color: #075985 !important; }
-    :root:not(.dark) .syn-method { color: #6b21a8 !important; }
-    :root:not(.dark) .syn-comment { color: #4b5563 !important; }
-    :root:not(.dark) .syn-variable { color: #92400e !important; }
-    :root:not(.dark) .syn-function { color: #6b21a8 !important; }
-    :root:not(.dark) .syn-arrow { color: #9f1239 !important; }
-    :root:not(.dark) .syn-bracket { color: #374151 !important; }
-    :root:not(.dark) .syn-text { color: #374151 !important; }
-    :root:not(.dark) .syn-param { color: #92400e !important; }
-    /* Light mode tab text */
-    :root:not(.dark) .code-editor .text-gray-300 { color: #1f2328 !important; }
-    :root:not(.dark) .code-editor .text-gray-500 { color: #4b5563 !important; }
-    :root:not(.dark) .code-editor .text-gray-600 { color: #656d76 !important; }
-
-    /* Light mode hero — clean white with subtle texture */
-    :root:not(.dark) .hero-mesh {
-        background: #ffffff !important;
-        animation: none !important;
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .hero-mesh h1 {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .hero-mesh .noise-overlay::after {
-        opacity: 0.015 !important;
-    }
-    :root:not(.dark) .laravel-glow {
-        background: linear-gradient(135deg, #2d6aa3, #4A7FBF, #2d6aa3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        filter: none;
-    }
-    :root:not(.dark) .scramble-char-resolved {
-        color: #4A7FBF;
-    }
-    :root:not(.dark) .scramble-char-random {
-        color: rgba(74, 127, 191, 0.3);
-    }
-    :root:not(.dark) .glow-btn:hover {
-        box-shadow: 0 4px 20px rgba(74, 127, 191, 0.2);
-    }
-    :root:not(.dark) .glow-btn-outline {
-        border-color: #d0d7de;
-        color: #424a53;
-    }
-    :root:not(.dark) .glow-btn-outline:hover {
-        border-color: #4A7FBF;
-        color: #2d6aa3;
-        box-shadow: 0 4px 20px rgba(74, 127, 191, 0.15);
-    }
-    
-    /* Ensure pill colors use CSS variables */
-    .pill-brand {
-        color: var(--brand-pill-text);
-        background: var(--brand-pill-bg);
-        border-color: var(--brand-pill-border);
-    }
-    .pill-accent {
-        color: var(--accent-pill-text);
-        background: var(--accent-pill-bg);
-        border-color: var(--accent-pill-border);
-    }
-    .pill-green {
-        color: var(--green-pill-text);
-        background: var(--green-pill-bg);
-        border-color: var(--green-pill-border);
-    }
-    .pill-amber {
-        color: var(--amber-pill-text);
-        background: var(--amber-pill-bg);
-        border-color: var(--amber-pill-border);
-    }
-</style>
-
 {{-- ===== HERO ===== --}}
-<section class="hero-mesh noise-overlay relative overflow-hidden min-h-[70vh] lg:min-h-screen flex items-center">
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 z-10">
+<section class="hero-mesh noise-overlay relative flex min-h-[70vh] items-center overflow-hidden lg:min-h-[calc(100svh-4rem)]">
+    <div class="hero-shell relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-16">
         <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
             {{-- Left: Text Content --}}
             <div class="flex-1 text-center lg:text-left">
@@ -856,12 +15,11 @@
                 </h1>
 
                 <div class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4">
-                    Crafting <span class="scramble-wrapper"><span class="scramble-text text-brand-300" id="scramble-text"></span></span>
+                    Crafting <span class="font-mono font-medium text-brand-700 dark:text-brand-300">maintainable Laravel systems</span>
                 </div>
 
                 <p class="text-lg sm:text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
-                    15 years of building Laravel applications that scale. I write about the craft,
-                    I'm launching a podcast, and I help developers build things they're proud of.
+                    I help teams design, modernize, and ship maintainable Laravel applications—with clear architecture, useful tests, and fewer surprises.
                 </p>
 
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
@@ -970,15 +128,15 @@
                             <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
                         </div>
                         <div class="flex items-center ml-2">
-                            <button onclick="switchTab('routes')" id="tab-routes" class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5 cursor-pointer">
+                            <button data-code-tab="routes" id="tab-routes" class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
                                 web.php
                             </button>
-                            <button onclick="switchTab('architect')" id="tab-architect" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
+                            <button data-code-tab="architect" id="tab-architect" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
                                 Architect.php
                             </button>
-                            <button onclick="switchTab('test')" id="tab-test" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
+                            <button data-code-tab="test" id="tab-test" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                                 ArchitectTest.php
                             </button>
@@ -1173,32 +331,12 @@
     </div>
 </section>
 
-{{-- ===== STATS BAR ===== --}}
-<section class="py-10 sm:py-16 border-y border-gray-200 dark:border-[#1e2a3a]/50 bg-white dark:bg-transparent">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-8 sm:flex sm:items-center sm:justify-between fade-up">
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="15">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Years Experience</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="4">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Open Source Projects</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number count-up" data-target="2">0</div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Podcasts Launching</div>
-            </div>
-            <div class="stat-divider hidden sm:block"></div>
-            <div class="text-center">
-                <div class="stat-number"><span class="count-up" data-target="1000">0</span><span class="stat-number-suffix">+</span></div>
-                <div class="text-xs text-gray-500 uppercase tracking-widest mt-2 font-semibold">Cups of Coffee</div>
-            </div>
-        </div>
-    </div>
-</section>
+<x-home.proof-strip
+    years="15"
+    :published-posts="$publishedPostCount"
+    :published-projects="$publishedProjectCount"
+    :recommendations="$testimonials->count()"
+/>
 
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
@@ -1207,16 +345,19 @@
 @if($featuredProjects->count())
 <section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Featured Projects</h2>
-            <a href="{{ route('projects.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Selected work"
+            title="Laravel systems built for the long term"
+            description="A selection of products and platforms shaped around maintainability, clear domain boundaries, and dependable delivery."
+            :href="route('projects.index')"
+            link-label="View all projects"
+        />
         <div class="space-y-6">
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
                 @if($project->featured_image_url)
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 @endif
                 <div class="p-6">
@@ -1237,20 +378,20 @@
 </section>
 @endif
 
+<x-home.credibility :testimonials="$testimonials" />
+
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
 {{-- ===== WHAT I DO ===== --}}
 <section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="section-heading mx-auto text-center mb-12 fade-up">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.38-5.38a1 1 0 010-1.41l.7-.7a1 1 0 011.41 0L12 11.5l3.85-3.85a1 1 0 011.41 0l.7.7a1 1 0 010 1.41l-5.38 5.38a1 1 0 01-1.16.04z"/></svg>
-                Services
-            </div>
-            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">What I Do</h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">From greenfield apps to legacy rescues, I help teams build software they can be proud of.</p>
-        </div>
+        <x-home.section-header
+            class="fade-up"
+            eyebrow="Services"
+            title="How I help Laravel teams"
+            description="From greenfield applications to legacy rescues, I help teams make sound technical decisions and leave the codebase stronger."
+        />
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <x-home.service-card
                 variant="brand"
@@ -1306,10 +447,13 @@
 @if($latestPosts->count())
 <section class="py-12 sm:py-20 dot-grid-bg bg-gray-50 dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Latest Posts</h2>
-            <a href="{{ route('blog.index') }}" class="text-sm text-brand-400 hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Latest writing"
+            title="Practical notes from the work"
+            description="Architecture decisions, Laravel techniques, and lessons from maintaining real applications."
+            :href="route('blog.index')"
+            link-label="Browse all articles"
+        />
         <div class="blog-posts-grid">
             {{-- Featured post --}}
             @if($latestPosts->first())
@@ -1359,18 +503,31 @@
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
+{{-- ===== NEWSLETTER ===== --}}
+<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <x-home.newsletter-signup />
+    </div>
+</section>
+
+{{-- Section Divider --}}
+<div class="section-divider section-divider-dark hidden dark:block"></div>
+
 {{-- ===== PODCASTS ===== --}}
 <section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-end justify-between gap-6 mb-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">Podcasts</h2>
-            <a href="{{ route('podcast.index') }}" class="text-sm text-brand-600 dark:text-brand-400 hover:text-brand-500 dark:hover:text-brand-300 transition-colors">View all →</a>
-        </div>
+        <x-home.section-header
+            eyebrow="Listen"
+            title="Long-form Laravel conversations"
+            description="Thoughtful discussions about architecture, web development, and the realities of building software."
+            :href="route('podcast.index')"
+            link-label="Browse the podcast"
+        />
         <div class="grid grid-cols-1 gap-8">
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
                 description="Conversations about Laravel, web development, and the developer life. One cup at a time."
-                image="/images/podcast-coffee-logo.png"
+                :image="Vite::asset('resources/images/podcast-coffee-logo-512.webp')"
                 image-alt="Coffee With The Laravel Architect"
                 :episode-count="$coffeeEpisodeCount ?? null"
                 :href="route('podcast.index')"
@@ -1416,7 +573,7 @@
                     <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
                         <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
                         <div class="yt-red-glow absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[80px]"></div>
-                        <img src="/images/logo-color.svg" alt="" class="w-20 h-20 opacity-60 mb-4 relative z-10">
+                        <img src="/images/logo-color.svg" alt="" width="80" height="80" loading="lazy" decoding="async" class="w-20 h-20 opacity-60 mb-4 relative z-10">
                         <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
                         <p class="text-gray-500 text-xs mt-1 relative z-10">Tutorials, live coding, and architecture</p>
                     </div>
@@ -1433,7 +590,7 @@
 
                             {{-- Center content --}}
                             <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                                <img src="/images/logo-color.svg" alt="" class="w-16 h-16 opacity-50">
+                                <img src="/images/logo-color.svg" alt="" width="64" height="64" loading="lazy" decoding="async" class="w-16 h-16 opacity-50">
                                 <div class="text-center">
                                     <p class="text-white/60 text-sm font-semibold tracking-wide">Jeffrey Davidson</p>
                                     <p class="text-gray-600 text-[10px] uppercase tracking-widest mt-1">Camera 1</p>
@@ -1536,7 +693,7 @@
                     <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10 yt-bottom-bar">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 md:gap-3 min-w-0">
-                                <img src="/images/logo-color.svg" alt="" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
+                                <img src="/images/logo-color.svg" alt="" width="36" height="36" loading="lazy" decoding="async" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
                                 <div class="min-w-0">
                                     <p class="text-white font-bold text-xs md:text-sm truncate">The Laravel Architect on YouTube</p>
                                     <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">Tutorials, live coding, and architecture</p>
@@ -1579,63 +736,17 @@
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
-{{-- ===== NEWSLETTER ===== --}}
-<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <x-home.newsletter-signup />
-    </div>
-</section>
-
-{{-- ===== TESTIMONIALS ===== --}}
-<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
+{{-- ===== FEEDBACK ===== --}}
+<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent" aria-labelledby="testimonial-form-title">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Personal Quote --}}
-        <div class="text-center mb-10 fade-up">
-            <div class="relative inline-block max-w-3xl mx-auto rounded-2xl border border-[#4A7FBF]/15 dark:border-[#4A7FBF]/10 bg-gradient-to-br from-[#4A7FBF]/[0.04] to-[#9D5175]/[0.03] dark:from-[#4A7FBF]/[0.06] dark:to-transparent p-10 md:p-14">
-                {{-- Decorative quote marks --}}
-                <svg class="w-14 h-14 text-[#4A7FBF]/20 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                <blockquote class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white mb-6 leading-snug">
-                    Clean architecture, tested code, and honest conversations. That's what I bring to every project.
-                </blockquote>
-                <p class="text-[#4A7FBF] font-semibold">— Jeffrey Davidson</p>
-            </div>
-        </div>
-
-        {{-- Approved Testimonials --}}
-        @if($testimonials->count())
-        <div class="mb-16">
-            <h3 class="text-center text-sm font-semibold uppercase tracking-widest text-gray-600 mb-10">Kind Words from Colleagues & Collaborators</h3>
-            <div class="grid grid-cols-1 md:grid-cols-{{ min($testimonials->count(), 3) }} gap-8">
-                @foreach($testimonials as $testimonial)
-                <div class="testimonial-card fade-up">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">"{{ $testimonial->body }}"</p>
-                    </div>
-                    <div class="flex items-center gap-3 mt-auto pt-5 border-t border-gray-200 dark:border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-[#4A7FBF]/20 flex items-center justify-center text-[#4A7FBF] font-bold text-sm flex-shrink-0">
-                            {{ collect(explode(' ', $testimonial->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('') }}
-                        </div>
-                        <div>
-                            <p class="text-gray-900 dark:text-white text-sm font-semibold">{{ $testimonial->name }}</p>
-                            @if($testimonial->role || $testimonial->company)
-                            <p class="text-gray-500 text-xs">{{ collect([$testimonial->role, $testimonial->company])->filter()->join(', ') }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
         {{-- Submit Testimonial Form --}}
         <div class="max-w-2xl mx-auto fade-up">
             <div class="relative rounded-2xl border-t-[3px] border-t-[#4A7FBF] border border-[#4A7FBF]/10 dark:border-[#1e2a3a] dark:border-t-[#4A7FBF] bg-[#f0f6fc] dark:bg-[#0D1117] p-8 shadow-sm">
                 {{-- Subtle corner accent --}}
                 <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#4A7FBF]/[0.06] to-transparent rounded-bl-full pointer-events-none"></div>
 
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
+                <h2 id="testimonial-form-title" class="text-balance text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h2>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
 
                 @if(session('testimonial_success'))
                 <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm text-center">
@@ -1673,6 +784,9 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
                             Submit Testimonial
                         </button>
+                        <p class="mt-3 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+                            Approved submissions may be displayed publicly. <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">Privacy details</a>
+                        </p>
                     </div>
                 </form>
             </div>
@@ -1724,106 +838,4 @@
     </div>
 </section>
 
-<script>
-// Code editor tab switching
-function switchTab(tab) {
-    const panels = { routes: 'code-routes', architect: 'code-architect', test: 'code-test' };
-    const tabs = { routes: 'tab-routes', architect: 'tab-architect', test: 'tab-test' };
-
-    Object.keys(panels).forEach(key => {
-        const panel = document.getElementById(panels[key]);
-        const btn = document.getElementById(tabs[key]);
-        if (key === tab) {
-            panel.classList.remove('hidden');
-            btn.className = btn.className.replace('code-editor-tab-inactive', 'code-editor-tab').replace('text-gray-500', 'text-gray-300');
-        } else {
-            panel.classList.add('hidden');
-            btn.className = btn.className.replace(/\bcode-editor-tab\b(?!-)/, 'code-editor-tab-inactive').replace('text-gray-300', 'text-gray-500');
-        }
-    });
-}
-
-// Text Scramble/Decode Effect
-(function() {
-    const phrases = ['elegant APIs', 'scalable apps', 'clean code', 'Filament dashboards'];
-    const chars = '!<>-_\\/[]{}—=+*^?#_abcdefghijklmnopqrstuvwxyz';
-    const el = document.getElementById('scramble-text');
-    let phraseIdx = 0;
-
-    function scramble(text, onComplete) {
-        let frame = 0;
-        const length = text.length;
-        const totalFrames = length * 3; // frames to fully resolve
-        let resolved = 0;
-        let output = '';
-
-        function update() {
-            output = '';
-            resolved = Math.floor(frame / 3);
-            for (let i = 0; i < length; i++) {
-                if (i < resolved) {
-                    output += '<span class="scramble-char-resolved">' + text[i] + '</span>';
-                } else if (i < resolved + 3) {
-                    output += '<span class="scramble-char-random">' + chars[Math.floor(Math.random() * chars.length)] + '</span>';
-                } else {
-                    output += '<span class="scramble-char-random">' + chars[Math.floor(Math.random() * chars.length)] + '</span>';
-                }
-            }
-            el.innerHTML = output;
-            frame++;
-
-            if (frame <= totalFrames) {
-                requestAnimationFrame(update);
-            } else {
-                el.innerHTML = '<span class="scramble-char-resolved">' + text + '</span>';
-                if (onComplete) onComplete();
-            }
-        }
-        requestAnimationFrame(update);
-    }
-
-    function cycle() {
-        scramble(phrases[phraseIdx], function() {
-            setTimeout(function() {
-                phraseIdx = (phraseIdx + 1) % phrases.length;
-                cycle();
-            }, 2500);
-        });
-    }
-    cycle();
-})();
-
-// IntersectionObserver for fade-up + count-up
-(function() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
-                observer.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-    // Count-up
-    const countObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                const target = +e.target.dataset.target;
-                let current = 0;
-                const step = () => {
-                    current += Math.ceil(target / 30);
-                    if (current >= target) { e.target.textContent = target; return; }
-                    e.target.textContent = current;
-                    requestAnimationFrame(step);
-                };
-                step();
-                countObserver.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
-})();
-
-</script>
 @endsection

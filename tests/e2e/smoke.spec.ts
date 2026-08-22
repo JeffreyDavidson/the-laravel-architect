@@ -1,7 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, Page, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/projects', '/uses'];
+const publicRoutes = [
+    '/',
+    '/about',
+    '/blog',
+    '/blog/how-i-structure-every-laravel-project',
+    '/contact',
+    '/podcasts',
+    '/privacy',
+    '/projects',
+    '/projects/ringside',
+    '/uses',
+];
 const publicColorSchemes = ['light', 'dark'] as const;
 
 test.beforeEach(async ({ page }) => {
@@ -45,6 +56,55 @@ test('admin login loads with labeled credentials without high-impact accessibili
     await expect(page.locator('input[type="password"]')).toHaveAccessibleName(/password/i);
 
     await assertNoHighImpactAccessibilityViolations(page);
+});
+
+test('homepage primary actions remain visible at a laptop viewport height', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/');
+
+    for (const name of ['Read the Blog', 'View Projects']) {
+        const link = page.getByRole('link', { name, exact: true });
+
+        await expect(link).toBeVisible();
+        await expect.poll(async () => {
+            const box = await link.boundingBox();
+
+            return box !== null && box.y + box.height <= 720;
+        }).toBeTruthy();
+    }
+});
+
+test('homepage code preview switches between examples', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+
+    await expect(page.locator('#code-routes')).toBeVisible();
+    await expect(page.locator('#code-architect')).toBeHidden();
+
+    await page.locator('[data-code-tab="architect"]').click();
+
+    await expect(page.locator('#code-routes')).toBeHidden();
+    await expect(page.locator('#code-architect')).toBeVisible();
+});
+
+test('about card can be flipped with the keyboard', async ({ page }) => {
+    await page.goto('/about');
+
+    const card = page.getByRole('button', { name: 'Flip Jeffrey Davidson developer card' });
+
+    await expect(card).toHaveAttribute('aria-pressed', 'false');
+    await card.focus();
+    await page.keyboard.press('Enter');
+    await expect(card).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('blog code blocks expose a keyboard-accessible copy action', async ({ page }) => {
+    await page.goto('/blog/how-i-structure-every-laravel-project');
+
+    const copyButton = page.getByRole('button', { name: 'Copy code' }).first();
+
+    await copyButton.focus();
+    await expect(copyButton).toBeVisible();
 });
 
 test('an administrator can reach the dashboard', async ({ page }) => {

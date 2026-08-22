@@ -28,4 +28,7 @@
             Subscribe
         </button>
     </form>
+    <p class="mx-auto mt-3 max-w-md text-xs text-gray-600 dark:text-gray-400">
+        Confirmation is required. See the <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">privacy notice</a> for how your email is handled.
+    </p>
 </div>

@@ -8,7 +8,7 @@
         <x-terminal-prompt command="contact:new" />
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-5xl">Let's Build Something <span class="text-brand-600">Together</span></h1>
         <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
-        <p class="text-green-600 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
+        <p class="text-green-700 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
             <span class="relative flex h-2 w-2">
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
@@ -88,6 +88,9 @@
                             Send Message
                             <x-svg-icon name="arrow-right" class="w-4 h-4" />
                         </x-button>
+                        <p class="text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+                            Your details are used to reply to this inquiry. Read the <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">privacy notice</a> for more information.
+                        </p>
                     </form>
                 </div>
 

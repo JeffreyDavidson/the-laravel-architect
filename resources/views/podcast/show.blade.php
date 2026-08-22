@@ -68,7 +68,7 @@
                 <div class="artwork-glow absolute top-1/2 left-1/2 w-72 h-72 rounded-full blur-[80px]" style="background: {{ $podcast->color }};"></div>
 
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
                 <div class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}44, {{ $podcast->color }}11);">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -107,25 +107,25 @@
                 {{-- Subscribe buttons --}}
                 <div class="flex flex-wrap gap-3 justify-center md:justify-start">
                     @if($podcast->spotify_url)
-                    <a href="{{ $podcast->spotify_url }}" target="_blank" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-[#1DB954]/10 text-[#1DB954] text-sm font-medium rounded-xl hover:bg-[#1DB954]/20 transition-colors border border-[#1DB954]/20">
+                    <a href="{{ $podcast->spotify_url }}" target="_blank" rel="noopener noreferrer" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-[#1DB954]/10 text-[#1DB954] text-sm font-medium rounded-xl hover:bg-[#1DB954]/20 transition-colors border border-[#1DB954]/20">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                         Spotify
                     </a>
                     @endif
                     @if($podcast->apple_url)
-                    <a href="{{ $podcast->apple_url }}" target="_blank" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-[#D56DFB]/10 text-[#D56DFB] text-sm font-medium rounded-xl hover:bg-[#D56DFB]/20 transition-colors border border-[#D56DFB]/20">
+                    <a href="{{ $podcast->apple_url }}" target="_blank" rel="noopener noreferrer" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-[#D56DFB]/10 text-[#D56DFB] text-sm font-medium rounded-xl hover:bg-[#D56DFB]/20 transition-colors border border-[#D56DFB]/20">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5.34 0A5.328 5.328 0 000 5.34v13.32A5.328 5.328 0 005.34 24h13.32A5.328 5.328 0 0024 18.66V5.34A5.328 5.328 0 0018.66 0H5.34z"/></svg>
                         Apple Podcasts
                     </a>
                     @endif
                     @if($podcast->youtube_url)
-                    <a href="{{ $podcast->youtube_url }}" target="_blank" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-red-500/10 text-red-400 text-sm font-medium rounded-xl hover:bg-red-500/20 transition-colors border border-red-500/20">
+                    <a href="{{ $podcast->youtube_url }}" target="_blank" rel="noopener noreferrer" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-red-500/10 text-red-400 text-sm font-medium rounded-xl hover:bg-red-500/20 transition-colors border border-red-500/20">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                         YouTube
                     </a>
                     @endif
                     @if($podcast->rss_url)
-                    <a href="{{ $podcast->rss_url }}" target="_blank" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500/10 text-orange-400 text-sm font-medium rounded-xl hover:bg-orange-500/20 transition-colors border border-orange-500/20">
+                    <a href="{{ $podcast->rss_url }}" target="_blank" rel="noopener noreferrer" class="subscribe-btn inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500/10 text-orange-400 text-sm font-medium rounded-xl hover:bg-orange-500/20 transition-colors border border-orange-500/20">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.18 15.64a2.18 2.18 0 010 4.36 2.18 2.18 0 010-4.36M4 4.44A15.56 15.56 0 0119.56 20h-2.83A12.73 12.73 0 004 7.27V4.44m0 5.66a9.9 9.9 0 019.9 9.9h-2.83A7.07 7.07 0 004 12.93V10.1z"/></svg>
                         RSS
                     </a>

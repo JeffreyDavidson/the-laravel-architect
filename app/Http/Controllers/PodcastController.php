@@ -47,13 +47,13 @@ class PodcastController extends Controller
         $episode->load('tags');
 
         $nextEpisode = $podcast->publishedEpisodes()
-            ->where('episode_number', '>', $episode->episode_number)
-            ->orderBy('episode_number')
+            ->where('published_at', '>', $episode->published_at)
+            ->oldest('published_at')
             ->first();
 
         $prevEpisode = $podcast->publishedEpisodes()
-            ->where('episode_number', '<', $episode->episode_number)
-            ->orderByDesc('episode_number')
+            ->where('published_at', '<', $episode->published_at)
+            ->latest('published_at')
             ->first();
 
         return view('podcast.episode', compact('podcast', 'episode', 'nextEpisode', 'prevEpisode'));
