@@ -1,7 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, Page, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/about', '/blog', '/podcasts', '/privacy', '/projects', '/uses'];
+const publicRoutes = [
+    '/',
+    '/about',
+    '/blog',
+    '/blog/how-i-structure-every-laravel-project',
+    '/contact',
+    '/podcasts',
+    '/privacy',
+    '/projects',
+    '/projects/ringside',
+    '/uses',
+];
 const publicColorSchemes = ['light', 'dark'] as const;
 
 test.beforeEach(async ({ page }) => {
@@ -74,6 +85,26 @@ test('homepage code preview switches between examples', async ({ page }) => {
 
     await expect(page.locator('#code-routes')).toBeHidden();
     await expect(page.locator('#code-architect')).toBeVisible();
+});
+
+test('about card can be flipped with the keyboard', async ({ page }) => {
+    await page.goto('/about');
+
+    const card = page.getByRole('button', { name: 'Flip Jeffrey Davidson developer card' });
+
+    await expect(card).toHaveAttribute('aria-pressed', 'false');
+    await card.focus();
+    await page.keyboard.press('Enter');
+    await expect(card).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('blog code blocks expose a keyboard-accessible copy action', async ({ page }) => {
+    await page.goto('/blog/how-i-structure-every-laravel-project');
+
+    const copyButton = page.getByRole('button', { name: 'Copy code' }).first();
+
+    await copyButton.focus();
+    await expect(copyButton).toBeVisible();
 });
 
 test('an administrator can reach the dashboard', async ({ page }) => {

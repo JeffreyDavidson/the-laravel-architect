@@ -62,6 +62,41 @@ it('loads public interactivity from the local Vite bundle', function () {
         ->assertSee(Vite::asset('resources/js/app.js'), false);
 });
 
+it('places the theme bootstrap inside the document head', function () {
+    $content = $this->get(route('home'))
+        ->assertOk()
+        ->getContent();
+
+    expect(strpos($content, '<head>'))
+        ->toBeLessThan(strpos($content, 'Sync theme before paint'));
+});
+
+it('renders accessible podcast episode embeds and external links', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Laravel Applications',
+        'slug' => 'designing-laravel-applications',
+        'description' => 'A practical architecture discussion.',
+        'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSee('title="Designing Laravel Applications on YouTube"', false)
+        ->assertSee('loading="lazy"', false)
+        ->assertSee('rel="noopener noreferrer"', false)
+        ->assertSee('data-podcast-copy-url=', false)
+        ->assertDontSee('onclick=', false);
+});
+
 it('keeps the admin panel behind authentication', function () {
     $this->get('/admin')->assertRedirect('/admin/login');
     $this->get('/admin/login')->assertOk();

@@ -1,7 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { devices, expect, Page, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/about', '/blog', '/contact', '/podcasts', '/privacy', '/projects', '/uses'];
+const publicRoutes = [
+    '/',
+    '/about',
+    '/blog',
+    '/blog/how-i-structure-every-laravel-project',
+    '/contact',
+    '/podcasts',
+    '/privacy',
+    '/projects',
+    '/projects/ringside',
+    '/uses',
+];
 
 test.use({ ...devices['Pixel 5'] });
 

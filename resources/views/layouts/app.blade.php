@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
-<script>
-    // Sync theme before paint to prevent flash
-    if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-        document.documentElement.classList.remove('dark');
-    }
-</script>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // Sync theme before paint to prevent a flash of the wrong color scheme.
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180x180.png">
@@ -79,37 +79,6 @@
         </div>
     </nav>
 
-    <script>
-        // Mobile menu
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            const isOpen = menu.classList.toggle('hidden') === false;
-            this.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        // Theme toggle
-        function updateThemeIcons() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('theme-icon-dark').classList.toggle('hidden', isDark);
-            document.getElementById('theme-icon-light').classList.toggle('hidden', !isDark);
-            document.querySelectorAll('.theme-toggle-label').forEach(el => {
-                el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-            });
-            // Update theme-color meta
-            document.querySelector('meta[name="theme-color"]').content = isDark ? '#0D1117' : '#ffffff';
-        }
-
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.theme = isDark ? 'dark' : 'light';
-            updateThemeIcons();
-        }
-
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.querySelectorAll('.theme-toggle-mobile').forEach(el => el.addEventListener('click', toggleTheme));
-        updateThemeIcons();
-    </script>
-
     {{-- Content --}}
     <main class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')
@@ -157,7 +126,7 @@
                             <li><a href="{{ route('contact') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a></li>
                             <li><a href="{{ route('privacy') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</a></li>
                             <li><a href="/rss" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a></li>
-                            <li><a href="https://uses.tech" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>
+                            <li><a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">uses.tech</a></li>
                         </ul>
                     </div>
                 </div>
@@ -170,8 +139,8 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">
                 <p class="text-xs text-gray-600 dark:text-gray-400">
                     &copy; {{ date('Y') }} Jeffrey Davidson. Built with
-                    <a href="https://laravel.com" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Laravel</a> &
-                    <a href="https://filamentphp.com" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Filament</a>.
+                    <a href="https://laravel.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Laravel</a> &
+                    <a href="https://filamentphp.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-[#4A7FBF] transition-colors">Filament</a>.
                 </p>
                 <p class="text-xs text-gray-600 dark:text-gray-400">
                     Designed with ☕ in Florida

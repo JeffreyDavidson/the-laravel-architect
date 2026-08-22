@@ -44,6 +44,8 @@ CI runs dependency auditing, formatting, static analysis, asset compilation, Pla
 
 Public pages are server-rendered Blade views. Route-model binding uses content slugs, while publication scopes keep drafts and future content off public pages, feeds, and the sitemap.
 
+Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`.
+
 Generated post OG images are cached on the private local filesystem. Cache validity is based on the rendered title, category name, and an explicit renderer version; deleting a post removes its cached image.
 
 The Filament panel is available at `/admin`. Panel admission requires the native `is_admin` flag, resource actions are protected by Laravel policies, and app-based multi-factor authentication is required in production.
