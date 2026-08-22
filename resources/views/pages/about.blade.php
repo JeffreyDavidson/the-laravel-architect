@@ -67,7 +67,7 @@
                                             <span class="whitespace-nowrap rounded-full border border-accent-400/20 bg-accent-400/5 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-accent-400">Legendary</span>
                                         </div>
                                         <div class="mx-4 rounded-xl overflow-hidden border-4 border-gray-300 dark:border-brand-700 relative flex-1">
-                                            <img src="/images/avatar.jpg" alt="Jeffrey Davidson" class="w-full h-full object-cover object-top">
+                                            <img src="{{ Vite::asset('resources/images/avatar-640.webp') }}" alt="Jeffrey Davidson" width="427" height="640" decoding="async" fetchpriority="high" class="w-full h-full object-cover object-top">
                                         </div>
                                         <div class="px-5 pt-3 pb-3 text-center">
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>

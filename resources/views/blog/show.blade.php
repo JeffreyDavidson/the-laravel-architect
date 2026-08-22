@@ -69,7 +69,7 @@
         {{-- Featured Image --}}
         @if($post->featured_image_url)
         <div class="rounded-xl overflow-hidden mb-10 bg-gray-100 dark:bg-gray-800">
-            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full">
+            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="w-full">
         </div>
         @endif
 

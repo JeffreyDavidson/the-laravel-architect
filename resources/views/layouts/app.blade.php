@@ -32,7 +32,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" class="h-10 w-10 rounded-full">
+                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" decoding="async" class="h-10 w-10 rounded-full">
                     <span class="flex flex-col gap-0.5 leading-none">
                         <span class="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
                         <span class="font-empera text-lg leading-none tracking-[0.08em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
@@ -127,7 +127,7 @@
             <div class="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 mb-8 lg:mb-14">
                 <div class="max-w-sm">
                     <a href="{{ route('home') }}" aria-label="Homepage" class="flex items-center gap-3 mb-3 group">
-                        <img src="/images/logo-color.svg" alt="The Laravel Architect" class="w-10 h-10 rounded-full">
+                        <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-full">
                         <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-[#4A7FBF] transition-colors">
                             <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
                             <span class="text-xl font-empera tracking-wide">Laravel</span>

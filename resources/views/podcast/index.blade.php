@@ -74,7 +74,7 @@
                             {{-- Cover art --}}
                             <div class="showcase-artwork relative z-10">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="podcast-cover-shadow w-40 h-40 md:w-48 md:h-48 rounded-2xl object-cover shadow-2xl">
+                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="192" height="192" decoding="async" fetchpriority="high" class="podcast-cover-shadow w-40 h-40 md:w-48 md:h-48 rounded-2xl object-cover shadow-2xl">
                                 @else
                                 <div class="podcast-cover-placeholder w-40 h-40 md:w-48 md:h-48 rounded-2xl shadow-2xl flex items-center justify-center">
                                     <svg class="podcast-accent-text w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
