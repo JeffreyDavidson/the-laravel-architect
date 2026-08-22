@@ -11,6 +11,25 @@ it('uses safe backup configuration defaults', function () {
         ->and(config('backup.notifications.mail.to'))->toBe(config('mail.contact_to'));
 });
 
+it('configures a private SFTP disk for NAS backups', function () {
+    expect(config('filesystems.disks.nas-backups'))
+        ->toMatchArray([
+            'driver' => 'sftp',
+            'host' => null,
+            'username' => null,
+            'password' => null,
+            'port' => 22,
+            'root' => '/laravel-backups',
+            'hostFingerprint' => null,
+            'timeout' => 30,
+            'maxTries' => 3,
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ]);
+});
+
 it('schedules backup and failed-job operations', function () {
     Artisan::call('schedule:list');
 

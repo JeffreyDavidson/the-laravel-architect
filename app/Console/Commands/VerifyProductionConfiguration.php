@@ -33,6 +33,8 @@ class VerifyProductionConfiguration extends Command
             [$this->isProductionEmail(config('backup.notifications.mail.to')), 'BACKUP_NOTIFICATION_EMAIL must use a monitored production address.'],
             [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
+            [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
+            [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
             [$this->isConfigured(config('backup.backup.password')), 'BACKUP_ARCHIVE_PASSWORD must be configured.'],
             [$this->isPositiveInteger(config('health.backup.max_age_hours')), 'BACKUP_MAX_AGE_HOURS must be at least 1.'],
             [$this->isNonNegativeInteger(config('health.failed_jobs.alert_threshold')), 'QUEUE_FAILED_JOB_ALERT_THRESHOLD must be zero or greater.'],
@@ -97,6 +99,36 @@ class VerifyProductionConfiguration extends Command
             $disks,
             fn (mixed $disk): bool => is_string($disk) && $disk !== 'local',
         );
+    }
+
+    private function hasKnownBackupDisks(mixed $disks): bool
+    {
+        return is_array($disks) && array_all(
+            $disks,
+            fn (mixed $disk): bool => is_string($disk)
+                && is_array(config("filesystems.disks.{$disk}")),
+        );
+    }
+
+    private function hasConfiguredNasBackup(mixed $disks): bool
+    {
+        if (! is_array($disks) || ! in_array('nas-backups', $disks, true)) {
+            return true;
+        }
+
+        $disk = config('filesystems.disks.nas-backups');
+
+        if (! is_array($disk)) {
+            return false;
+        }
+
+        return ($disk['driver'] ?? null) === 'sftp'
+            && $this->isConfigured($disk['host'] ?? null)
+            && $this->isConfigured($disk['username'] ?? null)
+            && $this->isConfigured($disk['password'] ?? null)
+            && $this->isConfigured($disk['root'] ?? null)
+            && $this->isConfigured($disk['hostFingerprint'] ?? null)
+            && $this->isPositiveInteger($disk['port'] ?? null);
     }
 
     private function hasValidHeartbeatMaxAge(mixed $maxAge): bool
