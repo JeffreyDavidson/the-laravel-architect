@@ -54,7 +54,7 @@ Uploaded images and audio are validated and stored through Laravel's `public` fi
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
-Application responses set clickjacking, MIME-sniffing, referrer, and browser-feature policy headers globally. Content Security Policy is intentionally deferred until Filament and Vite assets can use a tested nonce-based policy.
+Application responses set a constrained Content Security Policy plus clickjacking, transport-security, MIME-sniffing, referrer, and browser-feature policy headers globally. The policy limits document embedding, object sources, and base URLs without interfering with Filament or Vite's inline runtime behavior.
 
 The `/up` health endpoint verifies both the Laravel runtime and access to the migrated application database. Production monitoring should treat any non-200 response as unhealthy.
 
@@ -66,6 +66,7 @@ The production scheduler must run every minute. It dispatches:
 - application and database backups daily
 - backup cleanup weekly
 - backup health monitoring daily
+- failed-job monitoring hourly and failed-job pruning daily
 - `youtube:stats` daily
 - `youtube:sync` weekly
 
@@ -75,13 +76,17 @@ Production must set `DB_DATABASE` to the absolute path of the live SQLite databa
 
 Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
+Set `QUEUE_FAILED_JOB_ALERT_THRESHOLD` to the number of retained failures that operations will tolerate and `QUEUE_FAILED_JOB_RETENTION_HOURS` to the retention window. The scheduled monitor emails the backup notification recipient when the threshold is exceeded.
+
 After changing backup configuration, run `php artisan backup:run`, `php artisan backup:monitor`, and restore a copy of the resulting SQLite dump and media archive in a temporary location. A successful backup notification is not a substitute for validating the archive contents and restored database.
 
 ## Deployment
 
 The application is hosted through Laravel Forge. A deployment should install locked dependencies, build production assets, run forward-only migrations, refresh optimized caches, and ensure the scheduler and queue worker are active.
 
-Run `php artisan app:verify-production` after loading the production environment and before applying migrations. The command reports missing or unsafe settings without printing their configured values.
+Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
+
+The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 

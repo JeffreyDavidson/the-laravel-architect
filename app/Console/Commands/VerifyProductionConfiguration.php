@@ -34,6 +34,9 @@ class VerifyProductionConfiguration extends Command
             [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->isConfigured(config('backup.backup.password')), 'BACKUP_ARCHIVE_PASSWORD must be configured.'],
+            [$this->isPositiveInteger(config('health.backup.max_age_hours')), 'BACKUP_MAX_AGE_HOURS must be at least 1.'],
+            [$this->isNonNegativeInteger(config('health.failed_jobs.alert_threshold')), 'QUEUE_FAILED_JOB_ALERT_THRESHOLD must be zero or greater.'],
+            [$this->isPositiveInteger(config('health.failed_jobs.retention_hours')), 'QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.'],
             [config('health.runtime.enabled') === true, 'RUNTIME_HEALTH_ENABLED must be true.'],
             [$this->hasValidHeartbeatMaxAge(config('health.runtime.max_age_seconds')), 'RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.'],
         ];
@@ -99,5 +102,15 @@ class VerifyProductionConfiguration extends Command
     private function hasValidHeartbeatMaxAge(mixed $maxAge): bool
     {
         return is_int($maxAge) && $maxAge >= 60;
+    }
+
+    private function isPositiveInteger(mixed $value): bool
+    {
+        return is_int($value) && $value >= 1;
+    }
+
+    private function isNonNegativeInteger(mixed $value): bool
+    {
+        return is_int($value) && $value >= 0;
     }
 }
