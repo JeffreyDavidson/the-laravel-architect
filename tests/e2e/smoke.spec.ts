@@ -63,6 +63,19 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     }
 });
 
+test('homepage code preview switches between examples', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+
+    await expect(page.locator('#code-routes')).toBeVisible();
+    await expect(page.locator('#code-architect')).toBeHidden();
+
+    await page.locator('[data-code-tab="architect"]').click();
+
+    await expect(page.locator('#code-routes')).toBeHidden();
+    await expect(page.locator('#code-architect')).toBeVisible();
+});
+
 test('an administrator can reach the dashboard', async ({ page }) => {
     test.skip(!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD);
 
