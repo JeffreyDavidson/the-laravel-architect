@@ -60,6 +60,22 @@ return [
             'report' => false,
         ],
 
+        'nas-backups' => [
+            'driver' => 'sftp',
+            'host' => env('BACKUP_SFTP_HOST'),
+            'username' => env('BACKUP_SFTP_USERNAME'),
+            'password' => env('BACKUP_SFTP_PASSWORD'),
+            'port' => (int) env('BACKUP_SFTP_PORT', 22),
+            'root' => env('BACKUP_SFTP_ROOT', '/laravel-backups'),
+            'hostFingerprint' => env('BACKUP_SFTP_HOST_FINGERPRINT'),
+            'timeout' => (int) env('BACKUP_SFTP_TIMEOUT', 30),
+            'maxTries' => (int) env('BACKUP_SFTP_MAX_TRIES', 3),
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+
     ],
 
     /*

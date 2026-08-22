@@ -47,6 +47,36 @@ For content or authorization changes, also verify the affected public route and 
 
 ## Backup validation
 
+### Synology NAS destination
+
+The production server and Synology NAS must both be connected to the private Tailscale network. Configure these values through the production secret manager, never in the repository:
+
+```dotenv
+BACKUP_DISKS=local,nas-backups
+BACKUP_SFTP_HOST=<NAS Tailscale address>
+BACKUP_SFTP_PORT=22
+BACKUP_SFTP_USERNAME=<dedicated backup user>
+BACKUP_SFTP_PASSWORD=<dedicated backup password>
+BACKUP_SFTP_ROOT=/laravel-backups
+BACKUP_SFTP_HOST_FINGERPRINT=<verified SHA256 fingerprint>
+BACKUP_SFTP_TIMEOUT=30
+BACKUP_SFTP_MAX_TRIES=3
+BACKUP_ARCHIVE_PASSWORD=<independent archive password>
+```
+
+Obtain the SSH host fingerprint through a separately trusted channel and pin it with `BACKUP_SFTP_HOST_FINGERPRINT`. Do not accept an unexpected replacement fingerprint during a deployment.
+
+After changing these values, refresh the configuration and prove both destinations work:
+
+```bash
+php artisan config:clear
+php artisan app:verify-production
+php artisan backup:run
+php artisan backup:monitor
+```
+
+Confirm a new encrypted archive exists on both the local and `nas-backups` disks, then complete the restore drill below. A successful SFTP connection alone does not prove that an application backup can be restored.
+
 An exit-zero backup command is not enough. Independently verify:
 
 - SQLite `PRAGMA quick_check` returns `ok` for the live database and snapshot.

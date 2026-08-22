@@ -31,6 +31,46 @@ it('accepts a safe production configuration', function () {
         ->assertSuccessful();
 });
 
+it('accepts a fully configured NAS backup disk', function () {
+    config()->set([
+        'backup.backup.destination.disks' => ['local', 'nas-backups'],
+        'filesystems.disks.nas-backups' => [
+            'driver' => 'sftp',
+            'host' => 'nas.internal.test',
+            'username' => 'backup-user',
+            'password' => 'secret-password',
+            'port' => 22,
+            'root' => '/backups',
+            'hostFingerprint' => 'SHA256:test-fingerprint',
+        ],
+    ]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutput('Production configuration is ready.')
+        ->assertSuccessful();
+});
+
+it('rejects an incomplete NAS backup disk without exposing credentials', function () {
+    config()->set([
+        'backup.backup.destination.disks' => ['local', 'nas-backups'],
+        'filesystems.disks.nas-backups.password' => 'secret-password',
+        'filesystems.disks.nas-backups.hostFingerprint' => null,
+    ]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('The nas-backups disk must configure host, username, password, root, port, and host fingerprint.')
+        ->doesntExpectOutput('secret-password')
+        ->assertFailed();
+});
+
+it('rejects an unknown backup disk', function () {
+    config()->set('backup.backup.destination.disks', ['local', 'missing-disk']);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('BACKUP_DISKS must reference configured filesystem disks.')
+        ->assertFailed();
+});
+
 it('reports every unsafe production setting without exposing its value', function () {
     config()->set([
         'app.debug' => true,
