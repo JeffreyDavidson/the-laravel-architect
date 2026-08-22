@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -70,14 +71,15 @@ class Podcast extends Model
             return Storage::disk('public')->url($this->cover_image_path);
         }
 
-        // Fallback to static files
         $slug = $this->slug;
         $map = [
-            'coffee-with-the-laravel-architect' => '/images/podcast-coffee-logo-512.webp',
-            'embracing-cloudy-days' => '/images/podcast-cloudy-logo-512.webp',
+            'coffee-with-the-laravel-architect' => 'resources/images/podcast-coffee-logo-512.webp',
+            'embracing-cloudy-days' => 'resources/images/podcast-cloudy-logo-512.webp',
         ];
 
-        return $map[$slug] ?? null;
+        return isset($map[$slug])
+            ? Vite::asset($map[$slug])
+            : null;
     }
 
     public function getDynamicSEOData(): SEOData
