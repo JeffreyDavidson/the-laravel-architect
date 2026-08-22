@@ -84,7 +84,7 @@
                 <div class="artwork-glow absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[60px]" style="background: {{ $podcast->color }};"></div>
 
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
                 <div class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}33, {{ $podcast->color }}11);">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -115,7 +115,7 @@
                 {{-- Podcast name link --}}
                 <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
                     @if($podcast->cover_image_url)
-                    <img src="{{ $podcast->cover_image_url }}" alt="" class="w-5 h-5 rounded object-cover">
+                    <img src="{{ $podcast->cover_image_url }}" alt="" width="20" height="20" loading="lazy" decoding="async" class="w-5 h-5 rounded object-cover">
                     @else
                     <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                     @endif
@@ -206,7 +206,7 @@
                         <div class="flex items-center gap-3">
                             {{-- Podcast mini artwork --}}
                             @if($podcast->cover_image_url)
-                            <img src="{{ $podcast->cover_image_url }}" alt="" class="w-10 h-10 rounded-lg object-cover">
+                            <img src="{{ $podcast->cover_image_url }}" alt="" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-lg object-cover">
                             @endif
                             <div class="min-w-0">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $episode->title }}</p>
@@ -370,7 +370,7 @@
                         <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                             <div class="flex items-center gap-3 mb-3">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" class="w-12 h-12 rounded-lg object-cover">
+                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="48" height="48" loading="lazy" decoding="async" class="w-12 h-12 rounded-lg object-cover">
                                 @else
                                 <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
                                     <svg class="w-6 h-6" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>

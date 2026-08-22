@@ -73,8 +73,8 @@ class Podcast extends Model
         // Fallback to static files
         $slug = $this->slug;
         $map = [
-            'coffee-with-the-laravel-architect' => '/images/podcast-coffee-logo.png',
-            'embracing-cloudy-days' => '/images/podcast-cloudy-logo.png',
+            'coffee-with-the-laravel-architect' => '/images/podcast-coffee-logo-512.webp',
+            'embracing-cloudy-days' => '/images/podcast-cloudy-logo-512.webp',
         ];
 
         return $map[$slug] ?? null;

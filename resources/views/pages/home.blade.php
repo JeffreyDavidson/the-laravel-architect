@@ -357,7 +357,7 @@
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
                 @if($project->featured_image_url)
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 @endif
                 <div class="p-6">
@@ -527,7 +527,7 @@
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
                 description="Conversations about Laravel, web development, and the developer life. One cup at a time."
-                image="/images/podcast-coffee-logo.png"
+                image="/images/podcast-coffee-logo-512.webp"
                 image-alt="Coffee With The Laravel Architect"
                 :episode-count="$coffeeEpisodeCount ?? null"
                 :href="route('podcast.index')"
@@ -573,7 +573,7 @@
                     <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
                         <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
                         <div class="yt-red-glow absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[80px]"></div>
-                        <img src="/images/logo-color.svg" alt="" class="w-20 h-20 opacity-60 mb-4 relative z-10">
+                        <img src="/images/logo-color.svg" alt="" width="80" height="80" loading="lazy" decoding="async" class="w-20 h-20 opacity-60 mb-4 relative z-10">
                         <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
                         <p class="text-gray-500 text-xs mt-1 relative z-10">Tutorials, live coding, and architecture</p>
                     </div>
@@ -590,7 +590,7 @@
 
                             {{-- Center content --}}
                             <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                                <img src="/images/logo-color.svg" alt="" class="w-16 h-16 opacity-50">
+                                <img src="/images/logo-color.svg" alt="" width="64" height="64" loading="lazy" decoding="async" class="w-16 h-16 opacity-50">
                                 <div class="text-center">
                                     <p class="text-white/60 text-sm font-semibold tracking-wide">Jeffrey Davidson</p>
                                     <p class="text-gray-600 text-[10px] uppercase tracking-widest mt-1">Camera 1</p>
@@ -693,7 +693,7 @@
                     <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10 yt-bottom-bar">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2 md:gap-3 min-w-0">
-                                <img src="/images/logo-color.svg" alt="" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
+                                <img src="/images/logo-color.svg" alt="" width="36" height="36" loading="lazy" decoding="async" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
                                 <div class="min-w-0">
                                     <p class="text-white font-bold text-xs md:text-sm truncate">The Laravel Architect on YouTube</p>
                                     <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">Tutorials, live coding, and architecture</p>
