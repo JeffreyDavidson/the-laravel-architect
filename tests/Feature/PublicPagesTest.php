@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Vite;
 
 uses(RefreshDatabase::class);
 
@@ -38,6 +39,13 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/projects', 'Projects'],
     ['/podcasts', 'Podcast'],
 ]);
+
+it('loads public interactivity from the local Vite bundle', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertDontSee('cdn.jsdelivr.net/npm/alpinejs', false)
+        ->assertSee(Vite::asset('resources/js/app.js'), false);
+});
 
 it('keeps the admin panel behind authentication', function () {
     $this->get('/admin')->assertRedirect('/admin/login');
