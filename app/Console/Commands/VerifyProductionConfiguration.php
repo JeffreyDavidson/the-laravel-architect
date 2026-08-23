@@ -31,6 +31,10 @@ class VerifyProductionConfiguration extends Command
             [$this->isProductionEmail(config('app.content_author_email')), 'CONTENT_AUTHOR_EMAIL must use a private production address.'],
             [$this->isProductionEmail(config('mail.contact_to')), 'MAIL_CONTACT_TO must use a monitored production address.'],
             [$this->isProductionEmail(config('backup.notifications.mail.to')), 'BACKUP_NOTIFICATION_EMAIL must use a monitored production address.'],
+            [$this->isConfigured(config('services.turnstile.site_key')), 'TURNSTILE_SITE_KEY must be configured.'],
+            [$this->isConfigured(config('services.turnstile.secret_key')), 'TURNSTILE_SECRET_KEY must be configured.'],
+            [$this->isConfigured(config('services.turnstile.contact_action')), 'TURNSTILE_CONTACT_ACTION must be configured.'],
+            [$this->includesAppHostname(config('services.turnstile.allowed_hostnames'), config('app.url')), 'TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.'],
             [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
@@ -91,6 +95,28 @@ class VerifyProductionConfiguration extends Command
             && filter_var($email, FILTER_VALIDATE_EMAIL) !== false
             && ! str_ends_with($email, '@example.com')
             && ! str_ends_with($email, '@example.test');
+    }
+
+    private function includesAppHostname(mixed $allowedHostnames, mixed $appUrl): bool
+    {
+        if (! is_array($allowedHostnames) || ! is_string($appUrl)) {
+            return false;
+        }
+
+        $appHostname = parse_url($appUrl, PHP_URL_HOST);
+
+        if (! is_string($appHostname)) {
+            return false;
+        }
+
+        $normalizedHostnames = array_map(
+            fn (mixed $hostname): string => is_string($hostname)
+                ? strtolower(rtrim(trim($hostname), '.'))
+                : '',
+            $allowedHostnames,
+        );
+
+        return in_array(strtolower(rtrim($appHostname, '.')), $normalizedHostnames, true);
     }
 
     private function hasOffServerBackup(mixed $disks): bool

@@ -5,16 +5,33 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ContactRequest;
 use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
+use App\Support\Turnstile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
 class ContactController extends Controller
 {
-    public function submit(ContactRequest $request): RedirectResponse
+    public function submit(ContactRequest $request, Turnstile $turnstile): RedirectResponse
     {
         if ($request->filled('website')) {
             return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
+        }
+
+        $key = 'contact-form:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            return back()->withErrors(['message' => 'Too many submissions. Please try again later.']);
+        }
+
+        $turnstileAction = config('services.turnstile.contact_action');
+
+        if (! is_string($turnstileAction) || ! $turnstile->passes($request, $turnstileAction)) {
+            return back()
+                ->withErrors([
+                    'cf-turnstile-response' => 'Please verify that you are human and try again.',
+                ])
+                ->withInput($request->except('cf-turnstile-response'));
         }
 
         $validated = $request->safe();
@@ -25,12 +42,6 @@ class ContactController extends Controller
             ? $validated->string('budget')->toString()
             : null;
         $message = $validated->string('message')->toString();
-        $key = 'contact-form:'.$request->ip();
-
-        if (RateLimiter::tooManyAttempts($key, 3)) {
-            return back()->withErrors(['message' => 'Too many submissions. Please try again later.']);
-        }
-
         RateLimiter::hit($key, 3600);
 
         Mail::to(config('mail.contact_to', config('mail.from.address')))->queue(new ContactMessageReceived(
