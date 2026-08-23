@@ -88,6 +88,24 @@
                             <x-form.textarea id="message" name="message" rows="6" required placeholder="Tell me about your project, timeline, and any specific requirements..." :autofocus="$firstErrorField === 'message'" />
                         </div>
 
+                        @if(config('services.turnstile.site_key'))
+                            @once
+                                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                            @endonce
+
+                            <div>
+                                <div
+                                    class="cf-turnstile"
+                                    data-sitekey="{{ config('services.turnstile.site_key') }}"
+                                    data-action="{{ config('services.turnstile.contact_action') }}"
+                                    data-size="flexible"
+                                ></div>
+                                @error('cf-turnstile-response')
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @endif
+
                         <x-button type="submit" class="px-8 py-3.5">
                             Send Message
                             <x-svg-icon name="arrow-right" class="w-4 h-4" />
