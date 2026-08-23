@@ -1,11 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<header class="noise-overlay relative overflow-hidden border-b border-gray-200 bg-white dark:border-brand-700 dark:bg-transparent">
-    {{-- Ambient glow --}}
-    <div class="project-hero-glow absolute left-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-brand-600 opacity-0 blur-[120px] dark:opacity-[0.06]"></div>
-    <div class="absolute bottom-0 right-1/3 h-[400px] w-[400px] rounded-full bg-accent-400 opacity-0 blur-[100px] dark:opacity-[0.04]"></div>
-
+<header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         {{-- Breadcrumb --}}
         <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-500">
@@ -17,9 +13,9 @@
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
             <div class="flex-1 min-w-0">
                 <div class="mb-5 flex flex-wrap items-center gap-3">
-                    <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-600">Project case study</span>
+                    <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-600">Project case study</span>
                     @if($project->is_featured)
-                        <span class="rounded-full border border-accent-400/30 bg-accent-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#7f334d] dark:text-accent-400">Featured work</span>
+                        <span class="rounded-full border border-accent-400/30 bg-accent-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#7f334d] dark:text-accent-400">Featured work</span>
                     @endif
                 </div>
 
@@ -29,7 +25,7 @@
                 {{-- Action buttons --}}
                 <div class="flex flex-wrap gap-3">
                     @if($project->url)
-                    <x-button href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="link-btn shadow-[0_0_20px_rgba(74,127,191,0.3)]">
+                    <x-button href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="link-btn">
                         <x-svg-icon name="external-link" class="w-4 h-4" />
                         Visit the project
                     </x-button>
@@ -107,7 +103,7 @@
 </div>
 @endif
 
-<section class="dot-grid-bg bg-gray-50 dark:bg-transparent">
+<section class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 lg:px-8">
         <div>
             <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Behind the build</p>

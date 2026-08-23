@@ -11,6 +11,7 @@ const publicRoutes = [
     '/privacy',
     '/projects',
     '/projects/ringside',
+    '/testimonials/submit',
     '/uses',
 ];
 const publicColorSchemes = ['light', 'dark'] as const;
@@ -62,8 +63,8 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto('/');
 
-    for (const name of ['Read the Blog', 'View Projects']) {
-        const link = page.getByRole('link', { name, exact: true });
+    for (const name of ['Discuss a Project', 'View Projects']) {
+        const link = page.getByRole('main').getByRole('link', { name, exact: true });
 
         await expect(link).toBeVisible();
         await expect.poll(async () => {
@@ -74,17 +75,26 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     }
 });
 
-test('homepage code preview switches between examples', async ({ page }) => {
+test('homepage architecture scene keeps an accessible fallback', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/');
 
-    await expect(page.locator('#code-routes')).toBeVisible();
-    await expect(page.locator('#code-architect')).toBeHidden();
+    const scene = page.locator('[data-architecture-scene]');
 
-    await page.locator('[data-code-tab="architect"]').click();
+    await expect(scene).toBeVisible();
+    await expect(scene.locator('[data-architecture-fallback]')).toBeAttached();
+    await expect.poll(async () => scene.getAttribute('data-architecture-state'))
+        .toMatch(/ready|fallback/);
+});
 
-    await expect(page.locator('#code-routes')).toBeHidden();
-    await expect(page.locator('#code-architect')).toBeVisible();
+test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
+    await page.goto('/testimonials/submit');
+
+    await expect(page.getByLabel('Name')).toBeVisible();
+    await expect(page.getByLabel('Role')).toBeVisible();
+    await expect(page.getByLabel('Company')).toBeVisible();
+    await expect(page.getByLabel('Testimonial')).toBeVisible();
+    await expect(page.getByText('Your testimonial will be reviewed before it appears publicly.')).toBeVisible();
 });
 
 test('about card can be flipped with the keyboard', async ({ page }) => {

@@ -2,281 +2,56 @@
 
 @section('content')
 {{-- ===== HERO ===== --}}
-<section class="hero-mesh noise-overlay relative flex min-h-[70vh] items-center overflow-hidden lg:min-h-[calc(100svh-4rem)]">
-    <div class="hero-shell relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-16">
-        <div class="flex flex-col lg:flex-row items-center lg:items-stretch gap-12 lg:gap-12">
-            {{-- Left: Text Content --}}
-            <div class="flex-1 text-center lg:text-left">
-                <x-home.hero-eyebrow class="mb-5" />
-                <h1 class="max-w-3xl text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-5 text-gray-900 dark:text-white">
-                    I don't just write code.
-                    <br>
-                    I <span class="laravel-glow text-5xl sm:text-6xl lg:text-8xl">architect</span> it!
-                </h1>
+<section class="homepage-hero">
+    <div class="hero-shell mx-auto grid max-w-7xl gap-14 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 xl:grid-cols-[1.03fr_0.97fr] xl:items-center xl:gap-20 xl:py-24">
+        <div class="max-w-2xl">
+            <h1 class="hero-title text-5xl font-semibold leading-[1.02] tracking-[-0.045em] text-gray-950 sm:text-6xl xl:text-[4rem] dark:text-white">
+                <span class="block xl:whitespace-nowrap">I don't just write code.</span>
+                <span class="hero-title-accent block">I architect it!</span>
+            </h1>
 
-                <div class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-4">
-                    Crafting <span class="font-mono font-medium text-brand-700 dark:text-brand-300">maintainable Laravel systems</span>
-                </div>
+            <p class="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
+                I help teams modernize Laravel applications with clear architecture, useful tests, and fewer surprises in production.
+            </p>
 
-                <p class="text-lg sm:text-xl text-gray-500 dark:text-gray-500 mb-10 max-w-2xl">
-                    I help teams design, modernize, and ship maintainable Laravel applications—with clear architecture, useful tests, and fewer surprises.
-                </p>
-
-                <div class="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
-                    <a href="{{ route('blog.index') }}" class="glow-btn inline-flex items-center px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg">
-                        Read the Blog
-                    </a>
-                    <a href="{{ route('projects.index') }}" class="glow-btn glow-btn-outline inline-flex items-center px-8 py-3.5 border border-gray-300 dark:border-brand-700 text-gray-600 dark:text-gray-300 font-semibold rounded-lg transition-all">
-                        View Projects
-                    </a>
-                </div>
-
-                {{-- Mobile Code Editor Preview --}}
-                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono !animate-none" x-data="{ mobileTab: 'routes' }">
-                    <div class="code-editor-bar px-3 py-2 flex items-center gap-2">
-                        <div class="flex gap-1">
-                            <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
-                            <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
-                            <span class="w-2 h-2 rounded-full bg-green-500/80"></span>
-                        </div>
-                        <div class="flex items-center overflow-x-auto">
-                            <button @click="mobileTab = 'routes'" :class="mobileTab === 'routes' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
-                                web.php
-                            </button>
-                            <button @click="mobileTab = 'architect'" :class="mobileTab === 'architect' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
-                                Architect.php
-                            </button>
-                            <button @click="mobileTab = 'test'" :class="mobileTab === 'test' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                                Test.php
-                            </button>
-                        </div>
-                    </div>
-                    {{-- web.php --}}
-                    <div x-show="mobileTab === 'routes'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">ArchitectController</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 3</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 4</span><span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 5</span><span>&nbsp;&nbsp;-><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>,</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'share'</span>]);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/podcasts'</span>,</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'discuss'</span>]);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
-                    </div>
-                    {{-- Architect.php --}}
-                    <div x-show="mobileTab === 'architect'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span> <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;<span class="syn-variable">$available</span> = <span class="syn-keyword">true</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;<span class="syn-variable">$skills</span> = [<span class="syn-string">'Laravel'</span>, ...];</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">philosophy</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span> <span class="syn-keyword">return</span> <span class="syn-string">'Build it</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">clean, build it right.'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
-                    </div>
-                    {{-- ArchitectTest.php --}}
-                    <div x-show="mobileTab === 'test'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">ArchitectTest</span> <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">builds_clean</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span> = <span class="syn-class">Architect</span>::<span class="syn-method">hire</span>();</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span>-><span class="syn-method">build</span>(<span class="syn-variable">$project</span>);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$project</span>)</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeClean</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeTested</span>();</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
-                    </div>
-                </div>
-
-                {{-- Social links --}}
-                <div class="flex items-center justify-center lg:justify-start gap-6">
-                    <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="YouTube">
-                        <x-svg-icon name="youtube" class="w-5 h-5" />
-                    </a>
-                    <a href="https://instagram.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-pink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Instagram">
-                        <x-svg-icon name="instagram" class="w-5 h-5" />
-                    </a>
-                    <a href="https://twitter.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter" class="inline-flex rounded-md p-2 -m-2 text-gray-400 dark:text-gray-500 hover:text-brand-600 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="X / Twitter">
-                        <x-svg-icon name="x-twitter" class="w-5 h-5" />
-                    </a>
-                    <a href="https://bsky.app/profile/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Bluesky" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Bluesky">
-                        <x-svg-icon name="bluesky" class="w-5 h-5" />
-                    </a>
-                    <a href="https://facebook.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="Facebook">
-                        <x-svg-icon name="facebook" class="w-5 h-5" />
-                    </a>
-                </div>
-            </div>
-
-            {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0">
-                <div class="code-editor flex flex-col h-full" id="code-editor">
-                    {{-- Title bar --}}
-                    <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
-                        <div class="flex gap-1.5">
-                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
-                        </div>
-                        <div class="flex items-center ml-2">
-                            <button data-code-tab="routes" id="tab-routes" class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
-                                web.php
-                            </button>
-                            <button data-code-tab="architect" id="tab-architect" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
-                                Architect.php
-                            </button>
-                            <button data-code-tab="test" id="tab-test" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                                ArchitectTest.php
-                            </button>
-                        </div>
-                    </div>
-                    {{-- Code body: web.php --}}
-                    <div id="code-routes" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1">
-                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 4</span><span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'share'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">10</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/podcasts'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">13</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'discuss'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">15</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/projects'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">17</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'build'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">20</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/about'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">23</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'introduce'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/uses'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">28</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'equipment'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">29</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">30</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">31</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/hire-me'</span>, <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">32</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">ArchitectController</span>::<span class="syn-keyword">class</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'collaborate'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
-                    </div>
-                    {{-- Code body: Architect.php --}}
-                    <div id="code-architect" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
-                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-keyword">&lt;?php</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">namespace</span> <span class="syn-class">App\Models</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 4</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 5</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span><span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$location</span> = <span class="syn-string">'Florida, USA'</span>;</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$available_for_hire</span> = <span class="syn-keyword">true</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$skills</span> = <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">13</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Laravel'</span>, <span class="syn-string">'PHP'</span>, <span class="syn-string">'Filament'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Livewire'</span>, <span class="syn-string">'Tailwind CSS'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">15</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'MySQL'</span>, <span class="syn-string">'Redis'</span>, <span class="syn-string">'Alpine.js'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">17</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$passions</span> = <span class="syn-bracket">[</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Clean Architecture'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">20</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Content Creation'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">'Teaching Others'</span>,</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">]</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">23</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">protected</span> <span class="syn-variable">$podcast</span> = <span class="syn-string">'Coffee With The Laravel Architect'</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">experience</span>(): <span class="syn-class">int</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">28</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-class">Carbon</span>::<span class="syn-method">parse</span>(<span class="syn-string">'2011'</span>)</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">32</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">diffInYears</span>(<span class="syn-method">now</span>()); <span class="syn-comment">// 15+</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">public function</span> <span class="syn-function">philosophy</span>(): <span class="syn-class">string</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">36</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">37</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-string">'Build it clean,'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">38</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. <span class="syn-string">' build it right,'</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">39</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. <span class="syn-string">' then teach someone how.'</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">40</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">41</span><span><span class="syn-bracket">}</span></span></div>
-                    </div>
-                    {{-- Code body: ArchitectTest.php --}}
-                    <div id="code-test" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
-                        <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// tests/Feature/ArchitectTest.php</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Models\Architect</span>;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 4</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number"> 5</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect has required skills'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">first</span>();</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 7</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">skills</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Laravel'</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'PHP'</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Filament'</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toContain</span>(<span class="syn-string">'Livewire'</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">13</span><span><span class="syn-bracket">}</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">14</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">15</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect is available for hire'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">find</span>(<span class="syn-string">'jeffrey'</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">17</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">available_for_hire</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeTrue</span>();</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">20</span><span><span class="syn-bracket">}</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">21</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4 code-line-highlight rounded"><span class="code-line-number">22</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect delivers quality work'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">23</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$project</span> = <span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-method">build</span>(<span class="syn-string">'your-idea'</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">24</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">25</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$project</span>)</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">26</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeClean</span>()</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">27</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeScalable</span>()</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">28</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeWellTested</span>()</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">29</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-arrow">-></span><span class="syn-method">toBeDeliveredOnTime</span>();</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">30</span><span><span class="syn-bracket">}</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">31</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">32</span><span><span class="syn-method">test</span>(<span class="syn-string">'architect never stops learning'</span>, <span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-4"><span class="code-line-number">33</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$architect</span> = <span class="syn-class">Architect</span>::<span class="syn-method">find</span>(<span class="syn-string">'jeffrey'</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">34</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">podcasts</span>)<span class="syn-arrow">-></span><span class="syn-method">toHaveCount</span>(<span class="syn-variable">1</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">36</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">youtube</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">37</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$architect</span><span class="syn-arrow">-></span><span class="syn-text">blog</span>)<span class="syn-arrow">-></span><span class="syn-method">toBeActive</span>();</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">38</span><span><span class="syn-bracket">}</span>);</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">39</span><span>&nbsp;</span></div>
-                        <div class="flex gap-4"><span class="code-line-number">40</span><span><span class="syn-comment">// ✓ All tests passed (4 tests, 12 assertions)</span></span></div>
-                    </div>
-                </div>
+            <div class="mt-9 flex flex-wrap gap-3">
+                <a href="{{ route('contact') }}" class="hero-action hero-action-primary">Discuss a Project</a>
+                <a href="{{ route('projects.index') }}" class="hero-action hero-action-secondary">View Projects</a>
             </div>
         </div>
+
+        <figure class="architecture-scene" data-architecture-scene data-architecture-state="idle" aria-labelledby="architecture-title architecture-description">
+            <h2 id="architecture-title" class="architecture-scene-title">How a Laravel request moves</h2>
+
+            <p id="architecture-description" class="sr-only">
+                A Laravel request moves through routes, an application controller, the domain layer, and data services. Domain work can also dispatch queued jobs and events.
+            </p>
+
+            <div class="architecture-visual">
+                <div class="architecture-canvas" data-architecture-canvas aria-hidden="true"></div>
+
+                <div class="architecture-fallback" data-architecture-fallback>
+                    <ol class="architecture-flow" aria-label="Primary request flow">
+                        <li><span aria-hidden="true"></span><strong>Request</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Routes</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Application</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Domain</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Data</strong></li>
+                    </ol>
+
+                    <p class="architecture-branch">Queue / events</p>
+                </div>
+            </div>
+
+            <figcaption class="architecture-caption">
+                Clear boundaries keep change local, behavior testable, and production work predictable.
+            </figcaption>
+        </figure>
     </div>
 </section>
 
-{{-- Hero to light transition --}}
-<div class="hidden h-20 bg-gradient-to-b from-[#0D1117] to-white"></div>
-
 {{-- ===== TECH STACK MARQUEE ===== --}}
-<section class="py-8 overflow-hidden relative bg-gray-50 dark:bg-[#0D1117]">
-    <div class="marquee-fade-left"></div>
-    <div class="marquee-fade-right"></div>
+<section class="hidden" aria-hidden="true">
     <div class="marquee-track">
         @for($i = 0; $i < 4; $i++)
         <div class="marquee-item">
@@ -338,12 +113,9 @@
     :recommendations="$testimonials->count()"
 />
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== FEATURED PROJECTS ===== --}}
 @if($featuredProjects->count())
-<section class="py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
+<section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             eyebrow="Selected work"
@@ -380,11 +152,8 @@
 
 <x-home.credibility :testimonials="$testimonials" />
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== WHAT I DO ===== --}}
-<section class="py-12 sm:py-20 noise-overlay bg-white dark:bg-transparent">
+<section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             class="fade-up"
@@ -440,12 +209,9 @@
     </div>
 </section>
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== LATEST POSTS ===== --}}
 @if($latestPosts->count())
-<section class="py-12 sm:py-20 dot-grid-bg bg-gray-50 dark:bg-transparent">
+<section class="border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             eyebrow="Latest writing"
@@ -458,7 +224,7 @@
             {{-- Featured post --}}
             @if($latestPosts->first())
             @php $featured = $latestPosts->first(); @endphp
-            <article class="blog-featured group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300">
+            <article class="blog-featured group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
                 <a href="{{ route('blog.show', $featured) }}" class="block p-8">
                     @if($featured->category)
                     <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
@@ -478,7 +244,7 @@
             @if($latestPosts->count() > 1)
             <div class="blog-posts-rest">
                 @foreach($latestPosts->skip(1) as $post)
-                <article class="group fade-up gradient-border-card bg-white dark:bg-brand-900/60 rounded-xl overflow-hidden border border-gray-200 dark:border-brand-800/50 hover:border-brand-600/40 transition-all duration-300">
+                <article class="group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
                     <a href="{{ route('blog.show', $post) }}" class="block p-6">
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
@@ -500,21 +266,15 @@
 </section>
 @endif
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== NEWSLETTER ===== --}}
-<section class="py-12 sm:py-20 fade-up dot-grid-bg bg-white dark:bg-transparent">
+<section class="fade-up border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <x-home.newsletter-signup />
     </div>
 </section>
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== PODCASTS ===== --}}
-<section class="podcasts py-12 sm:py-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent">
+<section class="podcasts border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             eyebrow="Listen"
@@ -536,302 +296,59 @@
     </div>
 </section>
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
-{{-- ===== YOUTUBE ===== --}}
-<section class="youtube-section relative py-12 sm:py-20 overflow-hidden bg-gray-50 dark:bg-transparent">
-    {{-- Red ambient glow --}}
-    <div class="youtube-ambient-glow absolute top-1/2 left-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.06] blur-[120px]"></div>
-
-    {{-- Scanlines --}}
-    <div class="youtube-scanlines pointer-events-none absolute inset-0 opacity-[0.02]"></div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Section header with glitch --}}
-        <div class="text-center mb-12 yt-heading">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
-                <span class="relative flex h-2 w-2">
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                </span>
-                Laravel videos
+{{-- ===== VIDEO ===== --}}
+<section class="border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div class="max-w-xl">
+                <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Watch</p>
+                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Practical Laravel, on video</h2>
+                <p class="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">Tutorials, live coding, and architecture discussions grounded in the decisions that shape real applications.</p>
+                <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="mt-7 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition-colors hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:text-gray-200 dark:hover:border-brand-500 dark:hover:text-white">
+                    Visit the YouTube channel
+                    <x-svg-icon name="arrow-right" class="h-4 w-4" />
+                </a>
             </div>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 cursor-default">
-                Watch on <span class="glitch-text inline-block text-red-500">YouTube</span>
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
-                Tutorials, live coding, and honest conversations about building with Laravel.
-            </p>
-        </div>
 
-        {{-- Main video preview --}}
-        <div class="relative">
-            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" rel="noopener noreferrer" aria-label="Watch The Laravel Architect on YouTube" class="yt-video-wrapper group block relative rounded-2xl overflow-hidden border border-gray-200 dark:border-[#1e2a3a] hover:border-red-500/30 transition-all duration-500">
-                <div class="relative aspect-video bg-[#0a0a0a] yt-video-player">
-
-                    {{-- Mobile: Clean simple thumbnail --}}
-                    <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
-                        <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
-                        <div class="yt-red-glow absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[80px]"></div>
-                        <img src="/images/logo-color.svg" alt="" width="80" height="80" loading="lazy" decoding="async" class="w-20 h-20 opacity-60 mb-4 relative z-10">
-                        <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
-                        <p class="text-gray-500 text-xs mt-1 relative z-10">Tutorials, live coding, and architecture</p>
-                    </div>
-
-                    {{-- Desktop: Split screen layout --}}
-                    <div class="absolute inset-0 hidden md:flex">
-                        {{-- Left: Presenter/webcam side --}}
-                        <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden yt-presenter">
-                            {{-- Subtle grid pattern --}}
-                            <div class="yt-dot-grid absolute inset-0 opacity-[0.04]"></div>
-
-                            {{-- Ambient glow --}}
-                            <div class="yt-brand-glow absolute top-1/2 left-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-15 blur-[80px]"></div>
-
-                            {{-- Center content --}}
-                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                                <img src="/images/logo-color.svg" alt="" width="64" height="64" loading="lazy" decoding="async" class="w-16 h-16 opacity-50">
-                                <div class="text-center">
-                                    <p class="text-white/60 text-sm font-semibold tracking-wide">Jeffrey Davidson</p>
-                                    <p class="text-gray-600 text-[10px] uppercase tracking-widest mt-1">Camera 1</p>
-                                </div>
-                            </div>
-
-                            {{-- Webcam frame corners --}}
-                            <div class="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-white/10 rounded-tl-sm"></div>
-                            <div class="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-white/10 rounded-tr-sm"></div>
-                            <div class="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-white/10 rounded-bl-sm"></div>
-                            <div class="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-white/10 rounded-br-sm"></div>
-                        </div>
-
-                        {{-- Divider --}}
-                        <div class="w-px bg-[#1e2a3a] yt-divider"></div>
-
-                        {{-- Right: Browser/editor side --}}
-                        <div class="flex-1 relative bg-[#0D1117] overflow-hidden flex flex-col yt-browser">
-                            {{-- Browser chrome --}}
-                            <div class="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-[#1e2a3a] yt-browser-chrome">
-                                <div class="flex gap-1.5">
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#f85149]/60"></div>
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#d29922]/60"></div>
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#3fb950]/60"></div>
-                                </div>
-                                <div class="flex-1 mx-3">
-                                    <div class="bg-[#0D1117] rounded-md px-3 py-1 flex items-center gap-2 yt-address-bar">
-                                        <svg class="w-3 h-3 text-green-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                                        <span class="text-[10px] text-gray-500 font-mono">thelaravelarchitect.com</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Editor content --}}
-                            <div class="flex-1 p-4 font-mono text-[11px] leading-relaxed overflow-hidden">
-                                <div class="flex gap-4 text-gray-600">
-                                    <div class="select-none text-right w-6 flex-shrink-0 space-y-0.5">
-                                        @for($i = 1; $i <= 18; $i++)
-                                            <div>{{ $i }}</div>
-                                        @endfor
-                                    </div>
-                                    <div class="space-y-0.5 overflow-hidden">
-                                        <div><span class="text-[#ff7b72]">class</span> <span class="text-[#d2a8ff]">ArchitectController</span></div>
-                                        <div>{</div>
-                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">index</span>()</div>
-                                        <div>&nbsp;&nbsp;{</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.index'</span>, [</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'videos'</span> <span class="text-gray-500">=></span> <span class="text-[#79c0ff]">Video</span>::<span class="text-[#d2a8ff]">published</span>()</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'tags'</span>)</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">latest</span>()</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">paginate</span>(<span class="text-[#79c0ff]">12</span>),</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;]);</div>
-                                        <div>&nbsp;&nbsp;}</div>
-                                        <div></div>
-                                        <div>&nbsp;&nbsp;<span class="text-gray-600">// 🎬 New episodes every week</span></div>
-                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">show</span>(<span class="text-[#79c0ff]">Video</span> <span class="text-[#ffa657]">$video</span>)</div>
-                                        <div>&nbsp;&nbsp;{</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.show'</span>)</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'video'</span>, <span class="text-[#ffa657]">$video</span>);</div>
-                                        <div>&nbsp;&nbsp;}</div>
-                                    </div>
-                                </div>
-
-                                {{-- Blinking cursor --}}
-                                <div class="absolute bottom-16 left-[4.5rem]">
-                                    <div class="w-[2px] h-4 bg-[#4A7FBF] opacity-70"></div>
-                                </div>
-                            </div>
-
-                            {{-- Terminal strip at bottom --}}
-                            <div class="px-4 py-2 bg-[#161b22] border-t border-[#1e2a3a] font-mono text-[10px] text-gray-600 flex items-center gap-3 yt-terminal">
-                                <span class="text-green-500">●</span>
-                                <span>PHP 8.4</span>
-                                <span class="text-[#1e2a3a]">|</span>
-                                <span>Laravel 13</span>
-                                <span class="text-[#1e2a3a]">|</span>
-                                <span class="text-green-400/60">✓ 42 tests passing</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- REC indicator (desktop only) --}}
-                    <div class="absolute top-4 left-4 hidden md:flex items-center gap-2 z-10">
-                        <span class="rec-dot w-2.5 h-2.5 rounded-full bg-red-600"></span>
-                        <span class="text-red-500 text-[11px] font-mono font-bold tracking-wider">REC</span>
-                    </div>
-
-                    {{-- Center play button with rings --}}
-                    <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="yt-play-ring-medium absolute w-24 h-24 md:w-36 md:h-36 rounded-full border border-red-500/10"></div>
-                        <div class="yt-play-ring-slow absolute w-20 h-20 md:w-28 md:h-28 rounded-full border border-red-500/15"></div>
-                        <div class="yt-play-ring-fast absolute w-16 h-16 md:w-20 md:h-20 rounded-full border border-red-500/20"></div>
-
-                        <div class="yt-play-button relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 md:w-8 md:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
-
-                    {{-- Video title overlay --}}
-                    <div class="absolute bottom-0 inset-x-0 p-3 md:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent z-10 yt-bottom-bar">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 md:gap-3 min-w-0">
-                                <img src="/images/logo-color.svg" alt="" width="36" height="36" loading="lazy" decoding="async" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
-                                <div class="min-w-0">
-                                    <p class="text-white font-bold text-xs md:text-sm truncate">The Laravel Architect on YouTube</p>
-                                    <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">Tutorials, live coding, and architecture</p>
-                                </div>
-                            </div>
-                            <span class="yt-subscribe px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
-                                Subscribe
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        {{-- Subscriber goal --}}
-        <div class="mt-8 max-w-md mx-auto">
-            <div class="flex items-center justify-between text-xs mb-2">
-                <span class="text-gray-500">Subscriber Goal</span>
-                <span class="text-red-400 font-mono font-bold">{{ $youtubeSubscribers }} / 100</span>
-            </div>
-            <div class="h-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
-                <div class="subscriber-bar-fill h-full rounded-full bg-gradient-to-r from-red-600 to-red-400" style="--subscriber-progress: {{ min($youtubeSubscribers, 100) }}%;"></div>
-            </div>
-            <p class="text-[10px] text-gray-600 mt-2 text-center">Subscribe for practical Laravel videos and architecture discussions.</p>
-        </div>
-
-        @if($latestYouTubeVideos->isNotEmpty())
-            <div class="mt-12">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Latest Videos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    @foreach($latestYouTubeVideos as $video)
+            @if($latestYouTubeVideos->isNotEmpty())
+                <div class="grid gap-6 sm:grid-cols-2">
+                    @foreach($latestYouTubeVideos->take(2) as $video)
                         <x-home.youtube-thumbnail-card :video="$video" />
                     @endforeach
                 </div>
-            </div>
-        @endif
-    </div>
-</section>
-
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
-{{-- ===== FEEDBACK ===== --}}
-<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent" aria-labelledby="testimonial-form-title">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Submit Testimonial Form --}}
-        <div class="max-w-2xl mx-auto fade-up">
-            <div class="relative rounded-2xl border-t-[3px] border-t-[#4A7FBF] border border-[#4A7FBF]/10 dark:border-[#1e2a3a] dark:border-t-[#4A7FBF] bg-[#f0f6fc] dark:bg-[#0D1117] p-8 shadow-sm">
-                {{-- Subtle corner accent --}}
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#4A7FBF]/[0.06] to-transparent rounded-bl-full pointer-events-none"></div>
-
-                <h2 id="testimonial-form-title" class="text-balance text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h2>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
-
-                @if(session('testimonial_success'))
-                <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm text-center">
-                    {{ session('testimonial_success') }}
-                </div>
-                @endif
-
-                <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
-                        <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
-                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                            @error('name') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <input type="text" name="company" placeholder="Company" value="{{ old('company') }}"
-                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" name="role" placeholder="Your role (e.g. CTO, Developer)" value="{{ old('role') }}"
-                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                    </div>
-                    <div>
-                        <textarea name="body" rows="4" placeholder="What was it like working with me? *" required
-                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all resize-none">{{ old('body') }}</textarea>
-                        @error('body') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="text-center pt-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#3f6fa8] hover:bg-[#345f91] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
-                            Submit Testimonial
-                        </button>
-                        <p class="mt-3 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
-                            Approved submissions may be displayed publicly. <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">Privacy details</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
+            @else
+                <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="group rounded-xl border border-gray-200 bg-white p-7 transition-colors hover:border-brand-500/50 dark:border-brand-800/60 dark:bg-brand-900/40">
+                    <p class="font-mono text-xs uppercase tracking-[0.16em] text-gray-500">The Laravel Architect</p>
+                    <p class="mt-3 text-xl font-semibold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-300">Follow the channel for the next build session.</p>
+                    <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-400">New videos focus on maintainable Laravel architecture, testing, and production-minded development.</p>
+                </a>
+            @endif
         </div>
     </div>
 </section>
 
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== FINAL CTA ===== --}}
-<section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
-    {{-- Animated gradient orbs --}}
-    <div class="cta-orb-brand absolute top-1/2 left-1/4 h-[500px] w-[500px] -translate-y-1/2 rounded-full opacity-[0.06] blur-[100px] dark:opacity-[0.04]"></div>
-    <div class="cta-orb-accent absolute top-1/2 right-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-[0.05] blur-[100px] dark:opacity-[0.03]"></div>
-
-    {{-- Grid pattern --}}
-    <div class="cta-grid absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"></div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center relative z-10">
-        {{-- Available badge --}}
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 dark:border-green-500/20 bg-green-500/10 dark:bg-green-500/5 text-green-600 dark:text-green-400 text-xs font-semibold uppercase tracking-widest mb-8">
-            <span class="relative flex h-2 w-2">
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500 dark:bg-green-400"></span>
-            </span>
+<section class="border-t border-gray-200 bg-gray-50 dark:border-white/5 dark:bg-[#0D1117]">
+    <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
+        <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-800 dark:border-green-500/20 dark:bg-green-500/5 dark:text-green-400">
+            <span class="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400" aria-hidden="true"></span>
             Available for Projects
         </div>
 
-        {{-- Headline with gradient text --}}
-        <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
-            Let's Build Something
-            <span class="bg-gradient-to-r from-[#2d6aa3] via-[#c74b7a] to-[#2d6aa3] dark:from-[#4A7FBF] dark:via-[#E47A9D] dark:to-[#4A7FBF] bg-clip-text text-transparent">Together</span>
+        <h2 class="mb-6 text-4xl font-extrabold leading-tight text-gray-900 dark:text-white sm:text-5xl">
+            Let's build something maintainable.
         </h2>
 
-        <p class="text-gray-600 dark:text-gray-400 mb-12 max-w-lg mx-auto text-lg leading-relaxed">
+        <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
             Freelance Laravel development, legacy modernization, consulting, and collaborations. Let's talk.
         </p>
 
-        {{-- Buttons --}}
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 px-8 py-4 bg-[#3f6fa8] hover:bg-[#345f91] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 rounded-xl bg-brand-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-brand-500">
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
-            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-[#1e2a3a] hover:border-[#4A7FBF] dark:hover:border-[#4A7FBF]/50 text-gray-700 dark:text-gray-300 hover:text-[#4A7FBF] dark:hover:text-white font-semibold rounded-xl transition-all text-lg">
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold text-gray-700 transition-colors hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:text-gray-300 dark:hover:border-brand-500 dark:hover:text-white">
                 View My Work
             </a>
         </div>

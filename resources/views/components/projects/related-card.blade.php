@@ -1,12 +1,10 @@
 @props(['project'])
 
-<a href="{{ route('projects.show', $project) }}" class="related-card group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-brand-700 dark:bg-brand-950/50 dark:ring-offset-brand-950">
+<a href="{{ route('projects.show', $project) }}" class="related-card group flex h-full flex-col border-b border-gray-200 py-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400 dark:border-[#1e2a3a]">
     <div class="mb-3 flex items-start justify-between">
-        <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-600/10">
-            <x-svg-icon name="folder" class="h-4 w-4 text-brand-600" />
-        </div>
+        <span class="font-mono text-xs uppercase tracking-[0.16em] text-gray-500">Build note</span>
         @if($project->is_featured)
-            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600">Featured</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Featured</span>
         @endif
     </div>
     <h3 class="mb-2 font-bold transition-colors group-hover:text-brand-600">{{ $project->title }}</h3>

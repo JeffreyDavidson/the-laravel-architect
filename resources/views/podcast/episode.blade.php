@@ -2,15 +2,6 @@
 
 @section('content')
 <style>
-    /* Artwork glow pulse */
-    @keyframes glowPulse {
-        0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-        50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); }
-    }
-    .artwork-glow {
-        animation: glowPulse 4s ease-in-out infinite;
-    }
-
     /* Waveform visualization */
     .waveform-bar {
         animation: waveform var(--dur) ease-in-out infinite alternate;
@@ -62,11 +53,7 @@
 </style>
 
 {{-- ===== EPISODE HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
-    {{-- Background glow from podcast color --}}
-    <div class="hidden dark:block absolute top-1/2 left-1/3 w-[600px] h-[600px] rounded-full opacity-[0.07] blur-[120px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-    <div class="hidden dark:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-
+<section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 relative z-10">
@@ -78,15 +65,12 @@
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
-            {{-- Podcast artwork with glow --}}
+            {{-- Podcast artwork --}}
             <div class="flex-shrink-0 relative">
-                {{-- Glow behind artwork --}}
-                <div class="artwork-glow absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[60px]" style="background: {{ $podcast->color }};"></div>
-
                 @if($podcast->cover_image_url)
                 <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
-                <div class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}33, {{ $podcast->color }}11);">
+                <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] lg:h-56 lg:w-56">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                 </div>
                 @endif
@@ -127,7 +111,7 @@
 </section>
 
 {{-- ===== MAIN CONTENT ===== --}}
-<div class="dot-grid-bg">
+<div class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div class="flex flex-col lg:flex-row gap-12">
 
@@ -136,7 +120,7 @@
 
                 {{-- Custom Audio Player --}}
                 @if($episode->audio_url)
-                <div class="mb-10 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden" style="box-shadow: 0 0 60px {{ $podcast->color }}08;"
+                <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
                      x-data="{
                         audio: null,
                         playing: false,
@@ -161,10 +145,10 @@
                             else { this.audio.play(); }
                             this.playing = !this.playing;
                         },
-                        seek(e) {
-                            const rect = this.$refs.progress.getBoundingClientRect();
-                            const pct = (e.clientX - rect.left) / rect.width;
-                            this.audio.currentTime = pct * this.duration;
+                        seekTo(value) {
+                            if (!this.duration) return;
+
+                            this.audio.currentTime = (Number(value) / 100) * this.duration;
                         },
                         skipBack() { this.audio.currentTime = Math.max(0, this.audio.currentTime - 15); },
                         skipForward() { this.audio.currentTime = Math.min(this.duration, this.audio.currentTime + 30); },
@@ -182,20 +166,32 @@
 
                     {{-- Waveform visualization --}}
                     <div class="px-6 pt-6 pb-2">
-                        <div class="flex items-end justify-center gap-[2px] h-16 opacity-40" :class="{ 'opacity-60': playing }">
+                        <div class="flex h-16 items-end justify-center gap-[2px] opacity-40" aria-hidden="true">
                             @for($i = 0; $i < 80; $i++)
-                            <div class="waveform-bar w-[3px] rounded-full h-full transition-opacity duration-300" style="background: {{ $podcast->color }}; --from: {{ rand(10, 30) / 100 }}; --to: {{ rand(40, 100) / 100 }}; --dur: {{ rand(4, 12) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;" :style="playing ? '' : 'animation-play-state: paused'"></div>
+                            <div class="waveform-bar h-full w-[3px] rounded-full" style="background: {{ $podcast->color }}; --from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;" :style="playing ? '' : 'animation-play-state: paused'"></div>
                             @endfor
                         </div>
                     </div>
 
                     {{-- Progress bar --}}
                     <div class="px-6 py-2">
-                        <div class="relative h-1.5 rounded-full bg-[#1e2a3a] cursor-pointer group" x-ref="progress" @click="seek($event)">
-                            <div class="absolute inset-y-0 left-0 rounded-full transition-all" :style="'width: ' + pct() + '%; background: {{ $podcast->color }};'"></div>
-                            <div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" :style="'left: calc(' + pct() + '% - 7px)'"></div>
+                        <div class="group relative h-5">
+                            <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[#1e2a3a]">
+                                <div class="absolute inset-y-0 left-0 rounded-full" :style="'width: ' + pct() + '%; background: {{ $podcast->color }};'"></div>
+                            </div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                :value="pct()"
+                                @input="seekTo($event.target.value)"
+                                aria-label="Seek episode"
+                                :aria-valuetext="format(currentTime) + ' of ' + format(duration)"
+                                class="absolute inset-0 h-5 w-full cursor-pointer opacity-0"
+                            >
                         </div>
-                        <div class="flex justify-between mt-2 text-[11px] font-mono text-gray-600">
+                        <div class="mt-2 flex justify-between font-mono text-xs text-gray-600">
                             <span x-text="format(currentTime)">0:00</span>
                             <span x-text="format(duration)">0:00</span>
                         </div>
@@ -216,27 +212,27 @@
 
                         <div class="flex items-center gap-4">
                             {{-- Skip back 15s --}}
-                            <button @click="skipBack()" class="text-gray-500 hover:text-white transition-colors relative">
+                            <button type="button" @click="skipBack()" aria-label="Skip back 15 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
-                                <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-gray-600">15</span>
+                                <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">15</span>
                             </button>
 
                             {{-- Play/Pause --}}
-                            <button @click="toggle()" class="w-12 h-12 rounded-full flex items-center justify-center text-white transition-all hover:scale-105" style="background: {{ $podcast->color }}; box-shadow: 0 0 30px {{ $podcast->color }}40;">
-                                <svg x-show="!playing" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg x-show="playing" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+                            <button type="button" @click="toggle()" :aria-label="playing ? 'Pause episode' : 'Play episode'" :aria-pressed="playing" class="flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105" style="background: {{ $podcast->color }};">
+                                <svg x-show="!playing" x-cloak aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg x-show="playing" x-cloak aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                             </button>
 
                             {{-- Skip forward 30s --}}
-                            <button @click="skipForward()" class="text-gray-500 hover:text-white transition-colors relative">
+                            <button type="button" @click="skipForward()" aria-label="Skip forward 30 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"/></svg>
-                                <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-[8px] font-mono text-gray-600">30</span>
+                                <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">30</span>
                             </button>
                         </div>
 
                         {{-- Speed control --}}
                         <div x-data="{ speed: 1 }">
-                            <button @click="speed = speed >= 2 ? 0.5 : speed + 0.25; $refs.audio.playbackRate = speed" class="px-2.5 py-1 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-xs font-mono text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors">
+                            <button type="button" @click="speed = speed >= 2 ? 0.5 : speed + 0.25; $refs.audio.playbackRate = speed" :aria-label="'Playback speed ' + speed + ' times. Activate to change.'" class="rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white">
                                 <span x-text="speed + 'x'">1x</span>
                             </button>
                         </div>
@@ -246,7 +242,7 @@
 
                 {{-- Description Fallback (no audio, no show_notes, no youtube) --}}
                 @if(!$episode->audio_url && !$episode->show_notes && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
-                <div class="mb-10 p-8 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] relative" style="box-shadow: 0 0 40px {{ $podcast->color }}06;">
+                <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
                     <div class="absolute top-6 left-6 text-6xl leading-none opacity-15" style="color: {{ $podcast->color }};">"</div>
                     <div class="pl-8 pt-4">
                         <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed italic">{{ $episode->description }}</p>
