@@ -28,11 +28,11 @@
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" decoding="async" class="h-10 w-10 rounded-full">
+                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3.5">
+                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="44" height="44" decoding="async" class="h-11 w-11 rounded-full">
                     <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
-                        <span class="font-empera text-lg leading-none tracking-[0.08em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
+                        <span class="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
+                        <span class="font-empera text-xl leading-none tracking-[0.07em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
                     </span>
                 </a>
 

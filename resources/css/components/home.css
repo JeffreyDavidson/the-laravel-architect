@@ -58,7 +58,7 @@
         position: absolute;
         top: -0.5rem;
         right: 1rem;
-        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-family: var(--font-mono);
         font-size: 5rem;
         font-weight: 900;
         line-height: 1;

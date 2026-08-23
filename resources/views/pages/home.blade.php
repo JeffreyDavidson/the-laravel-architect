@@ -3,41 +3,25 @@
 @section('content')
 {{-- ===== HERO ===== --}}
 <section class="homepage-hero">
-    <div class="hero-shell mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+    <div class="hero-shell mx-auto grid max-w-7xl gap-14 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 xl:grid-cols-[1.03fr_0.97fr] xl:items-center xl:gap-20 xl:py-24">
         <div class="max-w-2xl">
-            <p class="hero-kicker">Laravel architecture, built for the long term</p>
-
-            <h1 class="hero-title mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] text-gray-950 sm:text-6xl lg:text-7xl dark:text-white">
-                I don't just write code.
+            <h1 class="hero-title text-5xl font-semibold leading-[1.02] tracking-[-0.045em] text-gray-950 sm:text-6xl xl:text-[4rem] dark:text-white">
+                <span class="block xl:whitespace-nowrap">I don't just write code.</span>
                 <span class="hero-title-accent block">I architect it!</span>
             </h1>
 
             <p class="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
-                I help teams design, modernize, and ship maintainable Laravel applications—with clear architecture, useful tests, and fewer surprises.
+                I help teams modernize Laravel applications with clear architecture, useful tests, and fewer surprises in production.
             </p>
 
             <div class="mt-9 flex flex-wrap gap-3">
-                <a href="{{ route('blog.index') }}" class="hero-action hero-action-primary">Read the Blog</a>
-                <a href="{{ route('projects.index') }}" class="hero-action hero-action-secondary">View Projects</a>
-            </div>
-
-            <div class="mt-10 flex items-center gap-3" aria-label="Social profiles">
-                <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="hero-social-link" title="YouTube"><x-svg-icon name="youtube" class="h-5 w-5" /></a>
-                <a href="https://instagram.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="hero-social-link" title="Instagram"><x-svg-icon name="instagram" class="h-5 w-5" /></a>
-                <a href="https://twitter.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter" class="hero-social-link" title="X / Twitter"><x-svg-icon name="x-twitter" class="h-5 w-5" /></a>
-                <a href="https://bsky.app/profile/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Bluesky" class="hero-social-link" title="Bluesky"><x-svg-icon name="bluesky" class="h-5 w-5" /></a>
-                <a href="https://facebook.com/thelaravelarch" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="hero-social-link" title="Facebook"><x-svg-icon name="facebook" class="h-5 w-5" /></a>
+                <a href="{{ route('projects.index') }}" class="hero-action hero-action-primary">View Projects</a>
+                <a href="{{ route('blog.index') }}" class="hero-action hero-action-secondary">Read the Blog</a>
             </div>
         </div>
 
         <figure class="architecture-scene" data-architecture-scene data-architecture-state="idle" aria-labelledby="architecture-title architecture-description">
-            <div class="architecture-scene-header">
-                <div>
-                    <p class="architecture-scene-label">System topology</p>
-                    <h2 id="architecture-title" class="architecture-scene-title">A request, deliberately composed</h2>
-                </div>
-                <span class="architecture-scene-status" aria-hidden="true"><span></span>Live map</span>
-            </div>
+            <h2 id="architecture-title" class="architecture-scene-title">How a Laravel request moves</h2>
 
             <p id="architecture-description" class="sr-only">
                 A Laravel request moves through routes, an application controller, the domain layer, and data services. Domain work can also dispatch queued jobs and events.
@@ -48,17 +32,14 @@
 
                 <div class="architecture-fallback" data-architecture-fallback>
                     <ol class="architecture-flow" aria-label="Primary request flow">
-                        <li><span>01</span><strong>Request</strong></li>
-                        <li><span>02</span><strong>Routes</strong></li>
-                        <li><span>03</span><strong>Application</strong></li>
-                        <li><span>04</span><strong>Domain</strong></li>
-                        <li><span>05</span><strong>Data</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Request</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Routes</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Application</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Domain</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Data</strong></li>
                     </ol>
 
-                    <div class="architecture-branch">
-                        <span>Domain signal</span>
-                        <strong>Queue · Events</strong>
-                    </div>
+                    <p class="architecture-branch">Queue / events</p>
                 </div>
             </div>
 
@@ -70,7 +51,7 @@
 </section>
 
 {{-- ===== TECH STACK MARQUEE ===== --}}
-<section class="py-8 overflow-hidden relative bg-gray-50 dark:bg-[#0D1117]">
+<section class="hidden" aria-hidden="true">
     <div class="marquee-track">
         @for($i = 0; $i < 4; $i++)
         <div class="marquee-item">
