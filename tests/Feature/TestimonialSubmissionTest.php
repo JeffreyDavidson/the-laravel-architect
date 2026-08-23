@@ -6,6 +6,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+it('renders an accessible testimonial submission page', function () {
+    $this->get(route('testimonials.create'))
+        ->assertOk()
+        ->assertSee('Share your', false)
+        ->assertSee('for="testimonial-name"', false)
+        ->assertSee('for="testimonial-role"', false)
+        ->assertSee('for="testimonial-company"', false)
+        ->assertSee('for="testimonial-body"', false)
+        ->assertSee('aria-describedby="testimonial-body-help"', false);
+});
+
 it('stores a valid testimonial as pending', function () {
     $this->post(route('testimonials.store'), [
         'name' => 'Jane Doe',
@@ -28,13 +39,15 @@ it('silently discards testimonial honeypot submissions', function () {
 });
 
 it('validates testimonial submissions', function () {
-    $this->from(route('home'))
+    $this->from(route('testimonials.create'))
         ->post(route('testimonials.store'), [
             'name' => '',
+            'role' => 'CTO',
             'body' => '',
         ])
-        ->assertRedirect(route('home'))
-        ->assertSessionHasErrors(['name', 'body']);
+        ->assertRedirect(route('testimonials.create'))
+        ->assertSessionHasErrors(['name', 'body'])
+        ->assertSessionHasInput('role', 'CTO');
 
     expect(Testimonial::query()->count())->toBe(0);
 });

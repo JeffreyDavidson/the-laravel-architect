@@ -23,6 +23,7 @@ Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::cl
 Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'confirm'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'showUnsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
+Route::get('/testimonials/submit', [TestimonialController::class, 'create'])->name('testimonials.create');
 Route::post('/testimonials', [TestimonialController::class, 'store'])->middleware('throttle:testimonials')->name('testimonials.store');
 Route::get('/uses', [PageController::class, 'uses'])->name('uses');
 

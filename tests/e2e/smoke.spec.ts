@@ -11,6 +11,7 @@ const publicRoutes = [
     '/privacy',
     '/projects',
     '/projects/ringside',
+    '/testimonials/submit',
     '/uses',
 ];
 const publicColorSchemes = ['light', 'dark'] as const;
@@ -85,6 +86,16 @@ test('homepage code preview switches between examples', async ({ page }) => {
 
     await expect(page.locator('#code-routes')).toBeHidden();
     await expect(page.locator('#code-architect')).toBeVisible();
+});
+
+test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
+    await page.goto('/testimonials/submit');
+
+    await expect(page.getByLabel('Name')).toBeVisible();
+    await expect(page.getByLabel('Role')).toBeVisible();
+    await expect(page.getByLabel('Company')).toBeVisible();
+    await expect(page.getByLabel('Testimonial')).toBeVisible();
+    await expect(page.getByText('Your testimonial will be reviewed before it appears publicly.')).toBeVisible();
 });
 
 test('about card can be flipped with the keyboard', async ({ page }) => {

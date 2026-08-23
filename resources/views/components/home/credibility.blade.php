@@ -34,5 +34,12 @@
                 @endforeach
             </div>
         @endif
+
+        <div class="mt-8 text-center">
+            <a href="{{ route('testimonials.create') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 transition-colors hover:text-brand-600 dark:text-brand-300 dark:decoration-brand-700 dark:hover:text-brand-200">
+                Worked with me? Share your experience
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
     </div>
 </section>

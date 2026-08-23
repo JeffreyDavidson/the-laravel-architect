@@ -44,7 +44,7 @@ it('renders the core public pages', function (string $uri, string $copy) {
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('home'))
+    $this->get(route('testimonials.create'))
         ->assertOk()
         ->assertSee($privacyUrl, false)
         ->assertSee('Approved submissions may be displayed publicly');
@@ -55,11 +55,24 @@ it('links the privacy notice from public collection points', function () {
         ->assertSee('Your details are used to reply to this inquiry.');
 });
 
-it('loads public interactivity from the local Vite bundle', function () {
+it('loads public interactivity and typography from the local Vite bundle', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertDontSee('cdn.jsdelivr.net/npm/alpinejs', false)
+        ->assertDontSee('fonts.bunny.net', false)
+        ->assertSee(Vite::asset('resources/css/app.css'), false)
         ->assertSee(Vite::asset('resources/js/app.js'), false);
+});
+
+it('renders one responsive and accessible homepage code preview', function () {
+    $content = $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('role="tablist"', false)
+        ->assertSee('aria-controls="code-routes"', false)
+        ->getContent();
+
+    expect(substr_count($content, 'id="code-editor"'))->toBe(1)
+        ->and($content)->not->toContain('mobileTab');
 });
 
 it('places the theme bootstrap inside the document head', function () {
@@ -95,6 +108,32 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
         ->assertDontSee('onclick=', false);
+});
+
+it('renders keyboard accessible podcast audio controls', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Accessible Audio',
+        'slug' => 'accessible-audio',
+        'description' => 'An episode with accessible playback controls.',
+        'audio_url' => 'https://example.com/accessible-audio.mp3',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSee('aria-label="Seek episode"', false)
+        ->assertSee('aria-label="Skip back 15 seconds"', false)
+        ->assertSee('aria-label="Skip forward 30 seconds"', false)
+        ->assertSee(':aria-label="playing ? \'Pause episode\' : \'Play episode\'"', false)
+        ->assertDontSee('@click="seek($event)"', false);
 });
 
 it('keeps the admin panel behind authentication', function () {

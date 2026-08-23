@@ -31,72 +31,6 @@
                     </a>
                 </div>
 
-                {{-- Mobile Code Editor Preview --}}
-                <div class="lg:hidden mb-10 code-editor rounded-lg overflow-hidden text-[11px] leading-5 font-mono !animate-none" x-data="{ mobileTab: 'routes' }">
-                    <div class="code-editor-bar px-3 py-2 flex items-center gap-2">
-                        <div class="flex gap-1">
-                            <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
-                            <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
-                            <span class="w-2 h-2 rounded-full bg-green-500/80"></span>
-                        </div>
-                        <div class="flex items-center overflow-x-auto">
-                            <button @click="mobileTab = 'routes'" :class="mobileTab === 'routes' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
-                                web.php
-                            </button>
-                            <button @click="mobileTab = 'architect'" :class="mobileTab === 'architect' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
-                                Architect.php
-                            </button>
-                            <button @click="mobileTab = 'test'" :class="mobileTab === 'test' ? 'code-editor-tab text-gray-300' : 'code-editor-tab-inactive text-gray-500'" class="px-2 py-0.5 text-[10px] flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                                Test.php
-                            </button>
-                        </div>
-                    </div>
-                    {{-- web.php --}}
-                    <div x-show="mobileTab === 'routes'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">ArchitectController</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 3</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 4</span><span><span class="syn-class">Route</span>::<span class="syn-method">middleware</span>(<span class="syn-string">'architect'</span>)</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]"> 5</span><span>&nbsp;&nbsp;-><span class="syn-method">group</span>(<span class="syn-keyword">function</span> () <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/blog'</span>,</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'share'</span>]);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-class">Route</span>::<span class="syn-method">get</span>(<span class="syn-string">'/podcasts'</span>,</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]"> 9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="syn-class">Architect</span>::<span class="syn-keyword">class</span>, <span class="syn-string">'discuss'</span>]);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
-                    </div>
-                    {{-- Architect.php --}}
-                    <div x-show="mobileTab === 'architect'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">Architect</span> <span class="syn-keyword">extends</span> <span class="syn-class">Model</span> <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-variable">$name</span> = <span class="syn-string">'Jeffrey Davidson'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-variable">$title</span> = <span class="syn-string">'The Laravel Architect'</span>;</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;<span class="syn-variable">$available</span> = <span class="syn-keyword">true</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;<span class="syn-variable">$skills</span> = [<span class="syn-string">'Laravel'</span>, ...];</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">philosophy</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span> <span class="syn-keyword">return</span> <span class="syn-string">'Build it</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-string">clean, build it right.'</span>;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
-                    </div>
-                    {{-- ArchitectTest.php --}}
-                    <div x-show="mobileTab === 'test'" class="p-3 space-y-0.5">
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">1</span><span><span class="syn-keyword">class</span> <span class="syn-class">ArchitectTest</span> <span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">2</span><span>&nbsp;&nbsp;<span class="syn-keyword">function</span> <span class="syn-function">builds_clean</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">3</span><span>&nbsp;&nbsp;<span class="syn-bracket">{</span></span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span> = <span class="syn-class">Architect</span>::<span class="syn-method">hire</span>();</span></div>
-                        <div class="flex gap-2 code-line-highlight rounded"><span class="code-line-number text-[10px]">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-variable">$arch</span>-><span class="syn-method">build</span>(<span class="syn-variable">$project</span>);</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">6</span><span>&nbsp;</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-method">expect</span>(<span class="syn-variable">$project</span>)</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeClean</span>()</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="syn-method">toBeTested</span>();</span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">10</span><span>&nbsp;&nbsp;<span class="syn-bracket">}</span></span></div>
-                        <div class="flex gap-2"><span class="code-line-number text-[10px]">11</span><span><span class="syn-bracket">}</span></span></div>
-                    </div>
-                </div>
-
                 {{-- Social links --}}
                 <div class="flex items-center justify-center lg:justify-start gap-6">
                     <a href="https://youtube.com/channel/UC42H30o7l5QvvCzC86dSu_A" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="inline-flex rounded-md p-2 -m-2 text-gray-500 hover:text-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 transition-colors" title="YouTube">
@@ -118,7 +52,7 @@
             </div>
 
             {{-- Right: Code Editor --}}
-            <div class="hidden lg:flex lg:flex-col flex-1 min-w-0">
+            <div class="flex w-full min-w-0 flex-1 flex-col">
                 <div class="code-editor flex flex-col h-full" id="code-editor">
                     {{-- Title bar --}}
                     <div class="code-editor-bar px-4 py-2.5 flex items-center gap-3">
@@ -127,23 +61,23 @@
                             <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
                             <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
                         </div>
-                        <div class="flex items-center ml-2">
-                            <button data-code-tab="routes" id="tab-routes" class="code-editor-tab px-3 py-1 text-xs text-gray-300 flex items-center gap-1.5 cursor-pointer">
+                        <div class="ml-2 flex items-center overflow-x-auto" role="tablist" aria-label="Code samples">
+                            <button data-code-tab="routes" id="tab-routes" type="button" role="tab" aria-selected="true" aria-controls="code-routes" class="code-editor-tab flex cursor-pointer items-center gap-1.5 whitespace-nowrap px-3 py-1 text-xs text-gray-300">
                                 <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M23.642 5.43a.364.364 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934c0 .135-.073.26-.189.326l-9.037 5.206a.35.35 0 0 1-.128.049c-.01.004-.02.005-.03.01a.35.35 0 0 1-.2 0c-.013-.005-.025-.004-.038-.01a.376.376 0 0 1-.126-.049L.378 18.755a.378.378 0 0 1-.189-.326V3.334c0-.034.005-.07.014-.1.003-.012.01-.02.014-.032a.369.369 0 0 1 .023-.058c.004-.013.015-.022.023-.033.012-.015.021-.032.036-.045.01-.01.025-.018.037-.027.014-.012.027-.024.041-.034h.001L4.896.384a.378.378 0 0 1 .378 0L9.79 3.01h.002l.04.033.038.028c.014.013.023.03.035.045l.024.033c.01.019.015.038.024.058.005.012.011.02.013.033a.363.363 0 0 1 .015.1v9.652l3.76-2.164V5.527c0-.034.005-.07.013-.1l.015-.033c.008-.02.014-.039.023-.058.01-.013.016-.022.024-.033.011-.015.02-.032.035-.045.012-.01.025-.018.038-.027l.04-.034h.002l4.518-2.624a.378.378 0 0 1 .377 0l4.518 2.624c.015.01.027.021.042.033.012.01.025.018.036.028.016.013.025.03.037.045l.023.033c.01.019.017.038.024.058.005.012.011.02.014.033z"/></svg>
                                 web.php
                             </button>
-                            <button data-code-tab="architect" id="tab-architect" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
+                            <button data-code-tab="architect" id="tab-architect" type="button" role="tab" aria-selected="false" aria-controls="code-architect" tabindex="-1" class="code-editor-tab-inactive flex cursor-pointer items-center gap-1.5 whitespace-nowrap px-3 py-1 text-xs text-gray-500">
                                 <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312z"/></svg>
                                 Architect.php
                             </button>
-                            <button data-code-tab="test" id="tab-test" class="code-editor-tab-inactive px-3 py-1 text-xs text-gray-500 flex items-center gap-1.5 cursor-pointer">
+                            <button data-code-tab="test" id="tab-test" type="button" role="tab" aria-selected="false" aria-controls="code-test" tabindex="-1" class="code-editor-tab-inactive flex cursor-pointer items-center gap-1.5 whitespace-nowrap px-3 py-1 text-xs text-gray-500">
                                 <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                                 ArchitectTest.php
                             </button>
                         </div>
                     </div>
                     {{-- Code body: web.php --}}
-                    <div id="code-routes" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1">
+                    <div id="code-routes" role="tabpanel" aria-labelledby="tab-routes" tabindex="0" class="code-panel max-h-80 flex-1 overflow-y-auto p-4 font-mono text-[11px] leading-5 lg:max-h-none lg:p-5 lg:text-[13px] lg:leading-6">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// routes/web.php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Http\Controllers\ArchitectController</span>;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span>&nbsp;</span></div>
@@ -181,7 +115,7 @@
                         <div class="flex gap-4"><span class="code-line-number">35</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-bracket">}</span>);</span></div>
                     </div>
                     {{-- Code body: Architect.php --}}
-                    <div id="code-architect" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
+                    <div id="code-architect" role="tabpanel" aria-labelledby="tab-architect" tabindex="0" hidden class="code-panel max-h-80 flex-1 overflow-y-auto p-4 font-mono text-[11px] leading-5 lg:max-h-none lg:p-5 lg:text-[13px] lg:leading-6">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-keyword">&lt;?php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">namespace</span> <span class="syn-class">App\Models</span>;</span></div>
@@ -222,7 +156,7 @@
                         <div class="flex gap-4"><span class="code-line-number">41</span><span><span class="syn-bracket">}</span></span></div>
                     </div>
                     {{-- Code body: ArchitectTest.php --}}
-                    <div id="code-test" class="code-panel p-5 font-mono text-[13px] leading-6 overflow-y-auto flex-1 hidden">
+                    <div id="code-test" role="tabpanel" aria-labelledby="tab-test" tabindex="0" hidden class="code-panel max-h-80 flex-1 overflow-y-auto p-4 font-mono text-[11px] leading-5 lg:max-h-none lg:p-5 lg:text-[13px] lg:leading-6">
                         <div class="flex gap-4"><span class="code-line-number"> 1</span><span><span class="syn-comment">// tests/Feature/ArchitectTest.php</span></span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 2</span><span>&nbsp;</span></div>
                         <div class="flex gap-4"><span class="code-line-number"> 3</span><span><span class="syn-keyword">use</span> <span class="syn-class">App\Models\Architect</span>;</span></div>
@@ -736,102 +670,28 @@
 {{-- Section Divider --}}
 <div class="section-divider section-divider-dark hidden dark:block"></div>
 
-{{-- ===== FEEDBACK ===== --}}
-<section class="testimonials pt-4 sm:pt-8 pb-12 sm:pb-20 noise-overlay dot-grid-bg bg-white dark:bg-transparent" aria-labelledby="testimonial-form-title">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Submit Testimonial Form --}}
-        <div class="max-w-2xl mx-auto fade-up">
-            <div class="relative rounded-2xl border-t-[3px] border-t-[#4A7FBF] border border-[#4A7FBF]/10 dark:border-[#1e2a3a] dark:border-t-[#4A7FBF] bg-[#f0f6fc] dark:bg-[#0D1117] p-8 shadow-sm">
-                {{-- Subtle corner accent --}}
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#4A7FBF]/[0.06] to-transparent rounded-bl-full pointer-events-none"></div>
-
-                <h2 id="testimonial-form-title" class="text-balance text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">Worked with me?</h2>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 text-center">I'd love to hear about your experience. Submit a testimonial and it'll appear here once approved.</p>
-
-                @if(session('testimonial_success'))
-                <div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm text-center">
-                    {{ session('testimonial_success') }}
-                </div>
-                @endif
-
-                <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
-                        <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <input type="text" name="name" placeholder="Your name *" required value="{{ old('name') }}"
-                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                            @error('name') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <input type="text" name="company" placeholder="Company" value="{{ old('company') }}"
-                                class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" name="role" placeholder="Your role (e.g. CTO, Developer)" value="{{ old('role') }}"
-                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all">
-                    </div>
-                    <div>
-                        <textarea name="body" rows="4" placeholder="What was it like working with me? *" required
-                            class="w-full px-4 py-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#1e2a3a] rounded-lg text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-600 focus:border-[#4A7FBF] focus:ring-2 focus:ring-[#4A7FBF]/20 focus:outline-none transition-all resize-none">{{ old('body') }}</textarea>
-                        @error('body') <p class="text-red-500 dark:text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="text-center pt-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-7 py-3 bg-[#3f6fa8] hover:bg-[#345f91] hover:shadow-lg hover:shadow-[#4A7FBF]/20 text-white font-semibold rounded-lg transition-all text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
-                            Submit Testimonial
-                        </button>
-                        <p class="mt-3 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
-                            Approved submissions may be displayed publicly. <a href="{{ route('privacy') }}" class="underline decoration-gray-300 underline-offset-2 transition-colors hover:text-brand-600 dark:decoration-gray-700 dark:hover:text-brand-300">Privacy details</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- Section Divider --}}
-<div class="section-divider section-divider-dark hidden dark:block"></div>
-
 {{-- ===== FINAL CTA ===== --}}
-<section class="cta-section relative overflow-hidden border-t border-gray-200 dark:border-[#1e2a3a] bg-gradient-to-b from-[#f0f6fc] to-white dark:from-transparent dark:to-transparent">
-    {{-- Animated gradient orbs --}}
-    <div class="cta-orb-brand absolute top-1/2 left-1/4 h-[500px] w-[500px] -translate-y-1/2 rounded-full opacity-[0.06] blur-[100px] dark:opacity-[0.04]"></div>
-    <div class="cta-orb-accent absolute top-1/2 right-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-[0.05] blur-[100px] dark:opacity-[0.03]"></div>
-
-    {{-- Grid pattern --}}
-    <div class="cta-grid absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"></div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center relative z-10">
-        {{-- Available badge --}}
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 dark:border-green-500/20 bg-green-500/10 dark:bg-green-500/5 text-green-600 dark:text-green-400 text-xs font-semibold uppercase tracking-widest mb-8">
-            <span class="relative flex h-2 w-2">
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500 dark:bg-green-400"></span>
-            </span>
+<section class="border-t border-gray-200 bg-gray-50 dark:border-white/5 dark:bg-[#0D1117]">
+    <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
+        <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-800 dark:border-green-500/20 dark:bg-green-500/5 dark:text-green-400">
+            <span class="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400" aria-hidden="true"></span>
             Available for Projects
         </div>
 
-        {{-- Headline with gradient text --}}
-        <h2 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-gray-900 dark:text-white">
-            Let's Build Something
-            <span class="bg-gradient-to-r from-[#2d6aa3] via-[#c74b7a] to-[#2d6aa3] dark:from-[#4A7FBF] dark:via-[#E47A9D] dark:to-[#4A7FBF] bg-clip-text text-transparent">Together</span>
+        <h2 class="mb-6 text-4xl font-extrabold leading-tight text-gray-900 dark:text-white sm:text-5xl">
+            Let's build something maintainable.
         </h2>
 
-        <p class="text-gray-600 dark:text-gray-400 mb-12 max-w-lg mx-auto text-lg leading-relaxed">
+        <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
             Freelance Laravel development, legacy modernization, consulting, and collaborations. Let's talk.
         </p>
 
-        {{-- Buttons --}}
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 px-8 py-4 bg-[#3f6fa8] hover:bg-[#345f91] text-white font-semibold rounded-xl transition-all text-lg hover:shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <a href="{{ route('contact') }}" class="group inline-flex items-center gap-2 rounded-xl bg-brand-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-brand-500">
                 Get in Touch
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
-            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-[#1e2a3a] hover:border-[#4A7FBF] dark:hover:border-[#4A7FBF]/50 text-gray-700 dark:text-gray-300 hover:text-[#4A7FBF] dark:hover:text-white font-semibold rounded-xl transition-all text-lg">
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold text-gray-700 transition-colors hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:text-gray-300 dark:hover:border-brand-500 dark:hover:text-white">
                 View My Work
             </a>
         </div>
