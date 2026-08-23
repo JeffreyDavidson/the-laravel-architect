@@ -15,8 +15,8 @@
             </p>
 
             <div class="mt-9 flex flex-wrap gap-3">
-                <a href="{{ route('projects.index') }}" class="hero-action hero-action-primary">View Projects</a>
-                <a href="{{ route('blog.index') }}" class="hero-action hero-action-secondary">Read the Blog</a>
+                <a href="{{ route('contact') }}" class="hero-action hero-action-primary">Discuss a Project</a>
+                <a href="{{ route('projects.index') }}" class="hero-action hero-action-secondary">View Projects</a>
             </div>
         </div>
 
@@ -296,174 +296,34 @@
     </div>
 </section>
 
-{{-- ===== YOUTUBE ===== --}}
-<section class="youtube-section relative py-12 sm:py-20 overflow-hidden bg-gray-50 dark:bg-transparent">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Section header with glitch --}}
-        <div class="text-center mb-12 yt-heading">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 border border-red-500/20">
-                <span class="relative flex h-2 w-2">
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                </span>
-                Laravel videos
+{{-- ===== VIDEO ===== --}}
+<section class="border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div class="max-w-xl">
+                <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Watch</p>
+                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Practical Laravel, on video</h2>
+                <p class="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">Tutorials, live coding, and architecture discussions grounded in the decisions that shape real applications.</p>
+                <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="mt-7 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition-colors hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:text-gray-200 dark:hover:border-brand-500 dark:hover:text-white">
+                    Visit the YouTube channel
+                    <x-svg-icon name="arrow-right" class="h-4 w-4" />
+                </a>
             </div>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 cursor-default">
-                Watch on <span class="glitch-text inline-block text-red-500">YouTube</span>
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
-                Tutorials, live coding, and honest conversations about building with Laravel.
-            </p>
-        </div>
 
-        {{-- Main video preview --}}
-        <div class="relative">
-            <a href="https://youtube.com/@thelaravelarchitect" target="_blank" rel="noopener noreferrer" aria-label="Watch The Laravel Architect on YouTube" class="yt-video-wrapper group relative block overflow-hidden rounded-2xl border border-gray-200 transition-colors duration-300 hover:border-red-500/30 dark:border-[#1e2a3a]">
-                <div class="relative aspect-video bg-[#0a0a0a] yt-video-player">
-
-                    {{-- Mobile: Clean simple thumbnail --}}
-                    <div class="absolute inset-0 flex flex-col items-center justify-center md:hidden">
-                        <img src="/images/logo-color.svg" alt="" width="80" height="80" loading="lazy" decoding="async" class="w-20 h-20 opacity-60 mb-4 relative z-10">
-                        <p class="text-white/80 font-bold text-sm relative z-10">The Laravel Architect</p>
-                        <p class="text-gray-500 text-xs mt-1 relative z-10">Tutorials, live coding, and architecture</p>
-                    </div>
-
-                    {{-- Desktop: Split screen layout --}}
-                    <div class="absolute inset-0 hidden md:flex">
-                        {{-- Left: Presenter/webcam side --}}
-                        <div class="w-[45%] relative bg-[#0a0e14] overflow-hidden yt-presenter">
-                            {{-- Center content --}}
-                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                                <img src="/images/logo-color.svg" alt="" width="64" height="64" loading="lazy" decoding="async" class="w-16 h-16 opacity-50">
-                                <div class="text-center">
-                                    <p class="text-white/60 text-sm font-semibold tracking-wide">Jeffrey Davidson</p>
-                                    <p class="text-gray-600 text-[10px] uppercase tracking-widest mt-1">Camera 1</p>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {{-- Divider --}}
-                        <div class="w-px bg-[#1e2a3a] yt-divider"></div>
-
-                        {{-- Right: Browser/editor side --}}
-                        <div class="flex-1 relative bg-[#0D1117] overflow-hidden flex flex-col yt-browser">
-                            {{-- Browser chrome --}}
-                            <div class="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-[#1e2a3a] yt-browser-chrome">
-                                <div class="flex gap-1.5">
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#f85149]/60"></div>
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#d29922]/60"></div>
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#3fb950]/60"></div>
-                                </div>
-                                <div class="flex-1 mx-3">
-                                    <div class="bg-[#0D1117] rounded-md px-3 py-1 flex items-center gap-2 yt-address-bar">
-                                        <svg class="w-3 h-3 text-green-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                                        <span class="text-[10px] text-gray-500 font-mono">thelaravelarchitect.com</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Editor content --}}
-                            <div class="flex-1 p-4 font-mono text-[11px] leading-relaxed overflow-hidden">
-                                <div class="flex gap-4 text-gray-600">
-                                    <div class="select-none text-right w-6 flex-shrink-0 space-y-0.5">
-                                        @for($i = 1; $i <= 18; $i++)
-                                            <div>{{ $i }}</div>
-                                        @endfor
-                                    </div>
-                                    <div class="space-y-0.5 overflow-hidden">
-                                        <div><span class="text-[#ff7b72]">class</span> <span class="text-[#d2a8ff]">ArchitectController</span></div>
-                                        <div>{</div>
-                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">index</span>()</div>
-                                        <div>&nbsp;&nbsp;{</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.index'</span>, [</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#a5d6ff]">'videos'</span> <span class="text-gray-500">=></span> <span class="text-[#79c0ff]">Video</span>::<span class="text-[#d2a8ff]">published</span>()</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'tags'</span>)</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">latest</span>()</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">paginate</span>(<span class="text-[#79c0ff]">12</span>),</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;]);</div>
-                                        <div>&nbsp;&nbsp;}</div>
-                                        <div></div>
-                                        <div>&nbsp;&nbsp;<span class="text-gray-600">// 🎬 New episodes every week</span></div>
-                                        <div>&nbsp;&nbsp;<span class="text-[#ff7b72]">public function</span> <span class="text-[#d2a8ff]">show</span>(<span class="text-[#79c0ff]">Video</span> <span class="text-[#ffa657]">$video</span>)</div>
-                                        <div>&nbsp;&nbsp;{</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-[#ff7b72]">return</span> <span class="text-[#79c0ff]">view</span>(<span class="text-[#a5d6ff]">'tutorials.show'</span>)</div>
-                                        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-><span class="text-[#d2a8ff]">with</span>(<span class="text-[#a5d6ff]">'video'</span>, <span class="text-[#ffa657]">$video</span>);</div>
-                                        <div>&nbsp;&nbsp;}</div>
-                                    </div>
-                                </div>
-
-                                {{-- Blinking cursor --}}
-                                <div class="absolute bottom-16 left-[4.5rem]">
-                                    <div class="w-[2px] h-4 bg-[#4A7FBF] opacity-70"></div>
-                                </div>
-                            </div>
-
-                            {{-- Terminal strip at bottom --}}
-                            <div class="px-4 py-2 bg-[#161b22] border-t border-[#1e2a3a] font-mono text-[10px] text-gray-600 flex items-center gap-3 yt-terminal">
-                                <span class="text-green-500">●</span>
-                                <span>PHP 8.4</span>
-                                <span class="text-[#1e2a3a]">|</span>
-                                <span>Laravel 13</span>
-                                <span class="text-[#1e2a3a]">|</span>
-                                <span class="text-green-400/60">✓ 42 tests passing</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- REC indicator (desktop only) --}}
-                    <div class="absolute top-4 left-4 hidden md:flex items-center gap-2 z-10">
-                        <span class="rec-dot w-2.5 h-2.5 rounded-full bg-red-600"></span>
-                        <span class="text-red-500 text-[11px] font-mono font-bold tracking-wider">REC</span>
-                    </div>
-
-                    {{-- Center play button --}}
-                    <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="yt-play-button relative w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 md:w-8 md:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
-
-                    {{-- Video title overlay --}}
-                    <div class="yt-bottom-bar absolute inset-x-0 bottom-0 z-10 bg-black/75 p-3 backdrop-blur-sm md:p-5">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 md:gap-3 min-w-0">
-                                <img src="/images/logo-color.svg" alt="" width="36" height="36" loading="lazy" decoding="async" class="w-7 h-7 md:w-9 md:h-9 rounded-full ring-2 ring-red-500/30 flex-shrink-0">
-                                <div class="min-w-0">
-                                    <p class="text-white font-bold text-xs md:text-sm truncate">The Laravel Architect on YouTube</p>
-                                    <p class="text-gray-400 text-[10px] md:text-xs hidden sm:block">Tutorials, live coding, and architecture</p>
-                                </div>
-                            </div>
-                            <span class="yt-subscribe px-3 md:px-4 py-1 md:py-1.5 bg-red-600 text-white text-[10px] md:text-xs font-bold rounded-full group-hover:bg-red-500 transition-colors flex-shrink-0">
-                                Subscribe
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        {{-- Subscriber goal --}}
-        <div class="mt-8 max-w-md mx-auto">
-            <div class="flex items-center justify-between text-xs mb-2">
-                <span class="text-gray-500">Subscriber Goal</span>
-                <span class="text-red-400 font-mono font-bold">{{ $youtubeSubscribers }} / 100</span>
-            </div>
-            <div class="h-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-[#1e2a3a] overflow-hidden">
-                <div class="subscriber-bar-fill h-full rounded-full bg-red-600" style="--subscriber-progress: {{ min($youtubeSubscribers, 100) }}%;"></div>
-            </div>
-            <p class="text-[10px] text-gray-600 mt-2 text-center">Subscribe for practical Laravel videos and architecture discussions.</p>
-        </div>
-
-        @if($latestYouTubeVideos->isNotEmpty())
-            <div class="mt-12">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6 text-center">Latest Videos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    @foreach($latestYouTubeVideos as $video)
+            @if($latestYouTubeVideos->isNotEmpty())
+                <div class="grid gap-6 sm:grid-cols-2">
+                    @foreach($latestYouTubeVideos->take(2) as $video)
                         <x-home.youtube-thumbnail-card :video="$video" />
                     @endforeach
                 </div>
-            </div>
-        @endif
+            @else
+                <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="group rounded-xl border border-gray-200 bg-white p-7 transition-colors hover:border-brand-500/50 dark:border-brand-800/60 dark:bg-brand-900/40">
+                    <p class="font-mono text-xs uppercase tracking-[0.16em] text-gray-500">The Laravel Architect</p>
+                    <p class="mt-3 text-xl font-semibold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-300">Follow the channel for the next build session.</p>
+                    <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-400">New videos focus on maintainable Laravel architecture, testing, and production-minded development.</p>
+                </a>
+            @endif
+        </div>
     </div>
 </section>
 

@@ -41,6 +41,55 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/podcasts', 'Podcast'],
 ]);
 
+it('keeps one main landmark on public index pages', function (string $routeName) {
+    $content = $this->get(route($routeName))
+        ->assertOk()
+        ->getContent();
+
+    expect(substr_count($content, '<main'))->toBe(1)
+        ->and(substr_count($content, '</main>'))->toBe(1);
+})->with([
+    'projects' => 'projects.index',
+    'podcasts' => 'podcast.index',
+]);
+
+it('uses a concise primary navigation and a project-focused call to action', function () {
+    $content = $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Writing')
+        ->assertSee('Discuss a Project')
+        ->getContent();
+
+    expect($content)->not->toContain('>Contact Me<');
+});
+
+it('keeps public technology and channel details consistent', function () {
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSee((string) config('public-site.technology.laravel'))
+        ->assertSee('I share practical Laravel videos');
+
+    $this->get(route('uses'))
+        ->assertOk()
+        ->assertSee('Laravel '.config('public-site.technology.laravel'))
+        ->assertSee('Filament '.config('public-site.technology.filament'));
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee(config('public-site.youtube.url'), false)
+        ->assertSee('Practical Laravel, on video');
+});
+
+it('places the mobile uses jump navigation before the equipment list', function () {
+    $content = $this->get(route('uses'))
+        ->assertOk()
+        ->assertSee('aria-label="Jump to uses section"', false)
+        ->getContent();
+
+    expect(strpos($content, 'aria-label="Jump to uses section"'))
+        ->toBeLessThan(strpos($content, 'id="hardware"'));
+});
+
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 

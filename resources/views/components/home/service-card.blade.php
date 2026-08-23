@@ -52,7 +52,7 @@
 
     <div class="relative z-10 flex flex-wrap gap-2">
         @foreach($tags as $tag)
-            <span class="rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider {{ $colors['tag'] }}">{{ $tag }}</span>
+            <span class="rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider {{ $colors['tag'] }}">{{ $tag }}</span>
         @endforeach
     </div>
 

@@ -56,8 +56,8 @@
                                 <div class="about-holo-border relative">
                                     <div class="about-trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-brand-900">
                                         <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                            <span class="text-[9px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-wider">Developer Card</span>
-                                            <span class="whitespace-nowrap rounded-full border border-accent-400/20 bg-accent-400/5 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-accent-400">Legendary</span>
+                                            <span class="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-500">Developer Card</span>
+                                            <span class="whitespace-nowrap rounded-full border border-accent-400/20 bg-accent-400/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-400">Legendary</span>
                                         </div>
                                         <div class="mx-4 rounded-xl overflow-hidden border-4 border-gray-300 dark:border-brand-700 relative flex-1">
                                             <img src="{{ Vite::asset('resources/images/avatar-640.webp') }}" alt="Jeffrey Davidson" width="427" height="640" decoding="async" fetchpriority="high" class="w-full h-full object-cover object-top">
@@ -66,7 +66,7 @@
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-1">
                                                 <div class="h-px flex-1 bg-brand-600/20"></div>
-                                                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-600">Laravel Architect</p>
+                                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Laravel Architect</p>
                                                 <div class="h-px flex-1 bg-brand-600/20"></div>
                                             </div>
                                         </div>
@@ -79,8 +79,8 @@
                                 <div class="about-holo-border relative">
                                     <div class="about-trading-card-inner relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-brand-900">
                                         <div class="flex items-center justify-between px-5 pt-3 pb-2">
-                                            <span class="text-[9px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stat Sheet</span>
-                                            <span class="text-[9px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">#001</span>
+                                            <span class="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">Stat Sheet</span>
+                                            <span class="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">#001</span>
                                         </div>
 
                                         <div class="about-stats-content">
@@ -89,7 +89,7 @@
                                             <h2 class="text-lg font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-0.5">
                                                 <div class="h-px flex-1 bg-accent-600/20"></div>
-                                                <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent-600">Stats &amp; Specs</p>
+                                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent-600">Stats &amp; Specs</p>
                                                 <div class="h-px flex-1 bg-accent-600/20"></div>
                                             </div>
                                         </div>
@@ -98,33 +98,33 @@
                                         <div class="px-4 pb-3">
                                             <div class="grid grid-cols-2 gap-2">
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">PHP</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">PHP</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">8.4</span>
                                                 </div>
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Laravel</span>
-                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">12</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Laravel</span>
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.laravel') }}</span>
                                                 </div>
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Stack</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Stack</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">TALL</span>
                                                 </div>
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Role</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Role</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Sr. Software Eng</span>
                                                 </div>
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Works</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Works</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">Remote</span>
                                                 </div>
                                                 <div class="about-stat-cell px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-brand-950/80 border border-gray-200 dark:border-brand-700/50">
-                                                    <span class="text-[9px] uppercase tracking-wider text-gray-500 dark:text-gray-400 block">Call Me When</span>
+                                                    <span class="block text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Call Me When</span>
                                                     <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
                                                 </div>
                                             </div>
                                             {{-- Flavor text --}}
                                             <div class="mt-3 px-1 pt-3 border-t border-gray-200 dark:border-brand-700/50">
-                                                <p class="text-[11px] italic text-gray-400 dark:text-gray-500 leading-relaxed text-center">"The one you call when the codebase is on fire and nobody else can untangle it."</p>
+                                                <p class="text-center text-xs italic leading-relaxed text-gray-400 dark:text-gray-500">"The one you call when the codebase is on fire and nobody else can untangle it."</p>
                                             </div>
                                         </div>
                                         </div>
@@ -149,6 +149,7 @@
 
                 {{-- Intro Text --}}
                 <div class="flex-1 text-center md:text-left">
+                    <p class="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Profile / 04</p>
                     <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
                         <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
                             <span class="text-brand-600">$</span>
@@ -161,7 +162,7 @@
                         I've spent 15 years learning how to write code that my future self <span class="text-brand-600">won't hate.</span>
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 text-base leading-relaxed max-w-xl mx-auto md:mx-0">
-                        Web developer based in Florida. I build clean, maintainable applications with Laravel, talk about it on a podcast, and I'm putting together a YouTube channel. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
+                        Web developer based in Florida. I build clean, maintainable applications with Laravel and share what I learn through writing, podcast conversations, and practical YouTube videos. When I'm not coding, I'm being a dad, exploring theme parks, and pretending I'm going to get better at poker.
                     </p>
 
                     <div class="flex flex-wrap gap-4 justify-center md:justify-start mt-6">
@@ -209,7 +210,7 @@
                             In 2015, my wife Cassie and I packed up our Kansas lives and moved to <strong class="text-gray-900 dark:text-gray-200">Florida</strong>. In 2017, our daughter <strong class="text-gray-900 dark:text-gray-200">Viola</strong> came along, and being her dad has reshaped my priorities, my patience, and my entire perspective on what matters.
                         </p>
                         <p>
-                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love, and <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel is bringing tutorials and live coding to the mix.
+                            Now I'm building content alongside code. <strong class="text-gray-900 dark:text-gray-200">Coffee with The Laravel Architect</strong> is me talking about the framework I love, and on <strong class="text-gray-900 dark:text-gray-200">The Laravel Architect</strong> YouTube channel I share practical Laravel videos, tutorials, and live coding.
                         </p>
                     </div>
                 </div>
@@ -245,7 +246,7 @@
                                     <div class="text-center mb-4">
                                         <span class="text-xs font-bold text-brand-600">{{ $item['year'] }}</span>
                                         <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1">{{ $item['title'] }}</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-500">{{ $item['desc'] }}</p>
                                     </div>
                                 @endif
 
@@ -256,7 +257,7 @@
                                     <div class="text-center mt-4">
                                         <span class="text-xs font-bold text-brand-600">{{ $item['year'] }}</span>
                                         <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1">{{ $item['title'] }}</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">{{ $item['desc'] }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-500">{{ $item['desc'] }}</p>
                                     </div>
                                 @endif
                             </div>

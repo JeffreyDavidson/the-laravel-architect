@@ -6,7 +6,7 @@
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Contact / 05</p>
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Contact / 06</p>
             <div>
                 <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-6xl">Let’s talk about the work.</h1>
                 <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
@@ -29,14 +29,19 @@
                     </div>
                     @endif
 
+                    @php($firstErrorField = $errors->keys()[0] ?? null)
+
                     @if($errors->any())
-                    <div class="mb-6 p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
-                        <ul class="list-disc list-inside space-y-1">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                        <div role="alert" class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400">
+                            <p class="font-semibold">Please review the highlighted fields.</p>
+                            <ul class="mt-2 list-disc space-y-1 pl-5">
+                                @foreach($errors->getMessages() as $field => $messages)
+                                    @foreach($messages as $error)
+                                        <li><a href="#{{ $field }}" class="underline underline-offset-2">{{ $error }}</a></li>
+                                    @endforeach
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
 
                     <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
@@ -48,39 +53,39 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
-                                <x-form.input id="name" name="name" required placeholder="Your name" />
+                                <x-form.input id="name" name="name" required autocomplete="name" placeholder="Your name" :autofocus="$firstErrorField === 'name'" />
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                                <x-form.input id="email" name="email" type="email" required placeholder="you@example.com" />
+                                <x-form.input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" :autofocus="$firstErrorField === 'email'" />
                             </div>
                         </div>
 
                         <div>
                             <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">What can I help with?</label>
-                            <x-form.select id="type" name="type">
-                                <option value="freelance">Freelance Project</option>
-                                <option value="consulting">Consulting / Code Review</option>
-                                <option value="modernization">Legacy Modernization</option>
-                                <option value="collaboration">Collaboration</option>
-                                <option value="other">Just Saying Hi</option>
+                            <x-form.select id="type" name="type" :autofocus="$firstErrorField === 'type'">
+                                <option value="freelance" @selected(old('type', 'freelance') === 'freelance')>Freelance Project</option>
+                                <option value="consulting" @selected(old('type') === 'consulting')>Consulting / Code Review</option>
+                                <option value="modernization" @selected(old('type') === 'modernization')>Legacy Modernization</option>
+                                <option value="collaboration" @selected(old('type') === 'collaboration')>Collaboration</option>
+                                <option value="other" @selected(old('type') === 'other')>Just Saying Hi</option>
                             </x-form.select>
                         </div>
 
                         <div>
                             <label for="budget" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Budget Range <span class="text-gray-600">(optional)</span></label>
                             <x-form.select id="budget" name="budget">
-                                <option value="">Prefer not to say</option>
-                                <option value="small">Under $5,000</option>
-                                <option value="medium">$5,000 to $15,000</option>
-                                <option value="large">$15,000 to $50,000</option>
-                                <option value="enterprise">$50,000+</option>
+                                <option value="" @selected(old('budget') === null || old('budget') === '')>Prefer not to say</option>
+                                <option value="small" @selected(old('budget') === 'small')>Under $5,000</option>
+                                <option value="medium" @selected(old('budget') === 'medium')>$5,000 to $15,000</option>
+                                <option value="large" @selected(old('budget') === 'large')>$15,000 to $50,000</option>
+                                <option value="enterprise" @selected(old('budget') === 'enterprise')>$50,000+</option>
                             </x-form.select>
                         </div>
 
                         <div>
                             <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-                            <x-form.textarea id="message" name="message" rows="6" required placeholder="Tell me about your project, timeline, and any specific requirements..." />
+                            <x-form.textarea id="message" name="message" rows="6" required placeholder="Tell me about your project, timeline, and any specific requirements..." :autofocus="$firstErrorField === 'message'" />
                         </div>
 
                         <x-button type="submit" class="px-8 py-3.5">

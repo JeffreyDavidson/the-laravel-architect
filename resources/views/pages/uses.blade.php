@@ -6,7 +6,7 @@
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Toolkit / 04</p>
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Toolkit / 05</p>
             <div>
                 <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-6xl">The tools behind the work.</h1>
                 <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-brand-600 underline decoration-brand-600/50 underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">uses.tech</a>.</p>
@@ -14,6 +14,16 @@
             </div>
         </div>
     </x-hero-section>
+
+    <nav aria-label="Jump to uses section" class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016] lg:hidden">
+        <div class="mx-auto flex max-w-7xl gap-6 overflow-x-auto px-4 py-4 font-mono text-xs uppercase tracking-wide text-gray-600 sm:px-6 dark:text-gray-400">
+            <a href="#hardware" class="whitespace-nowrap hover:text-brand-600">Hardware</a>
+            <a href="#development" class="whitespace-nowrap hover:text-brand-600">Development</a>
+            <a href="#content-creation" class="whitespace-nowrap hover:text-brand-600">Content</a>
+            <a href="#productivity" class="whitespace-nowrap hover:text-brand-600">Productivity</a>
+            <a href="#this-site" class="whitespace-nowrap hover:text-brand-600">This site</a>
+        </div>
+    </nav>
 
     {{-- Content --}}
     <div class="bg-gray-50 dark:bg-[#0b1016]">
@@ -113,8 +123,8 @@
                         </div>
                         <div class="grid grid-cols-2 border-y border-gray-200 dark:border-[#1e2a3a] sm:grid-cols-3">
                             @foreach([
-                                ['icon' => '🐘', 'name' => 'Laravel 12', 'desc' => 'Framework'],
-                                ['icon' => '🛡️', 'name' => 'Filament 5', 'desc' => 'Admin panel'],
+                                ['icon' => '🐘', 'name' => 'Laravel '.config('public-site.technology.laravel'), 'desc' => 'Framework'],
+                                ['icon' => '🛡️', 'name' => 'Filament '.config('public-site.technology.filament'), 'desc' => 'Admin panel'],
                                 ['icon' => '🎨', 'name' => 'Tailwind CSS', 'desc' => 'Styling'],
                                 ['icon' => '📄', 'name' => 'Blade', 'desc' => 'Templates'],
                                 ['icon' => '💾', 'name' => 'SQLite', 'desc' => 'Database'],
@@ -132,17 +142,17 @@
                 </div>
 
                 {{-- Sidebar --}}
-                <div class="lg:w-72 flex-shrink-0">
+                <div class="hidden flex-shrink-0 lg:block lg:w-72">
                     <div class="lg:sticky lg:top-24 space-y-6">
                         {{-- Quick nav --}}
                         <section class="border-t border-gray-200 pt-5 dark:border-[#1e2a3a]">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Jump To</h3>
-                            <nav class="space-y-2">
-                                <a href="#hardware" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🖥️ Hardware</a>
-                                <a href="#development" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">💻 Development</a>
-                                <a href="#content-creation" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🎬 Content Creation</a>
-                                <a href="#productivity" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">📋 Productivity</a>
-                                <a href="#this-site" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🧪 This Site</a>
+                            <nav aria-label="Jump to uses section" class="space-y-2">
+                                <a href="#hardware" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Hardware</a>
+                                <a href="#development" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Development</a>
+                                <a href="#content-creation" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Content Creation</a>
+                                <a href="#productivity" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Productivity</a>
+                                <a href="#this-site" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">This Site</a>
                             </nav>
                         </section>
 

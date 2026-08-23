@@ -5,5 +5,5 @@
         <span class="text-base">{{ $tech['icon'] }}</span>
         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $tech['name'] }}</p>
     </div>
-    <p class="text-[11px] text-gray-500">{{ $tech['desc'] }}</p>
+    <p class="text-xs text-gray-500">{{ $tech['desc'] }}</p>
 </div>

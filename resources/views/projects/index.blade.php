@@ -12,14 +12,14 @@
         </div>
 
         <dl class="grid grid-cols-3 border-y border-gray-200 dark:border-[#1e2a3a]">
-            <div class="py-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->count() }}</dd><dt class="mt-1 text-[10px] uppercase tracking-wider text-gray-500">Studies</dt></div>
-            <div class="border-x border-gray-200 px-4 py-4 dark:border-[#1e2a3a]"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->where('is_featured', true)->count() }}</dd><dt class="mt-1 text-[10px] uppercase tracking-wider text-gray-500">Featured</dt></div>
-            <div class="py-4 pl-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</dd><dt class="mt-1 text-[10px] uppercase tracking-wider text-gray-500">Tools</dt></div>
+            <div class="py-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Studies</dt></div>
+            <div class="border-x border-gray-200 px-4 py-4 dark:border-[#1e2a3a]"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->where('is_featured', true)->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Featured</dt></div>
+            <div class="py-4 pl-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Tools</dt></div>
         </dl>
     </div>
 </x-hero-section>
 
-<main class="bg-gray-50 dark:bg-[#0b1016]">
+<div class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="mx-auto max-w-7xl space-y-20 px-4 py-12 sm:px-6 md:py-20 lg:px-8">
         @if($projects->where('is_featured', true)->isNotEmpty())
             <section aria-labelledby="featured-projects-heading">
@@ -36,7 +36,7 @@
                                     <h3 class="text-2xl font-semibold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white md:text-3xl">{{ $project->title }}</h3>
                                     <p class="mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ $project->description }}</p>
                                     @if($project->tech_stack)
-                                        <ul aria-label="Technology stack" class="mt-5 flex flex-wrap gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-wide text-gray-500">
+                                        <ul aria-label="Technology stack" class="mt-5 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs uppercase tracking-wide text-gray-500">
                                             @foreach($project->tech_stack as $tech)<li>{{ $tech }}</li>@endforeach
                                         </ul>
                                     @endif
@@ -61,5 +61,5 @@
             </section>
         @endif
     </div>
-</main>
+</div>
 @endsection

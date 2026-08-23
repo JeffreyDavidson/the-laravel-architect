@@ -17,7 +17,7 @@
     </div>
 </x-hero-section>
 
-<main class="bg-gray-50 dark:bg-[#0b1016]">
+<div class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
         @if($podcast)
             <a href="{{ route('podcast.show', $podcast) }}" class="group grid gap-10 border-y border-gray-200 py-10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400 md:grid-cols-[18rem_minmax(0,1fr)] md:items-center md:py-14 dark:border-[#1e2a3a]">
@@ -33,7 +33,7 @@
                     <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Current show</p>
                     <h2 class="mt-4 text-3xl font-semibold text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white md:text-5xl">{{ $podcast->name }}</h2>
                     <p class="mt-5 max-w-2xl text-base leading-relaxed text-gray-600 dark:text-gray-400">{{ $podcast->description }}</p>
-                    <ul aria-label="Topics" class="mt-7 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-wide text-gray-500">
+                    <ul aria-label="Topics" class="mt-7 flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-wide text-gray-500">
                         @foreach(['Laravel', 'Architecture', 'Testing', 'Career', 'Guest interviews'] as $topic)<li>{{ $topic }}</li>@endforeach
                     </ul>
                     <span class="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-600">View show <x-svg-icon name="arrow-long-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
@@ -66,5 +66,5 @@
             </div>
         @endif
     </div>
-</main>
+</div>
 @endsection

@@ -13,9 +13,9 @@
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
             <div class="flex-1 min-w-0">
                 <div class="mb-5 flex flex-wrap items-center gap-3">
-                    <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-600">Project case study</span>
+                    <span class="rounded-full border border-brand-600/20 bg-brand-600/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-600">Project case study</span>
                     @if($project->is_featured)
-                        <span class="rounded-full border border-accent-400/30 bg-accent-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#7f334d] dark:text-accent-400">Featured work</span>
+                        <span class="rounded-full border border-accent-400/30 bg-accent-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#7f334d] dark:text-accent-400">Featured work</span>
                     @endif
                 </div>
 
