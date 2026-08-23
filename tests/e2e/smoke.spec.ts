@@ -63,8 +63,8 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto('/');
 
-    for (const name of ['Read the Blog', 'View Projects']) {
-        const link = page.getByRole('link', { name, exact: true });
+    for (const name of ['Discuss a Project', 'View Projects']) {
+        const link = page.getByRole('main').getByRole('link', { name, exact: true });
 
         await expect(link).toBeVisible();
         await expect.poll(async () => {

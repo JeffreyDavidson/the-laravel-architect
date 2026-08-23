@@ -163,9 +163,11 @@
     --color-brand-100: #d4e6f4;
     --color-brand-50: #eaf3fa;
 
+    --color-accent-700: #963a5b;
     --color-accent-600: #c47088;
     --color-accent-500: #d4808f;
     --color-accent-400: #e0a0aa;
+    --color-accent-300: #efb6c2;
 }
 
 /* Light mode prose */

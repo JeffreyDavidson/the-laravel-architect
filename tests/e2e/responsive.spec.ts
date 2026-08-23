@@ -67,10 +67,10 @@ test('mobile navigation opens and navigates to the blog', async ({ page }) => {
     await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
     await assertNoHighImpactAccessibilityViolations(page);
 
-    await menu.getByRole('link', { name: 'Blog', exact: true }).click();
+    await menu.getByRole('link', { name: 'Writing', exact: true }).click();
 
     await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.getByRole('heading', { name: 'Blog', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Notes from the work.', exact: true })).toBeVisible();
 });
 
 test('mobile theme choice persists across navigation', async ({ page }) => {

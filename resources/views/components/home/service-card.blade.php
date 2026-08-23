@@ -21,7 +21,7 @@
             'card' => 'service-card-accent',
             'text' => 'text-accent-400',
             'border' => 'border-accent-500/20',
-            'tag' => 'text-accent-600 dark:text-accent-300 bg-accent-500/10 border-accent-500/20',
+            'tag' => 'text-accent-700 dark:text-accent-300 bg-accent-500/10 border-accent-500/20',
         ],
         'green' => [
             'card' => 'service-card-green',

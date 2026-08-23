@@ -89,7 +89,7 @@
                                             <h2 class="text-lg font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-0.5">
                                                 <div class="h-px flex-1 bg-accent-600/20"></div>
-                                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent-600">Stats &amp; Specs</p>
+                                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent-700 dark:text-accent-300">Stats &amp; Specs</p>
                                                 <div class="h-px flex-1 bg-accent-600/20"></div>
                                             </div>
                                         </div>
@@ -124,7 +124,7 @@
                                             </div>
                                             {{-- Flavor text --}}
                                             <div class="mt-3 px-1 pt-3 border-t border-gray-200 dark:border-brand-700/50">
-                                                <p class="text-center text-xs italic leading-relaxed text-gray-400 dark:text-gray-500">"The one you call when the codebase is on fire and nobody else can untangle it."</p>
+                                                <p class="text-center text-xs italic leading-relaxed text-gray-600 dark:text-gray-300">"The one you call when the codebase is on fire and nobody else can untangle it."</p>
                                             </div>
                                         </div>
                                         </div>

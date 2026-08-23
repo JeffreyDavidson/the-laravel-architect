@@ -129,7 +129,7 @@
     }
 
     :root:not(.dark) .service-card-v2 .font-mono .text-brand-400 {
-        color: #2d6aa3;
+        color: #7eb0dc !important;
     }
 
     :root:not(.dark) .service-card-v2 .font-mono .text-accent-400 {
@@ -146,6 +146,18 @@
 
     :root:not(.dark) .service-card-v2 .font-mono .text-white {
         color: #1f2328;
+    }
+
+    :root:not(.dark) .service-card-v2 .service-arrow.text-accent-400 {
+        color: #963a5b !important;
+    }
+
+    :root:not(.dark) .service-card-v2 .service-arrow.text-green-400 {
+        color: #14733b !important;
+    }
+
+    :root:not(.dark) .service-card-v2 .service-arrow.text-amber-400 {
+        color: #855400 !important;
     }
 
     :root:not(.dark) .service-card-v2 .font-mono .animate-pulse {

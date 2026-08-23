@@ -280,6 +280,10 @@
         font-weight: 600;
     }
 
+    .dark .architecture-branch {
+        color: #b8c4d1;
+    }
+
     .architecture-caption {
         max-width: 30rem;
         color: #64748b;
