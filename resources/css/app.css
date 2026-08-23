@@ -185,8 +185,7 @@
 /* Light mode subtle background patterns */
 :root:not(.dark) .noise-overlay::after { opacity: 0.015; }
 :root:not(.dark) .dot-grid-bg::before {
-    background-image: radial-gradient(circle, #000000 1px, transparent 1px);
-    opacity: 0.03;
+    content: none;
 }
 
 /* Code block styling for blog posts */
@@ -287,17 +286,3 @@
     background-repeat: repeat;
     background-size: 256px 256px;
 }
-
-/* Dot grid background - dark mode only */
-.dark .dot-grid-bg { position: relative; }
-.dark .dot-grid-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.03;
-    pointer-events: none;
-    background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-    background-size: 24px 24px;
-    z-index: 0;
-}
-.dark .dot-grid-bg > * { position: relative; z-index: 1; }

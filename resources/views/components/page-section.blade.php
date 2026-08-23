@@ -1,7 +1,7 @@
 @props(['class' => ''])
 
-<div class="dot-grid-bg bg-gray-50 dark:bg-transparent {{ $class }}">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+<div class="bg-gray-50 dark:bg-[#0b1016] {{ $class }}">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
         {{ $slot }}
     </div>
 </div>

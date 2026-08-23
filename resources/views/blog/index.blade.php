@@ -5,13 +5,17 @@
 @section('content')
 {{-- Hero --}}
 <x-hero-section>
-    <x-terminal-prompt command="blog:latest" />
-    <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">Blog</h1>
-    <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">Thoughts on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.</p>
+    <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
+        <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Writing / 01</p>
+        <div>
+            <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-6xl">Notes from the work.</h1>
+            <p class="max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">Thoughts on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.</p>
+        </div>
+    </div>
 </x-hero-section>
 
 {{-- Content --}}
-<div class="dot-grid-bg bg-gray-50 dark:bg-transparent" x-data="{
+<div class="bg-gray-50 dark:bg-[#0b1016]" x-data="{
     activeCategory: 'all',
     search: '',
     posts: [
@@ -28,10 +32,10 @@
         return this.posts.filter(p => this.isVisible(p)).length;
     }
 }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
 
         {{-- Search + Category filters --}}
-        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
+        <div class="mb-12 flex flex-col gap-4 border-b border-gray-200 pb-6 sm:flex-row sm:items-center dark:border-[#1e2a3a]">
             {{-- Search --}}
             <div class="relative flex-shrink-0 sm:w-72">
                 <label for="blog-search" class="sr-only">Search posts</label>
@@ -67,7 +71,7 @@
         </div>
 
         {{-- Posts --}}
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col">
             @forelse($posts as $post)
             <div :class="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' }) ? 'blog-card-wrapper' : 'blog-card-wrapper collapsed'"
                 class="blog-card-wrapper">

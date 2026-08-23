@@ -2,15 +2,6 @@
 
 @section('content')
 <style>
-    /* Artwork glow pulse */
-    @keyframes glowPulse {
-        0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-        50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); }
-    }
-    .artwork-glow {
-        animation: glowPulse 4s ease-in-out infinite;
-    }
-
     /* Waveform visualization */
     .waveform-bar {
         animation: waveform var(--dur) ease-in-out infinite alternate;
@@ -62,11 +53,7 @@
 </style>
 
 {{-- ===== EPISODE HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
-    {{-- Background glow from podcast color --}}
-    <div class="hidden dark:block absolute top-1/2 left-1/3 w-[600px] h-[600px] rounded-full opacity-[0.07] blur-[120px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-    <div class="hidden dark:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.05] blur-[100px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-
+<section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 relative z-10">
@@ -78,15 +65,12 @@
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
-            {{-- Podcast artwork with glow --}}
+            {{-- Podcast artwork --}}
             <div class="flex-shrink-0 relative">
-                {{-- Glow behind artwork --}}
-                <div class="artwork-glow absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-[60px]" style="background: {{ $podcast->color }};"></div>
-
                 @if($podcast->cover_image_url)
                 <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
-                <div class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}33, {{ $podcast->color }}11);">
+                <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] lg:h-56 lg:w-56">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                 </div>
                 @endif
@@ -127,7 +111,7 @@
 </section>
 
 {{-- ===== MAIN CONTENT ===== --}}
-<div class="dot-grid-bg">
+<div class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div class="flex flex-col lg:flex-row gap-12">
 
@@ -136,7 +120,7 @@
 
                 {{-- Custom Audio Player --}}
                 @if($episode->audio_url)
-                <div class="mb-10 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden" style="box-shadow: 0 0 60px {{ $podcast->color }}08;"
+                <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
                      x-data="{
                         audio: null,
                         playing: false,
@@ -234,7 +218,7 @@
                             </button>
 
                             {{-- Play/Pause --}}
-                            <button type="button" @click="toggle()" :aria-label="playing ? 'Pause episode' : 'Play episode'" :aria-pressed="playing" class="flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105" style="background: {{ $podcast->color }}; box-shadow: 0 0 30px {{ $podcast->color }}40;">
+                            <button type="button" @click="toggle()" :aria-label="playing ? 'Pause episode' : 'Play episode'" :aria-pressed="playing" class="flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105" style="background: {{ $podcast->color }};">
                                 <svg x-show="!playing" x-cloak aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 <svg x-show="playing" x-cloak aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                             </button>
@@ -258,7 +242,7 @@
 
                 {{-- Description Fallback (no audio, no show_notes, no youtube) --}}
                 @if(!$episode->audio_url && !$episode->show_notes && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
-                <div class="mb-10 p-8 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] relative" style="box-shadow: 0 0 40px {{ $podcast->color }}06;">
+                <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
                     <div class="absolute top-6 left-6 text-6xl leading-none opacity-15" style="color: {{ $podcast->color }};">"</div>
                     <div class="pl-8 pt-4">
                         <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed italic">{{ $episode->description }}</p>

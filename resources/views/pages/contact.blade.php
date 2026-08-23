@@ -5,15 +5,14 @@
 @section('content')
     {{-- Hero --}}
     <x-hero-section>
-        <x-terminal-prompt command="contact:new" />
-        <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-5xl">Let's Build Something <span class="text-brand-600">Together</span></h1>
-        <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
-        <p class="text-green-700 dark:text-green-400 text-sm mt-4 flex items-center gap-2">
-            <span class="relative flex h-2 w-2">
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            Available for Projects
-        </p>
+        <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Contact / 05</p>
+            <div>
+                <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-6xl">Let’s talk about the work.</h1>
+                <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about Laravel? I'd love to hear from you.</p>
+                <p class="mt-5 font-mono text-xs uppercase tracking-wide text-gray-500">Available for select projects</p>
+            </div>
+        </div>
     </x-hero-section>
 
     {{-- Content --}}
@@ -73,8 +72,8 @@
                             <x-form.select id="budget" name="budget">
                                 <option value="">Prefer not to say</option>
                                 <option value="small">Under $5,000</option>
-                                <option value="medium">$5,000 – $15,000</option>
-                                <option value="large">$15,000 – $50,000</option>
+                                <option value="medium">$5,000 to $15,000</option>
+                                <option value="large">$15,000 to $50,000</option>
                                 <option value="enterprise">$50,000+</option>
                             </x-form.select>
                         </div>
@@ -84,7 +83,7 @@
                             <x-form.textarea id="message" name="message" rows="6" required placeholder="Tell me about your project, timeline, and any specific requirements..." />
                         </div>
 
-                        <x-button type="submit" class="px-8 py-3.5 shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+                        <x-button type="submit" class="px-8 py-3.5">
                             Send Message
                             <x-svg-icon name="arrow-right" class="w-4 h-4" />
                         </x-button>
@@ -97,7 +96,7 @@
                 {{-- Sidebar --}}
                 <div class="lg:w-80 flex-shrink-0 space-y-6">
                     {{-- What to Expect --}}
-                    <x-card class="p-6">
+                    <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
                             <x-svg-icon name="info" class="h-4 w-4 text-brand-600" />
                             What to Expect
@@ -105,7 +104,7 @@
                         <ul role="list" class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                             <li class="flex items-start gap-2">
                                 <x-svg-icon name="check" class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-600" />
-                                I'll respond within 24–48 hours
+                                I'll respond within 24 to 48 hours
                             </li>
                             <li class="flex items-start gap-2">
                                 <x-svg-icon name="check" class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-600" />
@@ -120,10 +119,10 @@
                                 No obligation, no pressure
                             </li>
                         </ul>
-                    </x-card>
+                    </section>
 
                     {{-- Services --}}
-                    <x-card class="p-6">
+                    <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
                             <x-svg-icon name="settings" class="h-4 w-4 text-brand-600" />
                             Services
@@ -135,7 +134,7 @@
                             </x-public.muted-card>
                             <x-public.muted-card>
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white">Legacy Modernization</p>
-                                <p class="text-xs text-gray-500 mt-0.5">CodeIgniter, CakePHP, Yii → Laravel</p>
+                                <p class="text-xs text-gray-500 mt-0.5">CodeIgniter, CakePHP, and Yii to Laravel</p>
                             </x-public.muted-card>
                             <x-public.muted-card>
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white">Code Review & Consulting</p>
@@ -146,16 +145,16 @@
                                 <p class="text-xs text-gray-500 mt-0.5">Feature, Integration & Unit test suites</p>
                             </x-public.muted-card>
                         </div>
-                    </x-card>
+                    </section>
 
                     {{-- Connect --}}
-                    <x-card class="p-6">
+                    <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
                         <h3 class="font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
                             <x-svg-icon name="chat" class="h-4 w-4 text-brand-600" />
                             Other Ways to Connect
                         </h3>
                         <x-social-links variant="list" />
-                    </x-card>
+                    </section>
                 </div>
             </div>
     </x-page-section>

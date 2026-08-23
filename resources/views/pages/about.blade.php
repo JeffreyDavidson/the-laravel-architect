@@ -39,19 +39,12 @@
     @endphp
 
     {{-- Hero --}}
-    <div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-brand-700 bg-white dark:bg-transparent">
-        {{-- Ambient glow --}}
-        <div class="absolute left-1/4 top-1/3 h-[500px] w-[500px] rounded-full bg-brand-600 opacity-0 blur-[120px] dark:opacity-[0.06]"></div>
-        <div class="absolute bottom-0 right-1/4 h-[400px] w-[400px] rounded-full bg-accent-600 opacity-0 blur-[100px] dark:opacity-[0.04]"></div>
-
+    <div class="relative overflow-hidden border-b border-gray-200 bg-white dark:border-brand-700 dark:bg-[#0b1016]">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
                 <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
-                    {{-- Pulsing ambient glow --}}
-                    <div class="about-trading-card-glow absolute inset-0 -m-8 rounded-full bg-gradient-to-br from-brand-600 via-accent-600 to-transparent blur-[60px] opacity-0 dark:opacity-100"></div>
-
                     <div class="about-card-deck">
                         <div class="about-ghost-card about-ghost-card-2"></div>
                         <div class="about-ghost-card about-ghost-card-1"></div>
@@ -72,9 +65,9 @@
                                         <div class="px-5 pt-3 pb-3 text-center">
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-1">
-                                                <div class="h-px flex-1 bg-gradient-to-r from-transparent to-brand-600/30"></div>
+                                                <div class="h-px flex-1 bg-brand-600/20"></div>
                                                 <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-600">Laravel Architect</p>
-                                                <div class="h-px flex-1 bg-gradient-to-l from-transparent to-brand-600/30"></div>
+                                                <div class="h-px flex-1 bg-brand-600/20"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -95,9 +88,9 @@
                                         <div class="px-5 pb-3 pt-2 text-center">
                                             <h2 class="text-lg font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>
                                             <div class="flex items-center justify-center gap-2 mt-0.5">
-                                                <div class="h-px flex-1 bg-gradient-to-r from-transparent to-accent-600/30"></div>
+                                                <div class="h-px flex-1 bg-accent-600/20"></div>
                                                 <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent-600">Stats &amp; Specs</p>
-                                                <div class="h-px flex-1 bg-gradient-to-l from-transparent to-accent-600/30"></div>
+                                                <div class="h-px flex-1 bg-accent-600/20"></div>
                                             </div>
                                         </div>
 
@@ -187,7 +180,7 @@
     </div>
 
     {{-- The Story --}}
-    <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
+    <div class="bg-gray-50 dark:bg-[#0b1016]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="flex flex-col lg:flex-row gap-16">
                 {{-- Main story --}}
@@ -242,7 +235,7 @@
                 <h2 class="text-2xl font-extrabold mb-10 text-center text-gray-900 dark:text-white">Timeline</h2>
                 <div class="relative">
                     {{-- Horizontal line --}}
-                    <div class="absolute left-0 right-0 top-1/2 h-0.5 bg-gradient-to-r from-transparent via-brand-600/40 to-transparent"></div>
+                    <div class="absolute left-0 right-0 top-1/2 h-px bg-brand-600/25"></div>
 
                     <div class="grid grid-cols-6 gap-2">
                         @foreach($timelineItems as $i => $item)
@@ -257,7 +250,7 @@
                                 @endif
 
                                 {{-- Dot --}}
-                                <div class="w-3 h-3 rounded-full bg-brand-600 shadow-[0_0_10px_rgba(74,127,191,0.4)] z-10 flex-shrink-0"></div>
+                                <div class="z-10 h-3 w-3 flex-shrink-0 rounded-full bg-brand-600"></div>
 
                                 @if($i % 2 !== 0)
                                     <div class="text-center mt-4">
@@ -343,7 +336,7 @@
     </div>
 
     {{-- Tech Stack --}}
-    <div class="border-t border-gray-200 dark:border-brand-700 dot-grid-bg bg-white dark:bg-transparent">
+    <div class="border-t border-gray-200 bg-white dark:border-brand-700 dark:bg-[#0b1016]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-3">Toolbox</p>
@@ -358,10 +351,9 @@
     </div>
 
     {{-- CTA --}}
-    <div class="relative border-t border-gray-200 dark:border-brand-700 overflow-hidden bg-gray-50 dark:bg-transparent">
+    <div class="relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-brand-700 dark:bg-[#0b1016]">
         {{-- Floating orbs --}}
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-[0.08] dark:opacity-[0.06] blur-[80px] bg-brand-600"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-[0.06] dark:opacity-[0.06] blur-[80px] bg-accent-600"></div>
+        <div class="hidden"></div>
 
         <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 text-green-800 dark:text-green-400 text-xs font-bold uppercase tracking-widest mb-6 border border-green-500/20">
@@ -371,10 +363,10 @@
                 Available for Projects
             </div>
             <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
-                <span class="about-cta-shimmer">Want to work together?</span>
+                <span>Want to work together?</span>
             </h2>
             <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-xl mx-auto">I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about what you're building.</p>
-            <x-button href="{{ route('contact') }}" class="px-8 py-3.5 text-lg shadow-[0_0_30px_rgba(74,127,191,0.3)]">
+            <x-button href="{{ route('contact') }}" class="px-8 py-3.5 text-lg">
                 Contact Me
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </x-button>
