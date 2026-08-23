@@ -12,6 +12,10 @@ beforeEach(function () {
         'queue.default' => 'database',
         'mail.default' => 'resend',
         'mail.contact_to' => 'contact@thelaravelarchitect.com',
+        'services.turnstile.site_key' => 'production-site-key',
+        'services.turnstile.secret_key' => 'production-secret-key',
+        'services.turnstile.contact_action' => 'contact-form',
+        'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
         'database.default' => 'sqlite',
         'database.connections.sqlite.database' => '/var/www/the-laravel-architect/database/database.sqlite',
         'backup.backup.destination.disks' => ['local', 's3'],
@@ -78,6 +82,10 @@ it('reports every unsafe production setting without exposing its value', functio
         'app.admin_email' => 'admin@example.test',
         'session.secure' => false,
         'queue.default' => 'sync',
+        'services.turnstile.site_key' => null,
+        'services.turnstile.secret_key' => null,
+        'services.turnstile.contact_action' => null,
+        'services.turnstile.allowed_hostnames' => ['attacker.example'],
         'database.connections.sqlite.database' => 'database/database.sqlite',
         'backup.backup.destination.disks' => ['local'],
         'backup.backup.password' => null,
@@ -95,6 +103,10 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('ADMIN_EMAIL must use a private production address.')
         ->expectsOutputToContain('SESSION_SECURE_COOKIE must be true.')
         ->expectsOutputToContain('QUEUE_CONNECTION must use an asynchronous driver.')
+        ->expectsOutputToContain('TURNSTILE_SITE_KEY must be configured.')
+        ->expectsOutputToContain('TURNSTILE_SECRET_KEY must be configured.')
+        ->expectsOutputToContain('TURNSTILE_CONTACT_ACTION must be configured.')
+        ->expectsOutputToContain('TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.')
         ->expectsOutputToContain('DB_DATABASE must be an absolute path.')
         ->expectsOutputToContain('BACKUP_DISKS must include an off-server disk.')
         ->expectsOutputToContain('BACKUP_ARCHIVE_PASSWORD must be configured.')
