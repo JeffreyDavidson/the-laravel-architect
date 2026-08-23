@@ -75,17 +75,16 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     }
 });
 
-test('homepage code preview switches between examples', async ({ page }) => {
+test('homepage architecture scene keeps an accessible fallback', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/');
 
-    await expect(page.locator('#code-routes')).toBeVisible();
-    await expect(page.locator('#code-architect')).toBeHidden();
+    const scene = page.locator('[data-architecture-scene]');
 
-    await page.locator('[data-code-tab="architect"]').click();
-
-    await expect(page.locator('#code-routes')).toBeHidden();
-    await expect(page.locator('#code-architect')).toBeVisible();
+    await expect(scene).toBeVisible();
+    await expect(scene.locator('[data-architecture-fallback]')).toBeAttached();
+    await expect.poll(async () => scene.getAttribute('data-architecture-state'))
+        .toMatch(/ready|fallback/);
 });
 
 test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {

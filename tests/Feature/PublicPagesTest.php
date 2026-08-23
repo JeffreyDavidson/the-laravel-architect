@@ -64,15 +64,20 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee(Vite::asset('resources/js/app.js'), false);
 });
 
-it('renders one responsive and accessible homepage code preview', function () {
+it('renders an accessible homepage architecture scene with a static fallback', function () {
     $content = $this->get(route('home'))
         ->assertOk()
-        ->assertSee('role="tablist"', false)
-        ->assertSee('aria-controls="code-routes"', false)
+        ->assertSee('data-architecture-scene', false)
+        ->assertSee('aria-labelledby="architecture-title architecture-description"', false)
+        ->assertSee('data-architecture-fallback', false)
+        ->assertSee('Request', false)
+        ->assertSee('Domain', false)
+        ->assertSee('Data', false)
         ->getContent();
 
-    expect(substr_count($content, 'id="code-editor"'))->toBe(1)
-        ->and($content)->not->toContain('mobileTab');
+    expect(substr_count($content, 'data-architecture-scene'))->toBe(1)
+        ->and($content)->not->toContain('id="code-editor"')
+        ->and($content)->not->toContain('role="tablist"');
 });
 
 it('places the theme bootstrap inside the document head', function () {

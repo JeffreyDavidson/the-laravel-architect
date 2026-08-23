@@ -83,10 +83,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-brand-950 dark:to-brand-950">
-        {{-- Subtle grid background --}}
-        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.015]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 24px 24px;"></div>
-
+    <footer class="relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-[#1e2a3a] dark:bg-brand-950">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-8">
 
             {{-- Top section: Brand + Links --}}
@@ -130,8 +127,8 @@
                 </div>
             </div>
 
-            {{-- Gradient line --}}
-            <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #4A7FBF55, #9D517544, #4A7FBF55, transparent);"></div>
+            {{-- Divider --}}
+            <div class="h-px w-full bg-gray-200 dark:bg-brand-800"></div>
 
             {{-- Bottom bar --}}
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">

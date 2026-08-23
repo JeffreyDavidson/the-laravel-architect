@@ -1,6 +1,6 @@
 @props(['testimonials'])
 
-<section {{ $attributes->class(['noise-overlay bg-gray-50 py-12 dark:bg-transparent sm:py-20']) }}>
+<section {{ $attributes->class(['border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20']) }}>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             eyebrow="Working principles"
