@@ -2,12 +2,6 @@
 
 @section('content')
 <style>
-    @keyframes glowPulse {
-        0%, 100% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-        50% { opacity: 0.45; transform: translate(-50%, -50%) scale(1.08); }
-    }
-    .artwork-glow { animation: glowPulse 4s ease-in-out infinite; }
-
     .eq-bar {
         animation: equalize var(--dur) ease-in-out infinite alternate;
         transform-origin: bottom;
@@ -50,11 +44,7 @@
 </style>
 
 {{-- ===== PODCAST HERO ===== --}}
-<section class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a]">
-    {{-- Ambient glow --}}
-    <div class="hidden dark:block absolute top-0 left-1/3 w-[700px] h-[700px] rounded-full opacity-[0.06] blur-[120px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-    <div class="hidden dark:block absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.04] blur-[100px]" style="background: radial-gradient(circle, {{ $podcast->color }}, transparent 70%);"></div>
-
+<section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         {{-- Breadcrumb --}}
         <a href="{{ route('podcast.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors mb-8 relative z-10">
@@ -63,14 +53,12 @@
         </a>
 
         <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
-            {{-- Artwork with glow --}}
+            {{-- Artwork --}}
             <div class="flex-shrink-0 relative">
-                <div class="artwork-glow absolute top-1/2 left-1/2 w-72 h-72 rounded-full blur-[80px]" style="background: {{ $podcast->color }};"></div>
-
                 @if($podcast->cover_image_url)
                 <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
                 @else
-                <div class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl shadow-2xl flex items-center justify-center ring-1 ring-white/10" style="background: linear-gradient(135deg, {{ $podcast->color }}44, {{ $podcast->color }}11);">
+                <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] md:h-56 md:w-56">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                 </div>
                 @endif
@@ -164,9 +152,9 @@
 @if($latestEpisode)
 <section class="border-b border-gray-200 dark:border-[#1e2a3a]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <a href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}" class="group block rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117] overflow-hidden hover:border-opacity-60 transition-all" style="box-shadow: 0 0 60px {{ $podcast->color }}06;">
+        <a href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}" class="group block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-colors hover:border-brand-600/50 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
             {{-- Top accent --}}
-            <div class="h-[2px]" style="background: linear-gradient(90deg, transparent, {{ $podcast->color }}, transparent);"></div>
+            <div class="h-[2px]" style="background: {{ $podcast->color }};"></div>
 
             <div class="p-8 md:p-10">
                 <div class="flex items-center gap-3 mb-5">
@@ -199,7 +187,7 @@
                 @endif
 
                 <div class="inline-flex items-center gap-2 text-sm font-semibold" style="color: {{ $podcast->color }};">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style="background: {{ $podcast->color }}; box-shadow: 0 0 20px {{ $podcast->color }}40;">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style="background: {{ $podcast->color }};">
                         <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </div>
                     <span>Listen Now</span>
@@ -211,7 +199,7 @@
 @endif
 
 {{-- ===== ALL EPISODES ===== --}}
-<section class="dot-grid-bg">
+<section class="bg-gray-50 dark:bg-[#0b1016]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">

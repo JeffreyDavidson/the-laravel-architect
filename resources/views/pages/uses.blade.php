@@ -5,14 +5,28 @@
 @section('content')
     {{-- Hero --}}
     <x-hero-section>
-        <x-terminal-prompt command="uses:list" />
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">/uses</h1>
-        <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-brand-600 underline decoration-brand-600/50 underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">uses.tech</a>.</p>
-        <p class="text-gray-500 text-sm mt-4">Last updated: February 2026</p>
+        <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-brand-600">Toolkit / 05</p>
+            <div>
+                <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-6xl">The tools behind the work.</h1>
+                <p class="text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">The hardware, software, and tools I use daily for development, content creation, and life. Inspired by <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="text-brand-600 underline decoration-brand-600/50 underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">uses.tech</a>.</p>
+                <p class="mt-5 font-mono text-xs uppercase tracking-wide text-gray-500">Last updated February 2026</p>
+            </div>
+        </div>
     </x-hero-section>
 
+    <nav aria-label="Jump to uses section" class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016] lg:hidden">
+        <div class="mx-auto flex max-w-7xl gap-6 overflow-x-auto px-4 py-4 font-mono text-xs uppercase tracking-wide text-gray-600 sm:px-6 dark:text-gray-400">
+            <a href="#hardware" class="whitespace-nowrap hover:text-brand-600">Hardware</a>
+            <a href="#development" class="whitespace-nowrap hover:text-brand-600">Development</a>
+            <a href="#content-creation" class="whitespace-nowrap hover:text-brand-600">Content</a>
+            <a href="#productivity" class="whitespace-nowrap hover:text-brand-600">Productivity</a>
+            <a href="#this-site" class="whitespace-nowrap hover:text-brand-600">This site</a>
+        </div>
+    </nav>
+
     {{-- Content --}}
-    <div class="dot-grid-bg bg-gray-50 dark:bg-transparent">
+    <div class="bg-gray-50 dark:bg-[#0b1016]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
             <div class="flex flex-col lg:flex-row gap-12">
 
@@ -107,10 +121,10 @@
                             <x-public.section-icon><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></x-public.section-icon>
                             <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">This Site Is Built With</h2>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-2 border-y border-gray-200 dark:border-[#1e2a3a] sm:grid-cols-3">
                             @foreach([
-                                ['icon' => '🐘', 'name' => 'Laravel 12', 'desc' => 'Framework'],
-                                ['icon' => '🛡️', 'name' => 'Filament 5', 'desc' => 'Admin panel'],
+                                ['icon' => '🐘', 'name' => 'Laravel '.config('public-site.technology.laravel'), 'desc' => 'Framework'],
+                                ['icon' => '🛡️', 'name' => 'Filament '.config('public-site.technology.filament'), 'desc' => 'Admin panel'],
                                 ['icon' => '🎨', 'name' => 'Tailwind CSS', 'desc' => 'Styling'],
                                 ['icon' => '📄', 'name' => 'Blade', 'desc' => 'Templates'],
                                 ['icon' => '💾', 'name' => 'SQLite', 'desc' => 'Database'],
@@ -128,29 +142,29 @@
                 </div>
 
                 {{-- Sidebar --}}
-                <div class="lg:w-72 flex-shrink-0">
+                <div class="hidden flex-shrink-0 lg:block lg:w-72">
                     <div class="lg:sticky lg:top-24 space-y-6">
                         {{-- Quick nav --}}
-                        <x-public.surface-card class="p-5">
+                        <section class="border-t border-gray-200 pt-5 dark:border-[#1e2a3a]">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Jump To</h3>
-                            <nav class="space-y-2">
-                                <a href="#hardware" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🖥️ Hardware</a>
-                                <a href="#development" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">💻 Development</a>
-                                <a href="#content-creation" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🎬 Content Creation</a>
-                                <a href="#productivity" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">📋 Productivity</a>
-                                <a href="#this-site" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">🧪 This Site</a>
+                            <nav aria-label="Jump to uses section" class="space-y-2">
+                                <a href="#hardware" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Hardware</a>
+                                <a href="#development" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Development</a>
+                                <a href="#content-creation" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Content Creation</a>
+                                <a href="#productivity" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">Productivity</a>
+                                <a href="#this-site" class="block text-sm text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400">This Site</a>
                             </nav>
-                        </x-public.surface-card>
+                        </section>
 
                         {{-- uses.tech --}}
-                        <x-public.surface-card class="p-5">
+                        <section class="border-t border-gray-200 pt-5 dark:border-[#1e2a3a]">
                             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Inspired By</h3>
                             <a href="https://uses.tech" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm text-brand-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">
                                 uses.tech
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
                             <p class="text-xs text-gray-500 mt-1.5">A directory of developer /uses pages.</p>
-                        </x-public.surface-card>
+                        </section>
                     </div>
                 </div>
             </div>

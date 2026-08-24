@@ -1,10 +1,9 @@
 @props(['class' => ''])
 
-<div class="noise-overlay relative overflow-hidden border-b border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-transparent {{ $class }}">
-    <x-ambient-glow />
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+<header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016] {{ $class }}">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
         <div class="max-w-3xl">
             {{ $slot }}
         </div>
     </div>
-</div>
+</header>

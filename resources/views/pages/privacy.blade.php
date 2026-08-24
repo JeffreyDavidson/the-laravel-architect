@@ -7,7 +7,7 @@
         <x-terminal-prompt command="privacy:read" />
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-5xl">A clear view of your <span class="text-brand-600">privacy</span></h1>
         <p class="max-w-3xl text-lg leading-relaxed text-gray-600 dark:text-gray-400 md:text-xl">This notice explains what The Laravel Architect collects, why it is needed, and the choices available to you.</p>
-        <p class="mt-4 text-sm text-gray-500 dark:text-gray-500">Last updated August 21, 2026</p>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-500">Last updated August 23, 2026</p>
     </x-hero-section>
 
     <x-page-section>
@@ -53,14 +53,15 @@
                     <h2 id="privacy-automatic" class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Site operation and analytics</h2>
                     <div class="space-y-4 leading-relaxed">
                         <p>Laravel uses essential session and security cookies to protect forms, preserve validation messages, and support authenticated administration. The server may process standard request information such as IP address, browser details, requested URL, and timestamps for security, rate limiting, and operational logs.</p>
-                        <p>When configured, the site loads Fathom Analytics to understand aggregate site traffic. The site also loads fonts from Bunny Fonts. Podcast pages may include a YouTube player; loading or using that player can send information to YouTube under its own privacy practices.</p>
+                        <p>The contact form uses Cloudflare Turnstile to distinguish legitimate submissions from automated abuse. Cloudflare may process connection and browser information needed to perform that security check under its own privacy practices.</p>
+                        <p>When configured, the site loads Fathom Analytics to understand aggregate site traffic. Podcast pages may include a YouTube player; loading or using that player can send information to YouTube under its own privacy practices.</p>
                     </div>
                 </section>
 
                 <section aria-labelledby="privacy-use">
                     <h2 id="privacy-use" class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">How information is used and shared</h2>
                     <p class="mb-4 leading-relaxed">Information is used to answer inquiries, deliver and administer newsletter subscriptions, review and publish approved testimonials, secure the application, prevent abuse, and understand site performance.</p>
-                    <p class="leading-relaxed">Information is shared only with service providers needed to operate the site—such as hosting, email delivery, analytics, fonts, and embedded media—or when disclosure is required to comply with law or protect the site and its users. Those providers process information under their own terms and privacy notices.</p>
+                    <p class="leading-relaxed">Information is shared only with service providers needed to operate the site—such as hosting, email delivery, analytics, and embedded media—or when disclosure is required to comply with law or protect the site and its users. Those providers process information under their own terms and privacy notices.</p>
                 </section>
 
                 <section aria-labelledby="privacy-retention">

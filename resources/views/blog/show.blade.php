@@ -5,13 +5,13 @@
 @endpush
 
 @section('content')
-    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <article class="mx-auto max-w-4xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
         {{-- Header --}}
         <header class="mb-10">
             @if($post->category)
             <a href="{{ route('blog.category', $post->category) }}" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide hover:underline">{{ $post->category->name }}</a>
             @endif
-            <h1 class="text-3xl sm:text-4xl font-bold mt-2 mb-4 text-gray-900 dark:text-white">{{ $post->title }}</h1>
+            <h1 class="mb-5 mt-3 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">{{ $post->title }}</h1>
             <div class="flex items-center gap-4 text-sm text-gray-500">
                 <span>{{ $post->author->name ?? 'Jeffrey Davidson' }}</span>
                 <span>·</span>
@@ -51,19 +51,22 @@
         {{-- Related Posts --}}
         @if($relatedPosts->count())
         <div class="mt-16 pt-10 border-t border-gray-200 dark:border-gray-700/50">
-            <h2 class="text-xl font-bold mb-8 text-gray-900 dark:text-white">Continue Reading</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-brand-600">From the archive</p>
+            <h2 class="mb-8 text-2xl font-bold text-gray-900 dark:text-white">Continue reading</h2>
+            <div class="divide-y divide-gray-200 border-y border-gray-200 dark:divide-[#1e2a3a] dark:border-[#1e2a3a]">
                 @foreach($relatedPosts as $related)
-                <a href="{{ route('blog.show', $related) }}" class="group block bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-xl p-5 hover:border-blue-500/30 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-[color,border-color,background-color,box-shadow] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">
-                    <div class="flex items-center gap-3 mb-3">
+                <a href="{{ route('blog.show', $related) }}" class="group grid gap-3 py-5 transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:hover:bg-[#111820] sm:grid-cols-[10rem_minmax(0,1fr)] sm:px-3">
+                    <div class="flex items-center gap-3 sm:block">
                         @if($related->category)
-                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">{{ $related->category->name }}</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-brand-600">{{ $related->category->name }}</span>
                         @endif
-                        <span class="text-xs text-gray-500">{{ $related->reading_time }} min read</span>
+                        <span class="text-xs text-gray-500 sm:mt-2 sm:block">{{ $related->reading_time }} min read</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug mb-2">{{ $related->title }}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ $related->excerpt }}</p>
-                    <div class="mt-3 text-xs text-gray-500">{{ $related->published_at->format('M d, Y') }}</div>
+                    <div>
+                        <h3 class="font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white">{{ $related->title }}</h3>
+                        <p class="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{{ $related->excerpt }}</p>
+                        <div class="mt-3 text-xs text-gray-500">{{ $related->published_at->format('M d, Y') }}</div>
+                    </div>
                 </a>
                 @endforeach
             </div>

@@ -9,7 +9,7 @@
 @endphp
 
 <div {{ $attributes->class([
-    'about-value-card rounded-2xl border border-gray-200 bg-white p-6 dark:border-[#1e2a3a] dark:bg-[#0D1117]',
+    'about-value-card border-t border-gray-200 py-6 dark:border-[#1e2a3a]',
     'about-value-card-accent' => $accent,
 ]) }}>
     <x-public.section-icon :variant="$accent ? 'accent' : 'brand'" class="mb-4">

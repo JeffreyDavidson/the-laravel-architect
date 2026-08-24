@@ -41,10 +41,59 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/podcasts', 'Podcast'],
 ]);
 
+it('keeps one main landmark on public index pages', function (string $routeName) {
+    $content = $this->get(route($routeName))
+        ->assertOk()
+        ->getContent();
+
+    expect(substr_count($content, '<main'))->toBe(1)
+        ->and(substr_count($content, '</main>'))->toBe(1);
+})->with([
+    'projects' => 'projects.index',
+    'podcasts' => 'podcast.index',
+]);
+
+it('uses a concise primary navigation and a project-focused call to action', function () {
+    $content = $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Writing')
+        ->assertSee('Discuss a Project')
+        ->getContent();
+
+    expect($content)->not->toContain('>Contact Me<');
+});
+
+it('keeps public technology and channel details consistent', function () {
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSee((string) config('public-site.technology.laravel'))
+        ->assertSee('I share practical Laravel videos');
+
+    $this->get(route('uses'))
+        ->assertOk()
+        ->assertSee('Laravel '.config('public-site.technology.laravel'))
+        ->assertSee('Filament '.config('public-site.technology.filament'));
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee(config('public-site.youtube.url'), false)
+        ->assertSee('Practical Laravel, on video');
+});
+
+it('places the mobile uses jump navigation before the equipment list', function () {
+    $content = $this->get(route('uses'))
+        ->assertOk()
+        ->assertSee('aria-label="Jump to uses section"', false)
+        ->getContent();
+
+    expect(strpos($content, 'aria-label="Jump to uses section"'))
+        ->toBeLessThan(strpos($content, 'id="hardware"'));
+});
+
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('home'))
+    $this->get(route('testimonials.create'))
         ->assertOk()
         ->assertSee($privacyUrl, false)
         ->assertSee('Approved submissions may be displayed publicly');
@@ -55,11 +104,29 @@ it('links the privacy notice from public collection points', function () {
         ->assertSee('Your details are used to reply to this inquiry.');
 });
 
-it('loads public interactivity from the local Vite bundle', function () {
+it('loads public interactivity and typography from the local Vite bundle', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertDontSee('cdn.jsdelivr.net/npm/alpinejs', false)
+        ->assertDontSee('fonts.bunny.net', false)
+        ->assertSee(Vite::asset('resources/css/app.css'), false)
         ->assertSee(Vite::asset('resources/js/app.js'), false);
+});
+
+it('renders an accessible homepage architecture scene with a static fallback', function () {
+    $content = $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('data-architecture-scene', false)
+        ->assertSee('aria-labelledby="architecture-title architecture-description"', false)
+        ->assertSee('data-architecture-fallback', false)
+        ->assertSee('Request', false)
+        ->assertSee('Domain', false)
+        ->assertSee('Data', false)
+        ->getContent();
+
+    expect(substr_count($content, 'data-architecture-scene'))->toBe(1)
+        ->and($content)->not->toContain('id="code-editor"')
+        ->and($content)->not->toContain('role="tablist"');
 });
 
 it('places the theme bootstrap inside the document head', function () {
@@ -95,6 +162,32 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
         ->assertDontSee('onclick=', false);
+});
+
+it('renders keyboard accessible podcast audio controls', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Accessible Audio',
+        'slug' => 'accessible-audio',
+        'description' => 'An episode with accessible playback controls.',
+        'audio_url' => 'https://example.com/accessible-audio.mp3',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSee('aria-label="Seek episode"', false)
+        ->assertSee('aria-label="Skip back 15 seconds"', false)
+        ->assertSee('aria-label="Skip forward 30 seconds"', false)
+        ->assertSee(':aria-label="playing ? \'Pause episode\' : \'Play episode\'"', false)
+        ->assertDontSee('@click="seek($event)"', false);
 });
 
 it('keeps the admin panel behind authentication', function () {

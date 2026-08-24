@@ -8,4 +8,4 @@
     </div>
     <p class="mt-0.5 text-xs text-gray-500">{{ $item['desc'] }}</p>
 </div>
-<span class="mt-1 flex-shrink-0 font-mono text-[10px] text-gray-600">{{ $item['tag'] }}</span>
+<span class="mt-1 flex-shrink-0 font-mono text-xs text-gray-600">{{ $item['tag'] }}</span>

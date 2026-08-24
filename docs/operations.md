@@ -58,13 +58,13 @@ BACKUP_SFTP_PORT=22
 BACKUP_SFTP_USERNAME=<dedicated backup user>
 BACKUP_SFTP_PASSWORD=<dedicated backup password>
 BACKUP_SFTP_ROOT=/laravel-backups
-BACKUP_SFTP_HOST_FINGERPRINT=<verified SHA256 fingerprint>
+BACKUP_SFTP_HOST_FINGERPRINT=<verified Flysystem-compatible fingerprint>
 BACKUP_SFTP_TIMEOUT=30
 BACKUP_SFTP_MAX_TRIES=3
 BACKUP_ARCHIVE_PASSWORD=<independent archive password>
 ```
 
-Obtain the SSH host fingerprint through a separately trusted channel and pin it with `BACKUP_SFTP_HOST_FINGERPRINT`. Do not accept an unexpected replacement fingerprint during a deployment.
+Obtain the SSH host key through a separately trusted channel before configuring `BACKUP_SFTP_HOST_FINGERPRINT`. First verify its standard OpenSSH SHA-256 fingerprint. Then convert that same verified key to the format expected by the installed `league/flysystem-sftp-v3` adapter. For an ED25519 key, the adapter expects the lowercase SHA-512 digest of the decoded public-key blob with colon-separated byte pairs, not the `SHA256:...` value displayed by OpenSSH. Recheck this behavior when upgrading the adapter, and never accept an unexpected replacement key during a deployment.
 
 After changing these values, refresh the configuration and prove both destinations work:
 
@@ -82,7 +82,7 @@ An exit-zero backup command is not enough. Independently verify:
 - SQLite `PRAGMA quick_check` returns `ok` for the live database and snapshot.
 - Source and snapshot migration counts match.
 - Source and snapshot record counts match for affected tables.
-- `gzip -t` passes for media archives.
+- PHP's `ZipArchive` can decrypt and read every archive entry.
 - The archive contains only files from the intended media root.
 - Archived file count matches the source file count.
 

@@ -22,19 +22,17 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.json-ld')
     @stack('head')
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,500" rel="stylesheet" />
 </head>
 <body class="bg-white dark:bg-brand-950 text-gray-800 dark:text-gray-100 font-sans antialiased">
     {{-- Navigation --}}
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" decoding="async" class="h-10 w-10 rounded-full">
+                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3.5">
+                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="44" height="44" decoding="async" class="h-11 w-11 rounded-full">
                     <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
-                        <span class="font-empera text-lg leading-none tracking-[0.08em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
+                        <span class="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
+                        <span class="font-empera text-xl leading-none tracking-[0.07em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
                     </span>
                 </a>
 
@@ -46,34 +44,31 @@
                 </button>
 
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('home')) is-active text-gray-900 dark:text-white @endif">Home</a>
-                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('projects.index') }}" @if(request()->routeIs('projects.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) is-active text-gray-900 dark:text-white @endif">Projects</a>
+                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Writing</a>
+                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif">About</a>
-                    <a href="{{ route('uses') }}" @if(request()->routeIs('uses')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif">Uses</a>
                     <button id="theme-toggle" class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-brand-800/50 transition-colors" title="Toggle theme" aria-label="Toggle theme">
                         <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
-                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors">Contact Me</a>
+                    <a href="{{ route('contact') }}" @if(request()->routeIs('contact')) aria-current="page" @endif class="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-500">Discuss a Project</a>
                 </div>
             </div>
 
             {{-- Mobile menu --}}
             <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-brand-800/50 py-4">
                 <div class="flex flex-col gap-3">
-                    <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('home')) is-active text-gray-900 dark:text-white @endif">Home</a>
-                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Blog</a>
-                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('projects.index') }}" @if(request()->routeIs('projects.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('projects.*')) is-active text-gray-900 dark:text-white @endif">Projects</a>
+                    <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('blog.*')) is-active text-gray-900 dark:text-white @endif">Writing</a>
+                    <a href="{{ route('podcast.index') }}" @if(request()->routeIs('podcast.*')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('podcast.*')) is-active text-gray-900 dark:text-white @endif">Podcast</a>
                     <a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif">About</a>
                     <a href="{{ route('uses') }}" @if(request()->routeIs('uses')) aria-current="page" @endif class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif">Uses</a>
                     <button class="theme-toggle-mobile flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1" aria-label="Toggle theme">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <span class="theme-toggle-label">Light Mode</span>
                     </button>
-                    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors w-fit">Contact Me</a>
+                    <a href="{{ route('contact') }}" @if(request()->routeIs('contact')) aria-current="page" @endif class="inline-flex w-fit items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-500">Discuss a Project</a>
                 </div>
             </div>
         </div>
@@ -85,10 +80,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="relative border-t border-gray-200 dark:border-[#1e2a3a] overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-brand-950 dark:to-brand-950">
-        {{-- Subtle grid background --}}
-        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.015]" style="background-image: radial-gradient(circle, #4A7FBF 1px, transparent 1px); background-size: 24px 24px;"></div>
-
+    <footer class="relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-[#1e2a3a] dark:bg-brand-950">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-8">
 
             {{-- Top section: Brand + Links --}}
@@ -132,8 +124,8 @@
                 </div>
             </div>
 
-            {{-- Gradient line --}}
-            <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #4A7FBF55, #9D517544, #4A7FBF55, transparent);"></div>
+            {{-- Divider --}}
+            <div class="h-px w-full bg-gray-200 dark:bg-brand-800"></div>
 
             {{-- Bottom bar --}}
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6">

@@ -72,7 +72,9 @@ The production scheduler must run every minute. It dispatches:
 
 YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
 
-Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS=local,nas-backups`, configure the `BACKUP_SFTP_*` values and a verified SSH host fingerprint, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `MAIL_CONTACT_TO` and `BACKUP_NOTIFICATION_EMAIL` must point to monitored mailboxes.
+Production must set `DB_DATABASE` to the absolute path of the live SQLite database and `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory. Set `BACKUP_DISKS=local,nas-backups`, configure the `BACKUP_SFTP_*` values and the Flysystem-compatible fingerprint derived from an independently verified SSH host key, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `MAIL_CONTACT_TO` and `BACKUP_NOTIFICATION_EMAIL` must point to monitored mailboxes.
+
+Create a Cloudflare Turnstile widget for the production host and set `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_CONTACT_ACTION=contact-form`, and `TURNSTILE_ALLOWED_HOSTNAMES=thelaravelarchitect.com,www.thelaravelarchitect.com`. Contact submissions fail closed when verification is unavailable or the verified action and hostname do not match the configured values.
 
 Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
