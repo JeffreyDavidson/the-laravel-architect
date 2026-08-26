@@ -12,7 +12,12 @@ const budgets = [
     {
         entry: 'resources/js/app.js',
         label: 'Public JavaScript',
-        maxGzipBytes: 22 * 1024,
+        maxGzipBytes: 4 * 1024,
+    },
+    {
+        entry: 'resources/js/alpine.js',
+        label: 'On-demand Alpine runtime',
+        maxGzipBytes: 20 * 1024,
     },
     {
         entry: 'resources/js/pages/about.js',
