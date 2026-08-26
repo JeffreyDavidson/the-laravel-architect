@@ -157,8 +157,13 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false);
 
+    expect($manifest)
+        ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
+        ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf');
+
     expect(implode("\n", array_column($manifest, 'file')))
-        ->not->toContain('Empera-Vintage');
+        ->not->toContain('Empera-Vintage')
+        ->not->toContain('Empera-Regular.ttf');
 });
 
 it('renders an accessible homepage architecture scene with a static fallback', function () {
