@@ -5,6 +5,36 @@ const manifest = JSON.parse(readFileSync('public/build/manifest.json', 'utf8'));
 
 const budgets = [
     {
+        entry: 'resources/css/app.css',
+        label: 'Public stylesheet',
+        maxGzipBytes: 29 * 1024,
+    },
+    {
+        entry: 'resources/js/app.js',
+        label: 'Public JavaScript',
+        maxGzipBytes: 43 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/home.js',
+        label: 'Homepage loader',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/architecture-scene.js',
+        label: 'Lazy architecture scene',
+        maxGzipBytes: 135 * 1024,
+    },
+    {
+        entry: 'resources/css/prism.css',
+        label: 'Code highlighting stylesheet',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/prism.js',
+        label: 'Code highlighting JavaScript',
+        maxGzipBytes: 14 * 1024,
+    },
+    {
         entry: 'resources/css/filament/admin/theme.css',
         label: 'Filament admin theme',
         maxGzipBytes: 68 * 1024,
