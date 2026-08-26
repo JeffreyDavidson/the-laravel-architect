@@ -158,11 +158,17 @@
     }
 
     .architecture-scene {
+        --architecture-line: rgba(82, 107, 131, 0.58);
+        --architecture-node: #356d9f;
+        --architecture-packet: #568ab6;
         padding-left: clamp(0rem, 3vw, 2.5rem);
         color: #16202c;
     }
 
     .dark .architecture-scene {
+        --architecture-line: rgba(82, 107, 131, 0.72);
+        --architecture-node: #6f9fca;
+        --architecture-packet: #9fc5e5;
         color: #f1f5f9;
     }
 

@@ -62,7 +62,7 @@ const budgets = [
     {
         entry: 'resources/js/pages/architecture-scene.js',
         label: 'Lazy architecture scene',
-        maxGzipBytes: 135 * 1024,
+        maxGzipBytes: 4 * 1024,
     },
     {
         entry: 'resources/css/prism.css',

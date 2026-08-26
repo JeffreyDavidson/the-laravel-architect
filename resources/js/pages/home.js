@@ -59,7 +59,7 @@ async function initializeArchitectureScene(reduceMotion) {
         return;
     }
 
-    if (reduceMotion || !window.WebGLRenderingContext) {
+    if (reduceMotion) {
         sceneElement.dataset.architectureState = 'fallback';
 
         return;
@@ -76,7 +76,7 @@ async function initializeArchitectureScene(reduceMotion) {
 }
 
 function scheduleArchitectureScene(reduceMotion) {
-    if (reduceMotion || !window.WebGLRenderingContext) {
+    if (reduceMotion) {
         initializeArchitectureScene(reduceMotion);
 
         return;
