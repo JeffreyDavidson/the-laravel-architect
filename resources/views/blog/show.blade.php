@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('head')
-    @vite(['resources/css/prism.css', 'resources/js/prism.js'])
+    @vite('resources/css/prism.css')
 @endpush
 
 @section('content')
