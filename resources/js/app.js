@@ -1,6 +1,8 @@
-import Alpine from 'alpinejs';
-
 import './public-shell';
+
+if (document.querySelector('[x-data]')) {
+    import('./alpine');
+}
 
 if (document.querySelector('.about-card-flip-container')) {
     import('./pages/about');
@@ -23,7 +25,3 @@ import.meta.glob('../images/**', {
     query: '?url',
     import: 'default',
 });
-
-window.Alpine = Alpine;
-
-Alpine.start();
