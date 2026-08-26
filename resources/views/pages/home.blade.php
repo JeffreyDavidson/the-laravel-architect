@@ -118,6 +118,7 @@
 />
 
 {{-- ===== FEATURED PROJECTS ===== --}}
+@inject('projectImages', 'App\Services\ProjectImageVariants')
 @if($featuredProjects->count())
 <section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,8 +133,20 @@
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
                 @if($project->featured_image_url)
+                @php
+                    $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
+                @endphp
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <picture class="block h-full">
+                        @if($featuredImageSrcset)
+                        <source
+                            type="image/webp"
+                            srcset="{{ $featuredImageSrcset }}"
+                            sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+                        >
+                        @endif
+                        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </picture>
                 </div>
                 @endif
                 <div class="p-6">
