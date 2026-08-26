@@ -39,8 +39,6 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@import './components/listings.css';
-
 /* Keep muted dark-mode text readable against the site's deep surfaces. */
 .dark .text-gray-500 {
     color: #a8b3c2 !important;

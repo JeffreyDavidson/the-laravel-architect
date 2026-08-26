@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 <header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
