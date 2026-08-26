@@ -1,6 +1,5 @@
 import Alpine from 'alpinejs';
 
-import './bootstrap';
 import './pages/about';
 import './pages/blog';
 import './pages/podcast';
