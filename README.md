@@ -39,13 +39,13 @@ composer audit --locked
 npm audit --omit=dev
 ```
 
-CI runs dependency auditing, formatting, static analysis, asset compilation and budget checks, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
 ## Architecture
 
 Public pages are server-rendered Blade views. Route-model binding uses content slugs, while publication scopes keep drafts and future content off public pages, feeds, and the sitemap.
 
-Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. The Filament theme is a separate Vite entry loaded only by the admin panel, with its compressed size guarded in CI. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`.
+Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. Compressed budgets guard the public entry points and lazy homepage scene in CI. The Filament theme is a separate budgeted Vite entry loaded only by the admin panel. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`.
 
 Generated post OG images are cached on the private local filesystem. Cache validity is based on the rendered title, category name, and an explicit renderer version; deleting a post removes its cached image.
 
