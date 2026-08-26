@@ -39,7 +39,6 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@import './components/about.css';
 @import './components/listings.css';
 
 /* Keep muted dark-mode text readable against the site's deep surfaces. */

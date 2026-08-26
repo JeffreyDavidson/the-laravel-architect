@@ -2,6 +2,10 @@
 
 @section('title', 'About')
 
+@push('head')
+    @vite('resources/css/pages/about-entry.css')
+@endpush
+
 @section('content')
     @php
         $timelineItems = [
