@@ -2,7 +2,6 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
-@source '../../../../resources/views/vendor/**/*';
 
 /*
 |--------------------------------------------------------------------------
@@ -21,52 +20,6 @@
  * contract intact so filters, columns, and the user menu never flash open. */
 [x-cloak] {
     display: none !important;
-}
-
-/* Keep the admin surface in the same navy family as the public site. */
-.dark .fi-body,
-.dark .fi-simple-layout {
-    background-color: #0d1117;
-}
-
-.dark .fi-body {
-    color: #e5edf8;
-}
-
-/* ── Nav group labels ── */
-.dark .fi-sidebar-group-label {
-    color: rgba(130, 172, 220, 0.78);
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    opacity: 1;
-}
-
-/* ── Active nav item accent ── */
-.dark .fi-sidebar-item.fi-active > a {
-    border-left: 0;
-    background:
-        linear-gradient(90deg, rgba(74, 127, 191, 0.24), rgba(74, 127, 191, 0.06)),
-        rgba(255, 255, 255, 0.035);
-    box-shadow: inset 2px 0 0 #75a7df;
-}
-
-/* ── Nav item hover tint ── */
-.dark .fi-sidebar-item > a:hover:not([aria-current='page']) {
-    background-color: rgba(255, 255, 255, 0.025);
-    color: rgba(231, 238, 248, 0.86);
-}
-
-/* ── Table header ── */
-.dark .fi-ta-header-cell {
-    font-size: 0.75rem;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-}
-
-/* ── Table row hover ── */
-.dark .fi-ta-row:hover td {
-    background-color: rgba(74, 127, 191, 0.04);
 }
 
 /* ── Input focus glow ── */
@@ -100,11 +53,6 @@
     background-color: #4A7FBF;
 }
 
-/* ── Dropdown hover ── */
-.dark .fi-dropdown-list-item:hover {
-    background-color: rgba(74, 127, 191, 0.06);
-}
-
 /* ── Custom scrollbar ── */
 .dark ::-webkit-scrollbar {
     width: 6px;
@@ -124,56 +72,8 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* ── Empty state text ── */
-.dark .fi-ta-empty-state-heading {
-    color: #9ca3af;
-}
-
-/* ── Section header label ── */
-.dark .fi-section-header-heading {
-    color: #e5e7eb;
-}
-
-/* ── TLA dashboard ── */
-.dark .fi-main {
-    background:
-        radial-gradient(circle at 15% 0%, rgba(74, 127, 191, 0.18), transparent 24rem),
-        radial-gradient(circle at 82% 16%, rgba(245, 158, 11, 0.12), transparent 22rem),
-        linear-gradient(180deg, #0d1117 0%, #111827 34%, #0d1117 100%);
-}
-
-.fi-main {
-    max-width: 88rem !important;
-    padding-inline: clamp(1.25rem, 2.8vw, 2.75rem) !important;
-}
-
 .fi-page {
     gap: 1.25rem;
-}
-
-.dark .fi-main-ctn {
-    background:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 34rem),
-        #111827;
-}
-
-.dark .fi-topbar {
-    background: rgba(13, 17, 23, 0.96);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
-    box-shadow: none;
-    backdrop-filter: blur(18px);
-}
-
-.dark .fi-sidebar {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18rem),
-        #111827;
-    border-right: 1px solid rgba(255, 255, 255, 0.075);
-}
-
-.dark .fi-sidebar-header {
-    background: #111827;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
 }
 
 /* ── Auth / simple pages ── */
@@ -763,12 +663,17 @@
     background: #0b1018;
     border-color: var(--tla-line);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(18px);
 }
 
 .dark .fi-sidebar,
 .dark .fi-sidebar-header {
     background: #101927;
     border-color: var(--tla-line);
+}
+
+.dark .fi-sidebar {
+    border-right: 1px solid var(--tla-line);
 }
 
 .dark .fi-sidebar-header {
@@ -909,6 +814,7 @@
     font-size: 0.72rem;
     font-weight: 550;
     letter-spacing: 0.01em;
+    opacity: 1;
     text-transform: none;
 }
 

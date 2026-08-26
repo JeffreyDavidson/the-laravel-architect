@@ -12,7 +12,6 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Vite;
 
 uses(RefreshDatabase::class);
 
@@ -105,12 +104,21 @@ it('links the privacy notice from public collection points', function () {
 });
 
 it('loads public interactivity and typography from the local Vite bundle', function () {
+    $this->withVite();
+
+    $manifest = json_decode(
+        file_get_contents(public_path('build/manifest.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
     $this->get(route('home'))
         ->assertOk()
         ->assertDontSee('cdn.jsdelivr.net/npm/alpinejs', false)
         ->assertDontSee('fonts.bunny.net', false)
-        ->assertSee(Vite::asset('resources/css/app.css'), false)
-        ->assertSee(Vite::asset('resources/js/app.js'), false);
+        ->assertDontSee($manifest['resources/css/filament/admin/theme.css']['file'], false)
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/js/app.js']['file'], false);
 });
 
 it('renders an accessible homepage architecture scene with a static fallback', function () {
@@ -191,8 +199,18 @@ it('renders keyboard accessible podcast audio controls', function () {
 });
 
 it('keeps the admin panel behind authentication', function () {
+    $this->withVite();
+
+    $manifest = json_decode(
+        file_get_contents(public_path('build/manifest.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
     $this->get('/admin')->assertRedirect('/admin/login');
-    $this->get('/admin/login')->assertOk();
+    $this->get('/admin/login')
+        ->assertOk()
+        ->assertSee($manifest['resources/css/filament/admin/theme.css']['file'], false);
 });
 
 it('uses published work and approved recommendations as homepage proof', function () {

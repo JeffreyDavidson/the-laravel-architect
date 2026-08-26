@@ -79,6 +79,9 @@ jobs:
       - name: Build assets
         run: npm run build
 
+      - name: Check asset budgets
+        run: npm run test:assets
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
