@@ -1,0 +1,38 @@
+import { readFileSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
+
+const manifest = JSON.parse(readFileSync('public/build/manifest.json', 'utf8'));
+
+const budgets = [
+    {
+        entry: 'resources/css/filament/admin/theme.css',
+        label: 'Filament admin theme',
+        maxGzipBytes: 68 * 1024,
+    },
+];
+
+let failed = false;
+
+for (const budget of budgets) {
+    const asset = manifest[budget.entry];
+
+    if (! asset) {
+        throw new Error(`Vite manifest entry not found: ${budget.entry}`);
+    }
+
+    const contents = readFileSync(`public/build/${asset.file}`);
+    const gzipBytes = gzipSync(contents, { level: 9 }).length;
+    const gzipKilobytes = (gzipBytes / 1024).toFixed(1);
+    const limitKilobytes = (budget.maxGzipBytes / 1024).toFixed(1);
+
+    console.log(`${budget.label}: ${gzipKilobytes} KiB gzip (limit ${limitKilobytes} KiB)`);
+
+    if (gzipBytes > budget.maxGzipBytes) {
+        failed = true;
+    }
+}
+
+if (failed) {
+    console.error('Asset budget exceeded. Review the generated bundle before increasing the limit.');
+    process.exitCode = 1;
+}
