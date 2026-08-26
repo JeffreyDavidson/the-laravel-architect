@@ -75,6 +75,22 @@ async function initializeArchitectureScene(reduceMotion) {
     }
 }
 
+function scheduleArchitectureScene(reduceMotion) {
+    if (reduceMotion || !window.WebGLRenderingContext) {
+        initializeArchitectureScene(reduceMotion);
+
+        return;
+    }
+
+    if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => initializeArchitectureScene(false), { timeout: 1500 });
+
+        return;
+    }
+
+    window.setTimeout(() => initializeArchitectureScene(false));
+}
+
 function initializeHomepage() {
     const homepage = document.querySelector('[data-architecture-scene]');
 
@@ -84,7 +100,7 @@ function initializeHomepage() {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    initializeArchitectureScene(reduceMotion);
+    scheduleArchitectureScene(reduceMotion);
     initializeRevealAnimations(reduceMotion);
 }
 
