@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/home-entry.css')
+@endpush
+
 @section('content')
 {{-- ===== HERO ===== --}}
 <section class="homepage-hero">
