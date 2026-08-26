@@ -12,7 +12,22 @@ const budgets = [
     {
         entry: 'resources/js/app.js',
         label: 'Public JavaScript',
-        maxGzipBytes: 24 * 1024,
+        maxGzipBytes: 22 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/about.js',
+        label: 'About page interaction',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/blog.js',
+        label: 'Blog page interaction',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/podcast.js',
+        label: 'Podcast page interaction',
+        maxGzipBytes: 2 * 1024,
     },
     {
         entry: 'resources/js/pages/home.js',
