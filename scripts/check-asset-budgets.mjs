@@ -71,7 +71,7 @@ const budgets = [
     },
     {
         entry: 'resources/js/prism.js',
-        label: 'Code highlighting JavaScript',
+        label: 'Lazy code highlighting runtime',
         maxGzipBytes: 14 * 1024,
     },
     {

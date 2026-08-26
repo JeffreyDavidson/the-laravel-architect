@@ -4,3 +4,7 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-markup-templating';
 import 'prismjs/components/prism-css';
+
+Prism.manual = true;
+Prism.highlightAll();
+document.documentElement.dataset.codeHighlightingState = 'ready';

@@ -167,6 +167,37 @@ test('blog code blocks expose a keyboard-accessible copy action', async ({ page 
     await expect(copyButton).toBeVisible();
 });
 
+test('blog syntax highlighting waits until the browser is idle', async ({ page }) => {
+    await page.addInitScript(() => {
+        const idleCallbacks: IdleRequestCallback[] = [];
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
+        Object.defineProperty(window, 'requestIdleCallback', {
+            value: (callback) => {
+                idleCallbacks.push(callback);
+
+                return idleCallbacks.length;
+            },
+        });
+    });
+
+    await page.goto('/blog/how-i-structure-every-laravel-project');
+
+    await expect(page.locator('html')).toHaveAttribute('data-code-highlighting-state', 'idle');
+    await expect(page.locator('.prose code .token')).toHaveCount(0);
+
+    await page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const callback = testWindow.__testIdleCallbacks.shift();
+
+        callback?.({ didTimeout: false, timeRemaining: () => 50 });
+    });
+
+    await expect(page.locator('html')).toHaveAttribute('data-code-highlighting-state', 'ready');
+    await expect(page.locator('.prose code .token').first()).toBeAttached();
+});
+
 test('an administrator can reach the dashboard', async ({ page }) => {
     test.skip(!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD);
 
