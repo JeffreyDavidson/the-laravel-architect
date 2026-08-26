@@ -7,12 +7,17 @@ const budgets = [
     {
         entry: 'resources/css/app.css',
         label: 'Public stylesheet',
-        maxGzipBytes: 23 * 1024,
+        maxGzipBytes: 22 * 1024,
     },
     {
         entry: 'resources/css/pages/home-entry.css',
         label: 'Homepage stylesheet',
         maxGzipBytes: 5 * 1024,
+    },
+    {
+        entry: 'resources/css/pages/about-entry.css',
+        label: 'About stylesheet',
+        maxGzipBytes: 2 * 1024,
     },
     {
         entry: 'resources/css/pages/podcast-entry.css',
