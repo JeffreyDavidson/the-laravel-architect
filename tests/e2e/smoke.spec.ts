@@ -87,6 +87,41 @@ test('homepage architecture scene keeps an accessible fallback', async ({ page }
         .toMatch(/ready|fallback/);
 });
 
+test('homepage defers its decorative architecture scene until the browser is idle', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.addInitScript(() => {
+        const idleCallbacks: IdleRequestCallback[] = [];
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
+        Object.defineProperty(window, 'WebGLRenderingContext', { value: function WebGLRenderingContext() {} });
+        Object.defineProperty(window, 'requestIdleCallback', {
+            value: (callback) => {
+                idleCallbacks.push(callback);
+
+                return idleCallbacks.length;
+            },
+        });
+    });
+
+    await page.goto('/');
+
+    const scene = page.locator('[data-architecture-scene]');
+
+    await expect(scene).toHaveAttribute('data-architecture-state', 'idle');
+    await expect(scene.locator('[data-architecture-fallback]')).toBeVisible();
+
+    await page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const callback = testWindow.__testIdleCallbacks.shift();
+
+        callback?.({ didTimeout: false, timeRemaining: () => 50 });
+    });
+
+    await expect.poll(async () => scene.getAttribute('data-architecture-state'))
+        .toMatch(/ready|fallback/);
+});
+
 test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
     await page.goto('/testimonials/submit');
 
