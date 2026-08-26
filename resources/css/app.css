@@ -39,7 +39,6 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@import './components/podcast.css';
 @import './components/about.css';
 @import './components/listings.css';
 
