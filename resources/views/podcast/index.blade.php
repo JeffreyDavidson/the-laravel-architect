@@ -2,6 +2,10 @@
 
 @section('title', 'Podcast')
 
+@push('head')
+    @vite('resources/css/pages/podcast-entry.css')
+@endpush
+
 @section('content')
 <x-hero-section>
     <div class="grid gap-8 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-10">

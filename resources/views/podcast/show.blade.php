@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/podcast-entry.css')
+@endpush
+
 @section('content')
 <style>
     .eq-bar {

@@ -124,6 +124,13 @@ it('loads public interactivity and typography from the local Vite bundle', funct
     $this->get(route('about'))
         ->assertOk()
         ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/podcast-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false);
 
     expect(implode("\n", array_column($manifest, 'file')))
