@@ -94,7 +94,6 @@ test('homepage defers its decorative architecture scene until the browser is idl
         const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
 
         Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
-        Object.defineProperty(window, 'WebGLRenderingContext', { value: function WebGLRenderingContext() {} });
         Object.defineProperty(window, 'requestIdleCallback', {
             value: (callback) => {
                 idleCallbacks.push(callback);
@@ -111,6 +110,12 @@ test('homepage defers its decorative architecture scene until the browser is idl
     await expect(scene).toHaveAttribute('data-architecture-state', 'idle');
     await expect(scene.locator('[data-architecture-fallback]')).toBeVisible();
 
+    await expect.poll(() => page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        return testWindow.__testIdleCallbacks.length;
+    })).toBeGreaterThan(0);
+
     await page.evaluate(() => {
         const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
         const callback = testWindow.__testIdleCallbacks.shift();
@@ -118,8 +123,8 @@ test('homepage defers its decorative architecture scene until the browser is idl
         callback?.({ didTimeout: false, timeRemaining: () => 50 });
     });
 
-    await expect.poll(async () => scene.getAttribute('data-architecture-state'))
-        .toMatch(/ready|fallback/);
+    await expect(scene).toHaveAttribute('data-architecture-state', 'ready');
+    await expect(scene.locator('canvas')).toBeVisible();
 });
 
 test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
