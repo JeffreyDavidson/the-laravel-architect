@@ -11,7 +11,9 @@ use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -335,6 +337,34 @@ it('presents published projects as case studies without inferring product status
         ->assertSee('Decisions over decoration')
         ->assertSee('The challenge')
         ->assertDontSee('Active');
+});
+
+it('serves responsive project images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('architecture.png', 1280, 72);
+    Storage::disk('public')->put('projects/architecture.png', $image->getContent());
+
+    $project = Project::query()->create([
+        'title' => 'Responsive Architecture',
+        'slug' => 'responsive-architecture',
+        'description' => 'A project with responsive imagery.',
+        'is_featured' => true,
+        'status' => ProjectStatus::Published,
+        'featured_image_path' => 'projects/architecture.png',
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('architecture-640.webp', false)
+        ->assertSee('architecture-1280.webp', false)
+        ->assertSee($project->featured_image_url, false);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($project->featured_image_url, false);
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {

@@ -5,6 +5,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -61,6 +62,43 @@ it('deletes native media with its record', function () {
     $project->delete();
 
     Storage::disk('public')->assertMissing('projects/image.png');
+});
+
+it('keeps responsive project image variants in sync with the original image', function () {
+    $image = UploadedFile::fake()->image('project.png', 1280, 8)->getContent();
+    Storage::disk('public')->put('projects/old.png', $image);
+    Storage::disk('public')->put('projects/new.png', $image);
+
+    $project = Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => ProjectStatus::Draft,
+        'featured_image_path' => 'projects/old.png',
+    ]);
+
+    Storage::disk('public')->assertExists([
+        'projects/responsive/old-640.webp',
+        'projects/responsive/old-1280.webp',
+    ]);
+
+    $project->update(['featured_image_path' => 'projects/new.png']);
+
+    Storage::disk('public')->assertMissing([
+        'projects/responsive/old-640.webp',
+        'projects/responsive/old-1280.webp',
+    ]);
+    Storage::disk('public')->assertExists([
+        'projects/responsive/new-640.webp',
+        'projects/responsive/new-1280.webp',
+    ]);
+
+    $project->delete();
+
+    Storage::disk('public')->assertMissing([
+        'projects/responsive/new-640.webp',
+        'projects/responsive/new-1280.webp',
+    ]);
 });
 
 it('deletes episode media when its podcast is deleted', function () {

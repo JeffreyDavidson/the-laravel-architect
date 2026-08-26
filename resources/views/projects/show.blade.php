@@ -100,9 +100,22 @@
 
 {{-- ===== FEATURED IMAGE ===== --}}
 @if($project->featured_image_url)
+@inject('projectImages', 'App\Services\ProjectImageVariants')
+@php
+    $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
+@endphp
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-8 relative z-10">
     <div class="mt-[-2rem] overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
-        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="w-full">
+        <picture class="block">
+            @if($featuredImageSrcset)
+            <source
+                type="image/webp"
+                srcset="{{ $featuredImageSrcset }}"
+                sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+            >
+            @endif
+            <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="w-full">
+        </picture>
     </div>
 </div>
 @endif

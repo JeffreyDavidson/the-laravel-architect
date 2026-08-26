@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\ProjectStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Observers\ProjectObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +19,7 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
+#[ObservedBy(ProjectObserver::class)]
 class Project extends Model
 {
     use HasSEO;
