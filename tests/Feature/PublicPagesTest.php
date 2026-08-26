@@ -120,12 +120,30 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee($manifest['resources/css/app.css']['file'], false)
         ->assertSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
         ->assertSee($manifest['resources/js/app.js']['file'], false);
 
     $this->get(route('about'))
         ->assertOk()
         ->assertSee($manifest['resources/css/app.css']['file'], false)
         ->assertSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('projects.index'))
+        ->assertOk()
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
 
@@ -134,6 +152,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee($manifest['resources/css/app.css']['file'], false)
         ->assertSee($manifest['resources/css/pages/podcast-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false);
 
     expect(implode("\n", array_column($manifest, 'file')))

@@ -2,6 +2,10 @@
 
 @section('title', $category->name)
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 {{-- Hero --}}
 <header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">

@@ -2,6 +2,10 @@
 
 @section('title', 'Projects')
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 <x-hero-section>
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-end lg:gap-16">

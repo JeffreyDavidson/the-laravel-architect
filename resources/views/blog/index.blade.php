@@ -2,6 +2,10 @@
 
 @section('title', 'Blog')
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 {{-- Hero --}}
 <x-hero-section>
