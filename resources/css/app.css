@@ -36,6 +36,8 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../**/*.blade.php';
+/* The unused Laravel starter view contains a large utility-heavy demo template. */
+@source not '../views/welcome.blade.php';
 @source '../**/*.js';
 
 /* Keep muted dark-mode text readable against the site's deep surfaces. */
