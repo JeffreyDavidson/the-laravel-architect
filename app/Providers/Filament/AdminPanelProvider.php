@@ -58,9 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(isForced: true)
             ->brandName('The Laravel Architect')
-            ->brandLogo('/images/logo-color.svg')
+            ->brandLogo('/images/logo-color-128.webp')
             ->brandLogoHeight('2.5rem')
-            ->favicon('/images/logo-color.svg')
+            ->favicon('/images/favicon-32x32.png')
             ->font('Inter')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {

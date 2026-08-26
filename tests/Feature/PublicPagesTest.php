@@ -59,9 +59,12 @@ it('uses a concise primary navigation and a project-focused call to action', fun
         ->assertOk()
         ->assertSee('Writing')
         ->assertSee('Discuss a Project')
+        ->assertSee('/images/logo-color-128.webp', false)
+        ->assertDontSee('/images/logo-color.svg', false)
         ->getContent();
 
     expect($content)->not->toContain('>Contact Me<');
+    expect(filesize(public_path('images/logo-color-128.webp')))->toBeLessThanOrEqual(20 * 1024);
 });
 
 it('keeps public technology and channel details consistent', function () {
