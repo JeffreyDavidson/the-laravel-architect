@@ -10,6 +10,11 @@ const budgets = [
         maxGzipBytes: 17 * 1024,
     },
     {
+        entry: 'resources/fonts/empera/Empera-Regular.woff2',
+        label: 'Brand font',
+        maxGzipBytes: 8 * 1024,
+    },
+    {
         entry: 'resources/css/pages/home-entry.css',
         label: 'Homepage stylesheet',
         maxGzipBytes: 5 * 1024,

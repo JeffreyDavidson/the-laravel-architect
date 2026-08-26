@@ -124,7 +124,7 @@
 
 @font-face {
     font-family: 'Empera';
-    src: url('../fonts/empera/Empera-Regular.ttf') format('truetype');
+    src: url('../fonts/empera/Empera-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
