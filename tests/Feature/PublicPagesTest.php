@@ -241,6 +241,8 @@ it('renders accessible podcast episode embeds and external links', function () {
     $this->get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSee('style="--podcast-color: #2563eb;"', false)
+        ->assertSee('[--dur:0.7s]', false)
+        ->assertDontSee('style="--dur:', false)
         ->assertDontSee('<style>', false);
 });
 
