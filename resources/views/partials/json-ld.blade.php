@@ -1,18 +1,22 @@
 @php
-$siteUrl = 'https://thelaravelarchitect.com';
+$siteUrl = route('home');
 $siteName = 'The Laravel Architect';
 $authorName = 'Jeffrey Davidson';
+$authorUrl = route('about');
 
 $schemas = [];
 
 // 1. WebSite + Person (every page)
 $schemas[] = [
     '@type' => 'WebSite',
+    '@id' => $siteUrl.'#website',
     'name' => $siteName,
     'url' => $siteUrl,
     'author' => [
         '@type' => 'Person',
+        '@id' => $authorUrl.'#person',
         'name' => $authorName,
+        'url' => $authorUrl,
     ],
 ];
 
@@ -20,13 +24,16 @@ $schemas[] = [
 if (request()->routeIs('blog.show') && isset($post)) {
     $article = [
         '@type' => 'Article',
+        '@id' => route('blog.show', $post).'#article',
+        'url' => route('blog.show', $post),
         'headline' => $post->title,
         'datePublished' => $post->published_at?->toIso8601String(),
         'dateModified' => $post->updated_at?->toIso8601String(),
         'author' => [
             '@type' => 'Person',
-            'name' => $authorName,
+            '@id' => $authorUrl.'#person',
         ],
+        'mainEntityOfPage' => route('blog.show', $post),
         'description' => $post->excerpt ?? '',
     ];
     $featuredImage = $post->featured_image_url;

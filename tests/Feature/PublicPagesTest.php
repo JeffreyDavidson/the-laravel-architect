@@ -73,6 +73,50 @@ it('renders model-specific SEO metadata', function () {
         );
 });
 
+it('renders canonical structured data for the site and blog posts', function () {
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Structuring Laravel Applications',
+        'excerpt' => 'A practical guide to application structure.',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $website = collect($structuredData['@graph'])->firstWhere('@type', 'WebSite');
+    $article = collect($structuredData['@graph'])->firstWhere('@type', 'Article');
+
+    expect($website)
+        ->toMatchArray([
+            '@id' => route('home').'#website',
+            'url' => route('home'),
+        ])
+        ->and($website['author'])
+        ->toMatchArray([
+            '@id' => route('about').'#person',
+            'url' => route('about'),
+        ])
+        ->and($article)
+        ->toMatchArray([
+            '@id' => route('blog.show', $post).'#article',
+            'url' => route('blog.show', $post),
+            'mainEntityOfPage' => route('blog.show', $post),
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+        ]);
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
