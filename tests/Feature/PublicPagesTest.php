@@ -3,10 +3,12 @@
 use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Enums\TestimonialStatus;
+use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Video;
@@ -213,14 +215,24 @@ it('renders canonical structured data for project case studies', function () {
 
 it('renders canonical structured data for public content collections', function () {
     $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
     $post = Post::query()->create([
         'title' => 'Structuring Laravel Applications',
         'slug' => 'structuring-laravel-applications',
         'content' => 'A maintainable application starts with clear boundaries.',
+        'category_id' => $category->id,
         'user_id' => $author->id,
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);
+    $post->attachTag($tag);
     $project = Project::query()->create([
         'title' => 'Architecture Decisions',
         'slug' => 'architecture-decisions',
@@ -236,6 +248,8 @@ it('renders canonical structured data for public content collections', function 
 
     $collections = [
         [route('blog.index'), 'Blog', $post->title, route('blog.show', $post)],
+        [route('blog.category', $category), 'Architecture Articles', $post->title, route('blog.show', $post)],
+        [route('blog.tag', $tag), 'Boundaries Articles', $post->title, route('blog.show', $post)],
         [route('projects.index'), 'Projects', $project->title, route('projects.show', $project)],
         [route('podcast.index'), 'Podcast', $podcast->name, route('podcast.show', $podcast)],
     ];
