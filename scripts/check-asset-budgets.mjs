@@ -1,9 +1,33 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const manifest = JSON.parse(readFileSync('public/build/manifest.json', 'utf8'));
 
+const publicImageBudgets = [
+    { file: 'public/images/favicon-16x16.png', label: '16px favicon', maxBytes: 2 * 1024 },
+    { file: 'public/images/favicon-180x180.png', label: 'Apple touch icon', maxBytes: 40 * 1024 },
+    { file: 'public/images/favicon-192x192.png', label: '192px web app icon', maxBytes: 44 * 1024 },
+    { file: 'public/images/favicon-32x32.png', label: '32px favicon', maxBytes: 4 * 1024 },
+    { file: 'public/images/favicon-512x512.png', label: '512px web app icon', maxBytes: 128 * 1024 },
+    { file: 'public/images/logo-color-128.webp', label: 'Global logo', maxBytes: 20 * 1024 },
+    { file: 'public/images/logo-color-black-bg.png', label: 'Social sharing image', maxBytes: 400 * 1024 },
+];
+
+const allowedPublicImages = new Set(
+    publicImageBudgets.map(({ file }) => file.replace('public/images/', '')),
+);
+
+const unexpectedPublicImages = readdirSync('public/images')
+    .filter((file) => ! allowedPublicImages.has(file));
+
+if (unexpectedPublicImages.length > 0) {
+    console.error(`Unexpected files in public/images: ${unexpectedPublicImages.join(', ')}`);
+    console.error('Use resources/images with Vite for build-managed images, or explicitly allow stable direct-URL assets.');
+    process.exit(1);
+}
+
 const budgets = [
+    ...publicImageBudgets,
     {
         entry: 'resources/css/app.css',
         label: 'Public stylesheet',
@@ -83,11 +107,6 @@ const budgets = [
         entry: 'resources/js/prism.js',
         label: 'Lazy code highlighting runtime',
         maxGzipBytes: 14 * 1024,
-    },
-    {
-        file: 'public/images/logo-color-128.webp',
-        label: 'Global logo',
-        maxBytes: 20 * 1024,
     },
     {
         entry: 'resources/images/avatar-320.webp',
