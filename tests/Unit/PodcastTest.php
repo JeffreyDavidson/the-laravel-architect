@@ -24,3 +24,20 @@ it('provides responsive fallback artwork for known podcasts', function (string $
     ['coffee-with-the-laravel-architect', 'podcast-coffee-logo'],
     ['embracing-cloudy-days', 'podcast-cloudy-logo'],
 ]);
+
+it('uses valid six-digit hex colors for public presentation', function () {
+    $podcast = new Podcast(['color' => '#2A6FDB']);
+
+    expect($podcast->display_color)->toBe('#2A6FDB');
+});
+
+it('falls back to the default public color for invalid values', function (mixed $color) {
+    $podcast = new Podcast(['color' => $color]);
+
+    expect($podcast->display_color)->toBe('#6366f1');
+})->with([
+    'missing' => null,
+    'short hex' => '#fff',
+    'non-hex value' => 'rebeccapurple',
+    'css expression' => 'url(https://example.com/image.png)',
+]);
