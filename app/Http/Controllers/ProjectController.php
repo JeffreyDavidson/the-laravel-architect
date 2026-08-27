@@ -16,12 +16,12 @@ class ProjectController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        seo()->for(new SEOData(
+        $seoSource = new SEOData(
             title: 'Projects',
             description: 'Open source projects and side projects by Jeffrey Davidson — including Ringside, Campus Sync, and more built with Laravel.',
-        ));
+        );
 
-        return view('projects.index', compact('projects'));
+        return view('projects.index', compact('projects', 'seoSource'));
     }
 
     public function show(Project $project): View
@@ -35,7 +35,8 @@ class ProjectController extends Controller
             ->with('tags')
             ->orderBy('sort_order')
             ->get();
+        $seoSource = $project;
 
-        return view('projects.show', compact('project', 'otherProjects'));
+        return view('projects.show', compact('project', 'otherProjects', 'seoSource'));
     }
 }

@@ -42,6 +42,37 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/podcasts', 'Podcast'],
 ]);
 
+it('renders page-specific SEO metadata', function () {
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSee('<title>About — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">',
+            false,
+        );
+});
+
+it('renders model-specific SEO metadata', function () {
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'excerpt' => 'A focused guide to keeping Laravel applications maintainable.',
+        'content' => 'Clear boundaries keep application behavior understandable.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('<title>Designing Clear Laravel Boundaries — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">',
+            false,
+        );
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()

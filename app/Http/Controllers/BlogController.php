@@ -21,12 +21,12 @@ class BlogController extends Controller
             ->withCount(['publishedPosts as posts_count'])
             ->get();
 
-        seo()->for(new SEOData(
+        $seoSource = new SEOData(
             title: 'Blog',
             description: 'Articles on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.',
-        ));
+        );
 
-        return view('blog.index', compact('posts', 'categories'));
+        return view('blog.index', compact('posts', 'categories', 'seoSource'));
     }
 
     public function show(Post $post): View
@@ -73,7 +73,9 @@ class BlogController extends Controller
             $relatedPosts = $relatedPosts->merge($latest);
         }
 
-        return view('blog.show', compact('post', 'relatedPosts'));
+        $seoSource = $post;
+
+        return view('blog.show', compact('post', 'relatedPosts', 'seoSource'));
     }
 
     public function category(Category $category): View
@@ -84,12 +86,12 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
-        seo()->for(new SEOData(
+        $seoSource = new SEOData(
             title: $category->name.' Articles',
             description: "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.",
-        ));
+        );
 
-        return view('blog.category', compact('category', 'posts'));
+        return view('blog.category', compact('category', 'posts', 'seoSource'));
     }
 
     public function tag(Tag $tag): View
@@ -100,11 +102,11 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
-        seo()->for(new SEOData(
+        $seoSource = new SEOData(
             title: $tag->name.' Articles',
             description: "Articles tagged with {$tag->name} on The Laravel Architect.",
-        ));
+        );
 
-        return view('blog.tag', compact('tag', 'posts'));
+        return view('blog.tag', compact('tag', 'posts', 'seoSource'));
     }
 }

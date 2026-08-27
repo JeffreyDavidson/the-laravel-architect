@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class NewsletterController extends Controller
 {
@@ -53,8 +54,14 @@ class NewsletterController extends Controller
     {
         $this->ensureValidConfirmationToken($subscriber, $token);
 
+        $seoSource = (new SEOData(
+            title: 'Confirm Your Subscription',
+            description: 'Confirm your subscription to The Laravel Architect newsletter.',
+        ))->markAsNoindex();
+
         return view('newsletter.confirm', [
             'actionUrl' => $request->fullUrl(),
+            'seoSource' => $seoSource,
             'subscriber' => $subscriber,
         ]);
     }
@@ -74,8 +81,14 @@ class NewsletterController extends Controller
 
     public function showUnsubscribe(Request $request, Subscriber $subscriber): View
     {
+        $seoSource = (new SEOData(
+            title: 'Unsubscribe',
+            description: 'Manage your subscription to The Laravel Architect newsletter.',
+        ))->markAsNoindex();
+
         return view('newsletter.unsubscribe', [
             'actionUrl' => $request->fullUrl(),
+            'seoSource' => $seoSource,
             'subscriber' => $subscriber,
         ]);
     }
