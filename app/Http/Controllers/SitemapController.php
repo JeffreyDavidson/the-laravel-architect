@@ -12,7 +12,13 @@ class SitemapController extends Controller
 {
     public function __invoke(): Response
     {
-        $posts = Post::published()->latest('published_at')->get();
+        $posts = Post::published()
+            ->with('tags')
+            ->latest('published_at')
+            ->get();
+        $tags = $posts
+            ->flatMap->tags
+            ->unique('id');
         $categories = Category::query()
             ->whereHas('publishedPosts')
             ->get();
@@ -58,6 +64,15 @@ class SitemapController extends Controller
         foreach ($categories as $category) {
             $xml .= '<url>';
             $xml .= '<loc>'.route('blog.category', $category).'</loc>';
+            $xml .= '<changefreq>weekly</changefreq>';
+            $xml .= '<priority>0.5</priority>';
+            $xml .= '</url>';
+        }
+
+        // Tags
+        foreach ($tags as $tag) {
+            $xml .= '<url>';
+            $xml .= '<loc>'.route('blog.tag', $tag).'</loc>';
             $xml .= '<changefreq>weekly</changefreq>';
             $xml .= '<priority>0.5</priority>';
             $xml .= '</url>';
