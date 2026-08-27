@@ -89,17 +89,15 @@
                         </div>
 
                         @if(config('services.turnstile.site_key'))
-                            @once
-                                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-                            @endonce
-
                             <div>
                                 <div
-                                    class="cf-turnstile"
+                                    data-turnstile-widget
                                     data-sitekey="{{ config('services.turnstile.site_key') }}"
                                     data-action="{{ config('services.turnstile.contact_action') }}"
-                                    data-size="flexible"
                                 ></div>
+                                <noscript>
+                                    <p class="text-sm text-red-600 dark:text-red-400" role="alert">JavaScript is required to complete the verification.</p>
+                                </noscript>
                                 @error('cf-turnstile-response')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
                                 @enderror
