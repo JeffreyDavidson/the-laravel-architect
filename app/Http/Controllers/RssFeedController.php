@@ -53,6 +53,6 @@ class RssFeedController extends Controller
         $xml .= "</channel>\n</rss>";
 
         return response($xml)
-            ->header('Content-Type', 'application/xml; charset=UTF-8');
+            ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }
