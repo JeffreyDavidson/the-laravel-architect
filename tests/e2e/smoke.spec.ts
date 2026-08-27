@@ -15,6 +15,7 @@ const publicRoutes = [
     '/uses',
 ];
 const publicColorSchemes = ['light', 'dark'] as const;
+const optionalPublicBundles = ['about', 'alpine', 'architecture-scene', 'blog', 'home', 'podcast', 'prism'];
 
 test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -31,6 +32,24 @@ async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<vo
         impact: violation.impact,
         targets: violation.nodes.map((node) => node.target),
     }))).toEqual([]);
+}
+
+function trackRequestedAssets(page: Page): string[] {
+    const assets: string[] = [];
+
+    page.on('request', (request) => {
+        if (request.resourceType() !== 'script') {
+            return;
+        }
+
+        assets.push(new URL(request.url()).pathname.split('/').pop() ?? '');
+    });
+
+    return assets;
+}
+
+function requestedBundle(assets: string[], bundle: string): boolean {
+    return assets.some((asset) => asset === `${bundle}.js` || asset.startsWith(`${bundle}-`));
 }
 
 for (const colorScheme of publicColorSchemes) {
@@ -85,6 +104,16 @@ test('homepage architecture scene keeps an accessible fallback', async ({ page }
     await expect(scene.locator('[data-architecture-fallback]')).toBeAttached();
     await expect.poll(async () => scene.getAttribute('data-architecture-state'))
         .toMatch(/ready|fallback/);
+});
+
+test('homepage reduced motion avoids downloading the decorative architecture scene', async ({ page }) => {
+    const requestedAssets = trackRequestedAssets(page);
+
+    await page.goto('/');
+    await expect(page.locator('[data-architecture-scene]')).toHaveAttribute('data-architecture-state', 'fallback');
+
+    expect(requestedBundle(requestedAssets, 'home')).toBeTruthy();
+    expect(requestedBundle(requestedAssets, 'architecture-scene')).toBeFalsy();
 });
 
 test('homepage defers its decorative architecture scene until the browser is idle', async ({ page }) => {
@@ -156,6 +185,17 @@ test('Alpine loads only on pages that use it', async ({ page }) => {
     await page.goto('/about');
 
     await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('object');
+});
+
+test('static public pages avoid downloading optional interaction bundles', async ({ page }) => {
+    const requestedAssets = trackRequestedAssets(page);
+
+    await page.goto('/privacy');
+    await expect(page.getByRole('main')).toBeVisible();
+
+    for (const bundle of optionalPublicBundles) {
+        expect(requestedBundle(requestedAssets, bundle), `${bundle} should not load on /privacy`).toBeFalsy();
+    }
 });
 
 test('blog code blocks expose a keyboard-accessible copy action', async ({ page }) => {
