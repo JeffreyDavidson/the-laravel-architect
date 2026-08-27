@@ -55,6 +55,11 @@ const budgets = [
         maxGzipBytes: 2 * 1024,
     },
     {
+        entry: 'resources/js/pages/contact.js',
+        label: 'Contact verification loader',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
         entry: 'resources/js/pages/podcast.js',
         label: 'Podcast page interaction',
         maxGzipBytes: 2 * 1024,

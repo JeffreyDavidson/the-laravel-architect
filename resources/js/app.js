@@ -16,6 +16,10 @@ if (document.querySelector('[data-podcast-copy-url]')) {
     import('./pages/podcast');
 }
 
+if (document.querySelector('[data-turnstile-widget]')) {
+    import('./pages/contact');
+}
+
 if (document.querySelector('.home-page')) {
     import('./pages/home');
 }
