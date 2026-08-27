@@ -80,6 +80,51 @@ const budgets = [
         maxGzipBytes: 14 * 1024,
     },
     {
+        file: 'public/images/logo-color-128.webp',
+        label: 'Global logo',
+        maxBytes: 20 * 1024,
+    },
+    {
+        entry: 'resources/images/avatar-320.webp',
+        label: 'About portrait (320px)',
+        maxBytes: 24 * 1024,
+    },
+    {
+        entry: 'resources/images/avatar-640.webp',
+        label: 'About portrait (640px)',
+        maxBytes: 42 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-coffee-logo-128.webp',
+        label: 'Coffee podcast artwork (128px)',
+        maxBytes: 4 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-coffee-logo-320.webp',
+        label: 'Coffee podcast artwork (320px)',
+        maxBytes: 12 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-coffee-logo-512.webp',
+        label: 'Coffee podcast artwork (512px)',
+        maxBytes: 20 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-cloudy-logo-128.webp',
+        label: 'Cloudy podcast artwork (128px)',
+        maxBytes: 5 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-cloudy-logo-320.webp',
+        label: 'Cloudy podcast artwork (320px)',
+        maxBytes: 15 * 1024,
+    },
+    {
+        entry: 'resources/images/podcast-cloudy-logo-512.webp',
+        label: 'Cloudy podcast artwork (512px)',
+        maxBytes: 23 * 1024,
+    },
+    {
         entry: 'resources/css/filament/admin/theme.css',
         label: 'Filament admin theme',
         maxGzipBytes: 68 * 1024,
@@ -89,20 +134,25 @@ const budgets = [
 let failed = false;
 
 for (const budget of budgets) {
-    const asset = manifest[budget.entry];
+    const asset = budget.entry ? manifest[budget.entry] : null;
 
-    if (! asset) {
+    if (budget.entry && ! asset) {
         throw new Error(`Vite manifest entry not found: ${budget.entry}`);
     }
 
-    const contents = readFileSync(`public/build/${asset.file}`);
-    const gzipBytes = gzipSync(contents, { level: 9 }).length;
-    const gzipKilobytes = (gzipBytes / 1024).toFixed(1);
-    const limitKilobytes = (budget.maxGzipBytes / 1024).toFixed(1);
+    const path = budget.file ?? `public/build/${asset.file}`;
+    const contents = readFileSync(path);
+    const measuredBytes = budget.maxBytes === undefined
+        ? gzipSync(contents, { level: 9 }).length
+        : contents.length;
+    const maxBytes = budget.maxBytes ?? budget.maxGzipBytes;
+    const measuredKilobytes = (measuredBytes / 1024).toFixed(1);
+    const limitKilobytes = (maxBytes / 1024).toFixed(1);
+    const measurement = budget.maxBytes ? 'file' : 'gzip';
 
-    console.log(`${budget.label}: ${gzipKilobytes} KiB gzip (limit ${limitKilobytes} KiB)`);
+    console.log(`${budget.label}: ${measuredKilobytes} KiB ${measurement} (limit ${limitKilobytes} KiB)`);
 
-    if (gzipBytes > budget.maxGzipBytes) {
+    if (measuredBytes > maxBytes) {
         failed = true;
     }
 }
