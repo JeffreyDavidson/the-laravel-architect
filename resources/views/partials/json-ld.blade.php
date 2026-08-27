@@ -109,7 +109,43 @@ if ((request()->routeIs('podcast.show') || request()->routeIs('podcast.episode')
     }
 }
 
-// 4. CollectionPage (blog.index)
+// 4. CreativeWork (projects.show)
+if (request()->routeIs('projects.show') && isset($project)) {
+    $projectUrl = route('projects.show', $project);
+    $projectCaseStudy = [
+        '@type' => 'CreativeWork',
+        '@id' => $projectUrl.'#project',
+        'name' => $project->title,
+        'url' => $projectUrl,
+        'mainEntityOfPage' => $projectUrl,
+        'description' => $project->description,
+        'author' => [
+            '@type' => 'Person',
+            '@id' => $authorUrl.'#person',
+        ],
+    ];
+
+    if ($project->featured_image_url) {
+        $projectCaseStudy['image'] = $project->featured_image_url;
+    }
+
+    if ($project->tech_stack) {
+        $projectCaseStudy['keywords'] = implode(', ', $project->tech_stack);
+    }
+
+    $relatedUrls = array_values(array_filter([
+        $project->url,
+        $project->github_url,
+    ]));
+
+    if ($relatedUrls !== []) {
+        $projectCaseStudy['sameAs'] = $relatedUrls;
+    }
+
+    $schemas[] = $projectCaseStudy;
+}
+
+// 5. CollectionPage (blog.index)
 if (request()->routeIs('blog.index')) {
     $schemas[] = [
         '@type' => 'CollectionPage',
@@ -118,7 +154,7 @@ if (request()->routeIs('blog.index')) {
     ];
 }
 
-// 5. BreadcrumbList
+// 6. BreadcrumbList
 $breadcrumbItems = [];
 $breadcrumbItems[] = ['name' => 'Home', 'url' => $siteUrl];
 
