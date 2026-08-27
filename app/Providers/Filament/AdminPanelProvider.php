@@ -23,7 +23,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 // AccountWidget replaced by WelcomeWidget
 use Filament\Support\Icons\Heroicon;
@@ -31,9 +30,9 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Foundation\Vite;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -64,9 +63,6 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2.5rem')
             ->favicon('/images/favicon-32x32.png')
             ->font('Inter')
-            ->assets([
-                Js::make('admin', Vite::asset('resources/js/filament/admin.js'))->module(),
-            ])
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder
@@ -134,6 +130,10 @@ class AdminPanelProvider extends PanelProvider
                         Private studio access
                     </div>
                 '),
+            )
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_AFTER,
+                fn (Vite $vite): HtmlString => $vite('resources/js/filament/admin.js'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
