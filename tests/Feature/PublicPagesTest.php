@@ -209,6 +209,7 @@ it('renders accessible podcast episode embeds and external links', function () {
         'name' => 'Architecture Sessions',
         'slug' => 'architecture-sessions',
         'description' => 'Conversations about Laravel architecture.',
+        'color' => '#2563eb',
         'is_active' => true,
     ]);
     $episode = Episode::query()->create([
@@ -233,11 +234,13 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertDontSee('src="https://www.youtube.com/embed/', false)
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
+        ->assertSee('style="--podcast-color: #2563eb;"', false)
         ->assertDontSee('<style>', false)
         ->assertDontSee('onclick=', false);
 
     $this->get(route('podcast.show', $podcast))
         ->assertOk()
+        ->assertSee('style="--podcast-color: #2563eb;"', false)
         ->assertDontSee('<style>', false);
 });
 

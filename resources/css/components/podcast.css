@@ -240,6 +240,18 @@
         color: var(--podcast-color);
     }
 
+    .podcast-accent-bg {
+        background: var(--podcast-color);
+    }
+
+    .podcast-accent-bg-faint {
+        background: color-mix(in srgb, var(--podcast-color) 3%, transparent);
+    }
+
+    .podcast-accent-bg-soft {
+        background: color-mix(in srgb, var(--podcast-color) 6%, transparent);
+    }
+
     .podcast-badge {
         background: color-mix(in srgb, var(--podcast-color) 8%, transparent);
         color: var(--podcast-color);
@@ -247,6 +259,11 @@
 
     .podcast-live-dot {
         background: var(--podcast-color);
+    }
+
+    .podcast-prose {
+        --tw-prose-links: var(--podcast-color);
+        --tw-prose-code: #e47a9d;
     }
 
     .topic-pill {
