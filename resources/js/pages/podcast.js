@@ -20,8 +20,29 @@ function initializePodcastCopyButton() {
     });
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializePodcastCopyButton, { once: true });
-} else {
+function initializeYoutubeFacades() {
+    document.querySelectorAll('[data-youtube-facade]').forEach((facade) => {
+        const button = facade.querySelector('[data-youtube-play]');
+        const template = facade.querySelector('[data-youtube-player]');
+
+        if (!button || !(template instanceof HTMLTemplateElement)) {
+            return;
+        }
+
+        button.addEventListener('click', () => {
+            template.replaceWith(template.content.cloneNode(true));
+            button.remove();
+        }, { once: true });
+    });
+}
+
+function initializePodcastPage() {
     initializePodcastCopyButton();
+    initializeYoutubeFacades();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePodcastPage, { once: true });
+} else {
+    initializePodcastPage();
 }
