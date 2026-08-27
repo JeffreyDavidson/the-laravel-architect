@@ -48,12 +48,12 @@
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
-                <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
+                <div class="flex-shrink-0 relative">
                     <div class="about-card-deck">
                         <div class="about-ghost-card about-ghost-card-2"></div>
                         <div class="about-ghost-card about-ghost-card-1"></div>
-                    <div class="about-card-flip-container rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400" role="button" tabindex="0" aria-label="Flip Jeffrey Davidson developer card" :aria-pressed="flipped.toString()" @click="flipped = !flipped; $dispatch('about-card-flip')" @keydown.enter.prevent="$el.click()" @keydown.space.prevent="$el.click()">
-                        <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
+                    <div class="about-card-flip-container rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400" role="button" tabindex="0" aria-label="Flip Jeffrey Davidson developer card" aria-pressed="false">
+                        <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]">
 
                             {{-- FRONT: Portrait --}}
                             <div class="about-card-front">
