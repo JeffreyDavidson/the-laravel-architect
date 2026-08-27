@@ -262,8 +262,8 @@
                         $videoId = $matches[1] ?? null;
                     @endphp
                     @if($videoId)
-                    <div class="relative aspect-video w-full bg-[#0b1016]" x-data="{ showPlayer: false }">
-                        <template x-if="showPlayer">
+                    <div class="relative aspect-video w-full bg-[#0b1016]" data-youtube-facade>
+                        <template data-youtube-player>
                             <iframe
                                 src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
                                 title="{{ $episode->title }} on YouTube"
@@ -276,8 +276,7 @@
 
                         <button
                             type="button"
-                            x-show="!showPlayer"
-                            @click="showPlayer = true"
+                            data-youtube-play
                             aria-label="Play {{ $episode->title }} on YouTube"
                             class="group absolute inset-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center text-white transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand-400"
                         >
