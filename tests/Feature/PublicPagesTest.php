@@ -126,6 +126,8 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/podcast-coffee-logo-128.webp']['file'], false)
+        ->assertDontSee($manifest['resources/images/podcast-coffee-logo-512.webp']['file'], false)
         ->assertSee($manifest['resources/js/app.js']['file'], false);
 
     $this->get(route('about'))

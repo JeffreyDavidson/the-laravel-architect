@@ -304,7 +304,7 @@
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
                 description="Conversations about Laravel, web development, and the developer life. One cup at a time."
-                :image="Vite::asset('resources/images/podcast-coffee-logo-512.webp')"
+                :image="Vite::asset('resources/images/podcast-coffee-logo-128.webp')"
                 image-alt="Coffee With The Laravel Architect"
                 :episode-count="$coffeeEpisodeCount ?? null"
                 :href="route('podcast.index')"
