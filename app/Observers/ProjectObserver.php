@@ -3,11 +3,11 @@
 namespace App\Observers;
 
 use App\Models\Project;
-use App\Services\ProjectImageVariants;
+use App\Services\ResponsiveImageVariants;
 
 class ProjectObserver
 {
-    public function __construct(private readonly ProjectImageVariants $images) {}
+    public function __construct(private readonly ResponsiveImageVariants $images) {}
 
     public function created(Project $project): void
     {

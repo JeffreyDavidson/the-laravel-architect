@@ -1,9 +1,12 @@
 <?php
 
 use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -98,6 +101,45 @@ it('keeps responsive project image variants in sync with the original image', fu
     Storage::disk('public')->assertMissing([
         'projects/responsive/new-640.webp',
         'projects/responsive/new-1280.webp',
+    ]);
+});
+
+it('keeps responsive post image variants in sync with the original image', function () {
+    $image = UploadedFile::fake()->image('post.png', 1280, 8)->getContent();
+    Storage::disk('public')->put('posts/old.png', $image);
+    Storage::disk('public')->put('posts/new.png', $image);
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Post',
+        'slug' => 'post',
+        'content' => 'Content',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Draft,
+        'featured_image_path' => 'posts/old.png',
+    ]);
+
+    Storage::disk('public')->assertExists([
+        'posts/responsive/old-640.webp',
+        'posts/responsive/old-1280.webp',
+    ]);
+
+    $post->update(['featured_image_path' => 'posts/new.png']);
+
+    Storage::disk('public')->assertMissing([
+        'posts/responsive/old-640.webp',
+        'posts/responsive/old-1280.webp',
+    ]);
+    Storage::disk('public')->assertExists([
+        'posts/responsive/new-640.webp',
+        'posts/responsive/new-1280.webp',
+    ]);
+
+    $post->delete();
+
+    Storage::disk('public')->assertMissing([
+        'posts/responsive/new-640.webp',
+        'posts/responsive/new-1280.webp',
     ]);
 });
 

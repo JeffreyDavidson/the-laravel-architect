@@ -2,26 +2,26 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Project;
+use App\Models\Post;
 use App\Services\ResponsiveImageVariants;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('projects:generate-image-variants')]
-#[Description('Generate responsive WebP variants for existing project images')]
-class GenerateProjectImageVariants extends Command
+#[Signature('posts:generate-image-variants')]
+#[Description('Generate responsive WebP variants for existing post images')]
+class GeneratePostImageVariants extends Command
 {
     public function handle(ResponsiveImageVariants $images): int
     {
         $generated = 0;
         $failed = 0;
 
-        Project::query()
+        Post::query()
             ->whereNotNull('featured_image_path')
             ->select(['id', 'featured_image_path'])
-            ->eachById(function (Project $project) use ($images, &$generated, &$failed): void {
-                $sourcePath = $project->featured_image_path;
+            ->eachById(function (Post $post) use ($images, &$generated, &$failed): void {
+                $sourcePath = $post->featured_image_path;
 
                 if (is_string($sourcePath) && $images->generate($sourcePath)) {
                     $generated++;
@@ -30,10 +30,10 @@ class GenerateProjectImageVariants extends Command
                 }
 
                 $failed++;
-                $this->warn("Skipped project {$project->id}: its source image is missing or unsupported.");
+                $this->warn("Skipped post {$post->id}: its source image is missing or unsupported.");
             });
 
-        $noun = $generated === 1 ? 'project' : 'projects';
+        $noun = $generated === 1 ? 'post' : 'posts';
         $this->info("Generated responsive images for {$generated} {$noun}.");
 
         return $failed === 0 ? self::SUCCESS : self::FAILURE;
