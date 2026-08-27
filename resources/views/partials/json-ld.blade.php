@@ -145,12 +145,67 @@ if (request()->routeIs('projects.show') && isset($project)) {
     $schemas[] = $projectCaseStudy;
 }
 
-// 5. CollectionPage (blog.index)
-if (request()->routeIs('blog.index')) {
+// 5. CollectionPage + ItemList (public indexes)
+$collectionPage = null;
+$collectionItems = [];
+
+if (request()->routeIs('blog.index') && isset($posts)) {
+    $collectionPage = ['name' => 'Blog', 'url' => route('blog.index')];
+
+    foreach ($posts as $collectionPost) {
+        $collectionItems[] = [
+            'name' => $collectionPost->title,
+            'url' => route('blog.show', $collectionPost),
+        ];
+    }
+} elseif (request()->routeIs('projects.index') && isset($projects)) {
+    $collectionPage = ['name' => 'Projects', 'url' => route('projects.index')];
+
+    foreach ($projects as $collectionProject) {
+        $collectionItems[] = [
+            'name' => $collectionProject->title,
+            'url' => route('projects.show', $collectionProject),
+        ];
+    }
+} elseif (request()->routeIs('podcast.index')) {
+    $collectionPage = ['name' => 'Podcast', 'url' => route('podcast.index')];
+
+    if (isset($podcast) && $podcast) {
+        $collectionItems[] = [
+            'name' => $podcast->name,
+            'url' => route('podcast.show', $podcast),
+        ];
+    }
+}
+
+if ($collectionPage) {
+    $itemListId = $collectionPage['url'].'#items';
     $schemas[] = [
         '@type' => 'CollectionPage',
-        'name' => 'Blog',
-        'url' => route('blog.index'),
+        '@id' => $collectionPage['url'].'#collection',
+        'name' => $collectionPage['name'],
+        'url' => $collectionPage['url'],
+        'mainEntity' => [
+            '@type' => 'ItemList',
+            '@id' => $itemListId,
+        ],
+    ];
+
+    $itemListElements = [];
+    foreach ($collectionItems as $index => $item) {
+        $itemListElements[] = [
+            '@type' => 'ListItem',
+            'position' => $index + 1,
+            'name' => $item['name'],
+            'item' => $item['url'],
+        ];
+    }
+
+    $schemas[] = [
+        '@type' => 'ItemList',
+        '@id' => $itemListId,
+        'numberOfItems' => count($itemListElements),
+        'itemListElement' => $itemListElements,
     ];
 }
 
