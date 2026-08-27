@@ -23,6 +23,8 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PodcastObserver::class)]
 class Podcast extends Model
 {
+    private const DEFAULT_COLOR = '#6366f1';
+
     use HasSEO;
     use LogsActivity;
     use ManagesStoredMedia;
@@ -100,6 +102,15 @@ class Podcast extends Model
         }
 
         return implode(', ', $srcset);
+    }
+
+    public function getDisplayColorAttribute(): string
+    {
+        if (is_string($this->color) && preg_match('/\A#[0-9a-fA-F]{6}\z/', $this->color) === 1) {
+            return $this->color;
+        }
+
+        return self::DEFAULT_COLOR;
     }
 
     public function getDynamicSEOData(): SEOData

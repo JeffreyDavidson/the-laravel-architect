@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-<div class="podcast-detail" style="--podcast-color: {{ $podcast->color }};">
+<div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
 {{-- ===== EPISODE HERO ===== --}}
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">

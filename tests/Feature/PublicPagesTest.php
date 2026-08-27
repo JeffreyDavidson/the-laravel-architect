@@ -288,6 +288,21 @@ it('renders keyboard accessible podcast audio controls', function () {
         ->assertDontSee('@click=', false);
 });
 
+it('falls back to a safe podcast color when stored presentation data is invalid', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'color' => 'url(https://example.com/image.png)',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('style="--podcast-color: #6366f1;"', false)
+        ->assertDontSee('url(https://example.com/image.png)', false);
+});
+
 it('keeps the admin panel behind authentication', function () {
     $this->withVite();
 
