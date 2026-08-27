@@ -143,6 +143,42 @@ it('keeps responsive post image variants in sync with the original image', funct
     ]);
 });
 
+it('keeps responsive podcast cover variants in sync with the original image', function () {
+    $image = UploadedFile::fake()->image('podcast.png', 1280, 8)->getContent();
+    Storage::disk('public')->put('podcasts/old.png', $image);
+    Storage::disk('public')->put('podcasts/new.png', $image);
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Podcast',
+        'slug' => 'podcast',
+        'description' => 'Description',
+        'cover_image_path' => 'podcasts/old.png',
+    ]);
+
+    Storage::disk('public')->assertExists([
+        'podcasts/responsive/old-640.webp',
+        'podcasts/responsive/old-1280.webp',
+    ]);
+
+    $podcast->update(['cover_image_path' => 'podcasts/new.png']);
+
+    Storage::disk('public')->assertMissing([
+        'podcasts/responsive/old-640.webp',
+        'podcasts/responsive/old-1280.webp',
+    ]);
+    Storage::disk('public')->assertExists([
+        'podcasts/responsive/new-640.webp',
+        'podcasts/responsive/new-1280.webp',
+    ]);
+
+    $podcast->delete();
+
+    Storage::disk('public')->assertMissing([
+        'podcasts/responsive/new-640.webp',
+        'podcasts/responsive/new-1280.webp',
+    ]);
+});
+
 it('deletes episode media when its podcast is deleted', function () {
     Storage::disk('public')->put('podcasts/cover.png', 'cover');
     Storage::disk('public')->put('episodes/images/episode.png', 'image');

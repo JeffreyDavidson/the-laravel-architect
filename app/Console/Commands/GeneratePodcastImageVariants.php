@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Podcast;
+use App\Services\ResponsiveImageVariants;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Console\Command;
+
+#[Signature('podcasts:generate-image-variants')]
+#[Description('Generate responsive WebP variants for existing podcast cover images')]
+class GeneratePodcastImageVariants extends Command
+{
+    public function handle(ResponsiveImageVariants $images): int
+    {
+        $generated = 0;
+        $failed = 0;
+
+        Podcast::query()
+            ->whereNotNull('cover_image_path')
+            ->select(['id', 'cover_image_path'])
+            ->eachById(function (Podcast $podcast) use ($images, &$generated, &$failed): void {
+                $sourcePath = $podcast->cover_image_path;
+
+                if (is_string($sourcePath) && $images->generate($sourcePath)) {
+                    $generated++;
+
+                    return;
+                }
+
+                $failed++;
+                $this->warn("Skipped podcast {$podcast->id}: its source image is missing or unsupported.");
+            });
+
+        $noun = $generated === 1 ? 'podcast' : 'podcasts';
+        $this->info("Generated responsive images for {$generated} {$noun}.");
+
+        return $failed === 0 ? self::SUCCESS : self::FAILURE;
+    }
+}

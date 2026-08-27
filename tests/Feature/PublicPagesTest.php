@@ -401,6 +401,34 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSee($post->featured_image_url, false);
 });
 
+it('serves responsive podcast cover images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('podcast.png', 1280, 72);
+    Storage::disk('public')->put('podcasts/podcast.png', $image->getContent());
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Responsive Podcast',
+        'slug' => 'responsive-podcast',
+        'description' => 'A podcast with responsive cover artwork.',
+        'cover_image_path' => 'podcasts/podcast.png',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('podcast-640.webp', false)
+        ->assertSee('podcast-1280.webp', false)
+        ->assertSee('sizes="288px"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($podcast->cover_image_url, false);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('sizes="224px"', false)
+        ->assertSee($podcast->cover_image_url, false);
+});
+
 it('shows synced published YouTube videos without stale launch content', function () {
     $publishedVideo = Video::query()->create([
         'youtube_id' => 'published-video',

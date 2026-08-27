@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\PublishStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Observers\PodcastObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +20,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
+#[ObservedBy(PodcastObserver::class)]
 class Podcast extends Model
 {
     use HasSEO;
