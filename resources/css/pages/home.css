@@ -636,13 +636,6 @@
     :root:not(.dark) .yt-video-player .text-red-500 {
         color: #cf222e !important;
     }
-    /* Coming Soon badge */
-    :root:not(.dark) .yt-video-player .yt-coming-soon {
-        color: #cf222e !important;
-        background: rgba(207,34,46,0.12) !important;
-        border-color: rgba(207,34,46,0.25) !important;
-        backdrop-filter: blur(8px);
-    }
     /* Mobile thumbnail */
     :root:not(.dark) .yt-video-player .text-white\/80 {
         color: #1f2328 !important;
