@@ -30,6 +30,16 @@
     }
 }
 
+@keyframes podcast-player-waveform {
+    from {
+        transform: scaleY(var(--from));
+    }
+
+    to {
+        transform: scaleY(var(--to));
+    }
+}
+
 @keyframes podcast-spin-slow {
     from {
         transform: rotate(0deg);
@@ -84,6 +94,67 @@
     .podcast-eq-bar {
         animation: podcast-equalize var(--dur) ease-in-out infinite alternate;
         transform-origin: bottom;
+    }
+
+    .eq-bar {
+        animation: podcast-equalize var(--dur) ease-in-out infinite alternate;
+        transform-origin: bottom;
+    }
+
+    .episode-card {
+        transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .episode-card:hover {
+        background: rgb(255 255 255 / 0.02);
+        transform: translateY(-2px);
+    }
+
+    .episode-card:hover .ep-play {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .episode-card:hover .ep-number {
+        opacity: 0;
+    }
+
+    .ep-play {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .ep-number {
+        transition: opacity 0.2s ease;
+    }
+
+    .subscribe-btn,
+    .share-btn {
+        transition: transform 0.2s ease;
+    }
+
+    .subscribe-btn:hover,
+    .share-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .waveform-bar {
+        animation: podcast-player-waveform var(--dur) ease-in-out infinite alternate;
+        animation-play-state: paused;
+        transform-origin: bottom;
+    }
+
+    [data-audio-player][data-playing="true"] .waveform-bar {
+        animation-play-state: running;
+    }
+
+    .ep-nav:hover {
+        border-color: rgb(255 255 255 / 0.1);
+    }
+
+    .ep-nav:hover .ep-nav-arrow {
+        transform: translateX(var(--arrow-dir, 4px));
     }
 
     .podcast-surface {

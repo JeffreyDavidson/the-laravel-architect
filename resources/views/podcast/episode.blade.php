@@ -5,59 +5,6 @@
 @endpush
 
 @section('content')
-<style>
-    /* Waveform visualization */
-    .waveform-bar {
-        animation: waveform var(--dur) ease-in-out infinite alternate;
-        animation-play-state: paused;
-        transform-origin: bottom;
-    }
-    [data-audio-player][data-playing="true"] .waveform-bar { animation-play-state: running; }
-    @keyframes waveform {
-        0% { transform: scaleY(var(--from)); }
-        100% { transform: scaleY(var(--to)); }
-    }
-
-    /* Custom player */
-    .player-progress::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: white;
-        cursor: pointer;
-        box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-    .player-progress::-moz-range-thumb {
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: white;
-        cursor: pointer;
-        border: none;
-        box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-    .player-progress {
-        -webkit-appearance: none;
-        background: transparent;
-        cursor: pointer;
-    }
-    .player-progress::-webkit-slider-runnable-track {
-        height: 4px;
-        border-radius: 2px;
-        background: #1e2a3a;
-    }
-    .player-progress::-moz-range-track {
-        height: 4px;
-        border-radius: 2px;
-        background: #1e2a3a;
-    }
-
-    /* Share/nav hover */
-    .share-btn { transition: all 0.2s ease; }
-    .share-btn:hover { transform: translateY(-2px); }
-    .ep-nav:hover { border-color: rgba(255,255,255,0.1); }
-    .ep-nav:hover .ep-nav-arrow { transform: translateX(var(--arrow-dir, 4px)); }
-</style>
-
 {{-- ===== EPISODE HERO ===== --}}
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
