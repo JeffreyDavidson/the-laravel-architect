@@ -211,6 +211,70 @@ it('renders canonical structured data for project case studies', function () {
         ->not->toContain('SoftwareApplication');
 });
 
+it('renders canonical structured data for public content collections', function () {
+    $author = User::factory()->create();
+    $post = Post::query()->create([
+        'title' => 'Structuring Laravel Applications',
+        'slug' => 'structuring-laravel-applications',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $project = Project::query()->create([
+        'title' => 'Architecture Decisions',
+        'slug' => 'architecture-decisions',
+        'description' => 'A project shaped by explicit technical tradeoffs.',
+        'status' => ProjectStatus::Published,
+    ]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    $collections = [
+        [route('blog.index'), 'Blog', $post->title, route('blog.show', $post)],
+        [route('projects.index'), 'Projects', $project->title, route('projects.show', $project)],
+        [route('podcast.index'), 'Podcast', $podcast->name, route('podcast.show', $podcast)],
+    ];
+
+    foreach ($collections as [$url, $name, $itemName, $itemUrl]) {
+        $content = $this->get($url)
+            ->assertOk()
+            ->getContent();
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+
+        expect($collectionPage)
+            ->toMatchArray([
+                '@id' => $url.'#collection',
+                'name' => $name,
+                'url' => $url,
+                'mainEntity' => [
+                    '@type' => 'ItemList',
+                    '@id' => $url.'#items',
+                ],
+            ])
+            ->and($itemList)
+            ->toMatchArray([
+                '@id' => $url.'#items',
+                'numberOfItems' => 1,
+                'itemListElement' => [[
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => $itemName,
+                    'item' => $itemUrl,
+                ]],
+            ]);
+    }
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
