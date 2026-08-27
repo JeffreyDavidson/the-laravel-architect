@@ -262,6 +262,14 @@ it('renders keyboard accessible podcast audio controls', function () {
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);
+    Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Earlier Episode',
+        'slug' => 'earlier-episode',
+        'description' => 'An earlier published episode.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDays(2),
+    ]);
 
     $this->get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
@@ -272,6 +280,10 @@ it('renders keyboard accessible podcast audio controls', function () {
         ->assertSee('aria-label="Skip back 15 seconds"', false)
         ->assertSee('aria-label="Skip forward 30 seconds"', false)
         ->assertSee('aria-label="Play episode"', false)
+        ->assertSee('class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full" data-audio-progress', false)
+        ->assertSee('[--arrow-dir:-4px]', false)
+        ->assertDontSee('style="width: 0;"', false)
+        ->assertDontSee('style="--arrow-dir:', false)
         ->assertDontSee('x-data=', false)
         ->assertDontSee('@click=', false);
 });

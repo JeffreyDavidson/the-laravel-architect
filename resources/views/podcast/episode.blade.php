@@ -92,7 +92,7 @@
                     <div class="px-6 py-2">
                         <div class="group relative h-5">
                             <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[#1e2a3a]">
-                                <div class="podcast-accent-bg absolute inset-y-0 left-0 rounded-full" data-audio-progress style="width: 0;"></div>
+                                <div class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full" data-audio-progress></div>
                             </div>
                             <input
                                 type="range"
@@ -381,7 +381,7 @@
                 @if($prevEpisode)
                 <a href="{{ route('podcast.episode', [$podcast, $prevEpisode]) }}" class="ep-nav group p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] transition-all duration-300 hover:bg-white dark:bg-[#0D1117]">
                     <div class="flex items-center gap-3">
-                        <svg class="ep-nav-arrow w-5 h-5 text-gray-600 flex-shrink-0 transition-transform" style="--arrow-dir: -4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        <svg class="ep-nav-arrow w-5 h-5 text-gray-600 flex-shrink-0 transition-transform [--arrow-dir:-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                         <div class="min-w-0">
                             <span class="text-xs text-gray-500 uppercase tracking-wide">Previous Episode</span>
                             <p class="font-semibold group-hover:opacity-80 transition-opacity truncate mt-0.5">{{ $prevEpisode->title }}</p>
