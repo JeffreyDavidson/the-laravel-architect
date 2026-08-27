@@ -134,6 +134,11 @@ const budgets = [
         label: 'Filament admin theme',
         maxGzipBytes: 68 * 1024,
     },
+    {
+        entry: 'resources/js/filament/admin.js',
+        label: 'Filament admin interaction',
+        maxGzipBytes: 2 * 1024,
+    },
 ];
 
 let failed = false;
