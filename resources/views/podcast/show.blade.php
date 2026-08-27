@@ -45,10 +45,10 @@
 
                     {{-- Mini equalizer --}}
                     <div class="flex items-end gap-[2px] h-4">
-                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full" style="--dur: 0.7s;"></span>
-                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full" style="--dur: 0.5s;"></span>
-                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full" style="--dur: 0.8s;"></span>
-                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full" style="--dur: 0.6s;"></span>
+                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full [--dur:0.7s]"></span>
+                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full [--dur:0.5s]"></span>
+                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full [--dur:0.8s]"></span>
+                        <span class="eq-bar podcast-accent-bg w-[3px] h-full rounded-full [--dur:0.6s]"></span>
                     </div>
                 </div>
 
@@ -204,10 +204,10 @@
 
                 {{-- Mini equalizer on hover --}}
                 <div class="hidden md:flex items-end gap-[2px] h-5 opacity-0 group-hover:opacity-60 transition-opacity">
-                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full" style="--dur: 0.6s;"></span>
-                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full" style="--dur: 0.8s;"></span>
-                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full" style="--dur: 0.5s;"></span>
-                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full" style="--dur: 0.7s;"></span>
+                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full [--dur:0.6s]"></span>
+                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full [--dur:0.8s]"></span>
+                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full [--dur:0.5s]"></span>
+                    <span class="eq-bar podcast-accent-bg w-[2px] h-full rounded-full [--dur:0.7s]"></span>
                 </div>
 
                 <svg class="w-5 h-5 text-gray-600 group-hover:translate-x-1 transition-transform flex-shrink-0 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
