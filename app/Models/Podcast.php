@@ -74,15 +74,32 @@ class Podcast extends Model
             return Storage::disk('public')->url($this->cover_image_path);
         }
 
-        $slug = $this->slug;
-        $map = [
-            'coffee-with-the-laravel-architect' => 'resources/images/podcast-coffee-logo-512.webp',
-            'embracing-cloudy-days' => 'resources/images/podcast-cloudy-logo-512.webp',
-        ];
+        $resources = $this->fallbackCoverImageResources();
 
-        return isset($map[$slug])
-            ? Vite::asset($map[$slug])
+        return $resources
+            ? Vite::asset($resources[512])
             : null;
+    }
+
+    public function getFallbackCoverImageSrcsetAttribute(): ?string
+    {
+        if ($this->cover_image_path) {
+            return null;
+        }
+
+        $resources = $this->fallbackCoverImageResources();
+
+        if (! $resources) {
+            return null;
+        }
+
+        $srcset = [];
+
+        foreach ($resources as $width => $resource) {
+            $srcset[] = Vite::asset($resource)." {$width}w";
+        }
+
+        return implode(', ', $srcset);
     }
 
     public function getDynamicSEOData(): SEOData
@@ -104,5 +121,23 @@ class Podcast extends Model
     protected function storedMediaAttributes(): array
     {
         return ['cover_image_path'];
+    }
+
+    /** @return array<int, string>|null */
+    private function fallbackCoverImageResources(): ?array
+    {
+        return match ($this->slug) {
+            'coffee-with-the-laravel-architect' => [
+                128 => 'resources/images/podcast-coffee-logo-128.webp',
+                320 => 'resources/images/podcast-coffee-logo-320.webp',
+                512 => 'resources/images/podcast-coffee-logo-512.webp',
+            ],
+            'embracing-cloudy-days' => [
+                128 => 'resources/images/podcast-cloudy-logo-128.webp',
+                320 => 'resources/images/podcast-cloudy-logo-320.webp',
+                512 => 'resources/images/podcast-cloudy-logo-512.webp',
+            ],
+            default => null,
+        };
     }
 }

@@ -434,6 +434,23 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertSee($podcast->cover_image_url, false);
 });
 
+it('serves responsive optimized fallback artwork for known podcasts', function () {
+    $this->withVite();
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Coffee With The Laravel Architect',
+        'slug' => 'coffee-with-the-laravel-architect',
+        'description' => 'A podcast with bundled fallback artwork.',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('srcset="'.$podcast->fallback_cover_image_srcset.'"', false)
+        ->assertSee('sizes="224px"', false)
+        ->assertSee($podcast->cover_image_url, false);
+});
+
 it('shows synced published YouTube videos without stale launch content', function () {
     $publishedVideo = Video::query()->create([
         'youtube_id' => 'published-video',
