@@ -23,8 +23,21 @@
 
         {{-- Featured Image --}}
         @if($post->featured_image_url)
+        @inject('responsiveImages', 'App\Services\ResponsiveImageVariants')
+        @php
+            $featuredImageSrcset = $responsiveImages->srcset($post->featured_image_path);
+        @endphp
         <div class="rounded-xl overflow-hidden mb-10 bg-gray-100 dark:bg-gray-800">
-            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="w-full">
+            <picture class="block">
+                @if($featuredImageSrcset)
+                <source
+                    type="image/webp"
+                    srcset="{{ $featuredImageSrcset }}"
+                    sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"
+                >
+                @endif
+                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="w-full">
+            </picture>
         </div>
         @endif
 

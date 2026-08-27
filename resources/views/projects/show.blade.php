@@ -100,7 +100,7 @@
 
 {{-- ===== FEATURED IMAGE ===== --}}
 @if($project->featured_image_url)
-@inject('projectImages', 'App\Services\ProjectImageVariants')
+@inject('projectImages', 'App\Services\ResponsiveImageVariants')
 @php
     $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
 @endphp

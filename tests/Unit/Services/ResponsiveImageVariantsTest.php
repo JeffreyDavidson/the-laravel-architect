@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\ProjectImageVariants;
+use App\Services\ResponsiveImageVariants;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +13,7 @@ it('generates responsive webp variants without replacing the original image', fu
 
     Storage::disk('public')->put('projects/project.png', $image->getContent());
 
-    $generated = app(ProjectImageVariants::class)->generate('projects/project.png');
+    $generated = app(ResponsiveImageVariants::class)->generate('projects/project.png');
 
     expect($generated)->toBeTrue();
     Storage::disk('public')->assertExists([
@@ -38,7 +38,7 @@ it('generates responsive webp variants without replacing the original image', fu
 it('returns a srcset only for generated variants that exist', function () {
     Storage::disk('public')->put('projects/responsive/project-640.webp', 'small');
 
-    $srcset = app(ProjectImageVariants::class)->srcset('projects/project.png');
+    $srcset = app(ResponsiveImageVariants::class)->srcset('projects/project.png');
 
     expect($srcset)
         ->toContain('projects/responsive/project-640.webp')
@@ -50,7 +50,7 @@ it('does not upscale images to create responsive variants', function () {
     $image = UploadedFile::fake()->image('small.png', 800, 45);
     Storage::disk('public')->put('projects/small.png', $image->getContent());
 
-    app(ProjectImageVariants::class)->generate('projects/small.png');
+    app(ResponsiveImageVariants::class)->generate('projects/small.png');
 
     Storage::disk('public')->assertExists('projects/responsive/small-640.webp');
     Storage::disk('public')->assertMissing('projects/responsive/small-1280.webp');
@@ -61,7 +61,7 @@ it('deletes generated variants without deleting the original image', function ()
     Storage::disk('public')->put('projects/responsive/project-640.webp', 'small');
     Storage::disk('public')->put('projects/responsive/project-1280.webp', 'large');
 
-    app(ProjectImageVariants::class)->delete('projects/project.png');
+    app(ResponsiveImageVariants::class)->delete('projects/project.png');
 
     Storage::disk('public')->assertMissing([
         'projects/responsive/project-640.webp',

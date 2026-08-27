@@ -8,7 +8,7 @@ use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\Exceptions\DecoderException;
 use Intervention\Image\ImageManager;
 
-class ProjectImageVariants
+class ResponsiveImageVariants
 {
     /** @var list<int> */
     private const WIDTHS = [640, 1280];

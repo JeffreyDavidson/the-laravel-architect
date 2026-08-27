@@ -375,6 +375,32 @@ it('serves responsive project images while retaining the original fallback', fun
         ->assertSee($project->featured_image_url, false);
 });
 
+it('serves responsive post images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('article.png', 1280, 72);
+    Storage::disk('public')->put('posts/article.png', $image->getContent());
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Responsive Article',
+        'slug' => 'responsive-article',
+        'content' => 'An article with responsive imagery.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now(),
+        'featured_image_path' => 'posts/article.png',
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('article-640.webp', false)
+        ->assertSee('article-1280.webp', false)
+        ->assertSee('sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($post->featured_image_url, false);
+});
+
 it('shows synced published YouTube videos without stale launch content', function () {
     $publishedVideo = Video::query()->create([
         'youtube_id' => 'published-video',

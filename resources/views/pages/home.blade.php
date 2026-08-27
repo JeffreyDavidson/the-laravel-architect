@@ -118,7 +118,7 @@
 />
 
 {{-- ===== FEATURED PROJECTS ===== --}}
-@inject('projectImages', 'App\Services\ProjectImageVariants')
+@inject('projectImages', 'App\Services\ResponsiveImageVariants')
 @if($featuredProjects->count())
 <section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
