@@ -5,48 +5,6 @@
 @endpush
 
 @section('content')
-<style>
-    .eq-bar {
-        animation: equalize var(--dur) ease-in-out infinite alternate;
-        transform-origin: bottom;
-    }
-    @keyframes equalize {
-        0% { transform: scaleY(0.15); }
-        50% { transform: scaleY(1); }
-        100% { transform: scaleY(0.3); }
-    }
-
-    .episode-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .episode-card:hover {
-        transform: translateY(-2px);
-        background: rgba(255, 255, 255, 0.02);
-    }
-    .episode-card:hover .ep-play {
-        opacity: 1;
-        transform: scale(1);
-    }
-    .episode-card:hover .ep-number {
-        opacity: 0;
-    }
-    .ep-play {
-        opacity: 0;
-        transform: scale(0.8);
-        transition: all 0.2s ease;
-    }
-    .ep-number {
-        transition: opacity 0.2s ease;
-    }
-
-    .subscribe-btn {
-        transition: all 0.2s ease;
-    }
-    .subscribe-btn:hover {
-        transform: translateY(-2px);
-    }
-</style>
-
 {{-- ===== PODCAST HERO ===== --}}
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">

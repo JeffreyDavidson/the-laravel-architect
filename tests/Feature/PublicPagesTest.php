@@ -233,7 +233,12 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertDontSee('src="https://www.youtube.com/embed/', false)
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
+        ->assertDontSee('<style>', false)
         ->assertDontSee('onclick=', false);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertDontSee('<style>', false);
 });
 
 it('renders keyboard accessible podcast audio controls', function () {
