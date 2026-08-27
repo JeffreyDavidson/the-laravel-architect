@@ -40,11 +40,6 @@ const budgets = [
         maxGzipBytes: 4 * 1024,
     },
     {
-        entry: 'resources/js/alpine.js',
-        label: 'On-demand Alpine runtime',
-        maxGzipBytes: 20 * 1024,
-    },
-    {
         entry: 'resources/js/pages/about.js',
         label: 'About page interaction',
         maxGzipBytes: 2 * 1024,
@@ -67,7 +62,7 @@ const budgets = [
     {
         entry: 'resources/js/pages/podcast.js',
         label: 'Podcast page interaction',
-        maxGzipBytes: 2 * 1024,
+        maxGzipBytes: 3 * 1024,
     },
     {
         entry: 'resources/js/pages/home.js',

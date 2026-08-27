@@ -255,11 +255,15 @@ it('renders keyboard accessible podcast audio controls', function () {
 
     $this->get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
+        ->assertSee('data-audio-player', false)
+        ->assertSee('data-audio-play', false)
+        ->assertSee('data-audio-speed', false)
         ->assertSee('aria-label="Seek episode"', false)
         ->assertSee('aria-label="Skip back 15 seconds"', false)
         ->assertSee('aria-label="Skip forward 30 seconds"', false)
-        ->assertSee(':aria-label="playing ? \'Pause episode\' : \'Play episode\'"', false)
-        ->assertDontSee('@click="seek($event)"', false);
+        ->assertSee('aria-label="Play episode"', false)
+        ->assertDontSee('x-data=', false)
+        ->assertDontSee('@click=', false);
 });
 
 it('keeps the admin panel behind authentication', function () {
