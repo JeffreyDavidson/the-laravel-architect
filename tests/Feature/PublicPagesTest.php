@@ -155,6 +155,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     $this->get(route('projects.index'))
         ->assertOk()
+        ->assertDontSee('x-data=', false)
         ->assertSee($manifest['resources/css/app.css']['file'], false)
         ->assertSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
