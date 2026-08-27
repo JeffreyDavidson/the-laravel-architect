@@ -184,6 +184,10 @@ test('Alpine loads only on pages that use it', async ({ page }) => {
 
     await page.goto('/about');
 
+    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
+
+    await page.goto('/blog');
+
     await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('object');
 });
 

@@ -6,19 +6,42 @@ function initializeAboutCard() {
         return;
     }
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const maxTilt = 15;
     let flipCount = 0;
     let isAnimating = false;
 
-    container.addEventListener('about-card-flip', () => {
+    function flipCard() {
         flipCount += 1;
-        isAnimating = true;
-        card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        isAnimating = !reduceMotion;
+        container.setAttribute('aria-pressed', String(flipCount % 2 === 1));
+        card.style.transition = reduceMotion
+            ? 'none'
+            : 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
         card.style.transform = `rotateX(0deg) rotateY(${flipCount * 180}deg) scale(1)`;
+
+        if (reduceMotion) {
+            return;
+        }
+
         window.setTimeout(() => {
             isAnimating = false;
         }, 800);
+    }
+
+    container.addEventListener('click', flipCard);
+    container.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+
+        event.preventDefault();
+        flipCard();
     });
+
+    if (reduceMotion) {
+        return;
+    }
 
     container.addEventListener('mousemove', (event) => {
         if (isAnimating) {

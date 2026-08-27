@@ -70,6 +70,9 @@ it('uses a concise primary navigation and a project-focused call to action', fun
 it('keeps public technology and channel details consistent', function () {
     $this->get(route('about'))
         ->assertOk()
+        ->assertSee('aria-label="Flip Jeffrey Davidson developer card"', false)
+        ->assertSee('aria-pressed="false"', false)
+        ->assertDontSee('x-data=', false)
         ->assertSee((string) config('public-site.technology.laravel'))
         ->assertSee('I share practical Laravel videos');
 
