@@ -29,6 +29,11 @@ if (unexpectedPublicImages.length > 0) {
 const budgets = [
     ...publicImageBudgets,
     {
+        file: 'public/favicon.ico',
+        label: 'Legacy browser favicon',
+        maxBytes: 8 * 1024,
+    },
+    {
         entry: 'resources/css/app.css',
         label: 'Public stylesheet',
         maxGzipBytes: 17 * 1024,
