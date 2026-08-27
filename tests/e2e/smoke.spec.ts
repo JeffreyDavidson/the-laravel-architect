@@ -177,7 +177,7 @@ test('about card can be flipped with the keyboard', async ({ page }) => {
     await expect(card).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('Alpine loads only on pages that use it', async ({ page }) => {
+test('Alpine stays off pages with native interactions', async ({ page }) => {
     await page.goto('/');
 
     await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
@@ -188,7 +188,23 @@ test('Alpine loads only on pages that use it', async ({ page }) => {
 
     await page.goto('/blog');
 
-    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('object');
+    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
+});
+
+test('blog posts can be searched and reset without Alpine', async ({ page }) => {
+    await page.goto('/blog');
+
+    const search = page.getByRole('searchbox', { name: 'Search posts' });
+    const matchingPost = page.getByRole('link', { name: /What 15 Years of Web Development Taught Me/ });
+    const otherPost = page.getByRole('link', { name: /Hello World: Why I'm Starting This Blog/ });
+
+    await search.fill('web development taught');
+    await expect(matchingPost).toBeVisible();
+    await expect(otherPost).toBeHidden();
+
+    await page.getByRole('button', { name: 'Clear search' }).click();
+    await expect(search).toHaveValue('');
+    await expect(otherPost).toBeVisible();
 });
 
 test('static public pages avoid downloading optional interaction bundles', async ({ page }) => {

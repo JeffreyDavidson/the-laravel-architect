@@ -8,6 +8,10 @@ if (document.querySelector('.about-card-flip-container')) {
     import('./pages/about');
 }
 
+if (document.querySelector('[data-blog-filter]')) {
+    import('./pages/blog-index');
+}
+
 if (document.querySelector('.prose pre')) {
     import('./pages/blog');
 }

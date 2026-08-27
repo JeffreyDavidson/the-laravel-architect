@@ -51,7 +51,12 @@ const budgets = [
     },
     {
         entry: 'resources/js/pages/blog.js',
-        label: 'Blog page interaction',
+        label: 'Blog article interaction',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/blog-index.js',
+        label: 'Blog index filtering',
         maxGzipBytes: 2 * 1024,
     },
     {
