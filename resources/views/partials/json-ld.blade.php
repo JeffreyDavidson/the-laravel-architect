@@ -20,7 +20,44 @@ $schemas[] = [
     ],
 ];
 
-// 2. Article (blog.show)
+// 2. Static public pages
+$staticPage = null;
+
+if (request()->routeIs('home')) {
+    $staticPage = ['type' => 'WebPage', 'name' => $siteName, 'url' => $siteUrl];
+} elseif (request()->routeIs('about')) {
+    $staticPage = ['type' => 'ProfilePage', 'name' => 'About', 'url' => route('about')];
+} elseif (request()->routeIs('contact')) {
+    $staticPage = ['type' => 'ContactPage', 'name' => 'Contact', 'url' => route('contact')];
+} elseif (request()->routeIs('privacy')) {
+    $staticPage = ['type' => 'WebPage', 'name' => 'Privacy', 'url' => route('privacy')];
+} elseif (request()->routeIs('uses')) {
+    $staticPage = ['type' => 'WebPage', 'name' => 'Uses', 'url' => route('uses')];
+}
+
+if ($staticPage) {
+    $pageSchema = [
+        '@type' => $staticPage['type'],
+        '@id' => $staticPage['url'].'#page',
+        'name' => $staticPage['name'],
+        'url' => $staticPage['url'],
+        'isPartOf' => [
+            '@type' => 'WebSite',
+            '@id' => $siteUrl.'#website',
+        ],
+    ];
+
+    if (request()->routeIs('about')) {
+        $pageSchema['mainEntity'] = [
+            '@type' => 'Person',
+            '@id' => $authorUrl.'#person',
+        ];
+    }
+
+    $schemas[] = $pageSchema;
+}
+
+// 3. Article (blog.show)
 if (request()->routeIs('blog.show') && isset($post)) {
     $article = [
         '@type' => 'Article',
@@ -43,7 +80,7 @@ if (request()->routeIs('blog.show') && isset($post)) {
     $schemas[] = $article;
 }
 
-// 3. PodcastSeries + PodcastEpisode
+// 4. PodcastSeries + PodcastEpisode
 if ((request()->routeIs('podcast.show') || request()->routeIs('podcast.episode')) && isset($podcast)) {
     $podcastUrl = route('podcast.show', $podcast);
     $podcastSeries = [
@@ -109,7 +146,7 @@ if ((request()->routeIs('podcast.show') || request()->routeIs('podcast.episode')
     }
 }
 
-// 4. CreativeWork (projects.show)
+// 5. CreativeWork (projects.show)
 if (request()->routeIs('projects.show') && isset($project)) {
     $projectUrl = route('projects.show', $project);
     $projectCaseStudy = [
@@ -145,7 +182,7 @@ if (request()->routeIs('projects.show') && isset($project)) {
     $schemas[] = $projectCaseStudy;
 }
 
-// 5. CollectionPage + ItemList (public indexes)
+// 6. CollectionPage + ItemList (public indexes)
 $collectionPage = null;
 $collectionItems = [];
 
@@ -233,7 +270,7 @@ if ($collectionPage) {
     ];
 }
 
-// 6. BreadcrumbList
+// 7. BreadcrumbList
 $breadcrumbItems = [];
 $breadcrumbItems[] = ['name' => 'Home', 'url' => $siteUrl];
 
