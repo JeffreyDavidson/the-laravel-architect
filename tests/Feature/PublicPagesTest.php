@@ -67,6 +67,15 @@ it('uses a concise primary navigation and a project-focused call to action', fun
     expect(filesize(public_path('images/logo-color-128.webp')))->toBeLessThanOrEqual(20 * 1024);
 });
 
+it('provides a valid legacy favicon fallback', function () {
+    $favicon = file_get_contents(public_path('favicon.ico'));
+
+    expect($favicon)
+        ->not->toBeFalse()
+        ->and(strlen($favicon))->toBeGreaterThan(0)
+        ->and(substr($favicon, 0, 4))->toBe("\x00\x00\x01\x00");
+});
+
 it('keeps public technology and channel details consistent', function () {
     $this->get(route('about'))
         ->assertOk()
