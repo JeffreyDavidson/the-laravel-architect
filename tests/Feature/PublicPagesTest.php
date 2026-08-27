@@ -324,6 +324,63 @@ it('renders canonical structured data for public content collections', function 
     }
 });
 
+it('uses page-specific canonical metadata for paginated taxonomy archives', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
+
+    foreach (range(1, 11) as $index) {
+        $post = Post::query()->create([
+            'title' => "Architecture Article {$index}",
+            'slug' => "architecture-article-{$index}",
+            'content' => 'A maintainable application starts with clear boundaries.',
+            'category_id' => $category->id,
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+        $post->attachTag($tag);
+    }
+
+    foreach ([
+        route('blog.category', ['category' => $category, 'page' => 2]),
+        route('blog.tag', ['tag' => $tag, 'page' => 2]),
+    ] as $url) {
+        $content = $this->get($url)
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="'.$url.'">', false)
+            ->assertSee('<meta property="og:url" content="'.$url.'">', false)
+            ->getContent();
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+
+        expect($collectionPage)
+            ->toMatchArray([
+                '@id' => $url.'#collection',
+                'url' => $url,
+            ])
+            ->and($itemList)
+            ->toMatchArray([
+                '@id' => $url.'#items',
+            ])
+            ->and($itemList['itemListElement'][0])
+            ->toMatchArray([
+                '@type' => 'ListItem',
+                'position' => 11,
+            ]);
+    }
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
