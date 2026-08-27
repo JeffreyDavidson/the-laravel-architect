@@ -15,7 +15,7 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#0D1117">
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
-    {!! seo() !!}
+    {!! seo($seoSource ?? null) !!}
     @if(config('services.fathom.site_id'))
     <script src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
     @endif

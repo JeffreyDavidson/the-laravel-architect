@@ -52,7 +52,8 @@ it('shows an explicit confirmation step without changing subscriber state', func
     $this->get($url)
         ->assertOk()
         ->assertSee('Confirm your subscription')
-        ->assertSee($subscriber->email);
+        ->assertSee($subscriber->email)
+        ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
 
     expect($subscriber->refresh()->verified_at)->toBeNull()
         ->and($subscriber->verification_token)->not->toBeNull();
@@ -103,7 +104,8 @@ it('shows an unsubscribe step without changing subscriber state', function () {
     $this->get($subscriber->unsubscribeUrl())
         ->assertOk()
         ->assertSee('Unsubscribe from the newsletter')
-        ->assertSee($subscriber->email);
+        ->assertSee($subscriber->email)
+        ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
 
     expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
 });
