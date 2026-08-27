@@ -12,10 +12,10 @@ class TestimonialController extends Controller
 {
     public function create(): View
     {
-        $seoSource = new SEOData(
+        $seoSource = (new SEOData(
             title: 'Share Your Experience',
             description: 'Share a testimonial about working with Jeffrey Davidson and The Laravel Architect.',
-        );
+        ))->markAsNoindex();
 
         return view('testimonials.create', ['seoSource' => $seoSource]);
     }

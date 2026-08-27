@@ -9,6 +9,7 @@ uses(RefreshDatabase::class);
 it('renders an accessible testimonial submission page', function () {
     $this->get(route('testimonials.create'))
         ->assertOk()
+        ->assertSee('<meta name="robots" content="noindex, nofollow">', false)
         ->assertSee('Share your', false)
         ->assertSee('for="testimonial-name"', false)
         ->assertSee('for="testimonial-role"', false)
