@@ -117,6 +117,59 @@ it('renders canonical structured data for the site and blog posts', function () 
         ]);
 });
 
+it('renders canonical structured data for podcasts and episodes', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Clear Boundaries',
+        'slug' => 'designing-clear-boundaries',
+        'episode_number' => 12,
+        'description' => 'A practical discussion about application boundaries.',
+        'duration_minutes' => 42,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $podcastSeries = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastSeries');
+    $podcastEpisode = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastEpisode');
+
+    expect($podcastSeries)
+        ->toMatchArray([
+            '@id' => route('podcast.show', $podcast).'#podcast',
+            'name' => $podcast->name,
+            'url' => route('podcast.show', $podcast),
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+        ])
+        ->and($podcastEpisode)
+        ->toMatchArray([
+            '@id' => route('podcast.episode', [$podcast, $episode]).'#episode',
+            'name' => $episode->title,
+            'url' => route('podcast.episode', [$podcast, $episode]),
+            'episodeNumber' => 12,
+            'duration' => 'PT42M',
+            'datePublished' => $episode->published_at?->toIso8601String(),
+            'partOfSeries' => [
+                '@type' => 'PodcastSeries',
+                '@id' => route('podcast.show', $podcast).'#podcast',
+            ],
+        ]);
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()

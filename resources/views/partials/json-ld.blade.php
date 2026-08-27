@@ -43,7 +43,73 @@ if (request()->routeIs('blog.show') && isset($post)) {
     $schemas[] = $article;
 }
 
-// 3. CollectionPage (blog.index)
+// 3. PodcastSeries + PodcastEpisode
+if ((request()->routeIs('podcast.show') || request()->routeIs('podcast.episode')) && isset($podcast)) {
+    $podcastUrl = route('podcast.show', $podcast);
+    $podcastSeries = [
+        '@type' => 'PodcastSeries',
+        '@id' => $podcastUrl.'#podcast',
+        'name' => $podcast->name,
+        'url' => $podcastUrl,
+        'author' => [
+            '@type' => 'Person',
+            '@id' => $authorUrl.'#person',
+        ],
+    ];
+
+    if ($podcast->description) {
+        $podcastSeries['description'] = $podcast->description;
+    }
+
+    $coverImage = $podcast->cover_image_url;
+    if ($coverImage) {
+        $podcastSeries['image'] = $coverImage;
+    }
+
+    $schemas[] = $podcastSeries;
+
+    if (request()->routeIs('podcast.episode') && isset($episode)) {
+        $episodeUrl = route('podcast.episode', [$podcast, $episode]);
+        $podcastEpisode = [
+            '@type' => 'PodcastEpisode',
+            '@id' => $episodeUrl.'#episode',
+            'name' => $episode->title,
+            'url' => $episodeUrl,
+            'mainEntityOfPage' => $episodeUrl,
+            'partOfSeries' => [
+                '@type' => 'PodcastSeries',
+                '@id' => $podcastUrl.'#podcast',
+            ],
+        ];
+
+        if ($episode->description) {
+            $podcastEpisode['description'] = $episode->description;
+        }
+
+        if ($episode->published_at) {
+            $podcastEpisode['datePublished'] = $episode->published_at->toIso8601String();
+        }
+
+        if ($episode->episode_number !== null) {
+            $podcastEpisode['episodeNumber'] = $episode->episode_number;
+        }
+
+        if ($episode->duration_minutes) {
+            $podcastEpisode['duration'] = 'PT'.$episode->duration_minutes.'M';
+        }
+
+        if ($episode->audio_url) {
+            $podcastEpisode['associatedMedia'] = [
+                '@type' => 'MediaObject',
+                'contentUrl' => $episode->audio_url,
+            ];
+        }
+
+        $schemas[] = $podcastEpisode;
+    }
+}
+
+// 4. CollectionPage (blog.index)
 if (request()->routeIs('blog.index')) {
     $schemas[] = [
         '@type' => 'CollectionPage',
@@ -52,7 +118,7 @@ if (request()->routeIs('blog.index')) {
     ];
 }
 
-// 4. BreadcrumbList
+// 5. BreadcrumbList
 $breadcrumbItems = [];
 $breadcrumbItems[] = ['name' => 'Home', 'url' => $siteUrl];
 
