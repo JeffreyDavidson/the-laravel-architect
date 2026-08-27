@@ -5,6 +5,7 @@
 @endpush
 
 @section('content')
+<div class="podcast-detail" style="--podcast-color: {{ $podcast->color }};">
 {{-- ===== EPISODE HERO ===== --}}
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
@@ -24,7 +25,7 @@
                 <x-podcast-cover :podcast="$podcast" sizes="224px" width="224" height="224" priority class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56" />
                 @else
                 <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] lg:h-56 lg:w-56">
-                    <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                    <svg class="podcast-accent-text w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                 </div>
                 @endif
             </div>
@@ -33,7 +34,7 @@
             <div class="flex-1 min-w-0 text-center lg:text-left">
                 {{-- Meta badges --}}
                 <div class="flex flex-wrap items-center gap-3 mb-4 justify-center lg:justify-start">
-                    <span class="font-mono text-sm font-bold px-3 py-1.5 rounded-lg" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">{{ $episode->episode_code }}</span>
+                    <span class="podcast-badge font-mono text-sm font-bold px-3 py-1.5 rounded-lg">{{ $episode->episode_code }}</span>
                     <span class="text-sm text-gray-500">{{ $episode->published_at->format('F d, Y') }}</span>
                     @if($episode->formatted_duration)
                     <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
@@ -54,7 +55,7 @@
                     @if($podcast->cover_image_url)
                     <x-podcast-cover :podcast="$podcast" alt="" sizes="20px" width="20" height="20" class="h-5 w-5 rounded object-cover" />
                     @else
-                    <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                    <svg class="podcast-accent-text w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                     @endif
                     {{ $podcast->name }}
                 </a>
@@ -82,7 +83,7 @@
                     <div class="px-6 pt-6 pb-2">
                         <div class="flex h-16 items-end justify-center gap-[2px] opacity-40" aria-hidden="true">
                             @for($i = 0; $i < 80; $i++)
-                            <div class="waveform-bar h-full w-[3px] rounded-full" style="background: {{ $podcast->color }}; --from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;"></div>
+                            <div class="waveform-bar podcast-accent-bg h-full w-[3px] rounded-full" style="--from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;"></div>
                             @endfor
                         </div>
                     </div>
@@ -91,7 +92,7 @@
                     <div class="px-6 py-2">
                         <div class="group relative h-5">
                             <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[#1e2a3a]">
-                                <div class="absolute inset-y-0 left-0 rounded-full" data-audio-progress style="width: 0; background: {{ $podcast->color }};"></div>
+                                <div class="podcast-accent-bg absolute inset-y-0 left-0 rounded-full" data-audio-progress style="width: 0;"></div>
                             </div>
                             <input
                                 type="range"
@@ -132,7 +133,7 @@
                             </button>
 
                             {{-- Play/Pause --}}
-                            <button type="button" data-audio-play aria-label="Play episode" aria-pressed="false" class="flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105" style="background: {{ $podcast->color }};">
+                            <button type="button" data-audio-play aria-label="Play episode" aria-pressed="false" class="podcast-accent-bg flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105">
                                 <svg data-audio-play-icon aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 <svg data-audio-pause-icon hidden aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                             </button>
@@ -157,7 +158,7 @@
                 {{-- Description Fallback (no audio, no show_notes, no youtube) --}}
                 @if(!$episode->audio_url && !$episode->show_notes && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
                 <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
-                    <div class="absolute top-6 left-6 text-6xl leading-none opacity-15" style="color: {{ $podcast->color }};">"</div>
+                    <div class="podcast-accent-text absolute top-6 left-6 text-6xl leading-none opacity-15">"</div>
                     <div class="pl-8 pt-4">
                         <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed italic">{{ $episode->description }}</p>
                     </div>
@@ -237,7 +238,7 @@
                 <div class="mb-10 p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Featured Guest</h3>
                     <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
+                        <div class="podcast-badge w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold">
                             {{ substr($episode->guest_name, 0, 1) }}
                         </div>
                         <div>
@@ -246,7 +247,7 @@
                             <p class="text-gray-600 dark:text-gray-400 text-sm mt-0.5">{{ $episode->guest_title }}</p>
                             @endif
                             @if($episode->guest_url)
-                            <a href="{{ $episode->guest_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-2 text-sm hover:underline" style="color: {{ $podcast->color }};">
+                            <a href="{{ $episode->guest_url }}" target="_blank" rel="noopener noreferrer" class="podcast-accent-text inline-flex items-center gap-1.5 mt-2 text-sm hover:underline">
                                 {{ parse_url($episode->guest_url, PHP_URL_HOST) }}
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
@@ -260,17 +261,16 @@
                 @if($episode->show_notes)
                 <div class="mb-12">
                     <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
-                            <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="podcast-accent-bg-soft w-8 h-8 rounded-lg flex items-center justify-center">
+                            <svg class="podcast-accent-text w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </span>
                         Show Notes
                     </h2>
-                    <div class="prose prose-invert prose-lg max-w-none
+                    <div class="podcast-prose prose prose-invert prose-lg max-w-none
                         prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold
                         prose-a:no-underline hover:prose-a:underline
                         prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a]
-                        prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400"
-                        style="--tw-prose-links: {{ $podcast->color }}; --tw-prose-code: #E47A9D;">
+                        prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400">
                         {!! $episode->show_notes !!}
                     </div>
                 </div>
@@ -310,8 +310,8 @@
                                 @if($podcast->cover_image_url)
                                 <x-podcast-cover :podcast="$podcast" sizes="48px" width="48" height="48" class="h-12 w-12 rounded-lg object-cover" />
                                 @else
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
-                                    <svg class="w-6 h-6" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                                <div class="podcast-accent-bg-soft w-12 h-12 rounded-lg flex items-center justify-center">
+                                    <svg class="podcast-accent-text w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                                 </div>
                                 @endif
                                 <div class="min-w-0">
@@ -329,7 +329,7 @@
                         <dl class="space-y-3 text-sm">
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Episode</dt>
-                                <dd class="font-mono font-semibold" style="color: {{ $podcast->color }};">{{ $episode->episode_code }}</dd>
+                                <dd class="podcast-accent-text font-mono font-semibold">{{ $episode->episode_code }}</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Published</dt>
@@ -410,5 +410,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
