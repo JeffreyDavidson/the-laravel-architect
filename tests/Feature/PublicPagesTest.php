@@ -119,6 +119,41 @@ it('renders canonical structured data for the site and blog posts', function () 
         ]);
 });
 
+it('renders canonical structured data for static public pages', function (string $routeName, string $type, string $name) {
+    $url = route($routeName);
+    $content = $this->get($url)
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $page = collect($structuredData['@graph'])->firstWhere('@type', $type);
+
+    expect($page)->toMatchArray([
+        '@id' => $url.'#page',
+        'name' => $name,
+        'url' => $url,
+        'isPartOf' => [
+            '@type' => 'WebSite',
+            '@id' => route('home').'#website',
+        ],
+    ]);
+
+    if ($routeName === 'about') {
+        expect($page['mainEntity'])->toMatchArray([
+            '@type' => 'Person',
+            '@id' => route('about').'#person',
+        ]);
+    }
+})->with([
+    'home' => ['home', 'WebPage', 'The Laravel Architect'],
+    'about' => ['about', 'ProfilePage', 'About'],
+    'contact' => ['contact', 'ContactPage', 'Contact'],
+    'privacy' => ['privacy', 'WebPage', 'Privacy'],
+    'uses' => ['uses', 'WebPage', 'Uses'],
+]);
+
 it('renders canonical structured data for podcasts and episodes', function () {
     $podcast = Podcast::query()->create([
         'name' => 'Architecture Sessions',
