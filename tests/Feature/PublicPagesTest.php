@@ -218,8 +218,11 @@ it('renders accessible podcast episode embeds and external links', function () {
 
     $this->get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
+        ->assertSee('Play Designing Laravel Applications on YouTube', false)
         ->assertSee('title="Designing Laravel Applications on YouTube"', false)
-        ->assertSee('loading="lazy"', false)
+        ->assertSee('www.youtube-nocookie.com/embed/dQw4w9WgXcQ', false)
+        ->assertSee('x-if="showPlayer"', false)
+        ->assertDontSee('src="https://www.youtube.com/embed/', false)
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
         ->assertDontSee('onclick=', false);

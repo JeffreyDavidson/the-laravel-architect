@@ -262,8 +262,37 @@
                         $videoId = $matches[1] ?? null;
                     @endphp
                     @if($videoId)
-                    <div class="relative w-full" style="padding-bottom: 56.25%;">
-                        <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="{{ $episode->title }} on YouTube" class="absolute inset-0 h-full w-full border-0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="relative aspect-video w-full bg-[#0b1016]" x-data="{ showPlayer: false }">
+                        <template x-if="showPlayer">
+                            <iframe
+                                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
+                                title="{{ $episode->title }} on YouTube"
+                                class="absolute inset-0 h-full w-full border-0"
+                                allow="autoplay; encrypted-media; picture-in-picture"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                            ></iframe>
+                        </template>
+
+                        <button
+                            type="button"
+                            x-show="!showPlayer"
+                            @click="showPlayer = true"
+                            aria-label="Play {{ $episode->title }} on YouTube"
+                            class="group absolute inset-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center text-white transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand-400"
+                        >
+                            <span class="flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/10 transition-transform group-hover:scale-105" aria-hidden="true">
+                                <svg class="ml-1 h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                            <span>
+                                <span class="block font-mono text-xs uppercase tracking-[0.18em] text-brand-300">Video episode</span>
+                                <span class="mt-2 block text-lg font-semibold">Watch on YouTube</span>
+                            </span>
+                        </button>
+
+                        <noscript>
+                            <a href="{{ $episode->youtube_url }}" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center text-base font-semibold text-white underline decoration-brand-400 underline-offset-4">Watch on YouTube</a>
+                        </noscript>
                     </div>
                     @endif
                 </div>
