@@ -105,8 +105,8 @@
     $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
 @endphp
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-8 relative z-10">
-    <div class="mt-[-2rem] overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
-        <picture class="block">
+    <div class="mt-[-2rem] aspect-video overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
+        <picture class="block h-full">
             @if($featuredImageSrcset)
             <source
                 type="image/webp"
@@ -114,7 +114,7 @@
                 sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
             >
             @endif
-            <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="w-full">
+            <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="h-full w-full object-cover">
         </picture>
     </div>
 </div>

@@ -27,8 +27,8 @@
         @php
             $featuredImageSrcset = $responsiveImages->srcset($post->featured_image_path);
         @endphp
-        <div class="rounded-xl overflow-hidden mb-10 bg-gray-100 dark:bg-gray-800">
-            <picture class="block">
+        <div class="aspect-video overflow-hidden rounded-xl bg-gray-100 mb-10 dark:bg-gray-800">
+            <picture class="block h-full">
                 @if($featuredImageSrcset)
                 <source
                     type="image/webp"
@@ -36,7 +36,7 @@
                     sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"
                 >
                 @endif
-                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="w-full">
+                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="h-full w-full object-cover">
             </picture>
         </div>
         @endif

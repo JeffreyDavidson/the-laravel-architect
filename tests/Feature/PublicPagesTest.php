@@ -376,6 +376,7 @@ it('serves responsive project images while retaining the original fallback', fun
     $this->get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('type="image/webp"', false)
+        ->assertSee('aspect-video', false)
         ->assertSee('fetchpriority="high"', false)
         ->assertSee($project->featured_image_url, false);
 });
@@ -402,6 +403,7 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSee('article-640.webp', false)
         ->assertSee('article-1280.webp', false)
         ->assertSee('sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"', false)
+        ->assertSee('aspect-video', false)
         ->assertSee('fetchpriority="high"', false)
         ->assertSee($post->featured_image_url, false);
 });
