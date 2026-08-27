@@ -60,7 +60,7 @@
             {{-- Artwork --}}
             <div class="flex-shrink-0 relative">
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <x-podcast-cover :podcast="$podcast" sizes="224px" width="224" height="224" priority class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56" />
                 @else
                 <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] md:h-56 md:w-56">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>

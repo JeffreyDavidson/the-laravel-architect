@@ -72,7 +72,7 @@
             {{-- Podcast artwork --}}
             <div class="flex-shrink-0 relative">
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <x-podcast-cover :podcast="$podcast" sizes="224px" width="224" height="224" priority class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56" />
                 @else
                 <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] lg:h-56 lg:w-56">
                     <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
@@ -103,7 +103,7 @@
                 {{-- Podcast name link --}}
                 <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
                     @if($podcast->cover_image_url)
-                    <img src="{{ $podcast->cover_image_url }}" alt="" width="20" height="20" loading="lazy" decoding="async" class="w-5 h-5 rounded object-cover">
+                    <x-podcast-cover :podcast="$podcast" alt="" sizes="20px" width="20" height="20" class="h-5 w-5 rounded object-cover" />
                     @else
                     <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                     @endif
@@ -206,7 +206,7 @@
                         <div class="flex items-center gap-3">
                             {{-- Podcast mini artwork --}}
                             @if($podcast->cover_image_url)
-                            <img src="{{ $podcast->cover_image_url }}" alt="" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-lg object-cover">
+                            <x-podcast-cover :podcast="$podcast" alt="" sizes="40px" width="40" height="40" class="h-10 w-10 rounded-lg object-cover" />
                             @endif
                             <div class="min-w-0">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $episode->title }}</p>
@@ -370,7 +370,7 @@
                         <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                             <div class="flex items-center gap-3 mb-3">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="48" height="48" loading="lazy" decoding="async" class="w-12 h-12 rounded-lg object-cover">
+                                <x-podcast-cover :podcast="$podcast" sizes="48px" width="48" height="48" class="h-12 w-12 rounded-lg object-cover" />
                                 @else
                                 <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
                                     <svg class="w-6 h-6" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
