@@ -6,6 +6,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -79,6 +80,11 @@ it('only includes public content in the sitemap', function () {
     $draftOnlyCategory = Category::query()->create(['name' => 'Private', 'slug' => 'private']);
     $scheduledPost->update(['category_id' => $draftOnlyCategory->id]);
 
+    $publishedTag = Tag::query()->create(['name' => 'Public tag', 'slug' => 'public-tag']);
+    $scheduledOnlyTag = Tag::query()->create(['name' => 'Scheduled tag', 'slug' => 'scheduled-tag']);
+    $publishedPost->attachTag($publishedTag);
+    $scheduledPost->attachTag($scheduledOnlyTag);
+
     DB::table('posts')->where('id', $publishedPost->id)->update(['updated_at' => null]);
     DB::table('projects')->where('id', $publishedProject->id)->update(['updated_at' => null]);
     DB::table('episodes')->where('id', $publishedEpisode->id)->update(['updated_at' => null]);
@@ -90,6 +96,8 @@ it('only includes public content in the sitemap', function () {
         ->assertSee(route('projects.show', $publishedProject), false)
         ->assertDontSee(route('projects.show', $draftProject), false)
         ->assertDontSee(route('blog.category', $draftOnlyCategory), false)
+        ->assertSee(route('blog.tag', $publishedTag), false)
+        ->assertDontSee(route('blog.tag', $scheduledOnlyTag), false)
         ->assertSee(route('podcast.episode', [$podcast, $publishedEpisode]), false)
         ->assertDontSee(route('podcast.episode', [$podcast, $draftEpisode]), false)
         ->assertDontSee('<lastmod>', false);
