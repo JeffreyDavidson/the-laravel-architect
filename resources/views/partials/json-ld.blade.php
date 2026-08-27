@@ -158,6 +158,30 @@ if (request()->routeIs('blog.index') && isset($posts)) {
             'url' => route('blog.show', $collectionPost),
         ];
     }
+} elseif (request()->routeIs('blog.category') && isset($category, $posts)) {
+    $collectionPage = [
+        'name' => $category->name.' Articles',
+        'url' => route('blog.category', $category),
+    ];
+
+    foreach ($posts as $collectionPost) {
+        $collectionItems[] = [
+            'name' => $collectionPost->title,
+            'url' => route('blog.show', $collectionPost),
+        ];
+    }
+} elseif (request()->routeIs('blog.tag') && isset($tag, $posts)) {
+    $collectionPage = [
+        'name' => $tag->name.' Articles',
+        'url' => route('blog.tag', $tag),
+    ];
+
+    foreach ($posts as $collectionPost) {
+        $collectionItems[] = [
+            'name' => $collectionPost->title,
+            'url' => route('blog.show', $collectionPost),
+        ];
+    }
 } elseif (request()->routeIs('projects.index') && isset($projects)) {
     $collectionPage = ['name' => 'Projects', 'url' => route('projects.index')];
 
