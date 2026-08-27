@@ -132,6 +132,9 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertOk()
         ->assertSee($manifest['resources/css/app.css']['file'], false)
         ->assertSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/avatar-320.webp']['file'], false)
+        ->assertSee($manifest['resources/images/avatar-640.webp']['file'], false)
+        ->assertSee('sizes="(min-width: 1024px) 300px, 250px"', false)
         ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
