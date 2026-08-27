@@ -9,7 +9,7 @@
 
 @inject('responsiveImages', 'App\Services\ResponsiveImageVariants')
 
-@php($srcset = $responsiveImages->srcset($podcast->cover_image_path))
+@php($srcset = $responsiveImages->srcset($podcast->cover_image_path) ?? $podcast->fallback_cover_image_srcset)
 
 <picture>
     @if($srcset)
