@@ -170,6 +170,47 @@ it('renders canonical structured data for podcasts and episodes', function () {
         ]);
 });
 
+it('renders canonical structured data for project case studies', function () {
+    $project = Project::query()->create([
+        'title' => 'Architecture Decisions',
+        'slug' => 'architecture-decisions',
+        'description' => 'A project shaped by explicit technical tradeoffs.',
+        'url' => 'https://example.com/architecture-decisions',
+        'github_url' => 'https://github.com/example/architecture-decisions',
+        'tech_stack' => ['Laravel', 'Pest'],
+        'status' => ProjectStatus::Published,
+    ]);
+
+    $content = $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $projectCaseStudy = collect($structuredData['@graph'])->firstWhere('@type', 'CreativeWork');
+
+    expect($projectCaseStudy)
+        ->toMatchArray([
+            '@id' => route('projects.show', $project).'#project',
+            'name' => $project->title,
+            'url' => route('projects.show', $project),
+            'mainEntityOfPage' => route('projects.show', $project),
+            'description' => $project->description,
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+            'keywords' => 'Laravel, Pest',
+            'sameAs' => [
+                $project->url,
+                $project->github_url,
+            ],
+        ])
+        ->and(collect($structuredData['@graph'])->pluck('@type'))
+        ->not->toContain('SoftwareApplication');
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
