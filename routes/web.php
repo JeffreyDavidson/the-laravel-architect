@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ShowBlogCategoryController;
 use App\Http\Controllers\ShowBlogTagController;
+use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
@@ -24,8 +26,8 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::post('/contact', SubmitContactController::class)->name('contact.submit');
 Route::post('/newsletter', SubscribeNewsletterController::class)->middleware('throttle:newsletter')->name('newsletter.subscribe');
-Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'showConfirmation'])->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm');
-Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'confirm'])->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
+Route::get('/newsletter/confirm/{subscriber}/{token}', ShowNewsletterConfirmationController::class)->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm');
+Route::post('/newsletter/confirm/{subscriber}/{token}', ConfirmNewsletterSubscriptionController::class)->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'showUnsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
 Route::get('/testimonials/submit', [TestimonialController::class, 'create'])->name('testimonials.create');
