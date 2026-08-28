@@ -8,6 +8,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\ShowAboutController;
 use App\Http\Controllers\ShowBlogCategoryController;
 use App\Http\Controllers\ShowBlogTagController;
 use App\Http\Controllers\ShowNewsletterConfirmationController;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 // Pages
 Route::get('/', HomeController::class)->name('home');
-Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/about', ShowAboutController::class)->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::post('/contact', SubmitContactController::class)->name('contact.submit');
