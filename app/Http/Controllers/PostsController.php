@@ -7,7 +7,7 @@ use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class BlogController extends Controller
+class PostsController extends Controller
 {
     public function index(): View
     {
