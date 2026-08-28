@@ -7,7 +7,7 @@ use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ProjectController extends Controller
+class ProjectsController extends Controller
 {
     public function index(): View
     {

@@ -5,7 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastsController;
 use App\Http\Controllers\PostsController;
-use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ShowAboutController;
 use App\Http\Controllers\ShowBlogCategoryController;
@@ -59,5 +59,5 @@ Route::get('/podcasts/{podcast:slug}', [PodcastsController::class, 'show'])->nam
 Route::get('/podcasts/{podcast:slug}/{episode:slug}', ShowPodcastEpisodeController::class)->name('podcast.episode');
 
 // Projects
-Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])->name('projects.show');
+Route::get('/projects', [ProjectsController::class, 'index'])->name('projects.index');
+Route::get('/projects/{project:slug}', [ProjectsController::class, 'show'])->name('projects.show');
