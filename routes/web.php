@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
@@ -22,7 +23,7 @@ use App\Http\Middleware\EnsureValidNewsletterConfirmationToken;
 use Illuminate\Support\Facades\Route;
 
 // Pages
-Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/', HomeController::class)->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
