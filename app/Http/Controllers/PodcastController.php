@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Episode;
 use App\Models\Podcast;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -55,27 +54,5 @@ class PodcastController extends Controller
         );
 
         return view('podcast.show', compact('podcast', 'episodes', 'latestEpisode', 'seoSource'));
-    }
-
-    public function episode(Podcast $podcast, Episode $episode): View
-    {
-        abort_unless($podcast->is_active, 404);
-        abort_unless($episode->isPublished(), 404);
-        abort_unless($episode->podcast_id === $podcast->id, 404);
-
-        $episode->load(['podcast', 'tags']);
-
-        $nextEpisode = $podcast->publishedEpisodes()
-            ->where('published_at', '>', $episode->published_at)
-            ->oldest('published_at')
-            ->first();
-
-        $prevEpisode = $podcast->publishedEpisodes()
-            ->where('published_at', '<', $episode->published_at)
-            ->latest('published_at')
-            ->first();
-        $seoSource = $episode;
-
-        return view('podcast.episode', compact('podcast', 'episode', 'nextEpisode', 'prevEpisode', 'seoSource'));
     }
 }

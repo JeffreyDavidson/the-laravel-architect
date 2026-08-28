@@ -7,6 +7,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
 use App\Http\Controllers\TestimonialController;
@@ -44,7 +45,7 @@ Route::get('/og-image/{post:slug}', OgImageController::class)->name('og-image');
 // Podcasts
 Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcast.index');
 Route::get('/podcasts/{podcast:slug}', [PodcastController::class, 'show'])->name('podcast.show');
-Route::get('/podcasts/{podcast:slug}/{episode:slug}', [PodcastController::class, 'episode'])->name('podcast.episode');
+Route::get('/podcasts/{podcast:slug}/{episode:slug}', ShowPodcastEpisodeController::class)->name('podcast.episode');
 
 // Projects
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
