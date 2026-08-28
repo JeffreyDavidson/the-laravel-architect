@@ -89,10 +89,17 @@ class BlogController extends Controller
         $canonicalUrl = $posts->onFirstPage()
             ? route('blog.category', $category)
             : route('blog.category', ['category' => $category, 'page' => $posts->currentPage()]);
+        $title = $category->name.' Articles';
+        $description = "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.";
+
+        if (! $posts->onFirstPage()) {
+            $title .= " — Page {$posts->currentPage()}";
+            $description .= " Page {$posts->currentPage()} of {$posts->lastPage()}.";
+        }
 
         $seoSource = new SEOData(
-            title: $category->name.' Articles',
-            description: "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.",
+            title: $title,
+            description: $description,
             url: $canonicalUrl,
             canonical_url: $canonicalUrl,
         );
@@ -111,10 +118,17 @@ class BlogController extends Controller
         $canonicalUrl = $posts->onFirstPage()
             ? route('blog.tag', $tag)
             : route('blog.tag', ['tag' => $tag, 'page' => $posts->currentPage()]);
+        $title = $tag->name.' Articles';
+        $description = "Articles tagged with {$tag->name} on The Laravel Architect.";
+
+        if (! $posts->onFirstPage()) {
+            $title .= " — Page {$posts->currentPage()}";
+            $description .= " Page {$posts->currentPage()} of {$posts->lastPage()}.";
+        }
 
         $seoSource = new SEOData(
-            title: $tag->name.' Articles',
-            description: "Articles tagged with {$tag->name} on The Laravel Architect.",
+            title: $title,
+            description: $description,
             url: $canonicalUrl,
             canonical_url: $canonicalUrl,
         );
