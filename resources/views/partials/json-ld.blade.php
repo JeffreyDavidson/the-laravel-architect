@@ -231,6 +231,19 @@ if (request()->routeIs('blog.index') && isset($posts)) {
             'url' => route('projects.show', $collectionProject),
         ];
     }
+} elseif (request()->routeIs('podcast.show') && isset($podcast, $episodes)) {
+    $collectionPage = [
+        'name' => $podcast->name.' Episodes',
+        'url' => $seoSource->canonical_url,
+    ];
+    $collectionPositionOffset = ($episodes->currentPage() - 1) * $episodes->perPage();
+
+    foreach ($episodes as $collectionEpisode) {
+        $collectionItems[] = [
+            'name' => $collectionEpisode->title,
+            'url' => route('podcast.episode', [$podcast, $collectionEpisode]),
+        ];
+    }
 } elseif (request()->routeIs('podcast.index')) {
     $collectionPage = ['name' => 'Podcast', 'url' => route('podcast.index')];
 
