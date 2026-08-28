@@ -52,6 +52,37 @@ it('does not replace the last known count when YouTube returns malformed data', 
         ->withArgs(fn (string $message): bool => $message === 'Unable to refresh the YouTube subscriber count.');
 });
 
+it('does not expose the API key or request URL when subscriber refresh fails', function () {
+    config()->set('services.youtube.api_key', 'secret-youtube-api-key');
+    config()->set('services.youtube.channel_id', 'channel-id');
+    Cache::put('youtube.subscriber_count.last_known', 9876, now()->addDay());
+    Log::spy();
+    Http::fake(fn () => throw new RuntimeException(
+        'Request failed for https://www.googleapis.com/youtube/v3/channels?key=secret-youtube-api-key',
+    ));
+
+    expect(YouTubeService::subscriberCount())->toBe(9876);
+
+    Log::shouldHaveReceived('warning')
+        ->once()
+        ->withArgs(function (string $message, array $context): bool {
+            $loggedData = json_encode([$message, $context], JSON_THROW_ON_ERROR);
+
+            return ! str_contains($loggedData, 'secret-youtube-api-key')
+                && ! str_contains($loggedData, 'www.googleapis.com');
+        });
+});
+
+it('returns a credential-free failure when a video request fails', function () {
+    config()->set('services.youtube.api_key', 'secret-youtube-api-key');
+    Http::fake(fn () => throw new RuntimeException(
+        'Request failed for https://www.googleapis.com/youtube/v3/videos?key=secret-youtube-api-key',
+    ));
+
+    expect(fn () => app(YouTubeService::class)->getVideoDetails(['video-1']))
+        ->toThrow(RuntimeException::class, 'The YouTube request failed.');
+});
+
 it('accepts and caches a legitimate zero subscriber count', function () {
     Http::fake([
         'www.googleapis.com/youtube/v3/channels*' => Http::response([

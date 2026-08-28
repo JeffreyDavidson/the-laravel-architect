@@ -29,7 +29,7 @@ class YouTubeSyncCommand extends Command
         $updated = 0;
 
         foreach ($videos as $videoData) {
-            $video = Video::where('youtube_id', $videoData['youtube_id'])->first();
+            $video = Video::query()->where('youtube_id', $videoData['youtube_id'])->first();
 
             if ($video) {
                 $video->update([
@@ -44,9 +44,9 @@ class YouTubeSyncCommand extends Command
                 ]);
                 $updated++;
             } else {
-                Video::create([
+                Video::query()->create([
                     ...$videoData,
-                    'slug' => Str::slug($videoData['title']),
+                    'slug' => $this->uniqueSlug($videoData['title'], $videoData['youtube_id']),
                     'published_at' => $videoData['published_at'],
                     'synced_at' => now(),
                 ]);
@@ -57,5 +57,40 @@ class YouTubeSyncCommand extends Command
         $this->info("Done! {$synced} new, {$updated} updated.");
 
         return self::SUCCESS;
+    }
+
+    private function uniqueSlug(string $title, string $youtubeId): string
+    {
+        $youtubeIdSlug = Str::slug($youtubeId);
+
+        if ($youtubeIdSlug === '') {
+            $youtubeIdSlug = substr(hash('sha256', $youtubeId), 0, 12);
+        }
+
+        $youtubeIdSlug = Str::substr($youtubeIdSlug, 0, 48);
+
+        $baseSlug = Str::slug($title);
+
+        if ($baseSlug === '') {
+            $baseSlug = "video-{$youtubeIdSlug}";
+        }
+
+        $baseSlug = rtrim(Str::substr($baseSlug, 0, 255), '-');
+
+        if (! Video::query()->where('slug', $baseSlug)->exists()) {
+            return $baseSlug;
+        }
+
+        $suffix = "-{$youtubeIdSlug}";
+        $slug = rtrim(Str::substr($baseSlug, 0, 255 - strlen($suffix)), '-').$suffix;
+        $attempt = 2;
+
+        while (Video::query()->where('slug', $slug)->exists()) {
+            $numberedSuffix = "{$suffix}-{$attempt}";
+            $slug = rtrim(Str::substr($baseSlug, 0, 255 - strlen($numberedSuffix)), '-').$numberedSuffix;
+            $attempt++;
+        }
+
+        return $slug;
     }
 }

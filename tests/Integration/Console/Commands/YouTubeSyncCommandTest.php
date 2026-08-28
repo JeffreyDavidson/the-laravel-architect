@@ -85,6 +85,68 @@ it('updates an existing video without replacing its publishing fields', function
         ->and($video->synced_at?->toDateTimeString())->toBe('2026-08-19 10:30:00');
 });
 
+it('creates stable unique slugs for colliding and empty titles', function () {
+    $payloads = [
+        [
+            'youtube_id' => 'first-video',
+            'title' => 'Same Title',
+            'description' => null,
+            'thumbnail_url' => null,
+            'duration' => null,
+            'view_count' => 0,
+            'like_count' => 0,
+            'comment_count' => 0,
+            'published_at' => null,
+        ],
+        [
+            'youtube_id' => 'second-video',
+            'title' => 'Same Title',
+            'description' => null,
+            'thumbnail_url' => null,
+            'duration' => null,
+            'view_count' => 0,
+            'like_count' => 0,
+            'comment_count' => 0,
+            'published_at' => null,
+        ],
+        [
+            'youtube_id' => 'empty-title-video',
+            'title' => '!!!',
+            'description' => null,
+            'thumbnail_url' => null,
+            'duration' => null,
+            'view_count' => 0,
+            'like_count' => 0,
+            'comment_count' => 0,
+            'published_at' => null,
+        ],
+    ];
+
+    $youtube = Mockery::mock(YouTubeService::class);
+    $youtube->shouldReceive('getChannelVideos')
+        ->twice()
+        ->with(50)
+        ->andReturn($payloads);
+    app()->instance(YouTubeService::class, $youtube);
+
+    $this->artisan('youtube:sync')
+        ->expectsOutput('Done! 3 new, 0 updated.')
+        ->assertSuccessful();
+
+    expect(Video::query()->where('youtube_id', 'first-video')->value('slug'))->toBe('same-title')
+        ->and(Video::query()->where('youtube_id', 'second-video')->value('slug'))->toBe('same-title-second-video')
+        ->and(Video::query()->where('youtube_id', 'empty-title-video')->value('slug'))->toBe('video-empty-title-video');
+
+    $this->artisan('youtube:sync')
+        ->expectsOutput('Done! 0 new, 3 updated.')
+        ->assertSuccessful();
+
+    expect(Video::query()->count())->toBe(3)
+        ->and(Video::query()->where('youtube_id', 'first-video')->value('slug'))->toBe('same-title')
+        ->and(Video::query()->where('youtube_id', 'second-video')->value('slug'))->toBe('same-title-second-video')
+        ->and(Video::query()->where('youtube_id', 'empty-title-video')->value('slug'))->toBe('video-empty-title-video');
+});
+
 it('fails without changing videos when YouTube is unavailable', function () {
     $video = Video::query()->create([
         'youtube_id' => 'existing-video',

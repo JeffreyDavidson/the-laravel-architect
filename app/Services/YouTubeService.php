@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Throwable;
 use UnexpectedValueException;
 
@@ -55,7 +56,7 @@ class YouTubeService
             $apiKey = config('services.youtube.api_key');
             $channelId = config('services.youtube.channel_id');
 
-            $response = self::client()->get('https://www.googleapis.com/youtube/v3/channels', [
+            $response = self::request('https://www.googleapis.com/youtube/v3/channels', [
                 'key' => $apiKey,
                 'id' => $channelId,
                 'part' => 'statistics',
@@ -75,7 +76,7 @@ class YouTubeService
             return $count;
         } catch (Throwable $exception) {
             Log::warning('Unable to refresh the YouTube subscriber count.', [
-                'exception' => $exception,
+                'exception' => $exception::class,
             ]);
 
             return self::integer(Cache::get("{$cacheKey}.last_known", 0));
@@ -93,7 +94,7 @@ class YouTubeService
         $pageToken = null;
 
         do {
-            $response = self::client()->get("{$this->baseUrl}/search", array_filter([
+            $response = self::request("{$this->baseUrl}/search", array_filter([
                 'key' => $this->apiKey,
                 'channelId' => $this->channelId,
                 'part' => 'snippet',
@@ -133,7 +134,7 @@ class YouTubeService
      */
     public function getVideoDetails(array $videoIds): array
     {
-        $response = self::client()->get("{$this->baseUrl}/videos", [
+        $response = self::request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'snippet,contentDetails,statistics',
@@ -175,7 +176,7 @@ class YouTubeService
      */
     public function getStatsForVideos(array $videoIds): array
     {
-        $response = self::client()->get("{$this->baseUrl}/videos", [
+        $response = self::request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'statistics',
@@ -240,6 +241,16 @@ class YouTubeService
     private static function integer(mixed $value): int
     {
         return is_numeric($value) ? (int) $value : 0;
+    }
+
+    /** @param array<string, mixed> $query */
+    private static function request(string $url, array $query): Response
+    {
+        try {
+            return self::client()->get($url, $query);
+        } catch (Throwable) {
+            throw new RuntimeException('The YouTube request failed.');
+        }
     }
 
     private static function client(): PendingRequest
