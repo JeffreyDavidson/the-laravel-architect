@@ -7,16 +7,6 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PageController extends Controller
 {
-    public function privacy(): View
-    {
-        $seoSource = new SEOData(
-            title: 'Privacy',
-            description: 'How The Laravel Architect handles contact messages, newsletter subscriptions, testimonials, analytics, and essential site data.',
-        );
-
-        return view('pages.privacy', ['seoSource' => $seoSource]);
-    }
-
     public function uses(): View
     {
         $seoSource = new SEOData(
