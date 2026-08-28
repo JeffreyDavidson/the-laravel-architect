@@ -10,9 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
-class ContactController extends Controller
+class SubmitContactController extends Controller
 {
-    public function submit(ContactRequest $request, Turnstile $turnstile): RedirectResponse
+    public function __invoke(ContactRequest $request, Turnstile $turnstile): RedirectResponse
     {
         if ($request->filled('website')) {
             return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
