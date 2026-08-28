@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +22,7 @@ use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
 #[ObservedBy(PodcastObserver::class)]
+/** @property-read Collection<int, Episode> $publishedEpisodes */
 class Podcast extends Model
 {
     private const DEFAULT_COLOR = '#6366f1';
