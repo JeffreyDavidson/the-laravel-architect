@@ -6,7 +6,7 @@ use App\Models\Podcast;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PodcastController extends Controller
+class PodcastsController extends Controller
 {
     public function index(): View
     {
