@@ -392,6 +392,36 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
     }
 });
 
+it('returns not found for out-of-range taxonomy archive pages', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'slug' => 'designing-clear-laravel-boundaries',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'category_id' => $category->id,
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $post->attachTag($tag);
+
+    foreach ([
+        route('blog.category', ['category' => $category, 'page' => 2]),
+        route('blog.tag', ['tag' => $tag, 'page' => 2]),
+    ] as $url) {
+        $this->get($url)
+            ->assertNotFound();
+    }
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
