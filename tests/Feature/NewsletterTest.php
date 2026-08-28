@@ -94,6 +94,30 @@ it('rejects unsigned newsletter state changes', function () {
     expect($subscriber->refresh()->verified_at)->toBeNull();
 });
 
+it('rejects signed confirmation links with an invalid token', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verification_token' => hash('sha256', 'valid-token'),
+    ]);
+
+    foreach (['newsletter.confirm', 'newsletter.confirm.store'] as $routeName) {
+        $url = URL::temporarySignedRoute(
+            $routeName,
+            now()->addHour(),
+            ['subscriber' => $subscriber, 'token' => 'invalid-token'],
+        );
+
+        $this->call(
+            $routeName === 'newsletter.confirm' ? 'GET' : 'POST',
+            $url,
+        )->assertForbidden();
+    }
+
+    expect($subscriber->refresh()->verified_at)->toBeNull()
+        ->and($subscriber->verification_token)->not->toBeNull();
+});
+
 it('shows an unsubscribe step without changing subscriber state', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
