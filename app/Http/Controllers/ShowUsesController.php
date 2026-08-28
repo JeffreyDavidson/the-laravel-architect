@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PageController extends Controller
+class ShowUsesController extends Controller
 {
-    public function uses(): View
+    public function __invoke(): View
     {
         $seoSource = new SEOData(
             title: 'Uses',
