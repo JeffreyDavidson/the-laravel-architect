@@ -15,9 +15,9 @@ use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\ShowPrivacyController;
+use App\Http\Controllers\ShowSitemapController;
 use App\Http\Controllers\ShowTestimonialSubmissionController;
 use App\Http\Controllers\ShowUsesController;
-use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
 use App\Http\Controllers\SubmitTestimonialController;
 use App\Http\Controllers\SubscribeNewsletterController;
@@ -42,7 +42,7 @@ Route::get('/uses', ShowUsesController::class)->name('uses');
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
-Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/sitemap.xml', ShowSitemapController::class)->name('sitemap');
 
 // Blog
 Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
