@@ -297,10 +297,10 @@ if (request()->routeIs('blog.index')) {
     $breadcrumbItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
 } elseif (request()->routeIs('blog.category') && isset($category)) {
     $breadcrumbItems[] = ['name' => 'Blog', 'url' => route('blog.index')];
-    $breadcrumbItems[] = ['name' => $category->name, 'url' => route('blog.category', $category)];
+    $breadcrumbItems[] = ['name' => $category->name, 'url' => $seoSource->canonical_url];
 } elseif (request()->routeIs('blog.tag') && isset($tag)) {
     $breadcrumbItems[] = ['name' => 'Blog', 'url' => route('blog.index')];
-    $breadcrumbItems[] = ['name' => $tag->name, 'url' => route('blog.tag', $tag)];
+    $breadcrumbItems[] = ['name' => $tag->name, 'url' => $seoSource->canonical_url];
 } elseif (request()->routeIs('projects.index')) {
     $breadcrumbItems[] = ['name' => 'Projects', 'url' => route('projects.index')];
 } elseif (request()->routeIs('projects.show') && isset($project)) {
@@ -310,7 +310,7 @@ if (request()->routeIs('blog.index')) {
     $breadcrumbItems[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
 } elseif (request()->routeIs('podcast.show') && isset($podcast)) {
     $breadcrumbItems[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
-    $breadcrumbItems[] = ['name' => $podcast->name, 'url' => route('podcast.show', $podcast)];
+    $breadcrumbItems[] = ['name' => $podcast->name, 'url' => $seoSource->canonical_url];
 } elseif (request()->routeIs('podcast.episode') && isset($podcast) && isset($episode)) {
     $breadcrumbItems[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
     $breadcrumbItems[] = ['name' => $podcast->name, 'url' => route('podcast.show', $podcast)];

@@ -374,6 +374,7 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
         $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
         $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
         $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+        $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
 
         expect($collectionPage)
             ->toMatchArray([
@@ -388,6 +389,12 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
             ->toMatchArray([
                 '@type' => 'ListItem',
                 'position' => 11,
+            ])
+            ->and($breadcrumbList['itemListElement'][2])
+            ->toMatchArray([
+                '@type' => 'ListItem',
+                'position' => 3,
+                'item' => $url,
             ]);
     }
 });
@@ -459,6 +466,7 @@ it('uses page-specific metadata for paginated podcast archives', function () {
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
     $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+    $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
 
     expect($collectionPage)
         ->toMatchArray([
@@ -477,6 +485,12 @@ it('uses page-specific metadata for paginated podcast archives', function () {
             'position' => 21,
             'name' => 'Architecture Session 21',
             'item' => route('podcast.episode', [$podcast, 'architecture-session-21']),
+        ])
+        ->and($breadcrumbList['itemListElement'][2])
+        ->toMatchArray([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'item' => $url,
         ]);
 });
 
