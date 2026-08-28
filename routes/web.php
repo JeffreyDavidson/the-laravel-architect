@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastsController;
 use App\Http\Controllers\PostsController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\ShowAboutController;
 use App\Http\Controllers\ShowBlogCategoryController;
 use App\Http\Controllers\ShowBlogTagController;
 use App\Http\Controllers\ShowContactController;
+use App\Http\Controllers\ShowHomeController;
 use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
@@ -26,7 +26,7 @@ use App\Http\Middleware\EnsureValidNewsletterConfirmationToken;
 use Illuminate\Support\Facades\Route;
 
 // Pages
-Route::get('/', HomeController::class)->name('home');
+Route::get('/', ShowHomeController::class)->name('home');
 Route::get('/about', ShowAboutController::class)->name('about');
 Route::get('/contact', ShowContactController::class)->name('contact');
 Route::get('/privacy', ShowPrivacyController::class)->name('privacy');
