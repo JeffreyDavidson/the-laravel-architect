@@ -7,16 +7,6 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PageController extends Controller
 {
-    public function contact(): View
-    {
-        $seoSource = new SEOData(
-            title: 'Contact',
-            description: 'Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.',
-        );
-
-        return view('pages.contact', ['seoSource' => $seoSource]);
-    }
-
     public function privacy(): View
     {
         $seoSource = new SEOData(
