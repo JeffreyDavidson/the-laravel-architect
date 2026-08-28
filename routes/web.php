@@ -4,7 +4,6 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\ShowPrivacyController;
 use App\Http\Controllers\ShowTestimonialSubmissionController;
+use App\Http\Controllers\ShowUsesController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
 use App\Http\Controllers\SubmitTestimonialController;
@@ -38,7 +38,7 @@ Route::get('/newsletter/unsubscribe/{subscriber}', ShowNewsletterUnsubscribeCont
 Route::post('/newsletter/unsubscribe/{subscriber}', UnsubscribeNewsletterController::class)->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
 Route::get('/testimonials/submit', ShowTestimonialSubmissionController::class)->name('testimonials.create');
 Route::post('/testimonials', SubmitTestimonialController::class)->middleware('throttle:testimonials')->name('testimonials.store');
-Route::get('/uses', [PageController::class, 'uses'])->name('uses');
+Route::get('/uses', ShowUsesController::class)->name('uses');
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
