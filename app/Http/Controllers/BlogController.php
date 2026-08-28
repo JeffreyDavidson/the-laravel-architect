@@ -86,6 +86,8 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
+        abort_if($posts->currentPage() > $posts->lastPage(), 404);
+
         $canonicalUrl = $posts->onFirstPage()
             ? route('blog.category', $category)
             : route('blog.category', ['category' => $category, 'page' => $posts->currentPage()]);
@@ -114,6 +116,8 @@ class BlogController extends Controller
             ->with(['category', 'author'])
             ->latest('published_at')
             ->paginate(10);
+
+        abort_if($posts->currentPage() > $posts->lastPage(), 404);
 
         $canonicalUrl = $posts->onFirstPage()
             ? route('blog.tag', $tag)
