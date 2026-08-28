@@ -422,6 +422,84 @@ it('returns not found for out-of-range taxonomy archive pages', function () {
     }
 });
 
+it('uses page-specific metadata for paginated podcast archives', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    foreach (range(1, 21) as $index) {
+        Episode::query()->create([
+            'podcast_id' => $podcast->id,
+            'title' => "Architecture Session {$index}",
+            'slug' => "architecture-session-{$index}",
+            'description' => "A conversation about architecture topic {$index}.",
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+    }
+
+    $url = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
+    $content = $this->get($url)
+        ->assertOk()
+        ->assertSee('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="Conversations about maintainable Laravel applications. Page 2 of 2.">',
+            false,
+        )
+        ->assertSee('<link rel="canonical" href="'.$url.'">', false)
+        ->assertSee('<meta property="og:url" content="'.$url.'">', false)
+        ->assertDontSee('Latest Episode')
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+    $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+
+    expect($collectionPage)
+        ->toMatchArray([
+            '@id' => $url.'#collection',
+            'name' => 'Architecture Sessions Episodes',
+            'url' => $url,
+        ])
+        ->and($itemList)
+        ->toMatchArray([
+            '@id' => $url.'#items',
+            'numberOfItems' => 1,
+        ])
+        ->and($itemList['itemListElement'][0])
+        ->toMatchArray([
+            '@type' => 'ListItem',
+            'position' => 21,
+            'name' => 'Architecture Session 21',
+            'item' => route('podcast.episode', [$podcast, 'architecture-session-21']),
+        ]);
+});
+
+it('returns not found for out-of-range podcast archive pages', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+    Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Clear Boundaries',
+        'slug' => 'designing-clear-boundaries',
+        'description' => 'A practical discussion about application boundaries.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('podcast.show', ['podcast' => $podcast, 'page' => 2]))
+        ->assertNotFound();
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
