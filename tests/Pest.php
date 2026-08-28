@@ -2,4 +2,4 @@
 
 use Tests\TestCase;
 
-uses(TestCase::class)->in('Feature', 'Integration', 'Unit');
+uses(TestCase::class)->in('Browser', 'Feature', 'Integration', 'Unit');

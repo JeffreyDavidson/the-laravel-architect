@@ -10,8 +10,8 @@
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         {{-- Breadcrumb --}}
-        <a href="{{ route('podcast.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors mb-8 relative z-10">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <a href="{{ route('podcast.index') }}" class="relative z-10 mb-8 inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+            <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Podcast
         </a>
 
@@ -124,7 +124,7 @@
                     <span class="podcast-badge px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide">Latest Episode</span>
                     <span class="font-mono text-sm text-gray-500">{{ $latestEpisode->episode_code }}</span>
                     <span class="text-sm text-gray-600">·</span>
-                    <span class="text-sm text-gray-500">{{ $latestEpisode->published_at->format('M d, Y') }}</span>
+                    <time datetime="{{ $latestEpisode->published_at->toDateString() }}" class="text-sm text-gray-500">{{ $latestEpisode->published_at->format('M d, Y') }}</time>
                     @if($latestEpisode->formatted_duration)
                     <span class="text-sm text-gray-600">·</span>
                     <span class="text-sm text-gray-500">{{ $latestEpisode->formatted_duration }}</span>
@@ -190,13 +190,13 @@
                 <div class="flex-1 min-w-0">
                     <h3 class="font-semibold text-gray-900 dark:text-white group-hover:opacity-80 transition-opacity truncate">{{ $episode->title }}</h3>
                     <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                        <span>{{ $episode->published_at->format('M d, Y') }}</span>
+                        <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
                         @if($episode->formatted_duration)
                         <span class="text-gray-300 dark:text-gray-700">·</span>
                         <span>{{ $episode->formatted_duration }}</span>
                         @endif
                         @if($episode->guest_name)
-                        <span class="hidden sm:inline text-gray-700 dark:text-gray-300 dark:text-gray-700">·</span>
+                        <span class="hidden text-gray-300 sm:inline dark:text-gray-700">·</span>
                         <span class="hidden sm:inline">with <span class="podcast-accent-text">{{ $episode->guest_name }}</span></span>
                         @endif
                     </div>

@@ -10,12 +10,12 @@
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 relative z-10">
-            <a href="{{ route('podcast.index') }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">Podcast</a>
-            <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <a href="{{ route('podcast.show', $podcast) }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ $podcast->name }}</a>
-            <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-gray-600 dark:text-gray-400 font-mono text-xs">{{ $episode->episode_code }}</span>
+        <nav aria-label="Breadcrumb" class="relative z-10 mb-8 flex items-center gap-2 text-sm text-gray-500">
+            <a href="{{ route('podcast.index') }}" class="transition-colors hover:text-gray-900 dark:hover:text-white">Podcast</a>
+            <svg aria-hidden="true" class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('podcast.show', $podcast) }}" class="transition-colors hover:text-gray-900 dark:hover:text-white">{{ $podcast->name }}</a>
+            <svg aria-hidden="true" class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span aria-current="page" class="font-mono text-xs text-gray-600 dark:text-gray-400">{{ $episode->episode_code }}</span>
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
@@ -35,7 +35,7 @@
                 {{-- Meta badges --}}
                 <div class="flex flex-wrap items-center gap-3 mb-4 justify-center lg:justify-start">
                     <span class="podcast-badge font-mono text-sm font-bold px-3 py-1.5 rounded-lg">{{ $episode->episode_code }}</span>
-                    <span class="text-sm text-gray-500">{{ $episode->published_at->format('F d, Y') }}</span>
+                    <time datetime="{{ $episode->published_at->toDateString() }}" class="text-sm text-gray-500">{{ $episode->published_at->format('F d, Y') }}</time>
                     @if($episode->formatted_duration)
                     <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -51,7 +51,7 @@
                 @endif
 
                 {{-- Podcast name link --}}
-                <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                     @if($podcast->cover_image_url)
                     <x-podcast-cover :podcast="$podcast" alt="" sizes="20px" width="20" height="20" class="h-5 w-5 rounded object-cover" />
                     @else
@@ -333,24 +333,24 @@
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Published</dt>
-                                <dd class="text-gray-300">{{ $episode->published_at->format('M d, Y') }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300"><time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time></dd>
                             </div>
                             @if($episode->formatted_duration)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Duration</dt>
-                                <dd class="text-gray-300">{{ $episode->formatted_duration }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->formatted_duration }}</dd>
                             </div>
                             @endif
                             @if($episode->season_number)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Season</dt>
-                                <dd class="text-gray-300">{{ $episode->season_number }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->season_number }}</dd>
                             </div>
                             @endif
                             @if($episode->guest_name)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Guest</dt>
-                                <dd class="text-gray-300">{{ $episode->guest_name }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->guest_name }}</dd>
                             </div>
                             @endif
                         </dl>
@@ -360,11 +360,11 @@
                     <div class="p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Share Episode</h3>
                         <div class="flex gap-2">
-                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" rel="noopener noreferrer" aria-label="Share {{ $episode->title }} on X" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                                <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" rel="noopener noreferrer" aria-label="Share {{ $episode->title }} on LinkedIn" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                                <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                             </a>
                             <button type="button" data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}" aria-label="Copy episode link" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>

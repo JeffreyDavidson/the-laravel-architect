@@ -15,7 +15,7 @@
             <div class="flex items-center gap-4 text-sm text-gray-500">
                 <span>{{ $post->author->name ?? 'Jeffrey Davidson' }}</span>
                 <span>·</span>
-                <time>{{ $post->published_at->format('F d, Y') }}</time>
+                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
                 <span>·</span>
                 <span>{{ $post->reading_time }} min read</span>
             </div>
@@ -78,7 +78,7 @@
                     <div>
                         <h3 class="font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white">{{ $related->title }}</h3>
                         <p class="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{{ $related->excerpt }}</p>
-                        <div class="mt-3 text-xs text-gray-500">{{ $related->published_at->format('M d, Y') }}</div>
+                        <div class="mt-3 text-xs text-gray-500"><time datetime="{{ $related->published_at->toDateString() }}">{{ $related->published_at->format('M d, Y') }}</time></div>
                     </div>
                 </a>
                 @endforeach

@@ -24,7 +24,7 @@
                     <x-section-heading icon="mail" class="mb-8">Send a Message</x-section-heading>
 
                     @if(session('success'))
-                    <div class="mb-6 p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-400 text-sm">
+                    <div class="mb-6 rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400" role="status" aria-live="polite">
                         {{ session('success') }}
                     </div>
                     @endif
@@ -32,7 +32,7 @@
                     @php($firstErrorField = $errors->keys()[0] ?? null)
 
                     @if($errors->any())
-                        <div role="alert" class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400">
+                        <div role="alert" aria-live="assertive" class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400">
                             <p class="font-semibold">Please review the highlighted fields.</p>
                             <ul class="mt-2 list-disc space-y-1 pl-5">
                                 @foreach($errors->getMessages() as $field => $messages)
@@ -96,10 +96,10 @@
                                     data-action="{{ config('services.turnstile.contact_action') }}"
                                 ></div>
                                 <noscript>
-                                    <p class="text-sm text-red-600 dark:text-red-400" role="alert">JavaScript is required to complete the verification.</p>
+                                    <p class="text-sm text-red-600 dark:text-red-400" role="alert" aria-live="assertive">JavaScript is required to complete the verification.</p>
                                 </noscript>
                                 @error('cf-turnstile-response')
-                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400" role="alert" aria-live="assertive">{{ $message }}</p>
                                 @enderror
                             </div>
                         @endif
