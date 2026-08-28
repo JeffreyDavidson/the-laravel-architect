@@ -86,9 +86,15 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
+        $canonicalUrl = $posts->onFirstPage()
+            ? route('blog.category', $category)
+            : route('blog.category', ['category' => $category, 'page' => $posts->currentPage()]);
+
         $seoSource = new SEOData(
             title: $category->name.' Articles',
             description: "Articles about {$category->name} — Laravel development insights from Jeffrey Davidson.",
+            url: $canonicalUrl,
+            canonical_url: $canonicalUrl,
         );
 
         return view('blog.category', compact('category', 'posts', 'seoSource'));
@@ -102,9 +108,15 @@ class BlogController extends Controller
             ->latest('published_at')
             ->paginate(10);
 
+        $canonicalUrl = $posts->onFirstPage()
+            ? route('blog.tag', $tag)
+            : route('blog.tag', ['tag' => $tag, 'page' => $posts->currentPage()]);
+
         $seoSource = new SEOData(
             title: $tag->name.' Articles',
             description: "Articles tagged with {$tag->name} on The Laravel Architect.",
+            url: $canonicalUrl,
+            canonical_url: $canonicalUrl,
         );
 
         return view('blog.tag', compact('tag', 'posts', 'seoSource'));

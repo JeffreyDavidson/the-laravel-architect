@@ -185,6 +185,7 @@ if (request()->routeIs('projects.show') && isset($project)) {
 // 6. CollectionPage + ItemList (public indexes)
 $collectionPage = null;
 $collectionItems = [];
+$collectionPositionOffset = 0;
 
 if (request()->routeIs('blog.index') && isset($posts)) {
     $collectionPage = ['name' => 'Blog', 'url' => route('blog.index')];
@@ -198,8 +199,9 @@ if (request()->routeIs('blog.index') && isset($posts)) {
 } elseif (request()->routeIs('blog.category') && isset($category, $posts)) {
     $collectionPage = [
         'name' => $category->name.' Articles',
-        'url' => route('blog.category', $category),
+        'url' => $seoSource->canonical_url,
     ];
+    $collectionPositionOffset = ($posts->currentPage() - 1) * $posts->perPage();
 
     foreach ($posts as $collectionPost) {
         $collectionItems[] = [
@@ -210,8 +212,9 @@ if (request()->routeIs('blog.index') && isset($posts)) {
 } elseif (request()->routeIs('blog.tag') && isset($tag, $posts)) {
     $collectionPage = [
         'name' => $tag->name.' Articles',
-        'url' => route('blog.tag', $tag),
+        'url' => $seoSource->canonical_url,
     ];
+    $collectionPositionOffset = ($posts->currentPage() - 1) * $posts->perPage();
 
     foreach ($posts as $collectionPost) {
         $collectionItems[] = [
@@ -256,7 +259,7 @@ if ($collectionPage) {
     foreach ($collectionItems as $index => $item) {
         $itemListElements[] = [
             '@type' => 'ListItem',
-            'position' => $index + 1,
+            'position' => $collectionPositionOffset + $index + 1,
             'name' => $item['name'],
             'item' => $item['url'],
         ];
