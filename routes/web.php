@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastController;
+use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ShowAboutController;
@@ -45,8 +45,8 @@ Route::get('/rss', RssFeedController::class)->name('rss');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [PostsController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{category:slug}', ShowBlogCategoryController::class)->name('blog.category');
 Route::get('/blog/tag/{tag:slug}', ShowBlogTagController::class)->name('blog.tag');
 
