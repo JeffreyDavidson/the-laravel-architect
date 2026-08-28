@@ -10,7 +10,7 @@ use App\Services\YouTubeService;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class HomeController extends Controller
+class ShowHomeController extends Controller
 {
     public function __invoke(): View
     {
