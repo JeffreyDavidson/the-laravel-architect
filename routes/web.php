@@ -7,6 +7,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\ShowBlogCategoryController;
+use App\Http\Controllers\ShowBlogTagController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
@@ -36,8 +38,8 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 // Blog
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
-Route::get('/blog/category/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
-Route::get('/blog/tag/{tag:slug}', [BlogController::class, 'tag'])->name('blog.tag');
+Route::get('/blog/category/{category:slug}', ShowBlogCategoryController::class)->name('blog.category');
+Route::get('/blog/tag/{tag:slug}', ShowBlogTagController::class)->name('blog.tag');
 
 // OG Images
 Route::get('/og-image/{post:slug}', OgImageController::class)->name('og-image');
