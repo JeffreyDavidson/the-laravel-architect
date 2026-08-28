@@ -324,7 +324,7 @@ it('renders canonical structured data for public content collections', function 
     }
 });
 
-it('uses page-specific canonical metadata for paginated taxonomy archives', function () {
+it('uses page-specific metadata for paginated taxonomy archives', function () {
     $author = User::factory()->create();
     $category = Category::query()->create([
         'name' => 'Architecture',
@@ -349,11 +349,22 @@ it('uses page-specific canonical metadata for paginated taxonomy archives', func
     }
 
     foreach ([
-        route('blog.category', ['category' => $category, 'page' => 2]),
-        route('blog.tag', ['tag' => $tag, 'page' => 2]),
-    ] as $url) {
+        [
+            'url' => route('blog.category', ['category' => $category, 'page' => 2]),
+            'title' => 'Architecture Articles — Page 2 — Jeffrey Davidson',
+            'description' => 'Articles about Architecture — Laravel development insights from Jeffrey Davidson. Page 2 of 2.',
+        ],
+        [
+            'url' => route('blog.tag', ['tag' => $tag, 'page' => 2]),
+            'title' => 'Boundaries Articles — Page 2 — Jeffrey Davidson',
+            'description' => 'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',
+        ],
+    ] as $metadata) {
+        $url = $metadata['url'];
         $content = $this->get($url)
             ->assertOk()
+            ->assertSee('<title>'.$metadata['title'].'</title>', false)
+            ->assertSee('<meta name="description" content="'.$metadata['description'].'">', false)
             ->assertSee('<link rel="canonical" href="'.$url.'">', false)
             ->assertSee('<meta property="og:url" content="'.$url.'">', false)
             ->getContent();
