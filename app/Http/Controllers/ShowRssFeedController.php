@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Response;
 
-class RssFeedController extends Controller
+class ShowRssFeedController extends Controller
 {
     public function __invoke(): Response
     {

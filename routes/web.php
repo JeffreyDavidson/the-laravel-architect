@@ -5,7 +5,6 @@ use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProjectsController;
-use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ShowAboutController;
 use App\Http\Controllers\ShowBlogCategoryController;
 use App\Http\Controllers\ShowBlogTagController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
 use App\Http\Controllers\ShowPrivacyController;
+use App\Http\Controllers\ShowRssFeedController;
 use App\Http\Controllers\ShowSitemapController;
 use App\Http\Controllers\ShowTestimonialSubmissionController;
 use App\Http\Controllers\ShowUsesController;
@@ -41,7 +41,7 @@ Route::post('/testimonials', SubmitTestimonialController::class)->middleware('th
 Route::get('/uses', ShowUsesController::class)->name('uses');
 
 // RSS & Sitemap
-Route::get('/rss', RssFeedController::class)->name('rss');
+Route::get('/rss', ShowRssFeedController::class)->name('rss');
 Route::get('/sitemap.xml', ShowSitemapController::class)->name('sitemap');
 
 // Blog
