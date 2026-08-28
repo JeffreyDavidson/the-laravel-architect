@@ -12,10 +12,11 @@ use App\Http\Controllers\ShowBlogTagController;
 use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
+use App\Http\Controllers\ShowTestimonialSubmissionController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubmitContactController;
+use App\Http\Controllers\SubmitTestimonialController;
 use App\Http\Controllers\SubscribeNewsletterController;
-use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\UnsubscribeNewsletterController;
 use App\Http\Middleware\EnsureValidNewsletterConfirmationToken;
 use Illuminate\Support\Facades\Route;
@@ -31,8 +32,8 @@ Route::get('/newsletter/confirm/{subscriber}/{token}', ShowNewsletterConfirmatio
 Route::post('/newsletter/confirm/{subscriber}/{token}', ConfirmNewsletterSubscriptionController::class)->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
 Route::get('/newsletter/unsubscribe/{subscriber}', ShowNewsletterUnsubscribeController::class)->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/unsubscribe/{subscriber}', UnsubscribeNewsletterController::class)->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
-Route::get('/testimonials/submit', [TestimonialController::class, 'create'])->name('testimonials.create');
-Route::post('/testimonials', [TestimonialController::class, 'store'])->middleware('throttle:testimonials')->name('testimonials.store');
+Route::get('/testimonials/submit', ShowTestimonialSubmissionController::class)->name('testimonials.create');
+Route::post('/testimonials', SubmitTestimonialController::class)->middleware('throttle:testimonials')->name('testimonials.store');
 Route::get('/uses', [PageController::class, 'uses'])->name('uses');
 
 // RSS & Sitemap

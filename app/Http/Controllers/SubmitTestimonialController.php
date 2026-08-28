@@ -5,22 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTestimonialRequest;
 use App\Models\Testimonial;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class TestimonialController extends Controller
+class SubmitTestimonialController extends Controller
 {
-    public function create(): View
-    {
-        $seoSource = (new SEOData(
-            title: 'Share Your Experience',
-            description: 'Share a testimonial about working with Jeffrey Davidson and The Laravel Architect.',
-        ))->markAsNoindex();
-
-        return view('testimonials.create', ['seoSource' => $seoSource]);
-    }
-
-    public function store(StoreTestimonialRequest $request): RedirectResponse
+    public function __invoke(StoreTestimonialRequest $request): RedirectResponse
     {
         if ($request->filled('website')) {
             return back()->with('testimonial_success', 'Thank you! Your testimonial has been submitted and will appear once approved.');
