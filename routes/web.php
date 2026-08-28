@@ -3,7 +3,7 @@
 use App\Http\Controllers\ConfirmNewsletterSubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OgImageController;
-use App\Http\Controllers\PodcastController;
+use App\Http\Controllers\PodcastsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
@@ -54,8 +54,8 @@ Route::get('/blog/tag/{tag:slug}', ShowBlogTagController::class)->name('blog.tag
 Route::get('/og-image/{post:slug}', OgImageController::class)->name('og-image');
 
 // Podcasts
-Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcast.index');
-Route::get('/podcasts/{podcast:slug}', [PodcastController::class, 'show'])->name('podcast.show');
+Route::get('/podcasts', [PodcastsController::class, 'index'])->name('podcast.index');
+Route::get('/podcasts/{podcast:slug}', [PodcastsController::class, 'show'])->name('podcast.show');
 Route::get('/podcasts/{podcast:slug}/{episode:slug}', ShowPodcastEpisodeController::class)->name('podcast.episode');
 
 // Projects
