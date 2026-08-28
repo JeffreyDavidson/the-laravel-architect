@@ -11,6 +11,7 @@ use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\ShowAboutController;
 use App\Http\Controllers\ShowBlogCategoryController;
 use App\Http\Controllers\ShowBlogTagController;
+use App\Http\Controllers\ShowContactController;
 use App\Http\Controllers\ShowNewsletterConfirmationController;
 use App\Http\Controllers\ShowNewsletterUnsubscribeController;
 use App\Http\Controllers\ShowPodcastEpisodeController;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 // Pages
 Route::get('/', HomeController::class)->name('home');
 Route::get('/about', ShowAboutController::class)->name('about');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/contact', ShowContactController::class)->name('contact');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::post('/contact', SubmitContactController::class)->name('contact.submit');
 Route::post('/newsletter', SubscribeNewsletterController::class)->middleware('throttle:newsletter')->name('newsletter.subscribe');
