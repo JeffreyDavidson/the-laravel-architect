@@ -10,6 +10,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Middleware\EnsureValidNewsletterConfirmationToken;
 use Illuminate\Support\Facades\Route;
 
 // Pages
@@ -19,8 +20,8 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->middleware('throttle:newsletter')->name('newsletter.subscribe');
-Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'showConfirmation'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.confirm');
-Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'confirm'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
+Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'showConfirmation'])->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm');
+Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterController::class, 'confirm'])->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'showUnsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/unsubscribe/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
 Route::get('/testimonials/submit', [TestimonialController::class, 'create'])->name('testimonials.create');

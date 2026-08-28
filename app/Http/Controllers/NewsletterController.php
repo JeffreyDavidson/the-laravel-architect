@@ -52,8 +52,6 @@ class NewsletterController extends Controller
 
     public function showConfirmation(Request $request, Subscriber $subscriber, string $token): View
     {
-        $this->ensureValidConfirmationToken($subscriber, $token);
-
         $seoSource = (new SEOData(
             title: 'Confirm Your Subscription',
             description: 'Confirm your subscription to The Laravel Architect newsletter.',
@@ -68,8 +66,6 @@ class NewsletterController extends Controller
 
     public function confirm(Subscriber $subscriber, string $token): RedirectResponse
     {
-        $this->ensureValidConfirmationToken($subscriber, $token);
-
         $subscriber->update([
             'verified_at' => now(),
             'verification_token' => null,
@@ -101,14 +97,5 @@ class NewsletterController extends Controller
         ]);
 
         return redirect()->route('home')->with('newsletter_success', 'You have been unsubscribed.');
-    }
-
-    private function ensureValidConfirmationToken(Subscriber $subscriber, string $token): void
-    {
-        abort_unless(
-            $subscriber->verification_token
-                && hash_equals($subscriber->verification_token, hash('sha256', $token)),
-            403,
-        );
     }
 }
