@@ -18,8 +18,8 @@ class EnsureValidNewsletterConfirmationToken
         abort_unless(
             $subscriber instanceof Subscriber
                 && is_string($token)
-                && $subscriber->verification_token
-                && hash_equals($subscriber->verification_token, hash('sha256', $token)),
+                && $subscriber->verification_token_hash
+                && hash_equals($subscriber->verification_token_hash, hash('sha256', $token)),
             403,
         );
 

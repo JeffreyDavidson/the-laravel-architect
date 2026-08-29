@@ -21,7 +21,7 @@ it('creates an unverified subscriber and sends a confirmation message', function
 
     expect($subscriber->email)->toBe('reader@example.com')
         ->and($subscriber->verified_at)->toBeNull()
-        ->and($subscriber->verification_token)->not->toBeNull();
+        ->and($subscriber->verification_token_hash)->not->toBeNull();
 
     Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
 });
@@ -40,8 +40,9 @@ it('shows an explicit confirmation step without changing subscriber state', func
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
-        'verification_token' => hash('sha256', $token),
     ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
 
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
@@ -56,7 +57,7 @@ it('shows an explicit confirmation step without changing subscriber state', func
         ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
 
     expect($subscriber->refresh()->verified_at)->toBeNull()
-        ->and($subscriber->verification_token)->not->toBeNull();
+        ->and($subscriber->verification_token_hash)->not->toBeNull();
 });
 
 it('confirms a subscriber with an explicit post to a valid signed link', function () {
@@ -64,8 +65,9 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
-        'verification_token' => hash('sha256', $token),
     ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
 
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
@@ -78,15 +80,16 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
         ->assertSessionHas('newsletter_success');
 
     expect($subscriber->refresh()->verified_at)->not->toBeNull()
-        ->and($subscriber->verification_token)->toBeNull();
+        ->and($subscriber->verification_token_hash)->toBeNull();
 });
 
 it('rejects unsigned newsletter state changes', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
-        'verification_token' => hash('sha256', 'token'),
     ]);
+    $subscriber->verification_token_hash = hash('sha256', 'token');
+    $subscriber->save();
 
     $this->post(route('newsletter.confirm.store', [$subscriber, 'token']))
         ->assertForbidden();
@@ -98,8 +101,9 @@ it('rejects signed confirmation links with an invalid token', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
-        'verification_token' => hash('sha256', 'valid-token'),
     ]);
+    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
+    $subscriber->save();
 
     foreach (['newsletter.confirm', 'newsletter.confirm.store'] as $routeName) {
         $url = URL::temporarySignedRoute(
@@ -115,7 +119,7 @@ it('rejects signed confirmation links with an invalid token', function () {
     }
 
     expect($subscriber->refresh()->verified_at)->toBeNull()
-        ->and($subscriber->verification_token)->not->toBeNull();
+        ->and($subscriber->verification_token_hash)->not->toBeNull();
 });
 
 it('shows an unsubscribe step without changing subscriber state', function () {

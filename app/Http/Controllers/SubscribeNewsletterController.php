@@ -31,9 +31,9 @@ class SubscribeNewsletterController extends Controller
         $subscriber->fill([
             'subscribed_at' => now(),
             'verified_at' => null,
-            'verification_token' => hash('sha256', $token),
             'unsubscribed_at' => null,
         ]);
+        $subscriber->verification_token_hash = hash('sha256', $token);
         $subscriber->save();
 
         $confirmationUrl = URL::temporarySignedRoute(

@@ -9,11 +9,12 @@ class ConfirmNewsletterSubscriptionController extends Controller
 {
     public function __invoke(Subscriber $subscriber): RedirectResponse
     {
-        $subscriber->update([
+        $subscriber->fill([
             'verified_at' => now(),
-            'verification_token' => null,
             'unsubscribed_at' => null,
         ]);
+        $subscriber->verification_token_hash = null;
+        $subscriber->save();
 
         return redirect()->route('home')->with('newsletter_success', 'You\'re subscribed. Thanks for confirming!');
     }
