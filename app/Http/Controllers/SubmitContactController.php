@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SendContactMessage;
 use App\Http\Requests\ContactRequest;
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
 use App\Support\Turnstile;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
 class SubmitContactController extends Controller
 {
-    public function __invoke(ContactRequest $request, Turnstile $turnstile): RedirectResponse
-    {
+    public function __invoke(
+        ContactRequest $request,
+        Turnstile $turnstile,
+        SendContactMessage $sendContactMessage,
+    ): RedirectResponse {
         if ($request->filled('website')) {
             return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
         }
@@ -46,19 +47,13 @@ class SubmitContactController extends Controller
         $message = $validated->string('message')->toString();
         RateLimiter::hit($key, 3600);
 
-        Mail::to(config('mail.contact_to', config('mail.from.address')))->queue(new ContactMessageReceived(
-            senderName: $name,
-            senderEmail: $email,
-            contactType: $type,
+        $sendContactMessage(
+            name: $name,
+            email: $email,
+            type: $type,
             budget: $budget,
-            contactMessage: $message,
-        ));
-        Mail::to($email, $name)->queue(new ContactMessageConfirmation(
-            senderName: $name,
-            contactType: $type,
-            budget: $budget,
-            contactMessage: $message,
-        ));
+            message: $message,
+        );
 
         return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
     }
