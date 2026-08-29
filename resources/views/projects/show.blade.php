@@ -161,7 +161,7 @@
             </a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($otherProjects->take(3) as $other)
+            @foreach($otherProjects as $other)
             <x-projects.related-card :project="$other" />
             @endforeach
         </div>

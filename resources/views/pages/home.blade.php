@@ -114,7 +114,7 @@
     years="15"
     :published-posts="$publishedPostCount"
     :published-projects="$publishedProjectCount"
-    :recommendations="$testimonials->count()"
+    :recommendations="$approvedTestimonialCount"
 />
 
 {{-- ===== FEATURED PROJECTS ===== --}}
