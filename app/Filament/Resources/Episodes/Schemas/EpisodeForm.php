@@ -32,6 +32,7 @@ class EpisodeForm
                             ->columnSpanFull(),
                         TextInput::make('title')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
@@ -60,6 +61,7 @@ class EpisodeForm
                         TextInput::make('audio_url')
                             ->label('Audio URL')
                             ->url()
+                            ->maxLength(255)
                             ->helperText('Link to hosted audio (Buzzsprout, Anchor, etc.)'),
                         FileUpload::make('audio_path')
                             ->disk('public')
@@ -69,10 +71,12 @@ class EpisodeForm
                         TextInput::make('embed_url')
                             ->label('Embed URL')
                             ->url()
+                            ->maxLength(255)
                             ->helperText('Spotify/Apple embed URL'),
                         TextInput::make('youtube_url')
                             ->label('YouTube URL')
                             ->url()
+                            ->maxLength(255)
                             ->helperText('If episode is also on YouTube'),
                         FileUpload::make('featured_image_path')
                             ->disk('public')
@@ -86,11 +90,14 @@ class EpisodeForm
 
                 Section::make('Guest')
                     ->schema([
-                        TextInput::make('guest_name'),
+                        TextInput::make('guest_name')
+                            ->maxLength(255),
                         TextInput::make('guest_title')
+                            ->maxLength(255)
                             ->helperText('e.g. Senior Dev at Acme Corp'),
                         TextInput::make('guest_url')
                             ->url()
+                            ->maxLength(255)
                             ->helperText('Guest website or social link'),
                     ])->columns(3)
                     ->collapsed(),

@@ -114,7 +114,7 @@
     years="15"
     :published-posts="$publishedPostCount"
     :published-projects="$publishedProjectCount"
-    :recommendations="$testimonials->count()"
+    :recommendations="$approvedTestimonialCount"
 />
 
 {{-- ===== FEATURED PROJECTS ===== --}}
@@ -249,7 +249,7 @@
                     <h3 class="font-semibold text-2xl md:text-3xl text-gray-900 dark:text-white mt-2 mb-4 group-hover:text-brand-400 transition-colors">{{ $featured->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-base line-clamp-3 max-w-3xl">{{ $featured->excerpt }}</p>
                     <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
-                        <time>{{ $featured->published_at->format('M d, Y') }}</time>
+                        <time datetime="{{ $featured->published_at->toDateString() }}">{{ $featured->published_at->format('M d, Y') }}</time>
                         <span>·</span>
                         <span>{{ $featured->reading_time }} min read</span>
                     </div>
@@ -269,7 +269,7 @@
                         <h3 class="font-semibold text-lg text-gray-900 dark:text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
                         <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
                         <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
-                            <time>{{ $post->published_at->format('M d, Y') }}</time>
+                            <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('M d, Y') }}</time>
                             <span>·</span>
                             <span>{{ $post->reading_time }} min read</span>
                         </div>

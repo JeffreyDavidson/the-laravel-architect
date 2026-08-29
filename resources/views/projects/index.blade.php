@@ -16,9 +16,9 @@
         </div>
 
         <dl class="grid grid-cols-3 border-y border-gray-200 dark:border-[#1e2a3a]">
-            <div class="py-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Studies</dt></div>
-            <div class="border-x border-gray-200 px-4 py-4 dark:border-[#1e2a3a]"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->where('is_featured', true)->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Featured</dt></div>
-            <div class="py-4 pl-4"><dd class="font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</dd><dt class="mt-1 text-xs uppercase tracking-wider text-gray-500">Tools</dt></div>
+            <div class="flex flex-col py-4"><dt class="order-2 mt-1 text-xs uppercase tracking-wider text-gray-500">Studies</dt><dd class="order-1 font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->count() }}</dd></div>
+            <div class="flex flex-col border-x border-gray-200 px-4 py-4 dark:border-[#1e2a3a]"><dt class="order-2 mt-1 text-xs uppercase tracking-wider text-gray-500">Featured</dt><dd class="order-1 font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->where('is_featured', true)->count() }}</dd></div>
+            <div class="flex flex-col py-4 pl-4"><dt class="order-2 mt-1 text-xs uppercase tracking-wider text-gray-500">Tools</dt><dd class="order-1 font-mono text-2xl font-semibold text-gray-900 dark:text-white">{{ $projects->pluck('tech_stack')->flatten()->unique()->count() }}</dd></div>
         </dl>
     </div>
 </x-hero-section>

@@ -12,13 +12,13 @@
     <x-page-section>
         <div class="mx-auto max-w-2xl">
             @if(session('testimonial_success'))
-                <div class="mb-6 rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400" role="status">
+                <div class="mb-6 rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400" role="status" aria-live="polite">
                     {{ session('testimonial_success') }}
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400" role="alert">
+                <div class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400" role="alert" aria-live="assertive">
                     <p class="font-semibold">Please review the highlighted fields.</p>
                 </div>
             @endif
@@ -36,26 +36,22 @@
                         <div>
                             <label for="testimonial-name" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
                             <x-form.input id="testimonial-name" name="name" required maxlength="100" value="{{ old('name') }}" autocomplete="name" aria-invalid="{{ $errors->has('name') ? 'true' : 'false' }}" />
-                            @error('name') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="testimonial-role" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Role <span class="text-gray-500">(optional)</span></label>
                             <x-form.input id="testimonial-role" name="role" maxlength="100" value="{{ old('role') }}" placeholder="CTO, developer, founder…" />
-                            @error('role') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
                     <div>
                         <label for="testimonial-company" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Company <span class="text-gray-500">(optional)</span></label>
                         <x-form.input id="testimonial-company" name="company" maxlength="100" value="{{ old('company') }}" autocomplete="organization" />
-                        @error('company') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="testimonial-body" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Testimonial</label>
                         <x-form.textarea id="testimonial-body" name="body" rows="6" required maxlength="1000" aria-describedby="testimonial-body-help" aria-invalid="{{ $errors->has('body') ? 'true' : 'false' }}">{{ old('body') }}</x-form.textarea>
                         <p id="testimonial-body-help" class="mt-2 text-sm text-gray-500">Your testimonial will be reviewed before it appears publicly.</p>
-                        @error('body') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

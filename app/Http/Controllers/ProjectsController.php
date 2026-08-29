@@ -34,6 +34,7 @@ class ProjectsController extends Controller
             ->where('id', '!=', $project->id)
             ->with('tags')
             ->orderBy('sort_order')
+            ->take(3)
             ->get();
         $seoSource = $project;
 

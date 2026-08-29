@@ -7,12 +7,12 @@
         A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam, unsubscribe anytime.
     </p>
     @if(session('newsletter_success'))
-    <div class="mx-auto mb-4 max-w-md rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
+    <div class="mx-auto mb-4 max-w-md rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400" role="status" aria-live="polite">
         {{ session('newsletter_success') }}
     </div>
     @endif
     @error('email')
-    <div class="mx-auto mb-4 max-w-md rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+    <div class="mx-auto mb-4 max-w-md rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400" role="alert" aria-live="assertive">
         {{ $message }}
     </div>
     @enderror
@@ -21,7 +21,8 @@
         <div class="absolute -left-[9999px] -top-[9999px]" aria-hidden="true">
             <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
         </div>
-        <input type="email" name="email" placeholder="you@example.com" required
+        <label for="newsletter-email" class="sr-only">Email address</label>
+        <input id="newsletter-email" type="email" name="email" placeholder="you@example.com" required autocomplete="email"
             class="newsletter-input min-w-0 flex-1 rounded-lg border border-brand-200 bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 dark:border-brand-700/50 dark:bg-brand-800 dark:text-white dark:shadow-none dark:placeholder:text-gray-500 sm:text-sm">
         <button type="submit" class="rounded-lg bg-brand-600 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-brand-500 sm:text-sm">
             Subscribe

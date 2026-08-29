@@ -16,9 +16,9 @@ class TestimonialForm
         return $schema->components([
             Section::make('Testimonial')
                 ->schema([
-                    TextInput::make('name')->required(),
-                    TextInput::make('role'),
-                    TextInput::make('company'),
+                    TextInput::make('name')->required()->maxLength(255),
+                    TextInput::make('role')->maxLength(255),
+                    TextInput::make('company')->maxLength(255),
                     Textarea::make('body')
                         ->required()
                         ->rows(4),

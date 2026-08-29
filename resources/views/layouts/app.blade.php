@@ -24,6 +24,10 @@
     @stack('head')
 </head>
 <body class="bg-white dark:bg-brand-950 text-gray-800 dark:text-gray-100 font-sans antialiased">
+    <a href="#main-content" class="sr-only z-[60] rounded-lg bg-brand-600 px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:outline-2 focus:outline-offset-2 focus:outline-brand-300">
+        Skip to content
+    </a>
+
     {{-- Navigation --}}
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,7 +79,7 @@
     </nav>
 
     {{-- Content --}}
-    <main class="isolate @if(request()->routeIs('home')) home-page @endif">
+    <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')
     </main>
 

@@ -85,8 +85,22 @@ class Episode extends Model implements Publishable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly([
+                'podcast_id',
+                'title',
+                'slug',
+                'episode_number',
+                'season_number',
+                'featured_image_path',
+                'audio_url',
+                'audio_path',
+                'embed_url',
+                'youtube_url',
+                'duration_minutes',
+                'status',
+                'published_at',
+            ])
             ->logOnlyDirty()
-            ->logAll()
             ->dontLogEmptyChanges();
     }
 

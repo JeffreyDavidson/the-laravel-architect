@@ -11,7 +11,7 @@
         <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-500">
             <a href="{{ route('projects.index') }}" class="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Projects</a>
             <x-svg-icon name="chevron-right" class="w-3.5 h-3.5 text-gray-600" />
-            <span class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
+            <span aria-current="page" class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
@@ -161,7 +161,7 @@
             </a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($otherProjects->take(3) as $other)
+            @foreach($otherProjects as $other)
             <x-projects.related-card :project="$other" />
             @endforeach
         </div>

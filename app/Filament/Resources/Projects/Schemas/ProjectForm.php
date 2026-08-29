@@ -27,6 +27,7 @@ class ProjectForm
                     ->schema([
                         TextInput::make('title')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
@@ -48,10 +49,12 @@ class ProjectForm
                     ->schema([
                         TextInput::make('url')
                             ->label('Live URL')
-                            ->url(),
+                            ->url()
+                            ->maxLength(255),
                         TextInput::make('github_url')
                             ->label('GitHub URL')
-                            ->url(),
+                            ->url()
+                            ->maxLength(255),
                         FileUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('projects')

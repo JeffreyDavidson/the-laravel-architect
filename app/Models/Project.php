@@ -77,8 +77,18 @@ class Project extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'slug',
+                'featured_image_path',
+                'url',
+                'github_url',
+                'tech_stack',
+                'is_featured',
+                'sort_order',
+                'status',
+            ])
             ->logOnlyDirty()
-            ->logAll()
             ->dontLogEmptyChanges();
     }
 

@@ -35,10 +35,12 @@ class ShowHomeController extends Controller
         $testimonials = Testimonial::approved()
             ->orderBy('sort_order')
             ->latest()
+            ->take(3)
             ->get();
 
         $publishedPostCount = Post::published()->count();
         $publishedProjectCount = Project::published()->count();
+        $approvedTestimonialCount = Testimonial::approved()->count();
 
         $seoSource = new SEOData(
             title: 'The Laravel Architect — Jeffrey Davidson',
@@ -53,6 +55,7 @@ class ShowHomeController extends Controller
             'testimonials' => $testimonials,
             'publishedPostCount' => $publishedPostCount,
             'publishedProjectCount' => $publishedProjectCount,
+            'approvedTestimonialCount' => $approvedTestimonialCount,
             'seoSource' => $seoSource,
         ]);
     }
