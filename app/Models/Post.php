@@ -122,8 +122,18 @@ class Post extends Model implements Publishable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'slug',
+                'featured_image_path',
+                'category_id',
+                'user_id',
+                'status',
+                'published_at',
+                'reviewed_by',
+                'reviewed_at',
+            ])
             ->logOnlyDirty()
-            ->logAll()
             ->dontLogEmptyChanges();
     }
 

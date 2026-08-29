@@ -30,6 +30,7 @@ class PostForm
                     ->schema([
                         TextInput::make('title')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
@@ -60,7 +61,7 @@ class PostForm
                             ->preload()
                             ->createOptionAction(fn (Action $action): Action => $action->authorize('create', Category::class))
                             ->createOptionForm([
-                                TextInput::make('name')->required(),
+                                TextInput::make('name')->required()->maxLength(255),
                                 TextInput::make('slug')
                                     ->required()
                                     ->maxLength(255)

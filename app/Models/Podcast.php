@@ -126,8 +126,19 @@ class Podcast extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'slug',
+                'cover_image_path',
+                'color',
+                'apple_url',
+                'spotify_url',
+                'rss_url',
+                'youtube_url',
+                'is_active',
+                'sort_order',
+            ])
             ->logOnlyDirty()
-            ->logAll()
             ->dontLogEmptyChanges();
     }
 

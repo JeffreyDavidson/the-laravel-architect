@@ -23,6 +23,7 @@ class PodcastForm
                     ->schema([
                         TextInput::make('name')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
                         TextInput::make('slug')
@@ -51,10 +52,10 @@ class PodcastForm
 
                 Section::make('Subscribe Links')
                     ->schema([
-                        TextInput::make('apple_url')->label('Apple Podcasts URL')->url(),
-                        TextInput::make('spotify_url')->label('Spotify URL')->url(),
-                        TextInput::make('rss_url')->label('RSS Feed URL')->url(),
-                        TextInput::make('youtube_url')->label('YouTube URL')->url(),
+                        TextInput::make('apple_url')->label('Apple Podcasts URL')->url()->maxLength(255),
+                        TextInput::make('spotify_url')->label('Spotify URL')->url()->maxLength(255),
+                        TextInput::make('rss_url')->label('RSS Feed URL')->url()->maxLength(255),
+                        TextInput::make('youtube_url')->label('YouTube URL')->url()->maxLength(255),
                     ])->columns(2),
 
                 Section::make('Settings')
