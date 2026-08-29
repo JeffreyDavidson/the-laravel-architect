@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Queries\RelatedPostsQuery;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -25,55 +26,26 @@ class PostsController extends Controller
             description: 'Articles on Laravel, PHP, architecture patterns, testing, and the craft of building modern web applications.',
         );
 
-        return view('blog.index', compact('posts', 'categories', 'seoSource'));
+        return view('blog.index', [
+            'posts' => $posts,
+            'categories' => $categories,
+            'seoSource' => $seoSource,
+        ]);
     }
 
-    public function show(Post $post): View
+    public function show(Post $post, RelatedPostsQuery $relatedPostsQuery): View
     {
         abort_unless($post->isPublished(), 404);
 
         $post->load(['category', 'tags', 'author']);
-
-        // Same category first
-        $relatedPosts = Post::published()
-            ->where('id', '!=', $post->id)
-            ->where('category_id', $post->category_id)
-            ->with(['category', 'tags'])
-            ->latest('published_at')
-            ->take(3)
-            ->get();
-
-        // Fill with shared-tag posts if needed
-        if ($relatedPosts->count() < 3 && $post->tags->count()) {
-            $exclude = $relatedPosts->pluck('id')->push($post->id);
-
-            $tagRelated = Post::published()
-                ->whereNotIn('id', $exclude)
-                ->withAnyTags($post->tags)
-                ->with(['category', 'tags'])
-                ->latest('published_at')
-                ->take(3 - $relatedPosts->count())
-                ->get();
-
-            $relatedPosts = $relatedPosts->merge($tagRelated);
-        }
-
-        // Fill with latest posts as last resort
-        if ($relatedPosts->count() < 3) {
-            $exclude = $relatedPosts->pluck('id')->push($post->id);
-
-            $latest = Post::published()
-                ->whereNotIn('id', $exclude)
-                ->with(['category', 'tags'])
-                ->latest('published_at')
-                ->take(3 - $relatedPosts->count())
-                ->get();
-
-            $relatedPosts = $relatedPosts->merge($latest);
-        }
+        $relatedPosts = $relatedPostsQuery->get($post);
 
         $seoSource = $post;
 
-        return view('blog.show', compact('post', 'relatedPosts', 'seoSource'));
+        return view('blog.show', [
+            'post' => $post,
+            'relatedPosts' => $relatedPosts,
+            'seoSource' => $seoSource,
+        ]);
     }
 }
