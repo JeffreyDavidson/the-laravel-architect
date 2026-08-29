@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Podcast;
+use App\ViewModels\PodcastShowViewModel;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -23,36 +24,14 @@ class PodcastsController extends Controller
         return view('podcast.index', compact('podcast', 'seoSource'));
     }
 
-    public function show(Podcast $podcast): View
+    public function show(Podcast $podcast, PodcastShowViewModel $podcastShowViewModel): View
     {
         abort_unless($podcast->is_active, 404);
 
-        $episodes = $podcast->publishedEpisodes()
-            ->with('tags')
-            ->latest('published_at')
-            ->paginate(20);
+        $data = $podcastShowViewModel->data($podcast);
 
-        abort_if($episodes->currentPage() > $episodes->lastPage(), 404);
+        abort_if($data['episodes']->currentPage() > $data['episodes']->lastPage(), 404);
 
-        $latestEpisode = $episodes->onFirstPage() ? $episodes->first() : null;
-        $canonicalUrl = $episodes->onFirstPage()
-            ? route('podcast.show', $podcast)
-            : route('podcast.show', ['podcast' => $podcast, 'page' => $episodes->currentPage()]);
-        $title = $podcast->name;
-        $description = $podcast->description;
-
-        if (! $episodes->onFirstPage()) {
-            $title .= " — Page {$episodes->currentPage()}";
-            $description = trim(($description ?? '')." Page {$episodes->currentPage()} of {$episodes->lastPage()}.");
-        }
-
-        $seoSource = new SEOData(
-            title: $title,
-            description: $description,
-            url: $canonicalUrl,
-            canonical_url: $canonicalUrl,
-        );
-
-        return view('podcast.show', compact('podcast', 'episodes', 'latestEpisode', 'seoSource'));
+        return view('podcast.show', $data);
     }
 }
