@@ -271,7 +271,10 @@
                         prose-a:no-underline hover:prose-a:underline
                         prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a]
                         prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400">
-                        {!! $episode->show_notes !!}
+                        {!! Str::markdown($episode->show_notes, [
+                            'html_input' => 'strip',
+                            'allow_unsafe_links' => false,
+                        ]) !!}
                     </div>
                 </div>
                 @endif
