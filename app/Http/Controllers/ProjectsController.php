@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use App\Queries\RelatedProjectsQuery;
 use Illuminate\Contracts\View\View;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -24,18 +25,12 @@ class ProjectsController extends Controller
         return view('projects.index', compact('projects', 'seoSource'));
     }
 
-    public function show(Project $project): View
+    public function show(Project $project, RelatedProjectsQuery $relatedProjectsQuery): View
     {
         abort_unless($project->status === ProjectStatus::Published, 404);
 
         $project->load('tags');
-
-        $otherProjects = Project::published()
-            ->where('id', '!=', $project->id)
-            ->with('tags')
-            ->orderBy('sort_order')
-            ->take(3)
-            ->get();
+        $otherProjects = $relatedProjectsQuery->get($project);
         $seoSource = $project;
 
         return view('projects.show', compact('project', 'otherProjects', 'seoSource'));
