@@ -1,6 +1,11 @@
 {
+    "id": "/",
     "name": "The Laravel Architect",
     "short_name": "Laravel Architect",
+    "description": "Laravel architecture, modernization, and maintainable application delivery by Jeffrey Davidson.",
+    "start_url": "/",
+    "scope": "/",
+    "lang": "en-US",
     "icons": [
         {
             "src": "/images/favicon-192x192.png",

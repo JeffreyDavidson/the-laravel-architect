@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 <header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -7,7 +11,7 @@
         <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-500">
             <a href="{{ route('projects.index') }}" class="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Projects</a>
             <x-svg-icon name="chevron-right" class="w-3.5 h-3.5 text-gray-600" />
-            <span class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
+            <span aria-current="page" class="text-gray-600 dark:text-gray-400">{{ $project->title }}</span>
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
@@ -96,9 +100,22 @@
 
 {{-- ===== FEATURED IMAGE ===== --}}
 @if($project->featured_image_url)
+@inject('projectImages', 'App\Services\ResponsiveImageVariants')
+@php
+    $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
+@endphp
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-8 relative z-10">
-    <div class="mt-[-2rem] overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
-        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="w-full">
+    <div class="mt-[-2rem] aspect-video overflow-hidden rounded-2xl border border-gray-200 shadow-2xl dark:border-brand-700">
+        <picture class="block h-full">
+            @if($featuredImageSrcset)
+            <source
+                type="image/webp"
+                srcset="{{ $featuredImageSrcset }}"
+                sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+            >
+            @endif
+            <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" decoding="async" fetchpriority="high" class="h-full w-full object-cover">
+        </picture>
     </div>
 </div>
 @endif
@@ -144,7 +161,7 @@
             </a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($otherProjects->take(3) as $other)
+            @foreach($otherProjects as $other)
             <x-projects.related-card :project="$other" />
             @endforeach
         </div>

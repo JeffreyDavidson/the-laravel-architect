@@ -2,6 +2,10 @@
 
 @section('title', 'Blog')
 
+@push('head')
+    @vite('resources/css/pages/listings-entry.css')
+@endpush
+
 @section('content')
 {{-- Hero --}}
 <x-hero-section>
@@ -15,23 +19,7 @@
 </x-hero-section>
 
 {{-- Content --}}
-<div class="bg-gray-50 dark:bg-[#0b1016]" x-data="{
-    activeCategory: 'all',
-    search: '',
-    posts: [
-        @foreach($posts as $post)
-        { slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' },
-        @endforeach
-    ],
-    isVisible(post) {
-        const catMatch = this.activeCategory === 'all' || this.activeCategory === post.category;
-        const searchMatch = this.search === '' || post.text.includes(this.search.toLowerCase());
-        return catMatch && searchMatch;
-    },
-    get visibleCount() {
-        return this.posts.filter(p => this.isVisible(p)).length;
-    }
-}">
+<div class="bg-gray-50 dark:bg-[#0b1016]" data-blog-filter>
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
 
         {{-- Search + Category filters --}}
@@ -42,9 +30,9 @@
                 <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input id="blog-search" type="text" x-model="search" placeholder="Search posts..."
+                <input id="blog-search" type="search" data-blog-search placeholder="Search posts..."
                     class="w-full rounded-xl border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 transition-colors placeholder-gray-500 focus:border-brand-600/50 focus:outline-none focus:ring-1 focus:ring-brand-600/20 dark:border-brand-700 dark:bg-brand-950 dark:text-white">
-                <button x-show="search.length > 0" x-cloak type="button" aria-label="Clear search" @click="search = ''" class="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-400 dark:hover:text-white">
+                <button hidden data-blog-clear type="button" aria-label="Clear search" class="absolute inset-y-0 right-3 flex items-center rounded p-1 text-gray-500 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-400 dark:hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -52,16 +40,12 @@
             {{-- Category filters --}}
             @if($categories->count())
             <div class="flex flex-wrap gap-2">
-            <button @click="activeCategory = 'all'"
-                :class="activeCategory === 'all' ? 'active' : ''"
-                :aria-pressed="activeCategory === 'all'"
-                class="category-pill rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:border-brand-700 dark:text-gray-400">
+            <button type="button" data-blog-category="all" aria-pressed="true"
+                class="category-pill active rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:border-brand-700 dark:text-gray-400">
                 All Posts <span class="text-gray-600 ml-1">{{ $posts->count() }}</span>
             </button>
             @foreach($categories as $category)
-            <button @click="activeCategory = '{{ $category->slug }}'"
-                :class="activeCategory === '{{ $category->slug }}' ? 'active' : ''"
-                :aria-pressed="activeCategory === '{{ $category->slug }}'"
+            <button type="button" data-blog-category="{{ $category->slug }}" aria-pressed="false"
                 class="category-pill rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:border-brand-700 dark:text-gray-400">
                 {{ $category->name }} <span class="text-gray-600 ml-1">{{ $category->posts_count }}</span>
             </button>
@@ -73,8 +57,7 @@
         {{-- Posts --}}
         <div class="flex flex-col">
             @forelse($posts as $post)
-            <div :class="isVisible({ slug: '{{ $post->slug }}', category: '{{ $post->category?->slug }}', text: '{{ strtolower(addslashes($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))) }}' }) ? 'blog-card-wrapper' : 'blog-card-wrapper collapsed'"
-                class="blog-card-wrapper">
+            <div data-blog-post data-category="{{ $post->category?->slug }}" data-search-content="{{ str($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))->lower() }}" class="blog-card-wrapper">
               <div>
                 <x-blog-card :post="$post" />
               </div>
@@ -91,10 +74,10 @@
             @endforelse
 
             {{-- No search results --}}
-            <div x-show="visibleCount === 0" x-cloak class="text-center py-16">
+            <div hidden data-blog-empty class="text-center py-16">
                 <div class="inline-block rounded-xl border border-gray-200 bg-white px-6 py-4 dark:border-brand-700 dark:bg-brand-950">
                     <div class="font-mono text-sm">
-                        <p class="text-gray-500">$ grep -r "<span x-text="search || activeCategory"></span>" ./posts</p>
+                        <p class="text-gray-500">$ grep -r "<span data-blog-empty-query></span>" ./posts</p>
                         <p class="text-yellow-400 mt-1">No matching posts found.</p>
                     </div>
                 </div>

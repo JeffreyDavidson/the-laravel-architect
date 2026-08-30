@@ -34,23 +34,24 @@ composer test:types
 composer test:filament
 vendor/bin/pint --test
 npm run build
+npm run test:assets
 composer audit --locked
 npm audit --omit=dev
 ```
 
-CI runs dependency auditing, formatting, static analysis, asset compilation, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
 ## Architecture
 
-Public pages are server-rendered Blade views. Route-model binding uses content slugs, while publication scopes keep drafts and future content off public pages, feeds, and the sitemap.
+Public pages are server-rendered Blade views. Controllers pass simple page data directly, while complex multi-source or pagination-aware payloads such as the homepage, blog index, category and tag archives, and post, podcast, and project detail pages are assembled by ViewModels. Pages provide page-specific `SEOData` or an SEO-enabled content model to the shared layout, which renders titles, descriptions, canonical links, social metadata, and robots directives. Reusable content selection, including related posts, related projects, and adjacent-episode navigation, lives in query objects rather than controllers. Sitemap and RSS serialization, the newsletter subscription lifecycle, and contact message delivery live in invokable actions, leaving their HTTP controllers responsible for request and response concerns. The shared JSON-LD graph uses named Laravel routes for canonical site, author, static-page, article, podcast, episode, project case-study, collection, item-list, and breadcrumb entities. Paginated public archives reject out-of-range pages and use page-specific titles, descriptions, canonical and collection URLs, and continuous item positions. Route-model binding uses content slugs, while publication scopes keep drafts and future content off public pages, feeds, and the sitemap. Dynamic sitemap archives report the latest modification date from their public content. Signed newsletter confirmation routes compare the presented token against a non-mass-assignable SHA-256 hash in middleware, and newsletter action pages and the testimonial submission form are explicitly excluded from indexing.
 
-Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`.
+Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. Compressed budgets guard the public entry points and lazy homepage scene in CI. The Filament theme is a separate budgeted Vite entry loaded only by the admin panel. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`. The asset-budget check rejects unexpected files in `public/images`, so new images must either use the Vite pipeline or be intentionally added to the direct-URL allowlist.
 
 Generated post OG images are cached on the private local filesystem. Cache validity is based on the rendered title, category name, and an explicit renderer version; deleting a post removes its cached image.
 
 The Filament panel is available at `/admin`. Panel admission requires the native `is_admin` flag, resource actions are protected by Laravel policies, and app-based multi-factor authentication is required in production.
 
-Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Run `php artisan storage:link` on a new environment.
+Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Project and post featured images and podcast cover images retain their original upload as the canonical fallback and generate 640px and 1280px WebP variants for responsive public rendering. Bundled podcast cover fallbacks provide 128px, 320px, and 512px Vite-managed variants for smaller episode artwork. Replacing or deleting an uploaded image also removes its variants. Run `php artisan storage:link` on a new environment, then use `php artisan projects:generate-image-variants`, `php artisan posts:generate-image-variants`, and `php artisan podcasts:generate-image-variants` when backfilling existing uploads.
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
@@ -88,10 +89,10 @@ The application is hosted through Laravel Forge. A deployment should install loc
 
 Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
-The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers.
+The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled production smoke failures reach a monitored inbox.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 
 The media migration copies existing Media Library associations to native path columns before dropping the package table. Back up the database and `storage/app/public` before deploying that migration.
 
-See [`docs/operations.md`](docs/operations.md) for the ordered deployment, backup-validation, and rollback runbook.
+See [`docs/releases.md`](docs/releases.md) for versioning and release promotion, and [`docs/operations.md`](docs/operations.md) for the ordered deployment, backup-validation, and rollback runbook.

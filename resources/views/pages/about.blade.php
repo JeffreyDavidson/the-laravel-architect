@@ -2,6 +2,10 @@
 
 @section('title', 'About')
 
+@push('head')
+    @vite('resources/css/pages/about-entry.css')
+@endpush
+
 @section('content')
     @php
         $timelineItems = [
@@ -44,12 +48,12 @@
             <div class="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-20 items-center">
 
                 {{-- Trading Card (Flip) --}}
-                <div class="flex-shrink-0 relative" x-data="{ flipped: false }">
+                <div class="flex-shrink-0 relative">
                     <div class="about-card-deck">
                         <div class="about-ghost-card about-ghost-card-2"></div>
                         <div class="about-ghost-card about-ghost-card-1"></div>
-                    <div class="about-card-flip-container rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400" role="button" tabindex="0" aria-label="Flip Jeffrey Davidson developer card" :aria-pressed="flipped.toString()" @click="flipped = !flipped; $dispatch('about-card-flip')" @keydown.enter.prevent="$el.click()" @keydown.space.prevent="$el.click()">
-                        <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]" :class="{ 'flipped': flipped }">
+                    <div class="about-card-flip-container rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400" role="button" tabindex="0" aria-label="Flip Jeffrey Davidson developer card" aria-pressed="false">
+                        <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]">
 
                             {{-- FRONT: Portrait --}}
                             <div class="about-card-front">
@@ -60,7 +64,17 @@
                                             <span class="whitespace-nowrap rounded-full border border-accent-400/20 bg-accent-400/5 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-400">Legendary</span>
                                         </div>
                                         <div class="mx-4 rounded-xl overflow-hidden border-4 border-gray-300 dark:border-brand-700 relative flex-1">
-                                            <img src="{{ Vite::asset('resources/images/avatar-640.webp') }}" alt="Jeffrey Davidson" width="427" height="640" decoding="async" fetchpriority="high" class="w-full h-full object-cover object-top">
+                                            <img
+                                                src="{{ Vite::asset('resources/images/avatar-640.webp') }}"
+                                                srcset="{{ Vite::asset('resources/images/avatar-320.webp') }} 320w, {{ Vite::asset('resources/images/avatar-640.webp') }} 427w"
+                                                sizes="(min-width: 1024px) 300px, 250px"
+                                                alt="Jeffrey Davidson"
+                                                width="427"
+                                                height="640"
+                                                decoding="async"
+                                                fetchpriority="high"
+                                                class="w-full h-full object-cover object-top"
+                                            >
                                         </div>
                                         <div class="px-5 pt-3 pb-3 text-center">
                                             <h2 class="text-xl font-empera tracking-wide text-gray-900 dark:text-white">Jeffrey Davidson</h2>

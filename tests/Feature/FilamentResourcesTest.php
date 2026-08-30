@@ -12,6 +12,7 @@ use App\Filament\Resources\Videos\VideoResource;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Vite;
 
 uses(RefreshDatabase::class);
 
@@ -50,5 +51,7 @@ it('registers visible navigation items for every admin section', function () {
 it('renders the publishing dashboard for an authorized user', function () {
     $this->get(route('filament.admin.pages.dashboard'))
         ->assertOk()
-        ->assertSee('Dashboard');
+        ->assertSee('Dashboard')
+        ->assertSee(Vite::asset('resources/js/filament/admin.js'), false)
+        ->assertDontSee('const expandSidebarGroups', false);
 });

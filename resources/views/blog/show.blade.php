@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('head')
-    @vite(['resources/css/prism.css', 'resources/js/prism.js'])
+    @vite('resources/css/prism.css')
 @endpush
 
 @section('content')
@@ -15,7 +15,7 @@
             <div class="flex items-center gap-4 text-sm text-gray-500">
                 <span>{{ $post->author->name ?? 'Jeffrey Davidson' }}</span>
                 <span>·</span>
-                <time>{{ $post->published_at->format('F d, Y') }}</time>
+                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
                 <span>·</span>
                 <span>{{ $post->reading_time }} min read</span>
             </div>
@@ -23,8 +23,21 @@
 
         {{-- Featured Image --}}
         @if($post->featured_image_url)
-        <div class="rounded-xl overflow-hidden mb-10 bg-gray-100 dark:bg-gray-800">
-            <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="w-full">
+        @inject('responsiveImages', 'App\Services\ResponsiveImageVariants')
+        @php
+            $featuredImageSrcset = $responsiveImages->srcset($post->featured_image_path);
+        @endphp
+        <div class="aspect-video overflow-hidden rounded-xl bg-gray-100 mb-10 dark:bg-gray-800">
+            <picture class="block h-full">
+                @if($featuredImageSrcset)
+                <source
+                    type="image/webp"
+                    srcset="{{ $featuredImageSrcset }}"
+                    sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"
+                >
+                @endif
+                <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" decoding="async" fetchpriority="high" class="h-full w-full object-cover">
+            </picture>
         </div>
         @endif
 
@@ -65,7 +78,7 @@
                     <div>
                         <h3 class="font-semibold leading-snug text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white">{{ $related->title }}</h3>
                         <p class="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{{ $related->excerpt }}</p>
-                        <div class="mt-3 text-xs text-gray-500">{{ $related->published_at->format('M d, Y') }}</div>
+                        <div class="mt-3 text-xs text-gray-500"><time datetime="{{ $related->published_at->toDateString() }}">{{ $related->published_at->format('M d, Y') }}</time></div>
                     </div>
                 </a>
                 @endforeach

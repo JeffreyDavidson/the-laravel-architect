@@ -15,7 +15,7 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#0D1117">
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
-    {!! seo() !!}
+    {!! seo($seoSource ?? null) !!}
     @if(config('services.fathom.site_id'))
     <script src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
     @endif
@@ -24,12 +24,16 @@
     @stack('head')
 </head>
 <body class="bg-white dark:bg-brand-950 text-gray-800 dark:text-gray-100 font-sans antialiased">
+    <a href="#main-content" class="sr-only z-[60] rounded-lg bg-brand-600 px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:outline-2 focus:outline-offset-2 focus:outline-brand-300">
+        Skip to content
+    </a>
+
     {{-- Navigation --}}
     <nav class="sticky top-0 z-50 border-b border-gray-200 dark:border-brand-800/50 bg-white/90 dark:bg-brand-950/90 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3.5">
-                    <img src="/images/logo-color.svg" alt="The Laravel Architect" width="44" height="44" decoding="async" class="h-11 w-11 rounded-full">
+                    <img src="/images/logo-color-128.webp" alt="The Laravel Architect" width="44" height="44" decoding="async" class="h-11 w-11 rounded-full">
                     <span class="flex flex-col gap-0.5 leading-none">
                         <span class="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-brand-600 transition-colors group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200">The Laravel</span>
                         <span class="font-empera text-xl leading-none tracking-[0.07em] text-gray-950 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-200">Architect</span>
@@ -75,7 +79,7 @@
     </nav>
 
     {{-- Content --}}
-    <main class="isolate @if(request()->routeIs('home')) home-page @endif">
+    <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')
     </main>
 
@@ -87,7 +91,7 @@
             <div class="flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 mb-8 lg:mb-14">
                 <div class="max-w-sm">
                     <a href="{{ route('home') }}" aria-label="Homepage" class="flex items-center gap-3 mb-3 group">
-                        <img src="/images/logo-color.svg" alt="The Laravel Architect" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-full">
+                        <img src="/images/logo-color-128.webp" alt="The Laravel Architect" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-full">
                         <span class="flex items-baseline gap-1 text-gray-900 dark:text-white group-hover:text-[#4A7FBF] transition-colors">
                             <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
                             <span class="text-xl font-empera tracking-wide">Laravel</span>

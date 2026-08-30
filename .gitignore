@@ -17,6 +17,7 @@
 /public/hot
 /public/storage
 /test-results
+/tests/Browser/Screenshots
 /storage/*.key
 /storage/pail
 /vendor

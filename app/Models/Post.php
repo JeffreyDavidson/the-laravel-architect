@@ -6,8 +6,10 @@ use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Observers\PostObserver;
 use App\Services\OgImageCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -20,6 +22,7 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at')]
+#[ObservedBy(PostObserver::class)]
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
@@ -119,8 +122,18 @@ class Post extends Model implements Publishable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'slug',
+                'featured_image_path',
+                'category_id',
+                'user_id',
+                'status',
+                'published_at',
+                'reviewed_by',
+                'reviewed_at',
+            ])
             ->logOnlyDirty()
-            ->logAll()
             ->dontLogEmptyChanges();
     }
 

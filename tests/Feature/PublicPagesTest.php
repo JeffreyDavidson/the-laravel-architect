@@ -3,16 +3,19 @@
 use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Enums\TestimonialStatus;
+use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -41,6 +44,476 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/podcasts', 'Podcast'],
 ]);
 
+it('renders page-specific SEO metadata', function () {
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSee('<title>About — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">',
+            false,
+        );
+});
+
+it('renders model-specific SEO metadata', function () {
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'excerpt' => 'A focused guide to keeping Laravel applications maintainable.',
+        'content' => 'Clear boundaries keep application behavior understandable.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('<title>Designing Clear Laravel Boundaries — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">',
+            false,
+        );
+});
+
+it('renders canonical structured data for the site and blog posts', function () {
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Structuring Laravel Applications',
+        'excerpt' => 'A practical guide to application structure.',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $website = collect($structuredData['@graph'])->firstWhere('@type', 'WebSite');
+    $article = collect($structuredData['@graph'])->firstWhere('@type', 'Article');
+
+    expect($website)
+        ->toMatchArray([
+            '@id' => route('home').'#website',
+            'url' => route('home'),
+        ])
+        ->and($website['author'])
+        ->toMatchArray([
+            '@id' => route('about').'#person',
+            'url' => route('about'),
+        ])
+        ->and($article)
+        ->toMatchArray([
+            '@id' => route('blog.show', $post).'#article',
+            'url' => route('blog.show', $post),
+            'mainEntityOfPage' => route('blog.show', $post),
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+        ]);
+});
+
+it('renders canonical structured data for static public pages', function (string $routeName, string $type, string $name) {
+    $url = route($routeName);
+    $content = $this->get($url)
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $page = collect($structuredData['@graph'])->firstWhere('@type', $type);
+
+    expect($page)->toMatchArray([
+        '@id' => $url.'#page',
+        'name' => $name,
+        'url' => $url,
+        'isPartOf' => [
+            '@type' => 'WebSite',
+            '@id' => route('home').'#website',
+        ],
+    ]);
+
+    if ($routeName === 'about') {
+        expect($page['mainEntity'])->toMatchArray([
+            '@type' => 'Person',
+            '@id' => route('about').'#person',
+        ]);
+    }
+})->with([
+    'home' => ['home', 'WebPage', 'The Laravel Architect'],
+    'about' => ['about', 'ProfilePage', 'About'],
+    'contact' => ['contact', 'ContactPage', 'Contact'],
+    'privacy' => ['privacy', 'WebPage', 'Privacy'],
+    'uses' => ['uses', 'WebPage', 'Uses'],
+]);
+
+it('renders canonical structured data for podcasts and episodes', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Clear Boundaries',
+        'slug' => 'designing-clear-boundaries',
+        'episode_number' => 12,
+        'description' => 'A practical discussion about application boundaries.',
+        'duration_minutes' => 42,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $podcastSeries = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastSeries');
+    $podcastEpisode = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastEpisode');
+
+    expect($podcastSeries)
+        ->toMatchArray([
+            '@id' => route('podcast.show', $podcast).'#podcast',
+            'name' => $podcast->name,
+            'url' => route('podcast.show', $podcast),
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+        ])
+        ->and($podcastEpisode)
+        ->toMatchArray([
+            '@id' => route('podcast.episode', [$podcast, $episode]).'#episode',
+            'name' => $episode->title,
+            'url' => route('podcast.episode', [$podcast, $episode]),
+            'episodeNumber' => 12,
+            'duration' => 'PT42M',
+            'datePublished' => $episode->published_at?->toIso8601String(),
+            'partOfSeries' => [
+                '@type' => 'PodcastSeries',
+                '@id' => route('podcast.show', $podcast).'#podcast',
+            ],
+        ]);
+});
+
+it('renders canonical structured data for project case studies', function () {
+    $project = Project::query()->create([
+        'title' => 'Architecture Decisions',
+        'slug' => 'architecture-decisions',
+        'description' => 'A project shaped by explicit technical tradeoffs.',
+        'url' => 'https://example.com/architecture-decisions',
+        'github_url' => 'https://github.com/example/architecture-decisions',
+        'tech_stack' => ['Laravel', 'Pest'],
+        'status' => ProjectStatus::Published,
+    ]);
+
+    $content = $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $projectCaseStudy = collect($structuredData['@graph'])->firstWhere('@type', 'CreativeWork');
+
+    expect($projectCaseStudy)
+        ->toMatchArray([
+            '@id' => route('projects.show', $project).'#project',
+            'name' => $project->title,
+            'url' => route('projects.show', $project),
+            'mainEntityOfPage' => route('projects.show', $project),
+            'description' => $project->description,
+            'author' => [
+                '@type' => 'Person',
+                '@id' => route('about').'#person',
+            ],
+            'keywords' => 'Laravel, Pest',
+            'sameAs' => [
+                $project->url,
+                $project->github_url,
+            ],
+        ])
+        ->and(collect($structuredData['@graph'])->pluck('@type'))
+        ->not->toContain('SoftwareApplication');
+});
+
+it('renders canonical structured data for public content collections', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
+    $post = Post::query()->create([
+        'title' => 'Structuring Laravel Applications',
+        'slug' => 'structuring-laravel-applications',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'category_id' => $category->id,
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $post->attachTag($tag);
+    $project = Project::query()->create([
+        'title' => 'Architecture Decisions',
+        'slug' => 'architecture-decisions',
+        'description' => 'A project shaped by explicit technical tradeoffs.',
+        'status' => ProjectStatus::Published,
+    ]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    $collections = [
+        [route('blog.index'), 'Blog', $post->title, route('blog.show', $post)],
+        [route('blog.category', $category), 'Architecture Articles', $post->title, route('blog.show', $post)],
+        [route('blog.tag', $tag), 'Boundaries Articles', $post->title, route('blog.show', $post)],
+        [route('projects.index'), 'Projects', $project->title, route('projects.show', $project)],
+        [route('podcast.index'), 'Podcast', $podcast->name, route('podcast.show', $podcast)],
+    ];
+
+    foreach ($collections as [$url, $name, $itemName, $itemUrl]) {
+        $content = $this->get($url)
+            ->assertOk()
+            ->getContent();
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+
+        expect($collectionPage)
+            ->toMatchArray([
+                '@id' => $url.'#collection',
+                'name' => $name,
+                'url' => $url,
+                'mainEntity' => [
+                    '@type' => 'ItemList',
+                    '@id' => $url.'#items',
+                ],
+            ])
+            ->and($itemList)
+            ->toMatchArray([
+                '@id' => $url.'#items',
+                'numberOfItems' => 1,
+                'itemListElement' => [[
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => $itemName,
+                    'item' => $itemUrl,
+                ]],
+            ]);
+    }
+});
+
+it('uses page-specific metadata for paginated taxonomy archives', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
+
+    foreach (range(1, 11) as $index) {
+        $post = Post::query()->create([
+            'title' => "Architecture Article {$index}",
+            'slug' => "architecture-article-{$index}",
+            'content' => 'A maintainable application starts with clear boundaries.',
+            'category_id' => $category->id,
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+        $post->attachTag($tag);
+    }
+
+    foreach ([
+        [
+            'url' => route('blog.category', ['category' => $category, 'page' => 2]),
+            'title' => 'Architecture Articles — Page 2 — Jeffrey Davidson',
+            'description' => 'Articles about Architecture — Laravel development insights from Jeffrey Davidson. Page 2 of 2.',
+        ],
+        [
+            'url' => route('blog.tag', ['tag' => $tag, 'page' => 2]),
+            'title' => 'Boundaries Articles — Page 2 — Jeffrey Davidson',
+            'description' => 'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',
+        ],
+    ] as $metadata) {
+        $url = $metadata['url'];
+        $content = $this->get($url)
+            ->assertOk()
+            ->assertSee('<title>'.$metadata['title'].'</title>', false)
+            ->assertSee('<meta name="description" content="'.$metadata['description'].'">', false)
+            ->assertSee('<link rel="canonical" href="'.$url.'">', false)
+            ->assertSee('<meta property="og:url" content="'.$url.'">', false)
+            ->getContent();
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+        $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
+
+        expect($collectionPage)
+            ->toMatchArray([
+                '@id' => $url.'#collection',
+                'url' => $url,
+            ])
+            ->and($itemList)
+            ->toMatchArray([
+                '@id' => $url.'#items',
+            ])
+            ->and($itemList['itemListElement'][0])
+            ->toMatchArray([
+                '@type' => 'ListItem',
+                'position' => 11,
+            ])
+            ->and($breadcrumbList['itemListElement'][2])
+            ->toMatchArray([
+                '@type' => 'ListItem',
+                'position' => 3,
+                'item' => $url,
+            ]);
+    }
+});
+
+it('returns not found for out-of-range taxonomy archive pages', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Boundaries',
+        'slug' => 'boundaries',
+    ]);
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'slug' => 'designing-clear-laravel-boundaries',
+        'content' => 'A maintainable application starts with clear boundaries.',
+        'category_id' => $category->id,
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $post->attachTag($tag);
+
+    foreach ([
+        route('blog.category', ['category' => $category, 'page' => 2]),
+        route('blog.tag', ['tag' => $tag, 'page' => 2]),
+    ] as $url) {
+        $this->get($url)
+            ->assertNotFound();
+    }
+});
+
+it('uses page-specific metadata for paginated podcast archives', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    foreach (range(1, 21) as $index) {
+        Episode::query()->create([
+            'podcast_id' => $podcast->id,
+            'title' => "Architecture Session {$index}",
+            'slug' => "architecture-session-{$index}",
+            'description' => "A conversation about architecture topic {$index}.",
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+    }
+
+    $url = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
+    $content = $this->get($url)
+        ->assertOk()
+        ->assertSee('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>', false)
+        ->assertSee(
+            '<meta name="description" content="Conversations about maintainable Laravel applications. Page 2 of 2.">',
+            false,
+        )
+        ->assertSee('<link rel="canonical" href="'.$url.'">', false)
+        ->assertSee('<meta property="og:url" content="'.$url.'">', false)
+        ->assertDontSee('Latest Episode')
+        ->getContent();
+
+    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+
+    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
+    $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
+    $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+    $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
+
+    expect($collectionPage)
+        ->toMatchArray([
+            '@id' => $url.'#collection',
+            'name' => 'Architecture Sessions Episodes',
+            'url' => $url,
+        ])
+        ->and($itemList)
+        ->toMatchArray([
+            '@id' => $url.'#items',
+            'numberOfItems' => 1,
+        ])
+        ->and($itemList['itemListElement'][0])
+        ->toMatchArray([
+            '@type' => 'ListItem',
+            'position' => 21,
+            'name' => 'Architecture Session 21',
+            'item' => route('podcast.episode', [$podcast, 'architecture-session-21']),
+        ])
+        ->and($breadcrumbList['itemListElement'][2])
+        ->toMatchArray([
+            '@type' => 'ListItem',
+            'position' => 3,
+            'item' => $url,
+        ]);
+});
+
+it('returns not found for out-of-range podcast archive pages', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+    Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Clear Boundaries',
+        'slug' => 'designing-clear-boundaries',
+        'description' => 'A practical discussion about application boundaries.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('podcast.show', ['podcast' => $podcast, 'page' => 2]))
+        ->assertNotFound();
+});
+
 it('keeps one main landmark on public index pages', function (string $routeName) {
     $content = $this->get(route($routeName))
         ->assertOk()
@@ -58,14 +531,29 @@ it('uses a concise primary navigation and a project-focused call to action', fun
         ->assertOk()
         ->assertSee('Writing')
         ->assertSee('Discuss a Project')
+        ->assertSee('/images/logo-color-128.webp', false)
+        ->assertDontSee('/images/logo-color.svg', false)
         ->getContent();
 
     expect($content)->not->toContain('>Contact Me<');
+    expect(filesize(public_path('images/logo-color-128.webp')))->toBeLessThanOrEqual(20 * 1024);
+});
+
+it('provides a valid legacy favicon fallback', function () {
+    $favicon = file_get_contents(public_path('favicon.ico'));
+
+    expect($favicon)
+        ->not->toBeFalse()
+        ->and(strlen($favicon))->toBeGreaterThan(0)
+        ->and(substr($favicon, 0, 4))->toBe("\x00\x00\x01\x00");
 });
 
 it('keeps public technology and channel details consistent', function () {
     $this->get(route('about'))
         ->assertOk()
+        ->assertSee('aria-label="Flip Jeffrey Davidson developer card"', false)
+        ->assertSee('aria-pressed="false"', false)
+        ->assertDontSee('x-data=', false)
         ->assertSee((string) config('public-site.technology.laravel'))
         ->assertSee('I share practical Laravel videos');
 
@@ -105,12 +593,71 @@ it('links the privacy notice from public collection points', function () {
 });
 
 it('loads public interactivity and typography from the local Vite bundle', function () {
+    $this->withVite();
+
+    $manifest = json_decode(
+        file_get_contents(public_path('build/manifest.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
     $this->get(route('home'))
         ->assertOk()
         ->assertDontSee('cdn.jsdelivr.net/npm/alpinejs', false)
         ->assertDontSee('fonts.bunny.net', false)
-        ->assertSee(Vite::asset('resources/css/app.css'), false)
-        ->assertSee(Vite::asset('resources/js/app.js'), false);
+        ->assertDontSee($manifest['resources/css/filament/admin/theme.css']['file'], false)
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/podcast-coffee-logo-128.webp']['file'], false)
+        ->assertDontSee($manifest['resources/images/podcast-coffee-logo-512.webp']['file'], false)
+        ->assertSee($manifest['resources/js/app.js']['file'], false);
+
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/avatar-320.webp']['file'], false)
+        ->assertSee($manifest['resources/images/avatar-640.webp']['file'], false)
+        ->assertSee('sizes="(min-width: 1024px) 300px, 250px"', false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertDontSee('x-data=', false)
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('projects.index'))
+        ->assertOk()
+        ->assertDontSee('x-data=', false)
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/podcast-entry.css']['file'], false);
+
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSee($manifest['resources/css/app.css']['file'], false)
+        ->assertSee($manifest['resources/css/pages/podcast-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertDontSee($manifest['resources/css/pages/home-entry.css']['file'], false);
+
+    expect($manifest)
+        ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
+        ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf');
+
+    expect(implode("\n", array_column($manifest, 'file')))
+        ->not->toContain('Empera-Vintage')
+        ->not->toContain('Empera-Regular.ttf');
 });
 
 it('renders an accessible homepage architecture scene with a static fallback', function () {
@@ -143,6 +690,7 @@ it('renders accessible podcast episode embeds and external links', function () {
         'name' => 'Architecture Sessions',
         'slug' => 'architecture-sessions',
         'description' => 'Conversations about Laravel architecture.',
+        'color' => '#2563eb',
         'is_active' => true,
     ]);
     $episode = Episode::query()->create([
@@ -157,11 +705,26 @@ it('renders accessible podcast episode embeds and external links', function () {
 
     $this->get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
+        ->assertSee('Play Designing Laravel Applications on YouTube', false)
         ->assertSee('title="Designing Laravel Applications on YouTube"', false)
-        ->assertSee('loading="lazy"', false)
+        ->assertSee('www.youtube-nocookie.com/embed/dQw4w9WgXcQ', false)
+        ->assertSee('data-youtube-facade', false)
+        ->assertSee('data-youtube-player', false)
+        ->assertSee('data-youtube-play', false)
+        ->assertDontSee('x-data=', false)
+        ->assertDontSee('src="https://www.youtube.com/embed/', false)
         ->assertSee('rel="noopener noreferrer"', false)
         ->assertSee('data-podcast-copy-url=', false)
+        ->assertSee('style="--podcast-color: #2563eb;"', false)
+        ->assertDontSee('<style>', false)
         ->assertDontSee('onclick=', false);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('style="--podcast-color: #2563eb;"', false)
+        ->assertSee('[--dur:0.7s]', false)
+        ->assertDontSee('style="--dur:', false)
+        ->assertDontSee('<style>', false);
 });
 
 it('renders keyboard accessible podcast audio controls', function () {
@@ -180,19 +743,60 @@ it('renders keyboard accessible podcast audio controls', function () {
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);
+    Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Earlier Episode',
+        'slug' => 'earlier-episode',
+        'description' => 'An earlier published episode.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDays(2),
+    ]);
 
     $this->get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
+        ->assertSee('data-audio-player', false)
+        ->assertSee('data-audio-play', false)
+        ->assertSee('data-audio-speed', false)
         ->assertSee('aria-label="Seek episode"', false)
         ->assertSee('aria-label="Skip back 15 seconds"', false)
         ->assertSee('aria-label="Skip forward 30 seconds"', false)
-        ->assertSee(':aria-label="playing ? \'Pause episode\' : \'Play episode\'"', false)
-        ->assertDontSee('@click="seek($event)"', false);
+        ->assertSee('aria-label="Play episode"', false)
+        ->assertSee('class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full" data-audio-progress', false)
+        ->assertSee('[--arrow-dir:-4px]', false)
+        ->assertDontSee('style="width: 0;"', false)
+        ->assertDontSee('style="--arrow-dir:', false)
+        ->assertDontSee('x-data=', false)
+        ->assertDontSee('@click=', false);
+});
+
+it('falls back to a safe podcast color when stored presentation data is invalid', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'color' => 'url(https://example.com/image.png)',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('style="--podcast-color: #6366f1;"', false)
+        ->assertDontSee('url(https://example.com/image.png)', false);
 });
 
 it('keeps the admin panel behind authentication', function () {
+    $this->withVite();
+
+    $manifest = json_decode(
+        file_get_contents(public_path('build/manifest.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
     $this->get('/admin')->assertRedirect('/admin/login');
-    $this->get('/admin/login')->assertOk();
+    $this->get('/admin/login')
+        ->assertOk()
+        ->assertSee($manifest['resources/css/filament/admin/theme.css']['file'], false);
 });
 
 it('uses published work and approved recommendations as homepage proof', function () {
@@ -279,6 +883,107 @@ it('presents published projects as case studies without inferring product status
         ->assertSee('Decisions over decoration')
         ->assertSee('The challenge')
         ->assertDontSee('Active');
+});
+
+it('serves responsive project images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('architecture.png', 1280, 72);
+    Storage::disk('public')->put('projects/architecture.png', $image->getContent());
+
+    $project = Project::query()->create([
+        'title' => 'Responsive Architecture',
+        'slug' => 'responsive-architecture',
+        'description' => 'A project with responsive imagery.',
+        'is_featured' => true,
+        'status' => ProjectStatus::Published,
+        'featured_image_path' => 'projects/architecture.png',
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('architecture-640.webp', false)
+        ->assertSee('architecture-1280.webp', false)
+        ->assertSee($project->featured_image_url, false);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('aspect-video', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($project->featured_image_url, false);
+});
+
+it('serves responsive post images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('article.png', 1280, 72);
+    Storage::disk('public')->put('posts/article.png', $image->getContent());
+    $author = User::factory()->create();
+
+    $post = Post::query()->create([
+        'title' => 'Responsive Article',
+        'slug' => 'responsive-article',
+        'content' => 'An article with responsive imagery.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now(),
+        'featured_image_path' => 'posts/article.png',
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('article-640.webp', false)
+        ->assertSee('article-1280.webp', false)
+        ->assertSee('sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"', false)
+        ->assertSee('aspect-video', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($post->featured_image_url, false);
+});
+
+it('serves responsive podcast cover images while retaining the original fallback', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('podcast.png', 1280, 72);
+    Storage::disk('public')->put('podcasts/podcast.png', $image->getContent());
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Responsive Podcast',
+        'slug' => 'responsive-podcast',
+        'description' => 'A podcast with responsive cover artwork.',
+        'cover_image_path' => 'podcasts/podcast.png',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSee('type="image/webp"', false)
+        ->assertSee('podcast-640.webp', false)
+        ->assertSee('podcast-1280.webp', false)
+        ->assertSee('sizes="288px"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee($podcast->cover_image_url, false);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('sizes="224px"', false)
+        ->assertSee($podcast->cover_image_url, false);
+});
+
+it('serves responsive optimized fallback artwork for known podcasts', function () {
+    $this->withVite();
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Coffee With The Laravel Architect',
+        'slug' => 'coffee-with-the-laravel-architect',
+        'description' => 'A podcast with bundled fallback artwork.',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee('srcset="'.$podcast->fallback_cover_image_srcset.'"', false)
+        ->assertSee('sizes="224px"', false)
+        ->assertSee($podcast->cover_image_url, false);
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {

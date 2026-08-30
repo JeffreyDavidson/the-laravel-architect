@@ -2,6 +2,10 @@
 
 @section('title', 'Podcast')
 
+@push('head')
+    @vite('resources/css/pages/podcast-entry.css')
+@endpush
+
 @section('content')
 <x-hero-section>
     <div class="grid gap-8 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-10">
@@ -22,7 +26,7 @@
         @if($podcast)
             <a href="{{ route('podcast.show', $podcast) }}" class="group grid gap-10 border-y border-gray-200 py-10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400 md:grid-cols-[18rem_minmax(0,1fr)] md:items-center md:py-14 dark:border-[#1e2a3a]">
                 @if($podcast->cover_image_url)
-                    <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="288" height="288" decoding="async" fetchpriority="high" class="aspect-square w-full max-w-72 object-cover grayscale-[15%]">
+                    <x-podcast-cover :podcast="$podcast" sizes="288px" width="288" height="288" priority class="aspect-square w-full max-w-72 object-cover grayscale-[15%]" />
                 @else
                     <div class="flex aspect-square w-full max-w-72 items-center justify-center border border-[#1e2a3a] bg-[#101722]">
                         <x-svg-icon name="microphone" class="h-12 w-12 text-brand-600" />

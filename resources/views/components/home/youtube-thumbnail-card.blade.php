@@ -11,7 +11,7 @@
             <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" width="480" height="270" loading="lazy" decoding="async" class="h-full w-full object-cover">
         @else
             <div class="flex h-full items-center justify-center">
-                <img src="/images/logo-color.svg" alt="" width="64" height="64" loading="lazy" decoding="async" class="h-16 w-16 opacity-60">
+                <img src="/images/logo-color-128.webp" alt="" width="64" height="64" loading="lazy" decoding="async" class="h-16 w-16 opacity-60">
             </div>
         @endif
 

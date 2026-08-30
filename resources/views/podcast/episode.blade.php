@@ -1,77 +1,31 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/podcast-entry.css')
+@endpush
+
 @section('content')
-<style>
-    /* Waveform visualization */
-    .waveform-bar {
-        animation: waveform var(--dur) ease-in-out infinite alternate;
-        transform-origin: bottom;
-    }
-    @keyframes waveform {
-        0% { transform: scaleY(var(--from)); }
-        100% { transform: scaleY(var(--to)); }
-    }
-
-    /* Custom player */
-    .player-progress::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: white;
-        cursor: pointer;
-        box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-    .player-progress::-moz-range-thumb {
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: white;
-        cursor: pointer;
-        border: none;
-        box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-    .player-progress {
-        -webkit-appearance: none;
-        background: transparent;
-        cursor: pointer;
-    }
-    .player-progress::-webkit-slider-runnable-track {
-        height: 4px;
-        border-radius: 2px;
-        background: #1e2a3a;
-    }
-    .player-progress::-moz-range-track {
-        height: 4px;
-        border-radius: 2px;
-        background: #1e2a3a;
-    }
-
-    /* Share/nav hover */
-    .share-btn { transition: all 0.2s ease; }
-    .share-btn:hover { transform: translateY(-2px); }
-    .ep-nav:hover { border-color: rgba(255,255,255,0.1); }
-    .ep-nav:hover .ep-nav-arrow { transform: translateX(var(--arrow-dir, 4px)); }
-</style>
-
+<div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
 {{-- ===== EPISODE HERO ===== --}}
 <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 relative z-10">
-            <a href="{{ route('podcast.index') }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">Podcast</a>
-            <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <a href="{{ route('podcast.show', $podcast) }}" class="hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ $podcast->name }}</a>
-            <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-gray-600 dark:text-gray-400 font-mono text-xs">{{ $episode->episode_code }}</span>
+        <nav aria-label="Breadcrumb" class="relative z-10 mb-8 flex items-center gap-2 text-sm text-gray-500">
+            <a href="{{ route('podcast.index') }}" class="transition-colors hover:text-gray-900 dark:hover:text-white">Podcast</a>
+            <svg aria-hidden="true" class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('podcast.show', $podcast) }}" class="transition-colors hover:text-gray-900 dark:hover:text-white">{{ $podcast->name }}</a>
+            <svg aria-hidden="true" class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span aria-current="page" class="font-mono text-xs text-gray-600 dark:text-gray-400">{{ $episode->episode_code }}</span>
         </nav>
 
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
             {{-- Podcast artwork --}}
             <div class="flex-shrink-0 relative">
                 @if($podcast->cover_image_url)
-                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="224" height="224" decoding="async" fetchpriority="high" class="relative w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+                <x-podcast-cover :podcast="$podcast" sizes="224px" width="224" height="224" priority class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56" />
                 @else
                 <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm dark:border-[#1e2a3a] dark:bg-[#111820] lg:h-56 lg:w-56">
-                    <svg class="w-20 h-20" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                    <svg class="podcast-accent-text w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                 </div>
                 @endif
             </div>
@@ -80,8 +34,8 @@
             <div class="flex-1 min-w-0 text-center lg:text-left">
                 {{-- Meta badges --}}
                 <div class="flex flex-wrap items-center gap-3 mb-4 justify-center lg:justify-start">
-                    <span class="font-mono text-sm font-bold px-3 py-1.5 rounded-lg" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">{{ $episode->episode_code }}</span>
-                    <span class="text-sm text-gray-500">{{ $episode->published_at->format('F d, Y') }}</span>
+                    <span class="podcast-badge font-mono text-sm font-bold px-3 py-1.5 rounded-lg">{{ $episode->episode_code }}</span>
+                    <time datetime="{{ $episode->published_at->toDateString() }}" class="text-sm text-gray-500">{{ $episode->published_at->format('F d, Y') }}</time>
                     @if($episode->formatted_duration)
                     <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -97,11 +51,11 @@
                 @endif
 
                 {{-- Podcast name link --}}
-                <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 dark:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                <a href="{{ route('podcast.show', $podcast) }}" class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                     @if($podcast->cover_image_url)
-                    <img src="{{ $podcast->cover_image_url }}" alt="" width="20" height="20" loading="lazy" decoding="async" class="w-5 h-5 rounded object-cover">
+                    <x-podcast-cover :podcast="$podcast" alt="" sizes="20px" width="20" height="20" class="h-5 w-5 rounded object-cover" />
                     @else
-                    <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                    <svg class="podcast-accent-text w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                     @endif
                     {{ $podcast->name }}
                 </a>
@@ -120,47 +74,8 @@
 
                 {{-- Custom Audio Player --}}
                 @if($episode->audio_url)
-                <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
-                     x-data="{
-                        audio: null,
-                        playing: false,
-                        currentTime: 0,
-                        duration: 0,
-                        loaded: false,
-                        init() {
-                            this.audio = this.$refs.audio;
-                            this.audio.addEventListener('loadedmetadata', () => {
-                                this.duration = this.audio.duration;
-                                this.loaded = true;
-                            });
-                            this.audio.addEventListener('timeupdate', () => {
-                                this.currentTime = this.audio.currentTime;
-                            });
-                            this.audio.addEventListener('ended', () => {
-                                this.playing = false;
-                            });
-                        },
-                        toggle() {
-                            if (this.playing) { this.audio.pause(); }
-                            else { this.audio.play(); }
-                            this.playing = !this.playing;
-                        },
-                        seekTo(value) {
-                            if (!this.duration) return;
-
-                            this.audio.currentTime = (Number(value) / 100) * this.duration;
-                        },
-                        skipBack() { this.audio.currentTime = Math.max(0, this.audio.currentTime - 15); },
-                        skipForward() { this.audio.currentTime = Math.min(this.duration, this.audio.currentTime + 30); },
-                        format(s) {
-                            if (!s || isNaN(s)) return '0:00';
-                            const m = Math.floor(s / 60);
-                            const sec = Math.floor(s % 60);
-                            return m + ':' + (sec < 10 ? '0' : '') + sec;
-                        },
-                        pct() { return this.duration ? (this.currentTime / this.duration * 100) : 0; }
-                     }">
-                    <audio x-ref="audio" preload="metadata">
+                <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]" data-audio-player data-playing="false">
+                    <audio controls data-audio preload="metadata">
                         <source src="{{ $episode->audio_url }}" type="audio/mpeg">
                     </audio>
 
@@ -168,7 +83,7 @@
                     <div class="px-6 pt-6 pb-2">
                         <div class="flex h-16 items-end justify-center gap-[2px] opacity-40" aria-hidden="true">
                             @for($i = 0; $i < 80; $i++)
-                            <div class="waveform-bar h-full w-[3px] rounded-full" style="background: {{ $podcast->color }}; --from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;" :style="playing ? '' : 'animation-play-state: paused'"></div>
+                            <div class="waveform-bar podcast-accent-bg h-full w-[3px] rounded-full" style="--from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;"></div>
                             @endfor
                         </div>
                     </div>
@@ -177,23 +92,23 @@
                     <div class="px-6 py-2">
                         <div class="group relative h-5">
                             <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[#1e2a3a]">
-                                <div class="absolute inset-y-0 left-0 rounded-full" :style="'width: ' + pct() + '%; background: {{ $podcast->color }};'"></div>
+                                <div class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full" data-audio-progress></div>
                             </div>
                             <input
                                 type="range"
                                 min="0"
                                 max="100"
                                 step="0.1"
-                                :value="pct()"
-                                @input="seekTo($event.target.value)"
+                                value="0"
+                                data-audio-seek
                                 aria-label="Seek episode"
-                                :aria-valuetext="format(currentTime) + ' of ' + format(duration)"
+                                aria-valuetext="0:00 of 0:00"
                                 class="absolute inset-0 h-5 w-full cursor-pointer opacity-0"
                             >
                         </div>
                         <div class="mt-2 flex justify-between font-mono text-xs text-gray-600">
-                            <span x-text="format(currentTime)">0:00</span>
-                            <span x-text="format(duration)">0:00</span>
+                            <span data-audio-current-time>0:00</span>
+                            <span data-audio-duration>0:00</span>
                         </div>
                     </div>
 
@@ -202,7 +117,7 @@
                         <div class="flex items-center gap-3">
                             {{-- Podcast mini artwork --}}
                             @if($podcast->cover_image_url)
-                            <img src="{{ $podcast->cover_image_url }}" alt="" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-lg object-cover">
+                            <x-podcast-cover :podcast="$podcast" alt="" sizes="40px" width="40" height="40" class="h-10 w-10 rounded-lg object-cover" />
                             @endif
                             <div class="min-w-0">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $episode->title }}</p>
@@ -212,28 +127,28 @@
 
                         <div class="flex items-center gap-4">
                             {{-- Skip back 15s --}}
-                            <button type="button" @click="skipBack()" aria-label="Skip back 15 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
+                            <button type="button" data-audio-skip-back aria-label="Skip back 15 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
                                 <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">15</span>
                             </button>
 
                             {{-- Play/Pause --}}
-                            <button type="button" @click="toggle()" :aria-label="playing ? 'Pause episode' : 'Play episode'" :aria-pressed="playing" class="flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105" style="background: {{ $podcast->color }};">
-                                <svg x-show="!playing" x-cloak aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                <svg x-show="playing" x-cloak aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+                            <button type="button" data-audio-play aria-label="Play episode" aria-pressed="false" class="podcast-accent-bg flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105">
+                                <svg data-audio-play-icon aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg data-audio-pause-icon hidden aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                             </button>
 
                             {{-- Skip forward 30s --}}
-                            <button type="button" @click="skipForward()" aria-label="Skip forward 30 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
+                            <button type="button" data-audio-skip-forward aria-label="Skip forward 30 seconds" class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"/></svg>
                                 <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">30</span>
                             </button>
                         </div>
 
                         {{-- Speed control --}}
-                        <div x-data="{ speed: 1 }">
-                            <button type="button" @click="speed = speed >= 2 ? 0.5 : speed + 0.25; $refs.audio.playbackRate = speed" :aria-label="'Playback speed ' + speed + ' times. Activate to change.'" class="rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white">
-                                <span x-text="speed + 'x'">1x</span>
+                        <div>
+                            <button type="button" data-audio-speed aria-label="Playback speed 1 times. Activate to change." class="rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white">
+                                <span data-audio-speed-label>1x</span>
                             </button>
                         </div>
                     </div>
@@ -243,7 +158,7 @@
                 {{-- Description Fallback (no audio, no show_notes, no youtube) --}}
                 @if(!$episode->audio_url && !$episode->show_notes && !($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
                 <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
-                    <div class="absolute top-6 left-6 text-6xl leading-none opacity-15" style="color: {{ $podcast->color }};">"</div>
+                    <div class="podcast-accent-text absolute top-6 left-6 text-6xl leading-none opacity-15">"</div>
                     <div class="pl-8 pt-4">
                         <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed italic">{{ $episode->description }}</p>
                     </div>
@@ -258,8 +173,36 @@
                         $videoId = $matches[1] ?? null;
                     @endphp
                     @if($videoId)
-                    <div class="relative w-full" style="padding-bottom: 56.25%;">
-                        <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="{{ $episode->title }} on YouTube" class="absolute inset-0 h-full w-full border-0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="relative aspect-video w-full bg-[#0b1016]" data-youtube-facade>
+                        <template data-youtube-player>
+                            <iframe
+                                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
+                                title="{{ $episode->title }} on YouTube"
+                                class="absolute inset-0 h-full w-full border-0"
+                                allow="autoplay; encrypted-media; picture-in-picture"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                            ></iframe>
+                        </template>
+
+                        <button
+                            type="button"
+                            data-youtube-play
+                            aria-label="Play {{ $episode->title }} on YouTube"
+                            class="group absolute inset-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center text-white transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-brand-400"
+                        >
+                            <span class="flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/10 transition-transform group-hover:scale-105" aria-hidden="true">
+                                <svg class="ml-1 h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                            <span>
+                                <span class="block font-mono text-xs uppercase tracking-[0.18em] text-brand-300">Video episode</span>
+                                <span class="mt-2 block text-lg font-semibold">Watch on YouTube</span>
+                            </span>
+                        </button>
+
+                        <noscript>
+                            <a href="{{ $episode->youtube_url }}" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center text-base font-semibold text-white underline decoration-brand-400 underline-offset-4">Watch on YouTube</a>
+                        </noscript>
                     </div>
                     @endif
                 </div>
@@ -295,7 +238,7 @@
                 <div class="mb-10 p-6 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Featured Guest</h3>
                     <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold" style="background: {{ $podcast->color }}15; color: {{ $podcast->color }};">
+                        <div class="podcast-badge w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold">
                             {{ substr($episode->guest_name, 0, 1) }}
                         </div>
                         <div>
@@ -304,7 +247,7 @@
                             <p class="text-gray-600 dark:text-gray-400 text-sm mt-0.5">{{ $episode->guest_title }}</p>
                             @endif
                             @if($episode->guest_url)
-                            <a href="{{ $episode->guest_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-2 text-sm hover:underline" style="color: {{ $podcast->color }};">
+                            <a href="{{ $episode->guest_url }}" target="_blank" rel="noopener noreferrer" class="podcast-accent-text inline-flex items-center gap-1.5 mt-2 text-sm hover:underline">
                                 {{ parse_url($episode->guest_url, PHP_URL_HOST) }}
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
@@ -318,18 +261,20 @@
                 @if($episode->show_notes)
                 <div class="mb-12">
                     <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
-                            <svg class="w-4 h-4" style="color: {{ $podcast->color }};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="podcast-accent-bg-soft w-8 h-8 rounded-lg flex items-center justify-center">
+                            <svg class="podcast-accent-text w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </span>
                         Show Notes
                     </h2>
-                    <div class="prose prose-invert prose-lg max-w-none
+                    <div class="podcast-prose prose prose-invert prose-lg max-w-none
                         prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold
                         prose-a:no-underline hover:prose-a:underline
                         prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a]
-                        prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400"
-                        style="--tw-prose-links: {{ $podcast->color }}; --tw-prose-code: #E47A9D;">
-                        {!! $episode->show_notes !!}
+                        prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400">
+                        {!! Str::markdown($episode->show_notes, [
+                            'html_input' => 'strip',
+                            'allow_unsafe_links' => false,
+                        ]) !!}
                     </div>
                 </div>
                 @endif
@@ -366,10 +311,10 @@
                         <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                             <div class="flex items-center gap-3 mb-3">
                                 @if($podcast->cover_image_url)
-                                <img src="{{ $podcast->cover_image_url }}" alt="{{ $podcast->name }}" width="48" height="48" loading="lazy" decoding="async" class="w-12 h-12 rounded-lg object-cover">
+                                <x-podcast-cover :podcast="$podcast" sizes="48px" width="48" height="48" class="h-12 w-12 rounded-lg object-cover" />
                                 @else
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: {{ $podcast->color }}15;">
-                                    <svg class="w-6 h-6" style="color: {{ $podcast->color }};" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
+                                <div class="podcast-accent-bg-soft w-12 h-12 rounded-lg flex items-center justify-center">
+                                    <svg class="podcast-accent-text w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z"/></svg>
                                 </div>
                                 @endif
                                 <div class="min-w-0">
@@ -387,28 +332,28 @@
                         <dl class="space-y-3 text-sm">
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Episode</dt>
-                                <dd class="font-mono font-semibold" style="color: {{ $podcast->color }};">{{ $episode->episode_code }}</dd>
+                                <dd class="podcast-accent-text font-mono font-semibold">{{ $episode->episode_code }}</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Published</dt>
-                                <dd class="text-gray-300">{{ $episode->published_at->format('M d, Y') }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300"><time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time></dd>
                             </div>
                             @if($episode->formatted_duration)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Duration</dt>
-                                <dd class="text-gray-300">{{ $episode->formatted_duration }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->formatted_duration }}</dd>
                             </div>
                             @endif
                             @if($episode->season_number)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Season</dt>
-                                <dd class="text-gray-300">{{ $episode->season_number }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->season_number }}</dd>
                             </div>
                             @endif
                             @if($episode->guest_name)
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Guest</dt>
-                                <dd class="text-gray-300">{{ $episode->guest_name }}</dd>
+                                <dd class="text-gray-700 dark:text-gray-300">{{ $episode->guest_name }}</dd>
                             </div>
                             @endif
                         </dl>
@@ -418,11 +363,11 @@
                     <div class="p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] bg-white dark:bg-[#0D1117]">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Share Episode</h3>
                         <div class="flex gap-2">
-                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}" target="_blank" rel="noopener noreferrer" aria-label="Share {{ $episode->title }} on X" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                                <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" rel="noopener noreferrer" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}" target="_blank" rel="noopener noreferrer" aria-label="Share {{ $episode->title }} on LinkedIn" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm">
+                                <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                             </a>
                             <button type="button" data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}" aria-label="Copy episode link" class="share-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 dark:border-[#1e2a3a] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-600 transition-colors text-sm cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
@@ -439,7 +384,7 @@
                 @if($prevEpisode)
                 <a href="{{ route('podcast.episode', [$podcast, $prevEpisode]) }}" class="ep-nav group p-5 rounded-2xl border border-gray-200 dark:border-[#1e2a3a] transition-all duration-300 hover:bg-white dark:bg-[#0D1117]">
                     <div class="flex items-center gap-3">
-                        <svg class="ep-nav-arrow w-5 h-5 text-gray-600 flex-shrink-0 transition-transform" style="--arrow-dir: -4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        <svg class="ep-nav-arrow w-5 h-5 text-gray-600 flex-shrink-0 transition-transform [--arrow-dir:-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                         <div class="min-w-0">
                             <span class="text-xs text-gray-500 uppercase tracking-wide">Previous Episode</span>
                             <p class="font-semibold group-hover:opacity-80 transition-opacity truncate mt-0.5">{{ $prevEpisode->title }}</p>
@@ -468,5 +413,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

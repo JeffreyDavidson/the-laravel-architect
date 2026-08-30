@@ -20,6 +20,8 @@ Run `php artisan app:verify-production` after loading the release environment an
 
 After enabling runtime monitoring or clearing the application cache, run `php artisan schedule:run` and allow the queue worker to process the heartbeat probe before relying on `/up`.
 
+When a release introduces responsive uploaded images, run `php artisan projects:generate-image-variants`, `php artisan posts:generate-image-variants`, and `php artisan podcasts:generate-image-variants` once after the persistent public-media directory is mounted. The commands preserve original uploads, create WebP derivatives beside them, and return a failure if a source file is missing or unsupported. Do not remove the original images.
+
 Do not run a standalone production migration unless the deployment itself cannot apply the migration and the release plan explicitly authorizes it.
 
 ## After deploying

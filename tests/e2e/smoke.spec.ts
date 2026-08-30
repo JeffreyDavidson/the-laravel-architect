@@ -15,6 +15,7 @@ const publicRoutes = [
     '/uses',
 ];
 const publicColorSchemes = ['light', 'dark'] as const;
+const optionalPublicBundles = ['about', 'alpine', 'architecture-scene', 'blog', 'home', 'podcast', 'prism'];
 
 test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -31,6 +32,24 @@ async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<vo
         impact: violation.impact,
         targets: violation.nodes.map((node) => node.target),
     }))).toEqual([]);
+}
+
+function trackRequestedAssets(page: Page): string[] {
+    const assets: string[] = [];
+
+    page.on('request', (request) => {
+        if (request.resourceType() !== 'script') {
+            return;
+        }
+
+        assets.push(new URL(request.url()).pathname.split('/').pop() ?? '');
+    });
+
+    return assets;
+}
+
+function requestedBundle(assets: string[], bundle: string): boolean {
+    return assets.some((asset) => asset === `${bundle}.js` || asset.startsWith(`${bundle}-`));
 }
 
 for (const colorScheme of publicColorSchemes) {
@@ -87,6 +106,56 @@ test('homepage architecture scene keeps an accessible fallback', async ({ page }
         .toMatch(/ready|fallback/);
 });
 
+test('homepage reduced motion avoids downloading the decorative architecture scene', async ({ page }) => {
+    const requestedAssets = trackRequestedAssets(page);
+
+    await page.goto('/');
+    await expect(page.locator('[data-architecture-scene]')).toHaveAttribute('data-architecture-state', 'fallback');
+
+    expect(requestedBundle(requestedAssets, 'home')).toBeTruthy();
+    expect(requestedBundle(requestedAssets, 'architecture-scene')).toBeFalsy();
+});
+
+test('homepage defers its decorative architecture scene until the browser is idle', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.addInitScript(() => {
+        const idleCallbacks: IdleRequestCallback[] = [];
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
+        Object.defineProperty(window, 'requestIdleCallback', {
+            value: (callback) => {
+                idleCallbacks.push(callback);
+
+                return idleCallbacks.length;
+            },
+        });
+    });
+
+    await page.goto('/');
+
+    const scene = page.locator('[data-architecture-scene]');
+
+    await expect(scene).toHaveAttribute('data-architecture-state', 'idle');
+    await expect(scene.locator('[data-architecture-fallback]')).toBeVisible();
+
+    await expect.poll(() => page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        return testWindow.__testIdleCallbacks.length;
+    })).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const callback = testWindow.__testIdleCallbacks.shift();
+
+        callback?.({ didTimeout: false, timeRemaining: () => 50 });
+    });
+
+    await expect(scene).toHaveAttribute('data-architecture-state', 'ready');
+    await expect(scene.locator('canvas')).toBeVisible();
+});
+
 test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
     await page.goto('/testimonials/submit');
 
@@ -108,6 +177,47 @@ test('about card can be flipped with the keyboard', async ({ page }) => {
     await expect(card).toHaveAttribute('aria-pressed', 'true');
 });
 
+test('Alpine stays off pages with native interactions', async ({ page }) => {
+    await page.goto('/');
+
+    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
+
+    await page.goto('/about');
+
+    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
+
+    await page.goto('/blog');
+
+    await expect.poll(() => page.evaluate(() => typeof window.Alpine)).toBe('undefined');
+});
+
+test('blog posts can be searched and reset without Alpine', async ({ page }) => {
+    await page.goto('/blog');
+
+    const search = page.getByRole('searchbox', { name: 'Search posts' });
+    const matchingPost = page.getByRole('link', { name: /What 15 Years of Web Development Taught Me/ });
+    const otherPost = page.getByRole('link', { name: /Hello World: Why I'm Starting This Blog/ });
+
+    await search.fill('web development taught');
+    await expect(matchingPost).toBeVisible();
+    await expect(otherPost).toBeHidden();
+
+    await page.getByRole('button', { name: 'Clear search' }).click();
+    await expect(search).toHaveValue('');
+    await expect(otherPost).toBeVisible();
+});
+
+test('static public pages avoid downloading optional interaction bundles', async ({ page }) => {
+    const requestedAssets = trackRequestedAssets(page);
+
+    await page.goto('/privacy');
+    await expect(page.getByRole('main')).toBeVisible();
+
+    for (const bundle of optionalPublicBundles) {
+        expect(requestedBundle(requestedAssets, bundle), `${bundle} should not load on /privacy`).toBeFalsy();
+    }
+});
+
 test('blog code blocks expose a keyboard-accessible copy action', async ({ page }) => {
     await page.goto('/blog/how-i-structure-every-laravel-project');
 
@@ -115,6 +225,37 @@ test('blog code blocks expose a keyboard-accessible copy action', async ({ page 
 
     await copyButton.focus();
     await expect(copyButton).toBeVisible();
+});
+
+test('blog syntax highlighting waits until the browser is idle', async ({ page }) => {
+    await page.addInitScript(() => {
+        const idleCallbacks: IdleRequestCallback[] = [];
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+
+        Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
+        Object.defineProperty(window, 'requestIdleCallback', {
+            value: (callback) => {
+                idleCallbacks.push(callback);
+
+                return idleCallbacks.length;
+            },
+        });
+    });
+
+    await page.goto('/blog/how-i-structure-every-laravel-project');
+
+    await expect(page.locator('html')).toHaveAttribute('data-code-highlighting-state', 'idle');
+    await expect(page.locator('.prose code .token')).toHaveCount(0);
+
+    await page.evaluate(() => {
+        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const callback = testWindow.__testIdleCallbacks.shift();
+
+        callback?.({ didTimeout: false, timeRemaining: () => 50 });
+    });
+
+    await expect(page.locator('html')).toHaveAttribute('data-code-highlighting-state', 'ready');
+    await expect(page.locator('.prose code .token').first()).toBeAttached();
 });
 
 test('an administrator can reach the dashboard', async ({ page }) => {

@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('head')
+    @vite('resources/css/pages/home-entry.css')
+@endpush
+
 @section('content')
 {{-- ===== HERO ===== --}}
 <section class="homepage-hero">
@@ -110,10 +114,11 @@
     years="15"
     :published-posts="$publishedPostCount"
     :published-projects="$publishedProjectCount"
-    :recommendations="$testimonials->count()"
+    :recommendations="$approvedTestimonialCount"
 />
 
 {{-- ===== FEATURED PROJECTS ===== --}}
+@inject('projectImages', 'App\Services\ResponsiveImageVariants')
 @if($featuredProjects->count())
 <section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,8 +133,20 @@
             @foreach($featuredProjects as $index => $project)
             <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
                 @if($project->featured_image_url)
+                @php
+                    $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
+                @endphp
                 <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
-                    <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <picture class="block h-full">
+                        @if($featuredImageSrcset)
+                        <source
+                            type="image/webp"
+                            srcset="{{ $featuredImageSrcset }}"
+                            sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+                        >
+                        @endif
+                        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </picture>
                 </div>
                 @endif
                 <div class="p-6">
@@ -232,7 +249,7 @@
                     <h3 class="font-semibold text-2xl md:text-3xl text-gray-900 dark:text-white mt-2 mb-4 group-hover:text-brand-400 transition-colors">{{ $featured->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-base line-clamp-3 max-w-3xl">{{ $featured->excerpt }}</p>
                     <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
-                        <time>{{ $featured->published_at->format('M d, Y') }}</time>
+                        <time datetime="{{ $featured->published_at->toDateString() }}">{{ $featured->published_at->format('M d, Y') }}</time>
                         <span>·</span>
                         <span>{{ $featured->reading_time }} min read</span>
                     </div>
@@ -252,7 +269,7 @@
                         <h3 class="font-semibold text-lg text-gray-900 dark:text-white mt-2 mb-3 group-hover:text-brand-400 transition-colors">{{ $post->title }}</h3>
                         <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{{ $post->excerpt }}</p>
                         <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
-                            <time>{{ $post->published_at->format('M d, Y') }}</time>
+                            <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('M d, Y') }}</time>
                             <span>·</span>
                             <span>{{ $post->reading_time }} min read</span>
                         </div>
@@ -287,7 +304,7 @@
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
                 description="Conversations about Laravel, web development, and the developer life. One cup at a time."
-                :image="Vite::asset('resources/images/podcast-coffee-logo-512.webp')"
+                :image="Vite::asset('resources/images/podcast-coffee-logo-128.webp')"
                 image-alt="Coffee With The Laravel Architect"
                 :episode-count="$coffeeEpisodeCount ?? null"
                 :href="route('podcast.index')"

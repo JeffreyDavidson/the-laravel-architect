@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Actions;
+
+use App\Models\Post;
+
+final class GenerateRssFeed
+{
+    public function __invoke(): string
+    {
+        $posts = Post::published()
+            ->latest('published_at')
+            ->with('category')
+            ->take(20)
+            ->get();
+
+        $siteUrl = url('/');
+        $feedUrl = route('rss');
+        $lastBuild = $posts->first()?->publishedAt()?->toRssString() ?? now()->toRssString();
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
+        $xml .= "<channel>\n";
+        $xml .= "<title>The Laravel Architect</title>\n";
+        $xml .= "<link>{$siteUrl}</link>\n";
+        $xml .= "<description>Deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.</description>\n";
+        $xml .= "<language>en-us</language>\n";
+        $xml .= "<lastBuildDate>{$lastBuild}</lastBuildDate>\n";
+        $xml .= "<atom:link href=\"{$feedUrl}\" rel=\"self\" type=\"application/rss+xml\" />\n";
+
+        foreach ($posts as $post) {
+            $title = htmlspecialchars($post->title, ENT_XML1, 'UTF-8');
+            $link = route('blog.show', $post);
+            $description = htmlspecialchars($post->excerpt ?? '', ENT_XML1, 'UTF-8');
+            $pubDate = $post->publishedAt()?->toRssString() ?? now()->toRssString();
+
+            $xml .= "<item>\n";
+            $xml .= "<title>{$title}</title>\n";
+            $xml .= "<link>{$link}</link>\n";
+            $xml .= "<guid isPermaLink=\"true\">{$link}</guid>\n";
+            $xml .= "<description>{$description}</description>\n";
+            $xml .= "<pubDate>{$pubDate}</pubDate>\n";
+
+            if ($post->category) {
+                $category = htmlspecialchars($post->category->name, ENT_XML1, 'UTF-8');
+                $xml .= "<category>{$category}</category>\n";
+            }
+
+            $xml .= "</item>\n";
+        }
+
+        return $xml."</channel>\n</rss>";
+    }
+}

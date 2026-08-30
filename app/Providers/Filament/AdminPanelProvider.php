@@ -30,6 +30,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Foundation\Vite;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
@@ -58,9 +59,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(isForced: true)
             ->brandName('The Laravel Architect')
-            ->brandLogo('/images/logo-color.svg')
+            ->brandLogo('/images/logo-color-128.webp')
             ->brandLogoHeight('2.5rem')
-            ->favicon('/images/logo-color.svg')
+            ->favicon('/images/favicon-32x32.png')
             ->font('Inter')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
@@ -129,6 +130,10 @@ class AdminPanelProvider extends PanelProvider
                         Private studio access
                     </div>
                 '),
+            )
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_AFTER,
+                fn (Vite $vite): HtmlString => $vite('resources/js/filament/admin.js'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

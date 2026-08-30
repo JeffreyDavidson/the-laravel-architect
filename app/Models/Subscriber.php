@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 
-#[Fillable('email', 'subscribed_at', 'verified_at', 'verification_token', 'unsubscribed_at')]
+#[Fillable('email', 'subscribed_at', 'verified_at', 'unsubscribed_at')]
+#[Hidden('verification_token_hash')]
 class Subscriber extends Model
 {
     public function unsubscribeUrl(): string

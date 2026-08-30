@@ -26,11 +26,15 @@ it('renders the Turnstile widget on the contact page', function () {
 
     $response
         ->assertOk()
+        ->assertSee('data-turnstile-widget', false)
         ->assertSee('data-sitekey="test-site-key"', false)
-        ->assertSee('data-action="contact-form"', false);
+        ->assertSee('data-action="contact-form"', false)
+        ->assertSee('class="absolute -left-[9999px] -top-[9999px]"', false)
+        ->assertDontSee('position:absolute;left:-9999px;top:-9999px;', false)
+        ->assertSee('JavaScript is required to complete the verification.', false);
 
     expect(substr_count($response->getContent(), 'https://challenges.cloudflare.com/turnstile/v0/api.js'))
-        ->toBe(1);
+        ->toBe(0);
 });
 
 it('silently accepts honeypot submissions without sending mail', function () {
