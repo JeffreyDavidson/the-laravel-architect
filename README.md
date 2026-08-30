@@ -95,4 +95,4 @@ Public contact and newsletter messages are queued on the configured Laravel queu
 
 The media migration copies existing Media Library associations to native path columns before dropping the package table. Back up the database and `storage/app/public` before deploying that migration.
 
-See [`docs/operations.md`](docs/operations.md) for the ordered deployment, backup-validation, and rollback runbook.
+See [`docs/releases.md`](docs/releases.md) for versioning and release promotion, and [`docs/operations.md`](docs/operations.md) for the ordered deployment, backup-validation, and rollback runbook.
