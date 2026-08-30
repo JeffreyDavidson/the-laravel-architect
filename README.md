@@ -39,7 +39,7 @@ composer audit --locked
 npm audit --omit=dev
 ```
 
-CI runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on every pull request and push to `develop` or `main`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
 ## Architecture
 
@@ -89,7 +89,7 @@ The application is hosted through Laravel Forge. A deployment should install loc
 
 Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
-The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers.
+The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled production smoke failures reach a monitored inbox.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 
