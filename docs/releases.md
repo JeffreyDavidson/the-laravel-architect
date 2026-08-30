@@ -89,6 +89,34 @@ Follow the ordered deployment and post-deployment checks in
 6. Record the version, commit, deployment result, and any one-time commands
    without recording secrets or private data.
 
+## Synchronize develop after release
+
+After production verification passes, synchronize the release ancestry back to
+`develop`. Never open a downstream pull request from `main` into `develop`.
+
+First verify that the current remote `develop` commit is an ancestor of the
+released `main` commit, then fast-forward `develop` directly:
+
+```bash
+git fetch --prune origin
+git merge-base --is-ancestor origin/develop origin/main
+git switch develop
+git merge --ff-only origin/main
+git push origin develop
+```
+
+Do not create a merge commit, squash, rebase, or force-push during this
+synchronization. If branch protection rejects the direct push, temporarily
+disable only the rule requiring changes to arrive through a pull request. Keep
+required status checks, administrator enforcement, deletion protection, and
+force-push protection enabled. Push the verified fast-forward, immediately
+restore the pull-request requirement with its previous settings, and confirm
+the protection is active again.
+
+Finish by confirming local and remote `main` and `develop` all resolve to the
+same release merge commit. This synchronization keeps the next release branch
+from appearing behind `main` without creating a downstream pull request.
+
 ## Hotfixes
 
 Use `hotfix/<short-description>` from `main` only for an urgent production
