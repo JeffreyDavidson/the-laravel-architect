@@ -24,6 +24,8 @@ class PodcastShowViewModel
             ->latest('published_at')
             ->paginate(20);
 
+        abort_if($episodes->currentPage() > $episodes->lastPage(), 404);
+
         $latestEpisode = $episodes->onFirstPage() ? $episodes->first() : null;
         $canonicalUrl = $episodes->onFirstPage()
             ? route('podcast.show', $podcast)

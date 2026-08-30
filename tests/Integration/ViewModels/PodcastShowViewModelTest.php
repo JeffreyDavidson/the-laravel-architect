@@ -7,6 +7,7 @@ use App\ViewModels\PodcastShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\Paginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 uses(RefreshDatabase::class);
 
@@ -62,4 +63,19 @@ it('builds a page-aware podcast payload', function () {
         )
         ->and($data['seoSource']->url)->toBe($canonicalUrl)
         ->and($data['seoSource']->canonical_url)->toBe($canonicalUrl);
+});
+
+it('rejects an out-of-range podcast page', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    Paginator::currentPageResolver(fn (): int => 2);
+
+    expect(fn () => app(PodcastShowViewModel::class)
+        ->data($podcast))
+        ->toThrow(NotFoundHttpException::class);
 });

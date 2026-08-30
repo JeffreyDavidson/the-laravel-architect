@@ -28,10 +28,6 @@ class PodcastsController extends Controller
     {
         abort_unless($podcast->is_active, 404);
 
-        $data = $podcastShowViewModel->data($podcast);
-
-        abort_if($data['episodes']->currentPage() > $data['episodes']->lastPage(), 404);
-
-        return view('podcast.show', $data);
+        return view('podcast.show', $podcastShowViewModel->data($podcast));
     }
 }
