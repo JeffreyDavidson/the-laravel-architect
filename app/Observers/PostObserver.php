@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Post;
 use App\Services\ResponsiveImageVariants;
+use Illuminate\Support\Facades\Log;
 
 class PostObserver
 {
@@ -42,6 +43,8 @@ class PostObserver
             return;
         }
 
-        $this->images->generate($path);
+        if (! $this->images->generate($path)) {
+            Log::warning('Responsive post image generation failed. Run posts:generate-image-variants to retry.');
+        }
     }
 }
