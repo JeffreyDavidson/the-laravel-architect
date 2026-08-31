@@ -26,6 +26,10 @@ beforeEach(function () {
         'health.failed_jobs.retention_hours' => 168,
         'health.runtime.enabled' => true,
         'health.runtime.max_age_seconds' => 300,
+        'nightwatch.enabled' => true,
+        'nightwatch.token' => 'production-nightwatch-token',
+        'nightwatch.capture_request_payload' => false,
+        'nightwatch.capture_exception_source_code' => false,
     ]);
 });
 
@@ -94,6 +98,10 @@ it('reports every unsafe production setting without exposing its value', functio
         'health.failed_jobs.retention_hours' => 0,
         'health.runtime.enabled' => false,
         'health.runtime.max_age_seconds' => 30,
+        'nightwatch.enabled' => false,
+        'nightwatch.token' => null,
+        'nightwatch.capture_request_payload' => true,
+        'nightwatch.capture_exception_source_code' => true,
     ]);
 
     $this->artisan('app:verify-production')
@@ -115,6 +123,10 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.')
         ->expectsOutputToContain('RUNTIME_HEALTH_ENABLED must be true.')
         ->expectsOutputToContain('RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.')
+        ->expectsOutputToContain('NIGHTWATCH_ENABLED must be true.')
+        ->expectsOutputToContain('NIGHTWATCH_TOKEN must be configured.')
+        ->expectsOutputToContain('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.')
+        ->expectsOutputToContain('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.')
         ->doesntExpectOutput('admin@example.test')
         ->assertFailed();
 });

@@ -45,6 +45,10 @@ class VerifyProductionConfiguration extends Command
             [$this->isPositiveInteger(config('health.failed_jobs.retention_hours')), 'QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.'],
             [config('health.runtime.enabled') === true, 'RUNTIME_HEALTH_ENABLED must be true.'],
             [$this->hasValidHeartbeatMaxAge(config('health.runtime.max_age_seconds')), 'RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.'],
+            [config('nightwatch.enabled') === true, 'NIGHTWATCH_ENABLED must be true.'],
+            [$this->isConfigured(config('nightwatch.token')), 'NIGHTWATCH_TOKEN must be configured.'],
+            [config('nightwatch.capture_request_payload') === false, 'NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.'],
+            [config('nightwatch.capture_exception_source_code') === false, 'NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.'],
         ];
 
         $failures = array_map(
