@@ -150,7 +150,7 @@ class FeaturedImageGenerator
         $snippets = $this->codeSnippets[$categorySlug] ?? $this->codeSnippets['laravel'];
         $categoryName = $category instanceof Category ? $category->name : 'Blog';
 
-        $image = $this->manager->create($this->width, $this->height);
+        $image = $this->manager->createImage($this->width, $this->height);
         $image = $image->fill('#0D1117');
 
         // Draw gradient orbs
@@ -178,7 +178,7 @@ class FeaturedImageGenerator
             throw new RuntimeException('Unable to create the featured image directory.');
         }
 
-        $image->toPng()->save($disk->path($path));
+        $image->save($disk->path($path));
 
         return $path;
     }
@@ -188,7 +188,8 @@ class FeaturedImageGenerator
     {
         // Large orb top-right
         for ($r = 300; $r > 0; $r -= 3) {
-            $image->drawCircle(1000, 100, function (CircleFactory $circle) use ($r, $colors) {
+            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors) {
+                $circle->at(1000, 100);
                 $circle->radius($r);
                 $circle->background($colors[0].'02');
             });
@@ -196,7 +197,8 @@ class FeaturedImageGenerator
 
         // Smaller orb bottom-left
         for ($r = 200; $r > 0; $r -= 3) {
-            $image->drawCircle(200, 530, function (CircleFactory $circle) use ($r, $colors) {
+            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors) {
+                $circle->at(200, 530);
                 $circle->radius($r);
                 $circle->background($colors[1].'02');
             });
@@ -208,7 +210,8 @@ class FeaturedImageGenerator
         $spacing = 32;
         for ($x = 0; $x < $this->width; $x += $spacing) {
             for ($y = 0; $y < $this->height; $y += $spacing) {
-                $image->drawCircle($x, $y, function (CircleFactory $circle) {
+                $image->drawCircle(function (CircleFactory $circle) use ($x, $y) {
+                    $circle->at($x, $y);
                     $circle->radius(1);
                     $circle->background('#ffffff05');
                 });
