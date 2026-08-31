@@ -79,7 +79,7 @@ Create a Cloudflare Turnstile widget for the production host and set `TURNSTILE_
 
 Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
-Production observability is provided by Laravel Nightwatch. It is disabled by default for local development and tests, samples 10% of web requests, and does not capture request payloads or exception source code. Connect the site through Forge's built-in Nightwatch integration, keep its environment token only in Forge, and set `NIGHTWATCH_ENABLED=true` in production. See [`docs/operations.md`](docs/operations.md) for setup and verification.
+Production observability is provided by Laravel Nightwatch. It is disabled by default for local development and tests, samples 10% of web requests, and does not capture request payloads, exception source code, authenticated user names, or authenticated user email addresses. Connect the site through Forge's built-in Nightwatch integration, keep its environment token only in Forge, and set `NIGHTWATCH_ENABLED=true` in production. See [`docs/operations.md`](docs/operations.md) for setup and verification.
 
 Set `QUEUE_FAILED_JOB_ALERT_THRESHOLD` to the number of retained failures that operations will tolerate and `QUEUE_FAILED_JOB_RETENTION_HOURS` to the retention window. The scheduled monitor emails the backup notification recipient when the threshold is exceeded.
 

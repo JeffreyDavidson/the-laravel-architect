@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Nightwatch\Facades\Nightwatch;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Nightwatch::user(fn (Authenticatable $user): array => []);
+
         Event::listen(DiagnosingHealth::class, function (): void {
             DB::table('migrations')->limit(1)->exists();
 
