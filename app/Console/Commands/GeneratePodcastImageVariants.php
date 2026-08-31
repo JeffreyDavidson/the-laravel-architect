@@ -8,20 +8,29 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('podcasts:generate-image-variants')]
+#[Signature('podcasts:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing podcast cover images')]
 class GeneratePodcastImageVariants extends Command
 {
     public function handle(ResponsiveImageVariants $images): int
     {
         $generated = 0;
+        $skipped = 0;
         $failed = 0;
 
         Podcast::query()
             ->whereNotNull('cover_image_path')
             ->select(['id', 'cover_image_path'])
-            ->eachById(function (Podcast $podcast) use ($images, &$generated, &$failed): void {
+            ->eachById(function (Podcast $podcast) use ($images, &$generated, &$skipped, &$failed): void {
                 $sourcePath = $podcast->cover_image_path;
+
+                if (! $this->option('force')
+                    && is_string($sourcePath)
+                    && $images->hasRequiredVariants($sourcePath)) {
+                    $skipped++;
+
+                    return;
+                }
 
                 if (is_string($sourcePath) && $images->generate($sourcePath)) {
                     $generated++;
@@ -35,6 +44,11 @@ class GeneratePodcastImageVariants extends Command
 
         $noun = $generated === 1 ? 'podcast' : 'podcasts';
         $this->info("Generated responsive images for {$generated} {$noun}.");
+
+        if ($skipped > 0) {
+            $skippedNoun = $skipped === 1 ? 'podcast' : 'podcasts';
+            $this->line("Skipped {$skipped} already verified {$skippedNoun}.");
+        }
 
         return $failed === 0 ? self::SUCCESS : self::FAILURE;
     }
