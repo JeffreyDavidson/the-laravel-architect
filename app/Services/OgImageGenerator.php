@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\Post;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Format;
 use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\Geometry\Factories\RectangleFactory;
@@ -34,7 +35,7 @@ class OgImageGenerator
         $width = 1200;
         $height = 630;
 
-        $image = $this->manager->create($width, $height)->fill('0D1117');
+        $image = $this->manager->createImage($width, $height)->fill('0D1117');
 
         // Geometric pattern overlay - subtle grid
         for ($x = 0; $x < $width; $x += 60) {
@@ -55,17 +56,20 @@ class OgImageGenerator
         }
 
         // Decorative circles
-        $image->drawCircle(900, 120, function (CircleFactory $circle) {
+        $image->drawCircle(function (CircleFactory $circle) {
+            $circle->at(900, 120);
             $circle->radius(80);
             $circle->border('1a2332', 2);
         });
-        $image->drawCircle(1050, 400, function (CircleFactory $circle) {
+        $image->drawCircle(function (CircleFactory $circle) {
+            $circle->at(1050, 400);
             $circle->radius(120);
             $circle->border('1a2332', 2);
         });
 
         // Brand accent line at top
-        $image->drawRectangle(0, 0, function (RectangleFactory $rect) use ($width) {
+        $image->drawRectangle(function (RectangleFactory $rect) use ($width) {
+            $rect->at(0, 0);
             $rect->size($width, 4);
             $rect->background('4A7FBF');
         });
@@ -108,7 +112,7 @@ class OgImageGenerator
             $font->color('1a2332');
         });
 
-        return $image->toPng()->toString();
+        return $image->encodeUsingFormat(Format::PNG)->toString();
     }
 
     /** @return list<string> */

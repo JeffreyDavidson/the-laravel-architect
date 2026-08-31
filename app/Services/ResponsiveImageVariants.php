@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
+use Illuminate\Image\ImageException;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Encoders\WebpEncoder;
-use Intervention\Image\Exceptions\DecoderException;
-use Intervention\Image\ImageManager;
 
 class ResponsiveImageVariants
 {
-    /** @var list<int> */
+    /** @var list<positive-int> */
     private const WIDTHS = [640, 1280];
 
     public function generate(string $originalPath): bool
@@ -21,28 +19,27 @@ class ResponsiveImageVariants
             return false;
         }
 
-        $contents = $disk->get($originalPath);
-        $manager = new ImageManager(new Driver);
-
         try {
-            $source = $manager->read($contents);
-        } catch (DecoderException) {
+            $source = Image::fromStorage($originalPath, 'public');
+            $sourceWidth = $source->width();
+        } catch (ImageException) {
             return false;
         }
 
         $this->delete($originalPath);
 
         foreach ($this->paths($originalPath) as $width => $variantPath) {
-            if ($width > $source->width()) {
+            if ($width > $sourceWidth) {
                 continue;
             }
 
-            $variant = $manager
-                ->read($contents)
-                ->scaleDown(width: $width)
-                ->encode(new WebpEncoder(quality: 82, strip: true));
+            $variant = $source
+                ->scale(width: $width)
+                ->toWebp()
+                ->quality(82)
+                ->toBytes();
 
-            $disk->put($variantPath, (string) $variant);
+            $disk->put($variantPath, $variant);
         }
 
         return true;
@@ -61,16 +58,14 @@ class ResponsiveImageVariants
             return false;
         }
 
-        $manager = new ImageManager(new Driver);
-
         try {
-            $source = $manager->read($disk->get($originalPath));
-        } catch (DecoderException) {
+            $sourceWidth = Image::fromStorage($originalPath, 'public')->width();
+        } catch (ImageException) {
             return false;
         }
 
         foreach ($this->paths($originalPath) as $width => $variantPath) {
-            if ($width > $source->width()) {
+            if ($width > $sourceWidth) {
                 continue;
             }
 
@@ -79,12 +74,14 @@ class ResponsiveImageVariants
             }
 
             try {
-                $variant = $manager->read($disk->get($variantPath));
-            } catch (DecoderException) {
+                $variant = Image::fromStorage($variantPath, 'public');
+                $variantWidth = $variant->width();
+                $variantMimeType = $variant->mimeType();
+            } catch (ImageException) {
                 return false;
             }
 
-            if ($variant->width() !== $width || $variant->origin()->mediaType() !== 'image/webp') {
+            if ($variantWidth !== $width || $variantMimeType !== 'image/webp') {
                 return false;
             }
         }
@@ -110,7 +107,7 @@ class ResponsiveImageVariants
         return $sources === [] ? null : implode(', ', $sources);
     }
 
-    /** @return array<int, string> */
+    /** @return array<positive-int, string> */
     public function paths(string $originalPath): array
     {
         $directory = pathinfo($originalPath, PATHINFO_DIRNAME);
