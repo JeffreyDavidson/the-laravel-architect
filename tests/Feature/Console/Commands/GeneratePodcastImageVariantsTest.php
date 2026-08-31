@@ -27,4 +27,14 @@ it('backfills responsive variants for existing podcast cover images', function (
         'podcasts/responsive/podcast-640.webp',
         'podcasts/responsive/podcast-1280.webp',
     ]);
+
+    $this->artisan('podcasts:generate-image-variants')
+        ->expectsOutputToContain('Generated responsive images for 0 podcasts.')
+        ->expectsOutputToContain('Skipped 1 already verified podcast.')
+        ->assertSuccessful();
+
+    $this->artisan('podcasts:generate-image-variants', ['--force' => true])
+        ->expectsOutputToContain('Generated responsive images for 1 podcast.')
+        ->doesntExpectOutputToContain('Skipped')
+        ->assertSuccessful();
 });

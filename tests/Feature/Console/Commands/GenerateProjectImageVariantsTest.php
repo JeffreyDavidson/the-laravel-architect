@@ -28,4 +28,14 @@ it('backfills responsive variants for existing project images', function () {
         'projects/responsive/project-640.webp',
         'projects/responsive/project-1280.webp',
     ]);
+
+    $this->artisan('projects:generate-image-variants')
+        ->expectsOutputToContain('Generated responsive images for 0 projects.')
+        ->expectsOutputToContain('Skipped 1 already verified project.')
+        ->assertSuccessful();
+
+    $this->artisan('projects:generate-image-variants', ['--force' => true])
+        ->expectsOutputToContain('Generated responsive images for 1 project.')
+        ->doesntExpectOutputToContain('Skipped')
+        ->assertSuccessful();
 });

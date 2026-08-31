@@ -33,4 +33,14 @@ it('backfills responsive variants for existing post images', function () {
         'posts/responsive/post-640.webp',
         'posts/responsive/post-1280.webp',
     ]);
+
+    $this->artisan('posts:generate-image-variants')
+        ->expectsOutputToContain('Generated responsive images for 0 posts.')
+        ->expectsOutputToContain('Skipped 1 already verified post.')
+        ->assertSuccessful();
+
+    $this->artisan('posts:generate-image-variants', ['--force' => true])
+        ->expectsOutputToContain('Generated responsive images for 1 post.')
+        ->doesntExpectOutputToContain('Skipped')
+        ->assertSuccessful();
 });
