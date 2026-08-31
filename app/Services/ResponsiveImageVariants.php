@@ -19,8 +19,14 @@ class ResponsiveImageVariants
             return false;
         }
 
+        $contents = $disk->get($originalPath);
+
+        if ($contents === null) {
+            return false;
+        }
+
         try {
-            $source = Image::fromBytes($disk->get($originalPath));
+            $source = Image::fromBytes($contents);
             $sourceWidth = $source->width();
         } catch (ImageException) {
             return false;

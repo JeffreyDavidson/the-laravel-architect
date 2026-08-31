@@ -81,6 +81,26 @@ it('does not delete existing variants when a replacement write fails', function 
     expect(app(ResponsiveImageVariants::class)->generate('projects/project.png'))->toBeFalse();
 });
 
+it('does not delete existing variants when the original cannot be read', function () {
+    $disk = Mockery::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('exists')
+        ->once()
+        ->with('projects/project.png')
+        ->andReturnTrue();
+    $disk->shouldReceive('get')
+        ->once()
+        ->with('projects/project.png')
+        ->andReturnNull();
+    $disk->shouldNotReceive('put');
+    $disk->shouldNotReceive('delete');
+    Storage::shouldReceive('disk')
+        ->once()
+        ->with('public')
+        ->andReturn($disk);
+
+    expect(app(ResponsiveImageVariants::class)->generate('projects/project.png'))->toBeFalse();
+});
+
 it('verifies every responsive variant appropriate for the source width', function () {
     $image = UploadedFile::fake()->image('project.png', 800, 45);
     Storage::disk('public')->put('projects/project.png', $image->getContent());
