@@ -25,6 +25,10 @@ class RepairResponsiveImages extends Command
             }
         }
 
+        if ($this->call('media:verify-responsive-images') !== self::SUCCESS) {
+            $status = self::FAILURE;
+        }
+
         if ($status === self::FAILURE) {
             $this->error('Responsive image repair completed with failures.');
 

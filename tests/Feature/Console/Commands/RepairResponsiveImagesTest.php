@@ -55,6 +55,7 @@ it('repairs unhealthy responsive variants across every supported media type', fu
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->expectsOutputToContain('Generated responsive images for 0 podcasts.')
         ->expectsOutputToContain('Skipped 1 already verified podcast.')
+        ->expectsOutputToContain('Responsive image verification passed.')
         ->expectsOutputToContain('Responsive image repair completed successfully.')
         ->assertSuccessful();
 
@@ -72,6 +73,7 @@ it('repairs unhealthy responsive variants across every supported media type', fu
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->expectsOutputToContain('Generated responsive images for 1 podcast.')
         ->doesntExpectOutputToContain('already verified')
+        ->expectsOutputToContain('Responsive image verification passed.')
         ->assertSuccessful();
 });
 
@@ -99,6 +101,7 @@ it('repairs remaining media types before reporting a failure', function () {
 
     $this->artisan('media:repair-responsive-images')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
+        ->expectsOutputToContain('Responsive image verification failed.')
         ->expectsOutputToContain('Responsive image repair completed with failures.')
         ->assertFailed();
 
