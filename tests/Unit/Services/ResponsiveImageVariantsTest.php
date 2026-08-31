@@ -56,6 +56,34 @@ it('does not upscale images to create responsive variants', function () {
     Storage::disk('public')->assertMissing('projects/responsive/small-1280.webp');
 });
 
+it('verifies every responsive variant appropriate for the source width', function () {
+    $image = UploadedFile::fake()->image('project.png', 800, 45);
+    Storage::disk('public')->put('projects/project.png', $image->getContent());
+    $images = app(ResponsiveImageVariants::class);
+
+    expect($images->hasRequiredVariants('projects/project.png'))->toBeFalse();
+
+    $images->generate('projects/project.png');
+
+    expect($images->hasRequiredVariants('projects/project.png'))->toBeTrue();
+
+    Storage::disk('public')->delete('projects/responsive/project-640.webp');
+
+    expect($images->hasRequiredVariants('projects/project.png'))->toBeFalse();
+
+    Storage::disk('public')->put('projects/responsive/project-640.webp', 'not an image');
+
+    expect($images->hasRequiredVariants('projects/project.png'))->toBeFalse();
+});
+
+it('rejects missing and unsupported responsive image sources', function () {
+    Storage::disk('public')->put('projects/invalid.txt', 'not an image');
+    $images = app(ResponsiveImageVariants::class);
+
+    expect($images->hasRequiredVariants('projects/missing.png'))->toBeFalse()
+        ->and($images->hasRequiredVariants('projects/invalid.txt'))->toBeFalse();
+});
+
 it('deletes generated variants without deleting the original image', function () {
     Storage::disk('public')->put('projects/project.png', 'original');
     Storage::disk('public')->put('projects/responsive/project-640.webp', 'small');
