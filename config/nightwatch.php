@@ -2,7 +2,7 @@
 
 return [
     'enabled' => (bool) env('NIGHTWATCH_ENABLED', false),
-    'token' => env('NIGHTWATCH_TOKEN'),
+    'token' => env('NIGHTWATCH_TOKEN') ?: null,
     'deployment' => env('NIGHTWATCH_DEPLOY', env('LARAVEL_CLOUD_DEPLOY_UUID', env('FORGE_DEPLOY_COMMIT', env('VAPOR_COMMIT_HASH')))),
     'server' => env('NIGHTWATCH_SERVER', (string) gethostname()),
     'capture_exception_source_code' => (bool) env('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE', false),
