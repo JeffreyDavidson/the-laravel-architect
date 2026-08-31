@@ -24,7 +24,7 @@ When a release introduces responsive uploaded images, run `php artisan projects:
 
 Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and regenerate or restore the affected variants before the next release.
 
-Failed derivative generation during an admin upload leaves the original upload available and writes a path-free warning identifying the appropriate retry command. Do not add stored media paths to that log context.
+Failed derivative generation during an admin upload leaves the original upload and any previously valid derivatives available, and writes a path-free warning identifying the appropriate retry command. Do not add stored media paths to that log context.
 
 Do not run a standalone production migration unless the deployment itself cannot apply the migration and the release plan explicitly authorizes it.
 

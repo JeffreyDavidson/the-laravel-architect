@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\ResponsiveImageVariants;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -49,11 +50,35 @@ it('returns a srcset only for generated variants that exist', function () {
 it('does not upscale images to create responsive variants', function () {
     $image = UploadedFile::fake()->image('small.png', 800, 45);
     Storage::disk('public')->put('projects/small.png', $image->getContent());
+    Storage::disk('public')->put('projects/responsive/small-1280.webp', 'stale');
 
     app(ResponsiveImageVariants::class)->generate('projects/small.png');
 
     Storage::disk('public')->assertExists('projects/responsive/small-640.webp');
     Storage::disk('public')->assertMissing('projects/responsive/small-1280.webp');
+});
+
+it('does not delete existing variants when a replacement write fails', function () {
+    $contents = UploadedFile::fake()->image('project.png', 1280, 72)->getContent();
+    $disk = Mockery::mock(FilesystemAdapter::class);
+    $disk->shouldReceive('exists')
+        ->once()
+        ->with('projects/project.png')
+        ->andReturnTrue();
+    $disk->shouldReceive('get')
+        ->once()
+        ->with('projects/project.png')
+        ->andReturn($contents);
+    $disk->shouldReceive('put')
+        ->once()
+        ->andReturnFalse();
+    $disk->shouldNotReceive('delete');
+    Storage::shouldReceive('disk')
+        ->once()
+        ->with('public')
+        ->andReturn($disk);
+
+    expect(app(ResponsiveImageVariants::class)->generate('projects/project.png'))->toBeFalse();
 });
 
 it('verifies every responsive variant appropriate for the source width', function () {
