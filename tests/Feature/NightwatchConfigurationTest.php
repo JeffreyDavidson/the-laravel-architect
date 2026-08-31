@@ -20,5 +20,9 @@ it('uses privacy-conscious Nightwatch defaults', function () {
             'Cookie',
             'Proxy-Authorization',
             'X-XSRF-TOKEN',
+            'X-Forwarded-For',
+            'X-Real-IP',
+            'CF-Connecting-IP',
+            'True-Client-IP',
         );
 });

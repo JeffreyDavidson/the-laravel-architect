@@ -8,7 +8,7 @@ return [
     'capture_exception_source_code' => (bool) env('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE', false),
     'capture_request_payload' => (bool) env('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD', false),
     'redact_payload_fields' => explode(',', env('NIGHTWATCH_REDACT_PAYLOAD_FIELDS', '_token,password,password_confirmation,email,name,message')),
-    'redact_headers' => explode(',', env('NIGHTWATCH_REDACT_HEADERS', 'Authorization,Cookie,Proxy-Authorization,X-XSRF-TOKEN')),
+    'redact_headers' => explode(',', env('NIGHTWATCH_REDACT_HEADERS', 'Authorization,Cookie,Proxy-Authorization,X-XSRF-TOKEN,X-Forwarded-For,X-Real-IP,CF-Connecting-IP,True-Client-IP')),
 
     'sampling' => [
         'requests' => (float) env('NIGHTWATCH_REQUEST_SAMPLE_RATE', 0.1),
