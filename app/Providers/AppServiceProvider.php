@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
             DB::table('migrations')->limit(1)->exists();
 
             if (config('health.runtime.enabled') === true) {
-                app(RuntimeHealth::class)->ensureHealthy();
+                app(RuntimeHealthMonitor::class)->ensureHealthy();
             }
         });
 

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -16,7 +16,7 @@ class VerifyDeployment extends Command
 {
     public function __construct(
         private readonly Migrator $migrator,
-        private readonly RuntimeHealth $runtimeHealth,
+        private readonly RuntimeHealthMonitor $runtimeHealthMonitor,
     ) {
         parent::__construct();
     }
@@ -76,7 +76,7 @@ class VerifyDeployment extends Command
     private function runtimeFailure(): ?string
     {
         try {
-            $this->runtimeHealth->ensureHealthy();
+            $this->runtimeHealthMonitor->ensureHealthy();
         } catch (\RuntimeException) {
             return 'The scheduler or queue worker heartbeat is stale.';
         }

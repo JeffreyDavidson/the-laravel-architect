@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -10,8 +10,8 @@ class RecordQueueHeartbeat implements ShouldQueue
 {
     use Queueable;
 
-    public function handle(RuntimeHealth $runtimeHealth): void
+    public function handle(RuntimeHealthMonitor $runtimeHealthMonitor): void
     {
-        $runtimeHealth->recordQueueHeartbeat();
+        $runtimeHealthMonitor->recordQueueHeartbeat();
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::call(function (RuntimeHealth $runtimeHealth): void {
-    $runtimeHealth->recordSchedulerHeartbeat();
+Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
+    $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
 })
     ->name('runtime-health:heartbeat')
