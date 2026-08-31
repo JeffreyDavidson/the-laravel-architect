@@ -2,6 +2,7 @@
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use App\Services\NightwatchHealthMonitor;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -29,6 +30,10 @@ beforeEach(function () {
     Storage::disk('deployment-backups')->put('deployment-test/fresh.zip', 'backup');
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
+
+    $nightwatch = Mockery::mock(NightwatchHealthMonitor::class);
+    $nightwatch->shouldReceive('ensureHealthy')->zeroOrMoreTimes();
+    app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 });
 
 it('accepts a healthy deployment at the expected commit', function () {
@@ -68,6 +73,20 @@ it('reports stale runtime heartbeats and missing backups', function () {
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The scheduler or queue worker heartbeat is stale.')
         ->expectsOutputToContain('One or more backup destinations do not contain a fresh backup.')
+        ->assertFailed();
+});
+
+it('reports an unavailable Nightwatch agent without exposing its error', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    $nightwatch = Mockery::mock(NightwatchHealthMonitor::class);
+    $nightwatch->shouldReceive('ensureHealthy')
+        ->once()
+        ->andThrow(new RuntimeException('private ingest address'));
+    app()->instance(NightwatchHealthMonitor::class, $nightwatch);
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('The Nightwatch agent is unavailable.')
+        ->doesntExpectOutput('private ingest address')
         ->assertFailed();
 });
 
