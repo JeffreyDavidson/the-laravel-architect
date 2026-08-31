@@ -5,6 +5,7 @@ it('uses privacy-conscious Nightwatch defaults', function () {
         ->and(config('nightwatch.token'))->toBeNull()
         ->and(config('nightwatch.capture_request_payload'))->toBeFalse()
         ->and(config('nightwatch.capture_exception_source_code'))->toBeFalse()
+        ->and(config('nightwatch.filtering.ignore_mail'))->toBeTrue()
         ->and(config('nightwatch.sampling.requests'))->toBe(0.1)
         ->and(config('nightwatch.redact_payload_fields'))->toContain(
             '_token',

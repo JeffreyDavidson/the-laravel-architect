@@ -49,6 +49,7 @@ class VerifyProductionConfiguration extends Command
             [$this->isConfigured(config('nightwatch.token')), 'NIGHTWATCH_TOKEN must be configured.'],
             [config('nightwatch.capture_request_payload') === false, 'NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.'],
             [config('nightwatch.capture_exception_source_code') === false, 'NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.'],
+            [config('nightwatch.filtering.ignore_mail') === true, 'NIGHTWATCH_IGNORE_MAIL must be true.'],
         ];
 
         $failures = array_map(

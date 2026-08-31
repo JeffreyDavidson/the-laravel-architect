@@ -30,6 +30,7 @@ beforeEach(function () {
         'nightwatch.token' => 'production-nightwatch-token',
         'nightwatch.capture_request_payload' => false,
         'nightwatch.capture_exception_source_code' => false,
+        'nightwatch.filtering.ignore_mail' => true,
     ]);
 });
 
@@ -102,6 +103,7 @@ it('reports every unsafe production setting without exposing its value', functio
         'nightwatch.token' => null,
         'nightwatch.capture_request_payload' => true,
         'nightwatch.capture_exception_source_code' => true,
+        'nightwatch.filtering.ignore_mail' => false,
     ]);
 
     $this->artisan('app:verify-production')
@@ -127,6 +129,7 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('NIGHTWATCH_TOKEN must be configured.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.')
+        ->expectsOutputToContain('NIGHTWATCH_IGNORE_MAIL must be true.')
         ->doesntExpectOutput('admin@example.test')
         ->assertFailed();
 });
