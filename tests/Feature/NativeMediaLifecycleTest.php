@@ -11,6 +11,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
+use Psr\Log\LoggerInterface;
 
 uses(RefreshDatabase::class);
 
@@ -181,7 +183,14 @@ it('keeps responsive podcast cover variants in sync with the original image', fu
 });
 
 it('logs responsive generation failures without exposing media paths', function () {
-    Log::spy();
+    $logger = Double::for(LoggerInterface::class);
+    $logger->expects('warning')
+        ->with('Responsive project image generation failed. Run projects:generate-image-variants to retry.');
+    $logger->expects('warning')
+        ->with('Responsive post image generation failed. Run posts:generate-image-variants to retry.');
+    $logger->expects('warning')
+        ->with('Responsive podcast image generation failed. Run podcasts:generate-image-variants to retry.');
+    Log::swap($logger);
     Storage::disk('public')->put('projects/private-project-name.png', 'not an image');
     Storage::disk('public')->put('posts/private-post-name.png', 'not an image');
     Storage::disk('public')->put('podcasts/private-podcast-name.png', 'not an image');
@@ -209,15 +218,6 @@ it('logs responsive generation failures without exposing media paths', function 
         'cover_image_path' => 'podcasts/private-podcast-name.png',
     ]);
 
-    Log::shouldHaveReceived('warning')
-        ->with('Responsive project image generation failed. Run projects:generate-image-variants to retry.')
-        ->once();
-    Log::shouldHaveReceived('warning')
-        ->with('Responsive post image generation failed. Run posts:generate-image-variants to retry.')
-        ->once();
-    Log::shouldHaveReceived('warning')
-        ->with('Responsive podcast image generation failed. Run podcasts:generate-image-variants to retry.')
-        ->once();
 });
 
 it('deletes episode media when its podcast is deleted', function () {

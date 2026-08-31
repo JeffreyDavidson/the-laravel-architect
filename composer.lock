@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6eb7ca6597f8e0eeefab4352aea7894c",
+    "content-hash": "594eb98fb1d7dee8906c7ebb3aa9dbf2",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -11371,6 +11371,57 @@
             "time": "2026-01-28T22:20:33+00:00"
         },
         {
+            "name": "jasonmccreary/double",
+            "version": "v0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jasonmccreary/double.git",
+                "reference": "c9d6d75e83ef17ea783ed5430c9f466aac85dadb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jasonmccreary/double/zipball/c9d6d75e83ef17ea783ed5430c9f466aac85dadb",
+                "reference": "c9d6d75e83ef17ea783ed5430c9f466aac85dadb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.29",
+                "phpunit/phpunit": "^11.5.50 || ^12.5.8 || ^13.0.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JMac\\Testing\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason McCreary",
+                    "email": "jason@pureconcepts.net"
+                }
+            ],
+            "description": "A modern PHP double library that puts developer experience first.",
+            "keywords": [
+                "Double",
+                "mock",
+                "spy",
+                "stub",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/jasonmccreary/double/issues",
+                "source": "https://github.com/jasonmccreary/double/tree/v0.6.1"
+            },
+            "time": "2026-08-19T22:33:25+00:00"
+        },
+        {
             "name": "jean85/pretty-package-versions",
             "version": "2.1.1",
             "source": {
@@ -12189,16 +12240,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.6.13",
+            "version": "1.6.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "9cb54414cdcd2ec5ca292e7ba19dba3a3444885d"
+                "reference": "967a801bd188989a5669bd280f252d51c0fdc9ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/9cb54414cdcd2ec5ca292e7ba19dba3a3444885d",
-                "reference": "9cb54414cdcd2ec5ca292e7ba19dba3a3444885d",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/967a801bd188989a5669bd280f252d51c0fdc9ee",
+                "reference": "967a801bd188989a5669bd280f252d51c0fdc9ee",
                 "shasum": ""
             },
             "require": {
@@ -12267,7 +12318,7 @@
                 "security": "https://github.com/mockery/mockery/security/advisories",
                 "source": "https://github.com/mockery/mockery"
             },
-            "time": "2026-08-15T03:07:32+00:00"
+            "time": "2026-08-19T19:37:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
 
 uses(RefreshDatabase::class);
 
@@ -31,8 +32,8 @@ beforeEach(function () {
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    $nightwatch = Mockery::mock(NightwatchHealthMonitor::class);
-    $nightwatch->shouldReceive('ensureHealthy')->zeroOrMoreTimes();
+    $nightwatch = Double::for(NightwatchHealthMonitor::class);
+    $nightwatch->allows('ensureHealthy');
     app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 });
 
@@ -78,10 +79,9 @@ it('reports stale runtime heartbeats and missing backups', function () {
 
 it('reports an unavailable Nightwatch agent without exposing its error', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
-    $nightwatch = Mockery::mock(NightwatchHealthMonitor::class);
-    $nightwatch->shouldReceive('ensureHealthy')
-        ->once()
-        ->andThrow(new RuntimeException('private ingest address'));
+    $nightwatch = Double::for(NightwatchHealthMonitor::class);
+    $nightwatch->expects('ensureHealthy')
+        ->throws(new RuntimeException('private ingest address'));
     app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
