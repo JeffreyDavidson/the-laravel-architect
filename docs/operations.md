@@ -32,7 +32,7 @@ Run the deployment verifier with the immutable commit expected for the release:
 php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 ```
 
-The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, or any configured backup disk lacks a fresh backup. Then verify all of the following against the deployed commit:
+The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, any configured backup disk lacks a fresh backup, or stored media lacks a required responsive variant. Then verify all of the following against the deployed commit:
 
 - Production `HEAD` matches the expected commit.
 - `php artisan migrate:status` has no pending migrations.

@@ -28,6 +28,7 @@ class VerifyDeployment extends Command
             $this->migrationFailure(),
             $this->runtimeFailure(),
             $this->backupFailure(),
+            $this->responsiveMediaFailure(),
         ]);
 
         if ($failures !== []) {
@@ -109,5 +110,12 @@ class VerifyDeployment extends Command
         }
 
         return null;
+    }
+
+    private function responsiveMediaFailure(): ?string
+    {
+        return $this->callSilent('media:verify-responsive-images') === self::SUCCESS
+            ? null
+            : 'One or more stored images are missing required responsive variants.';
     }
 }
