@@ -4,6 +4,7 @@ use App\Enums\ProjectStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -38,4 +39,18 @@ it('backfills responsive variants for existing project images', function () {
         ->expectsOutputToContain('Generated responsive images for 1 project.')
         ->doesntExpectOutputToContain('Skipped')
         ->assertSuccessful();
+});
+
+it('refuses to overlap another project image generation run', function () {
+    $lock = Cache::lock('framework/command-projects:generate-image-variants', 60);
+
+    expect($lock->get())->toBeTrue();
+
+    try {
+        $this->artisan('projects:generate-image-variants')
+            ->expectsOutputToContain('The [projects:generate-image-variants] command is already running.')
+            ->assertFailed();
+    } finally {
+        $lock->release();
+    }
 });

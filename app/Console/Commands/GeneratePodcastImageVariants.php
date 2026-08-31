@@ -7,11 +7,16 @@ use App\Services\ResponsiveImageVariants;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('podcasts:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing podcast cover images')]
-class GeneratePodcastImageVariants extends Command
+class GeneratePodcastImageVariants extends Command implements Isolatable
 {
+    protected $isolated = true;
+
+    protected $isolatedExitCode = self::FAILURE;
+
     public function handle(ResponsiveImageVariants $images): int
     {
         $generated = 0;

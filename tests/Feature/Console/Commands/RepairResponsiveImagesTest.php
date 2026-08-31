@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\ResponsiveImageVariants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -109,4 +110,18 @@ it('repairs remaining media types before reporting a failure', function () {
         'posts/responsive/post-640.webp',
         'posts/responsive/post-1280.webp',
     ]);
+});
+
+it('refuses to overlap another responsive image repair', function () {
+    $lock = Cache::lock('framework/command-media:repair-responsive-images', 60);
+
+    expect($lock->get())->toBeTrue();
+
+    try {
+        $this->artisan('media:repair-responsive-images')
+            ->expectsOutputToContain('The [media:repair-responsive-images] command is already running.')
+            ->assertFailed();
+    } finally {
+        $lock->release();
+    }
 });
