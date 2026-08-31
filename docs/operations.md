@@ -18,6 +18,25 @@ The Forge deployment should install locked Composer dependencies, build assets, 
 
 Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
 
+### Nightwatch
+
+Nightwatch is opt-in. In the Nightwatch dashboard, create the application and production environment, then use Forge's built-in Nightwatch integration from the site's Overview tab. Supply the environment-specific token through Forge, enable monitoring, and set these production values:
+
+```dotenv
+NIGHTWATCH_ENABLED=true
+NIGHTWATCH_TOKEN=<environment-specific token>
+NIGHTWATCH_REQUEST_SAMPLE_RATE=0.1
+NIGHTWATCH_COMMAND_SAMPLE_RATE=1.0
+NIGHTWATCH_EXCEPTION_SAMPLE_RATE=1.0
+NIGHTWATCH_SCHEDULED_TASK_SAMPLE_RATE=1.0
+NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE=false
+NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD=false
+```
+
+Never store the token in the repository. The Forge integration manages the required application-specific agent process. Do not add a second manual process for the same site. If the built-in integration is unavailable, add one Forge background process named `Nightwatch` that runs `php artisan nightwatch:agent` from the site directory with one process and a 15-second graceful shutdown.
+
+After enabling or changing Nightwatch, refresh the application's cached configuration and run `php artisan nightwatch:status`. Require a successful status before considering monitoring operational. Keep request sampling at 10% initially and adjust it only after reviewing event volume. Request payload and exception source-code capture must remain disabled unless a separate privacy review approves them.
+
 After enabling runtime monitoring or clearing the application cache, run `php artisan schedule:run` and allow the queue worker to process the heartbeat probe before relying on `/up`.
 
 When a release introduces responsive uploaded images, run `php artisan media:repair-responsive-images` once after the persistent public-media directory is mounted. The command repairs projects, posts, and podcasts in one bounded, isolated run while preserving original uploads, creating WebP derivatives beside them, skipping derivatives that already pass verification, and returning a failure if any source file is missing, unsupported, or still unhealthy after the aggregate verification pass. Concurrent repair or resource-specific generation runs are rejected so they cannot race over the same derivatives. Use `--force` only when a release intentionally requires every valid derivative to be re-encoded. The resource-specific generation commands remain available for targeted recovery. Use `php artisan media:verify-responsive-images` separately for read-only checks; it reports aggregate results without exposing stored paths and does not modify media. Do not remove the original images.
@@ -46,6 +65,7 @@ The command fails when the checked-out commit differs, migrations are pending, q
 - `/up` returns HTTP 200, confirming the application can read its migrated database and both the scheduler and queue worker have fresh heartbeats.
 - Public media URLs return successful responses.
 - The queue worker and scheduler are active.
+- `php artisan nightwatch:status` confirms the Nightwatch agent is accepting connections.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
 
