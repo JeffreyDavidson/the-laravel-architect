@@ -112,6 +112,12 @@ it('verifies every responsive variant appropriate for the source width', functio
 
     expect($images->hasRequiredVariants('projects/project.png'))->toBeTrue();
 
+    Storage::disk('public')->put('projects/responsive/project-1280.webp', 'obsolete');
+
+    expect($images->hasRequiredVariants('projects/project.png'))->toBeFalse();
+
+    Storage::disk('public')->delete('projects/responsive/project-1280.webp');
+
     Storage::disk('public')->delete('projects/responsive/project-640.webp');
 
     expect($images->hasRequiredVariants('projects/project.png'))->toBeFalse();

@@ -87,6 +87,10 @@ class ResponsiveImageVariants
 
         foreach ($this->paths($originalPath) as $width => $variantPath) {
             if ($width > $sourceWidth) {
+                if ($disk->exists($variantPath)) {
+                    return false;
+                }
+
                 continue;
             }
 
