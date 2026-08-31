@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Services\FeaturedImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 uses(RefreshDatabase::class);
 
 it('succeeds without invoking the generator when no posts need images', function () {
-    $generator = Mockery::mock(FeaturedImageGenerator::class);
-    $generator->shouldNotReceive('generate');
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->allows('generate')->never();
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     $this->artisan('posts:generate-images')
@@ -37,11 +39,10 @@ it('generates and persists images only for posts without one by default', functi
         'featured_image_path' => 'featured-images/existing.png',
     ]);
 
-    $generator = Mockery::mock(FeaturedImageGenerator::class);
-    $generator->shouldReceive('generate')
-        ->once()
-        ->withArgs(fn (Post $post): bool => $post->is($missingImage))
-        ->andReturn('featured-images/generated.png');
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->expects('generate')
+        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($missingImage)))
+        ->returns('featured-images/generated.png');
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     $this->artisan('posts:generate-images')
@@ -71,16 +72,14 @@ it('regenerates and persists every post image when forced', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    $generator = Mockery::mock(FeaturedImageGenerator::class);
-    $generator->shouldReceive('generate')
-        ->once()
-        ->withArgs(fn (Post $post): bool => $post->is($firstPost))
-        ->andReturn('featured-images/new-first.png')
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->expects('generate')
+        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($firstPost)))
+        ->returns('featured-images/new-first.png')
         ->ordered();
-    $generator->shouldReceive('generate')
-        ->once()
-        ->withArgs(fn (Post $post): bool => $post->is($secondPost))
-        ->andReturn('featured-images/new-second.png')
+    $generator->expects('generate')
+        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($secondPost)))
+        ->returns('featured-images/new-second.png')
         ->ordered();
     app()->instance(FeaturedImageGenerator::class, $generator);
 
@@ -104,11 +103,10 @@ it('propagates generator failures without persisting an image path', function ()
         'status' => PublishStatus::Draft,
     ]);
 
-    $generator = Mockery::mock(FeaturedImageGenerator::class);
-    $generator->shouldReceive('generate')
-        ->once()
-        ->withArgs(fn (Post $generatedPost): bool => $generatedPost->is($post))
-        ->andThrow(new RuntimeException('Image generation failed.'));
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->expects('generate')
+        ->with(Argument::satisfies(fn (Post $generatedPost): bool => $generatedPost->is($post)))
+        ->throws(new RuntimeException('Image generation failed.'));
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     expect(fn () => Artisan::call('posts:generate-images'))

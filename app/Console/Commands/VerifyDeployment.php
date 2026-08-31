@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\NightwatchHealthMonitor;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -11,12 +12,13 @@ use Illuminate\Support\Facades\Process;
 use Spatie\Backup\BackupDestination\BackupDestination;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
-#[Description('Verify the deployed commit, migrations, runtime heartbeats, and backup freshness')]
+#[Description('Verify the deployed commit, migrations, monitoring, runtime heartbeats, and backup freshness')]
 class VerifyDeployment extends Command
 {
     public function __construct(
         private readonly Migrator $migrator,
         private readonly RuntimeHealthMonitor $runtimeHealthMonitor,
+        private readonly NightwatchHealthMonitor $nightwatchHealthMonitor,
     ) {
         parent::__construct();
     }
@@ -27,6 +29,7 @@ class VerifyDeployment extends Command
             $this->commitFailure(),
             $this->migrationFailure(),
             $this->runtimeFailure(),
+            $this->nightwatchFailure(),
             $this->backupFailure(),
             $this->responsiveMediaFailure(),
         ]);
@@ -107,6 +110,17 @@ class VerifyDeployment extends Command
                 || $newestBackup->date()->lt(now()->subHours($maxAge))) {
                 return 'One or more backup destinations do not contain a fresh backup.';
             }
+        }
+
+        return null;
+    }
+
+    private function nightwatchFailure(): ?string
+    {
+        try {
+            $this->nightwatchHealthMonitor->ensureHealthy();
+        } catch (\RuntimeException) {
+            return 'The Nightwatch agent is unavailable.';
         }
 
         return null;

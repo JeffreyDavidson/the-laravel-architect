@@ -1,9 +1,11 @@
 <?php
 
 use App\Services\ResponsiveImageVariants;
+use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
 
 beforeEach(function () {
     Storage::fake('public');
@@ -60,43 +62,40 @@ it('does not upscale images to create responsive variants', function () {
 
 it('does not delete existing variants when a replacement write fails', function () {
     $contents = UploadedFile::fake()->image('project.png', 1280, 72)->getContent();
-    $disk = Mockery::mock(FilesystemAdapter::class);
-    $disk->shouldReceive('exists')
-        ->once()
+    $disk = Double::for(FilesystemAdapter::class);
+    $disk->expects('exists')
         ->with('projects/project.png')
-        ->andReturnTrue();
-    $disk->shouldReceive('get')
-        ->once()
+        ->returns(true);
+    $disk->expects('get')
         ->with('projects/project.png')
-        ->andReturn($contents);
-    $disk->shouldReceive('put')
-        ->once()
-        ->andReturnFalse();
-    $disk->shouldNotReceive('delete');
-    Storage::shouldReceive('disk')
-        ->once()
+        ->returns($contents);
+    $disk->expects('put')
+        ->returns(false);
+    $disk->allows('delete')->never();
+    $filesystem = Double::for(Factory::class);
+    $filesystem->expects('disk')
         ->with('public')
-        ->andReturn($disk);
+        ->returns($disk);
+    Storage::swap($filesystem);
 
     expect(app(ResponsiveImageVariants::class)->generate('projects/project.png'))->toBeFalse();
 });
 
 it('does not delete existing variants when the original cannot be read', function () {
-    $disk = Mockery::mock(FilesystemAdapter::class);
-    $disk->shouldReceive('exists')
-        ->once()
+    $disk = Double::for(FilesystemAdapter::class);
+    $disk->expects('exists')
         ->with('projects/project.png')
-        ->andReturnTrue();
-    $disk->shouldReceive('get')
-        ->once()
+        ->returns(true);
+    $disk->expects('get')
         ->with('projects/project.png')
-        ->andReturnNull();
-    $disk->shouldNotReceive('put');
-    $disk->shouldNotReceive('delete');
-    Storage::shouldReceive('disk')
-        ->once()
+        ->returns(null);
+    $disk->allows('put')->never();
+    $disk->allows('delete')->never();
+    $filesystem = Double::for(Factory::class);
+    $filesystem->expects('disk')
         ->with('public')
-        ->andReturn($disk);
+        ->returns($disk);
+    Storage::swap($filesystem);
 
     expect(app(ResponsiveImageVariants::class)->generate('projects/project.png'))->toBeFalse();
 });

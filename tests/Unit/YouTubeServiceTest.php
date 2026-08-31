@@ -4,6 +4,9 @@ use App\Services\YouTubeService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
+use Psr\Log\LoggerInterface;
 
 beforeEach(function () {
     Cache::flush();
@@ -38,7 +41,10 @@ it('uses zero when the last known subscriber count is malformed', function () {
 
 it('does not replace the last known count when YouTube returns malformed data', function () {
     Cache::put('youtube.subscriber_count.last_known', 9876, now()->addDay());
-    Log::spy();
+    $logger = Double::for(LoggerInterface::class);
+    $logger->expects('warning')
+        ->with('Unable to refresh the YouTube subscriber count.', Argument::type('array'));
+    Log::swap($logger);
     Http::fake([
         'www.googleapis.com/youtube/v3/channels*' => Http::response(['items' => []]),
     ]);
@@ -47,30 +53,30 @@ it('does not replace the last known count when YouTube returns malformed data', 
         ->and(Cache::get('youtube.subscriber_count'))->toBeNull()
         ->and(Cache::get('youtube.subscriber_count.last_known'))->toBe(9876);
 
-    Log::shouldHaveReceived('warning')
-        ->once()
-        ->withArgs(fn (string $message): bool => $message === 'Unable to refresh the YouTube subscriber count.');
 });
 
 it('does not expose the API key or request URL when subscriber refresh fails', function () {
     config()->set('services.youtube.api_key', 'secret-youtube-api-key');
     config()->set('services.youtube.channel_id', 'channel-id');
     Cache::put('youtube.subscriber_count.last_known', 9876, now()->addDay());
-    Log::spy();
+    $logger = Double::for(LoggerInterface::class);
+    $logger->expects('warning')
+        ->with(
+            'Unable to refresh the YouTube subscriber count.',
+            Argument::satisfies(function (array $context): bool {
+                $loggedData = json_encode($context, JSON_THROW_ON_ERROR);
+
+                return ! str_contains($loggedData, 'secret-youtube-api-key')
+                    && ! str_contains($loggedData, 'www.googleapis.com');
+            }),
+        );
+    Log::swap($logger);
     Http::fake(fn () => throw new RuntimeException(
         'Request failed for https://www.googleapis.com/youtube/v3/channels?key=secret-youtube-api-key',
     ));
 
     expect(YouTubeService::subscriberCount())->toBe(9876);
 
-    Log::shouldHaveReceived('warning')
-        ->once()
-        ->withArgs(function (string $message, array $context): bool {
-            $loggedData = json_encode([$message, $context], JSON_THROW_ON_ERROR);
-
-            return ! str_contains($loggedData, 'secret-youtube-api-key')
-                && ! str_contains($loggedData, 'www.googleapis.com');
-        });
 });
 
 it('returns a credential-free failure when a video request fails', function () {
