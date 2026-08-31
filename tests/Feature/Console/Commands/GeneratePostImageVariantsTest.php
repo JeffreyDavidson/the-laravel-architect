@@ -5,6 +5,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -43,4 +44,18 @@ it('backfills responsive variants for existing post images', function () {
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->doesntExpectOutputToContain('Skipped')
         ->assertSuccessful();
+});
+
+it('refuses to overlap another post image generation run', function () {
+    $lock = Cache::lock('framework/command-posts:generate-image-variants', 60);
+
+    expect($lock->get())->toBeTrue();
+
+    try {
+        $this->artisan('posts:generate-image-variants')
+            ->expectsOutputToContain('The [posts:generate-image-variants] command is already running.')
+            ->assertFailed();
+    } finally {
+        $lock->release();
+    }
 });

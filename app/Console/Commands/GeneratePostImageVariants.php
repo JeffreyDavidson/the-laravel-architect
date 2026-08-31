@@ -7,11 +7,16 @@ use App\Services\ResponsiveImageVariants;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('posts:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing post images')]
-class GeneratePostImageVariants extends Command
+class GeneratePostImageVariants extends Command implements Isolatable
 {
+    protected $isolated = true;
+
+    protected $isolatedExitCode = self::FAILURE;
+
     public function handle(ResponsiveImageVariants $images): int
     {
         $generated = 0;

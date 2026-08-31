@@ -5,11 +5,16 @@ namespace App\Console\Commands;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('media:repair-responsive-images {--force : Regenerate variants that already pass verification}')]
 #[Description('Repair responsive image variants for stored project, post, and podcast media')]
-class RepairResponsiveImages extends Command
+class RepairResponsiveImages extends Command implements Isolatable
 {
+    protected $isolated = true;
+
+    protected $isolatedExitCode = self::FAILURE;
+
     public function handle(): int
     {
         $arguments = $this->option('force') ? ['--force' => true] : [];
