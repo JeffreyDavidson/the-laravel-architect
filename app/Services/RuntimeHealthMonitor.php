@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Support;
+namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 use RuntimeException;
 
-class RuntimeHealth
+class RuntimeHealthMonitor
 {
     public const string QUEUE_HEARTBEAT_KEY = 'health.runtime.queue.last_seen_at';
 

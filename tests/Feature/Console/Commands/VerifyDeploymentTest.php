@@ -2,7 +2,7 @@
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -27,8 +27,8 @@ beforeEach(function () {
     Storage::fake('deployment-backups');
     Storage::fake('public');
     Storage::disk('deployment-backups')->put('deployment-test/fresh.zip', 'backup');
-    Cache::put(RuntimeHealth::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
-    Cache::put(RuntimeHealth::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 });
 
 it('accepts a healthy deployment at the expected commit', function () {
@@ -62,7 +62,7 @@ it('reports pending database migrations', function () {
 
 it('reports stale runtime heartbeats and missing backups', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
-    Cache::put(RuntimeHealth::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
     Storage::disk('deployment-backups')->delete('deployment-test/fresh.zip');
 
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\SendContactMessage;
 use App\Http\Requests\ContactRequest;
-use App\Support\Turnstile;
+use App\Services\TurnstileVerifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -12,7 +12,7 @@ class SubmitContactController extends Controller
 {
     public function __invoke(
         ContactRequest $request,
-        Turnstile $turnstile,
+        TurnstileVerifier $turnstileVerifier,
         SendContactMessage $sendContactMessage,
     ): RedirectResponse {
         if ($request->filled('website')) {
@@ -29,7 +29,7 @@ class SubmitContactController extends Controller
 
         $turnstileAction = config('services.turnstile.contact_action');
 
-        if (! is_string($turnstileAction) || ! $turnstile->passes($request, $turnstileAction)) {
+        if (! is_string($turnstileAction) || ! $turnstileVerifier->passes($request, $turnstileAction)) {
             return back()
                 ->withErrors([
                     'cf-turnstile-response' => 'Please verify that you are human and try again.',

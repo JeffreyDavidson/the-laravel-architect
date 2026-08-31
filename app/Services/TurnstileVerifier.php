@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Support;
+namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class Turnstile
+class TurnstileVerifier
 {
     public function passes(Request $request, string $expectedAction): bool
     {
