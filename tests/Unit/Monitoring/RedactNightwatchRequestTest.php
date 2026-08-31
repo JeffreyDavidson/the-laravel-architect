@@ -12,12 +12,15 @@ it('replaces sensitive request metadata with the route template', function () {
         routePath: '/newsletter/confirm/{subscriber}/{token}',
         ip: '203.0.113.10',
     );
+    $request->headers->set('Forwarded', 'for=203.0.113.10');
+    $request->headers->set('X-Custom-Identity', 'private-value');
 
     $redacted = app(RedactNightwatchRequest::class)($request);
 
     expect($redacted)->toBeTrue()
         ->and($request->url)->toBe('/newsletter/confirm/{subscriber}/{token}')
-        ->and($request->ip)->toBe('');
+        ->and($request->ip)->toBe('')
+        ->and($request->headers->all())->toBe([]);
 });
 
 it('does not retain arbitrary paths for unmatched routes', function () {
