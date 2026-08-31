@@ -31,6 +31,12 @@ Schedule::command('app:monitor-failed-jobs')
     ->withoutOverlapping()
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
+Schedule::command('media:verify-responsive-images')
+    ->dailyAt('05:00')
+    ->environments(['production'])
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('queue:prune-failed', [
     '--hours' => config('health.failed_jobs.retention_hours'),
 ])

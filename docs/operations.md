@@ -22,6 +22,8 @@ After enabling runtime monitoring or clearing the application cache, run `php ar
 
 When a release introduces responsive uploaded images, run `php artisan projects:generate-image-variants`, `php artisan posts:generate-image-variants`, and `php artisan podcasts:generate-image-variants` once after the persistent public-media directory is mounted. The commands preserve original uploads, create WebP derivatives beside them, and return a failure if a source file is missing or unsupported. Then run `php artisan media:verify-responsive-images` and require it to pass. The verifier reports aggregate results without exposing stored paths and does not modify media. Do not remove the original images.
 
+Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and regenerate or restore the affected variants before the next release.
+
 Do not run a standalone production migration unless the deployment itself cannot apply the migration and the release plan explicitly authorizes it.
 
 ## After deploying
