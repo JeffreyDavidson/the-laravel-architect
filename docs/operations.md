@@ -35,7 +35,7 @@ NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD=false
 
 Never store the token in the repository. The Forge integration manages the required application-specific agent process. Do not add a second manual process for the same site. If the built-in integration is unavailable, add one Forge background process named `Nightwatch` that runs `php artisan nightwatch:agent` from the site directory with one process and a 15-second graceful shutdown.
 
-After enabling or changing Nightwatch, refresh the application's cached configuration and run `php artisan nightwatch:status`. Require a successful status before considering monitoring operational. Keep request sampling at 10% initially and adjust it only after reviewing event volume. Request payload and exception source-code capture must remain disabled unless a separate privacy review approves them.
+After enabling or changing Nightwatch, refresh the application's cached configuration and run `php artisan nightwatch:status`. Require a successful status before considering monitoring operational. Keep request sampling at 10% initially and adjust it only after reviewing event volume. Request payload and exception source-code capture must remain disabled unless a separate privacy review approves them. The application deliberately reports only Nightwatch's internal authenticated-user identifier; do not restore the package defaults that also report user names and email addresses without the same review.
 
 After enabling runtime monitoring or clearing the application cache, run `php artisan schedule:run` and allow the queue worker to process the heartbeat probe before relying on `/up`.
 
