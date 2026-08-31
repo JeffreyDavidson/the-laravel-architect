@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Monitoring\RedactNightwatchRequest;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Nightwatch::user(fn (Authenticatable $user): array => []);
+        Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
 
         Event::listen(DiagnosingHealth::class, function (): void {
             DB::table('migrations')->limit(1)->exists();
