@@ -53,6 +53,45 @@ class ResponsiveImageVariants
         Storage::disk('public')->delete(array_values($this->paths($originalPath)));
     }
 
+    public function hasRequiredVariants(string $originalPath): bool
+    {
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($originalPath)) {
+            return false;
+        }
+
+        $manager = new ImageManager(new Driver);
+
+        try {
+            $source = $manager->read($disk->get($originalPath));
+        } catch (DecoderException) {
+            return false;
+        }
+
+        foreach ($this->paths($originalPath) as $width => $variantPath) {
+            if ($width > $source->width()) {
+                continue;
+            }
+
+            if (! $disk->exists($variantPath)) {
+                return false;
+            }
+
+            try {
+                $variant = $manager->read($disk->get($variantPath));
+            } catch (DecoderException) {
+                return false;
+            }
+
+            if ($variant->width() !== $width || $variant->origin()->mediaType() !== 'image/webp') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function srcset(?string $originalPath): ?string
     {
         if (blank($originalPath)) {
