@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Project;
 use App\Services\ResponsiveImageVariants;
+use Illuminate\Support\Facades\Log;
 
 class ProjectObserver
 {
@@ -42,6 +43,8 @@ class ProjectObserver
             return;
         }
 
-        $this->images->generate($path);
+        if (! $this->images->generate($path)) {
+            Log::warning('Responsive project image generation failed. Run projects:generate-image-variants to retry.');
+        }
     }
 }
