@@ -8,9 +8,9 @@ use App\Monitoring\RedactNightwatchException;
 use App\Monitoring\RedactNightwatchOutgoingRequest;
 use App\Monitoring\RedactNightwatchQuery;
 use App\Monitoring\RedactNightwatchRequest;
+use App\Monitoring\ResolveNightwatchUser;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Nightwatch::user(fn (Authenticatable $user): array => []);
+        Nightwatch::user(app(ResolveNightwatchUser::class));
         Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
         Nightwatch::redactExceptions(app(RedactNightwatchException::class));
