@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Monitoring\RedactNightwatchCacheEvent;
 use App\Monitoring\RedactNightwatchCommand;
 use App\Monitoring\RedactNightwatchException;
 use App\Monitoring\RedactNightwatchOutgoingRequest;
@@ -34,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Nightwatch::user(fn (Authenticatable $user): array => []);
+        Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
         Nightwatch::redactExceptions(app(RedactNightwatchException::class));
         Nightwatch::redactOutgoingRequests(app(RedactNightwatchOutgoingRequest::class));
