@@ -48,6 +48,7 @@ class VerifyProductionConfiguration extends Command
             [$this->hasValidHeartbeatMaxAge(config('health.runtime.max_age_seconds')), 'RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.'],
             [config('nightwatch.enabled') === true, 'NIGHTWATCH_ENABLED must be true.'],
             [$this->isConfigured(config('nightwatch.token')), 'NIGHTWATCH_TOKEN must be configured.'],
+            [$this->hasSafeNightwatchRequestSampleRate(config('nightwatch.sampling.requests')), 'NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.'],
             [config('nightwatch.capture_request_payload') === false, 'NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.'],
             [config('nightwatch.capture_exception_source_code') === false, 'NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.'],
             [config('nightwatch.filtering.ignore_mail') === true, 'NIGHTWATCH_IGNORE_MAIL must be true.'],
@@ -167,6 +168,13 @@ class VerifyProductionConfiguration extends Command
     private function hasValidHeartbeatMaxAge(mixed $maxAge): bool
     {
         return is_int($maxAge) && $maxAge >= 60;
+    }
+
+    private function hasSafeNightwatchRequestSampleRate(mixed $sampleRate): bool
+    {
+        return is_float($sampleRate)
+            && $sampleRate > 0
+            && $sampleRate <= 0.1;
     }
 
     private function isPositiveInteger(mixed $value): bool

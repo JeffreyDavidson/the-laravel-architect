@@ -28,6 +28,7 @@ beforeEach(function () {
         'health.runtime.max_age_seconds' => 300,
         'nightwatch.enabled' => true,
         'nightwatch.token' => 'production-nightwatch-token',
+        'nightwatch.sampling.requests' => 0.1,
         'nightwatch.capture_request_payload' => false,
         'nightwatch.capture_exception_source_code' => false,
         'nightwatch.filtering.ignore_mail' => true,
@@ -39,6 +40,27 @@ it('accepts a safe production configuration', function () {
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
+
+it('accepts a lower Nightwatch request sample rate', function () {
+    config()->set('nightwatch.sampling.requests', 0.05);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutput('Production configuration is ready.')
+        ->assertSuccessful();
+});
+
+it('rejects an unsafe Nightwatch request sample rate', function (mixed $sampleRate) {
+    config()->set('nightwatch.sampling.requests', $sampleRate);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.')
+        ->assertFailed();
+})->with([
+    'disabled' => 0.0,
+    'negative' => -0.1,
+    'above the ceiling' => 0.11,
+    'malformed' => '0.1',
+]);
 
 it('accepts a fully configured NAS backup disk', function () {
     config()->set([
@@ -101,6 +123,7 @@ it('reports every unsafe production setting without exposing its value', functio
         'health.runtime.max_age_seconds' => 30,
         'nightwatch.enabled' => false,
         'nightwatch.token' => null,
+        'nightwatch.sampling.requests' => 1.0,
         'nightwatch.capture_request_payload' => true,
         'nightwatch.capture_exception_source_code' => true,
         'nightwatch.filtering.ignore_mail' => false,
@@ -128,6 +151,7 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.')
         ->expectsOutputToContain('NIGHTWATCH_ENABLED must be true.')
         ->expectsOutputToContain('NIGHTWATCH_TOKEN must be configured.')
+        ->expectsOutputToContain('NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.')
         ->expectsOutputToContain('NIGHTWATCH_IGNORE_MAIL must be true.')
