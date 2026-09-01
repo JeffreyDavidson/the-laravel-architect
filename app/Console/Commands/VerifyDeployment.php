@@ -29,6 +29,7 @@ class VerifyDeployment extends Command
             $this->commitFailure(),
             $this->migrationFailure(),
             $this->runtimeFailure(),
+            $this->nightwatchDeploymentFailure(),
             $this->nightwatchFailure(),
             $this->backupFailure(),
             $this->responsiveMediaFailure(),
@@ -124,6 +125,16 @@ class VerifyDeployment extends Command
         }
 
         return null;
+    }
+
+    private function nightwatchDeploymentFailure(): ?string
+    {
+        $expectedCommit = trim((string) $this->argument('commit'));
+        $nightwatchDeployment = config('nightwatch.deployment');
+
+        return is_string($nightwatchDeployment) && hash_equals($expectedCommit, $nightwatchDeployment)
+            ? null
+            : 'Nightwatch is not configured with the expected deployment identifier.';
     }
 
     private function responsiveMediaFailure(): ?string

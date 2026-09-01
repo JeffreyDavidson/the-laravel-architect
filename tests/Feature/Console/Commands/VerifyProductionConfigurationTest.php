@@ -28,10 +28,20 @@ beforeEach(function () {
         'health.runtime.max_age_seconds' => 300,
         'nightwatch.enabled' => true,
         'nightwatch.token' => 'production-nightwatch-token',
+        'nightwatch.server' => 'production-web-1',
         'nightwatch.sampling.requests' => 0.1,
+        'nightwatch.sampling.commands' => 1.0,
+        'nightwatch.sampling.exceptions' => 1.0,
+        'nightwatch.sampling.scheduled_tasks' => 1.0,
         'nightwatch.capture_request_payload' => false,
         'nightwatch.capture_exception_source_code' => false,
         'nightwatch.filtering.ignore_mail' => true,
+        'nightwatch.redact_payload_fields' => ['_token', 'password', 'password_confirmation', 'email', 'name', 'message'],
+        'nightwatch.redact_headers' => ['Authorization', 'Cookie', 'Proxy-Authorization', 'X-XSRF-TOKEN', 'X-Forwarded-For', 'X-Real-IP', 'CF-Connecting-IP', 'True-Client-IP'],
+        'nightwatch.ingest.uri' => '127.0.0.1:2407',
+        'nightwatch.ingest.timeout' => 0.5,
+        'nightwatch.ingest.connection_timeout' => 0.5,
+        'nightwatch.ingest.event_buffer' => 500,
     ]);
 });
 
@@ -123,10 +133,20 @@ it('reports every unsafe production setting without exposing its value', functio
         'health.runtime.max_age_seconds' => 30,
         'nightwatch.enabled' => false,
         'nightwatch.token' => null,
+        'nightwatch.server' => null,
         'nightwatch.sampling.requests' => 1.0,
+        'nightwatch.sampling.commands' => 0.0,
+        'nightwatch.sampling.exceptions' => 1.1,
+        'nightwatch.sampling.scheduled_tasks' => '1.0',
         'nightwatch.capture_request_payload' => true,
         'nightwatch.capture_exception_source_code' => true,
         'nightwatch.filtering.ignore_mail' => false,
+        'nightwatch.redact_payload_fields' => ['_token'],
+        'nightwatch.redact_headers' => ['Authorization'],
+        'nightwatch.ingest.uri' => null,
+        'nightwatch.ingest.timeout' => 0.0,
+        'nightwatch.ingest.connection_timeout' => -1.0,
+        'nightwatch.ingest.event_buffer' => 0,
         'logging.channels.nightwatch.handler' => null,
     ]);
 
@@ -151,10 +171,20 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.')
         ->expectsOutputToContain('NIGHTWATCH_ENABLED must be true.')
         ->expectsOutputToContain('NIGHTWATCH_TOKEN must be configured.')
+        ->expectsOutputToContain('NIGHTWATCH_SERVER must identify the monitored server.')
         ->expectsOutputToContain('NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.')
+        ->expectsOutputToContain('NIGHTWATCH_COMMAND_SAMPLE_RATE must be greater than zero and no more than 1.0.')
+        ->expectsOutputToContain('NIGHTWATCH_EXCEPTION_SAMPLE_RATE must be greater than zero and no more than 1.0.')
+        ->expectsOutputToContain('NIGHTWATCH_SCHEDULED_TASK_SAMPLE_RATE must be greater than zero and no more than 1.0.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.')
         ->expectsOutputToContain('NIGHTWATCH_IGNORE_MAIL must be true.')
+        ->expectsOutputToContain('Nightwatch payload redactions must include every required sensitive field.')
+        ->expectsOutputToContain('Nightwatch header redactions must include every required credential and client-address header.')
+        ->expectsOutputToContain('NIGHTWATCH_INGEST_URI must be configured.')
+        ->expectsOutputToContain('NIGHTWATCH_INGEST_TIMEOUT must be greater than zero.')
+        ->expectsOutputToContain('NIGHTWATCH_INGEST_CONNECTION_TIMEOUT must be greater than zero.')
+        ->expectsOutputToContain('NIGHTWATCH_INGEST_EVENT_BUFFER must be at least 1.')
         ->expectsOutputToContain('Nightwatch log capture must remain disabled.')
         ->doesntExpectOutput('admin@example.test')
         ->assertFailed();

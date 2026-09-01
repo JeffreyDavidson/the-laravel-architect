@@ -24,6 +24,7 @@ beforeEach(function () {
         ],
         'health.backup.max_age_hours' => 36,
         'health.runtime.max_age_seconds' => 300,
+        'nightwatch.deployment' => 'expected-commit',
     ]);
 
     Storage::fake('deployment-backups');
@@ -87,6 +88,17 @@ it('reports an unavailable Nightwatch agent without exposing its error', functio
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The Nightwatch agent is unavailable.')
         ->doesntExpectOutput('private ingest address')
+        ->assertFailed();
+});
+
+it('reports mismatched Nightwatch deployment metadata without exposing either identifier', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    config()->set('nightwatch.deployment', 'previous-commit');
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('Nightwatch is not configured with the expected deployment identifier.')
+        ->doesntExpectOutput('previous-commit')
+        ->doesntExpectOutput('expected-commit')
         ->assertFailed();
 });
 
