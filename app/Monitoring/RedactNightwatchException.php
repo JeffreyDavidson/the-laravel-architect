@@ -2,7 +2,6 @@
 
 namespace App\Monitoring;
 
-use Illuminate\Database\QueryException;
 use Laravel\Nightwatch\Core;
 use Laravel\Nightwatch\Records\Exception;
 use Laravel\Nightwatch\State\CommandState;
@@ -15,12 +14,11 @@ final class RedactNightwatchException
 
     public function __invoke(Exception $exception): bool
     {
-        if ($exception->class !== QueryException::class) {
-            return true;
-        }
+        $exception->message = 'Exception message redacted.';
 
-        $exception->message = 'Database query failed.';
-        $this->nightwatch->executionState->exceptionPreview = $exception->message;
+        if (! $exception->handled) {
+            $this->nightwatch->executionState->exceptionPreview = $exception->message;
+        }
 
         return true;
     }
