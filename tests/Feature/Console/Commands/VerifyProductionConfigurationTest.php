@@ -104,6 +104,7 @@ it('reports every unsafe production setting without exposing its value', functio
         'nightwatch.capture_request_payload' => true,
         'nightwatch.capture_exception_source_code' => true,
         'nightwatch.filtering.ignore_mail' => false,
+        'logging.channels.nightwatch.handler' => null,
     ]);
 
     $this->artisan('app:verify-production')
@@ -130,6 +131,7 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.')
         ->expectsOutputToContain('NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.')
         ->expectsOutputToContain('NIGHTWATCH_IGNORE_MAIL must be true.')
+        ->expectsOutputToContain('Nightwatch log capture must remain disabled.')
         ->doesntExpectOutput('admin@example.test')
         ->assertFailed();
 });

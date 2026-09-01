@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Monolog\Handler\NullHandler;
 
 #[Signature('app:verify-production')]
 #[Description('Verify that required production settings are safely configured')]
@@ -50,6 +51,7 @@ class VerifyProductionConfiguration extends Command
             [config('nightwatch.capture_request_payload') === false, 'NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.'],
             [config('nightwatch.capture_exception_source_code') === false, 'NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.'],
             [config('nightwatch.filtering.ignore_mail') === true, 'NIGHTWATCH_IGNORE_MAIL must be true.'],
+            [config('logging.channels.nightwatch.handler') === NullHandler::class, 'Nightwatch log capture must remain disabled.'],
         ];
 
         $failures = array_map(
