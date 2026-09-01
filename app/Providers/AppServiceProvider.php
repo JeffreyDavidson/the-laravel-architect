@@ -6,6 +6,7 @@ use App\Monitoring\RedactNightwatchCacheEvent;
 use App\Monitoring\RedactNightwatchCommand;
 use App\Monitoring\RedactNightwatchException;
 use App\Monitoring\RedactNightwatchOutgoingRequest;
+use App\Monitoring\RedactNightwatchQuery;
 use App\Monitoring\RedactNightwatchRequest;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
         Nightwatch::redactExceptions(app(RedactNightwatchException::class));
         Nightwatch::redactOutgoingRequests(app(RedactNightwatchOutgoingRequest::class));
+        Nightwatch::redactQueries(app(RedactNightwatchQuery::class));
         Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
 
         Event::listen(DiagnosingHealth::class, function (): void {
