@@ -34,9 +34,32 @@ NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD=false
 NIGHTWATCH_IGNORE_MAIL=true
 ```
 
-Never store the token in the repository. The Forge integration manages the required application-specific agent process. Do not add a second manual process for the same site. If the built-in integration is unavailable, add one Forge background process named `Nightwatch` that runs `php artisan nightwatch:agent` from the site directory with one process and a 15-second graceful shutdown.
+Never store the token in the repository. Leave the ingest URI, timeouts, event buffer, and server identifier at the package defaults unless the Forge integration requires an explicit override. The production verifier requires a nonempty server identifier, positive ingest timeouts, and a positive event buffer. The Forge integration manages the required application-specific agent process. Do not add a second manual process for the same site. If the built-in integration is unavailable, add one Forge background process named `Nightwatch` that runs `php artisan nightwatch:agent` from the site directory with one process and a 15-second graceful shutdown.
 
-After enabling or changing Nightwatch, refresh the application's cached configuration and run `php artisan nightwatch:status`. Require a successful status before considering monitoring operational. Keep request sampling at 10% initially and adjust it only after reviewing event volume. Request payload, request-header, exception source-code, mail-event, and application-log capture must remain disabled unless a separate privacy review approves them. Contact-mail subjects and free-form log messages or context can contain personal or secret values. The configured `nightwatch` log channel intentionally uses a null handler, even if it is accidentally added to `LOG_STACK`. Request URLs and execution previews replace complete paths and IP addresses with Laravel route templates so newsletter tokens and signed URL signatures are not ingested by request or child-event telemetry. Unmatched routes use a fixed placeholder. Outgoing-request telemetry retains only each URL's scheme and host; user information, ports, paths, query strings, and fragments are removed. Command telemetry retains only the registered command name so arguments and options are not ingested. Cache keys and authenticated user IDs are replaced with application-keyed HMAC digests, preserving correlation without exposing source values. Query telemetry preserves SQL structure while replacing raw string and numeric literals and comments. Exception telemetry preserves class, code, file, line, and a type-only stack trace while replacing all free-form messages and unhandled-exception previews. Do not restore Nightwatch's default user details or raw identifiers without the same privacy review.
+After enabling or changing Nightwatch, refresh the application's cached configuration and run `php artisan nightwatch:status`. Require a successful status before considering monitoring operational. Keep request sampling at 10% initially; production verification requires a positive rate no higher than 10%, and a lower rate may be used after reviewing event volume. Command, exception, and scheduled-task sampling must remain positive and no higher than 100%. Request payload, request-header, exception source-code, mail-event, and application-log capture must remain disabled unless a separate privacy review approves them. The production verifier also prevents required payload and header redactions from being removed. Contact-mail subjects and free-form log messages or context can contain personal or secret values. The configured `nightwatch` log channel intentionally uses a null handler, even if it is accidentally added to `LOG_STACK`. Request URLs and execution previews replace complete paths and IP addresses with Laravel route templates so newsletter tokens and signed URL signatures are not ingested by request or child-event telemetry. Unmatched routes use a fixed placeholder. Outgoing-request telemetry retains only each URL's scheme and host; user information, ports, paths, query strings, and fragments are removed. Command telemetry retains only the registered command name so arguments and options are not ingested. Cache keys and authenticated user IDs are replaced with application-keyed HMAC digests, preserving correlation without exposing source values. Query telemetry preserves SQL structure while replacing raw string and numeric literals and comments. Exception telemetry preserves class, code, file, line, and a type-only stack trace while replacing all free-form messages and unhandled-exception previews. Do not restore Nightwatch's default user details or raw identifiers without the same privacy review.
+
+### Nightwatch deployment tracking
+
+Forge exposes the immutable release commit as `FORGE_DEPLOY_COMMIT`. Run Nightwatch's deployment command after the release caches have been rebuilt and the queue worker has been restarted:
+
+```bash
+php artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT"
+```
+
+The application configuration falls back to the same Forge value for `nightwatch.deployment`. Run `php artisan app:verify-deployment "$FORGE_DEPLOY_COMMIT"` afterward; it fails if the application is reporting a different Nightwatch deployment identifier. The package's deployment command reports API failures in its output but currently exits successfully, so confirm that the matching deployment marker appears in the Nightwatch dashboard rather than relying on its exit code alone.
+
+### Nightwatch dashboard baseline
+
+After production telemetry is visible, configure the dashboard to notify the operational recipient for any unhandled exception, failed queued job, and failed scheduled task. Establish slow-request and slow-query thresholds from observed production baselines instead of arbitrary local timings. Review sampled request volume after the first full traffic cycle and lower the request rate when the retained data is sufficient; do not raise it above 10% without a cost and privacy review.
+
+After the first deployment and after material Nightwatch configuration changes, confirm that:
+
+- the expected deployment marker and server identifier are visible;
+- sampled requests use route templates and contain no IP address, headers, payload, or route parameter values;
+- exceptions, SQL, cache keys, user identifiers, commands, and outgoing URLs retain only their documented redacted forms;
+- queued jobs, scheduled tasks, and notifications are arriving without message bodies or recipient details;
+- mail and application-log events are absent;
+- each configured alert reaches the monitored operational destination.
 
 After enabling runtime monitoring or clearing the application cache, run `php artisan schedule:run` and allow the queue worker to process the heartbeat probe before relying on `/up`.
 
@@ -67,6 +90,7 @@ The command fails when the checked-out commit differs, migrations are pending, t
 - Public media URLs return successful responses.
 - The queue worker and scheduler are active.
 - `php artisan nightwatch:status` confirms the Nightwatch agent is accepting connections.
+- The Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
 

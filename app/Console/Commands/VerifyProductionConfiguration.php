@@ -11,6 +11,26 @@ use Monolog\Handler\NullHandler;
 #[Description('Verify that required production settings are safely configured')]
 class VerifyProductionConfiguration extends Command
 {
+    private const array REQUIRED_NIGHTWATCH_PAYLOAD_REDACTIONS = [
+        '_token',
+        'password',
+        'password_confirmation',
+        'email',
+        'name',
+        'message',
+    ];
+
+    private const array REQUIRED_NIGHTWATCH_HEADER_REDACTIONS = [
+        'Authorization',
+        'Cookie',
+        'Proxy-Authorization',
+        'X-XSRF-TOKEN',
+        'X-Forwarded-For',
+        'X-Real-IP',
+        'CF-Connecting-IP',
+        'True-Client-IP',
+    ];
+
     public function handle(): int
     {
         $databaseConnection = config('database.default');
@@ -48,9 +68,20 @@ class VerifyProductionConfiguration extends Command
             [$this->hasValidHeartbeatMaxAge(config('health.runtime.max_age_seconds')), 'RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.'],
             [config('nightwatch.enabled') === true, 'NIGHTWATCH_ENABLED must be true.'],
             [$this->isConfigured(config('nightwatch.token')), 'NIGHTWATCH_TOKEN must be configured.'],
+            [$this->isConfigured(config('nightwatch.server')), 'NIGHTWATCH_SERVER must identify the monitored server.'],
+            [$this->hasValidNightwatchSampleRate(config('nightwatch.sampling.requests'), 0.1), 'NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.'],
+            [$this->hasValidNightwatchSampleRate(config('nightwatch.sampling.commands')), 'NIGHTWATCH_COMMAND_SAMPLE_RATE must be greater than zero and no more than 1.0.'],
+            [$this->hasValidNightwatchSampleRate(config('nightwatch.sampling.exceptions')), 'NIGHTWATCH_EXCEPTION_SAMPLE_RATE must be greater than zero and no more than 1.0.'],
+            [$this->hasValidNightwatchSampleRate(config('nightwatch.sampling.scheduled_tasks')), 'NIGHTWATCH_SCHEDULED_TASK_SAMPLE_RATE must be greater than zero and no more than 1.0.'],
             [config('nightwatch.capture_request_payload') === false, 'NIGHTWATCH_CAPTURE_REQUEST_PAYLOAD must be false.'],
             [config('nightwatch.capture_exception_source_code') === false, 'NIGHTWATCH_CAPTURE_EXCEPTION_SOURCE_CODE must be false.'],
             [config('nightwatch.filtering.ignore_mail') === true, 'NIGHTWATCH_IGNORE_MAIL must be true.'],
+            [$this->containsRequiredNightwatchRedactions(config('nightwatch.redact_payload_fields'), self::REQUIRED_NIGHTWATCH_PAYLOAD_REDACTIONS), 'Nightwatch payload redactions must include every required sensitive field.'],
+            [$this->containsRequiredNightwatchRedactions(config('nightwatch.redact_headers'), self::REQUIRED_NIGHTWATCH_HEADER_REDACTIONS), 'Nightwatch header redactions must include every required credential and client-address header.'],
+            [$this->isConfigured(config('nightwatch.ingest.uri')), 'NIGHTWATCH_INGEST_URI must be configured.'],
+            [$this->isPositiveNumber(config('nightwatch.ingest.timeout')), 'NIGHTWATCH_INGEST_TIMEOUT must be greater than zero.'],
+            [$this->isPositiveNumber(config('nightwatch.ingest.connection_timeout')), 'NIGHTWATCH_INGEST_CONNECTION_TIMEOUT must be greater than zero.'],
+            [$this->isPositiveInteger(config('nightwatch.ingest.event_buffer')), 'NIGHTWATCH_INGEST_EVENT_BUFFER must be at least 1.'],
             [config('logging.channels.nightwatch.handler') === NullHandler::class, 'Nightwatch log capture must remain disabled.'],
         ];
 
@@ -167,6 +198,38 @@ class VerifyProductionConfiguration extends Command
     private function hasValidHeartbeatMaxAge(mixed $maxAge): bool
     {
         return is_int($maxAge) && $maxAge >= 60;
+    }
+
+    private function hasValidNightwatchSampleRate(mixed $sampleRate, float $maximum = 1.0): bool
+    {
+        return is_float($sampleRate)
+            && $sampleRate > 0
+            && $sampleRate <= $maximum;
+    }
+
+    /**
+     * @param  list<string>  $required
+     */
+    private function containsRequiredNightwatchRedactions(mixed $configured, array $required): bool
+    {
+        if (! is_array($configured)) {
+            return false;
+        }
+
+        $normalized = array_map(
+            fn (mixed $value): string => is_string($value) ? strtolower(trim($value)) : '',
+            $configured,
+        );
+
+        return array_all(
+            $required,
+            fn (string $value): bool => in_array(strtolower($value), $normalized, true),
+        );
+    }
+
+    private function isPositiveNumber(mixed $value): bool
+    {
+        return (is_float($value) || is_int($value)) && $value > 0;
     }
 
     private function isPositiveInteger(mixed $value): bool

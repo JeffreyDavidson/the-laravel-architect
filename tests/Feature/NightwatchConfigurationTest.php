@@ -13,6 +13,13 @@ it('uses privacy-conscious Nightwatch defaults', function () {
             'handler' => NullHandler::class,
         ])
         ->and(config('nightwatch.sampling.requests'))->toBe(0.1)
+        ->and(config('nightwatch.sampling.commands'))->toBe(1.0)
+        ->and(config('nightwatch.sampling.exceptions'))->toBe(1.0)
+        ->and(config('nightwatch.sampling.scheduled_tasks'))->toBe(1.0)
+        ->and(config('nightwatch.ingest.uri'))->toBe('127.0.0.1:2407')
+        ->and(config('nightwatch.ingest.timeout'))->toBe(0.5)
+        ->and(config('nightwatch.ingest.connection_timeout'))->toBe(0.5)
+        ->and(config('nightwatch.ingest.event_buffer'))->toBe(500)
         ->and(config('nightwatch.redact_payload_fields'))->toContain(
             '_token',
             'password',
