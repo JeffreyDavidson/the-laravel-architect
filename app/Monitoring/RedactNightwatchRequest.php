@@ -12,6 +12,7 @@ final class RedactNightwatchRequest
             ? $request->routePath
             : '[unmatched route]';
         $request->ip = '';
+        $request->headers->replace([]);
 
         return true;
     }
