@@ -1,12 +1,15 @@
 <?php
 
 use App\Monitoring\RedactNightwatchRequest;
+use Laravel\Nightwatch\Core;
 use Laravel\Nightwatch\Records\Request;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
 
 it('replaces sensitive request metadata with the route template', function () {
+    $nightwatch = app(Core::class);
+    $nightwatch->executionState->executionPreview = 'GET /newsletter/confirm/42/private-token';
     $request = nightwatchRequest(
         url: 'https://thelaravelarchitect.com/newsletter/confirm/42/private-token?expires=123&signature=private-signature',
         routePath: '/newsletter/confirm/{subscriber}/{token}',
@@ -19,11 +22,14 @@ it('replaces sensitive request metadata with the route template', function () {
 
     expect($redacted)->toBeTrue()
         ->and($request->url)->toBe('/newsletter/confirm/{subscriber}/{token}')
+        ->and($nightwatch->executionState->executionPreview)->toBe('GET /newsletter/confirm/{subscriber}/{token}')
         ->and($request->ip)->toBe('')
         ->and($request->headers->all())->toBe([]);
 });
 
 it('does not retain arbitrary paths for unmatched routes', function () {
+    $nightwatch = app(Core::class);
+    $nightwatch->executionState->executionPreview = 'GET /private-value';
     $request = nightwatchRequest(
         url: 'https://thelaravelarchitect.com/private-value?token=secret',
         routePath: '',
@@ -33,6 +39,7 @@ it('does not retain arbitrary paths for unmatched routes', function () {
     app(RedactNightwatchRequest::class)($request);
 
     expect($request->url)->toBe('[unmatched route]')
+        ->and($nightwatch->executionState->executionPreview)->toBe('GET [unmatched route]')
         ->and($request->ip)->toBe('');
 });
 
