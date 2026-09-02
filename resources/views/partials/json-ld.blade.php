@@ -346,4 +346,4 @@ $jsonLd = [
     '@graph' => $schemas,
 ];
 @endphp
-<script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script nonce="{{ Vite::cspNonce() }}" type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>

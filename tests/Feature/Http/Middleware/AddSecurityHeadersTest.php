@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function expectedContentSecurityPolicy(bool $withVite = false): string
+function expectedContentSecurityPolicy(?string $scriptNonce = null, bool $withVite = false): string
 {
     $viteScriptSources = $withVite
         ? ' http://localhost:* http://127.0.0.1:* https://localhost:* https://127.0.0.1:*'
@@ -14,17 +14,33 @@ function expectedContentSecurityPolicy(bool $withVite = false): string
         ? $viteScriptSources.' ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:*'
         : '';
 
-    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
+    $scriptPolicy = $scriptNonce === null
+        ? "'unsafe-inline' 'unsafe-eval'"
+        : "'nonce-{$scriptNonce}'";
+
+    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
 }
 
 it('adds security headers to public responses', function () {
-    $this->get(route('home'))
+    $response = $this->get(route('home'));
+    $policy = $response->headers->get('Content-Security-Policy');
+
+    expect($policy)->toBeString();
+    preg_match("/'nonce-([^']+)'/", $policy, $matches);
+    $nonce = $matches[1] ?? null;
+
+    expect($nonce)->toBeString()->not->toBeEmpty()
+        ->and($policy)->not->toContain("'unsafe-inline'", "'unsafe-eval'");
+
+    $response
         ->assertOk()
-        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
+        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy($nonce))
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
         ->assertHeader('X-Content-Type-Options', 'nosniff')
-        ->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+        ->assertSee('<script nonce="'.$nonce.'">', false)
+        ->assertSee('<script nonce="'.$nonce.'" type="application/ld+json">', false);
 });
 
 it('adds transport security only to secure responses', function () {
@@ -50,7 +66,16 @@ it('adds security headers to admin responses', function () {
 it('allows the local Vite development server without weakening other environments', function () {
     $this->app->detectEnvironment(fn (): string => 'local');
 
-    $this->get(route('home'))
+    $response = $this->get(route('home'));
+    $policy = $response->headers->get('Content-Security-Policy');
+
+    expect($policy)->toBeString();
+    preg_match("/'nonce-([^']+)'/", $policy, $matches);
+    $nonce = $matches[1] ?? null;
+
+    expect($nonce)->toBeString()->not->toBeEmpty();
+
+    $response
         ->assertOk()
-        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy(withVite: true));
+        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy($nonce, withVite: true));
 });
