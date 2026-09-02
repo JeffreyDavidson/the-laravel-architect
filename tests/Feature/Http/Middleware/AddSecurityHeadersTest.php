@@ -35,6 +35,8 @@ it('adds security headers to public responses', function () {
     $response
         ->assertOk()
         ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy($nonce))
+        ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
+        ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
         ->assertHeader('X-Content-Type-Options', 'nosniff')
@@ -57,6 +59,8 @@ it('adds security headers to admin responses', function () {
     $this->get(Filament::getPanel('admin')->getLoginUrl())
         ->assertOk()
         ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
+        ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
+        ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
         ->assertHeader('X-Content-Type-Options', 'nosniff')

@@ -12,6 +12,8 @@ use UnexpectedValueException;
 final class AddSecurityHeaders
 {
     private const array HEADERS = [
+        'Cross-Origin-Opener-Policy' => 'same-origin',
+        'Cross-Origin-Resource-Policy' => 'same-origin',
         'Permissions-Policy' => 'camera=(), geolocation=(), microphone=()',
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
         'X-Content-Type-Options' => 'nosniff',
