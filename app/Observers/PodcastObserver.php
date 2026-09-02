@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Podcast;
 use App\Services\ResponsiveImageVariants;
+use Illuminate\Support\Facades\Log;
 
 class PodcastObserver
 {
@@ -42,6 +43,8 @@ class PodcastObserver
             return;
         }
 
-        $this->images->generate($path);
+        if (! $this->images->generate($path)) {
+            Log::warning('Responsive podcast image generation failed. Run podcasts:generate-image-variants to retry.');
+        }
     }
 }

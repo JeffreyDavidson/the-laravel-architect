@@ -2,7 +2,14 @@
 
 namespace App\Providers;
 
-use App\Support\RuntimeHealth;
+use App\Monitoring\RedactNightwatchCacheEvent;
+use App\Monitoring\RedactNightwatchCommand;
+use App\Monitoring\RedactNightwatchException;
+use App\Monitoring\RedactNightwatchOutgoingRequest;
+use App\Monitoring\RedactNightwatchQuery;
+use App\Monitoring\RedactNightwatchRequest;
+use App\Monitoring\ResolveNightwatchUser;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
@@ -11,6 +18,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Nightwatch\Facades\Nightwatch;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,11 +35,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Nightwatch::user(app(ResolveNightwatchUser::class));
+        Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
+        Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
+        Nightwatch::redactExceptions(app(RedactNightwatchException::class));
+        Nightwatch::redactOutgoingRequests(app(RedactNightwatchOutgoingRequest::class));
+        Nightwatch::redactQueries(app(RedactNightwatchQuery::class));
+        Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
+
         Event::listen(DiagnosingHealth::class, function (): void {
             DB::table('migrations')->limit(1)->exists();
 
             if (config('health.runtime.enabled') === true) {
-                app(RuntimeHealth::class)->ensureHealthy();
+                app(RuntimeHealthMonitor::class)->ensureHealthy();
             }
         });
 

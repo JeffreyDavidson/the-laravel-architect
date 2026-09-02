@@ -91,7 +91,7 @@ it('renders canonical structured data for the site and blog posts', function () 
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $website = collect($structuredData['@graph'])->firstWhere('@type', 'WebSite');
@@ -125,7 +125,7 @@ it('renders canonical structured data for static public pages', function (string
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $page = collect($structuredData['@graph'])->firstWhere('@type', $type);
@@ -176,7 +176,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $podcastSeries = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastSeries');
@@ -222,7 +222,7 @@ it('renders canonical structured data for project case studies', function () {
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $projectCaseStudy = collect($structuredData['@graph'])->firstWhere('@type', 'CreativeWork');
@@ -294,7 +294,7 @@ it('renders canonical structured data for public content collections', function 
             ->assertOk()
             ->getContent();
 
-        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+        preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
         $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
         $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
@@ -369,7 +369,7 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
             ->assertSee('<meta property="og:url" content="'.$url.'">', false)
             ->getContent();
 
-        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+        preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
         $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
         $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
@@ -461,7 +461,7 @@ it('uses page-specific metadata for paginated podcast archives', function () {
         ->assertDontSee('Latest Episode')
         ->getContent();
 
-    preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $content, $matches);
+    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
 
     $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
     $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');

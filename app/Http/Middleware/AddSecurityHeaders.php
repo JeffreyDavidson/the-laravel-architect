@@ -3,13 +3,17 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Filament\Facades\Filament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 use UnexpectedValueException;
 
 final class AddSecurityHeaders
 {
     private const array HEADERS = [
+        'Cross-Origin-Opener-Policy' => 'same-origin',
+        'Cross-Origin-Resource-Policy' => 'same-origin',
         'Permissions-Policy' => 'camera=(), geolocation=(), microphone=()',
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
         'X-Content-Type-Options' => 'nosniff',
@@ -18,6 +22,10 @@ final class AddSecurityHeaders
 
     public function handle(Request $request, Closure $next): Response
     {
+        $adminPath = trim(Filament::getPanel('admin')->getPath(), '/');
+        $scriptNonce = $request->is($adminPath, "{$adminPath}/*")
+            ? null
+            : Vite::useCspNonce();
         $response = $next($request);
 
         if (! $response instanceof Response) {
@@ -25,7 +33,7 @@ final class AddSecurityHeaders
         }
 
         if (! $response->headers->has('Content-Security-Policy')) {
-            $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy());
+            $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($scriptNonce));
         }
 
         foreach (self::HEADERS as $name => $value) {
@@ -41,12 +49,13 @@ final class AddSecurityHeaders
         return $response;
     }
 
-    private function contentSecurityPolicy(): string
+    private function contentSecurityPolicy(?string $scriptNonce): string
     {
         $scriptSources = [
             "'self'",
-            "'unsafe-inline'",
-            "'unsafe-eval'",
+            ...$scriptNonce === null
+                ? ["'unsafe-inline'", "'unsafe-eval'"]
+                : ["'nonce-{$scriptNonce}'"],
             'https://cdn.usefathom.com',
             'https://challenges.cloudflare.com',
         ];

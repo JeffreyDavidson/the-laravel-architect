@@ -3,6 +3,7 @@
 use App\Models\Podcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -27,4 +28,28 @@ it('backfills responsive variants for existing podcast cover images', function (
         'podcasts/responsive/podcast-640.webp',
         'podcasts/responsive/podcast-1280.webp',
     ]);
+
+    $this->artisan('podcasts:generate-image-variants')
+        ->expectsOutputToContain('Generated responsive images for 0 podcasts.')
+        ->expectsOutputToContain('Skipped 1 already verified podcast.')
+        ->assertSuccessful();
+
+    $this->artisan('podcasts:generate-image-variants', ['--force' => true])
+        ->expectsOutputToContain('Generated responsive images for 1 podcast.')
+        ->doesntExpectOutputToContain('Skipped')
+        ->assertSuccessful();
+});
+
+it('refuses to overlap another podcast image generation run', function () {
+    $lock = Cache::lock('framework/command-podcasts:generate-image-variants', 60);
+
+    expect($lock->get())->toBeTrue();
+
+    try {
+        $this->artisan('podcasts:generate-image-variants')
+            ->expectsOutputToContain('The [podcasts:generate-image-variants] command is already running.')
+            ->assertFailed();
+    } finally {
+        $lock->release();
+    }
 });

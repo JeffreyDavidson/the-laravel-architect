@@ -1,11 +1,16 @@
 <?php
 
-use App\Support\RuntimeHealth;
+use App\Enums\ProjectStatus;
+use App\Models\Project;
+use App\Services\NightwatchHealthMonitor;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
 
 uses(RefreshDatabase::class);
 
@@ -19,12 +24,18 @@ beforeEach(function () {
         ],
         'health.backup.max_age_hours' => 36,
         'health.runtime.max_age_seconds' => 300,
+        'nightwatch.deployment' => 'expected-commit',
     ]);
 
     Storage::fake('deployment-backups');
+    Storage::fake('public');
     Storage::disk('deployment-backups')->put('deployment-test/fresh.zip', 'backup');
-    Cache::put(RuntimeHealth::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
-    Cache::put(RuntimeHealth::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
+
+    $nightwatch = Double::for(NightwatchHealthMonitor::class);
+    $nightwatch->allows('ensureHealthy');
+    app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 });
 
 it('accepts a healthy deployment at the expected commit', function () {
@@ -58,11 +69,54 @@ it('reports pending database migrations', function () {
 
 it('reports stale runtime heartbeats and missing backups', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
-    Cache::put(RuntimeHealth::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
     Storage::disk('deployment-backups')->delete('deployment-test/fresh.zip');
 
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The scheduler or queue worker heartbeat is stale.')
         ->expectsOutputToContain('One or more backup destinations do not contain a fresh backup.')
+        ->assertFailed();
+});
+
+it('reports an unavailable Nightwatch agent without exposing its error', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    $nightwatch = Double::for(NightwatchHealthMonitor::class);
+    $nightwatch->expects('ensureHealthy')
+        ->throws(new RuntimeException('private ingest address'));
+    app()->instance(NightwatchHealthMonitor::class, $nightwatch);
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('The Nightwatch agent is unavailable.')
+        ->doesntExpectOutput('private ingest address')
+        ->assertFailed();
+});
+
+it('reports mismatched Nightwatch deployment metadata without exposing either identifier', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    config()->set('nightwatch.deployment', 'previous-commit');
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('Nightwatch is not configured with the expected deployment identifier.')
+        ->doesntExpectOutput('previous-commit')
+        ->doesntExpectOutput('expected-commit')
+        ->assertFailed();
+});
+
+it('reports incomplete responsive media without exposing its path', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    $image = UploadedFile::fake()->image('private-project-name.png', 1280, 72);
+    Storage::disk('public')->put('projects/private-project-name.png', $image->getContent());
+
+    Project::withoutEvents(fn () => Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => ProjectStatus::Published,
+        'featured_image_path' => 'projects/private-project-name.png',
+    ]));
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('One or more stored images are missing required responsive variants.')
+        ->doesntExpectOutputToContain('private-project-name.png')
         ->assertFailed();
 });

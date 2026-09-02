@@ -4,25 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use App\ViewModels\ProjectIndexViewModel;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Contracts\View\View;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ProjectsController extends Controller
 {
-    public function index(): View
+    public function index(ProjectIndexViewModel $projectIndexViewModel): View
     {
-        $projects = Project::published()
-            ->with('tags')
-            ->orderBy('sort_order')
-            ->get();
-
-        $seoSource = new SEOData(
-            title: 'Projects',
-            description: 'Open source projects and side projects by Jeffrey Davidson — including Ringside, Campus Sync, and more built with Laravel.',
-        );
-
-        return view('projects.index', compact('projects', 'seoSource'));
+        return view('projects.index', $projectIndexViewModel->data());
     }
 
     public function show(Project $project, ProjectShowViewModel $projectShowViewModel): View

@@ -3,12 +3,13 @@
 use App\Models\Video;
 use App\Services\YouTubeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JMac\Testing\Double;
 
 uses(RefreshDatabase::class);
 
 it('succeeds without calling YouTube when there are no videos', function () {
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldNotReceive('getStatsForVideos');
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->allows('getStatsForVideos')->never();
     app()->instance(YouTubeService::class, $youtube);
 
     $this->artisan('youtube:stats')
@@ -32,11 +33,10 @@ it('updates video statistics in batches of fifty', function () {
 
     $firstBatch = array_map(fn (int $index): string => "video-{$index}", range(1, 50));
 
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getStatsForVideos')
-        ->once()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getStatsForVideos')
         ->with($firstBatch)
-        ->andReturn([
+        ->returns([
             'video-1' => [
                 'view_count' => 1_000,
                 'like_count' => 100,
@@ -44,10 +44,9 @@ it('updates video statistics in batches of fifty', function () {
             ],
         ])
         ->ordered();
-    $youtube->shouldReceive('getStatsForVideos')
-        ->once()
+    $youtube->expects('getStatsForVideos')
         ->with(['video-51'])
-        ->andReturn([
+        ->returns([
             'video-51' => [
                 'view_count' => 5_100,
                 'like_count' => 510,
@@ -88,11 +87,10 @@ it('fails without changing statistics when YouTube is unavailable', function () 
         'comment_count' => 2,
     ]);
 
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getStatsForVideos')
-        ->once()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getStatsForVideos')
         ->with(['existing-video'])
-        ->andThrow(new RuntimeException('YouTube is unavailable.'));
+        ->throws(new RuntimeException('YouTube is unavailable.'));
     app()->instance(YouTubeService::class, $youtube);
 
     $this->artisan('youtube:stats')

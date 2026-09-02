@@ -3,15 +3,15 @@
 use App\Models\Video;
 use App\Services\YouTubeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JMac\Testing\Double;
 
 uses(RefreshDatabase::class);
 
 it('creates new videos and forwards the requested limit', function () {
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getChannelVideos')
-        ->once()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getChannelVideos')
         ->with(12)
-        ->andReturn([[
+        ->returns([[
             'youtube_id' => 'new-video',
             'title' => 'A New Video',
             'description' => 'New description',
@@ -53,11 +53,10 @@ it('updates an existing video without replacing its publishing fields', function
         'is_featured' => true,
     ]);
 
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getChannelVideos')
-        ->once()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getChannelVideos')
         ->with(50)
-        ->andReturn([[
+        ->returns([[
             'youtube_id' => 'existing-video',
             'title' => 'Updated Title',
             'description' => 'Updated description',
@@ -122,11 +121,11 @@ it('creates stable unique slugs for colliding and empty titles', function () {
         ],
     ];
 
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getChannelVideos')
-        ->twice()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getChannelVideos')
+        ->times(2)
         ->with(50)
-        ->andReturn($payloads);
+        ->returns($payloads);
     app()->instance(YouTubeService::class, $youtube);
 
     $this->artisan('youtube:sync')
@@ -154,11 +153,10 @@ it('fails without changing videos when YouTube is unavailable', function () {
         'slug' => 'existing-title',
     ]);
 
-    $youtube = Mockery::mock(YouTubeService::class);
-    $youtube->shouldReceive('getChannelVideos')
-        ->once()
+    $youtube = Double::for(YouTubeService::class);
+    $youtube->expects('getChannelVideos')
         ->with(50)
-        ->andThrow(new RuntimeException('YouTube is unavailable.'));
+        ->throws(new RuntimeException('YouTube is unavailable.'));
     app()->instance(YouTubeService::class, $youtube);
 
     $this->artisan('youtube:sync')

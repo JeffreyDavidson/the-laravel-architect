@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Support\RuntimeHealth;
+use App\Services\NightwatchHealthMonitor;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -11,12 +12,13 @@ use Illuminate\Support\Facades\Process;
 use Spatie\Backup\BackupDestination\BackupDestination;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
-#[Description('Verify the deployed commit, migrations, runtime heartbeats, and backup freshness')]
+#[Description('Verify the deployed commit, migrations, monitoring, runtime heartbeats, and backup freshness')]
 class VerifyDeployment extends Command
 {
     public function __construct(
         private readonly Migrator $migrator,
-        private readonly RuntimeHealth $runtimeHealth,
+        private readonly RuntimeHealthMonitor $runtimeHealthMonitor,
+        private readonly NightwatchHealthMonitor $nightwatchHealthMonitor,
     ) {
         parent::__construct();
     }
@@ -27,7 +29,10 @@ class VerifyDeployment extends Command
             $this->commitFailure(),
             $this->migrationFailure(),
             $this->runtimeFailure(),
+            $this->nightwatchDeploymentFailure(),
+            $this->nightwatchFailure(),
             $this->backupFailure(),
+            $this->responsiveMediaFailure(),
         ]);
 
         if ($failures !== []) {
@@ -75,7 +80,7 @@ class VerifyDeployment extends Command
     private function runtimeFailure(): ?string
     {
         try {
-            $this->runtimeHealth->ensureHealthy();
+            $this->runtimeHealthMonitor->ensureHealthy();
         } catch (\RuntimeException) {
             return 'The scheduler or queue worker heartbeat is stale.';
         }
@@ -109,5 +114,33 @@ class VerifyDeployment extends Command
         }
 
         return null;
+    }
+
+    private function nightwatchFailure(): ?string
+    {
+        try {
+            $this->nightwatchHealthMonitor->ensureHealthy();
+        } catch (\RuntimeException) {
+            return 'The Nightwatch agent is unavailable.';
+        }
+
+        return null;
+    }
+
+    private function nightwatchDeploymentFailure(): ?string
+    {
+        $expectedCommit = trim((string) $this->argument('commit'));
+        $nightwatchDeployment = config('nightwatch.deployment');
+
+        return is_string($nightwatchDeployment) && hash_equals($expectedCommit, $nightwatchDeployment)
+            ? null
+            : 'Nightwatch is not configured with the expected deployment identifier.';
+    }
+
+    private function responsiveMediaFailure(): ?string
+    {
+        return $this->callSilent('media:verify-responsive-images') === self::SUCCESS
+            ? null
+            : 'One or more stored images are missing required responsive variants.';
     }
 }

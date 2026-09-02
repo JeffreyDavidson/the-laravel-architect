@@ -8,6 +8,8 @@ use App\Services\OgImageCache;
 use App\Services\OgImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
+use JMac\Testing\Matching\Argument;
 
 uses(RefreshDatabase::class);
 
@@ -17,8 +19,10 @@ beforeEach(function () {
 
 it('generates an OG image once and serves later requests from private storage', function () {
     $post = createPublishedPost();
-    $generator = Mockery::mock(OgImageGenerator::class);
-    $generator->shouldReceive('generate')->once()->with(Mockery::type(Post::class))->andReturn('generated-png');
+    $generator = Double::for(OgImageGenerator::class);
+    $generator->expects('generate')
+        ->with(Argument::type(Post::class))
+        ->returns('generated-png');
     $this->app->instance(OgImageGenerator::class, $generator);
 
     $this->get(route('og-image', $post))
@@ -37,9 +41,10 @@ it('generates an OG image once and serves later requests from private storage', 
 
 it('regenerates an OG image when rendered post data changes', function () {
     $post = createPublishedPost();
-    $generator = Mockery::mock(OgImageGenerator::class);
-    $generator->shouldReceive('generate')->once()->andReturn('first-png');
-    $generator->shouldReceive('generate')->once()->andReturn('updated-png');
+    $generator = Double::for(OgImageGenerator::class);
+    $generator->expects('generate')
+        ->times(2)
+        ->returns('first-png', 'updated-png');
     $this->app->instance(OgImageGenerator::class, $generator);
 
     $this->get(route('og-image', $post))->assertContent('first-png');
@@ -51,9 +56,10 @@ it('regenerates an OG image when rendered post data changes', function () {
 
 it('regenerates an OG image when its category name changes', function () {
     $post = createPublishedPost();
-    $generator = Mockery::mock(OgImageGenerator::class);
-    $generator->shouldReceive('generate')->once()->andReturn('first-png');
-    $generator->shouldReceive('generate')->once()->andReturn('updated-png');
+    $generator = Double::for(OgImageGenerator::class);
+    $generator->expects('generate')
+        ->times(2)
+        ->returns('first-png', 'updated-png');
     $this->app->instance(OgImageGenerator::class, $generator);
 
     $this->get(route('og-image', $post))->assertContent('first-png');

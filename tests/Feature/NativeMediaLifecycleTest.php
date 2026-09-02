@@ -9,7 +9,10 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use JMac\Testing\Double;
+use Psr\Log\LoggerInterface;
 
 uses(RefreshDatabase::class);
 
@@ -177,6 +180,44 @@ it('keeps responsive podcast cover variants in sync with the original image', fu
         'podcasts/responsive/new-640.webp',
         'podcasts/responsive/new-1280.webp',
     ]);
+});
+
+it('logs responsive generation failures without exposing media paths', function () {
+    $logger = Double::for(LoggerInterface::class);
+    $logger->expects('warning')
+        ->with('Responsive project image generation failed. Run projects:generate-image-variants to retry.');
+    $logger->expects('warning')
+        ->with('Responsive post image generation failed. Run posts:generate-image-variants to retry.');
+    $logger->expects('warning')
+        ->with('Responsive podcast image generation failed. Run podcasts:generate-image-variants to retry.');
+    Log::swap($logger);
+    Storage::disk('public')->put('projects/private-project-name.png', 'not an image');
+    Storage::disk('public')->put('posts/private-post-name.png', 'not an image');
+    Storage::disk('public')->put('podcasts/private-podcast-name.png', 'not an image');
+    $author = User::factory()->create();
+
+    Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => ProjectStatus::Draft,
+        'featured_image_path' => 'projects/private-project-name.png',
+    ]);
+    Post::query()->create([
+        'title' => 'Post',
+        'slug' => 'post',
+        'content' => 'Content',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Draft,
+        'featured_image_path' => 'posts/private-post-name.png',
+    ]);
+    Podcast::query()->create([
+        'name' => 'Podcast',
+        'slug' => 'podcast',
+        'description' => 'Description',
+        'cover_image_path' => 'podcasts/private-podcast-name.png',
+    ]);
+
 });
 
 it('deletes episode media when its podcast is deleted', function () {

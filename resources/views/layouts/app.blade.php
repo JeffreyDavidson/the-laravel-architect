@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
+    <script nonce="{{ Vite::cspNonce() }}">
         // Sync theme before paint to prevent a flash of the wrong color scheme.
         if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
             document.documentElement.classList.remove('dark');
@@ -17,7 +17,7 @@
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss">
     {!! seo($seoSource ?? null) !!}
     @if(config('services.fathom.site_id'))
-    <script src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
+    <script nonce="{{ Vite::cspNonce() }}" src="https://cdn.usefathom.com/script.js" data-site="{{ config('services.fathom.site_id') }}" defer></script>
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.json-ld')

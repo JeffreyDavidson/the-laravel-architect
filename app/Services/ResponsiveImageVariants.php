@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
+use Illuminate\Image\ImageException;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Encoders\WebpEncoder;
-use Intervention\Image\Exceptions\DecoderException;
-use Intervention\Image\ImageManager;
 
 class ResponsiveImageVariants
 {
-    /** @var list<int> */
+    /** @var list<positive-int> */
     private const WIDTHS = [640, 1280];
 
     public function generate(string $originalPath): bool
@@ -22,27 +20,47 @@ class ResponsiveImageVariants
         }
 
         $contents = $disk->get($originalPath);
-        $manager = new ImageManager(new Driver);
 
-        try {
-            $source = $manager->read($contents);
-        } catch (DecoderException) {
+        if ($contents === null) {
             return false;
         }
 
-        $this->delete($originalPath);
+        try {
+            $source = Image::fromBytes($contents);
+            $sourceWidth = $source->width();
+        } catch (ImageException) {
+            return false;
+        }
 
-        foreach ($this->paths($originalPath) as $width => $variantPath) {
-            if ($width > $source->width()) {
-                continue;
+        $variantPaths = $this->paths($originalPath);
+        $variants = [];
+
+        try {
+            foreach ($variantPaths as $width => $variantPath) {
+                if ($width > $sourceWidth) {
+                    continue;
+                }
+
+                $variants[$variantPath] = $source
+                    ->scale(width: $width)
+                    ->toWebp()
+                    ->quality(82)
+                    ->toBytes();
             }
+        } catch (ImageException) {
+            return false;
+        }
 
-            $variant = $manager
-                ->read($contents)
-                ->scaleDown(width: $width)
-                ->encode(new WebpEncoder(quality: 82, strip: true));
+        foreach ($variants as $variantPath => $variant) {
+            if (! $disk->put($variantPath, $variant)) {
+                return false;
+            }
+        }
 
-            $disk->put($variantPath, (string) $variant);
+        $obsoletePaths = array_diff(array_values($variantPaths), array_keys($variants));
+
+        if ($obsoletePaths !== [] && ! $disk->delete($obsoletePaths)) {
+            return false;
         }
 
         return true;
@@ -51,6 +69,49 @@ class ResponsiveImageVariants
     public function delete(string $originalPath): void
     {
         Storage::disk('public')->delete(array_values($this->paths($originalPath)));
+    }
+
+    public function hasRequiredVariants(string $originalPath): bool
+    {
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($originalPath)) {
+            return false;
+        }
+
+        try {
+            $sourceWidth = Image::fromStorage($originalPath, 'public')->width();
+        } catch (ImageException) {
+            return false;
+        }
+
+        foreach ($this->paths($originalPath) as $width => $variantPath) {
+            if ($width > $sourceWidth) {
+                if ($disk->exists($variantPath)) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (! $disk->exists($variantPath)) {
+                return false;
+            }
+
+            try {
+                $variant = Image::fromStorage($variantPath, 'public');
+                $variantWidth = $variant->width();
+                $variantMimeType = $variant->mimeType();
+            } catch (ImageException) {
+                return false;
+            }
+
+            if ($variantWidth !== $width || $variantMimeType !== 'image/webp') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function srcset(?string $originalPath): ?string
@@ -71,7 +132,7 @@ class ResponsiveImageVariants
         return $sources === [] ? null : implode(', ', $sources);
     }
 
-    /** @return array<int, string> */
+    /** @return array<positive-int, string> */
     public function paths(string $originalPath): array
     {
         $directory = pathinfo($originalPath, PATHINFO_DIRNAME);

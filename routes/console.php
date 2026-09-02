@@ -1,11 +1,11 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
-use App\Support\RuntimeHealth;
+use App\Services\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::call(function (RuntimeHealth $runtimeHealth): void {
-    $runtimeHealth->recordSchedulerHeartbeat();
+Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
+    $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
 })
     ->name('runtime-health:heartbeat')
@@ -27,6 +27,12 @@ Schedule::command('backup:monitor')
     ->onOneServer();
 Schedule::command('app:monitor-failed-jobs')
     ->hourly()
+    ->environments(['production'])
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
+Schedule::command('media:verify-responsive-images')
+    ->dailyAt('05:00')
     ->environments(['production'])
     ->withoutOverlapping()
     ->onOneServer()

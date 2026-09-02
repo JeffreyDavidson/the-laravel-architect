@@ -30,7 +30,7 @@ it('configures a private SFTP disk for NAS backups', function () {
         ]);
 });
 
-it('schedules backup and failed-job operations', function () {
+it('schedules operational monitoring and maintenance', function () {
     Artisan::call('schedule:list');
 
     expect(Artisan::output())
@@ -38,5 +38,6 @@ it('schedules backup and failed-job operations', function () {
         ->toContain('backup:clean')
         ->toContain('backup:monitor')
         ->toContain('app:monitor-failed-jobs')
+        ->toContain('media:verify-responsive-images')
         ->toContain('queue:prune-failed --hours=168');
 });
