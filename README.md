@@ -55,7 +55,7 @@ Uploaded images and audio are validated and stored through Laravel's `public` fi
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact, newsletter, and testimonial submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
-Application responses set a constrained Content Security Policy plus cross-origin isolation, clickjacking, transport-security, MIME-sniffing, referrer, and browser-feature policy headers globally. Public scripts use a per-request nonce instead of `unsafe-inline` or `unsafe-eval`; the Filament admin path retains those allowances for framework compatibility.
+Application responses set a constrained Content Security Policy plus cross-origin isolation, clickjacking, transport-security, MIME-sniffing, referrer, and browser-feature policy headers globally. Public script and style elements use a per-request nonce instead of `unsafe-inline` or `unsafe-eval`; validated dynamic style attributes remain explicitly allowed, and the Filament admin path retains its framework compatibility allowances.
 
 The `/up` health endpoint verifies both the Laravel runtime and access to the migrated application database. Production monitoring should treat any non-200 response as unhealthy.
 

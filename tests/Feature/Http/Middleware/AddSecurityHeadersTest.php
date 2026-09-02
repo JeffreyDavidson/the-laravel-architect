@@ -17,8 +17,11 @@ function expectedContentSecurityPolicy(?string $scriptNonce = null, bool $withVi
     $scriptPolicy = $scriptNonce === null
         ? "'unsafe-inline' 'unsafe-eval'"
         : "'nonce-{$scriptNonce}'";
+    $stylePolicy = $scriptNonce === null
+        ? "'self' 'unsafe-inline'"
+        : "'self' 'nonce-{$scriptNonce}'".($withVite ? " 'unsafe-inline'" : '');
 
-    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
+    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src {$stylePolicy}; style-src-attr 'unsafe-inline'; worker-src 'self' blob:";
 }
 
 it('adds security headers to public responses', function () {
@@ -30,7 +33,7 @@ it('adds security headers to public responses', function () {
     $nonce = $matches[1] ?? null;
 
     expect($nonce)->toBeString()->not->toBeEmpty()
-        ->and($policy)->not->toContain("'unsafe-inline'", "'unsafe-eval'");
+        ->and($policy)->not->toContain("script-src 'self' 'unsafe-inline'", "'unsafe-eval'", "style-src 'self' 'unsafe-inline'");
 
     $response
         ->assertOk()

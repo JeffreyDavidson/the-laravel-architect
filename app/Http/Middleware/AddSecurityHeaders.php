@@ -65,6 +65,9 @@ final class AddSecurityHeaders
             'https://cdn.usefathom.com',
             'https://challenges.cloudflare.com',
         ];
+        $styleSources = $scriptNonce === null
+            ? ["'self'", "'unsafe-inline'"]
+            : ["'self'", "'nonce-{$scriptNonce}'"];
 
         if (app()->isLocal()) {
             array_push(
@@ -85,6 +88,10 @@ final class AddSecurityHeaders
                 'wss://localhost:*',
                 'wss://127.0.0.1:*',
             );
+
+            if (! in_array("'unsafe-inline'", $styleSources, true)) {
+                $styleSources[] = "'unsafe-inline'";
+            }
         }
 
         $directives = [
@@ -99,7 +106,8 @@ final class AddSecurityHeaders
             'media-src' => ["'self'", 'blob:', 'https:'],
             'object-src' => ["'none'"],
             'script-src' => $scriptSources,
-            'style-src' => ["'self'", "'unsafe-inline'"],
+            'style-src' => $styleSources,
+            'style-src-attr' => ["'unsafe-inline'"],
             'worker-src' => ["'self'", 'blob:'],
         ];
 
