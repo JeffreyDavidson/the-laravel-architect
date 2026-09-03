@@ -17,7 +17,6 @@ $backupDisks = array_values(array_filter(array_map(
 )));
 
 $backupSourcePaths = array_values(array_filter([
-    base_path(),
     env('BACKUP_MEDIA_PATH'),
 ]));
 
@@ -45,6 +44,7 @@ return [
                  * Directories used by the backup process will automatically be excluded.
                  */
                 'exclude' => [
+                    base_path('.env'),
                     base_path('vendor'),
                     base_path('node_modules'),
                 ],

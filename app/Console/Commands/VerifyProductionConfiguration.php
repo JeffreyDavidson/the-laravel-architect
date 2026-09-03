@@ -57,6 +57,7 @@ class VerifyProductionConfiguration extends Command
             [$this->isConfigured(config('services.turnstile.contact_action')), 'TURNSTILE_CONTACT_ACTION must be configured.'],
             [$this->includesAppHostname(config('services.turnstile.allowed_hostnames'), config('app.url')), 'TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.'],
             [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
+            [$this->hasSafeBackupFileSources(config('backup.backup.source.files.include'), config('backup.backup.source.files.exclude')), 'BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
             [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
@@ -163,6 +164,33 @@ class VerifyProductionConfiguration extends Command
             $disks,
             fn (mixed $disk): bool => is_string($disk) && $disk !== 'local',
         );
+    }
+
+    private function hasSafeBackupFileSources(mixed $sources, mixed $excludes): bool
+    {
+        if (! is_array($sources) || count($sources) !== 1 || ! is_array($excludes)) {
+            return false;
+        }
+
+        $source = $sources[0] ?? null;
+
+        if (! is_string($source) || ! str_starts_with($source, DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        $basePath = rtrim(base_path(), DIRECTORY_SEPARATOR);
+        $sourcePath = rtrim($source, DIRECTORY_SEPARATOR);
+        $excludedPaths = array_map(
+            fn (mixed $path): string => is_string($path) ? rtrim($path, DIRECTORY_SEPARATOR) : '',
+            $excludes,
+        );
+
+        $sourceOverlapsRelease = $sourcePath === $basePath
+            || str_starts_with($sourcePath, "{$basePath}".DIRECTORY_SEPARATOR)
+            || str_starts_with($basePath, "{$sourcePath}".DIRECTORY_SEPARATOR);
+
+        return ! $sourceOverlapsRelease
+            && in_array(base_path('.env'), $excludedPaths, true);
     }
 
     private function hasKnownBackupDisks(mixed $disks): bool

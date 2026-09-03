@@ -18,6 +18,8 @@ beforeEach(function () {
         'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
         'database.default' => 'sqlite',
         'database.connections.sqlite.database' => '/var/www/the-laravel-architect/database/database.sqlite',
+        'backup.backup.source.files.include' => ['/var/www/the-laravel-architect/shared/storage/app/public'],
+        'backup.backup.source.files.exclude' => [base_path('.env')],
         'backup.backup.destination.disks' => ['local', 's3'],
         'backup.backup.password' => 'encrypted-archive-password',
         'backup.notifications.mail.to' => 'backups@thelaravelarchitect.com',
@@ -112,6 +114,38 @@ it('rejects an unknown backup disk', function () {
         ->assertFailed();
 });
 
+it('rejects the application release directory as a backup source', function () {
+    config()->set('backup.backup.source.files.include', [base_path()]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
+        ->assertFailed();
+});
+
+it('rejects a media backup source inside the application release directory', function () {
+    config()->set('backup.backup.source.files.include', [storage_path('app/public')]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
+        ->assertFailed();
+});
+
+it('rejects a relative media backup source', function () {
+    config()->set('backup.backup.source.files.include', ['storage/app/public']);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
+        ->assertFailed();
+});
+
+it('requires the production environment file to be excluded from backups', function () {
+    config()->set('backup.backup.source.files.exclude', []);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
+        ->assertFailed();
+});
+
 it('reports every unsafe production setting without exposing its value', function () {
     config()->set([
         'app.debug' => true,
@@ -124,6 +158,8 @@ it('reports every unsafe production setting without exposing its value', functio
         'services.turnstile.contact_action' => null,
         'services.turnstile.allowed_hostnames' => ['attacker.example'],
         'database.connections.sqlite.database' => 'database/database.sqlite',
+        'backup.backup.source.files.include' => [base_path()],
+        'backup.backup.source.files.exclude' => [],
         'backup.backup.destination.disks' => ['local'],
         'backup.backup.password' => null,
         'health.backup.max_age_hours' => 0,
@@ -162,6 +198,7 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('TURNSTILE_CONTACT_ACTION must be configured.')
         ->expectsOutputToContain('TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.')
         ->expectsOutputToContain('DB_DATABASE must be an absolute path.')
+        ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->expectsOutputToContain('BACKUP_DISKS must include an off-server disk.')
         ->expectsOutputToContain('BACKUP_ARCHIVE_PASSWORD must be configured.')
         ->expectsOutputToContain('BACKUP_MAX_AGE_HOURS must be at least 1.')
