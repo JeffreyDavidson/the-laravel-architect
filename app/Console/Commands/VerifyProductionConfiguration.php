@@ -57,9 +57,6 @@ class VerifyProductionConfiguration extends Command
             [$this->isConfigured(config('services.turnstile.contact_action')), 'TURNSTILE_CONTACT_ACTION must be configured.'],
             [$this->includesAppHostname(config('services.turnstile.allowed_hostnames'), config('app.url')), 'TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.'],
             [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
-            [$this->hasSafeSqliteBusyTimeout($databaseConnection, $databaseConfig), 'DB_BUSY_TIMEOUT must be at least 5000 milliseconds for production SQLite.'],
-            [$this->usesSqliteWal($databaseConnection, $databaseConfig), 'DB_JOURNAL_MODE must be WAL for production SQLite.'],
-            [$this->usesSafeSqliteSynchronousMode($databaseConnection, $databaseConfig), 'DB_SYNCHRONOUS must be NORMAL or FULL for production SQLite.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
             [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
@@ -158,59 +155,6 @@ class VerifyProductionConfiguration extends Command
         );
 
         return in_array(strtolower(rtrim($appHostname, '.')), $normalizedHostnames, true);
-    }
-
-    private function hasSafeSqliteBusyTimeout(mixed $connection, mixed $databaseConfig): bool
-    {
-        if ($connection !== 'sqlite') {
-            return true;
-        }
-
-        if (! is_array($databaseConfig)) {
-            return false;
-        }
-
-        $busyTimeout = $databaseConfig['busy_timeout'] ?? null;
-
-        return is_int($busyTimeout) && $busyTimeout >= 5000;
-    }
-
-    private function usesSqliteWal(mixed $connection, mixed $databaseConfig): bool
-    {
-        if ($connection !== 'sqlite') {
-            return true;
-        }
-
-        if (! is_array($databaseConfig)) {
-            return false;
-        }
-
-        $journalMode = $databaseConfig['journal_mode'] ?? null;
-
-        return is_string($journalMode) && strtoupper($journalMode) === 'WAL';
-    }
-
-    private function usesSafeSqliteSynchronousMode(mixed $connection, mixed $databaseConfig): bool
-    {
-        if ($connection !== 'sqlite') {
-            return true;
-        }
-
-        if (! is_array($databaseConfig)) {
-            return false;
-        }
-
-        $synchronousMode = $databaseConfig['synchronous'] ?? null;
-
-        if (! is_string($synchronousMode)) {
-            return false;
-        }
-
-        return in_array(
-            strtoupper($synchronousMode),
-            ['FULL', 'NORMAL'],
-            true,
-        );
     }
 
     private function hasOffServerBackup(mixed $disks): bool
