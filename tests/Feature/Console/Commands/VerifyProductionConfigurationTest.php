@@ -18,6 +18,9 @@ beforeEach(function () {
         'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
         'database.default' => 'sqlite',
         'database.connections.sqlite.database' => '/var/www/the-laravel-architect/database/database.sqlite',
+        'database.connections.sqlite.busy_timeout' => 5000,
+        'database.connections.sqlite.journal_mode' => 'WAL',
+        'database.connections.sqlite.synchronous' => 'NORMAL',
         'backup.backup.destination.disks' => ['local', 's3'],
         'backup.backup.password' => 'encrypted-archive-password',
         'backup.notifications.mail.to' => 'backups@thelaravelarchitect.com',
@@ -58,6 +61,31 @@ it('accepts a lower Nightwatch request sample rate', function () {
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
+
+it('rejects SQLite without production concurrency safeguards', function (array $configuration, string $message) {
+    config()->set($configuration);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain($message)
+        ->assertFailed();
+})->with([
+    'missing busy timeout' => [
+        ['database.connections.sqlite.busy_timeout' => null],
+        'DB_BUSY_TIMEOUT must be at least 5000 milliseconds for production SQLite.',
+    ],
+    'short busy timeout' => [
+        ['database.connections.sqlite.busy_timeout' => 1000],
+        'DB_BUSY_TIMEOUT must be at least 5000 milliseconds for production SQLite.',
+    ],
+    'rollback journal' => [
+        ['database.connections.sqlite.journal_mode' => 'DELETE'],
+        'DB_JOURNAL_MODE must be WAL for production SQLite.',
+    ],
+    'disabled synchronous writes' => [
+        ['database.connections.sqlite.synchronous' => 'OFF'],
+        'DB_SYNCHRONOUS must be NORMAL or FULL for production SQLite.',
+    ],
+]);
 
 it('rejects an unsafe Nightwatch request sample rate', function (mixed $sampleRate) {
     config()->set('nightwatch.sampling.requests', $sampleRate);
