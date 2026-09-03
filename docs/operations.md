@@ -5,7 +5,7 @@ This runbook is for deployments to the Laravel Forge production server.
 ## Before deploying
 
 1. Confirm the target commit and review its migration and storage changes.
-2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy.
+2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes.
 3. Confirm `BACKUP_MEDIA_PATH` points to the persistent `storage/app/public` directory.
 4. Create and independently validate a SQLite snapshot and public-media archive.
 5. Keep both artifacts until the deployment and post-deployment checks are complete.
