@@ -25,12 +25,6 @@ Schedule::command('backup:monitor')
     ->dailyAt(config('backup.schedule.monitor_at'))
     ->withoutOverlapping()
     ->onOneServer();
-Schedule::command('app:monitor-failed-jobs')
-    ->hourly()
-    ->environments(['production'])
-    ->withoutOverlapping()
-    ->onOneServer()
-    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('media:verify-responsive-images')
     ->dailyAt('05:00')
     ->environments(['production'])
