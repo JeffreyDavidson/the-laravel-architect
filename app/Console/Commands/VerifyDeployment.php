@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\DatabaseHealthMonitor;
 use App\Services\NightwatchHealthMonitor;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Console\Attributes\Description;
@@ -17,6 +18,7 @@ class VerifyDeployment extends Command
 {
     public function __construct(
         private readonly Migrator $migrator,
+        private readonly DatabaseHealthMonitor $databaseHealthMonitor,
         private readonly RuntimeHealthMonitor $runtimeHealthMonitor,
         private readonly NightwatchHealthMonitor $nightwatchHealthMonitor,
     ) {
@@ -28,6 +30,7 @@ class VerifyDeployment extends Command
         $failures = array_filter([
             $this->commitFailure(),
             $this->migrationFailure(),
+            $this->databaseFailure(),
             $this->runtimeFailure(),
             $this->nightwatchDeploymentFailure(),
             $this->nightwatchFailure(),
@@ -83,6 +86,17 @@ class VerifyDeployment extends Command
             $this->runtimeHealthMonitor->ensureHealthy();
         } catch (\RuntimeException) {
             return 'The scheduler or queue worker heartbeat is stale.';
+        }
+
+        return null;
+    }
+
+    private function databaseFailure(): ?string
+    {
+        try {
+            $this->databaseHealthMonitor->ensureHealthy();
+        } catch (\RuntimeException) {
+            return 'The database integrity or connection safeguards could not be verified.';
         }
 
         return null;

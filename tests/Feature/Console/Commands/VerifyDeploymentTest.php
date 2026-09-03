@@ -2,6 +2,7 @@
 
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use App\Services\DatabaseHealthMonitor;
 use App\Services\NightwatchHealthMonitor;
 use App\Services\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,6 +37,10 @@ beforeEach(function () {
     $nightwatch = Double::for(NightwatchHealthMonitor::class);
     $nightwatch->allows('ensureHealthy');
     app()->instance(NightwatchHealthMonitor::class, $nightwatch);
+
+    $database = Double::for(DatabaseHealthMonitor::class);
+    $database->allows('ensureHealthy');
+    app()->instance(DatabaseHealthMonitor::class, $database);
 });
 
 it('accepts a healthy deployment at the expected commit', function () {
@@ -64,6 +69,19 @@ it('reports pending database migrations', function () {
 
     $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The application has pending database migrations.')
+        ->assertFailed();
+});
+
+it('reports an unhealthy database without exposing its error', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    $database = Double::for(DatabaseHealthMonitor::class);
+    $database->expects('ensureHealthy')
+        ->throws(new RuntimeException('private database path'));
+    app()->instance(DatabaseHealthMonitor::class, $database);
+
+    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutputToContain('The database integrity or connection safeguards could not be verified.')
+        ->doesntExpectOutput('private database path')
         ->assertFailed();
 });
 

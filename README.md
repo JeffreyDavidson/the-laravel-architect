@@ -89,7 +89,7 @@ After changing backup configuration, run `php artisan backup:run`, `php artisan 
 
 The application is hosted through Laravel Forge. A deployment should install locked dependencies, build production assets, run forward-only migrations, refresh optimized caches, and ensure the scheduler and queue worker are active.
 
-Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, Nightwatch agent, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
+Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, effective SQLite integrity and connection safeguards, Nightwatch agent, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
 The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled production smoke failures reach a monitored inbox.
 
