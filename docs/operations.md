@@ -155,7 +155,7 @@ Perform this drill in an isolated temporary directory, never over the live datab
 
 Run `php artisan app:test-backup-notification` after configuring or changing the production mail transport. The command sends an identifiable test message to `BACKUP_NOTIFICATION_EMAIL` and does not create a backup.
 
-Failed jobs are checked hourly against `QUEUE_FAILED_JOB_ALERT_THRESHOLD`. Failures are retained for `QUEUE_FAILED_JOB_RETENTION_HOURS` and then pruned by Laravel's native `queue:prune-failed` command.
+Nightwatch reports new failed jobs. Failures are retained for `QUEUE_FAILED_JOB_RETENTION_HOURS` and then pruned by Laravel's native `queue:prune-failed` command; do not add a scheduled command that fails merely because retained records exist, because Laravel will surface every nonzero scheduled run as a new exception.
 
 ## Rollback
 
