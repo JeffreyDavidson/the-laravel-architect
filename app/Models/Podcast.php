@@ -31,6 +31,14 @@ class Podcast extends Model
     use LogsActivity;
     use ManagesStoredMedia;
 
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'sort_order' => 'integer',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Podcast $podcast) {
