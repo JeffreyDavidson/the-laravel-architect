@@ -12,6 +12,12 @@ This runbook is for deployments to the Laravel Forge production server.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
 
+## Synchronizing public production content to staging
+
+Run `php artisan content:sync-production` from the staging release to replace staging's public content with the current production versions. The command transfers only published posts and projects, referenced categories and tags, active podcasts and their published episodes, published videos, approved testimonials, their SEO metadata, and referenced public media.
+
+The synchronization refuses to run in production. It maps posts to a non-login staging content owner and never exports production users, subscribers, authentication data, review notes, activity logs, failed jobs, cache or session data, credentials, or environment configuration. Content that is no longer public in production is unpublished in staging while staging-only drafts remain intact.
+
 ## Deploying
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.

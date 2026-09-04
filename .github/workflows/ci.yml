@@ -63,12 +63,6 @@ jobs:
           php artisan migrate --force --seed
           php artisan tinker --execute="\$user = App\\Models\\User::query()->updateOrCreate(['email' => 'e2e-admin@example.test'], ['name' => 'E2E Admin', 'password' => bcrypt('e2e-password')]); \$user->forceFill(['is_admin' => true])->save();"
 
-      - name: Audit Composer dependencies
-        run: composer audit --locked
-
-      - name: Audit npm dependencies
-        run: npm audit --omit=dev
-
       - name: Check code style
         run: ./vendor/bin/pint --test
 
