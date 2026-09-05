@@ -11,14 +11,12 @@ it('emails only when backup attention is required', function (): void {
     $notifications = config('backup.notifications.notifications');
 
     expect($notifications)
-        ->toHaveKeys([
-            BackupHasFailedNotification::class,
-            CleanupHasFailedNotification::class,
-            UnhealthyBackupWasFoundNotification::class,
-        ])
-        ->not->toHaveKeys([
-            BackupWasSuccessfulNotification::class,
-            CleanupWasSuccessfulNotification::class,
-            HealthyBackupWasFoundNotification::class,
+        ->toMatchArray([
+            BackupHasFailedNotification::class => ['mail'],
+            CleanupHasFailedNotification::class => ['mail'],
+            UnhealthyBackupWasFoundNotification::class => ['mail'],
+            BackupWasSuccessfulNotification::class => [],
+            CleanupWasSuccessfulNotification::class => [],
+            HealthyBackupWasFoundNotification::class => [],
         ]);
 });
