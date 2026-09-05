@@ -52,6 +52,7 @@ test('only public content and its presentation data are exported', function (): 
         'title' => 'Published project',
         'slug' => 'published-project',
         'description' => 'Public project',
+        'tech_stack' => ['Laravel', 'Pest'],
         'status' => ProjectStatus::Published,
     ]);
     Project::query()->create([
@@ -71,6 +72,7 @@ test('only public content and its presentation data are exported', function (): 
         ->and($archive['posts'][0]['seo']['canonical_url'])->toBe('https://thelaravelarchitect.com/blog/published-post')
         ->and($archive['projects'])->toHaveCount(1)
         ->and($archive['projects'][0]['slug'])->toBe('published-project')
+        ->and($archive['projects'][0]['tech_stack'])->toBe(['Laravel', 'Pest'])
         ->and($archive['categories'])->toHaveCount(1)
         ->and($encoded)->not->toContain('private-author@example.test')
         ->and($encoded)->not->toContain('private-subscriber@example.test')
@@ -101,6 +103,7 @@ test('public content is synchronized without importing production identities', f
     $counts = app(PublicContentArchive::class)->sync(publicContentArchiveFixture());
 
     $post = Post::query()->where('slug', 'production-post')->firstOrFail();
+    $project = Project::query()->where('slug', 'production-project')->firstOrFail();
     $podcast = Podcast::query()->where('slug', 'production-podcast')->firstOrFail();
     $stagingAuthor = User::query()->where('email', 'staging-content@example.test')->firstOrFail();
 
@@ -111,6 +114,7 @@ test('public content is synchronized without importing production identities', f
         ->and($post->seo->canonical_url)->toBe('https://thelaravelarchitect.com/blog/production-post')
         ->and($post->user_id)->toBe($stagingAuthor->getKey())
         ->and($stagingAuthor->is_admin)->toBeFalse()
+        ->and($project->tech_stack)->toBe(['Laravel', 'Pest'])
         ->and($podcast->is_active)->toBeTrue()
         ->and($localDraft->fresh()?->status)->toBe(PublishStatus::Draft)
         ->and($stale->fresh()?->status)->toBe(PublishStatus::Draft)
@@ -149,7 +153,16 @@ function publicContentArchiveFixture(): array
                 'canonical_url' => 'https://thelaravelarchitect.com/blog/production-post',
             ],
         ]],
-        'projects' => [],
+        'projects' => [[
+            'title' => 'Production project',
+            'slug' => 'production-project',
+            'description' => 'Production project description',
+            'tech_stack' => ['Laravel', 'Pest'],
+            'is_featured' => true,
+            'sort_order' => 1,
+            'tags' => [],
+            'seo' => null,
+        ]],
         'podcasts' => [[
             'name' => 'Production podcast',
             'slug' => 'production-podcast',

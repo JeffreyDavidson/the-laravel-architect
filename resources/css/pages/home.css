@@ -92,21 +92,59 @@
 
     /* ===== Homepage Hero ===== */
     .homepage-hero {
-        background: #f8fafc;
-        border-bottom: 1px solid #dce3ea;
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        background: #0d1117;
+        border-bottom: 1px solid #263241;
+        color: #ffffff;
     }
 
-    .dark .homepage-hero {
-        background: #0d1117;
-        border-bottom-color: #202938;
+    .hero-art {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        display: block;
+    }
+
+    .hero-art,
+    .hero-art img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .hero-art img {
+        display: block;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .homepage-hero::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: rgba(4, 8, 13, 0.12);
+        content: "";
+        pointer-events: none;
+    }
+
+    .hero-copy {
+        padding-block: 1rem;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-intro {
+        color: #9fc5e5;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
     }
 
     .hero-title-accent {
-        color: #356d9f;
-    }
-
-    .dark .hero-title-accent {
-        color: #7eb0dc;
+        color: #83b9e5;
     }
 
     .hero-action {
@@ -123,38 +161,58 @@
     }
 
     .hero-action-primary {
-        background: #356d9f;
+        background: #4a7fbf;
         color: #ffffff;
     }
 
     .hero-action-primary:hover {
-        background: #28577f;
+        background: #5d91cd;
     }
 
     .hero-action-secondary {
-        background: transparent;
-        border-color: #cbd5e1;
-        color: #334155;
+        background: rgba(9, 15, 23, 0.62);
+        border-color: #64748b;
+        color: #eef4fa;
     }
 
     .hero-action-secondary:hover {
-        background: #e9eef4;
-        border-color: #94a3b8;
-    }
-
-    .dark .hero-action-secondary {
-        border-color: #334155;
-        color: #d8e1eb;
-    }
-
-    .dark .hero-action-secondary:hover {
-        background: #161e29;
-        border-color: #526174;
+        background: #162231;
+        border-color: #8fa3b8;
     }
 
     .hero-action:focus-visible {
-        outline: 2px solid #4a7fbf;
+        outline: 2px solid #9fc5e5;
         outline-offset: 3px;
+    }
+
+    .architecture-section .architecture-scene {
+        padding-left: 0;
+    }
+
+    .architecture-section .architecture-visual {
+        min-height: 12rem;
+    }
+
+    @media (max-width: 767px) {
+        .hero-shell {
+            padding-top: 3rem;
+        }
+
+        .hero-copy {
+            max-width: 34rem;
+        }
+
+        .hero-art img {
+            object-position: center bottom;
+        }
+
+        .hero-art {
+            inset: 4rem 0 0;
+        }
+
+        .homepage-hero::after {
+            background: rgba(4, 8, 13, 0.18);
+        }
     }
 
     .architecture-scene {
@@ -369,13 +427,263 @@
 
     /* ===== Scroll Fade Up ===== */
     .fade-up {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .fade-up.reveal-pending {
         opacity: 0;
         transform: translateY(12px);
         transition: opacity 0.45s ease, transform 0.45s ease;
     }
-    .fade-up.visible {
+    .fade-up.reveal-pending.visible {
         opacity: 1;
         transform: translateY(0);
+    }
+
+    /* ===== Image-led homepage sections ===== */
+    .case-studies-heading h2,
+    .credibility-heading h2 {
+        color: #ffffff;
+    }
+
+    .case-studies-heading p,
+    .credibility-heading p {
+        color: #b8c4d1;
+    }
+
+    .case-studies-heading a,
+    .case-studies-eyebrow {
+        color: #b9dbf7;
+    }
+
+    .credibility-heading {
+        margin-bottom: 2rem;
+    }
+
+    .credibility-heading + [role="list"] .testimonial-card {
+        min-height: 0;
+        background: #111a27;
+        border-color: #2a3a4e;
+    }
+
+    .case-study-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .case-study-card {
+        overflow: hidden;
+        border: 1px solid #2a3a4e;
+        border-radius: 0.9rem;
+        background: #111a27;
+        transition: border-color 180ms ease, transform 180ms ease;
+    }
+
+    .case-study-card:hover {
+        border-color: #5d91cd;
+        transform: translateY(-2px);
+    }
+
+    .case-study-lead {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: minmax(0, 1.55fr) minmax(19rem, 0.75fr);
+    }
+
+    .case-study-art {
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        background: #172334;
+    }
+
+    .case-study-art img,
+    .blog-featured-art img,
+    .blog-compact-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .case-study-lead .case-study-art {
+        min-height: 26rem;
+        aspect-ratio: auto;
+    }
+
+    .case-study-lead .case-study-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    .case-study-lead .project-card-title {
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        line-height: 1.1;
+    }
+
+    .engagement-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-block: 1px solid #d9e0e8;
+    }
+
+    .dark .engagement-grid {
+        border-color: #263241;
+    }
+
+    .engagement-card {
+        display: flex;
+        min-height: 19rem;
+        flex-direction: column;
+        padding: 2rem;
+        transition: background-color 180ms ease;
+    }
+
+    .engagement-card + .engagement-card {
+        border-left: 1px solid #d9e0e8;
+    }
+
+    .dark .engagement-card + .engagement-card {
+        border-color: #263241;
+    }
+
+    .engagement-card:hover {
+        background: #f3f6f9;
+    }
+
+    .dark .engagement-card:hover {
+        background: #111a27;
+    }
+
+    .engagement-number {
+        color: #356d9f;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+    }
+
+    .dark .engagement-number {
+        color: #7eb0dc;
+    }
+
+    .engagement-card h3 {
+        margin-top: 2rem;
+        color: var(--text-primary);
+        font-size: 2rem;
+        letter-spacing: -0.035em;
+    }
+
+    .engagement-card p {
+        margin-top: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+    }
+
+    .engagement-link {
+        margin-top: auto;
+        padding-top: 2rem;
+        color: #356d9f;
+        font-size: 0.875rem;
+        font-weight: 650;
+    }
+
+    .dark .engagement-link {
+        color: #9fc5e5;
+    }
+
+    .blog-featured-link {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(20rem, 0.75fr);
+    }
+
+    .blog-featured-art {
+        display: block;
+        min-height: 27rem;
+        overflow: hidden;
+        background: #172334;
+    }
+
+    .blog-featured-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .blog-compact-link {
+        display: grid;
+        grid-template-columns: minmax(9rem, 0.7fr) minmax(0, 1.3fr);
+        height: 100%;
+    }
+
+    .blog-compact-art {
+        display: block;
+        overflow: hidden;
+        background: #172334;
+    }
+
+    .writing-newsletter {
+        max-width: 48rem;
+        margin-inline: auto;
+        text-align: center;
+    }
+
+    .media-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 1.25rem;
+    }
+
+    .media-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.5rem;
+        padding: 0.7rem 1rem;
+        color: #334155;
+        font-size: 0.875rem;
+        font-weight: 650;
+    }
+
+    .dark .media-link {
+        border-color: #334155;
+        color: #d8e1eb;
+    }
+
+    @media (max-width: 767px) {
+        .case-study-grid,
+        .case-study-lead,
+        .engagement-grid,
+        .blog-featured-link,
+        .blog-compact-link,
+        .media-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .case-study-lead .case-study-art,
+        .blog-featured-art {
+            min-height: 15rem;
+        }
+
+        .engagement-card {
+            min-height: 15rem;
+            padding-inline: 0.25rem;
+        }
+
+        .engagement-card + .engagement-card {
+            border-top: 1px solid #d9e0e8;
+            border-left: 0;
+        }
+
+        .dark .engagement-card + .engagement-card {
+            border-color: #263241;
+        }
+
+        .blog-compact-art {
+            aspect-ratio: 16 / 9;
+        }
     }
 
     /* ===== Infinite Marquee ===== */

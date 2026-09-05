@@ -8,7 +8,7 @@ if (document.querySelector('[data-blog-filter]')) {
     import('./pages/blog-index');
 }
 
-if (document.querySelector('.prose pre')) {
+if (document.querySelector('[data-article]')) {
     import('./pages/blog');
 }
 

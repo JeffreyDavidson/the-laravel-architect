@@ -182,6 +182,18 @@
     border-radius: 8px;
 }
 
+.prose pre code {
+    color: #e7edf3;
+}
+
+.prose :not(pre) > code {
+    color: #376fa9;
+}
+
+.dark .prose :not(pre) > code {
+    color: #a8cce8;
+}
+
 .copy-btn {
     position: absolute;
     z-index: 10;

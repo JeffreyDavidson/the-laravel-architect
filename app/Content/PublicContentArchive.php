@@ -68,6 +68,7 @@ class PublicContentArchive
             ->get()
             ->map(fn (Project $project): array => [
                 ...$this->attributes($project, self::PROJECT_FIELDS),
+                'tech_stack' => $project->tech_stack,
                 'tags' => $this->tags($project),
                 'seo' => $this->seo($project),
             ])

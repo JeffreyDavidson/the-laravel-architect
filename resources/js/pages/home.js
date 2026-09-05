@@ -2,6 +2,8 @@ function initializeRevealAnimations(reduceMotion) {
     const revealElements = document.querySelectorAll('.fade-up');
     const countElements = document.querySelectorAll('.count-up');
 
+    revealElements.forEach((element) => element.classList.add('reveal-pending'));
+
     if (reduceMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach((element) => element.classList.add('visible'));
 
