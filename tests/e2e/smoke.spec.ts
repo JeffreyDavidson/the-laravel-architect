@@ -207,6 +207,40 @@ test('blog posts can be searched and reset without Alpine', async ({ page }) => 
     await expect(otherPost).toBeVisible();
 });
 
+test('blog category filtering preserves the editorial hierarchy', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/blog');
+
+    const laravelFilter = page.getByRole('button', { name: /Laravel 2/ });
+    const transitionSupported = await page.evaluate(() => typeof document.startViewTransition === 'function');
+
+    await page.evaluate(() => {
+        if (!document.startViewTransition) {
+            return;
+        }
+
+        const startViewTransition = document.startViewTransition.bind(document);
+
+        document.startViewTransition = (update) => {
+            document.documentElement.dataset.blogTransitionStarted = 'true';
+
+            return startViewTransition(update);
+        };
+    });
+
+    await laravelFilter.click();
+
+    await expect(laravelFilter).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-blog-post]:visible')).toHaveCount(2);
+    await expect(page.locator('[data-blog-post][data-visible-index="0"]')).toHaveCount(1);
+
+    if (transitionSupported) {
+        await expect(page.locator('html')).toHaveAttribute('data-blog-transition-started', 'true');
+    }
+
+    await expect.poll(() => page.locator('html').evaluate((element) => element.style.viewTransitionName)).toBe('');
+});
+
 test('static public pages avoid downloading optional interaction bundles', async ({ page }) => {
     const requestedAssets = trackRequestedAssets(page);
 

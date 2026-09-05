@@ -8,9 +8,15 @@ if (filter) {
     const emptyState = filter.querySelector('[data-blog-empty]');
     const emptyQuery = filter.querySelector('[data-blog-empty-query]');
     const reset = filter.querySelector('[data-blog-reset]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let activeCategory = 'all';
+    let transitionSequence = 0;
 
-    const update = () => {
+    posts.forEach((post, index) => {
+        post.style.viewTransitionName = `blog-post-${index}`;
+    });
+
+    const applyFilter = () => {
         const query = search.value.toLocaleLowerCase();
         let visibleCount = 0;
 
@@ -41,7 +47,27 @@ if (filter) {
         }
     };
 
-    search.addEventListener('input', update);
+    const update = (animate = false) => {
+        if (!animate || reducedMotion.matches || !document.startViewTransition) {
+            applyFilter();
+
+            return;
+        }
+
+        document.documentElement.style.viewTransitionName = 'none';
+
+        const sequence = ++transitionSequence;
+        const transition = document.startViewTransition(applyFilter);
+        const finish = () => {
+            if (sequence === transitionSequence) {
+                document.documentElement.style.removeProperty('view-transition-name');
+            }
+        };
+
+        transition.finished.then(finish, finish);
+    };
+
+    search.addEventListener('input', () => update());
     clear.addEventListener('click', () => {
         search.value = '';
         search.focus();
@@ -52,13 +78,13 @@ if (filter) {
         activeCategory = 'all';
         search.value = '';
         search.focus();
-        update();
+        update(true);
     });
 
     for (const button of categoryButtons) {
         button.addEventListener('click', () => {
             activeCategory = button.dataset.blogCategory;
-            update();
+            update(true);
         });
     }
 
