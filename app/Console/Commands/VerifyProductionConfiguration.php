@@ -61,6 +61,7 @@ class VerifyProductionConfiguration extends Command
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
             [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
+            [$this->hasConfiguredB2Backup($backupDisks), 'The b2-backups disk must configure a private Backblaze S3 endpoint, region, bucket, key ID, and application key.'],
             [$this->isConfigured(config('backup.backup.password')), 'BACKUP_ARCHIVE_PASSWORD must be configured.'],
             [$this->isPositiveInteger(config('health.backup.max_age_hours')), 'BACKUP_MAX_AGE_HOURS must be at least 1.'],
             [$this->isPositiveInteger(config('health.failed_jobs.retention_hours')), 'QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.'],
@@ -220,6 +221,39 @@ class VerifyProductionConfiguration extends Command
             && $this->isConfigured($disk['root'] ?? null)
             && $this->isConfigured($disk['hostFingerprint'] ?? null)
             && $this->isPositiveInteger($disk['port'] ?? null);
+    }
+
+    private function hasConfiguredB2Backup(mixed $disks): bool
+    {
+        if (! is_array($disks) || ! in_array('b2-backups', $disks, true)) {
+            return true;
+        }
+
+        $disk = config('filesystems.disks.b2-backups');
+
+        if (! is_array($disk)) {
+            return false;
+        }
+
+        $endpoint = $disk['endpoint'] ?? null;
+        $endpointHost = is_string($endpoint)
+            ? parse_url($endpoint, PHP_URL_HOST)
+            : null;
+
+        return ($disk['driver'] ?? null) === 's3'
+            && $this->isConfigured($disk['key'] ?? null)
+            && $this->isConfigured($disk['secret'] ?? null)
+            && $this->isConfigured($disk['region'] ?? null)
+            && $this->isConfigured($disk['bucket'] ?? null)
+            && is_string($endpoint)
+            && str_starts_with($endpoint, 'https://')
+            && is_string($endpointHost)
+            && str_starts_with($endpointHost, 's3.')
+            && str_ends_with($endpointHost, '.backblazeb2.com')
+            && ($disk['use_path_style_endpoint'] ?? null) === false
+            && ($disk['visibility'] ?? null) === 'private'
+            && ($disk['directory_visibility'] ?? null) === 'private'
+            && ($disk['throw'] ?? null) === true;
     }
 
     private function hasValidHeartbeatMaxAge(mixed $maxAge): bool

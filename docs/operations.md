@@ -104,12 +104,12 @@ For content or authorization changes, also verify the affected public route and 
 
 ## Backup validation
 
-### Synology NAS destination
+### Off-server destinations
 
-The production server and Synology NAS must both be connected to the private Tailscale network. Configure these values through the production secret manager, never in the repository:
+The production server and Synology NAS must both be connected to the private Tailscale network. Backblaze B2 provides an independent encrypted cloud copy through its S3-compatible API. Configure these values through the production secret manager, never in the repository:
 
 ```dotenv
-BACKUP_DISKS=local,nas-backups
+BACKUP_DISKS=local,nas-backups,b2-backups
 BACKUP_SFTP_HOST=<NAS Tailscale address>
 BACKUP_SFTP_PORT=22
 BACKUP_SFTP_USERNAME=<dedicated backup user>
@@ -118,12 +118,19 @@ BACKUP_SFTP_ROOT=/laravel-backups
 BACKUP_SFTP_HOST_FINGERPRINT=<verified Flysystem-compatible fingerprint>
 BACKUP_SFTP_TIMEOUT=30
 BACKUP_SFTP_MAX_TRIES=3
+BACKUP_B2_KEY_ID=<bucket-scoped key ID>
+BACKUP_B2_APPLICATION_KEY=<bucket-scoped application key>
+BACKUP_B2_REGION=us-east-005
+BACKUP_B2_BUCKET=jdavidson-tla-production-backups
+BACKUP_B2_ENDPOINT=https://s3.us-east-005.backblazeb2.com
 BACKUP_ARCHIVE_PASSWORD=<independent archive password>
 ```
 
 Obtain the SSH host key through a separately trusted channel before configuring `BACKUP_SFTP_HOST_FINGERPRINT`. First verify its standard OpenSSH SHA-256 fingerprint. Then convert that same verified key to the format expected by the installed `league/flysystem-sftp-v3` adapter. For an ED25519 key, the adapter expects the lowercase SHA-512 digest of the decoded public-key blob with colon-separated byte pairs, not the `SHA256:...` value displayed by OpenSSH. Recheck this behavior when upgrading the adapter, and never accept an unexpected replacement key during a deployment.
 
-After changing these values, refresh the configuration and prove both destinations work:
+Restrict the B2 application key to the TLA backup bucket with read and write access. Keep the bucket private, retain client-side archive encryption, and do not reuse the Mouse28 key or bucket. The configured endpoint must use HTTPS on Backblaze's `backblazeb2.com` domain.
+
+After changing these values, refresh the configuration and prove all destinations work:
 
 ```bash
 php artisan config:clear
@@ -132,7 +139,7 @@ php artisan backup:run
 php artisan backup:monitor
 ```
 
-Confirm a new encrypted archive exists on both the local and `nas-backups` disks, then complete the restore drill below. A successful SFTP connection alone does not prove that an application backup can be restored.
+Confirm a new encrypted archive exists on the `local`, `nas-backups`, and `b2-backups` disks, then complete the restore drill below using a copy downloaded from B2. A successful connection to either off-server destination does not prove that an application backup can be restored.
 
 An exit-zero backup command is not enough. Independently verify:
 
