@@ -40,7 +40,7 @@ it('configures a private S3-compatible disk for Backblaze backups', function () 
             'secret' => null,
             'region' => 'us-east-005',
             'bucket' => null,
-            'endpoint' => null,
+            'endpoint' => 'https://s3.us-east-005.backblazeb2.com',
             'use_path_style_endpoint' => false,
             'visibility' => 'private',
             'directory_visibility' => 'private',
