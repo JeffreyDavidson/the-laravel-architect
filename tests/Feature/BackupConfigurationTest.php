@@ -32,6 +32,23 @@ it('configures a private SFTP disk for NAS backups', function () {
         ]);
 });
 
+it('configures a private S3-compatible disk for Backblaze backups', function () {
+    expect(config('filesystems.disks.b2-backups'))
+        ->toMatchArray([
+            'driver' => 's3',
+            'key' => null,
+            'secret' => null,
+            'region' => 'us-east-005',
+            'bucket' => null,
+            'endpoint' => null,
+            'use_path_style_endpoint' => false,
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ]);
+});
+
 it('schedules operational monitoring and maintenance', function () {
     Artisan::call('schedule:list');
 
