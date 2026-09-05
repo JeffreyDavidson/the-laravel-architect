@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -73,6 +74,49 @@ it('renders model-specific SEO metadata', function () {
             '<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">',
             false,
         );
+});
+
+it('renders bundled editorial artwork and article navigation for seeded posts', function () {
+    $this->withVite();
+
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+    $posts = [
+        'hello-world-why-im-starting-this-blog' => 'post-hello-world-768',
+        'from-kansas-to-florida-a-developers-journey' => 'post-kansas-florida-768',
+        'what-15-years-of-web-development-taught-me' => 'home-writing-modules-768',
+        'why-i-still-choose-laravel-in-2026' => 'home-writing-review-768',
+        'how-i-structure-every-laravel-project' => 'home-writing-fallback-768',
+    ];
+
+    foreach ($posts as $slug => $asset) {
+        $post = Post::query()->create([
+            'title' => Str::headline($slug),
+            'slug' => $slug,
+            'excerpt' => 'A practical structure for maintainable Laravel applications.',
+            'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
+            'category_id' => $category->id,
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSee("data-post-artwork=\"{$slug}\"", false)
+            ->assertSee($asset, false)
+            ->assertSee('data-article-toc', false);
+    }
+
+    $blog = $this->get(route('blog.index'))
+        ->assertOk();
+
+    foreach (array_keys($posts) as $slug) {
+        $blog->assertSee("data-post-artwork=\"{$slug}\"", false);
+    }
 });
 
 it('renders canonical structured data for the site and blog posts', function () {
@@ -696,10 +740,16 @@ it('gives every homepage article a responsive image', function () {
 
     $author = User::factory()->create();
 
-    foreach (range(1, 3) as $index) {
+    $posts = [
+        'what-15-years-of-web-development-taught-me',
+        'why-i-still-choose-laravel-in-2026',
+        'how-i-structure-every-laravel-project',
+    ];
+
+    foreach ($posts as $index => $slug) {
         Post::query()->create([
-            'title' => "Homepage article {$index}",
-            'slug' => "homepage-article-{$index}",
+            'title' => Str::headline($slug),
+            'slug' => $slug,
             'content' => 'A practical Laravel architecture article.',
             'user_id' => $author->id,
             'status' => PublishStatus::Published,
@@ -982,8 +1032,8 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSee('type="image/webp"', false)
         ->assertSee('article-640.webp', false)
         ->assertSee('article-1280.webp', false)
-        ->assertSee('sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"', false)
-        ->assertSee('aspect-video', false)
+        ->assertSee('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"', false)
+        ->assertSee('aspect-[3/2]', false)
         ->assertSee('fetchpriority="high"', false)
         ->assertSee($post->featured_image_url, false);
 });

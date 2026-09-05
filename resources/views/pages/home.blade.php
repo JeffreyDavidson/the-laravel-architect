@@ -256,7 +256,6 @@
 </section>
 
 {{-- ===== LATEST POSTS ===== --}}
-@inject('postImages', 'App\Services\ResponsiveImageVariants')
 @if($latestPosts->count())
 <section class="writing-section border-t border-gray-200 bg-gray-50 py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -273,24 +272,7 @@
             @php $featured = $latestPosts->first(); @endphp
             <article class="blog-featured group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
                 <a href="{{ route('blog.show', $featured) }}" class="blog-featured-link">
-                    @if($featured->featured_image_url)
-                    @php $featuredPostSrcset = $postImages->srcset($featured->featured_image_path); @endphp
-                    <picture class="blog-featured-art">
-                        @if($featuredPostSrcset)
-                        <source type="image/webp" srcset="{{ $featuredPostSrcset }}" sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)">
-                        @endif
-                        <img src="{{ $featured->featured_image_url }}" alt="" loading="lazy" decoding="async">
-                    </picture>
-                    @else
-                    <picture class="blog-featured-art">
-                        <source
-                            type="image/webp"
-                            srcset="{{ Vite::asset('resources/images/home-writing-fallback-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-fallback-1280.webp') }} 1280w"
-                            sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
-                        >
-                        <img src="{{ Vite::asset('resources/images/home-writing-fallback-1280.webp') }}" alt="" loading="lazy" decoding="async">
-                    </picture>
-                    @endif
+                    <x-post-artwork :post="$featured" sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)" class="blog-featured-art" />
                     <div class="blog-featured-copy p-7 sm:p-9">
                     @if($featured->category)
                     <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
@@ -313,33 +295,7 @@
                 @foreach($latestPosts->skip(1) as $post)
                 <article class="group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
                     <a href="{{ route('blog.show', $post) }}" class="blog-compact-link">
-                        @if($post->featured_image_url)
-                        @php $postSrcset = $postImages->srcset($post->featured_image_path); @endphp
-                        <picture class="blog-compact-art">
-                            @if($postSrcset)
-                            <source type="image/webp" srcset="{{ $postSrcset }}" sizes="(min-width: 640px) 280px, calc(100vw - 2rem)">
-                            @endif
-                            <img src="{{ $post->featured_image_url }}" alt="" loading="lazy" decoding="async">
-                        </picture>
-                        @elseif($loop->odd)
-                        <picture class="blog-compact-art">
-                            <source
-                                type="image/webp"
-                                srcset="{{ Vite::asset('resources/images/home-writing-review-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-review-1280.webp') }} 1280w"
-                                sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
-                            >
-                            <img src="{{ Vite::asset('resources/images/home-writing-review-1280.webp') }}" alt="" loading="lazy" decoding="async">
-                        </picture>
-                        @else
-                        <picture class="blog-compact-art">
-                            <source
-                                type="image/webp"
-                                srcset="{{ Vite::asset('resources/images/home-writing-modules-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-modules-1280.webp') }} 1280w"
-                                sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
-                            >
-                            <img src="{{ Vite::asset('resources/images/home-writing-modules-1280.webp') }}" alt="" loading="lazy" decoding="async">
-                        </picture>
-                        @endif
+                        <x-post-artwork :post="$post" sizes="(min-width: 640px) 280px, calc(100vw - 2rem)" class="blog-compact-art" />
                         <div class="p-6">
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>

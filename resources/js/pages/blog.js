@@ -54,12 +54,65 @@ function initializeCodeCopyButtons() {
     });
 }
 
+function initializeArticleNavigation() {
+    const article = document.querySelector('[data-article]');
+
+    if (!article) {
+        return;
+    }
+
+    const headings = Array.from(article.querySelectorAll('.article-prose h2[id]'));
+    const tocContainers = document.querySelectorAll('[data-article-toc]');
+    const tocLists = document.querySelectorAll('[data-article-toc-list]');
+
+    if (headings.length > 1) {
+        tocLists.forEach((list) => {
+            headings.forEach((heading) => {
+                const link = document.createElement('a');
+
+                link.href = `#${heading.id}`;
+                link.className = 'article-toc-link';
+                link.textContent = heading.textContent;
+                link.dataset.articleTocLink = heading.id;
+                list.appendChild(link);
+            });
+        });
+
+        tocContainers.forEach((container) => {
+            container.hidden = false;
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            const visibleHeading = entries.find((entry) => entry.isIntersecting);
+
+            if (!visibleHeading) {
+                return;
+            }
+
+            document.querySelectorAll('[data-article-toc-link]').forEach((link) => {
+                if (link.dataset.articleTocLink === visibleHeading.target.id) {
+                    link.setAttribute('aria-current', 'true');
+                } else {
+                    link.removeAttribute('aria-current');
+                }
+            });
+        }, {
+            rootMargin: '-20% 0px -65% 0px',
+        });
+
+        headings.forEach((heading) => observer.observe(heading));
+    }
+
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initializeCodeCopyButtons();
         scheduleCodeHighlighting();
+        initializeArticleNavigation();
     }, { once: true });
 } else {
     initializeCodeCopyButtons();
     scheduleCodeHighlighting();
+    initializeArticleNavigation();
 }
