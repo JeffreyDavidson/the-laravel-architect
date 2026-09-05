@@ -59,6 +59,11 @@ const budgets = [
         maxGzipBytes: 1 * 1024,
     },
     {
+        entry: 'resources/css/pages/article-entry.css',
+        label: 'Blog article stylesheet',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
         entry: 'resources/css/pages/podcast-entry.css',
         label: 'Podcast stylesheet',
         maxGzipBytes: 2 * 1024,
@@ -122,6 +127,86 @@ const budgets = [
         entry: 'resources/images/avatar-640.webp',
         label: 'About portrait (640px)',
         maxBytes: 42 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-desktop-1024.webp',
+        label: 'Homepage desktop hero (1024px)',
+        maxBytes: 70 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-desktop-1536.webp',
+        label: 'Homepage desktop hero (1536px)',
+        maxBytes: 165 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-mobile-640.webp',
+        label: 'Homepage mobile hero (640px)',
+        maxBytes: 40 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-mobile-1024.webp',
+        label: 'Homepage mobile hero (1024px)',
+        maxBytes: 95 * 1024,
+    },
+    {
+        entry: 'resources/images/home-case-study-fallback-768.webp',
+        label: 'Homepage case study fallback (768px)',
+        maxBytes: 48 * 1024,
+    },
+    {
+        entry: 'resources/images/home-case-study-fallback-1280.webp',
+        label: 'Homepage case study fallback (1280px)',
+        maxBytes: 145 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-fallback-768.webp',
+        label: 'Homepage writing fallback (768px)',
+        maxBytes: 65 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-fallback-1280.webp',
+        label: 'Homepage writing fallback (1280px)',
+        maxBytes: 180 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-review-768.webp',
+        label: 'Homepage writing review artwork (768px)',
+        maxBytes: 80 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-review-1280.webp',
+        label: 'Homepage writing review artwork (1280px)',
+        maxBytes: 190 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-modules-768.webp',
+        label: 'Homepage writing modules artwork (768px)',
+        maxBytes: 50 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-modules-1280.webp',
+        label: 'Homepage writing modules artwork (1280px)',
+        maxBytes: 120 * 1024,
+    },
+    {
+        entry: 'resources/images/post-hello-world-768.webp',
+        label: 'Hello World article artwork (768px)',
+        maxBytes: 70 * 1024,
+    },
+    {
+        entry: 'resources/images/post-hello-world-1280.webp',
+        label: 'Hello World article artwork (1280px)',
+        maxBytes: 170 * 1024,
+    },
+    {
+        entry: 'resources/images/post-kansas-florida-768.webp',
+        label: 'Kansas to Florida article artwork (768px)',
+        maxBytes: 85 * 1024,
+    },
+    {
+        entry: 'resources/images/post-kansas-florida-1280.webp',
+        label: 'Kansas to Florida article artwork (1280px)',
+        maxBytes: 190 * 1024,
     },
     {
         entry: 'resources/images/podcast-coffee-logo-128.webp',

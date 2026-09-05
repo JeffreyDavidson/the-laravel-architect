@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -73,6 +74,49 @@ it('renders model-specific SEO metadata', function () {
             '<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">',
             false,
         );
+});
+
+it('renders bundled editorial artwork and article navigation for seeded posts', function () {
+    $this->withVite();
+
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+    $posts = [
+        'hello-world-why-im-starting-this-blog' => 'post-hello-world-768',
+        'from-kansas-to-florida-a-developers-journey' => 'post-kansas-florida-768',
+        'what-15-years-of-web-development-taught-me' => 'home-writing-modules-768',
+        'why-i-still-choose-laravel-in-2026' => 'home-writing-review-768',
+        'how-i-structure-every-laravel-project' => 'home-writing-fallback-768',
+    ];
+
+    foreach ($posts as $slug => $asset) {
+        $post = Post::query()->create([
+            'title' => Str::headline($slug),
+            'slug' => $slug,
+            'excerpt' => 'A practical structure for maintainable Laravel applications.',
+            'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
+            'category_id' => $category->id,
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSee("data-post-artwork=\"{$slug}\"", false)
+            ->assertSee($asset, false)
+            ->assertSee('data-article-toc', false);
+    }
+
+    $blog = $this->get(route('blog.index'))
+        ->assertOk();
+
+    foreach (array_keys($posts) as $slug) {
+        $blog->assertSee("data-post-artwork=\"{$slug}\"", false);
+    }
 });
 
 it('renders canonical structured data for the site and blog posts', function () {
@@ -565,7 +609,7 @@ it('keeps public technology and channel details consistent', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee(config('public-site.youtube.url'), false)
-        ->assertSee('Practical Laravel, on video');
+        ->assertSee('Watch, listen, and build along');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
@@ -610,6 +654,10 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-desktop-1024.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-desktop-1536.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-mobile-640.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-mobile-1024.webp']['file'], false)
         ->assertSee($manifest['resources/images/podcast-coffee-logo-128.webp']['file'], false)
         ->assertDontSee($manifest['resources/images/podcast-coffee-logo-512.webp']['file'], false)
         ->assertSee($manifest['resources/js/app.js']['file'], false);
@@ -674,6 +722,46 @@ it('renders an accessible homepage architecture scene with a static fallback', f
     expect(substr_count($content, 'data-architecture-scene'))->toBe(1)
         ->and($content)->not->toContain('id="code-editor"')
         ->and($content)->not->toContain('role="tablist"');
+});
+
+it('prioritizes the art-directed homepage hero', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('media="(max-width: 767px)"', false)
+        ->assertSee('sizes="100vw"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee('decoding="async"', false)
+        ->assertSee('Laravel systems,', false)
+        ->assertSee('easier to change.', false);
+});
+
+it('gives every homepage article a responsive image', function () {
+    $this->withVite();
+
+    $author = User::factory()->create();
+
+    $posts = [
+        'what-15-years-of-web-development-taught-me',
+        'why-i-still-choose-laravel-in-2026',
+        'how-i-structure-every-laravel-project',
+    ];
+
+    foreach ($posts as $index => $slug) {
+        Post::query()->create([
+            'title' => Str::headline($slug),
+            'slug' => $slug,
+            'content' => 'A practical Laravel architecture article.',
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+    }
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('home-writing-fallback-768', false)
+        ->assertSee('home-writing-review-768', false)
+        ->assertSee('home-writing-modules-768', false);
 });
 
 it('places the theme bootstrap inside the document head', function () {
@@ -859,6 +947,15 @@ it('uses published work and approved recommendations as homepage proof', functio
         ]);
 });
 
+it('does not present zero-value homepage proof', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Years building PHP')
+        ->assertDontSee('Published articles')
+        ->assertDontSee('Portfolio projects')
+        ->assertDontSee('Recommendations');
+});
+
 it('presents published projects as case studies without inferring product status', function () {
     $project = Project::query()->create([
         'title' => 'Architecture Decisions',
@@ -935,8 +1032,8 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSee('type="image/webp"', false)
         ->assertSee('article-640.webp', false)
         ->assertSee('article-1280.webp', false)
-        ->assertSee('sizes="(min-width: 896px) 896px, calc(100vw - 2rem)"', false)
-        ->assertSee('aspect-video', false)
+        ->assertSee('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"', false)
+        ->assertSee('aspect-[3/2]', false)
         ->assertSee('fetchpriority="high"', false)
         ->assertSee($post->featured_image_url, false);
 });

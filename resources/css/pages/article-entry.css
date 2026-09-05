@@ -1,0 +1,55 @@
+.article-progress {
+    animation: article-reading-progress linear;
+    animation-timeline: scroll(root);
+    transform: scaleX(0);
+    transform-origin: left center;
+}
+
+@keyframes article-reading-progress {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.article-toc-link {
+    display: block;
+    border-left: 1px solid rgb(156 163 175 / 0.35);
+    padding: 0.4rem 0 0.4rem 0.9rem;
+    color: rgb(107 114 128);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    transition: border-color 160ms ease, color 160ms ease;
+}
+
+.article-toc-link:hover,
+.article-toc-link[aria-current="true"] {
+    border-color: #4a7fbf;
+    color: #4a7fbf;
+}
+
+.dark .article-toc-link {
+    border-color: rgb(74 127 191 / 0.25);
+    color: rgb(156 163 175);
+}
+
+.dark .article-toc-link:hover,
+.dark .article-toc-link[aria-current="true"] {
+    border-color: #6fa3d6;
+    color: #a8cce8;
+}
+
+.article-prose h2,
+.article-prose h3 {
+    scroll-margin-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .article-progress {
+        animation: none;
+        transform: none;
+    }
+
+    .article-toc-link {
+        transition: none;
+    }
+}

@@ -1,1 +1,60 @@
 @import 'prismjs/themes/prism-tomorrow.css';
+
+/* The editorial code palette mirrors the site's ink, paper, and blueprint colors. */
+code[class*='language-'],
+pre[class*='language-'] {
+    color: #e7edf3;
+    text-shadow: none;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #7f8c9b;
+}
+
+.token.punctuation,
+.token.operator {
+    color: #aab6c4;
+}
+
+.token.namespace,
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #e08a98;
+}
+
+.token.boolean,
+.token.number {
+    color: #efaa83;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #d9c28f;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #86b8e2;
+}
+
+.token.function,
+.token.class-name {
+    color: #a8cce8;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e9b4be;
+}
