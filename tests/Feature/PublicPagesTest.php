@@ -691,6 +691,29 @@ it('prioritizes the art-directed homepage hero', function () {
         ->assertSee('easier to change.', false);
 });
 
+it('gives every homepage article a responsive image', function () {
+    $this->withVite();
+
+    $author = User::factory()->create();
+
+    foreach (range(1, 3) as $index) {
+        Post::query()->create([
+            'title' => "Homepage article {$index}",
+            'slug' => "homepage-article-{$index}",
+            'content' => 'A practical Laravel architecture article.',
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+    }
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('home-writing-fallback-768', false)
+        ->assertSee('home-writing-review-768', false)
+        ->assertSee('home-writing-modules-768', false);
+});
+
 it('places the theme bootstrap inside the document head', function () {
     $content = $this->get(route('home'))
         ->assertOk()

@@ -321,6 +321,24 @@
                             @endif
                             <img src="{{ $post->featured_image_url }}" alt="" loading="lazy" decoding="async">
                         </picture>
+                        @elseif($loop->odd)
+                        <picture class="blog-compact-art">
+                            <source
+                                type="image/webp"
+                                srcset="{{ Vite::asset('resources/images/home-writing-review-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-review-1280.webp') }} 1280w"
+                                sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
+                            >
+                            <img src="{{ Vite::asset('resources/images/home-writing-review-1280.webp') }}" alt="" loading="lazy" decoding="async">
+                        </picture>
+                        @else
+                        <picture class="blog-compact-art">
+                            <source
+                                type="image/webp"
+                                srcset="{{ Vite::asset('resources/images/home-writing-modules-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-modules-1280.webp') }} 1280w"
+                                sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
+                            >
+                            <img src="{{ Vite::asset('resources/images/home-writing-modules-1280.webp') }}" alt="" loading="lazy" decoding="async">
+                        </picture>
                         @endif
                         <div class="p-6">
                         @if($post->category)

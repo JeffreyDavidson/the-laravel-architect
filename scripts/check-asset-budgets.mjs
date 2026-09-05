@@ -164,6 +164,26 @@ const budgets = [
         maxBytes: 180 * 1024,
     },
     {
+        entry: 'resources/images/home-writing-review-768.webp',
+        label: 'Homepage writing review artwork (768px)',
+        maxBytes: 80 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-review-1280.webp',
+        label: 'Homepage writing review artwork (1280px)',
+        maxBytes: 190 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-modules-768.webp',
+        label: 'Homepage writing modules artwork (768px)',
+        maxBytes: 50 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-modules-1280.webp',
+        label: 'Homepage writing modules artwork (1280px)',
+        maxBytes: 120 * 1024,
+    },
+    {
         entry: 'resources/images/podcast-coffee-logo-128.webp',
         label: 'Coffee podcast artwork (128px)',
         maxBytes: 4 * 1024,

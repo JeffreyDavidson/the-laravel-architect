@@ -599,6 +599,7 @@
     }
 
     .blog-featured-art {
+        display: block;
         min-height: 27rem;
         overflow: hidden;
         background: #172334;
@@ -617,6 +618,7 @@
     }
 
     .blog-compact-art {
+        display: block;
         overflow: hidden;
         background: #172334;
     }
