@@ -7,15 +7,37 @@
 @section('content')
 {{-- ===== HERO ===== --}}
 <section class="homepage-hero">
-    <div class="hero-shell mx-auto grid max-w-7xl gap-14 px-4 py-16 sm:px-6 sm:py-20 lg:px-8 xl:grid-cols-[1.03fr_0.97fr] xl:items-center xl:gap-20 xl:py-24">
-        <div class="max-w-2xl">
-            <h1 class="hero-title text-5xl font-semibold leading-[1.02] tracking-[-0.045em] text-gray-950 sm:text-6xl xl:text-[4rem] dark:text-white">
-                <span class="block xl:whitespace-nowrap">I don't just write code.</span>
-                <span class="hero-title-accent block">I architect it!</span>
+    <picture class="hero-art" aria-hidden="true">
+        <source
+            media="(max-width: 767px)"
+            srcset="{{ Vite::asset('resources/images/home-hero-mobile-640.webp') }} 640w, {{ Vite::asset('resources/images/home-hero-mobile-1024.webp') }} 1024w"
+            sizes="100vw"
+        >
+        <source
+            srcset="{{ Vite::asset('resources/images/home-hero-desktop-1024.webp') }} 1024w, {{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }} 1536w"
+            sizes="100vw"
+        >
+        <img
+            src="{{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }}"
+            alt=""
+            width="1536"
+            height="1024"
+            fetchpriority="high"
+            decoding="async"
+        >
+    </picture>
+
+    <div class="hero-shell mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-start px-4 py-16 sm:min-h-[calc(100svh-4.5rem)] sm:items-center sm:px-6 lg:px-8">
+        <div class="hero-copy max-w-2xl">
+            <p class="hero-intro">Jeffrey Davidson · The Laravel Architect</p>
+
+            <h1 class="hero-title mt-5 text-5xl font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-6xl xl:text-[4.5rem]">
+                Laravel systems,<br>
+                <span class="hero-title-accent">easier to change.</span>
             </h1>
 
-            <p class="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
-                I help teams modernize Laravel applications with clear architecture, useful tests, and fewer surprises in production.
+            <p class="mt-6 max-w-lg text-lg leading-8 text-slate-300">
+                Architecture, modernization, and hands-on development for teams carrying real production complexity.
             </p>
 
             <div class="mt-9 flex flex-wrap gap-3">
@@ -23,34 +45,6 @@
                 <a href="{{ route('projects.index') }}" class="hero-action hero-action-secondary">View Projects</a>
             </div>
         </div>
-
-        <figure class="architecture-scene" data-architecture-scene data-architecture-state="idle" aria-labelledby="architecture-title architecture-description">
-            <h2 id="architecture-title" class="architecture-scene-title">How a Laravel request moves</h2>
-
-            <p id="architecture-description" class="sr-only">
-                A Laravel request moves through routes, an application controller, the domain layer, and data services. Domain work can also dispatch queued jobs and events.
-            </p>
-
-            <div class="architecture-visual">
-                <div class="architecture-canvas" data-architecture-canvas aria-hidden="true"></div>
-
-                <div class="architecture-fallback" data-architecture-fallback>
-                    <ol class="architecture-flow" aria-label="Primary request flow">
-                        <li><span aria-hidden="true"></span><strong>Request</strong></li>
-                        <li><span aria-hidden="true"></span><strong>Routes</strong></li>
-                        <li><span aria-hidden="true"></span><strong>Application</strong></li>
-                        <li><span aria-hidden="true"></span><strong>Domain</strong></li>
-                        <li><span aria-hidden="true"></span><strong>Data</strong></li>
-                    </ol>
-
-                    <p class="architecture-branch">Queue / events</p>
-                </div>
-            </div>
-
-            <figcaption class="architecture-caption">
-                Clear boundaries keep change local, behavior testable, and production work predictable.
-            </figcaption>
-        </figure>
     </div>
 </section>
 
@@ -117,45 +111,105 @@
     :recommendations="$approvedTestimonialCount"
 />
 
+{{-- ===== ARCHITECTURE ===== --}}
+<section class="architecture-section border-t border-gray-200 bg-white py-10 dark:border-brand-800/50 dark:bg-transparent sm:py-14">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:px-8">
+        <div class="max-w-md">
+            <h2 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">A codebase should explain itself.</h2>
+            <p class="mt-5 text-lg leading-8 text-gray-600 dark:text-gray-400">Clear boundaries make change safer, tests more useful, and production behavior easier to understand.</p>
+        </div>
+
+        <figure class="architecture-scene" data-architecture-scene data-architecture-state="idle" aria-labelledby="architecture-title architecture-description">
+            <h3 id="architecture-title" class="architecture-scene-title">How a Laravel request moves</h3>
+
+            <p id="architecture-description" class="sr-only">
+                A Laravel request moves through routes, an application controller, the domain layer, and data services. Domain work can also dispatch queued jobs and events.
+            </p>
+
+            <div class="architecture-visual">
+                <div class="architecture-canvas" data-architecture-canvas aria-hidden="true"></div>
+
+                <div class="architecture-fallback" data-architecture-fallback>
+                    <ol class="architecture-flow" aria-label="Primary request flow">
+                        <li><span aria-hidden="true"></span><strong>Request</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Routes</strong></li>
+                        <li><span aria-hidden="true"></span><strong>App</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Domain</strong></li>
+                        <li><span aria-hidden="true"></span><strong>Data</strong></li>
+                    </ol>
+
+                    <p class="architecture-branch">Queue / events</p>
+                </div>
+            </div>
+
+            <figcaption class="architecture-caption">
+                Clear boundaries keep change local, behavior testable, and production work predictable.
+            </figcaption>
+        </figure>
+    </div>
+</section>
+
 {{-- ===== FEATURED PROJECTS ===== --}}
 @inject('projectImages', 'App\Services\ResponsiveImageVariants')
 @if($featuredProjects->count())
-<section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
+<section class="case-studies-section border-t border-brand-800 bg-brand-950 py-14 text-white sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <x-home.section-header
-            eyebrow="Selected work"
-            title="Laravel systems built for the long term"
-            description="A selection of products and platforms shaped around maintainability, clear domain boundaries, and dependable delivery."
-            :href="route('projects.index')"
-            link-label="View all projects"
-        />
-        <div class="space-y-6">
+        <div class="case-studies-heading mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="max-w-2xl">
+                <p class="case-studies-eyebrow mb-3 font-mono text-sm font-medium uppercase tracking-wide">
+                    Selected work
+                </p>
+                <h2 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Proof lives in the work
+                </h2>
+                <p class="mt-4 max-w-[62ch] text-pretty text-base sm:text-lg">
+                    Products and platforms shaped around maintainability, clear domain boundaries, and dependable delivery.
+                </p>
+            </div>
+
+            <a href="{{ route('projects.index') }}" class="inline-flex shrink-0 items-center gap-2 self-start rounded-lg px-3 py-2 text-base font-medium transition-colors hover:bg-brand-800/50 hover:text-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300 sm:self-auto sm:text-sm">
+                View all projects
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <div class="case-study-grid">
             @foreach($featuredProjects as $index => $project)
-            <a href="{{ route('projects.show', $project) }}" class="glass-card group block rounded-xl overflow-hidden fade-up bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-transparent">
+            <a href="{{ route('projects.show', $project) }}" class="case-study-card {{ $index === 0 ? 'case-study-lead' : '' }} group fade-up">
                 @if($project->featured_image_url)
                 @php
                     $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
                 @endphp
-                <div class="{{ $index === 0 ? 'aspect-[21/9]' : 'aspect-video' }} bg-brand-800 overflow-hidden">
+                <div class="case-study-art">
                     <picture class="block h-full">
                         @if($featuredImageSrcset)
                         <source
                             type="image/webp"
                             srcset="{{ $featuredImageSrcset }}"
-                            sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"
+                            sizes="{{ $index === 0 ? '(min-width: 1024px) 760px, calc(100vw - 2rem)' : '(min-width: 1024px) 390px, calc(100vw - 2rem)' }}"
                         >
                         @endif
-                        <img src="{{ $project->featured_image_url }}" alt="{{ $project->title }}" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <img src="{{ $project->featured_image_url }}" alt="" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </picture>
+                </div>
+                @elseif($index === 0)
+                <div class="case-study-art">
+                    <picture class="block h-full">
+                        <source
+                            type="image/webp"
+                            srcset="{{ Vite::asset('resources/images/home-case-study-fallback-768.webp') }} 768w, {{ Vite::asset('resources/images/home-case-study-fallback-1280.webp') }} 1280w"
+                            sizes="(min-width: 1024px) 760px, calc(100vw - 2rem)"
+                        >
+                        <img src="{{ Vite::asset('resources/images/home-case-study-fallback-1280.webp') }}" alt="" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </picture>
                 </div>
                 @endif
-                <div class="p-6">
-                    <h3 class="project-card-title font-semibold text-lg mb-2 group-hover:text-brand-400 transition-colors">{{ $project->title }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ $project->description }}</p>
+                <div class="case-study-copy p-6">
+                    <h3 class="project-card-title mb-2 text-xl font-semibold text-white transition-colors group-hover:text-brand-200">{{ $project->title }}</h3>
+                    <p class="mb-4 text-sm leading-6 text-gray-300">{{ $project->description }}</p>
                     @if($project->tech_stack)
                     <div class="flex flex-wrap gap-2">
                         @foreach($project->tech_stack as $tech)
-                        <span class="px-2.5 py-1 bg-brand-100 dark:bg-brand-800/80 text-brand-600 dark:text-brand-300 text-xs font-medium rounded-md border border-brand-200 dark:border-brand-700/50">{{ $tech }}</span>
+                        <span class="rounded-full border border-brand-700 px-2.5 py-1 text-xs font-medium text-brand-200">{{ $tech }}</span>
                         @endforeach
                     </div>
                     @endif
@@ -170,65 +224,41 @@
 <x-home.credibility :testimonials="$testimonials" />
 
 {{-- ===== WHAT I DO ===== --}}
-<section class="border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
+<section class="engagement-section border-t border-gray-200 bg-white py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             class="fade-up"
-            eyebrow="Services"
-            title="How I help Laravel teams"
-            description="From greenfield applications to legacy rescues, I help teams make sound technical decisions and leave the codebase stronger."
+            eyebrow="Ways to work together"
+            title="Bring me the consequential work"
+            description="The work usually falls into three clear engagements, each grounded in shipping—not slide decks."
         />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <x-home.service-card
-                variant="brand"
-                number="01"
-                command="build"
-                title="Laravel Development"
-                description="Custom web applications, REST APIs, SaaS platforms, and admin dashboards built with Laravel and Filament."
-                :tags="['APIs', 'SaaS', 'Filament', 'Livewire']"
-                :href="route('contact')"
-                cta="Start a project"
-            />
-
-            <x-home.service-card
-                variant="accent"
-                number="02"
-                command="modernize"
-                title="Legacy Modernization"
-                description="Migrating CodeIgniter, vanilla PHP, or aging frameworks to modern Laravel with tests, proper architecture, and CI/CD."
-                :tags="['Migration', 'Refactoring', 'Testing']"
-                :href="route('contact')"
-                cta="Modernize now"
-            />
-
-            <x-home.service-card
-                variant="green"
-                number="03"
-                command="teach"
-                title="Content & Teaching"
-                description="Blog posts, podcast episodes, and a YouTube channel dedicated to helping developers level up their Laravel skills."
-                :tags="['Blog', 'Podcasts', 'YouTube']"
-                :href="route('blog.index')"
-                cta="Start learning"
-            />
-
-            <x-home.service-card
-                variant="amber"
-                number="04"
-                command="review"
-                title="Consulting & Code Review"
-                description="Architecture audits, code reviews, and technical consulting to help your team ship better Laravel applications faster."
-                :tags="['Architecture', 'Code Review', 'Strategy']"
-                :href="route('contact')"
-                cta="Book a session"
-            />
+        <div class="engagement-grid">
+            <a href="{{ route('contact') }}" class="engagement-card group fade-up">
+                <span class="engagement-number">01</span>
+                <h3>Build</h3>
+                <p>Design and deliver a Laravel product with clean boundaries from the first production release.</p>
+                <span class="engagement-link">Start a build <span aria-hidden="true">→</span></span>
+            </a>
+            <a href="{{ route('contact') }}" class="engagement-card group fade-up">
+                <span class="engagement-number">02</span>
+                <h3>Modernize</h3>
+                <p>Move a legacy system forward without losing the behavior and knowledge the business depends on.</p>
+                <span class="engagement-link">Plan the migration <span aria-hidden="true">→</span></span>
+            </a>
+            <a href="{{ route('contact') }}" class="engagement-card group fade-up">
+                <span class="engagement-number">03</span>
+                <h3>Review</h3>
+                <p>Get a candid architecture and code review, prioritized around risk, leverage, and what to do next.</p>
+                <span class="engagement-link">Book a review <span aria-hidden="true">→</span></span>
+            </a>
         </div>
     </div>
 </section>
 
 {{-- ===== LATEST POSTS ===== --}}
+@inject('postImages', 'App\Services\ResponsiveImageVariants')
 @if($latestPosts->count())
-<section class="border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
+<section class="writing-section border-t border-gray-200 bg-gray-50 py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <x-home.section-header
             eyebrow="Latest writing"
@@ -242,7 +272,26 @@
             @if($latestPosts->first())
             @php $featured = $latestPosts->first(); @endphp
             <article class="blog-featured group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
-                <a href="{{ route('blog.show', $featured) }}" class="block p-8">
+                <a href="{{ route('blog.show', $featured) }}" class="blog-featured-link">
+                    @if($featured->featured_image_url)
+                    @php $featuredPostSrcset = $postImages->srcset($featured->featured_image_path); @endphp
+                    <picture class="blog-featured-art">
+                        @if($featuredPostSrcset)
+                        <source type="image/webp" srcset="{{ $featuredPostSrcset }}" sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)">
+                        @endif
+                        <img src="{{ $featured->featured_image_url }}" alt="" loading="lazy" decoding="async">
+                    </picture>
+                    @else
+                    <picture class="blog-featured-art">
+                        <source
+                            type="image/webp"
+                            srcset="{{ Vite::asset('resources/images/home-writing-fallback-768.webp') }} 768w, {{ Vite::asset('resources/images/home-writing-fallback-1280.webp') }} 1280w"
+                            sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
+                        >
+                        <img src="{{ Vite::asset('resources/images/home-writing-fallback-1280.webp') }}" alt="" loading="lazy" decoding="async">
+                    </picture>
+                    @endif
+                    <div class="blog-featured-copy p-7 sm:p-9">
                     @if($featured->category)
                     <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $featured->category->name }}</span>
                     @endif
@@ -253,6 +302,7 @@
                         <span>·</span>
                         <span>{{ $featured->reading_time }} min read</span>
                     </div>
+                    </div>
                 </a>
             </article>
             @endif
@@ -262,7 +312,17 @@
             <div class="blog-posts-rest">
                 @foreach($latestPosts->skip(1) as $post)
                 <article class="group fade-up overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60">
-                    <a href="{{ route('blog.show', $post) }}" class="block p-6">
+                    <a href="{{ route('blog.show', $post) }}" class="blog-compact-link">
+                        @if($post->featured_image_url)
+                        @php $postSrcset = $postImages->srcset($post->featured_image_path); @endphp
+                        <picture class="blog-compact-art">
+                            @if($postSrcset)
+                            <source type="image/webp" srcset="{{ $postSrcset }}" sizes="(min-width: 640px) 280px, calc(100vw - 2rem)">
+                            @endif
+                            <img src="{{ $post->featured_image_url }}" alt="" loading="lazy" decoding="async">
+                        </picture>
+                        @endif
+                        <div class="p-6">
                         @if($post->category)
                         <span class="text-xs font-semibold text-brand-400 uppercase tracking-wide">{{ $post->category->name }}</span>
                         @endif
@@ -273,34 +333,31 @@
                             <span>·</span>
                             <span>{{ $post->reading_time }} min read</span>
                         </div>
+                        </div>
                     </a>
                 </article>
                 @endforeach
             </div>
             @endif
         </div>
+
+        <div class="mt-12 fade-up sm:mt-16">
+            <x-home.newsletter-signup class="writing-newsletter" />
+        </div>
     </div>
 </section>
 @endif
 
-{{-- ===== NEWSLETTER ===== --}}
-<section class="fade-up border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <x-home.newsletter-signup />
-    </div>
-</section>
-
-{{-- ===== PODCASTS ===== --}}
-<section class="podcasts border-t border-gray-200 bg-white py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+{{-- ===== MEDIA ===== --}}
+<section class="media-section border-t border-gray-200 bg-white py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <x-home.section-header
-            eyebrow="Listen"
-            title="Long-form Laravel conversations"
-            description="Thoughtful discussions about architecture, web development, and the realities of building software."
-            :href="route('podcast.index')"
-            link-label="Browse the podcast"
+            eyebrow="Field notes"
+            title="Watch, listen, and build along"
+            description="Long-form conversations and practical build sessions for developers who care about what happens after launch."
         />
-        <div class="grid grid-cols-1 gap-8">
+
+        <div class="media-grid">
             <x-home.podcast-card
                 title="Coffee With The Laravel Architect"
                 description="Conversations about Laravel, web development, and the developer life. One cup at a time."
@@ -309,26 +366,9 @@
                 :episode-count="$coffeeEpisodeCount ?? null"
                 :href="route('podcast.index')"
             />
-        </div>
-    </div>
-</section>
-
-{{-- ===== VIDEO ===== --}}
-<section class="border-t border-gray-200 bg-gray-50 py-12 dark:border-brand-800/50 dark:bg-transparent sm:py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-            <div class="max-w-xl">
-                <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Watch</p>
-                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Practical Laravel, on video</h2>
-                <p class="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">Tutorials, live coding, and architecture discussions grounded in the decisions that shape real applications.</p>
-                <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="mt-7 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition-colors hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:text-gray-200 dark:hover:border-brand-500 dark:hover:text-white">
-                    Visit the YouTube channel
-                    <x-svg-icon name="arrow-right" class="h-4 w-4" />
-                </a>
-            </div>
 
             @if($latestYouTubeVideos->isNotEmpty())
-                <div class="grid gap-6 sm:grid-cols-2">
+                <div class="grid gap-5 sm:grid-cols-2">
                     @foreach($latestYouTubeVideos->take(2) as $video)
                         <x-home.youtube-thumbnail-card :video="$video" />
                     @endforeach
@@ -340,6 +380,11 @@
                     <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-400">New videos focus on maintainable Laravel architecture, testing, and production-minded development.</p>
                 </a>
             @endif
+        </div>
+
+        <div class="mt-7 flex flex-wrap gap-3">
+            <a href="{{ route('podcast.index') }}" class="media-link">Browse the podcast <span aria-hidden="true">→</span></a>
+            <a href="{{ config('public-site.youtube.url') }}" target="_blank" rel="noopener noreferrer" class="media-link">Visit the YouTube channel <span aria-hidden="true">→</span></a>
         </div>
     </div>
 </section>

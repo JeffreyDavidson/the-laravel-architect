@@ -565,7 +565,7 @@ it('keeps public technology and channel details consistent', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee(config('public-site.youtube.url'), false)
-        ->assertSee('Practical Laravel, on video');
+        ->assertSee('Watch, listen, and build along');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
@@ -610,6 +610,10 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSee($manifest['resources/css/pages/home-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/about-entry.css']['file'], false)
         ->assertDontSee($manifest['resources/css/pages/listings-entry.css']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-desktop-1024.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-desktop-1536.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-mobile-640.webp']['file'], false)
+        ->assertSee($manifest['resources/images/home-hero-mobile-1024.webp']['file'], false)
         ->assertSee($manifest['resources/images/podcast-coffee-logo-128.webp']['file'], false)
         ->assertDontSee($manifest['resources/images/podcast-coffee-logo-512.webp']['file'], false)
         ->assertSee($manifest['resources/js/app.js']['file'], false);
@@ -674,6 +678,17 @@ it('renders an accessible homepage architecture scene with a static fallback', f
     expect(substr_count($content, 'data-architecture-scene'))->toBe(1)
         ->and($content)->not->toContain('id="code-editor"')
         ->and($content)->not->toContain('role="tablist"');
+});
+
+it('prioritizes the art-directed homepage hero', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('media="(max-width: 767px)"', false)
+        ->assertSee('sizes="100vw"', false)
+        ->assertSee('fetchpriority="high"', false)
+        ->assertSee('decoding="async"', false)
+        ->assertSee('Laravel systems,', false)
+        ->assertSee('easier to change.', false);
 });
 
 it('places the theme bootstrap inside the document head', function () {
@@ -857,6 +872,15 @@ it('uses published work and approved recommendations as homepage proof', functio
             'Portfolio projects',
             'Recommendations',
         ]);
+});
+
+it('does not present zero-value homepage proof', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Years building PHP')
+        ->assertDontSee('Published articles')
+        ->assertDontSee('Portfolio projects')
+        ->assertDontSee('Recommendations');
 });
 
 it('presents published projects as case studies without inferring product status', function () {

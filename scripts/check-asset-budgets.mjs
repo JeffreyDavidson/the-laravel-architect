@@ -124,6 +124,46 @@ const budgets = [
         maxBytes: 42 * 1024,
     },
     {
+        entry: 'resources/images/home-hero-desktop-1024.webp',
+        label: 'Homepage desktop hero (1024px)',
+        maxBytes: 70 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-desktop-1536.webp',
+        label: 'Homepage desktop hero (1536px)',
+        maxBytes: 165 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-mobile-640.webp',
+        label: 'Homepage mobile hero (640px)',
+        maxBytes: 40 * 1024,
+    },
+    {
+        entry: 'resources/images/home-hero-mobile-1024.webp',
+        label: 'Homepage mobile hero (1024px)',
+        maxBytes: 95 * 1024,
+    },
+    {
+        entry: 'resources/images/home-case-study-fallback-768.webp',
+        label: 'Homepage case study fallback (768px)',
+        maxBytes: 48 * 1024,
+    },
+    {
+        entry: 'resources/images/home-case-study-fallback-1280.webp',
+        label: 'Homepage case study fallback (1280px)',
+        maxBytes: 145 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-fallback-768.webp',
+        label: 'Homepage writing fallback (768px)',
+        maxBytes: 65 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-fallback-1280.webp',
+        label: 'Homepage writing fallback (1280px)',
+        maxBytes: 180 * 1024,
+    },
+    {
         entry: 'resources/images/podcast-coffee-logo-128.webp',
         label: 'Coffee podcast artwork (128px)',
         maxBytes: 4 * 1024,
