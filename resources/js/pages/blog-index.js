@@ -7,6 +7,7 @@ if (filter) {
     const posts = [...filter.querySelectorAll('[data-blog-post]')];
     const emptyState = filter.querySelector('[data-blog-empty]');
     const emptyQuery = filter.querySelector('[data-blog-empty-query]');
+    const reset = filter.querySelector('[data-blog-reset]');
     let activeCategory = 'all';
 
     const update = () => {
@@ -19,7 +20,13 @@ if (filter) {
             const isVisible = categoryMatches && searchMatches;
 
             post.hidden = !isVisible;
-            visibleCount += Number(isVisible);
+
+            if (isVisible) {
+                post.dataset.visibleIndex = String(visibleCount);
+                visibleCount += 1;
+            } else {
+                delete post.dataset.visibleIndex;
+            }
         }
 
         clear.hidden = query === '';
@@ -36,6 +43,13 @@ if (filter) {
 
     search.addEventListener('input', update);
     clear.addEventListener('click', () => {
+        search.value = '';
+        search.focus();
+        update();
+    });
+
+    reset?.addEventListener('click', () => {
+        activeCategory = 'all';
         search.value = '';
         search.focus();
         update();
