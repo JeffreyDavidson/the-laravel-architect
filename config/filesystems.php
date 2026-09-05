@@ -76,6 +76,20 @@ return [
             'report' => true,
         ],
 
+        'b2-backups' => [
+            'driver' => 's3',
+            'key' => env('BACKUP_B2_KEY_ID'),
+            'secret' => env('BACKUP_B2_APPLICATION_KEY'),
+            'region' => env('BACKUP_B2_REGION', 'us-east-005'),
+            'bucket' => env('BACKUP_B2_BUCKET'),
+            'endpoint' => env('BACKUP_B2_ENDPOINT', 'https://s3.us-east-005.backblazeb2.com'),
+            'use_path_style_endpoint' => false,
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+
     ],
 
     /*

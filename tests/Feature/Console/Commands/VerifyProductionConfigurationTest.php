@@ -105,6 +105,53 @@ it('rejects an incomplete NAS backup disk without exposing credentials', functio
         ->assertFailed();
 });
 
+it('accepts a fully configured Backblaze backup disk', function () {
+    config()->set([
+        'backup.backup.destination.disks' => ['local', 'b2-backups'],
+        'filesystems.disks.b2-backups' => [
+            'driver' => 's3',
+            'key' => 'key-id',
+            'secret' => 'secret-application-key',
+            'region' => 'us-east-005',
+            'bucket' => 'jdavidson-tla-production-backups',
+            'endpoint' => 'https://s3.us-east-005.backblazeb2.com',
+            'use_path_style_endpoint' => false,
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+    ]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutput('Production configuration is ready.')
+        ->assertSuccessful();
+});
+
+it('rejects an incomplete Backblaze backup disk without exposing credentials', function () {
+    config()->set([
+        'backup.backup.destination.disks' => ['local', 'b2-backups'],
+        'filesystems.disks.b2-backups' => [
+            'driver' => 's3',
+            'key' => 'key-id',
+            'secret' => 'secret-application-key',
+            'region' => 'us-east-005',
+            'bucket' => null,
+            'endpoint' => 'http://s3.us-east-005.backblazeb2.com',
+            'use_path_style_endpoint' => false,
+            'visibility' => 'private',
+            'directory_visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+    ]);
+
+    $this->artisan('app:verify-production')
+        ->expectsOutputToContain('The b2-backups disk must configure a private Backblaze S3 endpoint, region, bucket, key ID, and application key.')
+        ->doesntExpectOutput('secret-application-key')
+        ->assertFailed();
+});
+
 it('rejects an unknown backup disk', function () {
     config()->set('backup.backup.destination.disks', ['local', 'missing-disk']);
 
