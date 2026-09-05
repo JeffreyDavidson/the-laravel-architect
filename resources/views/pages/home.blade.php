@@ -256,9 +256,9 @@
 </section>
 
 {{-- ===== LATEST POSTS ===== --}}
-@if($latestPosts->count())
 <section class="writing-section border-t border-gray-200 bg-gray-50 py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        @if($latestPosts->count())
         <x-home.section-header
             eyebrow="Latest writing"
             title="Practical notes from the work"
@@ -314,13 +314,13 @@
             </div>
             @endif
         </div>
+        @endif
 
         <div class="mt-12 fade-up sm:mt-16">
             <x-home.newsletter-signup class="writing-newsletter" />
         </div>
     </div>
 </section>
-@endif
 
 {{-- ===== MEDIA ===== --}}
 <section class="media-section border-t border-gray-200 bg-white py-14 dark:border-brand-800/50 dark:bg-transparent sm:py-24">
