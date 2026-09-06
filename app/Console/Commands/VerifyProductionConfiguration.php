@@ -84,6 +84,13 @@ class VerifyProductionConfiguration extends Command
             [$this->isPositiveNumber(config('nightwatch.ingest.connection_timeout')), 'NIGHTWATCH_INGEST_CONNECTION_TIMEOUT must be greater than zero.'],
             [$this->isPositiveInteger(config('nightwatch.ingest.event_buffer')), 'NIGHTWATCH_INGEST_EVENT_BUFFER must be at least 1.'],
             [config('logging.channels.nightwatch.handler') === NullHandler::class, 'Nightwatch log capture must remain disabled.'],
+            [$this->isConfigured(config('sentry.dsn')), 'SENTRY_LARAVEL_DSN must be configured.'],
+            [config('sentry.send_default_pii') === false, 'SENTRY_SEND_DEFAULT_PII must be false.'],
+            [$this->isDeploymentEnvironment(config('app.deployment_environment')), 'TLA_DEPLOYMENT_ENVIRONMENT must be production or staging.'],
+            [config('sentry.environment') === config('app.deployment_environment'), 'SENTRY_ENVIRONMENT must match TLA_DEPLOYMENT_ENVIRONMENT.'],
+            [$this->isConfigured(config('sentry.release')), 'SENTRY_RELEASE or FORGE_DEPLOY_COMMIT must be configured.'],
+            [config('sentry.traces_sample_rate') === 0.0, 'SENTRY_TRACES_SAMPLE_RATE must be 0.0 until tracing is deliberately enabled.'],
+            [config('sentry.profiles_sample_rate') === 0.0, 'SENTRY_PROFILES_SAMPLE_RATE must be 0.0 until profiling is deliberately enabled.'],
         ];
 
         $failures = array_map(
@@ -116,6 +123,11 @@ class VerifyProductionConfiguration extends Command
     private function isConfigured(mixed $value): bool
     {
         return is_string($value) && trim($value) !== '';
+    }
+
+    private function isDeploymentEnvironment(mixed $environment): bool
+    {
+        return is_string($environment) && in_array($environment, ['production', 'staging'], true);
     }
 
     private function usesAsynchronousQueue(mixed $connection): bool

@@ -3,6 +3,7 @@
 beforeEach(function () {
     config()->set([
         'app.env' => 'production',
+        'app.deployment_environment' => 'production',
         'app.debug' => false,
         'app.url' => 'https://thelaravelarchitect.com',
         'app.key' => 'base64:production-key',
@@ -43,10 +44,30 @@ beforeEach(function () {
         'nightwatch.ingest.timeout' => 0.5,
         'nightwatch.ingest.connection_timeout' => 0.5,
         'nightwatch.ingest.event_buffer' => 500,
+        'sentry.dsn' => 'https://public-key@example.ingest.sentry.io/123',
+        'sentry.environment' => 'production',
+        'sentry.release' => 'production-release',
+        'sentry.traces_sample_rate' => 0.0,
+        'sentry.profiles_sample_rate' => 0.0,
+        'sentry.send_default_pii' => false,
     ]);
 });
 
 it('accepts a safe production configuration', function () {
+    $this->artisan('app:verify-production')
+        ->expectsOutput('Production configuration is ready.')
+        ->assertSuccessful();
+});
+
+it('accepts an isolated staging observability configuration', function () {
+    config()->set([
+        'app.deployment_environment' => 'staging',
+        'app.url' => 'https://staging.thelaravelarchitect.com',
+        'services.turnstile.allowed_hostnames' => ['staging.thelaravelarchitect.com'],
+        'sentry.environment' => 'staging',
+        'sentry.release' => 'staging-release',
+    ]);
+
     $this->artisan('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
@@ -229,6 +250,13 @@ it('reports every unsafe production setting without exposing its value', functio
         'nightwatch.ingest.connection_timeout' => -1.0,
         'nightwatch.ingest.event_buffer' => 0,
         'logging.channels.nightwatch.handler' => null,
+        'app.deployment_environment' => 'preview',
+        'sentry.dsn' => 'https://private-public-key@example.ingest.sentry.io/123',
+        'sentry.environment' => 'production',
+        'sentry.release' => null,
+        'sentry.traces_sample_rate' => 0.1,
+        'sentry.profiles_sample_rate' => 0.1,
+        'sentry.send_default_pii' => true,
     ]);
 
     $this->artisan('app:verify-production')
@@ -267,6 +295,13 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('NIGHTWATCH_INGEST_CONNECTION_TIMEOUT must be greater than zero.')
         ->expectsOutputToContain('NIGHTWATCH_INGEST_EVENT_BUFFER must be at least 1.')
         ->expectsOutputToContain('Nightwatch log capture must remain disabled.')
+        ->expectsOutputToContain('SENTRY_SEND_DEFAULT_PII must be false.')
+        ->expectsOutputToContain('TLA_DEPLOYMENT_ENVIRONMENT must be production or staging.')
+        ->expectsOutputToContain('SENTRY_ENVIRONMENT must match TLA_DEPLOYMENT_ENVIRONMENT.')
+        ->expectsOutputToContain('SENTRY_RELEASE or FORGE_DEPLOY_COMMIT must be configured.')
+        ->expectsOutputToContain('SENTRY_TRACES_SAMPLE_RATE must be 0.0 until tracing is deliberately enabled.')
+        ->expectsOutputToContain('SENTRY_PROFILES_SAMPLE_RATE must be 0.0 until profiling is deliberately enabled.')
         ->doesntExpectOutput('admin@example.test')
+        ->doesntExpectOutput('private-public-key')
         ->assertFailed();
 });

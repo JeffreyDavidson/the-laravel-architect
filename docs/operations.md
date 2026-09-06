@@ -24,9 +24,26 @@ The Forge deployment should install locked Composer dependencies, build assets, 
 
 Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
 
+### Observability environments
+
+Create separate `production` and `staging` environments in Nightwatch. Connect each Forge site to its matching Nightwatch environment so it receives an environment-specific token and agent process. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
+
+Sentry is limited to exception reporting until a separate performance and privacy review approves broader collection:
+
+```dotenv
+SENTRY_LARAVEL_DSN=<project DSN>
+SENTRY_ENVIRONMENT=<production-or-staging>
+SENTRY_RELEASE=<immutable deployment commit>
+SENTRY_TRACES_SAMPLE_RATE=0.0
+SENTRY_PROFILES_SAMPLE_RATE=0.0
+SENTRY_SEND_DEFAULT_PII=false
+```
+
+`SENTRY_RELEASE` falls back to Forge's `FORGE_DEPLOY_COMMIT`, but an explicit value may be used when verifying an environment outside a Forge deployment. Never print the DSN in deployment logs or diagnostics.
+
 ### Nightwatch
 
-Nightwatch is opt-in. In the Nightwatch dashboard, create the application and production environment, then use Forge's built-in Nightwatch integration from the site's Overview tab. Supply the environment-specific token through Forge, enable monitoring, and set these production values:
+Nightwatch is opt-in. In the Nightwatch dashboard, create the application environments, then use Forge's built-in Nightwatch integration from each site's Overview tab. Supply the matching environment-specific token through Forge, enable monitoring, and set these values:
 
 ```dotenv
 NIGHTWATCH_ENABLED=true
