@@ -28,6 +28,8 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'deployment_environment' => env('TLA_DEPLOYMENT_ENVIRONMENT', env('APP_ENV', 'production')),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
