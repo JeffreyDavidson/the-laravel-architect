@@ -102,6 +102,30 @@ it('keeps repository URLs out of public project markup and structured data', fun
     expect($project->refresh()->github_url)->toBe('https://github.com/example/confidential-repository');
 })->with([null, 'https://example.com/product']);
 
+it('renders project content as safe Markdown', function () {
+    $project = Project::query()->create([
+        'title' => 'Safe project content',
+        'description' => 'A public case study.',
+        'content' => <<<'MARKDOWN'
+## Project approach
+
+This is **rendered** content.
+
+<script>alert('unsafe')</script>
+
+[Unsafe link](javascript:alert('unsafe'))
+MARKDOWN,
+        'status' => PublishStatus::Published,
+    ]);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSeeHtml('<h2>Project approach</h2>')
+        ->assertSeeHtml('This is <strong>rendered</strong> content.')
+        ->assertDontSee("<script>alert('unsafe')</script>", false)
+        ->assertDontSee('javascript:', false);
+});
+
 it('loads only the related projects displayed on a project page', function () {
     $project = Project::query()->create([
         'title' => 'Current Project',

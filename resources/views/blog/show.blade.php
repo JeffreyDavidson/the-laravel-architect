@@ -75,7 +75,11 @@
                     {!!
                         Str::markdown(
                             $post->content,
-                            ['heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => '']],
+                            [
+                                'html_input' => 'strip',
+                                'allow_unsafe_links' => false,
+                                'heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => ''],
+                            ],
                             [new League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension],
                         )
                     !!}

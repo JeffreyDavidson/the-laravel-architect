@@ -72,7 +72,12 @@
                 <div class="min-w-0">
                     @if ($project->content)
                         <x-prose class="prose-headings:font-semibold prose-h2:mt-10 prose-h2:text-2xl prose-h3:text-xl prose-p:leading-8 prose-pre:overflow-x-auto [&_h2:first-child]:mt-0 [&_img]:rounded-xl break-words">
-                            {!! Str::markdown($project->content) !!}
+                            {!!
+                                Str::markdown($project->content, [
+                                    'html_input' => 'strip',
+                                    'allow_unsafe_links' => false,
+                                ])
+                            !!}
                         </x-prose>
                     @else
                         <p class="text-lg leading-8 text-gray-600 dark:text-gray-400">
