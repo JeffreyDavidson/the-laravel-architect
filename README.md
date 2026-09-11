@@ -39,6 +39,8 @@ composer audit --locked
 npm audit --omit=dev
 ```
 
+See [`tests/TESTING.md`](tests/TESTING.md) for the boundary between Unit, Integration, Feature, Browser, Architecture, and Playwright e2e tests.
+
 CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
 ### Rector review

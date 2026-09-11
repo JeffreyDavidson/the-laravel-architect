@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-
 it('uses safe backup configuration defaults', function () {
     expect(config('backup.backup.source.files.include'))
         ->not->toContain(base_path())
@@ -47,16 +45,4 @@ it('configures a private S3-compatible disk for Backblaze backups', function () 
             'throw' => true,
             'report' => true,
         ]);
-});
-
-it('schedules operational monitoring and maintenance', function () {
-    Artisan::call('schedule:list');
-
-    expect(Artisan::output())
-        ->toContain('backup:run')
-        ->toContain('backup:clean')
-        ->toContain('backup:monitor')
-        ->toContain('media:verify-responsive-images')
-        ->toContain('queue:prune-failed --hours=168')
-        ->not->toContain('app:monitor-failed-jobs');
 });

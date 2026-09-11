@@ -37,6 +37,10 @@ it('stores a validated image through the Filament project form', function () {
 
     $path = Project::query()->sole()->featured_image_path;
 
+    if (! is_string($path)) {
+        throw new RuntimeException('Expected a stored project image path.');
+    }
+
     expect($path)->toStartWith('projects/');
     Storage::disk('public')->assertExists($path);
 });
@@ -76,6 +80,10 @@ it('stores validated audio through the Filament episode form', function () {
         ->assertHasNoFormErrors();
 
     $path = Episode::query()->sole()->audio_path;
+
+    if (! is_string($path)) {
+        throw new RuntimeException('Expected a stored episode audio path.');
+    }
 
     expect($path)->toStartWith('episodes/audio/');
     Storage::disk('public')->assertExists($path);
