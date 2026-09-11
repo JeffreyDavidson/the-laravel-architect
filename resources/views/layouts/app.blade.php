@@ -12,9 +12,9 @@
             document.documentElement.classList.remove('dark');
         }
     </script>
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-companion-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/elephant-companion-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/elephant-companion-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0D1117" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
@@ -43,18 +43,22 @@
     <nav class="dark:border-brand-800/50 dark:bg-brand-950/90 sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-lg">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
-                <a href="{{ route('home') }}" aria-label="Homepage" class="group flex items-center gap-3.5">
+                <a
+                    href="{{ route('home') }}"
+                    aria-label="Homepage"
+                    class="group focus-visible:outline-brand-500 flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
+                >
                     <img
-                        src="/images/logo-color-128.webp"
-                        alt="The Laravel Architect"
-                        width="44"
-                        height="44"
+                        src="/images/elephant-companion-128.webp"
+                        alt=""
+                        width="52"
+                        height="52"
                         decoding="async"
-                        class="h-11 w-11 rounded-full"
+                        class="size-13 shrink-0 object-contain"
                     />
                     <span class="flex flex-col gap-0.5 leading-none">
                         <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 font-mono text-[10px] font-medium tracking-[0.2em] uppercase transition-colors">The Laravel</span>
-                        <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-xl leading-none tracking-[0.07em] text-gray-950 transition-colors dark:text-white">Architect</span>
+                        <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-2xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
                     </span>
                 </a>
 
