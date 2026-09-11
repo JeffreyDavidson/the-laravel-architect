@@ -6,6 +6,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Services\ResponsiveImageVariants;
+use App\Services\ResponsiveImageWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -14,57 +15,16 @@ use Illuminate\Console\Command;
 #[Description('Verify responsive image variants for stored project, post, and podcast media')]
 class VerifyResponsiveImages extends Command
 {
-    public function handle(ResponsiveImageVariants $images): int
+    public function handle(ResponsiveImageVariants $images, ResponsiveImageWorkflow $workflow): int
     {
-        $projectChecks = 0;
-        $projectFailures = 0;
-
-        Project::query()
-            ->whereNotNull('featured_image_path')
-            ->select(['id', 'featured_image_path'])
-            ->eachById(function (Project $project) use ($images, &$projectChecks, &$projectFailures): void {
-                $projectChecks++;
-
-                if (! is_string($project->featured_image_path)
-                    || ! $images->hasRequiredVariants($project->featured_image_path)) {
-                    $projectFailures++;
-                }
-            });
-
-        $postChecks = 0;
-        $postFailures = 0;
-
-        Post::query()
-            ->whereNotNull('featured_image_path')
-            ->select(['id', 'featured_image_path'])
-            ->eachById(function (Post $post) use ($images, &$postChecks, &$postFailures): void {
-                $postChecks++;
-
-                if (! is_string($post->featured_image_path)
-                    || ! $images->hasRequiredVariants($post->featured_image_path)) {
-                    $postFailures++;
-                }
-            });
-
-        $podcastChecks = 0;
-        $podcastFailures = 0;
-
-        Podcast::query()
-            ->whereNotNull('cover_image_path')
-            ->select(['id', 'cover_image_path'])
-            ->eachById(function (Podcast $podcast) use ($images, &$podcastChecks, &$podcastFailures): void {
-                $podcastChecks++;
-
-                if (! is_string($podcast->cover_image_path)
-                    || ! $images->hasRequiredVariants($podcast->cover_image_path)) {
-                    $podcastFailures++;
-                }
-            });
+        $project = $workflow->verify(Project::class, 'featured_image_path', $images);
+        $post = $workflow->verify(Post::class, 'featured_image_path', $images);
+        $podcast = $workflow->verify(Podcast::class, 'cover_image_path', $images);
 
         $results = [
-            'Projects' => [$projectChecks, $projectFailures],
-            'Posts' => [$postChecks, $postFailures],
-            'Podcasts' => [$podcastChecks, $podcastFailures],
+            'Projects' => [$project['checked'], $project['failed']],
+            'Posts' => [$post['checked'], $post['failed']],
+            'Podcasts' => [$podcast['checked'], $podcast['failed']],
         ];
 
         foreach ($results as $label => [$checked, $failed]) {
@@ -73,7 +33,7 @@ class VerifyResponsiveImages extends Command
             $this->line("{$label}: {$checked} checked, {$verified} verified, {$failed} failed.");
         }
 
-        $failures = $projectFailures + $postFailures + $podcastFailures;
+        $failures = $project['failed'] + $post['failed'] + $podcast['failed'];
 
         if ($failures > 0) {
             $this->error('Responsive image verification failed.');

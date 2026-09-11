@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Podcast;
 use App\Services\ResponsiveImageVariants;
+use App\Services\ResponsiveImageWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -17,35 +18,18 @@ class GeneratePodcastImageVariants extends Command implements Isolatable
 
     protected $isolatedExitCode = self::FAILURE;
 
-    public function handle(ResponsiveImageVariants $images): int
+    public function handle(ResponsiveImageVariants $images, ResponsiveImageWorkflow $workflow): int
     {
-        $generated = 0;
-        $skipped = 0;
-        $failed = 0;
-
-        Podcast::query()
-            ->whereNotNull('cover_image_path')
-            ->select(['id', 'cover_image_path'])
-            ->eachById(function (Podcast $podcast) use ($images, &$generated, &$skipped, &$failed): void {
-                $sourcePath = $podcast->cover_image_path;
-
-                if (! $this->option('force')
-                    && is_string($sourcePath)
-                    && $images->hasRequiredVariants($sourcePath)) {
-                    $skipped++;
-
-                    return;
-                }
-
-                if (is_string($sourcePath) && $images->generate($sourcePath)) {
-                    $generated++;
-
-                    return;
-                }
-
-                $failed++;
-                $this->warn("Skipped podcast {$podcast->id}: its source image is missing or unsupported.");
-            });
+        ['generated' => $generated, 'skipped' => $skipped, 'failed' => $failed] = $workflow->generate(
+            Podcast::class,
+            'cover_image_path',
+            'podcast',
+            (bool) $this->option('force'),
+            $images,
+            function (string $message): void {
+                $this->warn($message);
+            },
+        );
 
         $noun = $generated === 1 ? 'podcast' : 'podcasts';
         $this->info("Generated responsive images for {$generated} {$noun}.");
