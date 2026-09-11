@@ -25,7 +25,7 @@ final class GenerateSitemap
             ->whereHas('publishedPosts')
             ->get();
         $podcasts = Podcast::query()
-            ->where('is_active', true)
+            ->active()
             ->with('publishedEpisodes')
             ->get();
         $projects = Project::published()->portfolio()->get();

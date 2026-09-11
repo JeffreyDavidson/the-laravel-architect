@@ -28,6 +28,12 @@ class PublicContentArchive
 {
     private const int VERSION = 1;
 
+    public function __construct(
+        private readonly PublicContentArchiveValidator $validator,
+        private readonly PublicContentArchiveMedia $media,
+        private readonly PublicContentArchiveRelations $relations,
+    ) {}
+
     private const array POST_FIELDS = ['title', 'slug', 'excerpt', 'content', 'featured_image_path', 'published_at'];
 
     private const array PROJECT_FIELDS = ['title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order'];
@@ -85,7 +91,7 @@ class PublicContentArchive
 
         $episodes = Episode::query()
             ->published()
-            ->whereHas('podcast', fn (Builder $query): Builder => $query->where('is_active', true))
+            ->whereHas('podcast', fn (Builder $query): Builder => $query->active())
             ->with(['podcast', 'tags', 'seo'])
             ->orderBy('published_at')
             ->get()
@@ -102,9 +108,7 @@ class PublicContentArchive
             'version' => self::VERSION,
             'exported_at' => now()->toAtomString(),
             'categories' => Category::query()
-                ->whereHas('posts', fn (Builder $query): Builder => $query
-                    ->where('status', PublishStatus::Published)
-                    ->where('published_at', '<=', now()))
+                ->whereHas('publishedPosts')
                 ->orderBy('name')
                 ->get(['name', 'slug', 'description'])
                 ->map(fn (Category $category): array => $this->attributes($category, ['name', 'slug', 'description']))
@@ -130,7 +134,7 @@ class PublicContentArchive
      */
     public function sync(array $archive): array
     {
-        $records = $this->validatedRecords($archive);
+        $records = $this->validator->validate($archive, self::VERSION);
 
         return Model::withoutEvents(fn (): array => DB::transaction(function () use ($records): array {
             $this->unpublishExistingContent();
@@ -147,7 +151,7 @@ class PublicContentArchive
                 $podcast = Podcast::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
                 $podcast->fill([...$this->only($attributes, self::PODCAST_FIELDS), 'is_active' => true]);
                 $podcast->save();
-                $this->syncSeo($podcast, $this->nullableRecord($attributes['seo'] ?? null, 'podcast SEO'));
+                $this->relations->syncSeo($podcast, $this->nullableRecord($attributes['seo'] ?? null, 'podcast SEO'), self::SEO_FIELDS);
             }
 
             foreach ($records['posts'] as $attributes) {
@@ -162,16 +166,16 @@ class PublicContentArchive
                     'reviewed_at' => null,
                 ]);
                 $post->save();
-                $this->syncTags($post, $this->tagRecords($attributes['tags'] ?? []));
-                $this->syncSeo($post, $this->nullableRecord($attributes['seo'] ?? null, 'post SEO'));
+                $this->relations->syncTags($post, $this->relations->tagRecords($attributes['tags'] ?? []));
+                $this->relations->syncSeo($post, $this->nullableRecord($attributes['seo'] ?? null, 'post SEO'), self::SEO_FIELDS);
             }
 
             foreach ($records['projects'] as $attributes) {
                 $project = Project::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
                 $project->fill([...$this->only($attributes, self::PROJECT_FIELDS), 'status' => ProjectStatus::Published]);
                 $project->save();
-                $this->syncTags($project, $this->tagRecords($attributes['tags'] ?? []));
-                $this->syncSeo($project, $this->nullableRecord($attributes['seo'] ?? null, 'project SEO'));
+                $this->relations->syncTags($project, $this->relations->tagRecords($attributes['tags'] ?? []));
+                $this->relations->syncSeo($project, $this->nullableRecord($attributes['seo'] ?? null, 'project SEO'), self::SEO_FIELDS);
             }
 
             foreach ($records['episodes'] as $attributes) {
@@ -182,8 +186,8 @@ class PublicContentArchive
                     'status' => PublishStatus::Published,
                 ]);
                 $episode->save();
-                $this->syncTags($episode, $this->tagRecords($attributes['tags'] ?? []));
-                $this->syncSeo($episode, $this->nullableRecord($attributes['seo'] ?? null, 'episode SEO'));
+                $this->relations->syncTags($episode, $this->relations->tagRecords($attributes['tags'] ?? []));
+                $this->relations->syncSeo($episode, $this->nullableRecord($attributes['seo'] ?? null, 'episode SEO'), self::SEO_FIELDS);
             }
 
             foreach ($records['videos'] as $attributes) {
@@ -205,7 +209,7 @@ class PublicContentArchive
      */
     public function mediaPaths(array $archive): array
     {
-        $records = $this->validatedRecords($archive);
+        $records = $this->validator->validate($archive, self::VERSION);
 
         $paths = [];
 
@@ -213,7 +217,7 @@ class PublicContentArchive
             foreach ($records[$type] as $attributes) {
                 foreach (['featured_image_path', 'cover_image_path', 'audio_path'] as $field) {
                     if (filled($attributes[$field] ?? null)) {
-                        $paths[] = $this->validateMediaPath($attributes[$field]);
+                        $paths[] = $this->media->validatePath($attributes[$field]);
                     }
                 }
             }
@@ -280,44 +284,6 @@ class PublicContentArchive
         return $seo !== null && $seo->exists ? $this->attributes($seo, self::SEO_FIELDS) : null;
     }
 
-    /** @param list<array{name: string, type?: string|null}> $tags */
-    private function syncTags(Post|Project|Episode $model, array $tags): void
-    {
-        $model->syncTags(collect($tags)->map(
-            fn (array $tag): Tag => $this->findOrCreateTag($tag['name'], $tag['type'] ?? null),
-        )->all());
-    }
-
-    private function findOrCreateTag(string $name, ?string $type): Tag
-    {
-        $locale = app()->getLocale();
-        $tag = Tag::findFromString($name, $type, $locale);
-
-        if ($tag instanceof Tag) {
-            return $tag;
-        }
-
-        $tag = new Tag;
-        $tag->setTranslation('name', $locale, $name);
-        $tag->setTranslation('slug', $locale, Str::slug($name));
-        $tag->type = $type;
-        $tag->save();
-
-        return $tag;
-    }
-
-    /** @param array<string, mixed>|null $attributes */
-    private function syncSeo(Post|Project|Podcast|Episode $model, ?array $attributes): void
-    {
-        if ($attributes === null) {
-            $model->seo()->delete();
-
-            return;
-        }
-
-        $model->seo()->updateOrCreate([], $this->only($attributes, self::SEO_FIELDS));
-    }
-
     private function stagingAuthor(): User
     {
         $author = User::query()->firstOrNew([
@@ -344,59 +310,6 @@ class PublicContentArchive
         Podcast::query()->active()->update(['is_active' => false]);
         Episode::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()->update(['published_at' => null]);
-    }
-
-    private function validateMediaPath(mixed $path): string
-    {
-        if (! is_string($path)
-            || str_starts_with($path, '/')
-            || str_contains($path, '\\')
-            || preg_match('/[\x00-\x1F\x7F]/', $path) === 1
-            || in_array('..', explode('/', $path), true)) {
-            throw new InvalidArgumentException('The public content archive contains an unsafe media path.');
-        }
-
-        return $path;
-    }
-
-    /** @param array<string, mixed> $archive
-     * @return ArchiveRecords
-     */
-    private function validatedRecords(array $archive): array
-    {
-        if (($archive['version'] ?? null) !== self::VERSION) {
-            throw new InvalidArgumentException('The public content archive version is not supported.');
-        }
-
-        $records = [];
-
-        foreach (['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos'] as $type) {
-            if (! isset($archive[$type]) || ! is_array($archive[$type])) {
-                throw new InvalidArgumentException("The public content archive is missing {$type}.");
-            }
-
-            $records[$type] = [];
-
-            foreach ($archive[$type] as $attributes) {
-                if (! is_array($attributes)) {
-                    throw new InvalidArgumentException("The public content archive contains invalid {$type}.");
-                }
-
-                $record = [];
-
-                foreach ($attributes as $key => $value) {
-                    if (! is_string($key)) {
-                        throw new InvalidArgumentException("The public content archive contains invalid {$type}.");
-                    }
-
-                    $record[$key] = $value;
-                }
-
-                $records[$type][] = $record;
-            }
-        }
-
-        return $records;
     }
 
     /** @param array<string, mixed> $attributes
@@ -462,33 +375,6 @@ class PublicContentArchive
         }
 
         return $record;
-    }
-
-    /** @return list<array{name: string, type?: string|null}> */
-    private function tagRecords(mixed $value): array
-    {
-        if (! is_array($value)) {
-            throw new InvalidArgumentException('The public content archive contains invalid tags.');
-        }
-
-        $tags = [];
-
-        foreach ($value as $tag) {
-            if (! is_array($tag)) {
-                throw new InvalidArgumentException('The public content archive contains invalid tags.');
-            }
-
-            $name = $tag['name'] ?? null;
-            $type = $tag['type'] ?? null;
-
-            if (! is_string($name) || $name === '' || ($type !== null && ! is_string($type))) {
-                throw new InvalidArgumentException('The public content archive contains invalid tags.');
-            }
-
-            $tags[] = ['name' => $name, 'type' => $type];
-        }
-
-        return $tags;
     }
 
     private function stringConfig(string $key): string
