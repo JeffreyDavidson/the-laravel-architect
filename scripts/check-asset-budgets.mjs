@@ -9,6 +9,10 @@ const publicImageBudgets = [
     { file: 'public/images/favicon-192x192.png', label: '192px web app icon', maxBytes: 44 * 1024 },
     { file: 'public/images/favicon-32x32.png', label: '32px favicon', maxBytes: 4 * 1024 },
     { file: 'public/images/favicon-512x512.png', label: '512px web app icon', maxBytes: 128 * 1024 },
+    { file: 'public/images/elephant-companion-16.png', label: 'Companion 16px favicon', maxBytes: 2 * 1024 },
+    { file: 'public/images/elephant-companion-32.png', label: 'Companion 32px favicon', maxBytes: 4 * 1024 },
+    { file: 'public/images/elephant-companion-128.webp', label: 'Companion header mark', maxBytes: 5 * 1024 },
+    { file: 'public/images/elephant-companion-180.png', label: 'Companion Apple touch icon', maxBytes: 40 * 1024 },
     { file: 'public/images/logo-color-128.webp', label: 'Global logo', maxBytes: 20 * 1024 },
     { file: 'public/images/logo-color-black-bg.png', label: 'Social sharing image', maxBytes: 400 * 1024 },
 ];
