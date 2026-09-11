@@ -168,7 +168,11 @@ it('rejects expired unsubscribe links', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
     ]);
-    $url = URL::temporarySignedRoute('newsletter.unsubscribe', now()->subMinute(), $subscriber);
+    $url = URL::temporarySignedRoute(
+        'newsletter.unsubscribe',
+        now()->subMinute(),
+        ['subscriber' => $subscriber],
+    );
 
     $this->delete($url)
         ->assertForbidden();

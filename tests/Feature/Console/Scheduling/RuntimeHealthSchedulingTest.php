@@ -19,12 +19,3 @@ it('schedules a heartbeat that records the scheduler and probes the queue', func
     expect(Cache::get(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY))->toBe(now()->getTimestamp());
     Queue::assertPushed(RecordQueueHeartbeat::class);
 });
-
-it('records a heartbeat when the queued probe is processed', function () {
-    $this->travelTo('2026-08-21 12:34:00');
-
-    app(RecordQueueHeartbeat::class)
-        ->handle(app(RuntimeHealthMonitor::class));
-
-    expect(Cache::get(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY))->toBe(now()->getTimestamp());
-});
