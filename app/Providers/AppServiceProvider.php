@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Monitoring\RedactNightwatchCacheEvent;
-use App\Monitoring\RedactNightwatchCommand;
-use App\Monitoring\RedactNightwatchException;
-use App\Monitoring\RedactNightwatchOutgoingRequest;
-use App\Monitoring\RedactNightwatchQuery;
-use App\Monitoring\RedactNightwatchRequest;
-use App\Monitoring\ResolveNightwatchUser;
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchException;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchOutgoingRequest;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchQuery;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
+use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;

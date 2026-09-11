@@ -2,7 +2,7 @@
 
 namespace App\Models\Concerns;
 
-use App\Attributes\PublishingStatus as PublishingStatusAttribute;
+use App\Models\Attributes\PublishingStatus as PublishingStatusAttribute;
 
 trait HasPublishingConfiguration
 {
