@@ -16,7 +16,7 @@ it('succeeds without invoking the generator when no posts need images', function
     $generator->allows('generate')->never();
     app()->instance(FeaturedImageGenerator::class, $generator);
 
-    $this->artisan('posts:generate-images')
+    $this->artisanCommand('posts:generate-images')
         ->expectsOutput('No posts need images generated.')
         ->assertSuccessful();
 });
@@ -41,11 +41,11 @@ it('generates and persists images only for posts without one by default', functi
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
-        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($missingImage)))
+        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($missingImage)))
         ->returns('featured-images/generated.png');
     app()->instance(FeaturedImageGenerator::class, $generator);
 
-    $this->artisan('posts:generate-images')
+    $this->artisanCommand('posts:generate-images')
         ->expectsOutput('Generated: featured-images/generated.png')
         ->expectsOutput('Done! Generated images for 1 posts.')
         ->assertSuccessful();
@@ -74,16 +74,16 @@ it('regenerates and persists every post image when forced', function () {
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
-        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($firstPost)))
+        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($firstPost)))
         ->returns('featured-images/new-first.png')
         ->ordered();
     $generator->expects('generate')
-        ->with(Argument::satisfies(fn (Post $post): bool => $post->is($secondPost)))
+        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($secondPost)))
         ->returns('featured-images/new-second.png')
         ->ordered();
     app()->instance(FeaturedImageGenerator::class, $generator);
 
-    $this->artisan('posts:generate-images', ['--force' => true])
+    $this->artisanCommand('posts:generate-images', ['--force' => true])
         ->expectsOutput('Generated: featured-images/new-first.png')
         ->expectsOutput('Generated: featured-images/new-second.png')
         ->expectsOutput('Done! Generated images for 2 posts.')
@@ -105,7 +105,7 @@ it('propagates generator failures without persisting an image path', function ()
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
-        ->with(Argument::satisfies(fn (Post $generatedPost): bool => $generatedPost->is($post)))
+        ->with(Argument::satisfies(fn (mixed $generatedPost): bool => $generatedPost instanceof Post && $generatedPost->is($post)))
         ->throws(new RuntimeException('Image generation failed.'));
     app()->instance(FeaturedImageGenerator::class, $generator);
 

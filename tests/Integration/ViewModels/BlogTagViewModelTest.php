@@ -7,7 +7,6 @@ use App\Models\Tag;
 use App\Models\User;
 use App\ViewModels\BlogTagViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 uses(RefreshDatabase::class);
 
@@ -59,7 +58,6 @@ it('builds a paginated tag archive payload', function () {
         ->and($data['posts']->total())->toBe(11)
         ->and($data['posts']->sole()->relationLoaded('category'))->toBeTrue()
         ->and($data['posts']->sole()->relationLoaded('author'))->toBeTrue()
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class)
         ->and($data['seoSource']->title)->toBe('Boundaries Articles — Page 2')
         ->and($data['seoSource']->description)->toBe(
             'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',

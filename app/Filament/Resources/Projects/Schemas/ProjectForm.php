@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -38,10 +38,11 @@ class ProjectForm
                         Textarea::make('description')
                             ->required()
                             ->rows(3)
-                            ->helperText('Short description for project cards')
+                            ->helperText('Explain who the product helps and the problem it solves in one or two sentences.')
                             ->columnSpanFull(),
                         MarkdownEditor::make('content')
                             ->label('Full Write-up')
+                            ->helperText('Tell the story under headings: The problem, My contribution, and The result. Use verified outcomes, then add implementation details and screenshots with captions. Mention when a project is still in development.')
                             ->columnSpanFull(),
                     ])->columns(2),
 
@@ -56,6 +57,7 @@ class ProjectForm
                             ->url()
                             ->maxLength(255),
                         FileUpload::make('featured_image_path')
+                            ->helperText('Upload a real product screenshot, ideally 1600 × 900 or larger. Keep its original colors; the site adds the TLA frame. Remove private data first. An image placeholder appears until you upload one.')
                             ->disk('public')
                             ->directory('projects')
                             ->image()
@@ -73,8 +75,11 @@ class ProjectForm
                             ->numeric()
                             ->default(0),
                         Select::make('status')
-                            ->options(ProjectStatus::labels())
-                            ->default(ProjectStatus::Draft)
+                            ->options([
+                                PublishStatus::Draft->value => PublishStatus::Draft->label(),
+                                PublishStatus::Published->value => PublishStatus::Published->label(),
+                            ])
+                            ->default(PublishStatus::Draft)
                             ->required(),
                     ])->columns(2),
 

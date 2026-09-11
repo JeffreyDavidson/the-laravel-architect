@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,14 +12,14 @@ it('builds the project detail payload', function () {
         'title' => 'Current Project',
         'slug' => 'current-project',
         'description' => 'The current project.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'sort_order' => 1,
     ]);
     $relatedProject = Project::query()->create([
         'title' => 'Related Project',
         'slug' => 'related-project',
         'description' => 'A related project.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'sort_order' => 2,
     ]);
 

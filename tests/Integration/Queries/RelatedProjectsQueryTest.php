@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Queries\RelatedProjectsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +23,7 @@ it('selects published projects in sort order while excluding the current project
     createRelatedProjectsQueryProject(
         title: 'Draft Project',
         sortOrder: 0,
-        status: ProjectStatus::Draft,
+        status: PublishStatus::Draft,
     );
     createRelatedProjectsQueryProject(
         title: 'Excluded By Limit',
@@ -42,7 +42,7 @@ it('selects published projects in sort order while excluding the current project
 function createRelatedProjectsQueryProject(
     string $title,
     int $sortOrder,
-    ProjectStatus $status = ProjectStatus::Published,
+    PublishStatus $status = PublishStatus::Published,
 ): Project {
     return Project::query()->create([
         'title' => $title,

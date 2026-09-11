@@ -1,10 +1,9 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 uses(RefreshDatabase::class);
 
@@ -14,21 +13,28 @@ it('builds the public project index payload', function () {
         'slug' => 'later-project',
         'description' => 'Description',
         'sort_order' => 2,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
     $earlierProject = Project::query()->create([
         'title' => 'Earlier Project',
         'slug' => 'earlier-project',
         'description' => 'Description',
         'sort_order' => 1,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
     Project::query()->create([
         'title' => 'Draft Project',
         'slug' => 'draft-project',
         'description' => 'Description',
         'sort_order' => 0,
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
+    ]);
+    Project::query()->create([
+        'title' => 'The Laravel Architect',
+        'slug' => 'the-laravel-architect',
+        'description' => 'The site itself is not portfolio work.',
+        'sort_order' => 0,
+        'status' => PublishStatus::Published,
     ]);
 
     $data = app(ProjectIndexViewModel::class)
@@ -42,5 +48,5 @@ it('builds the public project index payload', function () {
         ->and($data['projects']->every(
             fn (Project $project): bool => $project->relationLoaded('tags'),
         ))->toBeTrue()
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class);
+        ->and($data['seoSource']->title)->toBe('Projects');
 });

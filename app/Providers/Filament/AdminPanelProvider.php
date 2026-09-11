@@ -9,7 +9,6 @@ use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
-use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Filament\Resources\Videos\VideoResource;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
@@ -68,7 +67,6 @@ class AdminPanelProvider extends PanelProvider
                 return $builder
                     ->items([
                         ...Dashboard::getNavigationItems(),
-                        ...TestimonialResource::getNavigationItems(),
                     ])
                     ->groups([
                         NavigationGroup::make('Content')

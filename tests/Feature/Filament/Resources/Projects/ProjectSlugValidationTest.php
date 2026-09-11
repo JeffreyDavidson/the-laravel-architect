@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Project;
@@ -22,7 +22,7 @@ it('rejects non-normalized project slugs when creating a project', function (str
             'title' => 'Project title',
             'slug' => $slug,
             'description' => 'Project description',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
         ])
         ->call('create')
         ->assertHasFormErrors(['slug' => 'regex']);
@@ -43,7 +43,7 @@ it('accepts a normalized project slug when creating a project', function () {
             'title' => 'Project title',
             'slug' => 'project-title-2',
             'description' => 'Project description',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -56,7 +56,7 @@ it('rejects a non-normalized project slug when editing a project', function () {
         'title' => 'Project title',
         'slug' => 'project-title',
         'description' => 'Project description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])

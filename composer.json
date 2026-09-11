@@ -10,15 +10,16 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.5",
         "filament/filament": "^5.7",
         "filament/spatie-laravel-tags-plugin": "^5.0",
         "intervention/image": "^4.0",
         "laravel/framework": "^13.26",
         "laravel/nightwatch": "^1.30",
         "laravel/tinker": "^3.0",
+        "nunomaduro/laravel-sluggable": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.30",
         "league/flysystem-sftp-v3": "^3.0",
+        "php": "^8.5",
         "ralphjsmit/laravel-filament-seo": "^2.2",
         "ralphjsmit/laravel-seo": "^1.8",
         "resend/resend-laravel": "^1.3",
@@ -28,21 +29,29 @@
         "spatie/laravel-tags": "^4.11"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
-        "jasonmccreary/double": "^0.6.1",
+        "driftingly/rector-laravel": "^2.6",
+        "jasonmccreary/double": "^0.7.0",
         "larastan/larastan": "^3.8",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.5",
+        "laravel/pao": "^1.1",
         "laravel/pint": "^1.27",
-        "laravel/sail": "^1.53",
         "laraveldaily/filacheck": "^1.1",
         "laraveldaily/filacheck-pro": "^1.1",
         "mockery/mockery": "^1.6",
+        "mrpunyapal/laravel-auditor": "^0.1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-agent": "^5.0",
         "pestphp/pest-plugin-browser": "^5.0.1",
+        "pestphp/pest-plugin-faker": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0",
         "pestphp/pest-plugin-livewire": "^5.0",
-        "phpunit/phpunit": "^13.0"
+        "pestphp/pest-plugin-phpstan": "^5.0",
+        "pestphp/pest-plugin-rector": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0",
+        "phpstan/extension-installer": "^1.4",
+        "rector/rector": "^2.6"
     },
     "autoload": {
         "psr-4": {
@@ -74,7 +83,10 @@
             "vendor/bin/pest"
         ],
         "test:filament": "vendor/bin/filacheck --detailed",
+        "test:rector": "vendor/bin/rector process --dry-run --no-progress-bar",
+        "test:rector:pest": "vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar",
         "test:types": "vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table",
+        "test:types:pest": "APP_ENV=testing vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --memory-limit=1G --no-progress --error-format=table",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
@@ -106,7 +118,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
         }
     },
     "repositories": [

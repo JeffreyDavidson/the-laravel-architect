@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Featurable;
+use App\Models\Concerns\HasPublicationDate;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 
 /** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
+#[Sluggable(from: 'title')]
 class Video extends Model
 {
+    use Featurable;
+    use HasPublicationDate;
+
     protected function casts(): array
     {
         return [
@@ -25,15 +29,6 @@ class Video extends Model
         ];
     }
 
-    protected static function booted(): void
-    {
-        static::creating(function (Video $video) {
-            if (empty($video->slug)) {
-                $video->slug = Str::slug($video->title);
-            }
-        });
-    }
-
     public function getYoutubeUrlAttribute(): string
     {
         return "https://www.youtube.com/watch?v={$this->youtube_id}";
@@ -42,44 +37,5 @@ class Video extends Model
     public function getEmbedUrlAttribute(): string
     {
         return "https://www.youtube.com/embed/{$this->youtube_id}";
-    }
-
-    public function getFormattedDurationAttribute(): ?string
-    {
-        if (! $this->duration) {
-            return null;
-        }
-
-        // Parse ISO 8601 duration (PT1H2M3S)
-        try {
-            $interval = new \DateInterval($this->duration);
-            $parts = [];
-
-            if ($interval->h > 0) {
-                $parts[] = $interval->h.':'.str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
-            } else {
-                $parts[] = (string) $interval->i;
-            }
-
-            $parts[] = str_pad((string) $interval->s, 2, '0', STR_PAD_LEFT);
-
-            return implode(':', $parts);
-        } catch (\Exception) {
-            return $this->duration;
-        }
-    }
-
-    /** @param Builder<Video> $query */
-    #[Scope]
-    protected function published(Builder $query): void
-    {
-        $query->whereNotNull('published_at')->where('published_at', '<=', now());
-    }
-
-    /** @param Builder<Video> $query */
-    #[Scope]
-    protected function featured(Builder $query): void
-    {
-        $query->where('is_featured', true);
     }
 }

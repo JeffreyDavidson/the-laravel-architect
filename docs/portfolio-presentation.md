@@ -1,0 +1,11 @@
+# Portfolio presentation
+
+Project previews share `components/projects/artwork.blade.php` on the homepage, project index, project detail, and related projects. The neutral TLA frame establishes a consistent collection while uploaded images retain their original product colors. Images fit inside a 16:9 area without cropping interface details. The component uses existing responsive variants and lazy loading except for priority images.
+
+Until an image is uploaded, the frame explicitly says “Project preview coming soon.” These are placeholders, not fabricated product screens. Replace them through the project’s existing featured image field in Filament; no template edits are needed. Use screenshots at least 1600 × 900 where practical and remove private information. Avoid adding a second decorative frame to the uploaded image.
+
+For each project, keep the card description focused on the audience and problem. Structure the full write-up around the problem, Jeffrey’s specific contribution, and verified results. State when work is still in development. Add readable screenshots with short captions in the write-up when available. Never invent client quotes, roles, metrics, or shipped outcomes.
+
+The homepage relies on selected work and writing rather than testimonials or a recommendation count. Public testimonial display and submission routes, models, admin resources, and the legacy testimonials table have been retired. The original create-table migration remains in history; a later forward-only migration removes the table. The About page keeps the existing portrait and personal story, and the contact form explains what to include and the existing response-time commitment.
+
+The Services page (`services`) explains three offerings: building applications, improving existing codebases, and release confidence. Its open two-column sections use large Heroicons and concise scope examples, with a short engagement outline and contact CTA. The homepage links to it through a compact preview; About retains the personal story rather than duplicating service details. Desktop, mobile, and footer navigation include Services. No new CSS, JavaScript, or image assets are required.

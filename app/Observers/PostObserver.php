@@ -3,48 +3,24 @@
 namespace App\Observers;
 
 use App\Models\Post;
-use App\Services\ResponsiveImageVariants;
-use Illuminate\Support\Facades\Log;
+use App\Services\ResponsiveImageLifecycle;
 
 class PostObserver
 {
-    public function __construct(private readonly ResponsiveImageVariants $images) {}
+    public function __construct(private readonly ResponsiveImageLifecycle $lifecycle) {}
 
     public function created(Post $post): void
     {
-        $this->generateImages($post->featured_image_path);
+        $this->lifecycle->created($post, 'featured_image_path', 'post');
     }
 
     public function updated(Post $post): void
     {
-        if (! $post->wasChanged('featured_image_path')) {
-            return;
-        }
-
-        $previousPath = $post->getPrevious()['featured_image_path'] ?? null;
-
-        if (is_string($previousPath) && filled($previousPath)) {
-            $this->images->delete($previousPath);
-        }
-
-        $this->generateImages($post->featured_image_path);
+        $this->lifecycle->updated($post, 'featured_image_path', 'post');
     }
 
     public function deleted(Post $post): void
     {
-        if (is_string($post->featured_image_path) && filled($post->featured_image_path)) {
-            $this->images->delete($post->featured_image_path);
-        }
-    }
-
-    private function generateImages(mixed $path): void
-    {
-        if (! is_string($path) || blank($path)) {
-            return;
-        }
-
-        if (! $this->images->generate($path)) {
-            Log::warning('Responsive post image generation failed. Run posts:generate-image-variants to retry.');
-        }
+        $this->lifecycle->deleted($post, 'featured_image_path');
     }
 }

@@ -5,7 +5,6 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\ViewModels\PodcastIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 uses(RefreshDatabase::class);
 
@@ -46,7 +45,7 @@ it('builds the public podcast index payload', function () {
 
     expect($data)->toHaveKeys(['podcast', 'seoSource'])
         ->and($data['podcast'])->toBeInstanceOf(Podcast::class)
-        ->and($data['podcast']->is($podcast))->toBeTrue()
-        ->and($data['podcast']->published_episodes_count)->toBe(1)
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class);
+        ->and($data['podcast']?->is($podcast))->toBeTrue()
+        ->and($data['podcast']?->published_episodes_count)->toBe(1)
+        ->and($data['seoSource']->title)->toBe('Podcast');
 });

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Models\Project;
 use App\Models\User;
@@ -18,7 +18,7 @@ it('rejects project text inputs longer than their database columns', function (s
             'title' => 'Project title',
             'slug' => 'project-title',
             'description' => 'Project description',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
             $field => str_repeat('a', 256),
         ])
         ->call('create')

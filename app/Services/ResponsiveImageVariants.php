@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class ResponsiveImageVariants
 {
     /** @var list<positive-int> */
-    private const WIDTHS = [640, 1280];
+    private const array WIDTHS = [640, 1280];
 
     public function generate(string $originalPath): bool
     {

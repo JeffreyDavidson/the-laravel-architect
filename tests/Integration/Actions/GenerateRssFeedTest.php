@@ -22,7 +22,8 @@ it('generates a newest-first feed bounded to twenty published posts', function (
         ]);
     }
 
-    $xml = app(GenerateRssFeed::class)();
+    $xml = app(GenerateRssFeed::class)
+        ->handle();
 
     expect($xml)
         ->toContain('<title>Feed post 1</title>')

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 

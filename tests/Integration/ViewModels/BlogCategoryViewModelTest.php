@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\User;
 use App\ViewModels\BlogCategoryViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 uses(RefreshDatabase::class);
 
@@ -51,7 +50,6 @@ it('builds a paginated category archive payload', function () {
         ->and($data['posts']->total())->toBe(11)
         ->and($data['posts']->sole()->relationLoaded('tags'))->toBeTrue()
         ->and($data['posts']->sole()->relationLoaded('author'))->toBeTrue()
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class)
         ->and($data['seoSource']->title)->toBe('Architecture Articles — Page 2')
         ->and($data['seoSource']->description)->toBe(
             'Articles about Architecture — Laravel development insights from Jeffrey Davidson. Page 2 of 2.',

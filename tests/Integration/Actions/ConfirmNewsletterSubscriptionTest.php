@@ -15,7 +15,8 @@ it('marks a subscriber as verified and clears pending state', function () {
     $subscriber->verification_token_hash = hash('sha256', 'confirmation-token');
     $subscriber->save();
 
-    app(ConfirmNewsletterSubscription::class)($subscriber);
+    app(ConfirmNewsletterSubscription::class)
+        ->handle($subscriber);
 
     expect($subscriber->refresh()->verified_at)->not->toBeNull()
         ->and($subscriber->unsubscribed_at)->toBeNull()

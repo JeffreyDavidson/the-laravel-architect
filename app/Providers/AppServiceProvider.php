@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Monitoring\RedactNightwatchCacheEvent;
-use App\Monitoring\RedactNightwatchCommand;
-use App\Monitoring\RedactNightwatchException;
-use App\Monitoring\RedactNightwatchOutgoingRequest;
-use App\Monitoring\RedactNightwatchQuery;
-use App\Monitoring\RedactNightwatchRequest;
-use App\Monitoring\ResolveNightwatchUser;
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchException;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchOutgoingRequest;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchQuery;
+use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
+use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
@@ -53,7 +53,6 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('newsletter', fn (Request $request) => Limit::perHour(5)->by($request->ip()));
         RateLimiter::for('newsletter-confirm', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
-        RateLimiter::for('testimonials', fn (Request $request) => Limit::perHour(3)->by($request->ip()));
 
         $appUrl = config('app.url');
 

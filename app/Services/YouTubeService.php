@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Data\YouTubeVideoData;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
@@ -12,17 +13,6 @@ use Throwable;
 use UnexpectedValueException;
 
 /**
- * @phpstan-type VideoPayload array{
- *     youtube_id: string,
- *     title: string,
- *     description: string|null,
- *     thumbnail_url: string|null,
- *     duration: string|null,
- *     view_count: int,
- *     like_count: int,
- *     comment_count: int,
- *     published_at: string|null
- * }
  * @phpstan-type VideoStats array{view_count: int, like_count: int, comment_count: int}
  */
 class YouTubeService
@@ -83,7 +73,7 @@ class YouTubeService
         }
     }
 
-    /** @return list<VideoPayload> */
+    /** @return list<YouTubeVideoData> */
     public function getChannelVideos(int $maxResults = 50): array
     {
         if ($maxResults < 1) {
@@ -130,7 +120,7 @@ class YouTubeService
 
     /**
      * @param  list<string>  $videoIds
-     * @return list<VideoPayload>
+     * @return list<YouTubeVideoData>
      */
     public function getVideoDetails(array $videoIds): array
     {
@@ -150,21 +140,21 @@ class YouTubeService
                 continue;
             }
 
-            $videos[] = [
-                'youtube_id' => $videoId,
-                'title' => $title,
-                'description' => $this->nullableString(data_get($item, 'snippet.description')),
-                'thumbnail_url' => $this->nullableString(
+            $videos[] = new YouTubeVideoData(
+                youtubeId: $videoId,
+                title: $title,
+                description: $this->nullableString(data_get($item, 'snippet.description')),
+                thumbnailUrl: $this->nullableString(
                     data_get($item, 'snippet.thumbnails.high.url')
                         ?? data_get($item, 'snippet.thumbnails.medium.url')
                         ?? data_get($item, 'snippet.thumbnails.default.url'),
                 ),
-                'duration' => $this->nullableString(data_get($item, 'contentDetails.duration')),
-                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
-                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
-                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
-                'published_at' => $this->nullableString(data_get($item, 'snippet.publishedAt')),
-            ];
+                duration: $this->nullableString(data_get($item, 'contentDetails.duration')),
+                viewCount: self::integer(data_get($item, 'statistics.viewCount', 0)),
+                likeCount: self::integer(data_get($item, 'statistics.likeCount', 0)),
+                commentCount: self::integer(data_get($item, 'statistics.commentCount', 0)),
+                publishedAt: $this->nullableString(data_get($item, 'snippet.publishedAt')),
+            );
         }
 
         return $videos;

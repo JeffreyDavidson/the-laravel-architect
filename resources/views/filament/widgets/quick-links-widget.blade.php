@@ -18,7 +18,10 @@
                 </span>
             </a>
 
-            <a href="{{ \App\Filament\Resources\Projects\ProjectResource::getUrl('create') }}" class="tla-dashboard-action">
+            <a
+                href="{{ \App\Filament\Resources\Projects\ProjectResource::getUrl('create') }}"
+                class="tla-dashboard-action"
+            >
                 <span class="tla-dashboard-action__icon tla-dashboard-action__icon--pink">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.25 6.75 21 10.5l-3.75 3.75M6.75 17.25 3 13.5l3.75-3.75M14.25 4.5l-4.5 15" /></svg>
                 </span>
@@ -28,7 +31,10 @@
                 </span>
             </a>
 
-            <a href="{{ \App\Filament\Resources\Podcasts\PodcastResource::getUrl('create') }}" class="tla-dashboard-action">
+            <a
+                href="{{ \App\Filament\Resources\Podcasts\PodcastResource::getUrl('create') }}"
+                class="tla-dashboard-action"
+            >
                 <span class="tla-dashboard-action__icon tla-dashboard-action__icon--green">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-12 0v1.5a6 6 0 0 0 6 6Zm0 0v3m-3 0h6M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" /></svg>
                 </span>

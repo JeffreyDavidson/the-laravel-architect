@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Content\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchive;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

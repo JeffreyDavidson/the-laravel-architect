@@ -5,20 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 
 #[Fillable('name', 'slug', 'description')]
+#[Sluggable(from: 'name')]
 class Category extends Model
 {
-    protected static function booted(): void
-    {
-        static::creating(function (Category $category) {
-            if (empty($category->slug)) {
-                $category->slug = Str::slug($category->name);
-            }
-        });
-    }
-
     /** @return HasMany<Post, $this> */
     public function posts(): HasMany
     {

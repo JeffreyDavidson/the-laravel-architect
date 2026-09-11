@@ -1,0 +1,12 @@
+parameters:
+    paths:
+        - tests
+
+    level: max
+    treatPhpDocTypesAsCertain: false
+
+    stubFiles:
+        - tests/pest-livewire.stub
+        - tests/pest-browser.stub
+
+    tmpDir: storage/framework/cache/phpstan-pest

@@ -12,7 +12,7 @@ it('succeeds without calling YouTube when there are no videos', function () {
     $youtube->allows('getStatsForVideos')->never();
     app()->instance(YouTubeService::class, $youtube);
 
-    $this->artisan('youtube:stats')
+    $this->artisanCommand('youtube:stats')
         ->expectsOutput('No videos to update. Run youtube:sync first.')
         ->assertSuccessful();
 });
@@ -56,7 +56,7 @@ it('updates video statistics in batches of fifty', function () {
         ->ordered();
     app()->instance(YouTubeService::class, $youtube);
 
-    $this->artisan('youtube:stats')
+    $this->artisanCommand('youtube:stats')
         ->expectsOutput('Updating stats for 51 videos...')
         ->expectsOutput('Updated stats for 2 videos.')
         ->assertSuccessful();
@@ -93,7 +93,7 @@ it('fails without changing statistics when YouTube is unavailable', function () 
         ->throws(new RuntimeException('YouTube is unavailable.'));
     app()->instance(YouTubeService::class, $youtube);
 
-    $this->artisan('youtube:stats')
+    $this->artisanCommand('youtube:stats')
         ->expectsOutput('YouTube is unavailable.')
         ->assertFailed();
 

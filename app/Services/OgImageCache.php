@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class OgImageCache
 {
-    private const RENDERER_VERSION = 'v1';
+    private const string RENDERER_VERSION = 'v1';
 
     public function __construct(private readonly OgImageGenerator $generator) {}
 

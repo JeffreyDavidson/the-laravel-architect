@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\User;
 use App\ViewModels\BlogIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 uses(RefreshDatabase::class);
 
@@ -50,7 +49,7 @@ it('builds the public blog index payload', function () {
                 && $post->relationLoaded('author'),
         ))->toBeTrue()
         ->and($data['categories']->sole()->posts_count)->toBe(2)
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class);
+        ->and($data['seoSource']->title)->toBe('Blog');
 });
 
 function createBlogIndexViewModelPost(

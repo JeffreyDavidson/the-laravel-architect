@@ -1,0 +1,20 @@
+{
+    "agents": [
+        "codex"
+    ],
+    "cloud": true,
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch": true,
+    "sail": false,
+    "skills": [
+        "infer-conventions",
+        "deploying-to-cloud",
+        "laravel-best-practices",
+        "testing-best-practices",
+        "configure-nightwatch",
+        "tailwindcss-development",
+        "filament-development",
+        "livewire-development"
+    ]
+}

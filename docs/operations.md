@@ -14,7 +14,7 @@ For a migration that changes media or database structure, do not proceed without
 
 ## Synchronizing public production content to staging
 
-Run `php artisan content:sync-production` from the staging release to replace staging's public content with the current production versions. The command transfers only published posts and projects, referenced categories and tags, active podcasts and their published episodes, published videos, approved testimonials, their SEO metadata, and referenced public media.
+Run `php artisan content:sync-production` from the staging release to replace staging's public content with the current production versions. The command transfers only published posts and projects, referenced categories and tags, active podcasts and their published episodes, published videos, their SEO metadata, and referenced public media.
 
 The synchronization refuses to run in production. It maps posts to a non-login staging content owner and never exports production users, subscribers, authentication data, review notes, activity logs, failed jobs, cache or session data, credentials, or environment configuration. Content that is no longer public in production is unpublished in staging while staging-only drafts remain intact.
 
@@ -200,4 +200,4 @@ Never delete the only validated rollback artifacts during an incident.
 
 ## Forge API migration
 
-The legacy Forge API v1 is deprecated and is scheduled to be discontinued on August 31, 2026. Follow [`docs/forge-api-migration.md`](forge-api-migration.md) before that date. Application deployment must not depend on undocumented v1 requests.
+The application repository contains no direct Forge API client or `/api/v1` request. Application deployment must not depend on undocumented Forge API v1 requests.

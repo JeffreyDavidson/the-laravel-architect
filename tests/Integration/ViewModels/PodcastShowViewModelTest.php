@@ -6,7 +6,6 @@ use App\Models\Podcast;
 use App\ViewModels\PodcastShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\Paginator;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 uses(RefreshDatabase::class);
@@ -49,14 +48,13 @@ it('builds a page-aware podcast payload', function () {
         ->and($data['podcast']->is($podcast))->toBeTrue()
         ->and($data['episodes']->currentPage())->toBe(2)
         ->and($data['episodes']->total())->toBe(21)
-        ->and($data['episodes']->modelKeys())->toBe([
+        ->and($data['episodes']->getCollection()->map(fn (Episode $episode) => $episode->getKey())->all())->toBe([
             Episode::query()->where('slug', 'architecture-session-21')->value('id'),
         ])
         ->and($data['episodes']->every(
             fn (Episode $episode): bool => $episode->relationLoaded('tags'),
         ))->toBeTrue()
         ->and($data['latestEpisode'])->toBeNull()
-        ->and($data['seoSource'])->toBeInstanceOf(SEOData::class)
         ->and($data['seoSource']->title)->toBe('Architecture Sessions — Page 2')
         ->and($data['seoSource']->description)->toBe(
             'Conversations about maintainable Laravel applications. Page 2 of 2.',

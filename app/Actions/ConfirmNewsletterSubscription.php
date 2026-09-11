@@ -6,7 +6,7 @@ use App\Models\Subscriber;
 
 final class ConfirmNewsletterSubscription
 {
-    public function __invoke(Subscriber $subscriber): void
+    public function handle(Subscriber $subscriber): void
     {
         $subscriber->fill([
             'verified_at' => now(),
