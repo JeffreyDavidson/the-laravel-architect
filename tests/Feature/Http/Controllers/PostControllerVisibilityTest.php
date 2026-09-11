@@ -59,13 +59,23 @@ it('only allows directly viewing posts that are published now', function () {
 
 it('renders post content as markdown with anchored headings', function () {
     $post = createBlogPost([
-        'content' => "## Native Markdown\n\nThis is **rendered** content.",
+        'content' => <<<'MARKDOWN'
+## Native Markdown
+
+This is **rendered** content.
+
+<script>alert('unsafe')</script>
+
+[Unsafe link](javascript:alert('unsafe'))
+MARKDOWN,
     ]);
 
     $this->get(route('blog.show', $post))
         ->assertOk()
         ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')
-        ->assertSeeHtml('This is <strong>rendered</strong> content.');
+        ->assertSeeHtml('This is <strong>rendered</strong> content.')
+        ->assertDontSee("<script>alert('unsafe')</script>", false)
+        ->assertDontSee('javascript:', false);
 });
 
 it('counts only published posts in blog categories', function () {
