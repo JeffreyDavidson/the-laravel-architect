@@ -1,6 +1,8 @@
 # Forge API migration
 
-Forge API v1 is deprecated and is scheduled to be discontinued on August 31, 2026. The application repository currently contains no direct Forge API client or `/api/v1` request, so the remaining migration work concerns operator tooling and external automation.
+Forge API v1 was scheduled to be discontinued on August 31, 2026. The application repository currently contains no direct Forge API client or `/api/v1` request, so the remaining migration verification concerns operator tooling and external automation outside this repository.
+
+The repository-side guardrail is satisfied. Keep this checklist until the external inventory in step 1 has been completed and any remaining integrations have been migrated; then archive or remove this document and the reference from `docs/operations.md`.
 
 Official references:
 

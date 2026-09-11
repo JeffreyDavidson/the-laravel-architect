@@ -200,4 +200,4 @@ Never delete the only validated rollback artifacts during an incident.
 
 ## Forge API migration
 
-The legacy Forge API v1 is deprecated and is scheduled to be discontinued on August 31, 2026. Follow [`docs/forge-api-migration.md`](forge-api-migration.md) before that date. Application deployment must not depend on undocumented v1 requests.
+Forge API v1 was scheduled to be discontinued on August 31, 2026. The application repository contains no direct Forge API client or `/api/v1` request. Complete the external automation inventory and follow [`docs/forge-api-migration.md`](forge-api-migration.md) for any remaining operator tooling before archiving that checklist. Application deployment must not depend on undocumented v1 requests.
