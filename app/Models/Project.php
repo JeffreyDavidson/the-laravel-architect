@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -20,6 +20,7 @@ use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
 #[ObservedBy(ProjectObserver::class)]
+#[Sluggable(from: 'title')]
 class Project extends Model
 {
     use HasSEO;
@@ -34,15 +35,6 @@ class Project extends Model
             'is_featured' => 'boolean',
             'status' => ProjectStatus::class,
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Project $project) {
-            if (empty($project->slug)) {
-                $project->slug = Str::slug($project->title);
-            }
-        });
     }
 
     /** @param Builder<Project> $query */

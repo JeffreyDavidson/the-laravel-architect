@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -23,6 +23,7 @@ use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at')]
 #[ObservedBy(PostObserver::class)]
+#[Sluggable(from: 'title')]
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
@@ -53,12 +54,6 @@ class Post extends Model implements Publishable
 
     protected static function booted(): void
     {
-        static::creating(function (Post $post) {
-            if (empty($post->slug)) {
-                $post->slug = Str::slug($post->title);
-            }
-        });
-
         static::deleted(function (Post $post): void {
             app(OgImageCache::class)->forget($post);
         });
