@@ -8,6 +8,11 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Tests\Browser\Components\NewsletterForm;
+use Tests\Browser\Pages\BlogPostPage;
+use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\PodcastEpisodePage;
+use Tests\Browser\Pages\ProjectIndexPage;
 
 uses(RefreshDatabase::class);
 
@@ -22,7 +27,7 @@ beforeEach(function () {
 });
 
 it('provides a keyboard entry point and a programmatic newsletter label', function () {
-    $page = visit(route('home', absolute: false));
+    $page = HomePage::visit();
 
     $page->assertAttribute('a[href="#main-content"]', 'href', '#main-content')
         ->assertAttribute('#main-content', 'tabindex', '-1')
@@ -33,11 +38,10 @@ it('provides a keyboard entry point and a programmatic newsletter label', functi
 });
 
 it('keeps newsletter validation accessible and preserves the submitted email', function () {
-    $page = visit(route('home', absolute: false));
+    $page = HomePage::visit();
 
     $page->script('document.querySelector("#newsletter-email").form.noValidate = true');
-    $page->fill('Email address', 'not-an-email');
-    $page->press('Subscribe');
+    (new NewsletterForm($page))->submit('not-an-email');
 
     $page->assertPresent('#newsletter-email-error')
         ->assertValue('#newsletter-email', 'not-an-email')
@@ -55,7 +59,7 @@ it('gives project entries a heading and a labeled technology list', function () 
         'status' => PublishStatus::Published,
     ]);
 
-    $page = visit(route('projects.index', absolute: false));
+    $page = ProjectIndexPage::visit();
 
     $page->assertCount('[data-project-entry]', 1)
         ->assertSeeIn('[data-project-entry] h3', 'Architecture Decisions')
@@ -83,7 +87,7 @@ it('exposes podcast navigation, dates, and share actions to assistive technology
         'published_at' => '2026-08-20 12:00:00',
     ]);
 
-    $page = visit(route('podcast.episode', [$podcast, $episode], absolute: false));
+    $page = PodcastEpisodePage::visit($podcast, $episode);
 
     $page->assertPresent('nav[aria-label="Breadcrumb"]')
         ->assertAttribute('nav[aria-label="Breadcrumb"] [aria-current="page"]', 'aria-current', 'page')
@@ -105,7 +109,7 @@ it('publishes machine-readable dates for articles', function () {
         'published_at' => '2026-08-19 09:00:00',
     ]);
 
-    $page = visit(route('blog.show', $post, absolute: false));
+    $page = BlogPostPage::visit($post);
 
     $page->assertAttribute('time[datetime="2026-08-19"]', 'datetime', '2026-08-19')
         ->assertNoJavaScriptErrors();
