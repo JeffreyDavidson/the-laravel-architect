@@ -1,7 +1,7 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;

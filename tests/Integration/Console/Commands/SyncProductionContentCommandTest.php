@@ -1,7 +1,7 @@
 <?php
 
-use App\Content\ProductionContentSource;
 use App\Models\Post;
+use App\Support\Content\Archives\ProductionContentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
 

@@ -2,8 +2,8 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Project;
-use App\Services\NightwatchHealthMonitor;
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\NightwatchHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Attributes\PublishingStatus;
 use App\Enums\PublishStatus;
+use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;

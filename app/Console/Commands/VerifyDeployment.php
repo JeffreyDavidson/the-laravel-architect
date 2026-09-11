@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\NightwatchHealthMonitor;
-use App\Services\RuntimeHealthMonitor;
+use App\Support\Monitoring\Health\NightwatchHealthMonitor;
+use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

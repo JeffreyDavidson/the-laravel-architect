@@ -1,6 +1,6 @@
 <?php
 
-use App\Content\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchive;
 use Illuminate\Support\Facades\File;
 use JMac\Testing\Double;
 
