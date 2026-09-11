@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -17,7 +17,7 @@ it('backfills responsive variants for existing project images', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/project.png',
     ]));
 

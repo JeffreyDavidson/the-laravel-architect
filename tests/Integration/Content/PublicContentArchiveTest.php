@@ -1,7 +1,6 @@
 <?php
 
 use App\Content\PublicContentArchive;
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Podcast;
@@ -53,13 +52,13 @@ test('only public content and its presentation data are exported', function (): 
         'slug' => 'published-project',
         'description' => 'Public project',
         'tech_stack' => ['Laravel', 'Pest'],
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
     Project::query()->create([
         'title' => 'Draft project',
         'slug' => 'draft-project',
         'description' => 'Not public',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     $archive = app(PublicContentArchive::class)->export();

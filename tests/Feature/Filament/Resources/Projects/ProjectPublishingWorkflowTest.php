@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Project;
 use App\Models\User;
@@ -19,15 +19,15 @@ it('publishes a project through Filament and exposes it publicly', function () {
         'title' => 'Publishing workflow project',
         'slug' => 'publishing-workflow-project',
         'description' => 'A project that is ready to publish.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
-        ->fillForm(['status' => ProjectStatus::Published])
+        ->fillForm(['status' => PublishStatus::Published])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->status)->toBe(ProjectStatus::Published);
+    expect($project->refresh()->status)->toBe(PublishStatus::Published);
 
     $this->get(route('projects.show', $project))->assertOk();
     $this->get('/sitemap.xml')->assertSee(route('projects.show', $project), false);
@@ -38,15 +38,15 @@ it('hides a project again when Filament changes it back to draft', function () {
         'title' => 'Draft workflow project',
         'slug' => 'draft-workflow-project',
         'description' => 'A project that is no longer public.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
-        ->fillForm(['status' => ProjectStatus::Draft])
+        ->fillForm(['status' => PublishStatus::Draft])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->status)->toBe(ProjectStatus::Draft);
+    expect($project->refresh()->status)->toBe(PublishStatus::Draft);
 
     $this->get(route('projects.show', $project))->assertNotFound();
     $this->get('/sitemap.xml')->assertDontSee(route('projects.show', $project), false);

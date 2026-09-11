@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts;
+namespace App\Models\Contracts;
 
 interface Publishable
 {

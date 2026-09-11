@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Episode;
+use App\Presenters\EpisodePresenter;
 
 it('formats an episode code when its optional episode number is missing', function () {
     $episode = new Episode([
@@ -9,7 +10,7 @@ it('formats an episode code when its optional episode number is missing', functi
         'episode_number' => null,
     ]);
 
-    expect($episode->episode_code)->toBe('S02E00');
+    expect(EpisodePresenter::from($episode)->code())->toBe('S02E00');
 });
 
 it('generates SEO data when its podcast is missing', function () {

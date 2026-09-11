@@ -2,13 +2,14 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Post;
+use App\Presenters\PostPresenter;
 
 it('calculates reading time from post content', function () {
     $post = new Post([
         'content' => str_repeat('word ', 251),
     ]);
 
-    expect($post->reading_time)->toBe(2);
+    expect(PostPresenter::from($post)->readingTime())->toBe(2);
 });
 
 it('returns its cast publishing values', function () {

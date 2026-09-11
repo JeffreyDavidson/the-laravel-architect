@@ -161,15 +161,15 @@
                         <div class="p-8 md:p-10">
                             <div class="mb-5 flex items-center gap-3">
                                 <span class="podcast-badge rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase">Latest Episode</span>
-                                <span class="font-mono text-sm text-gray-500">{{ $latestEpisode->episode_code }}</span>
+                                <span class="font-mono text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->code() }}</span>
                                 <span class="text-sm text-gray-600">·</span>
                                 <time
                                     datetime="{{ $latestEpisode->published_at->toDateString() }}"
                                     class="text-sm text-gray-500"
                                 >{{ $latestEpisode->published_at->format('M d, Y') }}</time>
-                                @if ($latestEpisode->formatted_duration)
+                                @if (\App\Presenters\EpisodePresenter::from($latestEpisode)->duration())
                                     <span class="text-sm text-gray-600">·</span>
-                                    <span class="text-sm text-gray-500">{{ $latestEpisode->formatted_duration }}</span>
+                                    <span class="text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->duration() }}</span>
                                 @endif
                             </div>
 
@@ -231,7 +231,7 @@
                             >
                                 {{-- Episode number / play icon --}}
                                 <div class="podcast-accent-bg-faint relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
-                                    <span class="ep-number podcast-accent-text font-mono text-xs font-bold">{{ $episode->episode_code }}</span>
+                                    <span class="ep-number podcast-accent-text font-mono text-xs font-bold">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
                                     <div class="ep-play absolute inset-0 flex items-center justify-center">
                                         <div class="podcast-accent-bg flex h-10 w-10 items-center justify-center rounded-full">
                                             <svg class="ml-0.5 h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
@@ -245,9 +245,9 @@
                                     </h3>
                                     <div class="mt-1 flex items-center gap-3 text-xs text-gray-500">
                                         <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
-                                        @if ($episode->formatted_duration)
+                                        @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                             <span class="text-gray-300 dark:text-gray-700">·</span>
-                                            <span>{{ $episode->formatted_duration }}</span>
+                                            <span>{{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}</span>
                                         @endif
                                         @if ($episode->guest_name)
                                             <span class="hidden text-gray-300 sm:inline dark:text-gray-700">·</span>

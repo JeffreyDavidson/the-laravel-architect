@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ProjectStatus;
 use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use App\ViewModels\ProjectShowViewModel;
@@ -17,7 +16,7 @@ class ProjectController
 
     public function show(Project $project, ProjectShowViewModel $projectShowViewModel): View
     {
-        abort_unless($project->status === ProjectStatus::Published, 404);
+        abort_unless($project->isPublished(), 404);
 
         return view('projects.show', $projectShowViewModel->data($project));
     }

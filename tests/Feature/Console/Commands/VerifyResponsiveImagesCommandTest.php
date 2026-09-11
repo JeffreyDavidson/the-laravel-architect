@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Podcast;
 use App\Models\Project;
 use App\Services\ResponsiveImageVariants;
@@ -24,7 +24,7 @@ it('verifies responsive media using aggregate results', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/project.png',
     ]));
     Podcast::withoutEvents(fn () => Podcast::query()->create([
@@ -54,7 +54,7 @@ it('fails without exposing media paths when required variants are missing', func
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/private-project-name.png',
     ]));
 

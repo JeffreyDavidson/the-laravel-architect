@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\Projects\Pages\CreateProject;
@@ -29,7 +28,7 @@ it('stores a validated image through the Filament project form', function () {
             'title' => 'Project',
             'slug' => 'project',
             'description' => 'Description',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
             'featured_image_path' => UploadedFile::fake()->image('project.jpg'),
         ])
         ->call('create')
@@ -51,7 +50,7 @@ it('rejects an oversized image through the Filament project form', function () {
             'title' => 'Project',
             'slug' => 'project',
             'description' => 'Description',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
             'featured_image_path' => UploadedFile::fake()->image('project.jpg')->size(10241),
         ])
         ->call('create')

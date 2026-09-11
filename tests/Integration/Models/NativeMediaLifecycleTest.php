@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -28,7 +27,7 @@ it('deletes the previous file when native media is replaced', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'featured_image_path' => 'projects/old.png',
     ]);
 
@@ -45,7 +44,7 @@ it('keeps native media when unrelated attributes change', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'featured_image_path' => 'projects/image.png',
     ]);
 
@@ -61,7 +60,7 @@ it('deletes native media with its record', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'featured_image_path' => 'projects/image.png',
     ]);
 
@@ -79,7 +78,7 @@ it('keeps responsive project image variants in sync with the original image', fu
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'featured_image_path' => 'projects/old.png',
     ]);
 
@@ -200,7 +199,7 @@ it('logs responsive generation failures without exposing media paths', function 
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'featured_image_path' => 'projects/private-project-name.png',
     ]);
     Post::query()->create([

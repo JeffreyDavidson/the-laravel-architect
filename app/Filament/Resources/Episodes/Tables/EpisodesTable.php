@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Episodes\Tables;
 
 use App\Enums\PublishStatus;
+use App\Models\Episode;
+use App\Presenters\EpisodePresenter;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -14,8 +16,9 @@ class EpisodesTable
     {
         return $table
             ->columns([
-                TextColumn::make('episode_code')
+                TextColumn::make('episode_number')
                     ->label('#')
+                    ->state(fn (Episode $record): string => EpisodePresenter::from($record)->code())
                     ->sortable(['season_number', 'episode_number']),
                 TextColumn::make('title')
                     ->searchable()
@@ -27,8 +30,9 @@ class EpisodesTable
                 TextColumn::make('guest_name')
                     ->label('Guest')
                     ->placeholder('Solo'),
-                TextColumn::make('formatted_duration')
-                    ->label('Duration'),
+                TextColumn::make('duration_minutes')
+                    ->label('Duration')
+                    ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration()),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),

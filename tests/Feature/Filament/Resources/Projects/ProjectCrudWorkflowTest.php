@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Project;
@@ -23,7 +23,7 @@ it('creates a project through the resource form', function () {
             'slug' => 'new-project',
             'description' => 'A project description.',
             'content' => 'The full project write-up.',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -39,7 +39,7 @@ it('creates a project through the resource form', function () {
         'slug' => 'new-project',
         'description' => 'A project description.',
         'content' => 'The full project write-up.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 });
 
@@ -49,7 +49,7 @@ it('updates a project through the resource form', function () {
         'slug' => 'existing-project',
         'description' => 'The original description.',
         'content' => 'The original write-up.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
@@ -58,7 +58,7 @@ it('updates a project through the resource form', function () {
             'slug' => 'updated-project',
             'description' => 'The updated description.',
             'content' => 'The updated write-up.',
-            'status' => ProjectStatus::Published,
+            'status' => PublishStatus::Published,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -74,6 +74,6 @@ it('updates a project through the resource form', function () {
         'slug' => 'updated-project',
         'description' => 'The updated description.',
         'content' => 'The updated write-up.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 });

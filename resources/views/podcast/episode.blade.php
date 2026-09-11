@@ -24,7 +24,7 @@
                     <span
                         aria-current="page"
                         class="font-mono text-xs text-gray-600 dark:text-gray-400"
-                    >{{ $episode->episode_code }}</span>
+                    >{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
                 </nav>
 
                 <div class="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
@@ -50,15 +50,15 @@
                     <div class="min-w-0 flex-1 text-center lg:text-left">
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                            <span class="podcast-badge rounded-lg px-3 py-1.5 font-mono text-sm font-bold">{{ $episode->episode_code }}</span>
+                            <span class="podcast-badge rounded-lg px-3 py-1.5 font-mono text-sm font-bold">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
                             <time
                                 datetime="{{ $episode->published_at->toDateString() }}"
                                 class="text-sm text-gray-500"
                             >{{ $episode->published_at->format('F d, Y') }}</time>
-                            @if ($episode->formatted_duration)
+                            @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                 <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ $episode->formatted_duration }}
+                                    {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
                                 </span>
                             @endif
                         </div>
@@ -462,7 +462,7 @@
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Episode</dt>
                                         <dd class="podcast-accent-text font-mono font-semibold">
-                                            {{ $episode->episode_code }}
+                                            {{ \App\Presenters\EpisodePresenter::from($episode)->code() }}
                                         </dd>
                                     </div>
                                     <div class="flex justify-between">
@@ -471,11 +471,11 @@
                                             <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
                                         </dd>
                                     </div>
-                                    @if ($episode->formatted_duration)
+                                    @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                         <div class="flex justify-between">
                                             <dt class="text-gray-500">Duration</dt>
                                             <dd class="text-gray-700 dark:text-gray-300">
-                                                {{ $episode->formatted_duration }}
+                                                {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
                                             </dd>
                                         </div>
                                     @endif
@@ -550,8 +550,8 @@
                                             {{ $prevEpisode->title }}
                                         </p>
                                         <span class="font-mono text-xs text-gray-500"
-                                            >{{ $prevEpisode->episode_code }}
-                                            @if ($prevEpisode->formatted_duration) ·{{ $prevEpisode->formatted_duration }}@endif
+                                            >{{ \App\Presenters\EpisodePresenter::from($prevEpisode)->code() }}
+                                            @if (\App\Presenters\EpisodePresenter::from($prevEpisode)->duration()) ·{{ \App\Presenters\EpisodePresenter::from($prevEpisode)->duration() }}@endif
                                         </span>
                                     </div>
                                 </div>
@@ -572,8 +572,8 @@
                                             {{ $nextEpisode->title }}
                                         </p>
                                         <span class="font-mono text-xs text-gray-500"
-                                            >{{ $nextEpisode->episode_code }}
-                                            @if ($nextEpisode->formatted_duration) ·{{ $nextEpisode->formatted_duration }}@endif
+                                            >{{ \App\Presenters\EpisodePresenter::from($nextEpisode)->code() }}
+                                            @if (\App\Presenters\EpisodePresenter::from($nextEpisode)->duration()) ·{{ \App\Presenters\EpisodePresenter::from($nextEpisode)->duration() }}@endif
                                         </span>
                                     </div>
                                     <svg class="ep-nav-arrow h-5 w-5 flex-shrink-0 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>

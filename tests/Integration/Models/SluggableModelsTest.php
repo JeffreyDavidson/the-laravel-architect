@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
@@ -39,7 +38,7 @@ it('generates slugs from the configured source attributes', function () {
             'title' => 'A Laravel Project',
             'description' => 'Project description',
             'content' => 'Project content',
-            'status' => ProjectStatus::Draft,
+            'status' => PublishStatus::Draft,
         ])->slug)->toBe('a-laravel-project')
         ->and(Video::query()->create([
             'youtube_id' => 'video-id',

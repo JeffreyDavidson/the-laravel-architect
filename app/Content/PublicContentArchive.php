@@ -2,7 +2,6 @@
 
 namespace App\Content;
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
@@ -172,7 +171,7 @@ class PublicContentArchive
 
             foreach ($records['projects'] as $attributes) {
                 $project = Project::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $project->fill([...$this->only($attributes, self::PROJECT_FIELDS), 'status' => ProjectStatus::Published]);
+                $project->fill([...$this->only($attributes, self::PROJECT_FIELDS), 'status' => PublishStatus::Published]);
                 $project->save();
                 $this->relations->syncTags($project, $this->relations->tagRecords($attributes['tags'] ?? []));
                 $this->relations->syncSeo($project, $this->nullableRecord($attributes['seo'] ?? null, 'project SEO'), self::SEO_FIELDS);
@@ -306,7 +305,7 @@ class PublicContentArchive
     private function unpublishExistingContent(): void
     {
         Post::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
-        Project::query()->published()->update(['status' => ProjectStatus::Draft->value]);
+        Project::query()->published()->update(['status' => PublishStatus::Draft->value]);
         Podcast::query()->active()->update(['is_active' => false]);
         Episode::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()->update(['published_at' => null]);

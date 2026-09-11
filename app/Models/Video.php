@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Featurable;
+use App\Models\Concerns\HasPublicationDate;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -14,6 +14,9 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 #[Sluggable(from: 'title')]
 class Video extends Model
 {
+    use Featurable;
+    use HasPublicationDate;
+
     protected function casts(): array
     {
         return [
@@ -34,44 +37,5 @@ class Video extends Model
     public function getEmbedUrlAttribute(): string
     {
         return "https://www.youtube.com/embed/{$this->youtube_id}";
-    }
-
-    public function getFormattedDurationAttribute(): ?string
-    {
-        if (! $this->duration) {
-            return null;
-        }
-
-        // Parse ISO 8601 duration (PT1H2M3S)
-        try {
-            $interval = new \DateInterval($this->duration);
-            $parts = [];
-
-            if ($interval->h > 0) {
-                $parts[] = $interval->h.':'.str_pad((string) $interval->i, 2, '0', STR_PAD_LEFT);
-            } else {
-                $parts[] = (string) $interval->i;
-            }
-
-            $parts[] = str_pad((string) $interval->s, 2, '0', STR_PAD_LEFT);
-
-            return implode(':', $parts);
-        } catch (\Exception) {
-            return $this->duration;
-        }
-    }
-
-    /** @param Builder<Video> $query */
-    #[Scope]
-    protected function published(Builder $query): void
-    {
-        $query->whereNotNull('published_at')->where('published_at', '<=', now());
-    }
-
-    /** @param Builder<Video> $query */
-    #[Scope]
-    protected function featured(Builder $query): void
-    {
-        $query->where('is_featured', true);
     }
 }

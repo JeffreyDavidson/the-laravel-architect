@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -75,8 +75,11 @@ class ProjectForm
                             ->numeric()
                             ->default(0),
                         Select::make('status')
-                            ->options(ProjectStatus::labels())
-                            ->default(ProjectStatus::Draft)
+                            ->options([
+                                PublishStatus::Draft->value => PublishStatus::Draft->label(),
+                                PublishStatus::Published->value => PublishStatus::Published->label(),
+                            ])
+                            ->default(PublishStatus::Draft)
                             ->required(),
                     ])->columns(2),
 
