@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\PublishStatus;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Observers\PodcastObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -58,9 +58,7 @@ class Podcast extends Model
     /** @return HasMany<Episode, $this> */
     public function publishedEpisodes(): HasMany
     {
-        return $this->episodes()
-            ->where('status', PublishStatus::Published)
-            ->where('published_at', '<=', now());
+        return $this->episodes()->published();
     }
 
     public function latestEpisode(): ?Episode
@@ -75,47 +73,51 @@ class Podcast extends Model
         $query->where('is_active', true);
     }
 
-    public function getCoverImageUrlAttribute(): ?string
+    /** @return Attribute<string|null, never> */
+    protected function coverImageUrl(): Attribute
     {
-        if ($this->cover_image_path) {
-            return Storage::disk('public')->url($this->cover_image_path);
-        }
+        return Attribute::get(function (): ?string {
+            if ($this->cover_image_path) {
+                return Storage::disk('public')->url($this->cover_image_path);
+            }
 
-        $resources = $this->fallbackCoverImageResources();
+            $resources = $this->fallbackCoverImageResources();
 
-        return $resources
-            ? Vite::asset($resources[512])
-            : null;
+            return $resources ? Vite::asset($resources[512]) : null;
+        });
     }
 
-    public function getFallbackCoverImageSrcsetAttribute(): ?string
+    /** @return Attribute<non-falsy-string|null, never> */
+    protected function fallbackCoverImageSrcset(): Attribute
     {
-        if ($this->cover_image_path) {
-            return null;
-        }
+        return Attribute::get(function (): ?string {
+            if ($this->cover_image_path) {
+                return null;
+            }
 
-        $resources = $this->fallbackCoverImageResources();
+            $resources = $this->fallbackCoverImageResources();
 
-        if (! $resources) {
-            return null;
-        }
+            if (! $resources) {
+                return null;
+            }
 
-        $srcset = [];
+            $srcset = [];
 
-        foreach ($resources as $width => $resource) {
-            $srcset[] = Vite::asset($resource)." {$width}w";
-        }
+            foreach ($resources as $width => $resource) {
+                $srcset[] = Vite::asset($resource)." {$width}w";
+            }
 
-        return implode(', ', $srcset);
+            return implode(', ', $srcset);
+        });
     }
 
-    public function getDisplayColorAttribute(): string
+    /** @return Attribute<non-falsy-string, never> */
+    protected function displayColor(): Attribute
     {
-        if (is_string($this->color) && preg_match('/\A#[0-9a-fA-F]{6}\z/', $this->color) === 1) {
-            return $this->color;
-        }
-
-        return self::DEFAULT_COLOR;
+        return Attribute::get(fn (): string => is_string($this->color)
+            && preg_match('/\A#[0-9a-fA-F]{6}\z/', $this->color) === 1
+            ? $this->color
+            : self::DEFAULT_COLOR);
     }
 
     public function getDynamicSEOData(): SEOData
@@ -153,18 +155,20 @@ class Podcast extends Model
     /** @return array<int, string>|null */
     private function fallbackCoverImageResources(): ?array
     {
-        return match ($this->slug) {
-            'coffee-with-the-laravel-architect' => [
-                128 => 'resources/images/podcast-coffee-logo-128.webp',
-                320 => 'resources/images/podcast-coffee-logo-320.webp',
-                512 => 'resources/images/podcast-coffee-logo-512.webp',
-            ],
-            'embracing-cloudy-days' => [
-                128 => 'resources/images/podcast-cloudy-logo-128.webp',
-                320 => 'resources/images/podcast-cloudy-logo-320.webp',
-                512 => 'resources/images/podcast-cloudy-logo-512.webp',
-            ],
-            default => null,
-        };
+        $artwork = config('podcasts.fallback_artwork');
+
+        if (! is_array($artwork) || ! is_array($artwork[$this->slug] ?? null)) {
+            return null;
+        }
+
+        $resources = [];
+
+        foreach ($artwork[$this->slug] as $width => $resource) {
+            if (is_int($width) && is_string($resource)) {
+                $resources[$width] = $resource;
+            }
+        }
+
+        return $resources ?: null;
     }
 }

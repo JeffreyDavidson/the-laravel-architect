@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Services\NightwatchHealthMonitor;
 use App\Services\RuntimeHealthMonitor;
@@ -111,7 +111,7 @@ it('reports incomplete responsive media without exposing its path', function () 
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/private-project-name.png',
     ]));
 

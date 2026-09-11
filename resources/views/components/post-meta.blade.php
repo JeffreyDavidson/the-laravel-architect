@@ -21,5 +21,5 @@
             'text-xs text-gray-500',
             'border-l border-gray-300 pl-3 dark:border-gray-700' => $editorial,
         ])
-    >{{ $post->reading_time }} min read</span>
+    >{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min read</span>
 </div>

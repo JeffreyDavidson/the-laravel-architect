@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
@@ -257,7 +256,7 @@ it('renders canonical structured data for project case studies', function () {
         'url' => 'https://example.com/architecture-decisions',
         'github_url' => 'https://github.com/example/architecture-decisions',
         'tech_stack' => ['Laravel', 'Pest'],
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $content = $this->get(route('projects.show', $project))
@@ -313,7 +312,7 @@ it('renders canonical structured data for public content collections', function 
         'title' => 'Architecture Decisions',
         'slug' => 'architecture-decisions',
         'description' => 'A project shaped by explicit technical tradeoffs.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
     $podcast = Podcast::query()->create([
         'name' => 'Architecture Sessions',
@@ -903,14 +902,14 @@ it('uses published work as homepage proof', function () {
         'title' => 'Published Laravel application',
         'slug' => 'published-laravel-application',
         'description' => 'A published project.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     Project::query()->create([
         'title' => 'Draft Laravel application',
         'slug' => 'draft-laravel-application',
         'description' => 'A draft project that should not count.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     $this->get(route('home'))
@@ -945,7 +944,7 @@ it('presents published projects as case studies without inferring product status
         'github_url' => 'https://github.com/example/architecture-decisions',
         'tech_stack' => ['Laravel', 'Pest'],
         'is_featured' => true,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $this->get(route('projects.index'))
@@ -972,7 +971,7 @@ it('serves responsive project images while retaining the original fallback', fun
         'slug' => 'responsive-architecture',
         'description' => 'A project with responsive imagery.',
         'is_featured' => true,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/architecture.png',
     ]);
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -53,7 +52,7 @@ it('gives project entries a heading and a labeled technology list', function () 
         'description' => 'A project shaped by explicit technical tradeoffs.',
         'tech_stack' => ['Laravel', 'Pest'],
         'is_featured' => true,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $page = visit(route('projects.index', absolute: false));

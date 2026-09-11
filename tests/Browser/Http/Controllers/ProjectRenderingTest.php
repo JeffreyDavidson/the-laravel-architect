@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ it('renders responsive project images without overflow', function (string $route
         'description' => 'A test project with an uploaded screenshot.',
         'featured_image_path' => 'showcase.png',
         'is_featured' => true,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $project->refresh();
@@ -56,7 +56,7 @@ it('keeps image-free projects navigable', function (string $device) {
         'title' => 'A project without a screenshot',
         'description' => 'Practical software built around a client’s needs.',
         'is_featured' => false,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $page = $this->browserPage(route('projects.index', absolute: false), $device);
@@ -85,7 +85,7 @@ it('offers contact when there are no published projects', function (string $devi
     Project::query()->create([
         'title' => 'Unpublished client project',
         'description' => 'Not ready for the portfolio.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     $page = $this->browserPage(route('projects.index', absolute: false), $device);

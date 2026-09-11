@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -31,7 +30,7 @@ it('repairs unhealthy responsive variants across every supported media type', fu
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/project.png',
     ]));
     Post::withoutEvents(fn () => Post::query()->create([
@@ -87,7 +86,7 @@ it('repairs remaining media types before reporting a failure', function () {
         'title' => 'Project',
         'slug' => 'project',
         'description' => 'Description',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'featured_image_path' => 'projects/project.png',
     ]));
     Post::withoutEvents(fn () => Post::query()->create([

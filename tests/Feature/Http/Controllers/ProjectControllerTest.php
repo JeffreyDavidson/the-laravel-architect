@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -17,11 +17,11 @@ it('shows published projects once in their featured groups without repository li
             'is_featured' => $featured,
             'sort_order' => $order,
             'github_url' => 'https://github.com/example/private-repository',
-            'status' => ProjectStatus::Published,
+            'status' => PublishStatus::Published,
         ]);
     }
 
-    Project::query()->create(['title' => 'Unpublished work', 'description' => 'Private draft.', 'status' => ProjectStatus::Draft]);
+    Project::query()->create(['title' => 'Unpublished work', 'description' => 'Private draft.', 'status' => PublishStatus::Draft]);
 
     $response = $this->get(route('projects.index'));
 
@@ -61,7 +61,7 @@ it('uses responsive uploaded images in either project group', function (bool $fe
         'description' => 'An uploaded product screenshot.',
         'featured_image_path' => 'projects/showcase.png',
         'is_featured' => $featured,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $response = $this->get(route('projects.index'));
@@ -85,7 +85,7 @@ it('keeps repository URLs out of public project markup and structured data', fun
         'description' => 'Public case study, private source.',
         'github_url' => 'https://github.com/example/confidential-repository',
         'url' => $website,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     $response = $this->get(route('projects.show', $project));
@@ -107,7 +107,7 @@ it('loads only the related projects displayed on a project page', function () {
         'title' => 'Current Project',
         'slug' => 'current-project',
         'description' => 'The current project.',
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
         'sort_order' => 1,
     ]);
 
@@ -116,7 +116,7 @@ it('loads only the related projects displayed on a project page', function () {
             'title' => "Related Project {$sortOrder}",
             'slug' => "related-project-{$sortOrder}",
             'description' => "Related project {$sortOrder}.",
-            'status' => ProjectStatus::Published,
+            'status' => PublishStatus::Published,
             'sort_order' => $sortOrder,
         ]);
     }
@@ -125,7 +125,7 @@ it('loads only the related projects displayed on a project page', function () {
         'title' => 'Draft Project',
         'slug' => 'draft-project',
         'description' => 'A draft project.',
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
         'sort_order' => 0,
     ]);
 

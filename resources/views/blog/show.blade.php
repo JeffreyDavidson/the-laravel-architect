@@ -38,7 +38,7 @@
                 <span aria-hidden="true">·</span>
                 <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
                 <span aria-hidden="true">·</span>
-                <span>{{ $post->reading_time }} min read</span>
+                <span>{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min read</span>
             </div>
         </header>
 
@@ -151,7 +151,7 @@
                                             {{ $related->excerpt }}
                                         </p>
                                         <div class="mt-5 text-sm text-gray-500">
-                                            {{ $related->reading_time }} min read
+                                            {{ \App\Presenters\PostPresenter::from($related)->readingTime() }} min read
                                         </div>
                                     </div>
                                 </a>

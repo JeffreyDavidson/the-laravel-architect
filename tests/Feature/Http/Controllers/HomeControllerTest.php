@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -11,7 +11,7 @@ it('presents featured projects without duplicated summaries or invented artwork'
         Project::query()->create([
             'title' => "Selected project {$index}",
             'description' => "A distinct project summary {$index}.",
-            'status' => ProjectStatus::Published,
+            'status' => PublishStatus::Published,
             'is_featured' => true,
             'sort_order' => $index,
         ]);

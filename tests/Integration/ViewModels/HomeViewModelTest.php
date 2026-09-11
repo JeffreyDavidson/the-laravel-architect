@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ProjectStatus;
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Models\Video;
 use App\ViewModels\HomeViewModel;
@@ -22,7 +22,7 @@ it('builds the bounded public homepage payload', function () {
         'description' => 'The site itself is not portfolio work.',
         'is_featured' => true,
         'sort_order' => 0,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 
     Project::query()->create([
@@ -31,7 +31,7 @@ it('builds the bounded public homepage payload', function () {
         'description' => 'This project is not public.',
         'is_featured' => true,
         'sort_order' => 0,
-        'status' => ProjectStatus::Draft,
+        'status' => PublishStatus::Draft,
     ]);
 
     foreach (range(1, 4) as $sortOrder) {
@@ -68,7 +68,7 @@ function createHomeViewModelProject(int $sortOrder): void
         'description' => "Description for published project {$sortOrder}.",
         'is_featured' => true,
         'sort_order' => $sortOrder,
-        'status' => ProjectStatus::Published,
+        'status' => PublishStatus::Published,
     ]);
 }
 

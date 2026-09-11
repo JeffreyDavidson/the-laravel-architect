@@ -31,9 +31,9 @@
             </div>
         @endif
 
-        @if ($video->formatted_duration)
+        @if (\App\Presenters\VideoPresenter::from($video)->duration())
             <div class="absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] text-white">
-                {{ $video->formatted_duration }}
+                {{ \App\Presenters\VideoPresenter::from($video)->duration() }}
             </div>
         @endif
     </div>
