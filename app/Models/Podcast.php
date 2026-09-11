@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -22,6 +22,7 @@ use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
 #[ObservedBy(PodcastObserver::class)]
+#[Sluggable(from: 'name')]
 /** @property-read Collection<int, Episode> $publishedEpisodes */
 class Podcast extends Model
 {
@@ -41,12 +42,6 @@ class Podcast extends Model
 
     protected static function booted(): void
     {
-        static::creating(function (Podcast $podcast) {
-            if (empty($podcast->slug)) {
-                $podcast->slug = Str::slug($podcast->name);
-            }
-        });
-
         static::deleting(function (Podcast $podcast): void {
             $podcast->episodes()->each(
                 fn (Episode $episode) => $episode->deleteStoredMediaFiles(),

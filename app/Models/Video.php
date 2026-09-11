@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 
 /** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
+#[Sluggable(from: 'title')]
 class Video extends Model
 {
     protected function casts(): array
@@ -23,15 +24,6 @@ class Video extends Model
             'like_count' => 'integer',
             'comment_count' => 'integer',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Video $video) {
-            if (empty($video->slug)) {
-                $video->slug = Str::slug($video->title);
-            }
-        });
     }
 
     public function getYoutubeUrlAttribute(): string

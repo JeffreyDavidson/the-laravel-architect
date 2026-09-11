@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -18,6 +18,7 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
+#[Sluggable(from: 'title')]
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
@@ -37,15 +38,6 @@ class Episode extends Model implements Publishable
             'status' => PublishStatus::class,
             'published_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Episode $episode) {
-            if (empty($episode->slug)) {
-                $episode->slug = Str::slug($episode->title);
-            }
-        });
     }
 
     /** @return BelongsTo<Podcast, $this> */
