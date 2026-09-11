@@ -48,16 +48,18 @@
     </div>
 
     <h3 class="relative z-10 mb-3 text-xl font-bold text-gray-900 dark:text-white">{{ $title }}</h3>
-    <p class="relative z-10 mb-5 flex-grow text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ $description }}</p>
+    <p class="relative z-10 mb-5 flex-grow text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+        {{ $description }}
+    </p>
 
     <div class="relative z-10 flex flex-wrap gap-2">
-        @foreach($tags as $tag)
+        @foreach ($tags as $tag)
             <span class="rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider {{ $colors['tag'] }}">{{ $tag }}</span>
         @endforeach
     </div>
 
     <a href="{{ $href }}" class="service-arrow relative z-10 {{ $colors['text'] }}">
         {{ $cta }}
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
     </a>
 </div>

@@ -7,15 +7,31 @@
     {{ $attributes->class('thumbnail-card block overflow-hidden rounded-xl transition-[border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400') }}
 >
     <div class="relative aspect-video overflow-hidden bg-gray-100 dark:bg-[#111111]">
-        @if($video->thumbnail_url)
-            <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" width="480" height="270" loading="lazy" decoding="async" class="h-full w-full object-cover">
+        @if ($video->thumbnail_url)
+            <img
+                src="{{ $video->thumbnail_url }}"
+                alt="{{ $video->title }}"
+                width="480"
+                height="270"
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+            />
         @else
             <div class="flex h-full items-center justify-center">
-                <img src="/images/logo-color-128.webp" alt="" width="64" height="64" loading="lazy" decoding="async" class="h-16 w-16 opacity-60">
+                <img
+                    src="/images/logo-color-128.webp"
+                    alt=""
+                    width="64"
+                    height="64"
+                    loading="lazy"
+                    decoding="async"
+                    class="h-16 w-16 opacity-60"
+                />
             </div>
         @endif
 
-        @if($video->formatted_duration)
+        @if ($video->formatted_duration)
             <div class="absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] text-white">
                 {{ $video->formatted_duration }}
             </div>

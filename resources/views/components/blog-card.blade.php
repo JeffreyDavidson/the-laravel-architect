@@ -20,32 +20,42 @@
 
     <div @class(['blog-card__content flex flex-1 flex-col' => $editorial])>
         <x-post-meta :post="$post" :showCategory="$showCategory" :editorial="$editorial" class="mb-3" />
-        <a href="{{ route('blog.show', $post) }}" class="focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-4 focus-visible:ring-offset-white dark:focus-visible:ring-offset-brand-950">
+        <a
+            href="{{ route('blog.show', $post) }}"
+            class="focus-visible:ring-brand-500 dark:focus-visible:ring-offset-brand-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-white"
+        >
             <h2 @class([
                 'mb-3 text-balance font-semibold text-gray-900 group-hover:text-brand-600 dark:text-gray-100',
                 'blog-card__title line-clamp-2 text-2xl tracking-[-0.025em] md:text-3xl' => $editorial,
                 'text-xl md:text-2xl' => ! $editorial,
-            ])>{{ $post->title }}</h2>
+            ])>
+                {{ $post->title }}
+            </h2>
         </a>
 
-        @if($showExcerpt && $post->excerpt)
-        <p @class([
-            'mb-4 text-pretty text-gray-600 dark:text-gray-400',
-            'blog-card__excerpt line-clamp-3 text-base' => $editorial,
-            'line-clamp-2 text-sm leading-relaxed' => ! $editorial,
-        ])>{{ $post->excerpt }}</p>
+        @if ($showExcerpt && $post->excerpt)
+            <p @class([
+                'mb-4 text-pretty text-gray-600 dark:text-gray-400',
+                'blog-card__excerpt line-clamp-3 text-base' => $editorial,
+                'line-clamp-2 text-sm leading-relaxed' => ! $editorial,
+            ])>
+                {{ $post->excerpt }}
+            </p>
         @endif
 
-        @if($showTags && $post->tags && $post->tags->isNotEmpty())
-        <div class="flex flex-wrap items-center gap-2">
-            @foreach($post->tags as $tag)
-            <x-tag-pill :tag="$tag" />
-            @endforeach
-        </div>
+        @if ($showTags && $post->tags && $post->tags->isNotEmpty())
+            <div class="flex flex-wrap items-center gap-2">
+                @foreach ($post->tags as $tag)
+                    <x-tag-pill :tag="$tag" />
+                @endforeach
+            </div>
         @endif
 
-        @if($editorial)
-            <span class="blog-card__link mt-auto inline-flex items-center gap-2 text-sm font-semibold text-brand-600" aria-hidden="true">
+        @if ($editorial)
+            <span
+                class="blog-card__link text-brand-600 mt-auto inline-flex items-center gap-2 text-sm font-semibold"
+                aria-hidden="true"
+            >
                 Read article
                 <x-svg-icon name="arrow-right" class="h-4 w-4" />
             </span>

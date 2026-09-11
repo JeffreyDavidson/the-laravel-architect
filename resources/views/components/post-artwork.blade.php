@@ -40,17 +40,17 @@
         : null);
 @endphp
 
-@if($src)
-<picture {{ $attributes->class('block overflow-hidden') }} data-post-artwork="{{ $post->slug }}">
-    @if($srcset)
-    <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}">
-    @endif
-    <img
-        src="{{ $src }}"
-        alt=""
-        decoding="async"
-        @if($priority) fetchpriority="high" @else loading="lazy" @endif
-        class="h-full w-full object-cover"
-    >
-</picture>
+@if ($src)
+    <picture {{ $attributes->class('block overflow-hidden') }} data-post-artwork="{{ $post->slug }}">
+        @if ($srcset)
+            <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}" />
+        @endif
+        <img
+            src="{{ $src }}"
+            alt=""
+            decoding="async"
+            @if ($priority) fetchpriority="high" @else loading="lazy" @endif
+            class="h-full w-full object-cover"
+        />
+    </picture>
 @endif

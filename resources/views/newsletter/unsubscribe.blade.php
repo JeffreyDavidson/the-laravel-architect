@@ -4,7 +4,9 @@
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt command="newsletter:unsubscribe" />
-            <h1 class="mt-6 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Unsubscribe from the newsletter</h1>
+            <h1 class="mt-6 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+                Unsubscribe from the newsletter
+            </h1>
             <p class="mt-4 text-gray-600 dark:text-gray-400">
                 Stop newsletter updates to {{ $subscriber->email }}. You can subscribe again at any time.
             </p>
