@@ -1,5 +1,7 @@
-import AxeBuilder from '@axe-core/playwright';
-import { devices, expect, Page, test } from '@playwright/test';
+import { devices, expect, test } from '@playwright/test';
+import { MainNavigation } from '../components/MainNavigation';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { assertNoHighImpactAccessibilityViolations, assertNoHorizontalOverflow } from '../support/accessibility';
 
 const publicRoutes = [
     '/',
@@ -21,28 +23,6 @@ test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
 });
 
-async function assertNoHorizontalOverflow(page: Page): Promise<void> {
-    const dimensions = await page.evaluate(() => ({
-        clientWidth: document.documentElement.clientWidth,
-        scrollWidth: document.documentElement.scrollWidth,
-    }));
-
-    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
-}
-
-async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<void> {
-    const results = await new AxeBuilder({ page }).analyze();
-    const highImpactViolations = results.violations.filter(
-        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
-    );
-
-    expect(highImpactViolations.map((violation) => ({
-        id: violation.id,
-        impact: violation.impact,
-        targets: violation.nodes.map((node) => node.target),
-    }))).toEqual([]);
-}
-
 for (const route of publicRoutes) {
     test(`${route} fits the mobile viewport`, async ({ page }) => {
         const response = await page.goto(route);
@@ -56,13 +36,14 @@ for (const route of publicRoutes) {
 test('mobile navigation opens and navigates to the blog', async ({ page }) => {
     await page.goto('/');
 
+    const navigation = new MainNavigation(page);
     const menuButton = page.getByRole('button', { name: 'Toggle menu' });
     const menu = page.locator('#mobile-menu');
 
     await expect(menu).toBeHidden();
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
-    await menuButton.click();
+    await navigation.openMobile();
 
     await expect(menu).toBeVisible();
     await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
@@ -71,7 +52,12 @@ test('mobile navigation opens and navigates to the blog', async ({ page }) => {
     await menu.getByRole('link', { name: 'Writing', exact: true }).click();
 
     await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.getByRole('heading', { name: 'Notes from the work.', exact: true })).toBeVisible();
+    await expect(
+        page.getByRole('heading', {
+            name: 'Notes from the work.',
+            exact: true,
+        }),
+    ).toBeVisible();
 });
 
 test('mobile theme choice persists across navigation', async ({ page }) => {
@@ -79,11 +65,11 @@ test('mobile theme choice persists across navigation', async ({ page }) => {
     await page.goto('/');
 
     const root = page.locator('html');
+    const themeToggle = new ThemeToggle(page);
 
     await expect(root).not.toHaveClass(/dark/);
     await page.getByRole('button', { name: 'Toggle menu' }).click();
-    await page.locator('#mobile-menu').getByRole('button', { name: 'Toggle theme' }).click();
-    await expect(root).toHaveClass(/dark/);
+    await themeToggle.toggleMobile();
     await expect.poll(() => page.evaluate(() => localStorage.getItem('theme'))).toBe('dark');
 
     await page.reload();
