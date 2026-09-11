@@ -66,7 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder
                     ->items([
-                        ...Dashboard::getNavigationItems()
+                        ...Dashboard::getNavigationItems(),
                     ])
                     ->groups([
                         NavigationGroup::make('Content')

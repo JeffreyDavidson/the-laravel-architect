@@ -120,7 +120,7 @@ class PublicContentArchive
                 ->get(self::VIDEO_FIELDS)
                 ->map(fn (Video $video): array => $this->attributes($video, self::VIDEO_FIELDS))
                 ->values()
-                ->all()
+                ->all(),
         ];
     }
 
