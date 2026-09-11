@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { assertNoHighImpactAccessibilityViolations } from './support/accessibility';
 
 const publicRoutes = [
     '/',
@@ -20,19 +20,6 @@ const optionalPublicBundles = ['about', 'alpine', 'blog', 'home', 'podcast', 'pr
 test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
 });
-
-async function assertNoHighImpactAccessibilityViolations(page: Page): Promise<void> {
-    const results = await new AxeBuilder({ page }).analyze();
-    const highImpactViolations = results.violations.filter(
-        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
-    );
-
-    expect(highImpactViolations.map((violation) => ({
-        id: violation.id,
-        impact: violation.impact,
-        targets: violation.nodes.map((node) => node.target),
-    }))).toEqual([]);
-}
 
 function trackRequestedAssets(page: Page): string[] {
     const assets: string[] = [];
@@ -86,11 +73,13 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
         const link = page.locator('[data-home-hero]').getByRole('link', { name, exact: true });
 
         await expect(link).toBeVisible();
-        await expect.poll(async () => {
-            const box = await link.boundingBox();
+        await expect
+            .poll(async () => {
+                const box = await link.boundingBox();
 
-            return box !== null && box.y + box.height <= 720;
-        }).toBeTruthy();
+                return box !== null && box.y + box.height <= 720;
+            })
+            .toBeTruthy();
     }
 });
 
@@ -107,7 +96,9 @@ test('homepage services stay concise and link to services', async ({ page }) => 
 test('about card can be flipped with the keyboard', async ({ page }) => {
     await page.goto('/about');
 
-    const card = page.getByRole('button', { name: 'Flip Jeffrey Davidson developer card' });
+    const card = page.getByRole('button', {
+        name: 'Flip Jeffrey Davidson developer card',
+    });
 
     await expect(card).toHaveAttribute('aria-pressed', 'false');
     await card.focus();
@@ -133,8 +124,12 @@ test('blog posts can be searched and reset without Alpine', async ({ page }) => 
     await page.goto('/blog');
 
     const search = page.getByRole('searchbox', { name: 'Search posts' });
-    const matchingPost = page.getByRole('link', { name: /What 15 Years of Web Development Taught Me/ });
-    const otherPost = page.getByRole('link', { name: /Hello World: Why I'm Starting This Blog/ });
+    const matchingPost = page.getByRole('link', {
+        name: /What 15 Years of Web Development Taught Me/,
+    });
+    const otherPost = page.getByRole('link', {
+        name: /Hello World: Why I'm Starting This Blog/,
+    });
 
     await search.fill('web development taught');
     await expect(matchingPost).toBeVisible();
@@ -202,9 +197,13 @@ test('blog code blocks expose a keyboard-accessible copy action', async ({ page 
 test('blog syntax highlighting waits until the browser is idle', async ({ page }) => {
     await page.addInitScript(() => {
         const idleCallbacks: IdleRequestCallback[] = [];
-        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const testWindow = window as Window & {
+            __testIdleCallbacks: IdleRequestCallback[];
+        };
 
-        Object.defineProperty(testWindow, '__testIdleCallbacks', { value: idleCallbacks });
+        Object.defineProperty(testWindow, '__testIdleCallbacks', {
+            value: idleCallbacks,
+        });
         Object.defineProperty(window, 'requestIdleCallback', {
             value: (callback) => {
                 idleCallbacks.push(callback);
@@ -220,7 +219,9 @@ test('blog syntax highlighting waits until the browser is idle', async ({ page }
     await expect(page.locator('.prose code .token')).toHaveCount(0);
 
     await page.evaluate(() => {
-        const testWindow = window as Window & { __testIdleCallbacks: IdleRequestCallback[] };
+        const testWindow = window as Window & {
+            __testIdleCallbacks: IdleRequestCallback[];
+        };
         const callback = testWindow.__testIdleCallbacks.shift();
 
         callback?.({ didTimeout: false, timeRemaining: () => 50 });
