@@ -216,8 +216,8 @@ it('renders preserved values and accessible validation feedback', function () {
         ->assertOk()
         ->assertSee('Please review the highlighted fields.')
         ->assertSee('value="Jane Doe"', false)
-        ->assertSee('value="modernization" selected', false)
-        ->assertSee('value="large" selected', false)
+        ->assertSeeInOrder(['value="modernization"', 'selected'], false)
+        ->assertSeeInOrder(['value="large"', 'selected'], false)
         ->assertSee('aria-invalid="true" aria-describedby="email-error"', false)
         ->assertSee('href="#email"', false)
         ->assertSee('id="email-error"', false);
