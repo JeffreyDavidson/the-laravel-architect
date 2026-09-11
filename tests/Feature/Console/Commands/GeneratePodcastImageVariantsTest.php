@@ -20,7 +20,7 @@ it('backfills responsive variants for existing podcast cover images', function (
         'cover_image_path' => 'podcasts/podcast.png',
     ]));
 
-    $this->artisan('podcasts:generate-image-variants')
+    $this->artisanCommand('podcasts:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 1 podcast.')
         ->assertSuccessful();
 
@@ -29,12 +29,12 @@ it('backfills responsive variants for existing podcast cover images', function (
         'podcasts/responsive/podcast-1280.webp',
     ]);
 
-    $this->artisan('podcasts:generate-image-variants')
+    $this->artisanCommand('podcasts:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 0 podcasts.')
         ->expectsOutputToContain('Skipped 1 already verified podcast.')
         ->assertSuccessful();
 
-    $this->artisan('podcasts:generate-image-variants', ['--force' => true])
+    $this->artisanCommand('podcasts:generate-image-variants', ['--force' => true])
         ->expectsOutputToContain('Generated responsive images for 1 podcast.')
         ->doesntExpectOutputToContain('Skipped')
         ->assertSuccessful();
@@ -46,7 +46,7 @@ it('refuses to overlap another podcast image generation run', function () {
     expect($lock->get())->toBeTrue();
 
     try {
-        $this->artisan('podcasts:generate-image-variants')
+        $this->artisanCommand('podcasts:generate-image-variants')
             ->expectsOutputToContain('The [podcasts:generate-image-variants] command is already running.')
             ->assertFailed();
     } finally {

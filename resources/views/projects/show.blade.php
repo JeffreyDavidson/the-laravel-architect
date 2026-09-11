@@ -35,30 +35,7 @@
                     </div>
                 </div>
 
-                @if ($project->featured_image_url)
-                    @inject('projectImages', 'App\Services\ResponsiveImageVariants')
-                    @php
-                        $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
-                    @endphp
-                    <div class="dark:bg-brand-900 mt-10 overflow-hidden rounded-xl bg-gray-50 sm:mt-14">
-                        <picture>
-                            @if ($featuredImageSrcset)
-                                <source
-                                    type="image/webp"
-                                    srcset="{{ $featuredImageSrcset }}"
-                                    sizes="(min-width: 1280px) 1216px, (min-width: 640px) calc(100vw - 3rem), calc(100vw - 2rem)"
-                                />
-                            @endif
-                            <img
-                                src="{{ $project->featured_image_url }}"
-                                alt="{{ $project->title }}"
-                                decoding="async"
-                                fetchpriority="high"
-                                class="aspect-video w-full object-contain"
-                            />
-                        </picture>
-                    </div>
-                @endif
+                <x-projects.artwork :project="$project" priority detail class="mt-10 sm:mt-14" />
             </div>
         </section>
 
@@ -99,8 +76,8 @@
                         </x-prose>
                     @else
                         <p class="text-lg leading-8 text-gray-600 dark:text-gray-400">
-                            Want to know more about this project? Get in touch to discuss the work and how it relates to
-                            what you’re building.
+                            The full project story is coming soon. Get in touch to discuss the problem, my contribution,
+                            and how the work relates to what you’re building.
                         </p>
                     @endif
                 </div>

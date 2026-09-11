@@ -6,7 +6,7 @@ use App\Models\Subscriber;
 
 final class UnsubscribeFromNewsletter
 {
-    public function __invoke(Subscriber $subscriber): void
+    public function handle(Subscriber $subscriber): void
     {
         $subscriber->fill([
             'unsubscribed_at' => now(),

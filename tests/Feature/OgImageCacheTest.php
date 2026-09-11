@@ -64,7 +64,7 @@ it('regenerates an OG image when its category name changes', function () {
 
     $this->get(route('og-image', $post))->assertContent('first-png');
 
-    $post->category->update(['name' => 'Updated category']);
+    $post->category()->firstOrFail()->update(['name' => 'Updated category']);
 
     $this->get(route('og-image', $post))->assertContent('updated-png');
 });

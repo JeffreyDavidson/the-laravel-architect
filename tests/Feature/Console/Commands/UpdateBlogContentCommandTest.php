@@ -14,8 +14,13 @@ it('delegates to the blog seeder and reports success', function () {
             parent::__construct();
         }
 
-        public function call($command, array $arguments = [])
+        /** @param array<string, mixed> $arguments */
+        public function call(mixed $command, array $arguments = []): int
         {
+            if (! is_string($command)) {
+                throw new RuntimeException('Expected a string command name.');
+            }
+
             $this->calls[] = [$command, $arguments];
 
             return $this->exitCode;
@@ -46,7 +51,8 @@ it('propagates seeder failure without reporting success', function () {
             parent::__construct();
         }
 
-        public function call($command, array $arguments = [])
+        /** @param array<string, mixed> $arguments */
+        public function call(mixed $command, array $arguments = []): int
         {
             return $this->exitCode;
         }

@@ -2,7 +2,6 @@
     'years',
     'publishedPosts',
     'publishedProjects',
-    'recommendations',
 ])
 
 @php
@@ -10,7 +9,6 @@
         ['value' => $years, 'suffix' => '+', 'label' => 'Years building PHP'],
         ['value' => $publishedPosts, 'suffix' => '', 'label' => 'Published articles'],
         ['value' => $publishedProjects, 'suffix' => '', 'label' => 'Portfolio projects'],
-        ['value' => $recommendations, 'suffix' => '', 'label' => 'Recommendations'],
     ];
 
     $proofPoints = array_values(array_filter(

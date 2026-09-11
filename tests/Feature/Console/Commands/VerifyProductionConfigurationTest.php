@@ -54,7 +54,7 @@ beforeEach(function () {
 });
 
 it('accepts a safe production configuration', function () {
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
@@ -68,7 +68,7 @@ it('accepts an isolated staging observability configuration', function () {
         'sentry.release' => 'staging-release',
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
@@ -76,7 +76,7 @@ it('accepts an isolated staging observability configuration', function () {
 it('accepts a lower Nightwatch request sample rate', function () {
     config()->set('nightwatch.sampling.requests', 0.05);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
@@ -84,7 +84,7 @@ it('accepts a lower Nightwatch request sample rate', function () {
 it('rejects an unsafe Nightwatch request sample rate', function (mixed $sampleRate) {
     config()->set('nightwatch.sampling.requests', $sampleRate);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('NIGHTWATCH_REQUEST_SAMPLE_RATE must be greater than zero and no more than 0.1.')
         ->assertFailed();
 })->with([
@@ -108,7 +108,7 @@ it('accepts a fully configured NAS backup disk', function () {
         ],
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
@@ -120,7 +120,7 @@ it('rejects an incomplete NAS backup disk without exposing credentials', functio
         'filesystems.disks.nas-backups.hostFingerprint' => null,
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('The nas-backups disk must configure host, username, password, root, port, and host fingerprint.')
         ->doesntExpectOutput('secret-password')
         ->assertFailed();
@@ -144,7 +144,7 @@ it('accepts a fully configured Backblaze backup disk', function () {
         ],
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
@@ -167,7 +167,7 @@ it('rejects an incomplete Backblaze backup disk without exposing credentials', f
         ],
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('The b2-backups disk must configure a private Backblaze S3 endpoint, region, bucket, key ID, and application key.')
         ->doesntExpectOutput('secret-application-key')
         ->assertFailed();
@@ -176,7 +176,7 @@ it('rejects an incomplete Backblaze backup disk without exposing credentials', f
 it('rejects an unknown backup disk', function () {
     config()->set('backup.backup.destination.disks', ['local', 'missing-disk']);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('BACKUP_DISKS must reference configured filesystem disks.')
         ->assertFailed();
 });
@@ -184,7 +184,7 @@ it('rejects an unknown backup disk', function () {
 it('rejects the application release directory as a backup source', function () {
     config()->set('backup.backup.source.files.include', [base_path()]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->assertFailed();
 });
@@ -192,7 +192,7 @@ it('rejects the application release directory as a backup source', function () {
 it('rejects a media backup source inside the application release directory', function () {
     config()->set('backup.backup.source.files.include', [storage_path('app/public')]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->assertFailed();
 });
@@ -200,7 +200,7 @@ it('rejects a media backup source inside the application release directory', fun
 it('rejects a relative media backup source', function () {
     config()->set('backup.backup.source.files.include', ['storage/app/public']);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->assertFailed();
 });
@@ -208,7 +208,7 @@ it('rejects a relative media backup source', function () {
 it('requires the production environment file to be excluded from backups', function () {
     config()->set('backup.backup.source.files.exclude', []);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->assertFailed();
 });
@@ -259,7 +259,7 @@ it('reports every unsafe production setting without exposing its value', functio
         'sentry.send_default_pii' => true,
     ]);
 
-    $this->artisan('app:verify-production')
+    $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is not ready:')
         ->expectsOutputToContain('APP_DEBUG must be false.')
         ->expectsOutputToContain('APP_URL must use the canonical HTTPS URL.')

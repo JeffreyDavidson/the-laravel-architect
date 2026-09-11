@@ -5,8 +5,7 @@
 @section('content')
     {{-- Hero --}}
     <x-hero-section>
-        <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
-            <p class="text-brand-600 font-mono text-xs tracking-[0.18em] uppercase">Contact / 06</p>
+        <div class="max-w-3xl">
             <div>
                 <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl dark:text-white">
                     Let’s talk about the work.
@@ -15,8 +14,8 @@
                     Have a project in mind? Need help modernizing a legacy codebase? Or just want to talk shop about
                     Laravel? I'd love to hear from you.
                 </p>
-                <p class="mt-5 font-mono text-xs tracking-wide text-gray-500 uppercase">
-                    Available for select projects
+                <p class="text-brand-700 dark:text-brand-300 mt-5 text-sm font-medium">
+                    Custom Laravel applications · Modernization · Code review
                 </p>
             </div>
         </div>
@@ -28,6 +27,10 @@
             {{-- Form --}}
             <div class="flex-1">
                 <x-section-heading icon="mail" class="mb-8">Send a Message</x-section-heading>
+                <p class="mb-6 max-w-xl text-base leading-7 text-gray-600 dark:text-gray-400">
+                    A few sentences are enough to start. Share what you’re building, what’s getting in the way, and any
+                    timeline you have in mind. I’ll reply within 24 to 48 hours.
+                </p>
 
                 @if (session('success'))
                     <div
@@ -98,19 +101,14 @@
                         <label for="type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >What can I help with?</label>
                         <x-form.select id="type" name="type" :autofocus="$firstErrorField === 'type'">
-                            <option value="freelance" @selected(old('type', 'freelance') === 'freelance')>
-                                Freelance Project
-                            </option>
-                            <option value="consulting" @selected(old('type') === 'consulting')>
-                                Consulting / Code Review
-                            </option>
-                            <option value="modernization" @selected(old('type') === 'modernization')>
-                                Legacy Modernization
-                            </option>
-                            <option value="collaboration" @selected(old('type') === 'collaboration')>
-                                Collaboration
-                            </option>
-                            <option value="other" @selected(old('type') === 'other')>Just Saying Hi</option>
+                            @foreach (\App\Enums\ContactType::cases() as $type)
+                                <option
+                                    value="{{ $type->value }}"
+                                    @selected(old('type', \App\Enums\ContactType::Freelance->value) === $type->value)
+                                >
+                                    {{ $type->getLabel() }}
+                                </option>
+                            @endforeach
                         </x-form.select>
                     </div>
 
@@ -121,10 +119,11 @@
                             <option value="" @selected(old('budget') === null || old('budget') === '')>
                                 Prefer not to say
                             </option>
-                            <option value="small" @selected(old('budget') === 'small')>Under $5,000</option>
-                            <option value="medium" @selected(old('budget') === 'medium')>$5,000 to $15,000</option>
-                            <option value="large" @selected(old('budget') === 'large')>$15,000 to $50,000</option>
-                            <option value="enterprise" @selected(old('budget') === 'enterprise')>$50,000+</option>
+                            @foreach (\App\Enums\ContactBudget::cases() as $budget)
+                                <option value="{{ $budget->value }}" @selected(old('budget') === $budget->value)>
+                                    {{ $budget->getLabel() }}
+                                </option>
+                            @endforeach
                         </x-form.select>
                     </div>
 

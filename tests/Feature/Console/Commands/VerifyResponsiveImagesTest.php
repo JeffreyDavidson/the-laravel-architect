@@ -38,7 +38,7 @@ it('verifies responsive media using aggregate results', function () {
     $images->generate('projects/project.png');
     $images->generate('podcasts/podcast.png');
 
-    $this->artisan('media:verify-responsive-images')
+    $this->artisanCommand('media:verify-responsive-images')
         ->expectsOutputToContain('Projects: 1 checked, 1 verified, 0 failed.')
         ->expectsOutputToContain('Posts: 0 checked, 0 verified, 0 failed.')
         ->expectsOutputToContain('Podcasts: 1 checked, 1 verified, 0 failed.')
@@ -58,7 +58,7 @@ it('fails without exposing media paths when required variants are missing', func
         'featured_image_path' => 'projects/private-project-name.png',
     ]));
 
-    $this->artisan('media:verify-responsive-images')
+    $this->artisanCommand('media:verify-responsive-images')
         ->expectsOutputToContain('Projects: 1 checked, 0 verified, 1 failed.')
         ->doesntExpectOutputToContain('private-project-name.png')
         ->expectsOutputToContain('Responsive image verification failed.')

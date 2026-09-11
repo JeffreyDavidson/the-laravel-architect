@@ -75,13 +75,13 @@
             </div>
 
             <section aria-labelledby="blog-heading" class="py-10 md:py-14">
-                <div class="blog-index__grid">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
                     @forelse ($posts as $post)
                         <div
                             data-blog-post
                             data-category="{{ $post->category?->slug }}"
                             data-search-content="{{ str($post->title . ' ' . ($post->excerpt ?? '') . ' ' . $post->tags->pluck('name')->join(' '))->lower() }}"
-                            class="blog-card-wrapper"
+                            class="flex min-w-0"
                         >
                             <x-blog-card :post="$post" editorial :priority="$loop->first" :showTags="false" />
                         </div>

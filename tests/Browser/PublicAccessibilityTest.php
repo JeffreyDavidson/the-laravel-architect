@@ -46,20 +46,6 @@ it('keeps newsletter validation accessible and preserves the submitted email', f
         ->assertAttribute('#newsletter-email', 'aria-describedby', 'newsletter-email-error newsletter-privacy');
 });
 
-it('announces testimonial validation once and associates field errors', function () {
-    $page = visit(route('testimonials.create', absolute: false));
-
-    $page->script('document.querySelector("form").noValidate = true');
-    $page->press('Submit testimonial');
-
-    $page->assertCount('[role="alert"][aria-live="assertive"]', 1)
-        ->assertAttribute('#testimonial-name', 'aria-describedby', 'testimonial-name-error')
-        ->assertAttribute('#testimonial-body', 'aria-describedby', 'testimonial-body-error')
-        ->assertCount('#testimonial-name-error', 1)
-        ->assertCount('#testimonial-body-error', 1)
-        ->assertNoJavaScriptErrors();
-});
-
 it('gives project entries a heading and a labeled technology list', function () {
     Project::query()->create([
         'title' => 'Architecture Decisions',

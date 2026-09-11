@@ -1,9 +1,7 @@
 <?php
 
 use App\Enums\ProjectStatus;
-use App\Enums\TestimonialStatus;
 use App\Models\Project;
-use App\Models\Testimonial;
 use App\Models\Video;
 use App\ViewModels\HomeViewModel;
 use DateTimeInterface;
@@ -18,6 +16,14 @@ it('builds the bounded public homepage payload', function () {
     foreach (range(1, 5) as $sortOrder) {
         createHomeViewModelProject($sortOrder);
     }
+    Project::query()->create([
+        'title' => 'The Laravel Architect',
+        'slug' => 'the-laravel-architect',
+        'description' => 'The site itself is not portfolio work.',
+        'is_featured' => true,
+        'sort_order' => 0,
+        'status' => ProjectStatus::Published,
+    ]);
 
     Project::query()->create([
         'title' => 'Draft project',
@@ -29,16 +35,9 @@ it('builds the bounded public homepage payload', function () {
     ]);
 
     foreach (range(1, 4) as $sortOrder) {
-        createHomeViewModelTestimonial($sortOrder);
         createHomeViewModelVideo($sortOrder);
     }
 
-    Testimonial::query()->create([
-        'name' => 'Pending client',
-        'body' => 'This recommendation is not approved.',
-        'status' => TestimonialStatus::Pending,
-        'sort_order' => 0,
-    ]);
     createHomeViewModelVideo(5, now()->addDay());
 
     $data = app(HomeViewModel::class)
@@ -49,20 +48,16 @@ it('builds the bounded public homepage payload', function () {
         'featuredProjects',
         'youtubeSubscribers',
         'latestYouTubeVideos',
-        'testimonials',
         'publishedPostCount',
         'publishedProjectCount',
-        'approvedTestimonialCount',
         'seoSource',
     ])
         ->and($data['latestPosts'])->toBeEmpty()
         ->and($data['featuredProjects']->pluck('sort_order')->all())->toBe([1, 2, 3, 4])
         ->and($data['youtubeSubscribers'])->toBe(4242)
         ->and($data['latestYouTubeVideos']->pluck('youtube_id')->all())->toBe(['video-1', 'video-2', 'video-3'])
-        ->and($data['testimonials']->pluck('sort_order')->all())->toBe([1, 2, 3])
         ->and($data['publishedPostCount'])->toBe(0)
-        ->and($data['publishedProjectCount'])->toBe(5)
-        ->and($data['approvedTestimonialCount'])->toBe(4);
+        ->and($data['publishedProjectCount'])->toBe(5);
 });
 
 function createHomeViewModelProject(int $sortOrder): void
@@ -74,16 +69,6 @@ function createHomeViewModelProject(int $sortOrder): void
         'is_featured' => true,
         'sort_order' => $sortOrder,
         'status' => ProjectStatus::Published,
-    ]);
-}
-
-function createHomeViewModelTestimonial(int $sortOrder): void
-{
-    Testimonial::query()->create([
-        'name' => "Approved client {$sortOrder}",
-        'body' => "Approved recommendation {$sortOrder}.",
-        'status' => TestimonialStatus::Approved,
-        'sort_order' => $sortOrder,
     ]);
 }
 

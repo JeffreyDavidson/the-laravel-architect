@@ -33,7 +33,12 @@ it('renders the Turnstile widget on the contact page', function () {
         ->assertDontSee('position:absolute;left:-9999px;top:-9999px;', false)
         ->assertSee('JavaScript is required to complete the verification.', false);
 
-    expect(substr_count($response->getContent(), 'https://challenges.cloudflare.com/turnstile/v0/api.js'))
+    $content = $response->getContent();
+    if (! is_string($content)) {
+        throw new RuntimeException('Expected contact form HTML.');
+    }
+
+    expect(substr_count($content, 'https://challenges.cloudflare.com/turnstile/v0/api.js'))
         ->toBe(0);
 });
 
@@ -211,8 +216,8 @@ it('renders preserved values and accessible validation feedback', function () {
         ->assertOk()
         ->assertSee('Please review the highlighted fields.')
         ->assertSee('value="Jane Doe"', false)
-        ->assertSee('value="modernization" selected', false)
-        ->assertSee('value="large" selected', false)
+        ->assertSeeInOrder(['value="modernization"', 'selected'], false)
+        ->assertSeeInOrder(['value="large"', 'selected'], false)
         ->assertSee('aria-invalid="true" aria-describedby="email-error"', false)
         ->assertSee('href="#email"', false)
         ->assertSee('id="email-error"', false);

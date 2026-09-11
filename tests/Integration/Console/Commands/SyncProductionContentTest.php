@@ -9,13 +9,17 @@ uses(RefreshDatabase::class);
 
 test('production public content can be synchronized into staging', function (): void {
     $source = Double::for(ProductionContentSource::class);
-    $source->expects('exportTo')->resolves(function (string $path): void {
+    $source->expects('exportTo')->resolves(function (mixed $path = null): void {
+        if (! is_string($path)) {
+            throw new RuntimeException('Expected a string archive path.');
+        }
+
         file_put_contents($path, json_encode(commandPublicContentArchiveFixture(), JSON_THROW_ON_ERROR));
     });
     $source->expects('copyMedia')->with(['posts/production.webp']);
     app()->instance(ProductionContentSource::class, $source);
 
-    $this->artisan('content:sync-production')
+    $this->artisanCommand('content:sync-production')
         ->expectsOutputToContain('1 posts')
         ->expectsOutput('1 referenced public media files synchronized.')
         ->assertSuccessful();
@@ -30,7 +34,7 @@ test('production public content sync refuses to run in production', function ():
     $source->allows('copyMedia')->never();
     app()->instance(ProductionContentSource::class, $source);
 
-    $this->artisan('content:sync-production')
+    $this->artisanCommand('content:sync-production')
         ->expectsOutputToContain('may only run in a non-production environment')
         ->assertFailed();
 });
@@ -61,6 +65,5 @@ function commandPublicContentArchiveFixture(): array
         'podcasts' => [],
         'episodes' => [],
         'videos' => [],
-        'testimonials' => [],
     ];
 }

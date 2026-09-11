@@ -1,0 +1,8 @@
+<?php
+
+use Pest\Browser\Api\PendingAwaitablePage;
+
+/**
+ * @param array<string, mixed> $options
+ */
+function visit(string $url, array $options = []): PendingAwaitablePage {}

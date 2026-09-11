@@ -29,6 +29,13 @@ it('builds the public project index payload', function () {
         'sort_order' => 0,
         'status' => ProjectStatus::Draft,
     ]);
+    Project::query()->create([
+        'title' => 'The Laravel Architect',
+        'slug' => 'the-laravel-architect',
+        'description' => 'The site itself is not portfolio work.',
+        'sort_order' => 0,
+        'status' => ProjectStatus::Published,
+    ]);
 
     $data = app(ProjectIndexViewModel::class)
         ->data();

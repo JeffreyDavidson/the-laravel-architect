@@ -6,7 +6,7 @@ use App\Models\Post;
 use App\Services\OgImageCache;
 use Illuminate\Http\Response;
 
-class OgImageController extends Controller
+class OgImageController
 {
     public function __invoke(Post $post, OgImageCache $cache): Response
     {

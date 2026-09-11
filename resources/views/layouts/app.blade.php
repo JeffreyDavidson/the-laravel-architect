@@ -73,6 +73,11 @@
 
                 <div class="hidden items-center gap-8 md:flex">
                     <a
+                        href="{{ route('services') }}"
+                        @if (request()->routeIs('services')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('services')) is-active text-gray-900 dark:text-white @endif"
+                    >Services</a>
+                    <a
                         href="{{ route('projects.index') }}"
                         @if (request()->routeIs('projects.*')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('projects.*')) is-active text-gray-900 dark:text-white @endif"
@@ -112,6 +117,11 @@
             {{-- Mobile menu --}}
             <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 md:hidden">
                 <div class="flex flex-col gap-3">
+                    <a
+                        href="{{ route('services') }}"
+                        @if (request()->routeIs('services')) aria-current="page" @endif
+                        class="nav-link px-2 py-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('services')) is-active text-gray-900 dark:text-white @endif"
+                    >Services</a>
                     <a
                         href="{{ route('projects.index') }}"
                         @if (request()->routeIs('projects.*')) aria-current="page" @endif
@@ -220,6 +230,12 @@
                                     href="{{ route('about') }}"
                                     class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                                 >About</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="{{ route('services') }}"
+                                    class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                >Services</a>
                             </li>
                             <li>
                                 <a

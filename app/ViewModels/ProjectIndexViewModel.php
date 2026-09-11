@@ -18,6 +18,7 @@ class ProjectIndexViewModel
     {
         return [
             'projects' => Project::published()
+                ->portfolio()
                 ->with('tags')
                 ->orderBy('sort_order')
                 ->get(),

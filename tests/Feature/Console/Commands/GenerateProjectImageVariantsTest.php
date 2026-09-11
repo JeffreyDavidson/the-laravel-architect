@@ -21,7 +21,7 @@ it('backfills responsive variants for existing project images', function () {
         'featured_image_path' => 'projects/project.png',
     ]));
 
-    $this->artisan('projects:generate-image-variants')
+    $this->artisanCommand('projects:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 1 project.')
         ->assertSuccessful();
 
@@ -30,12 +30,12 @@ it('backfills responsive variants for existing project images', function () {
         'projects/responsive/project-1280.webp',
     ]);
 
-    $this->artisan('projects:generate-image-variants')
+    $this->artisanCommand('projects:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 0 projects.')
         ->expectsOutputToContain('Skipped 1 already verified project.')
         ->assertSuccessful();
 
-    $this->artisan('projects:generate-image-variants', ['--force' => true])
+    $this->artisanCommand('projects:generate-image-variants', ['--force' => true])
         ->expectsOutputToContain('Generated responsive images for 1 project.')
         ->doesntExpectOutputToContain('Skipped')
         ->assertSuccessful();
@@ -47,7 +47,7 @@ it('refuses to overlap another project image generation run', function () {
     expect($lock->get())->toBeTrue();
 
     try {
-        $this->artisan('projects:generate-image-variants')
+        $this->artisanCommand('projects:generate-image-variants')
             ->expectsOutputToContain('The [projects:generate-image-variants] command is already running.')
             ->assertFailed();
     } finally {

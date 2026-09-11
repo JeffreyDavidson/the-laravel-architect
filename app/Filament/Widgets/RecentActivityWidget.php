@@ -3,11 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\PublishStatus;
-use App\Enums\TestimonialStatus;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Models\Post;
-use App\Models\Testimonial;
 use Filament\Widgets\Widget;
 
 class RecentActivityWidget extends Widget
@@ -33,24 +30,6 @@ class RecentActivityWidget extends Widget
                 'kind' => 'post',
                 'url' => PostResource::getUrl('edit', ['record' => $post]),
                 'timestamp' => $updatedAt,
-            ]);
-        });
-
-        Testimonial::latest('created_at')->take(2)->get()->each(function (Testimonial $testimonial) use ($activities) {
-            $createdAt = $testimonial->created_at;
-            $statusLabel = match ($testimonial->testimonialStatus()) {
-                TestimonialStatus::Pending => 'Pending Review',
-                TestimonialStatus::Approved => 'Approved',
-                TestimonialStatus::Rejected => 'Rejected',
-            };
-            $activities->push([
-                'icon' => '💬',
-                'label' => 'Testimonial from '.$testimonial->name,
-                'meta' => $statusLabel,
-                'time' => $createdAt?->diffForHumans() ?? 'Unknown',
-                'kind' => 'testimonial',
-                'url' => TestimonialResource::getUrl('edit', ['record' => $testimonial]),
-                'timestamp' => $createdAt,
             ]);
         });
 

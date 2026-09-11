@@ -1,5 +1,4 @@
 @props(['projects'])
-@inject('projectImages', 'App\Services\ResponsiveImageVariants')
 
 @if ($projects->isNotEmpty())
     <section
@@ -19,29 +18,13 @@
             <div class="divide-brand-800 border-brand-800 divide-y border-y">
                 @foreach ($projects as $project)
                     <article data-project-entry class="py-8 sm:py-12">
-                        @if ($project->featured_image_url)
-                            @php
-                                $featuredImageSrcset = $projectImages->srcset($project->featured_image_path);
-                            @endphp
-                            <div class="bg-brand-900 mb-8 overflow-hidden rounded-xl">
-                                <picture>
-                                    @if ($featuredImageSrcset)
-                                        <source
-                                            type="image/webp"
-                                            srcset="{{ $featuredImageSrcset }}"
-                                            sizes="(min-width: 1280px) 1216px, (min-width: 640px) calc(100vw - 3rem), calc(100vw - 2rem)"
-                                        />
-                                    @endif
-                                    <img
-                                        src="{{ $project->featured_image_url }}"
-                                        alt=""
-                                        loading="lazy"
-                                        decoding="async"
-                                        class="aspect-video w-full object-contain"
-                                    />
-                                </picture>
-                            </div>
-                        @endif
+                        <a
+                            href="{{ route('projects.show', $project) }}"
+                            aria-label="Preview {{ $project->title }}"
+                            class="focus-visible:outline-brand-300 mb-8 block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
+                        >
+                            <x-projects.artwork :project="$project" detail />
+                        </a>
 
                         <div class="grid gap-6 lg:grid-cols-2 lg:gap-16">
                             <div>

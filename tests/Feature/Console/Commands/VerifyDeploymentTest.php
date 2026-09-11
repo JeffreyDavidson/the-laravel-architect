@@ -41,7 +41,7 @@ beforeEach(function () {
 it('accepts a healthy deployment at the expected commit', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutput('Deployment verification passed.')
         ->assertSuccessful();
 });
@@ -49,7 +49,7 @@ it('accepts a healthy deployment at the expected commit', function () {
 it('reports a mismatched deployment without exposing either commit', function () {
     Process::fake(fn () => Process::result("deployed-commit\n"));
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutput('Deployment verification failed:')
         ->expectsOutputToContain('The deployed Git commit does not match the expected release.')
         ->doesntExpectOutput('deployed-commit')
@@ -62,7 +62,7 @@ it('reports pending database migrations', function () {
     $latestMigration = DB::table('migrations')->orderByDesc('id')->value('migration');
     DB::table('migrations')->where('migration', $latestMigration)->delete();
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The application has pending database migrations.')
         ->assertFailed();
 });
@@ -72,7 +72,7 @@ it('reports stale runtime heartbeats and missing backups', function () {
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
     Storage::disk('deployment-backups')->delete('deployment-test/fresh.zip');
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The scheduler or queue worker heartbeat is stale.')
         ->expectsOutputToContain('One or more backup destinations do not contain a fresh backup.')
         ->assertFailed();
@@ -85,7 +85,7 @@ it('reports an unavailable Nightwatch agent without exposing its error', functio
         ->throws(new RuntimeException('private ingest address'));
     app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The Nightwatch agent is unavailable.')
         ->doesntExpectOutput('private ingest address')
         ->assertFailed();
@@ -95,7 +95,7 @@ it('reports mismatched Nightwatch deployment metadata without exposing either id
     Process::fake(fn () => Process::result("expected-commit\n"));
     config()->set('nightwatch.deployment', 'previous-commit');
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('Nightwatch is not configured with the expected deployment identifier.')
         ->doesntExpectOutput('previous-commit')
         ->doesntExpectOutput('expected-commit')
@@ -115,7 +115,7 @@ it('reports incomplete responsive media without exposing its path', function () 
         'featured_image_path' => 'projects/private-project-name.png',
     ]));
 
-    $this->artisan('app:verify-deployment', ['commit' => 'expected-commit'])
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('One or more stored images are missing required responsive variants.')
         ->doesntExpectOutputToContain('private-project-name.png')
         ->assertFailed();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Data\YouTubeVideoData;
 use App\Services\YouTubeService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -133,17 +134,17 @@ it('maps video details into the application payload', function () {
         ]),
     ]);
 
-    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBe([[
-        'youtube_id' => 'video-1',
-        'title' => 'Typed payloads',
-        'description' => 'A description',
-        'thumbnail_url' => 'https://example.com/thumbnail.jpg',
-        'duration' => 'PT5M',
-        'view_count' => 120,
-        'like_count' => 12,
-        'comment_count' => 3,
-        'published_at' => '2026-08-18T12:00:00Z',
-    ]]);
+    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toEqual([new YouTubeVideoData(
+        youtubeId: 'video-1',
+        title: 'Typed payloads',
+        description: 'A description',
+        thumbnailUrl: 'https://example.com/thumbnail.jpg',
+        duration: 'PT5M',
+        viewCount: 120,
+        likeCount: 12,
+        commentCount: 3,
+        publishedAt: '2026-08-18T12:00:00Z',
+    )]);
 });
 
 it('skips malformed video detail items', function () {
@@ -174,9 +175,9 @@ it('uses zero for malformed video statistics', function () {
     $videos = app(YouTubeService::class)->getVideoDetails(['video-1']);
 
     expect($videos)->toHaveCount(1)
-        ->and($videos[0]['view_count'])->toBe(0)
-        ->and($videos[0]['like_count'])->toBe(0)
-        ->and($videos[0]['comment_count'])->toBe(0);
+        ->and($videos[0]->viewCount)->toBe(0)
+        ->and($videos[0]->likeCount)->toBe(0)
+        ->and($videos[0]->commentCount)->toBe(0);
 });
 
 it('maps valid video statistics and skips malformed items', function () {

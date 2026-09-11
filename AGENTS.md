@@ -8,7 +8,14 @@
 
 ## Controllers
 
+- Use singular resource controller names, such as `ProjectController`.
+- Application controllers are standalone classes; do not reintroduce an empty shared base controller.
+- Page ViewModels own SEO metadata and the `seoSource` view payload. Controllers inject the appropriate ViewModel; keep request handling and visibility checks in controllers.
 - Controllers must not contain private methods. Keep controllers focused on translating HTTP requests and responses, and move supporting behavior into an appropriately named action, query, builder, or other cohesive application boundary.
+
+## Actions
+
+- Actions in `App\Actions` expose a public, non-static `handle()` method, never `__invoke()`. Call actions explicitly with `->handle(...)`.
 
 ## Testing
 

@@ -16,30 +16,6 @@
             ['year' => '2017', 'title' => 'Daughter Viola born', 'desc' => 'Changed everything'],
             ['year' => '2026', 'title' => 'The Laravel Architect', 'desc' => 'Blog, podcast, YouTube. Building in public'],
         ];
-
-        $facts = [
-            ['icon' => '☕', 'label' => 'Daily Coffee', 'value' => 'Too Many'],
-            ['icon' => '🎢', 'label' => 'Favorite Park', 'value' => 'Disney World'],
-            ['icon' => '🃏', 'label' => 'Poker Style', 'value' => 'Aggressive'],
-            ['icon' => '🤼', 'label' => 'Side Project', 'value' => 'Wrestling App'],
-            ['icon' => '🏫', 'label' => 'Alma Mater', 'value' => 'Full Sail University'],
-            ['icon' => '🏀', 'label' => 'Forever Fan', 'value' => 'Rock Chalk'],
-        ];
-
-        $techStack = [
-            ['name' => 'Laravel', 'icon' => '🔺', 'desc' => 'My framework of choice since 2014'],
-            ['name' => 'PHP', 'icon' => '🐘', 'desc' => 'The language that started it all'],
-            ['name' => 'Filament', 'icon' => '🛡️', 'desc' => 'Admin panels done right'],
-            ['name' => 'Livewire', 'icon' => '⚡', 'desc' => 'Reactive interfaces without the SPA'],
-            ['name' => 'Tailwind CSS', 'icon' => '🎨', 'desc' => 'Utility-first, no going back'],
-            ['name' => 'Alpine.js', 'icon' => '🏔️', 'desc' => 'Just enough JavaScript'],
-            ['name' => 'Pest', 'icon' => '🧪', 'desc' => 'Testing with elegance'],
-            ['name' => 'MySQL', 'icon' => '🗄️', 'desc' => 'Relational data, done well'],
-            ['name' => 'Redis', 'icon' => '⚡', 'desc' => 'Caching, queues, sessions'],
-            ['name' => 'Laravel Forge', 'icon' => '🔨', 'desc' => 'Deployment without the pain'],
-            ['name' => 'Git', 'icon' => '📦', 'desc' => 'Version everything, always'],
-            ['name' => 'SQLite', 'icon' => '💾', 'desc' => 'Perfect for the right project'],
-        ];
     @endphp
 
     {{-- Hero --}}
@@ -178,18 +154,9 @@
 
                 {{-- Intro Text --}}
                 <div class="flex-1 text-center md:text-left">
-                    <p class="text-brand-600 mb-4 font-mono text-xs tracking-[0.18em] uppercase">Profile / 04</p>
-                    <div class="mb-4 flex items-center justify-center gap-3 md:justify-start">
-                        <div class="flex items-center gap-2 font-mono text-sm text-gray-500">
-                            <span class="text-brand-600">$</span>
-                            <span>php artisan about:me</span>
-                            <span class="dark:text-brand-600 relative -top-px text-gray-400">▊</span>
-                        </div>
-                    </div>
-
                     <h1 class="mb-4 text-3xl leading-tight font-extrabold text-gray-900 md:text-4xl dark:text-white">
-                        I've spent 15 years learning how to write code that my future self
-                        <span class="text-brand-600">won't hate.</span>
+                        I’m Jeffrey Davidson. I build Laravel applications that are
+                        <span class="text-brand-600">easier to change.</span>
                     </h1>
                     <p class="mx-auto max-w-xl text-base leading-relaxed text-gray-600 md:mx-0 dark:text-gray-400">
                         Web developer based in Florida. I build clean, maintainable applications with Laravel and share
@@ -274,6 +241,18 @@
                             channel I share practical Laravel videos, tutorials, and live coding.
                         </p>
                     </div>
+                    <section
+                        aria-labelledby="outside-work-heading"
+                        class="dark:border-brand-800 mt-8 border-t border-gray-200 pt-8"
+                    >
+                        <h3 id="outside-work-heading" class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Outside of work
+                        </h3>
+                        <p class="mt-3 max-w-2xl text-base leading-7 text-gray-600 dark:text-gray-400">
+                            There’s usually coffee nearby. Away from the keyboard, I’m spending time with my family,
+                            exploring Disney World, and cheering on Kansas basketball. Rock Chalk.
+                        </p>
+                    </section>
                 </div>
 
                 {{-- Timeline sidebar (vertical on mobile & large) --}}
@@ -406,32 +385,6 @@
                         <svg class="text-brand-600 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </x-slot:icon>
                 </x-about.value-card>
-            </div>
-        </div>
-    </div>
-
-    {{-- Fun Facts --}}
-    <div class="dark:border-brand-700 border-t border-gray-200 bg-gray-50 dark:bg-transparent">
-        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 gap-6 text-center md:grid-cols-3 lg:grid-cols-6">
-                @foreach ($facts as $fact)
-                    <x-about.fact :icon="$fact['icon']" :label="$fact['label']" :value="$fact['value']" />
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    {{-- Tech Stack --}}
-    <div class="dark:border-brand-700 border-t border-gray-200 bg-white dark:bg-[#0b1016]">
-        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
-            <div class="mb-14 text-center">
-                <p class="mb-3 text-xs font-semibold tracking-widest text-gray-600 uppercase">Toolbox</p>
-                <h2 class="text-3xl font-extrabold text-gray-900 md:text-4xl dark:text-white">What I Work With</h2>
-            </div>
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                @foreach ($techStack as $tech)
-                    <x-about.tech-card :tech="$tech" />
-                @endforeach
             </div>
         </div>
     </div>

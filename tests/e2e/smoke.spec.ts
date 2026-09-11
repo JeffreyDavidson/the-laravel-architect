@@ -4,6 +4,7 @@ import { expect, Page, test } from '@playwright/test';
 const publicRoutes = [
     '/',
     '/about',
+    '/services',
     '/blog',
     '/blog/how-i-structure-every-laravel-project',
     '/contact',
@@ -11,7 +12,6 @@ const publicRoutes = [
     '/privacy',
     '/projects',
     '/projects/ringside',
-    '/testimonials/submit',
     '/uses',
 ];
 const publicColorSchemes = ['light', 'dark'] as const;
@@ -94,24 +94,14 @@ test('homepage primary actions remain visible at a laptop viewport height', asyn
     }
 });
 
-test('homepage services stay concise and link to contact', async ({ page }) => {
+test('homepage services stay concise and link to services', async ({ page }) => {
     await page.goto('/');
     const services = page.getByRole('region', { name: 'Where I can help' });
     await expect(services).toBeVisible();
     await expect(services.locator('dt')).toHaveCount(3);
     await expect(services.locator('svg[aria-hidden="true"]')).toHaveCount(3);
-    await services.getByRole('link', { name: 'Discuss your project' }).click();
-    await expect(page).toHaveURL(/\/contact$/);
-});
-
-test('testimonial submission exposes labeled fields and supporting copy', async ({ page }) => {
-    await page.goto('/testimonials/submit');
-
-    await expect(page.getByLabel('Name')).toBeVisible();
-    await expect(page.getByLabel('Role')).toBeVisible();
-    await expect(page.getByLabel('Company')).toBeVisible();
-    await expect(page.getByLabel('Testimonial')).toBeVisible();
-    await expect(page.getByText('Your testimonial will be reviewed before it appears publicly.')).toBeVisible();
+    await services.getByRole('link', { name: 'Explore services' }).click();
+    await expect(page).toHaveURL(/\/services$/);
 });
 
 test('about card can be flipped with the keyboard', async ({ page }) => {

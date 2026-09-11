@@ -6,7 +6,6 @@ use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Subscriber;
-use App\Models\Testimonial;
 use App\Models\Video;
 use Filament\Widgets\Widget;
 
@@ -28,7 +27,6 @@ class WelcomeWidget extends Widget
      *     featuredProjects: int,
      *     subscribers: int,
      *     videos: int,
-     *     pendingTestimonials: int
      * }
      */
     protected function getViewData(): array
@@ -42,7 +40,6 @@ class WelcomeWidget extends Widget
             'featuredProjects' => Project::query()->where('is_featured', true)->count(),
             'subscribers' => Subscriber::count(),
             'videos' => Video::count(),
-            'pendingTestimonials' => Testimonial::where('status', 'pending')->count(),
         ];
     }
 }

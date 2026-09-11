@@ -26,7 +26,7 @@ it('backfills responsive variants for existing post images', function () {
         'featured_image_path' => 'posts/post.png',
     ]));
 
-    $this->artisan('posts:generate-image-variants')
+    $this->artisanCommand('posts:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->assertSuccessful();
 
@@ -35,12 +35,12 @@ it('backfills responsive variants for existing post images', function () {
         'posts/responsive/post-1280.webp',
     ]);
 
-    $this->artisan('posts:generate-image-variants')
+    $this->artisanCommand('posts:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 0 posts.')
         ->expectsOutputToContain('Skipped 1 already verified post.')
         ->assertSuccessful();
 
-    $this->artisan('posts:generate-image-variants', ['--force' => true])
+    $this->artisanCommand('posts:generate-image-variants', ['--force' => true])
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->doesntExpectOutputToContain('Skipped')
         ->assertSuccessful();
@@ -52,7 +52,7 @@ it('refuses to overlap another post image generation run', function () {
     expect($lock->get())->toBeTrue();
 
     try {
-        $this->artisan('posts:generate-image-variants')
+        $this->artisanCommand('posts:generate-image-variants')
             ->expectsOutputToContain('The [posts:generate-image-variants] command is already running.')
             ->assertFailed();
     } finally {

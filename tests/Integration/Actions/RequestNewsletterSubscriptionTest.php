@@ -5,6 +5,7 @@ use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
@@ -15,7 +16,8 @@ beforeEach(function () {
 });
 
 it('starts a pending newsletter subscription and queues its confirmation', function () {
-    app(RequestNewsletterSubscription::class)('Reader@Example.com');
+    app(RequestNewsletterSubscription::class)
+        ->handle('Reader@Example.com');
 
     $subscriber = Subscriber::query()->sole();
 
@@ -41,10 +43,13 @@ it('does not restart an active verified subscription', function () {
         'verified_at' => $verifiedAt,
     ]);
 
-    app(RequestNewsletterSubscription::class)('Reader@Example.com');
+    app(RequestNewsletterSubscription::class)
+        ->handle('Reader@Example.com');
 
-    expect($subscriber->refresh()->subscribed_at?->equalTo($subscribedAt))->toBeTrue()
-        ->and($subscriber->verified_at?->equalTo($verifiedAt))->toBeTrue()
+    $subscriber->refresh();
+
+    expect(Date::parse($subscriber->subscribed_at)->equalTo($subscribedAt))->toBeTrue()
+        ->and(Date::parse($subscriber->verified_at)->equalTo($verifiedAt))->toBeTrue()
         ->and($subscriber->verification_token_hash)->toBeNull();
 
     Mail::assertNothingQueued();
@@ -58,7 +63,8 @@ it('restarts confirmation for an unsubscribed reader', function () {
         'unsubscribed_at' => now()->subWeek(),
     ]);
 
-    app(RequestNewsletterSubscription::class)('reader@example.com');
+    app(RequestNewsletterSubscription::class)
+        ->handle('reader@example.com');
 
     expect($subscriber->refresh()->subscribed_at?->isToday())->toBeTrue()
         ->and($subscriber->verified_at)->toBeNull()

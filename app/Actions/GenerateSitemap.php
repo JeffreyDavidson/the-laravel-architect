@@ -12,7 +12,7 @@ use Spatie\Tags\Tag;
 
 final class GenerateSitemap
 {
-    public function __invoke(): string
+    public function handle(): string
     {
         $posts = Post::published()
             ->with('tags')
@@ -28,7 +28,7 @@ final class GenerateSitemap
             ->where('is_active', true)
             ->with('publishedEpisodes')
             ->get();
-        $projects = Project::published()->get();
+        $projects = Project::published()->portfolio()->get();
         $podcastModels = [];
 
         foreach ($podcasts as $podcast) {
@@ -47,6 +47,7 @@ final class GenerateSitemap
         foreach ([
             ['url' => route('home'), 'priority' => '1.0', 'freq' => 'weekly', 'lastmod' => null],
             ['url' => route('about'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
+            ['url' => route('services'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('contact'), 'priority' => '0.7', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('privacy'), 'priority' => '0.3', 'freq' => 'yearly', 'lastmod' => null],
             ['url' => route('uses'), 'priority' => '0.6', 'freq' => 'monthly', 'lastmod' => null],

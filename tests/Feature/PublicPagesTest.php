@@ -2,14 +2,12 @@
 
 use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
-use App\Enums\TestimonialStatus;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
-use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -624,11 +622,6 @@ it('places the mobile uses jump navigation before the equipment list', function 
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('testimonials.create'))
-        ->assertOk()
-        ->assertSee($privacyUrl, false)
-        ->assertSee('Approved submissions may be displayed publicly');
-
     $this->get(route('contact'))
         ->assertOk()
         ->assertSee($privacyUrl, false)
@@ -711,9 +704,10 @@ it('renders one concise client-focused services section', function () {
     $content = $this->get(route('home'))
         ->assertOk()
         ->assertSee('Where I can help')
-        ->assertSee('Make change easier')
-        ->assertSee('Move your product forward')
-        ->assertSee('Modernize without starting over')
+        ->assertSee('Improve an existing codebase')
+        ->assertSee('Build your application')
+        ->assertSee('Ship with confidence')
+        ->assertSee(route('services'))
         ->assertDontSee('data-architecture-scene', false)
         ->assertDontSee('How I can help')
         ->getContent();
@@ -885,7 +879,7 @@ it('keeps the admin panel behind authentication', function () {
         ->assertSee($manifest['resources/css/filament/admin/theme.css']['file'], false);
 });
 
-it('uses published work and approved recommendations as homepage proof', function () {
+it('uses published work as homepage proof', function () {
     $author = User::factory()->create();
 
     Post::query()->create([
@@ -919,29 +913,17 @@ it('uses published work and approved recommendations as homepage proof', functio
         'status' => ProjectStatus::Draft,
     ]);
 
-    Testimonial::query()->create([
-        'name' => 'Approved Client',
-        'body' => 'A trusted Laravel partner.',
-        'status' => TestimonialStatus::Approved,
-    ]);
-
-    Testimonial::query()->create([
-        'name' => 'Pending Client',
-        'body' => 'This recommendation is not approved yet.',
-        'status' => TestimonialStatus::Pending,
-    ]);
-
     $this->get(route('home'))
         ->assertOk()
         ->assertViewHas('publishedPostCount', 1)
         ->assertViewHas('publishedProjectCount', 1)
-        ->assertSee('Approved Client')
+        ->assertDontSee('Approved Client')
+        ->assertDontSee('Recommendations')
         ->assertDontSee('Pending Client')
         ->assertSeeInOrder([
             'Years building PHP',
             'Published articles',
             'Portfolio projects',
-            'Recommendations',
         ]);
 });
 

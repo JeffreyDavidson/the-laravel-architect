@@ -4,6 +4,7 @@ import { devices, expect, Page, test } from '@playwright/test';
 const publicRoutes = [
     '/',
     '/about',
+    '/services',
     '/blog',
     '/blog/how-i-structure-every-laravel-project',
     '/contact',

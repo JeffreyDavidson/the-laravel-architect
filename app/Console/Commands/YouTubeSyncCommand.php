@@ -29,25 +29,24 @@ class YouTubeSyncCommand extends Command
         $updated = 0;
 
         foreach ($videos as $videoData) {
-            $video = Video::query()->where('youtube_id', $videoData['youtube_id'])->first();
+            $video = Video::query()->where('youtube_id', $videoData->youtubeId)->first();
 
             if ($video) {
                 $video->update([
-                    'title' => $videoData['title'],
-                    'description' => $videoData['description'],
-                    'thumbnail_url' => $videoData['thumbnail_url'],
-                    'duration' => $videoData['duration'],
-                    'view_count' => $videoData['view_count'],
-                    'like_count' => $videoData['like_count'],
-                    'comment_count' => $videoData['comment_count'],
+                    'title' => $videoData->title,
+                    'description' => $videoData->description,
+                    'thumbnail_url' => $videoData->thumbnailUrl,
+                    'duration' => $videoData->duration,
+                    'view_count' => $videoData->viewCount,
+                    'like_count' => $videoData->likeCount,
+                    'comment_count' => $videoData->commentCount,
                     'synced_at' => now(),
                 ]);
                 $updated++;
             } else {
                 Video::query()->create([
-                    ...$videoData,
-                    'slug' => $this->uniqueSlug($videoData['title'], $videoData['youtube_id']),
-                    'published_at' => $videoData['published_at'],
+                    ...$videoData->toArray(),
+                    'slug' => $this->uniqueSlug($videoData->title, $videoData->youtubeId),
                     'synced_at' => now(),
                 ]);
                 $synced++;

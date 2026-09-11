@@ -72,15 +72,6 @@
                                 link provided in newsletter messages.
                             </p>
                         </div>
-                        <div>
-                            <h3 class="mb-1 font-semibold text-gray-900 dark:text-white">Testimonials</h3>
-                            <p class="leading-relaxed">
-                                A testimonial submission includes your name, testimonial text, and any role or company
-                                you choose to provide. Submissions are stored for review and are not displayed until
-                                approved. Because approved testimonials may appear publicly, do not submit information
-                                you do not want published.
-                            </p>
-                        </div>
                     </div>
                 </section>
 
@@ -116,9 +107,8 @@
                         How information is used and shared
                     </h2>
                     <p class="mb-4 leading-relaxed">
-                        Information is used to answer inquiries, deliver and administer newsletter subscriptions, review
-                        and publish approved testimonials, secure the application, prevent abuse, and understand site
-                        performance.
+                        Information is used to answer inquiries, deliver and administer newsletter subscriptions, secure
+                        the application, prevent abuse, and understand site performance.
                     </p>
                     <p class="leading-relaxed">
                         Information is shared only with service providers needed to operate the site—such as hosting,
@@ -137,9 +127,10 @@
                     </h2>
                     <p class="mb-4 leading-relaxed">
                         Information is kept only as long as reasonably needed for the purpose described above, site
-                        security, or legitimate recordkeeping. Newsletter records and testimonials remain until they are
-                        no longer needed or a deletion request is completed. Operational logs and email records follow
-                        the retention settings of the services that store them.
+                        security, or legitimate recordkeeping. Newsletter records remain until they are no longer needed
+                        or a deletion request is completed. Legacy records retained in the application database follow
+                        the same retention and deletion practices. Operational logs and email records follow the
+                        retention settings of the services that store them.
                     </p>
                     <p class="leading-relaxed">
                         You may ask to access, correct, or delete personal information associated with you. Newsletter

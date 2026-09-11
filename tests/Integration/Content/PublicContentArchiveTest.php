@@ -172,6 +172,5 @@ function publicContentArchiveFixture(): array
         ]],
         'episodes' => [],
         'videos' => [],
-        'testimonials' => [],
     ];
 }

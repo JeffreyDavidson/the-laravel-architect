@@ -132,24 +132,48 @@ it('shows an unsubscribe step without changing subscriber state', function () {
     $this->get($subscriber->unsubscribeUrl())
         ->assertOk()
         ->assertSee('Unsubscribe from the newsletter')
+        ->assertSee('name="_method" value="DELETE"', false)
         ->assertSee($subscriber->email)
         ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
 
     expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
 });
 
-it('unsubscribes with an explicit post to a valid signed link', function () {
+it('unsubscribes with an explicit delete to a valid signed link', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
         'verified_at' => now(),
     ]);
 
-    $this->post($subscriber->unsubscribeUrl())
+    $this->delete($subscriber->unsubscribeUrl())
         ->assertRedirect(route('home'))
         ->assertSessionHas('newsletter_success', 'You have been unsubscribed.');
 
     expect($subscriber->refresh()->unsubscribed_at)->not->toBeNull();
+});
+
+it('rejects unsigned unsubscribe requests', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+    ]);
+
+    $this->delete(route('newsletter.unsubscribe.store', $subscriber))
+        ->assertForbidden();
+
+    expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
+});
+
+it('rejects expired unsubscribe links', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+    ]);
+    $url = URL::temporarySignedRoute('newsletter.unsubscribe', now()->subMinute(), $subscriber);
+
+    $this->delete($url)
+        ->assertForbidden();
+
+    expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
 });
 
 it('does not disclose whether an email is already subscribed', function () {

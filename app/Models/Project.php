@@ -59,6 +59,13 @@ class Project extends Model
         $query->where('is_featured', true);
     }
 
+    /** @param Builder<Project> $query */
+    #[Scope]
+    protected function portfolio(Builder $query): void
+    {
+        $query->where('slug', '!=', 'the-laravel-architect');
+    }
+
     public function getFeaturedImageUrlAttribute(): ?string
     {
         return $this->featured_image_path

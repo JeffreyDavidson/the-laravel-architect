@@ -14,7 +14,7 @@
                 </svg>
                 <div>
                     <strong>No activity yet</strong>
-                    <span>Published posts and testimonial reviews will show up here.</span>
+                    <span>Recent post activity will show up here.</span>
                 </div>
             </div>
         @else

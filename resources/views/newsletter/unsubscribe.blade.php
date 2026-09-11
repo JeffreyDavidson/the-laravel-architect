@@ -13,6 +13,7 @@
 
             <form action="{{ $actionUrl }}" method="POST" class="mt-8">
                 @csrf
+                @method('DELETE')
                 <x-button type="submit">Unsubscribe</x-button>
             </form>
         </div>

@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
+arch('keeps SEO metadata construction outside controllers')
+    ->expect('App\Http\Controllers')
+    ->not->toUse('RalphJSmit\Laravel\SEO\Support\SEOData');
+
 $controllerClasses = function (): array {
     $directory = dirname(__DIR__, 2).'/app/Http/Controllers';
 

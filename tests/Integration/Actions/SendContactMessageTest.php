@@ -1,6 +1,9 @@
 <?php
 
 use App\Actions\SendContactMessage;
+use App\Data\ContactMessageData;
+use App\Enums\ContactBudget;
+use App\Enums\ContactType;
 use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
 use Illuminate\Support\Facades\Mail;
@@ -9,13 +12,14 @@ it('queues the contact message for the site owner and a confirmation for the sen
     Mail::fake();
     config()->set('mail.contact_to', 'owner@example.com');
 
-    app(SendContactMessage::class)(
-        name: 'Jane Doe',
-        email: 'jane@example.com',
-        type: 'consulting',
-        budget: 'medium',
-        message: 'Can you help with an audit?',
-    );
+    app(SendContactMessage::class)
+        ->handle(new ContactMessageData(
+            name: 'Jane Doe',
+            email: 'jane@example.com',
+            type: ContactType::Consulting,
+            budget: ContactBudget::Medium,
+            message: 'Can you help with an audit?',
+        ));
 
     Mail::assertQueued(
         ContactMessageReceived::class,

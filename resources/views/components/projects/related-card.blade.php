@@ -4,6 +4,7 @@
     href="{{ route('projects.show', $project) }}"
     class="group focus-visible:outline-brand-400 dark:border-brand-800 flex h-full flex-col border-t border-gray-200 py-6 focus-visible:outline-2 focus-visible:outline-offset-4"
 >
+    <x-projects.artwork :project="$project" class="mb-5" />
     <h3 class="group-hover:text-brand-700 dark:group-hover:text-brand-300 text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
         {{ $project->title }}
     </h3>

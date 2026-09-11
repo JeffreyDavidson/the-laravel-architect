@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 final class RequestNewsletterSubscription
 {
-    public function __invoke(string $email): void
+    public function handle(string $email): void
     {
         $email = Str::of($email)->trim()->lower()->toString();
         $subscriber = Subscriber::query()->firstOrNew(['email' => $email]);

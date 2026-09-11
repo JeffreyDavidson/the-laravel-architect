@@ -6,7 +6,7 @@ use App\Models\Post;
 
 final class GenerateRssFeed
 {
-    public function __invoke(): string
+    public function handle(): string
     {
         $posts = Post::published()
             ->latest('published_at')

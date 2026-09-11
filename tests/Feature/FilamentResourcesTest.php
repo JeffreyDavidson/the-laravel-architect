@@ -7,7 +7,6 @@ use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
-use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -31,7 +30,6 @@ it('renders each registered resource index for an authorized user', function (st
     ProjectResource::class,
     SubscriberResource::class,
     TagResource::class,
-    TestimonialResource::class,
     VideoResource::class,
 ]);
 

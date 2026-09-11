@@ -4,13 +4,11 @@ namespace App\Content;
 
 use App\Enums\ProjectStatus;
 use App\Enums\PublishStatus;
-use App\Enums\TestimonialStatus;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +22,7 @@ use Spatie\Tags\Tag;
 /**
  * @phpstan-type ContentRecord array<string, mixed>
  * @phpstan-type ContentRecords list<ContentRecord>
- * @phpstan-type ArchiveRecords array{categories: ContentRecords, posts: ContentRecords, projects: ContentRecords, podcasts: ContentRecords, episodes: ContentRecords, videos: ContentRecords, testimonials: ContentRecords}
+ * @phpstan-type ArchiveRecords array{categories: ContentRecords, posts: ContentRecords, projects: ContentRecords, podcasts: ContentRecords, episodes: ContentRecords, videos: ContentRecords}
  */
 class PublicContentArchive
 {
@@ -39,8 +37,6 @@ class PublicContentArchive
     private const array EPISODE_FIELDS = ['title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'published_at'];
 
     private const array VIDEO_FIELDS = ['youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at'];
-
-    private const array TESTIMONIAL_FIELDS = ['name', 'role', 'company', 'body', 'sort_order'];
 
     private const array SEO_FIELDS = ['description', 'title', 'image', 'author', 'robots', 'canonical_url'];
 
@@ -125,13 +121,6 @@ class PublicContentArchive
                 ->map(fn (Video $video): array => $this->attributes($video, self::VIDEO_FIELDS))
                 ->values()
                 ->all(),
-            'testimonials' => Testimonial::query()
-                ->approved()
-                ->orderBy('sort_order')
-                ->get(self::TESTIMONIAL_FIELDS)
-                ->map(fn (Testimonial $testimonial): array => $this->attributes($testimonial, self::TESTIMONIAL_FIELDS))
-                ->values()
-                ->all(),
         ];
     }
 
@@ -204,14 +193,7 @@ class PublicContentArchive
                 );
             }
 
-            foreach ($records['testimonials'] as $attributes) {
-                Testimonial::query()->updateOrCreate(
-                    $this->only($attributes, ['name', 'company', 'body']),
-                    [...$this->only($attributes, self::TESTIMONIAL_FIELDS), 'status' => TestimonialStatus::Approved],
-                );
-            }
-
-            return collect(['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos', 'testimonials'])
+            return collect(['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos'])
                 ->mapWithKeys(fn (string $type): array => [$type => count($records[$type])])
                 ->all();
         }));
@@ -362,7 +344,6 @@ class PublicContentArchive
         Podcast::query()->active()->update(['is_active' => false]);
         Episode::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()->update(['published_at' => null]);
-        Testimonial::query()->approved()->update(['status' => TestimonialStatus::Pending->value]);
     }
 
     private function validateMediaPath(mixed $path): string
@@ -389,7 +370,7 @@ class PublicContentArchive
 
         $records = [];
 
-        foreach (['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos', 'testimonials'] as $type) {
+        foreach (['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos'] as $type) {
             if (! isset($archive[$type]) || ! is_array($archive[$type])) {
                 throw new InvalidArgumentException("The public content archive is missing {$type}.");
             }

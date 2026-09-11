@@ -12,9 +12,9 @@
                 Where I can help
             </h2>
             <a
-                href="{{ route('contact') }}"
+                href="{{ route('services') }}"
                 class="text-brand-700 decoration-brand-300 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 w-fit rounded py-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 dark:hover:text-white"
-            >Discuss your project</a>
+            >Explore services</a>
         </div>
 
         <dl class="grid gap-8 md:grid-cols-3 md:gap-10">
@@ -24,7 +24,7 @@
                         class="stroke-brand-600 dark:stroke-brand-300 mb-5 size-8"
                         aria-hidden="true"
                     />
-                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Make change easier</span>
+                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Improve an existing codebase</span>
                 </dt>
                 <dd class="mt-3 max-w-sm text-base leading-7 text-gray-600 dark:text-gray-400">
                     Get a clear code review, untangle problem areas and strengthen tests so your team can move forward
@@ -37,7 +37,7 @@
                         class="stroke-brand-600 dark:stroke-brand-300 mb-5 size-8"
                         aria-hidden="true"
                     />
-                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Move your product forward</span>
+                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Build your application</span>
                 </dt>
                 <dd class="mt-3 max-w-sm text-base leading-7 text-gray-600 dark:text-gray-400">
                     Bring experienced Laravel development to your team, from shaping the next feature to taking it
@@ -46,15 +46,15 @@
             </div>
             <div>
                 <dt>
-                    <x-heroicon-o-arrow-path
+                    <x-heroicon-o-shield-check
                         class="stroke-brand-600 dark:stroke-brand-300 mb-5 size-8"
                         aria-hidden="true"
                     />
-                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Modernize without starting over</span>
+                    <span class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Ship with confidence</span>
                 </dt>
                 <dd class="mt-3 max-w-sm text-base leading-7 text-gray-600 dark:text-gray-400">
-                    Plan Laravel upgrades and improve legacy applications while preserving the behavior your business
-                    depends on.
+                    Protect critical workflows with automated tests, repeatable deployments, and visibility into
+                    production errors.
                 </dd>
             </div>
         </dl>

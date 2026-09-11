@@ -4,7 +4,6 @@ namespace App\ViewModels;
 
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\Testimonial;
 use App\Models\Video;
 use App\Services\YouTubeService;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,10 +17,8 @@ class HomeViewModel
      *     featuredProjects: Collection<int, Project>,
      *     youtubeSubscribers: int,
      *     latestYouTubeVideos: Collection<int, Video>,
-     *     testimonials: Collection<int, Testimonial>,
      *     publishedPostCount: int,
      *     publishedProjectCount: int,
-     *     approvedTestimonialCount: int,
      *     seoSource: SEOData,
      * }
      */
@@ -34,6 +31,7 @@ class HomeViewModel
                 ->take(3)
                 ->get(),
             'featuredProjects' => Project::published()
+                ->portfolio()
                 ->featured()
                 ->orderBy('sort_order')
                 ->take(4)
@@ -43,14 +41,8 @@ class HomeViewModel
                 ->latest('published_at')
                 ->take(3)
                 ->get(),
-            'testimonials' => Testimonial::approved()
-                ->orderBy('sort_order')
-                ->latest()
-                ->take(3)
-                ->get(),
             'publishedPostCount' => Post::published()->count(),
-            'publishedProjectCount' => Project::published()->count(),
-            'approvedTestimonialCount' => Testimonial::approved()->count(),
+            'publishedProjectCount' => Project::published()->portfolio()->count(),
             'seoSource' => new SEOData(
                 title: 'The Laravel Architect — Jeffrey Davidson',
                 description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',

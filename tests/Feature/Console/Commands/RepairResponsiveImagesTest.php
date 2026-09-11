@@ -51,7 +51,7 @@ it('repairs unhealthy responsive variants across every supported media type', fu
     ]));
     app(ResponsiveImageVariants::class)->generate('podcasts/podcast.png');
 
-    $this->artisan('media:repair-responsive-images')
+    $this->artisanCommand('media:repair-responsive-images')
         ->expectsOutputToContain('Generated responsive images for 1 project.')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->expectsOutputToContain('Generated responsive images for 0 podcasts.')
@@ -69,7 +69,7 @@ it('repairs unhealthy responsive variants across every supported media type', fu
     ]);
     Storage::disk('public')->assertMissing('projects/responsive/project-1280.webp');
 
-    $this->artisan('media:repair-responsive-images', ['--force' => true])
+    $this->artisanCommand('media:repair-responsive-images', ['--force' => true])
         ->expectsOutputToContain('Generated responsive images for 1 project.')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->expectsOutputToContain('Generated responsive images for 1 podcast.')
@@ -100,7 +100,7 @@ it('repairs remaining media types before reporting a failure', function () {
         'featured_image_path' => 'posts/post.png',
     ]));
 
-    $this->artisan('media:repair-responsive-images')
+    $this->artisanCommand('media:repair-responsive-images')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
         ->expectsOutputToContain('Responsive image verification failed.')
         ->expectsOutputToContain('Responsive image repair completed with failures.')
@@ -118,7 +118,7 @@ it('refuses to overlap another responsive image repair', function () {
     expect($lock->get())->toBeTrue();
 
     try {
-        $this->artisan('media:repair-responsive-images')
+        $this->artisanCommand('media:repair-responsive-images')
             ->expectsOutputToContain('The [media:repair-responsive-images] command is already running.')
             ->assertFailed();
     } finally {

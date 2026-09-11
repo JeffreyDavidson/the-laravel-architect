@@ -6,12 +6,13 @@ use App\Models\Podcast;
 use App\Queries\EpisodeNavigationQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
 it('finds the closest published episodes before and after the current episode', function () {
-    $this->travelTo(Carbon::parse('2026-08-28 12:00:00'));
+    $this->travelTo(Date::parse('2026-08-28 12:00:00'));
 
     $podcast = Podcast::query()->create([
         'name' => 'Architecture Sessions',

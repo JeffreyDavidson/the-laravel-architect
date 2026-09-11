@@ -4,12 +4,10 @@ use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
-use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -41,10 +39,6 @@ it('renders the publishing and project statistics', function () {
         'slug' => 'standard-project',
         'description' => 'Description',
     ]);
-    Testimonial::query()->create([
-        'name' => 'Pending testimonial',
-        'body' => 'Testimonial body',
-    ]);
 
     livewire(WelcomeWidget::class)
         ->assertSee('4')
@@ -55,6 +49,5 @@ it('renders the publishing and project statistics', function () {
         ->assertSeeHtml('href="'.PostResource::getUrl('index').'"')
         ->assertSeeHtml('href="'.ProjectResource::getUrl('index').'"')
         ->assertSeeHtml('href="'.SubscriberResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.VideoResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.TestimonialResource::getUrl('index').'"');
+        ->assertSeeHtml('href="'.VideoResource::getUrl('index').'"');
 });
