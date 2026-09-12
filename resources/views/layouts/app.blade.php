@@ -181,7 +181,7 @@
                 <div class="max-w-sm">
                     <a href="{{ route('home') }}" aria-label="Homepage" class="group mb-3 flex items-center gap-3">
                         <img
-                            src="/images/logo-color-128.webp"
+                            src="/images/elephant-companion-128.webp"
                             alt="The Laravel Architect"
                             width="40"
                             height="40"

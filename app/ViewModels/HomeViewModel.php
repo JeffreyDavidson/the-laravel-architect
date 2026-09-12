@@ -2,6 +2,7 @@
 
 namespace App\ViewModels;
 
+use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
@@ -15,6 +16,7 @@ class HomeViewModel
      * @return array{
      *     latestPosts: Collection<int, Post>,
      *     featuredProjects: Collection<int, Project>,
+     *     podcast: Podcast|null,
      *     youtubeSubscribers: int,
      *     latestYouTubeVideos: Collection<int, Video>,
      *     publishedPostCount: int,
@@ -36,6 +38,9 @@ class HomeViewModel
                 ->orderBy('sort_order')
                 ->take(4)
                 ->get(),
+            'podcast' => Podcast::active()
+                ->orderBy('sort_order')
+                ->first(),
             'youtubeSubscribers' => YouTubeService::subscriberCount(),
             'latestYouTubeVideos' => Video::published()
                 ->latest('published_at')
