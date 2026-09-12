@@ -139,14 +139,14 @@
 
     .hero-steam {
         fill: none;
-        stroke: rgb(238 244 250 / 0.32);
+        stroke: rgb(238 244 250 / 0.52);
         stroke-linecap: round;
-        stroke-width: 5;
-        filter: blur(1.5px);
+        stroke-width: 6;
+        filter: blur(0.9px) drop-shadow(0 0 5px rgb(159 197 229 / 0.3));
         opacity: 0;
         transform-box: fill-box;
         transform-origin: center bottom;
-        animation: heroSteam 5.5s ease-in-out infinite;
+        animation: heroSteam 5s ease-in-out infinite;
     }
 
     .hero-steam-two {
@@ -172,12 +172,12 @@
             opacity: 0;
             transform: translate3d(0, 8px, 0) scale(0.82);
         }
-        20%, 65% {
-            opacity: 0.7;
+        18%, 72% {
+            opacity: 0.95;
         }
         100% {
             opacity: 0;
-            transform: translate3d(12px, -42px, 0) scale(1.15);
+            transform: translate3d(18px, -56px, 0) scale(1.28);
         }
     }
 
