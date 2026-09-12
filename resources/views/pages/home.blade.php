@@ -232,21 +232,33 @@
                     href="{{ route('podcast.index') }}"
                     class="group focus-visible:outline-brand-500 dark:border-brand-700 grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] dark:bg-[#161b22]"
                 >
-                    <picture class="[&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-full [&_img]:max-w-64 md:[&_img]:max-w-none block bg-black">
-                        <source
-                            type="image/webp"
-                            srcset="{{ Vite::asset('resources/images/podcast-coffee-logo-320.webp') }} 320w, {{ Vite::asset('resources/images/podcast-coffee-logo-512.webp') }} 512w"
-                            sizes="(min-width: 768px) 280px, 160px"
-                        />
-                        <img
-                            src="{{ Vite::asset('resources/images/podcast-coffee-logo-512.webp') }}"
-                            alt=""
-                            width="512"
-                            height="512"
-                            loading="lazy"
-                            decoding="async"
-                        />
-                    </picture>
+                    @if ($podcast)
+                        <div class="[&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-full [&_img]:max-w-64 md:[&_img]:max-w-none block bg-black">
+                            <x-podcast-cover
+                                :podcast="$podcast"
+                                sizes="(min-width: 768px) 280px, 160px"
+                                width="512"
+                                height="512"
+                                alt=""
+                            />
+                        </div>
+                    @else
+                        <picture class="[&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-full [&_img]:max-w-64 md:[&_img]:max-w-none block bg-black">
+                            <source
+                                type="image/webp"
+                                srcset="{{ Vite::asset('resources/images/podcast-coffee-logo-320.webp') }} 320w, {{ Vite::asset('resources/images/podcast-coffee-logo-512.webp') }} 512w"
+                                sizes="(min-width: 768px) 280px, 160px"
+                            />
+                            <img
+                                src="{{ Vite::asset('resources/images/podcast-coffee-logo-512.webp') }}"
+                                alt=""
+                                width="512"
+                                height="512"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </picture>
+                    @endif
                     <div class="[&_h3]:text-xl [&_h3]:leading-tight [&_h3]:text-gray-900 dark:[&_h3]:text-white lg:[&_h3]:text-2xl [&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-gray-600 dark:[&_p]:text-gray-300 p-5 sm:p-8">
                         <h3>Coffee With<br />The Laravel Architect</h3>
                         <p>Conversations about Laravel, web development, and the developer life. One cup at a time.</p>

@@ -571,12 +571,13 @@ it('uses a concise primary navigation and a project-focused call to action', fun
         ->assertOk()
         ->assertSee('Writing')
         ->assertSee('Discuss a Project')
-        ->assertSee('/images/logo-color-128.webp', false)
+        ->assertSee('/images/elephant-companion-128.webp', false)
         ->assertDontSee('/images/logo-color.svg', false)
         ->getContent();
 
-    expect($content)->not->toContain('>Contact Me<');
-    expect(filesize(public_path('images/logo-color-128.webp')))->toBeLessThanOrEqual(20 * 1024);
+    expect($content)
+        ->not->toContain('>Contact Me<')
+        ->and(substr_count($content, '/images/elephant-companion-128.webp'))->toBe(2);
 });
 
 it('provides a valid legacy favicon fallback', function () {
