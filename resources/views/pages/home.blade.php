@@ -10,28 +10,64 @@
         data-home-hero
         class="relative isolate overflow-hidden border-b border-[#263241] bg-[#0d1117] text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:bg-[#04080d]/18 md:after:bg-[#04080d]/12"
     >
-        <picture
-            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:object-bottom md:[&_img]:object-center absolute inset-x-0 top-16 bottom-0 -z-20 block h-full w-full md:inset-0"
-            aria-hidden="true"
-        >
-            <source
-                media="(max-width: 767px)"
-                srcset="{{ Vite::asset('resources/images/home-hero-mobile-640.webp') }} 640w, {{ Vite::asset('resources/images/home-hero-mobile-1024.webp') }} 1024w"
-                sizes="100vw"
-            />
-            <source
-                srcset="{{ Vite::asset('resources/images/home-hero-desktop-1024.webp') }} 1024w, {{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }} 1536w"
-                sizes="100vw"
-            />
-            <img
-                src="{{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }}"
-                alt=""
-                width="1536"
-                height="1024"
-                fetchpriority="high"
-                decoding="async"
-            />
-        </picture>
+        <div class="absolute inset-x-0 top-16 bottom-0 -z-20 overflow-hidden md:inset-0">
+            <picture
+                class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:object-bottom md:[&_img]:object-center absolute inset-0 block h-full w-full"
+                aria-hidden="true"
+            >
+                <source
+                    media="(max-width: 767px)"
+                    srcset="{{ Vite::asset('resources/images/home-hero-mobile-640.webp') }} 640w, {{ Vite::asset('resources/images/home-hero-mobile-1024.webp') }} 1024w"
+                    sizes="100vw"
+                />
+                <source
+                    srcset="{{ Vite::asset('resources/images/home-hero-desktop-1024.webp') }} 1024w, {{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }} 1536w"
+                    sizes="100vw"
+                />
+                <img
+                    src="{{ Vite::asset('resources/images/home-hero-desktop-1536.webp') }}"
+                    alt=""
+                    width="1536"
+                    height="1024"
+                    fetchpriority="high"
+                    decoding="async"
+                />
+            </picture>
+
+            <svg
+                class="hero-motion-overlay absolute inset-0 h-full w-full"
+                viewBox="0 0 1536 1024"
+                preserveAspectRatio="xMidYMid slice"
+                aria-hidden="true"
+            >
+                <g class="hero-motion-desktop">
+                    <circle class="hero-blueprint-pulse" cx="530" cy="535" r="54" />
+                    <circle class="hero-node-pulse" cx="58" cy="560" r="24" />
+                    <path class="hero-signal-track" d="M58 560 H190" />
+                    <path class="hero-signal-travel" d="M58 560 H190" />
+                    <path class="hero-grid-sweep" d="M150 710 H520" />
+                    <path class="hero-steam hero-steam-one" d="M820 692 C780 660 852 638 820 604 C795 577 830 556 818 526" />
+                    <path class="hero-steam hero-steam-two" d="M850 690 C824 657 886 636 856 604 C832 578 872 550 853 522" />
+                    <path class="hero-steam hero-steam-three" d="M884 690 C858 658 916 642 890 612 C866 585 906 562 889 538" />
+                </g>
+            </svg>
+
+            <svg
+                class="hero-motion-overlay hero-motion-mobile absolute inset-0 h-full w-full"
+                viewBox="0 0 1024 1280"
+                preserveAspectRatio="xMidYMid slice"
+                aria-hidden="true"
+            >
+                <circle class="hero-node-pulse" cx="48" cy="1038" r="24" />
+                <path class="hero-signal-track" d="M48 1038 H260" />
+                <path class="hero-signal-travel" d="M48 1038 H260" />
+                <path class="hero-grid-sweep" d="M80 1130 H430" />
+                <circle class="hero-blueprint-pulse" cx="120" cy="760" r="56" />
+                <path class="hero-steam hero-steam-one" d="M518 974 C480 940 548 914 520 878 C494 846 536 818 522 786" />
+                <path class="hero-steam hero-steam-two" d="M546 974 C518 940 578 914 550 878 C526 847 566 820 548 790" />
+                <path class="hero-steam hero-steam-three" d="M574 974 C550 942 608 920 580 887 C556 858 598 832 580 806" />
+            </svg>
+        </div>
 
         <div class="mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-start px-4 py-16 pt-12 sm:min-h-[calc(100svh-4.5rem)] sm:items-center sm:px-6 md:pt-16 lg:px-8">
             <div class="max-w-2xl py-4 [text-shadow:0_2px_24px_rgb(0_0_0/0.28)]">
