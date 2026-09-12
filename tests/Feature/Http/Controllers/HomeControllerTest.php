@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Models\Podcast;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -36,6 +37,21 @@ it('omits selected work when no projects are featured', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertDontSee('data-home-work', false);
+});
+
+it('uses the active podcast artwork on the homepage', function () {
+    Podcast::query()->create([
+        'name' => 'Coffee with The Laravel Architect',
+        'slug' => 'coffee-with-the-laravel-architect',
+        'description' => 'Conversations about Laravel and the developer life.',
+        'cover_image_path' => 'podcasts/current-cover.webp',
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('/storage/podcasts/current-cover.webp', false);
 });
 
 it('flashes invalid newsletter input for recovery', function () {

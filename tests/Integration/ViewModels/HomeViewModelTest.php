@@ -46,6 +46,7 @@ it('builds the bounded public homepage payload', function () {
     expect($data)->toHaveKeys([
         'latestPosts',
         'featuredProjects',
+        'podcast',
         'youtubeSubscribers',
         'latestYouTubeVideos',
         'publishedPostCount',
@@ -53,6 +54,7 @@ it('builds the bounded public homepage payload', function () {
         'seoSource',
     ])
         ->and($data['latestPosts'])->toBeEmpty()
+        ->and($data['podcast'])->toBeNull()
         ->and($data['featuredProjects']->pluck('sort_order')->all())->toBe([1, 2, 3, 4])
         ->and($data['youtubeSubscribers'])->toBe(4242)
         ->and($data['latestYouTubeVideos']->pluck('youtube_id')->all())->toBe(['video-1', 'video-2', 'video-3'])
