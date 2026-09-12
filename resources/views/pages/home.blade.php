@@ -42,6 +42,10 @@
             >
                 <g class="hero-motion-desktop">
                     <circle class="hero-blueprint-pulse" cx="530" cy="535" r="54" />
+                    <circle class="hero-node-pulse" cx="58" cy="560" r="24" />
+                    <path class="hero-signal-track" d="M58 560 H190" />
+                    <path class="hero-signal-travel" d="M58 560 H190" />
+                    <path class="hero-grid-sweep" d="M150 710 H520" />
                     <path class="hero-steam hero-steam-one" d="M820 692 C780 660 852 638 820 604 C795 577 830 556 818 526" />
                     <path class="hero-steam hero-steam-two" d="M850 690 C824 657 886 636 856 604 C832 578 872 550 853 522" />
                     <path class="hero-steam hero-steam-three" d="M884 690 C858 658 916 642 890 612 C866 585 906 562 889 538" />
@@ -54,6 +58,10 @@
                 preserveAspectRatio="xMidYMid slice"
                 aria-hidden="true"
             >
+                <circle class="hero-node-pulse" cx="48" cy="1038" r="24" />
+                <path class="hero-signal-track" d="M48 1038 H260" />
+                <path class="hero-signal-travel" d="M48 1038 H260" />
+                <path class="hero-grid-sweep" d="M80 1130 H430" />
                 <circle class="hero-blueprint-pulse" cx="120" cy="760" r="56" />
                 <path class="hero-steam hero-steam-one" d="M518 974 C480 940 548 914 520 878 C494 846 536 818 522 786" />
                 <path class="hero-steam hero-steam-two" d="M546 974 C518 940 578 914 550 878 C526 847 566 820 548 790" />
