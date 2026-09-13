@@ -30,7 +30,7 @@ class BlogIndexViewModel
         $categoryInput = $filters['category'] ?? null;
         $query = is_string($queryInput) ? trim($queryInput) : '';
         $categorySlug = is_string($categoryInput) ? $categoryInput : null;
-        $selectedCategory = $categorySlug
+        $selectedCategory = $categorySlug !== null && $categorySlug !== ''
             ? Category::query()->where('slug', $categorySlug)->firstOrFail()
             : null;
 
@@ -88,6 +88,10 @@ class BlogIndexViewModel
             'page' => $posts->onFirstPage() ? null : $posts->currentPage(),
         ], fn ($value): bool => $value !== null);
         $canonicalUrl = route('blog.index', $canonicalParameters);
+        $searchCanonicalUrl = route('blog.index', array_filter(
+            ['category' => $categorySlug],
+            fn ($value): bool => $value !== null,
+        ));
         $title = $selectedCategory ? "{$selectedCategory->name} Articles" : 'Blog';
         $description = $selectedCategory
             ? "Articles about {$selectedCategory->name} — Laravel development insights from Jeffrey Davidson."
@@ -115,8 +119,8 @@ class BlogIndexViewModel
             'seoSource' => new SEOData(
                 title: $title,
                 description: $description,
-                url: $query === '' ? $canonicalUrl : route('blog.index', array_filter(['category' => $categorySlug])),
-                canonical_url: $query === '' ? $canonicalUrl : route('blog.index', array_filter(['category' => $categorySlug])),
+                url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
+                canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
                 robots: $query === '' ? null : 'noindex, follow',
             ),
         ];

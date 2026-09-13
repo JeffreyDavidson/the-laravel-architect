@@ -125,10 +125,12 @@ test('blog posts can be searched and reset without Alpine', async ({ page }) => 
 
     const search = page.getByRole('searchbox', { name: 'Search posts' });
     const matchingPost = page.getByRole('link', {
-        name: /What 15 Years of Web Development Taught Me/,
+        name: 'What 15 Years of Web Development Taught Me',
+        exact: true,
     });
     const otherPost = page.getByRole('link', {
-        name: /Hello World: Why I'm Starting This Blog/,
+        name: "Hello World: Why I'm Starting This Blog",
+        exact: true,
     });
 
     await search.fill('web development taught');
@@ -139,7 +141,25 @@ test('blog posts can be searched and reset without Alpine', async ({ page }) => 
 
     await page.getByRole('link', { name: 'Clear search' }).click();
     await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.getByRole('link', { name: /Hello World: Why I'm Starting This Blog/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: "Hello World: Why I'm Starting This Blog", exact: true })).toBeVisible();
+});
+
+test('blog archive search, reset, and category links work without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    await page.goto('/blog');
+    await page.getByRole('searchbox', { name: 'Search posts' }).fill('web development taught');
+    await page.getByRole('searchbox', { name: 'Search posts' }).press('Enter');
+    await expect(page).toHaveURL(/\/blog\?q=web(?:%20|\+)development(?:%20|\+)taught$/);
+    await expect(page.getByRole('link', { name: 'What 15 Years of Web Development Taught Me', exact: true })).toBeVisible();
+
+    await page.getByRole('link', { name: 'Clear search' }).click();
+    await expect(page).toHaveURL(/\/blog$/);
+    await page.getByRole('link', { name: /Laravel 2/ }).click();
+    await expect(page).toHaveURL(/\/blog\?category=laravel$/);
+
+    await context.close();
 });
 
 test('blog category filtering preserves the editorial hierarchy', async ({ page }) => {

@@ -34,7 +34,7 @@
                     >
                         <x-svg-icon name="search" class="h-4 w-4 text-gray-500" />
                     </button>
-                    @if ($categorySlug)
+                    @if ($categorySlug !== null)
                         <input type="hidden" name="category" value="{{ $categorySlug }}" />
                     @endif
                     <input
@@ -49,7 +49,7 @@
                     />
                     @if ($query !== '')
                         <a
-                            href="{{ route('blog.index', array_filter(['category' => $categorySlug])) }}"
+                            href="{{ route('blog.index', array_filter(['category' => $categorySlug], fn ($value) => $value !== null)) }}"
                             data-blog-clear
                             aria-label="Clear search"
                             class="text-brand-600 hover:text-brand-500 focus-visible:outline-brand-500 absolute inset-y-0 right-3 flex items-center rounded px-1 text-sm font-medium focus-visible:outline-2"
@@ -59,7 +59,7 @@
                     @else
                         <a
                             hidden
-                            href="{{ route('blog.index', array_filter(['category' => $categorySlug])) }}"
+                            href="{{ route('blog.index', array_filter(['category' => $categorySlug], fn ($value) => $value !== null)) }}"
                             data-blog-clear
                             aria-label="Clear search"
                             class="text-brand-600 hover:text-brand-500 focus-visible:outline-brand-500 absolute inset-y-0 right-3 flex items-center rounded px-1 text-sm font-medium focus-visible:outline-2"
@@ -73,16 +73,16 @@
                     <nav aria-label="Filter articles by category" class="-mx-1 overflow-x-auto px-1">
                         <div class="flex min-w-max items-center gap-6">
                             <a
-                                href="{{ route('blog.index', array_filter(['q' => $query ?: null])) }}"
+                                href="{{ route('blog.index', array_filter(['q' => $query !== '' ? $query : null], fn ($value) => $value !== null)) }}"
                                 data-blog-category="all"
-                                @if (! $categorySlug) aria-current="page" @endif
-                                class="category-pill @if (! $categorySlug) active @endif"
+                                @if ($categorySlug === null) aria-current="page" @endif
+                                class="category-pill @if ($categorySlug === null) active @endif"
                             >
                                 All <span>{{ $publishedPostCount }}</span>
                             </a>
                             @foreach ($categories as $category)
                                 <a
-                                    href="{{ route('blog.index', array_filter(['q' => $query ?: null, 'category' => $category->slug])) }}"
+                                    href="{{ route('blog.index', array_filter(['q' => $query !== '' ? $query : null, 'category' => $category->slug], fn ($value) => $value !== null)) }}"
                                     data-blog-category="{{ $category->slug }}"
                                     @if ($categorySlug === $category->slug) aria-current="page" @endif
                                     class="category-pill @if ($categorySlug === $category->slug) active @endif"
@@ -99,7 +99,7 @@
                 <p class="mb-8 text-sm text-gray-600 dark:text-gray-400" aria-live="polite" role="status">
                     @if ($posts->total() > 0)
                         Showing {{ $posts->firstItem() }}–{{ $posts->lastItem() }} of {{ $posts->total() }} {{ \Illuminate\Support\Str::plural('article', $posts->total()) }}.
-                    @elseif ($query !== '' || $categorySlug)
+                    @elseif ($query !== '' || $categorySlug !== null)
                         No articles found.
                     @else
                         No articles are published yet.
@@ -113,18 +113,18 @@
                     @empty
                         <div class="col-span-full py-20 text-center">
                             <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                                {{ $query !== '' || $categorySlug ? 'No matching articles' : 'No articles yet' }}
+                                {{ $query !== '' || $categorySlug !== null ? 'No matching articles' : 'No articles yet' }}
                             </h2>
                             <p class="mt-2 text-gray-600 dark:text-gray-400">
                                 @if ($query !== '')
                                     Nothing matched “{{ $query }}”. Try another search.
-                                @elseif ($categorySlug)
+                                @elseif ($categorySlug !== null)
                                     No posts in this category yet.
                                 @else
                                     New writing will appear here when it is published.
                                 @endif
                             </p>
-                            @if ($query !== '' || $categorySlug)
+                            @if ($query !== '' || $categorySlug !== null)
                                 <a
                                     href="{{ route('blog.index') }}"
                                     class="hover:border-brand-500 hover:text-brand-600 focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-brand-950 mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100"

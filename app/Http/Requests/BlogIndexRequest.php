@@ -44,7 +44,7 @@ class BlogIndexRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        if ($validator->errors()->hasAny(['category', 'page'])) {
+        if ($validator->errors()->isNotEmpty()) {
             abort(404);
         }
 

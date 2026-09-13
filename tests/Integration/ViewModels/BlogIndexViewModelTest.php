@@ -94,6 +94,28 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         ->and(PostPresenter::from($data['posts']->sole())->readingTime())->toBe(2)
         ->and($data['seoSource']->robots)->toBe('noindex, follow')
         ->and($data['seoSource']->canonical_url)->toBe(route('blog.index'));
+
+    foreach ([
+        'title match' => 'Title Match',
+        'excerpt match' => 'Unrelated',
+    ] as $term => $expectedTitle) {
+        $filtered = app(BlogIndexViewModel::class)->data(['q' => $term]);
+
+        expect($filtered['posts']->sole()->title)->toBe($expectedTitle);
+    }
+
+    $literal = Post::query()->create([
+        'title' => 'Literal %_ Marker',
+        'slug' => 'literal-marker',
+        'content' => 'A literal search marker.',
+        'user_id' => $author->getKey(),
+        'category_id' => $category->getKey(),
+        'status' => PublishStatus::Published,
+        'published_at' => now(),
+    ]);
+
+    expect(app(BlogIndexViewModel::class)->data(['q' => '%'])['posts']->sole()->is($literal))->toBeTrue()
+        ->and(app(BlogIndexViewModel::class)->data(['q' => '_'])['posts']->sole()->is($literal))->toBeTrue();
 });
 
 function createBlogIndexViewModelPost(
