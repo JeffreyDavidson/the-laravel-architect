@@ -3,7 +3,7 @@
 <article @class([
     'blog-card group flex h-full min-w-0 flex-col gap-5',
     'blog-card--editorial' => $editorial,
-    'grid gap-5 border-b border-gray-200 py-8 dark:border-[#1e2a3a] sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-start sm:gap-7' => ! $editorial,
+    'grid gap-5 border-b border-gray-200 py-8 dark:border-surface-border sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-start sm:gap-7' => ! $editorial,
 ])>
     <a href="{{ route('blog.show', $post) }}" aria-hidden="true" tabindex="-1" class="block">
         <x-post-artwork
@@ -52,13 +52,14 @@
         @endif
 
         @if ($editorial)
-            <span
-                class="blog-card__link text-brand-600 mt-auto inline-flex items-center gap-2 text-sm font-semibold"
-                aria-hidden="true"
+            <a
+                href="{{ route('blog.show', $post) }}"
+                aria-label="Read article: {{ $post->title }}"
+                class="blog-card__link focus-visible:ring-brand-500 dark:focus-visible:ring-offset-brand-950 text-brand-600 mt-auto inline-flex items-center gap-2 rounded-sm text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-white"
             >
                 Read article
                 <x-svg-icon name="arrow-right" class="h-4 w-4" />
-            </span>
+            </a>
         @endif
     </div>
 </article>

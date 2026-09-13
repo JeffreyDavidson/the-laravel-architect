@@ -187,7 +187,11 @@
     $collectionPositionOffset = 0;
 
     if (request()->routeIs('blog.index') && isset($posts)) {
-        $collectionPage = ['name' => 'Blog', 'url' => route('blog.index')];
+        $collectionPage = [
+            'name' => isset($selectedCategory) && $selectedCategory ? $selectedCategory->name.' Articles' : 'Blog',
+            'url' => isset($seoSource) ? $seoSource->canonical_url : route('blog.index'),
+        ];
+        $collectionPositionOffset = ($posts->currentPage() - 1) * $posts->perPage();
 
         foreach ($posts as $collectionPost) {
             $collectionItems[] = [
@@ -290,7 +294,7 @@
     $breadcrumbItems[] = ['name' => 'Home', 'url' => $siteUrl];
 
     if (request()->routeIs('blog.index')) {
-        $breadcrumbItems[] = ['name' => 'Blog', 'url' => route('blog.index')];
+        $breadcrumbItems[] = ['name' => 'Blog', 'url' => isset($seoSource) ? $seoSource->canonical_url : route('blog.index')];
     } elseif (request()->routeIs('blog.show') && isset($post)) {
         $breadcrumbItems[] = ['name' => 'Blog', 'url' => route('blog.index')];
         $breadcrumbItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];

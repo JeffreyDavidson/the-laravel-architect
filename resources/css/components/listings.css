@@ -48,7 +48,7 @@
     position: relative;
     cursor: pointer;
     padding-block: 0.5rem;
-    color: #6b7280;
+    color: var(--color-archive-muted);
     font-size: 0.875rem;
     font-weight: 600;
     white-space: nowrap;
@@ -69,13 +69,13 @@
 
 .category-pill span {
     margin-left: 0.25rem;
-    color: #5c6675;
+    color: var(--color-archive-count);
     font-variant-numeric: tabular-nums;
 }
 
 .category-pill:hover,
 .category-pill.active {
-    color: #245b91;
+    color: var(--color-archive-link);
 }
 
 .category-pill.active::after {
@@ -83,17 +83,9 @@
     transform: scaleX(1);
 }
 
-.dark .category-pill {
-    color: #9ca3af;
-}
-
-.dark .category-pill span {
-    color: #9ca3af;
-}
-
 .dark .category-pill:hover,
 .dark .category-pill.active {
-    color: var(--color-brand-400);
+    color: var(--color-archive-link);
 }
 
 @media (prefers-reduced-motion: reduce) {
