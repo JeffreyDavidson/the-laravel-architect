@@ -77,6 +77,8 @@ Uploaded images and audio are validated and stored through Laravel's `public` fi
 
 Newsletter subscriptions use a signed, expiring double-opt-in link followed by an explicit confirmation form, preventing link scanners from changing subscriber state. Subscriber-specific signed unsubscribe links use the same explicit form pattern and should be included in every newsletter. Contact and newsletter submissions include abuse controls. Content changes are recorded with Spatie Activity Log.
 
+Newsletter confirmation emails have a 15-minute cooldown per normalized email address, coordinated through hashed cache keys and an atomic lock. Repeated requests during that window preserve the existing confirmation link, including requests from different IP addresses. An enqueue failure leaves retries available; the public response does not disclose subscription status.
+
 Application responses set a constrained Content Security Policy plus cross-origin isolation, clickjacking, transport-security, MIME-sniffing, referrer, and browser-feature policy headers globally. Public scripts use a per-request nonce instead of `unsafe-inline` or `unsafe-eval`; the Filament admin path retains those allowances for framework compatibility.
 
 The `/up` health endpoint verifies both the Laravel runtime and access to the migrated application database. Production monitoring should treat any non-200 response as unhealthy.
@@ -102,6 +104,8 @@ Create a Cloudflare Turnstile widget for the production host and set `TURNSTILE_
 Set `RUNTIME_HEALTH_ENABLED=true` in production. The scheduler records its heartbeat and dispatches a queued probe every minute; `/up` returns an unhealthy response when either heartbeat is older than `RUNTIME_HEALTH_MAX_AGE` seconds.
 
 Production and staging observability use isolated Laravel Nightwatch environments plus a shared Sentry project labeled with the matching deployment environment. Both integrations are disabled by default for local development and tests. Nightwatch samples at most 10% of web requests and applies the application's strict telemetry redaction layer. Sentry is limited to exception reporting: tracing and profiling remain disabled, default personally identifiable information and SQL bindings are not collected, and each release is identified by the immutable Forge commit. Production verification enforces these privacy controls and rejects missing or mismatched environment labels. Keep all Nightwatch tokens and the Sentry DSN in Forge, never in the repository. See [`docs/operations.md`](docs/operations.md) for setup, alert baselines, deployment tracking, and verification.
+
+Sentry request-body capture is disabled independently of its default PII setting. Event and breadcrumb callbacks filter request data, query strings, sensitive keyed values, email addresses, and token-bearing URL paths while retaining exception stack locations.
 
 Set `QUEUE_FAILED_JOB_RETENTION_HOURS` to the retention window. Laravel's native scheduled pruning removes expired failure records, while Nightwatch reports new failed jobs without turning retained failures into repeated scheduler exceptions.
 

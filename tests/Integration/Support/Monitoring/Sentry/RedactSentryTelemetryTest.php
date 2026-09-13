@@ -16,7 +16,7 @@ it('redacts sensitive request and breadcrumb data while retaining exception diag
         ->setRequest([
             'url' => 'https://thelaravelarchitect.com/newsletter/confirm/42/confirmation-token-012345678901234567890123456789',
             'query_string' => 'token=confirmation-token&email=reader@example.com',
-            'data' => ['email' => 'reader@example.com'],
+            'data' => ['email' => 'reader@example.com', 'message' => 'Private project brief from the contact form'],
         ])
         ->setExtra(['api_key' => 'youtube-secret-key'])
         ->setMessage('Unable to process reader@example.com')
@@ -42,7 +42,7 @@ it('redacts sensitive request and breadcrumb data while retaining exception diag
     $payload = EventItem::toEnvelopeItem($event);
 
     expect($payload)
-        ->not->toContain('confirmation-token', 'reader@example.com', 'youtube-secret-key', 'token=')
+        ->not->toContain('confirmation-token', 'reader@example.com', 'youtube-secret-key', 'token=', 'Private project brief')
         ->toContain('RequestNewsletterSubscription.php', '"lineno":38')
         ->and($event->getRequest()['url'])->toBe('https://thelaravelarchitect.com/newsletter/confirm/[Filtered]/[Filtered]')
         ->and($event->getRequest()['query_string'])->toBe('[Filtered]')
