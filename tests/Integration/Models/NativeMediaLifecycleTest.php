@@ -74,6 +74,48 @@ it('keeps replaced native media when the transaction rolls back', function () {
     Storage::disk('public')->assertExists('projects/new.png');
 });
 
+it('preserves original images and responsive variants when replacement rolls back', function () {
+    $image = UploadedFile::fake()->image('project.png', 1280, 8)->getContent();
+    Storage::disk('public')->put('projects/original.png', $image);
+    Storage::disk('public')->put('projects/replacement.png', $image);
+    $project = Project::query()->create([
+        'title' => 'Responsive rollback',
+        'description' => 'Preserve committed media.',
+        'status' => PublishStatus::Draft,
+        'featured_image_path' => 'projects/original.png',
+    ]);
+
+    DB::beginTransaction();
+    $project->update(['featured_image_path' => 'projects/replacement.png']);
+    DB::rollBack();
+
+    expect($project->refresh()->featured_image_path)->toBe('projects/original.png');
+    Storage::disk('public')->assertExists([
+        'projects/original.png',
+        'projects/responsive/original-640.webp',
+        'projects/responsive/original-1280.webp',
+    ]);
+});
+
+it('preserves cached OG images when post deletion rolls back', function () {
+    Storage::fake('local');
+    $post = Post::query()->create([
+        'title' => 'OG rollback',
+        'content' => 'Preserve the committed post.',
+        'user_id' => User::factory()->create()->getKey(),
+        'status' => PublishStatus::Draft,
+    ]);
+    $path = "og-images/{$post->getKey()}/cached.png";
+    Storage::disk('local')->put($path, 'cached image');
+
+    DB::beginTransaction();
+    $post->delete();
+    DB::rollBack();
+
+    expect(Post::query()->whereKey($post->getKey())->exists())->toBeTrue();
+    Storage::disk('local')->assertExists($path);
+});
+
 it('deletes replaced native media after the transaction commits', function () {
     Storage::disk('public')->put('projects/old.png', 'old');
     Storage::disk('public')->put('projects/new.png', 'new');
@@ -315,4 +357,28 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
         'podcasts/cover.png',
         'episodes/audio/episode.mp3',
     ]);
+});
+
+it('keeps podcast and episode files when deletion is cancelled without an application transaction', function () {
+    Storage::disk('public')->put('podcasts/kept.png', 'cover');
+    Storage::disk('public')->put('episodes/audio/kept.mp3', 'audio');
+    $podcast = Podcast::query()->create([
+        'name' => 'Cancelled deletion',
+        'description' => 'Preserve record-owned files on failure.',
+        'cover_image_path' => 'podcasts/kept.png',
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->getKey(),
+        'title' => 'Episode that must remain',
+        'description' => 'Preserve episode files on failure.',
+        'audio_path' => 'episodes/audio/kept.mp3',
+    ]);
+    Podcast::deleting(fn (): bool => false);
+
+    $deleted = $podcast->delete();
+
+    expect($deleted)->toBeFalse()
+        ->and(Podcast::query()->whereKey($podcast->getKey())->exists())->toBeTrue()
+        ->and(Episode::query()->whereKey($episode->getKey())->exists())->toBeTrue();
+    Storage::disk('public')->assertExists(['podcasts/kept.png', 'episodes/audio/kept.mp3']);
 });

@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
+/**
+ * @param  array<string, mixed>  $attributes
+ * @return array{Podcast, Episode}
+ */
 function createPublicEpisode(array $attributes = []): array
 {
     $podcast = Podcast::query()->create([
