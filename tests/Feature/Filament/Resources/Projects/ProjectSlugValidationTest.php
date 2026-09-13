@@ -66,3 +66,19 @@ it('rejects a non-normalized project slug when editing a project', function () {
 
     expect($project->refresh()->slug)->toBe('project-title');
 });
+
+it('preserves an existing project slug when the title changes', function () {
+    $project = Project::query()->create([
+        'title' => 'Project title',
+        'slug' => 'curated-project-slug',
+        'description' => 'Project description',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    livewire(EditProject::class, ['record' => $project->getRouteKey()])
+        ->fillForm(['title' => 'Updated project title', 'slug' => 'curated-project-slug'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($project->refresh()->slug)->toBe('curated-project-slug');
+});
