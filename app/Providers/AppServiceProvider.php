@@ -10,6 +10,8 @@ use App\Support\Monitoring\Nightwatch\RedactNightwatchOutgoingRequest;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchQuery;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
 use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
+use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
+use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nightwatch\Facades\Nightwatch;
+use Sentry\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,7 +30,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->afterResolving(ClientBuilder::class, function (ClientBuilder $clientBuilder): void {
+            $clientBuilder->getOptions()
+                ->setBeforeSendCallback($this->app->make(RedactSentryEvent::class))
+                ->setBeforeBreadcrumbCallback($this->app->make(RedactSentryBreadcrumb::class));
+        });
     }
 
     /**

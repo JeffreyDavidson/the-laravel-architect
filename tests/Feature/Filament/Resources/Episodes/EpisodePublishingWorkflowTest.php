@@ -6,6 +6,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
@@ -91,7 +92,7 @@ it('keeps an episode hidden while its published date is scheduled in the future'
     expect($episode->status)->toBe(PublishStatus::Published)
         ->and($episode->published_at)->not->toBeNull();
 
-    expect($episode->published_at?->isFuture())->toBeTrue();
+    expect(Date::parse($episode->published_at)->isFuture())->toBeTrue();
 
     $this->get(route('podcast.episode', [$episode->podcast, $episode]))->assertNotFound();
     $this->get('/sitemap.xml')->assertDontSee(route('podcast.episode', [$episode->podcast, $episode]), false);

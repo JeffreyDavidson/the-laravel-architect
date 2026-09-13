@@ -7,6 +7,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
 
@@ -15,6 +16,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
     $this->actingAs($user);
+    Storage::fake('public');
     $this->podcast = Podcast::query()->create([
         'name' => 'Workflow podcast',
         'slug' => 'workflow-podcast',
@@ -65,4 +67,31 @@ it('updates an episode through the authenticated resource form', function () {
         ->slug->toBe('updated-episode-title')
         ->description->toBe('Updated description')
         ->status->toBe(PublishStatus::Published);
+});
+
+it('preserves hosted audio when an uploaded source is present during an edit', function () {
+    Storage::disk('public')->put('episodes/audio/episode.mp3', 'audio');
+    $episode = Episode::query()->create([
+        'podcast_id' => $this->podcast->id,
+        'title' => 'Original episode title',
+        'slug' => 'original-episode-title',
+        'description' => 'Original description',
+        'audio_path' => 'episodes/audio/episode.mp3',
+        'audio_url' => 'https://cdn.example.test/episode.mp3',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
+        ->fillForm([
+            'title' => 'Updated episode title',
+            'slug' => 'original-episode-title',
+            'description' => 'Original description',
+            'status' => PublishStatus::Draft,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($episode->refresh())
+        ->audio_path->toBe('episodes/audio/episode.mp3')
+        ->audio_url->toBe('https://cdn.example.test/episode.mp3');
 });

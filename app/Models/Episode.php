@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -43,6 +44,68 @@ class Episode extends Model implements Publishable
             'status' => PublishStatus::class,
             'published_at' => 'datetime',
         ];
+    }
+
+    public function publicAudioUrl(): ?string
+    {
+        $path = $this->getRawOriginal('audio_path');
+
+        if (is_string($path) && filled($path)) {
+            return Storage::disk('public')->url($path);
+        }
+
+        $url = $this->getRawOriginal('audio_url');
+
+        return is_string($url) && filled($url) ? $url : null;
+    }
+
+    public function publicEmbedUrl(): ?string
+    {
+        $url = $this->getRawOriginal('embed_url');
+
+        if (! is_string($url) || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower((string) ($parts['host'] ?? ''));
+
+        if ($scheme !== 'https' || ! in_array($host, [
+            'open.spotify.com',
+            'embed.podcasts.apple.com',
+        ], true)) {
+            return null;
+        }
+
+        if ($host === 'open.spotify.com' && ! str_starts_with((string) ($parts['path'] ?? ''), '/embed/')) {
+            return null;
+        }
+
+        return $url;
+    }
+
+    public function publicEmbedLink(): ?string
+    {
+        $url = $this->getRawOriginal('embed_url');
+
+        if (! is_string($url) || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower((string) ($parts['host'] ?? ''));
+
+        if ($scheme !== 'https' || ! in_array($host, [
+            'open.spotify.com',
+            'embed.podcasts.apple.com',
+            'podcasts.apple.com',
+        ], true)) {
+            return null;
+        }
+
+        return $url;
     }
 
     /** @return BelongsTo<Podcast, $this> */

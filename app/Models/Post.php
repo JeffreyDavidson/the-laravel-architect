@@ -59,7 +59,15 @@ class Post extends Model implements Publishable
     protected static function booted(): void
     {
         static::deleted(function (Post $post): void {
-            app(OgImageCache::class)->forget($post);
+            $postKey = $post->getKey();
+
+            if (! is_int($postKey) && ! is_string($postKey)) {
+                return;
+            }
+
+            $post->getConnection()->afterCommit(function () use ($postKey): void {
+                app(OgImageCache::class)->forgetByKey($postKey);
+            });
         });
     }
 

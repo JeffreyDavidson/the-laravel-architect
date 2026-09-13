@@ -94,7 +94,12 @@ final class AddSecurityHeaders
             'font-src' => ["'self'", 'data:'],
             'form-action' => ["'self'"],
             'frame-ancestors' => ["'self'"],
-            'frame-src' => ['https://challenges.cloudflare.com', 'https://www.youtube-nocookie.com'],
+            'frame-src' => [
+                'https://challenges.cloudflare.com',
+                'https://www.youtube-nocookie.com',
+                'https://open.spotify.com',
+                'https://embed.podcasts.apple.com',
+            ],
             'img-src' => ["'self'", 'data:', 'blob:', 'https:'],
             'media-src' => ["'self'", 'blob:', 'https:'],
             'object-src' => ["'none'"],

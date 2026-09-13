@@ -54,6 +54,12 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Audit PHP dependencies
+        run: composer audit --locked
+
+      - name: Audit production JavaScript dependencies
+        run: npm audit --omit=dev
+
       - name: Prepare application
         run: |
           cp .env.example .env
@@ -68,6 +74,9 @@ jobs:
 
       - name: Run static analysis
         run: composer test:types
+
+      - name: Run test static analysis
+        run: composer test:types:pest
 
       - name: Check Filament code quality
         run: composer test:filament

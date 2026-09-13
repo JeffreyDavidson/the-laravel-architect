@@ -125,53 +125,54 @@ test('blog posts can be searched and reset without Alpine', async ({ page }) => 
 
     const search = page.getByRole('searchbox', { name: 'Search posts' });
     const matchingPost = page.getByRole('link', {
-        name: /What 15 Years of Web Development Taught Me/,
+        name: 'What 15 Years of Web Development Taught Me',
+        exact: true,
     });
     const otherPost = page.getByRole('link', {
-        name: /Hello World: Why I'm Starting This Blog/,
+        name: "Hello World: Why I'm Starting This Blog",
+        exact: true,
     });
 
     await search.fill('web development taught');
+    await search.press('Enter');
+    await expect(page).toHaveURL(/\/blog\?q=web(?:%20|\+)development(?:%20|\+)taught$/);
     await expect(matchingPost).toBeVisible();
     await expect(otherPost).toBeHidden();
 
-    await page.getByRole('button', { name: 'Clear search' }).click();
-    await expect(search).toHaveValue('');
-    await expect(otherPost).toBeVisible();
+    await page.getByRole('link', { name: 'Clear search' }).click();
+    await expect(page).toHaveURL(/\/blog$/);
+    await expect(page.getByRole('link', { name: "Hello World: Why I'm Starting This Blog", exact: true })).toBeVisible();
+});
+
+test('blog archive search, reset, and category links work without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    await page.goto('/blog');
+    await page.getByRole('searchbox', { name: 'Search posts' }).fill('web development taught');
+    await page.getByRole('searchbox', { name: 'Search posts' }).press('Enter');
+    await expect(page).toHaveURL(/\/blog\?q=web(?:%20|\+)development(?:%20|\+)taught$/);
+    await expect(page.getByRole('link', { name: 'What 15 Years of Web Development Taught Me', exact: true })).toBeVisible();
+
+    await page.getByRole('link', { name: 'Clear search' }).click();
+    await expect(page).toHaveURL(/\/blog$/);
+    await page.getByRole('link', { name: /Laravel 2/ }).click();
+    await expect(page).toHaveURL(/\/blog\?category=laravel$/);
+
+    await context.close();
 });
 
 test('blog category filtering preserves the editorial hierarchy', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/blog');
 
-    const laravelFilter = page.getByRole('button', { name: /Laravel 2/ });
-    const transitionSupported = await page.evaluate(() => typeof document.startViewTransition === 'function');
-
-    await page.evaluate(() => {
-        if (!document.startViewTransition) {
-            return;
-        }
-
-        const startViewTransition = document.startViewTransition.bind(document);
-
-        document.startViewTransition = (update) => {
-            document.documentElement.dataset.blogTransitionStarted = 'true';
-
-            return startViewTransition(update);
-        };
-    });
+    const laravelFilter = page.getByRole('link', { name: /Laravel 2/ });
 
     await laravelFilter.click();
 
-    await expect(laravelFilter).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('[data-blog-post]:visible')).toHaveCount(2);
-    await expect(page.locator('[data-blog-post][data-visible-index="0"]')).toHaveCount(1);
-
-    if (transitionSupported) {
-        await expect(page.locator('html')).toHaveAttribute('data-blog-transition-started', 'true');
-    }
-
-    await expect.poll(() => page.locator('html').evaluate((element) => element.style.viewTransitionName)).toBe('');
+    await expect(page).toHaveURL(/\/blog\?category=laravel$/);
+    await expect(laravelFilter).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('[data-blog-post]')).toHaveCount(2);
 });
 
 test('static public pages avoid downloading optional interaction bundles', async ({ page }) => {

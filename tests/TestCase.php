@@ -36,12 +36,13 @@ abstract class TestCase extends BaseTestCase
 
     protected function browserPage(string $url, string $device): AwaitableWebpage
     {
-        $page = \visit($url)->on()->{$device}()->wait(0);
+        $devices = \visit($url)->on();
+        $page = match ($device) {
+            'mobile' => $devices->mobile(),
+            'desktop' => $devices->desktop(),
+            default => throw new \InvalidArgumentException("Unsupported browser test device: {$device}"),
+        };
 
-        if (! $page instanceof AwaitableWebpage) {
-            throw new \RuntimeException('Expected a browser page after selecting a device.');
-        }
-
-        return $page;
+        return $page->wait(0);
     }
 }

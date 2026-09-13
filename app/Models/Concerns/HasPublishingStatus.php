@@ -16,7 +16,7 @@ trait HasPublishingStatus
     {
         $configuration = static::publishingStatusConfiguration();
         if ($configuration->status !== null) {
-            $query->where($configuration->status, PublishStatus::Published);
+            $query->whereIn($configuration->status, static::publishingStatuses());
         }
 
         $publishedAtColumn = static::publishingStatusConfiguration()->publishedAt;
@@ -34,7 +34,7 @@ trait HasPublishingStatus
             ? PublishStatus::Published
             : $this->getAttribute($configuration->status);
 
-        return $status === PublishStatus::Published
+        return in_array($status, static::publishingStatuses(), true)
             && $this->publicationDateHasArrived();
     }
 
@@ -50,5 +50,11 @@ trait HasPublishingStatus
         }
 
         return $status;
+    }
+
+    /** @return list<PublishStatus> */
+    protected static function publishingStatuses(): array
+    {
+        return [PublishStatus::Published, PublishStatus::Scheduled];
     }
 }

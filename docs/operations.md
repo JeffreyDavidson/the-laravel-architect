@@ -41,6 +41,8 @@ SENTRY_SEND_DEFAULT_PII=false
 
 `SENTRY_RELEASE` falls back to Forge's `FORGE_DEPLOY_COMMIT`, but an explicit value may be used when verifying an environment outside a Forge deployment. Never print the DSN in deployment logs or diagnostics.
 
+The application fixes `sentry.max_request_body_size` to `never`, and production verification enforces it. Container-resolved event and breadcrumb callbacks also filter request data, query strings, sensitive keyed values, email addresses, and token-bearing URL paths. They preserve exception classes and stack locations for diagnosis. These targeted filters do not make arbitrary free-form application logs safe to populate with personal data or credentials.
+
 ### Nightwatch
 
 Nightwatch is opt-in. In the Nightwatch dashboard, create the application environments, then use Forge's built-in Nightwatch integration from each site's Overview tab. Supply the matching environment-specific token through Forge, enable monitoring, and set these values:

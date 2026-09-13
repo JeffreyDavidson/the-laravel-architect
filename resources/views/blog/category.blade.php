@@ -8,7 +8,7 @@
 
 @section('content')
     {{-- Hero --}}
-    <header class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
+    <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
             <a
                 href="{{ route('blog.index') }}"
@@ -28,7 +28,7 @@
     </header>
 
     {{-- Posts --}}
-    <div class="bg-gray-50 dark:bg-[#0b1016]">
+    <div class="dark:bg-surface-page bg-gray-50">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
             <div class="space-y-6">
                 @forelse ($posts as $post)

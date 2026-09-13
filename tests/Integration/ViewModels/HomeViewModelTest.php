@@ -6,13 +6,10 @@ use App\Models\Video;
 use App\ViewModels\HomeViewModel;
 use DateTimeInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
 it('builds the bounded public homepage payload', function () {
-    Cache::put('youtube.subscriber_count', 4242);
-
     foreach (range(1, 5) as $sortOrder) {
         createHomeViewModelProject($sortOrder);
     }
@@ -47,7 +44,6 @@ it('builds the bounded public homepage payload', function () {
         'latestPosts',
         'featuredProjects',
         'podcast',
-        'youtubeSubscribers',
         'latestYouTubeVideos',
         'publishedPostCount',
         'publishedProjectCount',
@@ -56,7 +52,6 @@ it('builds the bounded public homepage payload', function () {
         ->and($data['latestPosts'])->toBeEmpty()
         ->and($data['podcast'])->toBeNull()
         ->and($data['featuredProjects']->pluck('sort_order')->all())->toBe([1, 2, 3, 4])
-        ->and($data['youtubeSubscribers'])->toBe(4242)
         ->and($data['latestYouTubeVideos']->pluck('youtube_id')->all())->toBe(['video-1', 'video-2', 'video-3'])
         ->and($data['publishedPostCount'])->toBe(0)
         ->and($data['publishedProjectCount'])->toBe(5);

@@ -21,7 +21,6 @@ it('creates a tag with the normalized slug generated from its name', function ()
     livewire(CreateTag::class)
         ->fillForm([
             'name' => 'Tag name',
-            'slug' => 'tag-name',
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -29,19 +28,19 @@ it('creates a tag with the normalized slug generated from its name', function ()
     expect(Tag::query()->sole()->slug)->toBe('tag-name');
 });
 
-it('rejects a name that cannot generate a valid slug', function (string $name) {
+it('rejects a slug that is empty or cannot be normalized', function (string $name, string $slug) {
     livewire(CreateTag::class)
         ->fillForm([
             'name' => $name,
-            'slug' => 'spoofed-valid-slug',
+            'slug' => $slug,
         ])
         ->call('create')
         ->assertHasFormErrors(['slug']);
 
     expect(Tag::query()->exists())->toBeFalse();
 })->with([
-    'empty generated slug' => '!!!',
-    'overlong generated slug' => str_repeat('a', 256),
+    'empty generated slug' => ['!!!', ''],
+    'overlong generated slug' => [str_repeat('a', 256), str_repeat('a', 256)],
 ]);
 
 it('rejects a duplicate localized tag slug across tag types', function () {
@@ -53,7 +52,7 @@ it('rejects a duplicate localized tag slug across tag types', function () {
     livewire(CreateTag::class)
         ->fillForm([
             'name' => 'Tag name',
-            'slug' => 'spoofed-unique-slug',
+            'slug' => 'tag-name',
             'type' => 'technology',
         ])
         ->call('create')
@@ -75,7 +74,7 @@ it('rejects a duplicate localized tag slug when editing a tag', function () {
     livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm([
             'name' => 'Existing tag',
-            'slug' => 'spoofed-unique-slug',
+            'slug' => 'existing-tag',
         ])
         ->call('save')
         ->assertHasFormErrors(['slug']);
@@ -96,6 +95,22 @@ it('allows a tag to retain its localized slug when editing', function () {
     expect($tag->refresh())
         ->name->toBe('Tag name')
         ->slug->toBe('tag-name');
+});
+
+it('preserves an existing tag slug when the name changes', function () {
+    $tag = Tag::query()->create([
+        'name' => 'Tag name',
+        'slug' => 'curated-tag-slug',
+    ]);
+
+    livewire(EditTag::class, ['record' => $tag->getRouteKey()])
+        ->fillForm(['name' => 'Updated tag name', 'slug' => 'curated-tag-slug'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($tag->refresh())
+        ->name->toBe('Updated tag name')
+        ->slug->toBe('curated-tag-slug');
 });
 
 it('resolves the validated localized slug on the public tag route', function () {

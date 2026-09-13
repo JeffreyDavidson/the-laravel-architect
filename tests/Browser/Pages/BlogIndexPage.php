@@ -4,5 +4,5 @@ namespace Tests\Browser\Pages;
 
 final class BlogIndexPage extends PublicPage
 {
-    protected const ROUTE = 'blog.index';
+    protected const string ROUTE = 'blog.index';
 }

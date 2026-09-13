@@ -76,3 +76,20 @@ it('rejects a non-normalized episode slug when editing an episode', function () 
 
     expect($episode->refresh()->slug)->toBe('episode-title');
 });
+
+it('preserves an existing episode slug when the title changes', function () {
+    $episode = Episode::query()->create([
+        'podcast_id' => $this->podcast->id,
+        'title' => 'Episode title',
+        'slug' => 'curated-episode-slug',
+        'description' => 'Episode description',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
+        ->fillForm(['title' => 'Updated episode title', 'slug' => 'curated-episode-slug'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($episode->refresh()->slug)->toBe('curated-episode-slug');
+});
