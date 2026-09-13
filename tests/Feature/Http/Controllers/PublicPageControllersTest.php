@@ -11,11 +11,141 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
+
+/**
+ * @return array<array-key, mixed>
+ */
+function decodeStructuredData(string|false $content): array
+{
+    if (! is_string($content)) {
+        throw new RuntimeException('The response did not contain HTML content.');
+    }
+
+    if (preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches) !== 1) {
+        throw new RuntimeException('The response did not contain structured data.');
+    }
+
+    $json = $matches[1];
+
+    $structuredData = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+
+    if (! is_array($structuredData)) {
+        throw new RuntimeException('The structured data was not an object.');
+    }
+
+    return $structuredData;
+}
+
+/**
+ * @return list<array<array-key, mixed>>
+ */
+function structuredDataGraph(mixed $value): array
+{
+    if (! is_array($value)) {
+        throw new RuntimeException('The structured data graph was not an array.');
+    }
+
+    $graph = [];
+
+    foreach ($value as $item) {
+        if (! is_array($item)) {
+            throw new RuntimeException('The structured data graph contained an invalid item.');
+        }
+
+        $graph[] = $item;
+    }
+
+    return $graph;
+}
+
+/**
+ * @return array<array-key, mixed>
+ */
+function structuredDataObject(mixed $value): array
+{
+    if (! is_array($value)) {
+        throw new RuntimeException('The structured data item was not an object.');
+    }
+
+    return $value;
+}
+
+/**
+ * @return array<array-key, mixed>
+ */
+function structuredDataListItem(mixed $value, int $index): array
+{
+    if (! is_array($value)) {
+        throw new RuntimeException('The structured data list was not an array.');
+    }
+
+    return structuredDataObject($value[$index] ?? null);
+}
+
+/**
+ * @return array<string, array{file: string}>
+ */
+function assetManifest(): array
+{
+    $content = file_get_contents(public_path('build/manifest.json'));
+
+    if (! is_string($content)) {
+        throw new RuntimeException('The Vite manifest could not be read.');
+    }
+
+    $decoded = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+
+    if (! is_array($decoded)) {
+        throw new RuntimeException('The Vite manifest was not an object.');
+    }
+
+    $manifest = [];
+
+    foreach ($decoded as $key => $entry) {
+        if (! is_string($key) || ! is_array($entry) || ! is_string($entry['file'] ?? null)) {
+            throw new RuntimeException('The Vite manifest contained an invalid entry.');
+        }
+
+        $manifest[$key] = ['file' => $entry['file']];
+    }
+
+    return $manifest;
+}
+
+function responseContent(string|false $content): string
+{
+    if (! is_string($content)) {
+        throw new RuntimeException('The response did not contain HTML content.');
+    }
+
+    return $content;
+}
+
+function stringPosition(string $haystack, string $needle): int
+{
+    $position = strpos($haystack, $needle);
+
+    if ($position === false) {
+        throw new RuntimeException("The response did not contain {$needle}.");
+    }
+
+    return $position;
+}
+
+function configuredString(mixed $value): string
+{
+    if (! is_string($value) && ! is_int($value) && ! is_float($value)) {
+        throw new RuntimeException('The configured value was not a string.');
+    }
+
+    return (string) $value;
+}
 
 beforeEach(function () {
     Http::fake([
@@ -132,11 +262,10 @@ it('renders canonical structured data for the site and blog posts', function () 
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $website = collect($structuredData['@graph'])->firstWhere('@type', 'WebSite');
-    $article = collect($structuredData['@graph'])->firstWhere('@type', 'Article');
+    $structuredData = decodeStructuredData($content);
+    $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+    $website = structuredDataObject(collect($graph)->firstWhere('@type', 'WebSite'));
+    $article = structuredDataObject(collect($graph)->firstWhere('@type', 'Article'));
 
     expect($website)
         ->toMatchArray([
@@ -166,10 +295,9 @@ it('renders canonical structured data for static public pages', function (string
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $page = collect($structuredData['@graph'])->firstWhere('@type', $type);
+    $structuredData = decodeStructuredData($content);
+    $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+    $page = structuredDataObject(collect($graph)->firstWhere('@type', $type));
 
     expect($page)->toMatchArray([
         '@id' => $url.'#page',
@@ -217,11 +345,10 @@ it('renders canonical structured data for podcasts and episodes', function () {
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $podcastSeries = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastSeries');
-    $podcastEpisode = collect($structuredData['@graph'])->firstWhere('@type', 'PodcastEpisode');
+    $structuredData = decodeStructuredData($content);
+    $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+    $podcastSeries = structuredDataObject(collect($graph)->firstWhere('@type', 'PodcastSeries'));
+    $podcastEpisode = structuredDataObject(collect($graph)->firstWhere('@type', 'PodcastEpisode'));
 
     expect($podcastSeries)
         ->toMatchArray([
@@ -240,7 +367,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
             'url' => route('podcast.episode', [$podcast, $episode]),
             'episodeNumber' => 12,
             'duration' => 'PT42M',
-            'datePublished' => $episode->published_at?->toIso8601String(),
+            'datePublished' => Date::parse($episode->published_at)->toIso8601String(),
             'partOfSeries' => [
                 '@type' => 'PodcastSeries',
                 '@id' => route('podcast.show', $podcast).'#podcast',
@@ -263,10 +390,9 @@ it('renders canonical structured data for project case studies', function () {
         ->assertOk()
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $projectCaseStudy = collect($structuredData['@graph'])->firstWhere('@type', 'CreativeWork');
+    $structuredData = decodeStructuredData($content);
+    $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+    $projectCaseStudy = structuredDataObject(collect($graph)->firstWhere('@type', 'CreativeWork'));
 
     expect($projectCaseStudy)
         ->toMatchArray([
@@ -284,7 +410,7 @@ it('renders canonical structured data for project case studies', function () {
                 $project->url,
             ],
         ])
-        ->and(collect($structuredData['@graph'])->pluck('@type'))
+        ->and(collect($graph)->pluck('@type'))
         ->not->toContain('SoftwareApplication');
 });
 
@@ -334,11 +460,10 @@ it('renders canonical structured data for public content collections', function 
             ->assertOk()
             ->getContent();
 
-        preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
-        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+        $structuredData = decodeStructuredData($content);
+        $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+        $collectionPage = structuredDataObject(collect($graph)->firstWhere('@type', 'CollectionPage'));
+        $itemList = structuredDataObject(collect($graph)->firstWhere('@type', 'ItemList'));
 
         expect($collectionPage)
             ->toMatchArray([
@@ -409,12 +534,11 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
             ->assertSee('<meta property="og:url" content="'.$url.'">', false)
             ->getContent();
 
-        preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-        $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-        $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
-        $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
-        $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
+        $structuredData = decodeStructuredData($content);
+        $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+        $collectionPage = structuredDataObject(collect($graph)->firstWhere('@type', 'CollectionPage'));
+        $itemList = structuredDataObject(collect($graph)->firstWhere('@type', 'ItemList'));
+        $breadcrumbList = structuredDataObject(collect($graph)->firstWhere('@type', 'BreadcrumbList'));
 
         expect($collectionPage)
             ->toMatchArray([
@@ -425,12 +549,12 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
             ->toMatchArray([
                 '@id' => $url.'#items',
             ])
-            ->and($itemList['itemListElement'][0])
+            ->and(structuredDataListItem($itemList['itemListElement'] ?? null, 0))
             ->toMatchArray([
                 '@type' => 'ListItem',
                 'position' => 11,
             ])
-            ->and($breadcrumbList['itemListElement'][2])
+            ->and(structuredDataListItem($breadcrumbList['itemListElement'] ?? null, 2))
             ->toMatchArray([
                 '@type' => 'ListItem',
                 'position' => 3,
@@ -501,12 +625,11 @@ it('uses page-specific metadata for paginated podcast archives', function () {
         ->assertDontSee('Latest Episode')
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $collectionPage = collect($structuredData['@graph'])->firstWhere('@type', 'CollectionPage');
-    $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
-    $breadcrumbList = collect($structuredData['@graph'])->firstWhere('@type', 'BreadcrumbList');
+    $structuredData = decodeStructuredData($content);
+    $graph = structuredDataGraph($structuredData['@graph'] ?? null);
+    $collectionPage = structuredDataObject(collect($graph)->firstWhere('@type', 'CollectionPage'));
+    $itemList = structuredDataObject(collect($graph)->firstWhere('@type', 'ItemList'));
+    $breadcrumbList = structuredDataObject(collect($graph)->firstWhere('@type', 'BreadcrumbList'));
 
     expect($collectionPage)
         ->toMatchArray([
@@ -519,14 +642,14 @@ it('uses page-specific metadata for paginated podcast archives', function () {
             '@id' => $url.'#items',
             'numberOfItems' => 1,
         ])
-        ->and($itemList['itemListElement'][0])
+        ->and(structuredDataListItem($itemList['itemListElement'] ?? null, 0))
         ->toMatchArray([
             '@type' => 'ListItem',
             'position' => 21,
             'name' => 'Architecture Session 21',
             'item' => route('podcast.episode', [$podcast, 'architecture-session-21']),
         ])
-        ->and($breadcrumbList['itemListElement'][2])
+        ->and(structuredDataListItem($breadcrumbList['itemListElement'] ?? null, 2))
         ->toMatchArray([
             '@type' => 'ListItem',
             'position' => 3,
@@ -555,9 +678,9 @@ it('returns not found for out-of-range podcast archive pages', function () {
 });
 
 it('keeps one main landmark on public index pages', function (string $routeName) {
-    $content = $this->get(route($routeName))
+    $content = responseContent($this->get(route($routeName))
         ->assertOk()
-        ->getContent();
+        ->getContent());
 
     expect(substr_count($content, '<main'))->toBe(1)
         ->and(substr_count($content, '</main>'))->toBe(1);
@@ -567,13 +690,13 @@ it('keeps one main landmark on public index pages', function (string $routeName)
 ]);
 
 it('uses a concise primary navigation and a project-focused call to action', function () {
-    $content = $this->get(route('home'))
+    $content = responseContent($this->get(route('home'))
         ->assertOk()
         ->assertSee('Writing')
         ->assertSee('Discuss a Project')
         ->assertSee('/images/elephant-companion-128.webp', false)
         ->assertDontSee('/images/logo-color.svg', false)
-        ->getContent();
+        ->getContent());
 
     expect($content)
         ->not->toContain('>Contact Me<')
@@ -583,9 +706,9 @@ it('uses a concise primary navigation and a project-focused call to action', fun
 it('provides a valid legacy favicon fallback', function () {
     $favicon = file_get_contents(public_path('favicon.ico'));
 
-    expect($favicon)
-        ->not->toBeFalse()
-        ->and(strlen($favicon))->toBeGreaterThan(0)
+    $favicon = responseContent($favicon);
+
+    expect(strlen($favicon))->toBeGreaterThan(0)
         ->and(substr($favicon, 0, 4))->toBe("\x00\x00\x01\x00");
 });
 
@@ -595,28 +718,28 @@ it('keeps public technology and channel details consistent', function () {
         ->assertSee('aria-label="Flip Jeffrey Davidson developer card"', false)
         ->assertSee('aria-pressed="false"', false)
         ->assertDontSee('x-data=', false)
-        ->assertSee((string) config('public-site.technology.laravel'))
+        ->assertSee(configuredString(config('public-site.technology.laravel')))
         ->assertSee('I share practical Laravel videos');
 
     $this->get(route('uses'))
         ->assertOk()
-        ->assertSee('Laravel '.config('public-site.technology.laravel'))
-        ->assertSee('Filament '.config('public-site.technology.filament'));
+        ->assertSee('Laravel '.configuredString(config('public-site.technology.laravel')))
+        ->assertSee('Filament '.configuredString(config('public-site.technology.filament')));
 
     $this->get(route('home'))
         ->assertOk()
-        ->assertSee(config('public-site.youtube.url'), false)
+        ->assertSee(configuredString(config('public-site.youtube.url')), false)
         ->assertSee('Away from the editor');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
-    $content = $this->get(route('uses'))
+    $content = responseContent($this->get(route('uses'))
         ->assertOk()
         ->assertSee('aria-label="Jump to uses section"', false)
-        ->getContent();
+        ->getContent());
 
-    expect(strpos($content, 'aria-label="Jump to uses section"'))
-        ->toBeLessThan(strpos($content, 'id="hardware"'));
+    expect(stringPosition($content, 'aria-label="Jump to uses section"'))
+        ->toBeLessThan(stringPosition($content, 'id="hardware"'));
 });
 
 it('links the privacy notice from public collection points', function () {
@@ -631,11 +754,7 @@ it('links the privacy notice from public collection points', function () {
 it('loads public interactivity and typography from the local Vite bundle', function () {
     $this->withVite();
 
-    $manifest = json_decode(
-        file_get_contents(public_path('build/manifest.json')),
-        true,
-        flags: JSON_THROW_ON_ERROR,
-    );
+    $manifest = assetManifest();
 
     $this->get(route('home'))
         ->assertOk()
@@ -701,7 +820,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 });
 
 it('renders one concise client-focused services section', function () {
-    $content = $this->get(route('home'))
+    $content = responseContent($this->get(route('home'))
         ->assertOk()
         ->assertSee('Where I can help')
         ->assertSee('Improve an existing codebase')
@@ -710,7 +829,7 @@ it('renders one concise client-focused services section', function () {
         ->assertSee(route('services'))
         ->assertDontSee('data-architecture-scene', false)
         ->assertDontSee('How I can help')
-        ->getContent();
+        ->getContent());
 
     expect(substr_count($content, 'data-home-services'))->toBe(1);
 });
@@ -756,12 +875,12 @@ it('gives every homepage article a responsive image', function () {
 });
 
 it('places the theme bootstrap inside the document head', function () {
-    $content = $this->get(route('home'))
+    $content = responseContent($this->get(route('home'))
         ->assertOk()
-        ->getContent();
+        ->getContent());
 
-    expect(strpos($content, '<head>'))
-        ->toBeLessThan(strpos($content, 'Sync theme before paint'));
+    expect(stringPosition($content, '<head>'))
+        ->toBeLessThan(stringPosition($content, 'Sync theme before paint'));
 });
 
 it('renders accessible podcast episode embeds and external links', function () {
@@ -867,11 +986,7 @@ it('falls back to a safe podcast color when stored presentation data is invalid'
 it('keeps the admin panel behind authentication', function () {
     $this->withVite();
 
-    $manifest = json_decode(
-        file_get_contents(public_path('build/manifest.json')),
-        true,
-        flags: JSON_THROW_ON_ERROR,
-    );
+    $manifest = assetManifest();
 
     $this->get('/admin')->assertRedirect('/admin/login');
     $this->get('/admin/login')
@@ -981,14 +1096,14 @@ it('serves responsive project images while retaining the original fallback', fun
         ->assertSee('type="image/webp"', false)
         ->assertSee('architecture-640.webp', false)
         ->assertSee('architecture-1280.webp', false)
-        ->assertSee($project->featured_image_url, false);
+        ->assertSee(configuredString($project->featured_image_url), false);
 
     $this->get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('type="image/webp"', false)
         ->assertSee('aspect-video', false)
         ->assertSee('fetchpriority="high"', false)
-        ->assertSee($project->featured_image_url, false);
+        ->assertSee(configuredString($project->featured_image_url), false);
 });
 
 it('serves responsive post images while retaining the original fallback', function () {
@@ -1015,7 +1130,7 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSee('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"', false)
         ->assertSee('aspect-[3/2]', false)
         ->assertSee('fetchpriority="high"', false)
-        ->assertSee($post->featured_image_url, false);
+        ->assertSee(configuredString($post->featured_image_url), false);
 });
 
 it('serves responsive podcast cover images while retaining the original fallback', function () {
@@ -1038,12 +1153,12 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertSee('podcast-1280.webp', false)
         ->assertSee('sizes="288px"', false)
         ->assertSee('fetchpriority="high"', false)
-        ->assertSee($podcast->cover_image_url, false);
+        ->assertSee(configuredString($podcast->cover_image_url), false);
 
     $this->get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSee('sizes="224px"', false)
-        ->assertSee($podcast->cover_image_url, false);
+        ->assertSee(configuredString($podcast->cover_image_url), false);
 });
 
 it('serves responsive optimized fallback artwork for known podcasts', function () {
@@ -1060,7 +1175,7 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
         ->assertOk()
         ->assertSee('srcset="'.$podcast->fallback_cover_image_srcset.'"', false)
         ->assertSee('sizes="224px"', false)
-        ->assertSee($podcast->cover_image_url, false);
+        ->assertSee(configuredString($podcast->cover_image_url), false);
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {

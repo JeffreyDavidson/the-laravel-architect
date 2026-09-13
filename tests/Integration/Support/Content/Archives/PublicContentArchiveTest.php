@@ -13,6 +13,84 @@ use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
+/**
+ * @return list<array<array-key, mixed>>
+ */
+function publicArchiveRecords(mixed $value): array
+{
+    if (! is_array($value)) {
+        throw new RuntimeException('The archive records were not an array.');
+    }
+
+    $records = [];
+
+    foreach ($value as $record) {
+        if (! is_array($record)) {
+            throw new RuntimeException('The archive contained an invalid record.');
+        }
+
+        $records[] = $record;
+    }
+
+    return $records;
+}
+
+/**
+ * @return array{slug: string, category_slug: string, tags: list<array{name: string}>, seo: array{canonical_url: string}}
+ */
+function publicArchivePost(mixed $value): array
+{
+    if (! is_array($value) || ! is_string($value['slug'] ?? null) || ! is_string($value['category_slug'] ?? null)) {
+        throw new RuntimeException('The archive post was invalid.');
+    }
+
+    $tags = publicArchiveRecords($value['tags'] ?? null);
+    $normalizedTags = [];
+
+    foreach ($tags as $tag) {
+        if (! is_string($tag['name'] ?? null)) {
+            throw new RuntimeException('The archive post tag was invalid.');
+        }
+
+        $normalizedTags[] = ['name' => $tag['name']];
+    }
+
+    $seo = $value['seo'] ?? null;
+
+    if (! is_array($seo) || ! is_string($seo['canonical_url'] ?? null)) {
+        throw new RuntimeException('The archive post SEO data was invalid.');
+    }
+
+    return [
+        'slug' => $value['slug'],
+        'category_slug' => $value['category_slug'],
+        'tags' => $normalizedTags,
+        'seo' => ['canonical_url' => $seo['canonical_url']],
+    ];
+}
+
+/**
+ * @return array{slug: string, tech_stack: list<string>}
+ */
+function publicArchiveProject(mixed $value): array
+{
+    if (! is_array($value) || ! is_string($value['slug'] ?? null) || ! is_array($value['tech_stack'] ?? null)) {
+        throw new RuntimeException('The archive project was invalid.');
+    }
+
+    $techStack = [];
+
+    foreach ($value['tech_stack'] as $technology) {
+        if (! is_string($technology)) {
+            throw new RuntimeException('The archive project technology was invalid.');
+        }
+
+        $techStack[] = $technology;
+    }
+
+    return ['slug' => $value['slug'], 'tech_stack' => $techStack];
+}
+
 test('export query count stays bounded as tagged content grows', function (): void {
     $project = Project::query()->create([
         'title' => 'First project',
@@ -97,14 +175,17 @@ test('only public content and its presentation data are exported', function (): 
     $archive = app(PublicContentArchive::class)->export();
     $encoded = json_encode($archive, JSON_THROW_ON_ERROR);
 
+    $post = publicArchivePost(publicArchiveRecords($archive['posts'] ?? null)[0] ?? null);
+    $project = publicArchiveProject(publicArchiveRecords($archive['projects'] ?? null)[0] ?? null);
+
     expect($archive['posts'])->toHaveCount(1)
-        ->and($archive['posts'][0]['slug'])->toBe('published-post')
-        ->and($archive['posts'][0]['category_slug'])->toBe('architecture')
-        ->and($archive['posts'][0]['tags'][0]['name'])->toBe('Laravel')
-        ->and($archive['posts'][0]['seo']['canonical_url'])->toBe('https://thelaravelarchitect.com/blog/published-post')
+        ->and($post['slug'])->toBe('published-post')
+        ->and($post['category_slug'])->toBe('architecture')
+        ->and($post['tags'][0]['name'])->toBe('Laravel')
+        ->and($post['seo']['canonical_url'])->toBe('https://thelaravelarchitect.com/blog/published-post')
         ->and($archive['projects'])->toHaveCount(1)
-        ->and($archive['projects'][0]['slug'])->toBe('published-project')
-        ->and($archive['projects'][0]['tech_stack'])->toBe(['Laravel', 'Pest'])
+        ->and($project['slug'])->toBe('published-project')
+        ->and($project['tech_stack'])->toBe(['Laravel', 'Pest'])
         ->and($archive['categories'])->toHaveCount(1)
         ->and($encoded)->not->toContain('private-author@example.test')
         ->and($encoded)->not->toContain('private-subscriber@example.test')
@@ -134,16 +215,17 @@ test('public content is synchronized without importing production identities', f
 
     $counts = app(PublicContentArchive::class)->sync(publicContentArchiveFixture());
 
-    $post = Post::query()->where('slug', 'production-post')->firstOrFail();
+    $post = Post::query()->where('slug', 'production-post')->sole();
     $project = Project::query()->where('slug', 'production-project')->firstOrFail();
     $podcast = Podcast::query()->where('slug', 'production-podcast')->firstOrFail();
     $stagingAuthor = User::query()->where('email', 'staging-content@example.test')->firstOrFail();
+    $seo = $post->seo()->firstOrFail();
 
     expect($counts['posts'])->toBe(1)
         ->and($post->status)->toBe(PublishStatus::Published)
         ->and($post->category?->slug)->toBe('architecture')
         ->and($post->tags->pluck('name')->all())->toBe(['Laravel'])
-        ->and($post->seo->canonical_url)->toBe('https://thelaravelarchitect.com/blog/production-post')
+        ->and($seo->getAttribute('canonical_url'))->toBe('https://thelaravelarchitect.com/blog/production-post')
         ->and($post->user_id)->toBe($stagingAuthor->getKey())
         ->and($stagingAuthor->is_admin)->toBeFalse()
         ->and($project->tech_stack)->toBe(['Laravel', 'Pest'])
@@ -155,7 +237,9 @@ test('public content is synchronized without importing production identities', f
 
 test('unsafe referenced media paths are rejected', function (): void {
     $archive = publicContentArchiveFixture();
-    $archive['posts'][0]['featured_image_path'] = '../private/file.webp';
+    $posts = publicArchiveRecords($archive['posts'] ?? null);
+    $posts[0]['featured_image_path'] = '../private/file.webp';
+    $archive['posts'] = $posts;
 
     expect(fn () => app(PublicContentArchive::class)->mediaPaths($archive))
         ->toThrow(InvalidArgumentException::class, 'unsafe media path');
