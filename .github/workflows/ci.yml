@@ -75,6 +75,9 @@ jobs:
       - name: Run static analysis
         run: composer test:types
 
+      - name: Run test static analysis
+        run: composer test:types:pest
+
       - name: Check Filament code quality
         run: composer test:filament
 

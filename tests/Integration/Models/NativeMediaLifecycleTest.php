@@ -105,7 +105,7 @@ it('preserves cached OG images when post deletion rolls back', function () {
         'user_id' => User::factory()->create()->getKey(),
         'status' => PublishStatus::Draft,
     ]);
-    $path = "og-images/{$post->getKey()}/cached.png";
+    $path = "og-images/{$post->id}/cached.png";
     Storage::disk('local')->put($path, 'cached image');
 
     DB::beginTransaction();
