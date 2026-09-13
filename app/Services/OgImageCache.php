@@ -38,7 +38,18 @@ class OgImageCache
 
     public function forget(Post $post): void
     {
-        Storage::disk('local')->deleteDirectory($this->cacheDirectory($post));
+        $postKey = $post->getKey();
+
+        if (! is_int($postKey) && ! is_string($postKey)) {
+            throw new \UnexpectedValueException('An OG image cannot be forgotten for a post without a scalar key.');
+        }
+
+        $this->forgetByKey($postKey);
+    }
+
+    public function forgetByKey(int|string $postKey): void
+    {
+        Storage::disk('local')->deleteDirectory("og-images/{$postKey}");
     }
 
     private function imagePath(Post $post): string

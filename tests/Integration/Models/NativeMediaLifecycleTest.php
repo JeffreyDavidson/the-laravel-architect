@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
@@ -51,6 +52,46 @@ it('keeps native media when unrelated attributes change', function () {
     $project->update(['title' => 'Renamed Project']);
 
     Storage::disk('public')->assertExists('projects/image.png');
+});
+
+it('keeps replaced native media when the transaction rolls back', function () {
+    Storage::disk('public')->put('projects/old.png', 'old');
+    Storage::disk('public')->put('projects/new.png', 'new');
+
+    $project = Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => PublishStatus::Draft,
+        'featured_image_path' => 'projects/old.png',
+    ]);
+
+    DB::beginTransaction();
+    $project->update(['featured_image_path' => 'projects/new.png']);
+    DB::rollBack();
+
+    Storage::disk('public')->assertExists('projects/old.png');
+    Storage::disk('public')->assertExists('projects/new.png');
+});
+
+it('deletes replaced native media after the transaction commits', function () {
+    Storage::disk('public')->put('projects/old.png', 'old');
+    Storage::disk('public')->put('projects/new.png', 'new');
+
+    $project = Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => PublishStatus::Draft,
+        'featured_image_path' => 'projects/old.png',
+    ]);
+
+    DB::beginTransaction();
+    $project->update(['featured_image_path' => 'projects/new.png']);
+    DB::commit();
+
+    Storage::disk('public')->assertMissing('projects/old.png');
+    Storage::disk('public')->assertExists('projects/new.png');
 });
 
 it('deletes native media with its record', function () {
@@ -244,6 +285,34 @@ it('deletes episode media when its podcast is deleted', function () {
     Storage::disk('public')->assertMissing([
         'podcasts/cover.png',
         'episodes/images/episode.png',
+        'episodes/audio/episode.mp3',
+    ]);
+});
+
+it('keeps podcast and episode media when the podcast deletion rolls back', function () {
+    Storage::disk('public')->put('podcasts/cover.png', 'cover');
+    Storage::disk('public')->put('episodes/audio/episode.mp3', 'audio');
+
+    $podcast = Podcast::query()->create([
+        'name' => 'Podcast',
+        'slug' => 'podcast',
+        'description' => 'Description',
+        'cover_image_path' => 'podcasts/cover.png',
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Episode',
+        'slug' => 'episode',
+        'description' => 'Description',
+        'audio_path' => 'episodes/audio/episode.mp3',
+    ]);
+
+    DB::beginTransaction();
+    $podcast->delete();
+    DB::rollBack();
+
+    Storage::disk('public')->assertExists([
+        'podcasts/cover.png',
         'episodes/audio/episode.mp3',
     ]);
 });
