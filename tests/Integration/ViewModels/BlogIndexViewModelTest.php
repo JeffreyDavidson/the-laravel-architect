@@ -41,7 +41,7 @@ it('builds the public blog index payload', function () {
         ->data();
 
     expect($data)->toHaveKeys(['posts', 'categories', 'seoSource'])
-        ->and($data['posts']->modelKeys())->toBe([
+        ->and($data['posts']->getCollection()->modelKeys())->toBe([
             $newerPost->getKey(),
             $olderPost->getKey(),
         ])

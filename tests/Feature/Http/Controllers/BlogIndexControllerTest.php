@@ -80,11 +80,43 @@ it('uses stable item positions and page metadata for an unfiltered archive page'
         ->assertSee('Stable Article 1', false)
         ->getContent();
 
-    preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches);
-    $structuredData = json_decode($matches[1] ?? '', true, flags: JSON_THROW_ON_ERROR);
-    $itemList = collect($structuredData['@graph'])->firstWhere('@type', 'ItemList');
+    if (! is_string($content)) {
+        throw new RuntimeException('Expected the blog response to contain HTML.');
+    }
 
-    expect($itemList['itemListElement'][0]['position'])->toBe(13);
+    if (
+        preg_match('/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/s', $content, $matches) !== 1
+    ) {
+        throw new RuntimeException('Expected the blog response to contain JSON-LD.');
+    }
+
+    $structuredData = json_decode($matches[1], true, flags: JSON_THROW_ON_ERROR);
+
+    if (! is_array($structuredData) || ! isset($structuredData['@graph']) || ! is_array($structuredData['@graph'])) {
+        throw new RuntimeException('Expected JSON-LD graph data.');
+    }
+
+    $itemList = null;
+
+    foreach ($structuredData['@graph'] as $graphItem) {
+        if (is_array($graphItem) && ($graphItem['@type'] ?? null) === 'ItemList') {
+            $itemList = $graphItem;
+
+            break;
+        }
+    }
+
+    if (
+        ! is_array($itemList)
+        || ! isset($itemList['itemListElement'])
+        || ! is_array($itemList['itemListElement'])
+        || ! isset($itemList['itemListElement'][0])
+        || ! is_array($itemList['itemListElement'][0])
+    ) {
+        throw new RuntimeException('Expected JSON-LD item list data.');
+    }
+
+    expect($itemList['itemListElement'][0]['position'] ?? null)->toBe(13);
 });
 
 it('rejects invalid public blog filters', function () {

@@ -4,6 +4,7 @@ namespace App\ViewModels;
 
 use App\Models\Category;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -58,13 +59,13 @@ class BlogIndexViewModel
         }
 
         if ($query !== '') {
-            $postsQuery->where(function ($postsQuery) use ($query): void {
+            $postsQuery->where(function (Builder $postsQuery) use ($query): void {
                 $like = '%'.addcslashes($query, '\\%_').'%';
 
                 $postsQuery
                     ->whereRaw("title LIKE ? ESCAPE '\\'", [$like])
                     ->orWhereRaw("excerpt LIKE ? ESCAPE '\\'", [$like])
-                    ->orWhereHas('tags', function ($tagQuery) use ($like): void {
+                    ->orWhereHas('tags', function (Builder $tagQuery) use ($like): void {
                         $locale = app()->getLocale();
                         $tagQuery->whereRaw(
                             "json_extract(\"tags\".\"name\", ?) LIKE ? ESCAPE '\\'",
@@ -79,18 +80,18 @@ class BlogIndexViewModel
             ->appends(array_filter([
                 'q' => $query !== '' ? $query : null,
                 'category' => $categorySlug,
-            ], fn ($value): bool => $value !== null));
+            ], fn (?string $value): bool => $value !== null));
 
         abort_if($posts->currentPage() > $posts->lastPage(), 404);
 
         $canonicalParameters = array_filter([
             'category' => $categorySlug,
             'page' => $posts->onFirstPage() ? null : $posts->currentPage(),
-        ], fn ($value): bool => $value !== null);
+        ], fn (string|int|null $value): bool => $value !== null);
         $canonicalUrl = route('blog.index', $canonicalParameters);
         $searchCanonicalUrl = route('blog.index', array_filter(
             ['category' => $categorySlug],
-            fn ($value): bool => $value !== null,
+            fn (?string $value): bool => $value !== null,
         ));
         $title = $selectedCategory ? "{$selectedCategory->name} Articles" : 'Blog';
         $description = $selectedCategory
