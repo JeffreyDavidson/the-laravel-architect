@@ -4,8 +4,20 @@ use App\Enums\PublishStatus;
 use App\Models\Podcast;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
+
+it('renders the homepage without requesting external statistics on a cold cache', function () {
+    Cache::flush();
+    Http::fake();
+
+    $this->get(route('home'))
+        ->assertOk();
+
+    Http::assertNothingSent();
+});
 
 it('presents featured projects without duplicated summaries or invented artwork', function (int $count) {
     foreach (range(1, $count) as $index) {

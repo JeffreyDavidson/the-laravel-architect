@@ -43,6 +43,8 @@ See [`tests/TESTING.md`](tests/TESTING.md) for the boundary between Unit, Integr
 
 CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
 
+The separate Dependency audit workflow checks locked PHP dependencies and production JavaScript dependencies every Monday at 08:43 UTC and supports manual runs. This catches newly published advisories between releases without changing dependencies.
+
 ### Rector review
 
 Run `composer test:rector` to preview application PHP and Laravel upgrades without modifying files. `rector.php` derives the PHP target (currently 8.5) and Laravel rules from Composer. It scans application code, bootstrap configuration, configuration files, factories, seeders, and routes; existing migrations and generated files are outside its configured paths.
@@ -91,7 +93,7 @@ The production scheduler must run every minute. It dispatches:
 - `youtube:stats` daily
 - `youtube:sync` weekly
 
-YouTube tasks prevent overlapping execution. The homepage caches the subscriber count, retains the last successful value when YouTube is unavailable or returns malformed data, and displays the latest published videos from the local sync instead of date-sensitive promotional placeholders.
+YouTube tasks prevent overlapping execution. The homepage displays the latest published videos from the local sync without requesting external statistics during page rendering.
 
 Production must set `DB_DATABASE` to the absolute path of the live SQLite database. The SQLite connection uses Laravel's native busy timeout, WAL journal mode, and `NORMAL` synchronous writes to tolerate normal web, scheduler, and queue concurrency. Set `BACKUP_MEDIA_PATH` to the absolute path of the persistent public-media directory outside the release directory. Application backups intentionally contain only the SQLite database dump and persistent uploaded media; GitHub remains the recovery source for application code, and `.env` is explicitly excluded from archives. Set `BACKUP_DISKS=local,nas-backups,b2-backups`, configure the `BACKUP_SFTP_*` values and independently verified NAS host fingerprint, configure the bucket-scoped `BACKUP_B2_*` credentials and HTTPS endpoint, and set `BACKUP_ARCHIVE_PASSWORD` before enabling off-server backups. `MAIL_CONTACT_TO` and `BACKUP_NOTIFICATION_EMAIL` must point to monitored mailboxes.
 

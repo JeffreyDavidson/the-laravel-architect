@@ -9,8 +9,41 @@ use App\Models\Subscriber;
 use App\Models\User;
 use App\Support\Content\Archives\PublicContentArchive;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
+
+test('export query count stays bounded as tagged content grows', function (): void {
+    $project = Project::query()->create([
+        'title' => 'First project',
+        'description' => 'A public project.',
+        'status' => PublishStatus::Published,
+    ]);
+    $project->syncTags(['Laravel']);
+
+    DB::enableQueryLog();
+    app(PublicContentArchive::class)->export();
+    $initialQueryCount = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    foreach (range(1, 9) as $index) {
+        $project = Project::query()->create([
+            'title' => "Additional project {$index}",
+            'description' => 'Another public project.',
+            'status' => PublishStatus::Published,
+        ]);
+        $project->syncTags(['Laravel']);
+    }
+
+    DB::flushQueryLog();
+    DB::enableQueryLog();
+    $archive = app(PublicContentArchive::class)->export();
+    $expandedQueryCount = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    expect($archive['projects'])->toHaveCount(10)
+        ->and($expandedQueryCount)->toBe($initialQueryCount);
+});
 
 test('only public content and its presentation data are exported', function (): void {
     $author = User::factory()->create([

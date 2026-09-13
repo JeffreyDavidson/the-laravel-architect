@@ -54,6 +54,12 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Audit PHP dependencies
+        run: composer audit --locked
+
+      - name: Audit production JavaScript dependencies
+        run: npm audit --omit=dev
+
       - name: Prepare application
         run: |
           cp .env.example .env

@@ -6,7 +6,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Services\YouTubeService;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -17,7 +16,6 @@ class HomeViewModel
      *     latestPosts: Collection<int, Post>,
      *     featuredProjects: Collection<int, Project>,
      *     podcast: Podcast|null,
-     *     youtubeSubscribers: int,
      *     latestYouTubeVideos: Collection<int, Video>,
      *     publishedPostCount: int,
      *     publishedProjectCount: int,
@@ -41,7 +39,6 @@ class HomeViewModel
             'podcast' => Podcast::active()
                 ->orderBy('sort_order')
                 ->first(),
-            'youtubeSubscribers' => YouTubeService::subscriberCount(),
             'latestYouTubeVideos' => Video::published()
                 ->latest('published_at')
                 ->take(3)
