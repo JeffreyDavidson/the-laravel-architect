@@ -147,11 +147,23 @@
     --color-brand-100: #d4e6f4;
     --color-brand-50: #eaf3fa;
 
+    --color-surface-page: #0b1016;
+    --color-surface-border: #1e2a3a;
+    --color-archive-muted: #6b7280;
+    --color-archive-link: #245b91;
+    --color-archive-count: #5c6675;
+
     --color-accent-700: #963a5b;
     --color-accent-600: #c47088;
     --color-accent-500: #d4808f;
     --color-accent-400: #e0a0aa;
     --color-accent-300: #efb6c2;
+}
+
+.dark {
+    --color-archive-muted: #9ca3af;
+    --color-archive-link: #6fa3d6;
+    --color-archive-count: #9ca3af;
 }
 
 /* Light mode prose */

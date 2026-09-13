@@ -26,10 +26,13 @@ class TagForm
                         return is_string($state) ? $state : '';
                     })
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
+                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state, string $operation): void {
+                        if ($operation === 'create' && blank($get('slug'))) {
+                            $set('slug', Str::slug($state ?? ''));
+                        }
+                    }),
                 TextInput::make('slug')
                     ->required()
-                    ->readOnly()
                     ->formatStateUsing(function (mixed $state): string {
                         if (is_array($state)) {
                             $state = $state[app()->getLocale()] ?? '';
@@ -39,32 +42,22 @@ class TagForm
                     })
                     ->maxLength(255)
                     ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                    ->rule(function (Get $get, ?Tag $record): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($get, $record): void {
-                            $name = $get('name');
-
-                            if (! is_string($name)) {
-                                $fail('The name must generate a valid slug of 255 characters or fewer.');
+                    ->rule(function (?Tag $record): Closure {
+                        return function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                            if (! is_string($value) || preg_match('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $value) !== 1) {
+                                $fail('The slug must contain only lowercase letters, numbers, and single hyphens.');
 
                                 return;
                             }
 
-                            $slug = Str::slug($name);
-
-                            if ($slug === '' || mb_strlen($slug) > 255) {
-                                $fail('The name must generate a valid slug of 255 characters or fewer.');
-
-                                return;
-                            }
-
-                            $query = Tag::query()->where('slug->'.app()->getLocale(), $slug);
+                            $query = Tag::query()->where('slug->'.app()->getLocale(), $value);
 
                             if ($record !== null) {
                                 $query->whereKeyNot($record->getKey());
                             }
 
                             if ($query->exists()) {
-                                $fail('The slug generated from this name has already been taken.');
+                                $fail('The slug has already been taken.');
                             }
                         };
                     }),

@@ -14,12 +14,12 @@ trait ManagesStoredMedia
                     continue;
                 }
 
-                $model->deleteStoredMediaPath($model->getPrevious()[$attribute] ?? null);
+                $model->queueStoredMediaPathDeletion($model->getPrevious()[$attribute] ?? null);
             }
         });
 
         static::deleted(function (self $model): void {
-            $model->deleteStoredMediaFiles();
+            $model->queueStoredMediaCleanup();
         });
     }
 
@@ -28,6 +28,35 @@ trait ManagesStoredMedia
         foreach ($this->storedMediaAttributes() as $attribute) {
             $this->deleteStoredMediaPath($this->getAttribute($attribute));
         }
+    }
+
+    public function queueStoredMediaCleanup(): void
+    {
+        $this->queueStoredMediaPathsCleanup($this->storedMediaPaths());
+    }
+
+    /** @param array<int, string> $paths */
+    public function queueStoredMediaPathsCleanup(array $paths): void
+    {
+        foreach ($paths as $path) {
+            $this->queueStoredMediaPathDeletion($path);
+        }
+    }
+
+    /** @return list<string> */
+    public function storedMediaPaths(): array
+    {
+        $paths = [];
+
+        foreach ($this->storedMediaAttributes() as $attribute) {
+            $path = $this->getAttribute($attribute);
+
+            if (is_string($path) && filled($path)) {
+                $paths[] = $path;
+            }
+        }
+
+        return $paths;
     }
 
     /** @return array<int, string> */
@@ -40,5 +69,18 @@ trait ManagesStoredMedia
         }
 
         Storage::disk('public')->delete($path);
+    }
+
+    private function queueStoredMediaPathDeletion(mixed $path): void
+    {
+        if (! is_string($path) || blank($path)) {
+            return;
+        }
+
+        $path = (string) $path;
+
+        $this->getConnection()->afterCommit(function () use ($path): void {
+            Storage::disk('public')->delete($path);
+        });
     }
 }

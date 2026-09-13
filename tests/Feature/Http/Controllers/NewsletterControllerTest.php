@@ -26,6 +26,20 @@ it('creates an unverified subscriber and sends a confirmation message', function
     Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
 });
 
+it('applies the pending email cooldown across different source IP addresses', function () {
+    $url = route('newsletter.subscribe');
+
+    $this->call('POST', $url, ['email' => 'reader@example.com'], [], [], [
+        'REMOTE_ADDR' => '192.0.2.10',
+    ])->assertRedirect();
+
+    $this->call('POST', $url, ['email' => 'reader@example.com'], [], [], [
+        'REMOTE_ADDR' => '198.51.100.20',
+    ])->assertRedirect();
+
+    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
+});
+
 it('silently accepts newsletter honeypot submissions without subscribing', function () {
     $this->post(route('newsletter.subscribe'), [
         'website' => 'filled-by-bot',

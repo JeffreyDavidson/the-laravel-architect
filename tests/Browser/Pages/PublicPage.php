@@ -6,7 +6,7 @@ use Pest\Browser\Api\AwaitableWebpage;
 
 abstract class PublicPage
 {
-    protected const ROUTE = '';
+    protected const string ROUTE = '';
 
     public static function visit(): AwaitableWebpage
     {

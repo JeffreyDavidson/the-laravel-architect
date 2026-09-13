@@ -86,6 +86,7 @@ class VerifyProductionConfiguration extends Command
             [config('logging.channels.nightwatch.handler') === NullHandler::class, 'Nightwatch log capture must remain disabled.'],
             [$this->isConfigured(config('sentry.dsn')), 'SENTRY_LARAVEL_DSN must be configured.'],
             [config('sentry.send_default_pii') === false, 'SENTRY_SEND_DEFAULT_PII must be false.'],
+            [config('sentry.max_request_body_size') === 'never', 'SENTRY_MAX_REQUEST_BODY_SIZE must be never.'],
             [$this->isDeploymentEnvironment(config('app.deployment_environment')), 'TLA_DEPLOYMENT_ENVIRONMENT must be production or staging.'],
             [config('sentry.environment') === config('app.deployment_environment'), 'SENTRY_ENVIRONMENT must match TLA_DEPLOYMENT_ENVIRONMENT.'],
             [$this->isConfigured(config('sentry.release')), 'SENTRY_RELEASE or FORGE_DEPLOY_COMMIT must be configured.'],

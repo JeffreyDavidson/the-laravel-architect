@@ -32,6 +32,11 @@ it('keeps a one-to-one test mapping for application console commands', function 
         expect($matchingTests)->toHaveCount(1, "{$className} must have exactly one matching command test.");
 
         $class = "App\\Console\\Commands\\{$className}";
+
+        if (! class_exists($class)) {
+            throw new RuntimeException("{$class} could not be loaded.");
+        }
+
         $signatures = (new ReflectionClass($class))->getAttributes(Signature::class);
 
         expect($signatures)->toHaveCount(1, "{$class} must declare one command signature.");

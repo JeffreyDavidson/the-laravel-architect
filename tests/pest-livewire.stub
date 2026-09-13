@@ -26,7 +26,3 @@ namespace Livewire\Features\SupportTesting;
  * @mixin \Illuminate\Testing\TestResponse
  */
 class Testable {}
-
-namespace Illuminate\Testing;
-
-class TestResponse {}

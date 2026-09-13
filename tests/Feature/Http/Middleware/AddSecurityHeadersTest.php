@@ -18,14 +18,22 @@ function expectedContentSecurityPolicy(?string $scriptNonce = null, bool $withVi
         ? "'unsafe-inline' 'unsafe-eval'"
         : "'nonce-{$scriptNonce}'";
 
-    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
+    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com https://open.spotify.com https://embed.podcasts.apple.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
+}
+
+function requiredHeader(?string $value): string
+{
+    if ($value === null) {
+        throw new RuntimeException('The response did not contain the expected header.');
+    }
+
+    return $value;
 }
 
 it('adds security headers to public responses', function () {
     $response = $this->get(route('home'));
-    $policy = $response->headers->get('Content-Security-Policy');
+    $policy = requiredHeader($response->headers->get('Content-Security-Policy'));
 
-    expect($policy)->toBeString();
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
     $nonce = $matches[1] ?? null;
 
@@ -56,7 +64,13 @@ it('adds transport security only to secure responses', function () {
 });
 
 it('adds security headers to admin responses', function () {
-    $this->get(Filament::getPanel('admin')->getLoginUrl())
+    $loginUrl = Filament::getPanel('admin')->getLoginUrl();
+
+    if ($loginUrl === null) {
+        throw new RuntimeException('The admin login URL was not configured.');
+    }
+
+    $this->get($loginUrl)
         ->assertOk()
         ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
         ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
@@ -71,9 +85,8 @@ it('allows the local Vite development server without weakening other environment
     $this->app->detectEnvironment(fn (): string => 'local');
 
     $response = $this->get(route('home'));
-    $policy = $response->headers->get('Content-Security-Policy');
+    $policy = requiredHeader($response->headers->get('Content-Security-Policy'));
 
-    expect($policy)->toBeString();
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
     $nonce = $matches[1] ?? null;
 

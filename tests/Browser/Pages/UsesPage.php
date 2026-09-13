@@ -4,5 +4,5 @@ namespace Tests\Browser\Pages;
 
 final class UsesPage extends PublicPage
 {
-    protected const ROUTE = 'uses';
+    protected const string ROUTE = 'uses';
 }

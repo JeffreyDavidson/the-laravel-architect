@@ -155,7 +155,7 @@ it('loads only the related projects displayed on a project page', function () {
 
     $this->get(route('projects.show', $project))
         ->assertOk()
-        ->assertViewHas('otherProjects', fn ($otherProjects): bool => $otherProjects instanceof Collection && $otherProjects->count() === 3)
+        ->assertViewHas('otherProjects', fn (mixed $otherProjects): bool => $otherProjects instanceof Collection && $otherProjects->count() === 3)
         ->assertSee('Related Project 2')
         ->assertSee('Related Project 4')
         ->assertDontSee('Related Project 5')

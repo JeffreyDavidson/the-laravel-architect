@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Episode;
+use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
@@ -10,6 +11,47 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
+
+it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible) {
+    $this->freezeSecond();
+    $publishedAt = $seconds === null ? null : now()->addSeconds($seconds);
+    $post = Post::query()->create([
+        'title' => 'Publication matrix post',
+        'content' => 'Publication boundary coverage.',
+        'user_id' => User::factory()->create()->getKey(),
+        'status' => $status,
+        'published_at' => $publishedAt,
+    ]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Publication matrix podcast',
+        'description' => 'Publication boundary coverage.',
+    ]);
+    $episode = Episode::query()->create([
+        'title' => 'Publication matrix episode',
+        'description' => 'Publication boundary coverage.',
+        'podcast_id' => $podcast->getKey(),
+        'status' => $status,
+        'published_at' => $publishedAt,
+    ]);
+
+    expect($post->isPublished())->toBe($visible)
+        ->and(Post::published()->whereKey($post->getKey())->exists())->toBe($visible)
+        ->and($episode->isPublished())->toBe($visible)
+        ->and(Episode::published()->whereKey($episode->getKey())->exists())->toBe($visible);
+})->with([
+    'overdue scheduled' => [PublishStatus::Scheduled, -1, true],
+    'exactly due scheduled' => [PublishStatus::Scheduled, 0, true],
+    'future scheduled' => [PublishStatus::Scheduled, 1, false],
+    'scheduled without a date' => [PublishStatus::Scheduled, null, false],
+    'past published' => [PublishStatus::Published, -1, true],
+    'future published' => [PublishStatus::Published, 1, false],
+    'published without a date' => [PublishStatus::Published, null, false],
+    'past draft' => [PublishStatus::Draft, -1, false],
+]);
+
+it('does not make a project public merely because it has a scheduled status', function () {
+    expect((new Project(['status' => PublishStatus::Scheduled]))->isPublished())->toBeFalse();
+});
 
 it('shares publishing behavior with projects despite their project status enum', function () {
     $project = Project::query()->create([

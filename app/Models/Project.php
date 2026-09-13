@@ -83,4 +83,10 @@ class Project extends Model implements Publishable
     {
         return ['featured_image_path'];
     }
+
+    /** @return list<PublishStatus> */
+    protected static function publishingStatuses(): array
+    {
+        return [PublishStatus::Published];
+    }
 }

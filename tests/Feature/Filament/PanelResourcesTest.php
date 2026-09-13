@@ -10,6 +10,7 @@ use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Vite;
 
@@ -21,7 +22,13 @@ beforeEach(function () {
 });
 
 it('renders each registered resource index for an authorized user', function (string $resource) {
-    $this->get($resource::getUrl('index'))->assertOk();
+    $url = $resource::getUrl('index');
+
+    if (! is_string($url)) {
+        throw new RuntimeException('The resource URL was not a string.');
+    }
+
+    $this->get($url)->assertOk();
 })->with([
     CategoryResource::class,
     EpisodeResource::class,
@@ -42,7 +49,7 @@ it('registers visible navigation items for every admin section', function () {
         expect($group->getItems())->not->toBeEmpty();
     }
 
-    expect(collect($navigation)->map(fn ($group): ?string => $group->getLabel())->all())
+    expect(collect($navigation)->map(fn (NavigationGroup $group): ?string => $group->getLabel())->all())
         ->toContain('Content', 'Podcasting', 'Showcase', 'Taxonomy', 'Newsletter', 'YouTube');
 });
 

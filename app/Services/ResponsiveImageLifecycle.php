@@ -23,7 +23,7 @@ class ResponsiveImageLifecycle
         $previousPath = $model->getPrevious()[$pathColumn] ?? null;
 
         if (is_string($previousPath) && filled($previousPath)) {
-            $this->images->delete($previousPath);
+            $this->deleteAfterCommit($model, $previousPath);
         }
 
         $this->generate($model->getAttribute($pathColumn), $label);
@@ -34,7 +34,7 @@ class ResponsiveImageLifecycle
         $path = $model->getAttribute($pathColumn);
 
         if (is_string($path) && filled($path)) {
-            $this->images->delete($path);
+            $this->deleteAfterCommit($model, $path);
         }
     }
 
@@ -47,5 +47,12 @@ class ResponsiveImageLifecycle
         if (! $this->images->generate($path)) {
             Log::warning("Responsive {$label} image generation failed. Run {$label}s:generate-image-variants to retry.");
         }
+    }
+
+    private function deleteAfterCommit(Model $model, string $path): void
+    {
+        $model->getConnection()->afterCommit(function () use ($path): void {
+            $this->images->delete($path);
+        });
     }
 }

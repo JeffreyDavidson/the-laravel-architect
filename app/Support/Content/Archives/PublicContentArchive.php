@@ -264,7 +264,7 @@ class PublicContentArchive
     {
         $tags = [];
 
-        foreach ($model->tags()->get() as $tag) {
+        foreach ($model->tags as $tag) {
             if (! $tag instanceof Tag || ! is_string($tag->name)) {
                 throw new InvalidArgumentException('Public content contains an invalid tag.');
             }

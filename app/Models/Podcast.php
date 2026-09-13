@@ -28,6 +28,9 @@ class Podcast extends Model
 {
     private const string DEFAULT_COLOR = '#6366f1';
 
+    /** @var array<int, string> */
+    private array $episodeMediaPathsForDeletion = [];
+
     use HasSEO;
     use LogsActivity;
     use ManagesStoredMedia;
@@ -43,9 +46,15 @@ class Podcast extends Model
     protected static function booted(): void
     {
         static::deleting(function (Podcast $podcast): void {
-            $podcast->episodes()->each(
-                fn (Episode $episode) => $episode->deleteStoredMediaFiles(),
-            );
+            $podcast->episodeMediaPathsForDeletion = $podcast->episodes()
+                ->get()
+                ->flatMap(fn (Episode $episode): array => $episode->storedMediaPaths())
+                ->values()
+                ->all();
+        });
+
+        static::deleted(function (Podcast $podcast): void {
+            $podcast->queueStoredMediaPathsCleanup($podcast->episodeMediaPathsForDeletion);
         });
     }
 
