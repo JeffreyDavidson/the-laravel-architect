@@ -18,7 +18,7 @@ function expectedContentSecurityPolicy(?string $scriptNonce = null, bool $withVi
         ? "'unsafe-inline' 'unsafe-eval'"
         : "'nonce-{$scriptNonce}'";
 
-    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
+    return "base-uri 'self'; connect-src 'self' https://api.usefathom.com https://cdn.usefathom.com https://challenges.cloudflare.com{$viteConnectSources}; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com https://open.spotify.com https://embed.podcasts.apple.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; object-src 'none'; script-src 'self' {$scriptPolicy} https://cdn.usefathom.com https://challenges.cloudflare.com{$viteScriptSources}; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:";
 }
 
 it('adds security headers to public responses', function () {

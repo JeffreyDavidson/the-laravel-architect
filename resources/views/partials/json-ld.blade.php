@@ -135,10 +135,10 @@
                 $podcastEpisode['duration'] = 'PT'.$episode->duration_minutes.'M';
             }
 
-            if ($episode->audio_url) {
+            if ($episode->publicAudioUrl()) {
                 $podcastEpisode['associatedMedia'] = [
                     '@type' => 'MediaObject',
-                    'contentUrl' => $episode->audio_url,
+                    'contentUrl' => $episode->publicAudioUrl(),
                 ];
             }
 
