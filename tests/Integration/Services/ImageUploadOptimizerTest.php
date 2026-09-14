@@ -3,7 +3,6 @@
 use App\Services\ImageUploadOptimizer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
 
 beforeEach(function () {
     Storage::fake('public');

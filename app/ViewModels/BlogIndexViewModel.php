@@ -84,6 +84,10 @@ class BlogIndexViewModel
 
         abort_if($posts->currentPage() > $posts->lastPage(), 404);
 
+        $publishedPostCount = $selectedCategory === null && $query === ''
+            ? $posts->total()
+            : Post::published()->count();
+
         $canonicalParameters = array_filter([
             'category' => $categorySlug,
             'page' => $posts->onFirstPage() ? null : $posts->currentPage(),
@@ -113,7 +117,7 @@ class BlogIndexViewModel
             'categories' => Category::query()
                 ->withCount(['publishedPosts as posts_count'])
                 ->get(),
-            'publishedPostCount' => Post::published()->count(),
+            'publishedPostCount' => $publishedPostCount,
             'query' => $query,
             'categorySlug' => $categorySlug,
             'selectedCategory' => $selectedCategory,
