@@ -28,7 +28,7 @@ final class GenerateSitemap
             ->active()
             ->with('publishedEpisodes')
             ->get();
-        $projects = Project::published()->portfolio()->get();
+        $projects = Project::published()->get();
         $podcastModels = [];
 
         foreach ($podcasts as $podcast) {

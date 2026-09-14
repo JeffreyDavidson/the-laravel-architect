@@ -14,15 +14,6 @@ it('builds the bounded public homepage payload', function () {
         createHomeViewModelProject($sortOrder);
     }
     Project::query()->create([
-        'title' => 'The Laravel Architect',
-        'slug' => 'the-laravel-architect',
-        'description' => 'The site itself is not portfolio work.',
-        'is_featured' => true,
-        'sort_order' => 0,
-        'status' => PublishStatus::Published,
-    ]);
-
-    Project::query()->create([
         'title' => 'Draft project',
         'slug' => 'draft-project',
         'description' => 'This project is not public.',

@@ -15,7 +15,6 @@ class RelatedProjectsQuery
         }
 
         return Project::published()
-            ->portfolio()
             ->whereKeyNot($project->getKey())
             ->with('tags')
             ->orderBy('sort_order')
