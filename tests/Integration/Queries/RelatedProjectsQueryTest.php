@@ -5,7 +5,7 @@ use App\Models\Project;
 use App\Queries\RelatedProjectsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('selects published projects in sort order while excluding the current project', function () {
     $currentProject = createRelatedProjectsQueryProject(

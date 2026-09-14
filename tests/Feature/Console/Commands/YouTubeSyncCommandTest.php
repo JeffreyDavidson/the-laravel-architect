@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use JMac\Testing\Double;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('creates new videos and forwards the requested limit', function () {
     $youtube = Double::for(YouTubeService::class);

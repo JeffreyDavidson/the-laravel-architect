@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('only includes public content in the sitemap', function () {
     $user = User::query()->create([
@@ -90,18 +90,7 @@ it('only includes public content in the sitemap', function () {
     DB::table('podcasts')->where('id', $podcast->id)->update(['updated_at' => null]);
     DB::table('episodes')->where('id', $publishedEpisode->id)->update(['updated_at' => null]);
 
-    $this->get('/sitemap.xml')
-        ->assertOk()
-        ->assertSee(route('blog.show', $publishedPost), false)
-        ->assertDontSee(route('blog.show', $scheduledPost), false)
-        ->assertSee(route('projects.show', $publishedProject), false)
-        ->assertDontSee(route('projects.show', $draftProject), false)
-        ->assertDontSee(route('blog.category', $draftOnlyCategory), false)
-        ->assertSee(route('blog.tag', $publishedTag), false)
-        ->assertDontSee(route('blog.tag', $scheduledOnlyTag), false)
-        ->assertSee(route('podcast.episode', [$podcast, $publishedEpisode]), false)
-        ->assertDontSee(route('podcast.episode', [$podcast, $draftEpisode]), false)
-        ->assertDontSee('<lastmod>', false);
+    $this->get('/sitemap.xml')->assertOk()->assertSeeHtml(route('blog.show', $publishedPost))->assertDontSeeHtml(route('blog.show', $scheduledPost))->assertSeeHtml(route('projects.show', $publishedProject))->assertDontSeeHtml(route('projects.show', $draftProject))->assertDontSeeHtml(route('blog.category', $draftOnlyCategory))->assertSeeHtml(route('blog.tag', $publishedTag))->assertDontSeeHtml(route('blog.tag', $scheduledOnlyTag))->assertSeeHtml(route('podcast.episode', [$podcast, $publishedEpisode]))->assertDontSeeHtml(route('podcast.episode', [$podcast, $draftEpisode]))->assertDontSeeHtml('<lastmod>');
 });
 
 it('reports the latest published content change for sitemap archives', function () {
@@ -171,9 +160,6 @@ it('reports the latest published content change for sitemap archives', function 
         [route('podcast.index'), $episodeUpdatedAt],
         [route('podcast.show', $podcast), $episodeUpdatedAt],
     ] as [$url, $updatedAt]) {
-        $response->assertSee(
-            '<loc>'.$url.'</loc><lastmod>'.$updatedAt->toW3cString().'</lastmod>',
-            false,
-        );
+        $response->assertSeeHtml('<loc>'.$url.'</loc><lastmod>'.$updatedAt->toW3cString().'</lastmod>');
     }
 });

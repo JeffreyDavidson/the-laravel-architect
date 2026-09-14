@@ -5,7 +5,7 @@ use App\Support\Content\Archives\ProductionContentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 test('production public content can be synchronized into staging', function (): void {
     $source = Double::for(ProductionContentSource::class);

@@ -14,7 +14,7 @@ use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
 use Tests\Browser\Pages\ProjectIndexPage;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Http::fake([

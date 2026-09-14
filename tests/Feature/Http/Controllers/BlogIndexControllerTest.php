@@ -6,7 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('renders validated search filters with pagination metadata and accessible result status', function () {
     $author = User::factory()->create();
@@ -30,15 +30,7 @@ it('renders validated search filters with pagination metadata and accessible res
 
     $url = route('blog.index', ['q' => 'Laravel', 'category' => 'laravel', 'page' => 2]);
 
-    $this->get($url)
-        ->assertOk()
-        ->assertSee('Showing 13–13 of 13 articles.', false)
-        ->assertSee('name="q"', false)
-        ->assertSee('value="Laravel"', false)
-        ->assertSee('name="category"', false)
-        ->assertSee('<meta name="robots" content="noindex, follow">', false)
-        ->assertSee('<link rel="canonical" href="'.route('blog.index', ['category' => 'laravel']).'">', false)
-        ->assertSee('Read article:', false);
+    $this->get($url)->assertOk()->assertSeeHtml('Showing 13–13 of 13 articles.')->assertSeeHtml('name="q"')->assertSeeHtml('value="Laravel"')->assertSeeHtml('name="category"')->assertSeeHtml('<meta name="robots" content="noindex, follow">')->assertSeeHtml('<link rel="canonical" href="'.route('blog.index', ['category' => 'laravel']).'">')->assertSeeHtml('Read article:');
 });
 
 it('returns not found for an out-of-range public blog page', function () {
@@ -73,11 +65,7 @@ it('uses stable item positions and page metadata for an unfiltered archive page'
     }
 
     $url = route('blog.index', ['page' => 2]);
-    $content = $this->get($url)
-        ->assertOk()
-        ->assertSee('<title>Blog — Page 2 — Jeffrey Davidson</title>', false)
-        ->assertSee('<link rel="canonical" href="'.$url.'">', false)
-        ->assertSee('Stable Article 1', false)
+    $content = $this->get($url)->assertOk()->assertSeeHtml('<title>Blog — Page 2 — Jeffrey Davidson</title>')->assertSeeHtml('<link rel="canonical" href="'.$url.'">')->assertSeeHtml('Stable Article 1')
         ->getContent();
 
     if (! is_string($content)) {
@@ -135,8 +123,5 @@ it('preserves a zero-valued search filter in canonical category links', function
         'published_at' => now()->subDay(),
     ]);
 
-    $this->get(route('blog.index', ['q' => '0']))
-        ->assertOk()
-        ->assertSee('href="'.route('blog.index', ['q' => '0']).'"', false)
-        ->assertSee('value="0"', false);
+    $this->get(route('blog.index', ['q' => '0']))->assertOk()->assertSeeHtml('href="'.route('blog.index', ['q' => '0']).'"')->assertSeeHtml('value="0"');
 });

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('succeeds without invoking the generator when no posts need images', function () {
     $generator = Double::for(FeaturedImageGenerator::class);

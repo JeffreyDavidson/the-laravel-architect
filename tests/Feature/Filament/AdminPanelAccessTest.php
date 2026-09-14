@@ -6,7 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('only admits administrators to the admin panel', function () {
     $user = User::factory()->create();

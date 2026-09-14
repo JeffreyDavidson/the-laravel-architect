@@ -11,7 +11,7 @@ use App\Support\Content\Archives\PublicContentArchive;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 /**
  * @return list<array<array-key, mixed>>

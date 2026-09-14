@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Mail::fake();
@@ -66,9 +66,7 @@ it('shows an explicit confirmation step without changing subscriber state', func
 
     $this->get($url)
         ->assertOk()
-        ->assertSee('Confirm your subscription')
-        ->assertSee($subscriber->email)
-        ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
+        ->assertSee('Confirm your subscription')->assertSee($subscriber->email)->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
 
     expect($subscriber->refresh()->verified_at)->toBeNull()
         ->and($subscriber->verification_token_hash)->not->toBeNull();
@@ -144,13 +142,17 @@ it('shows an unsubscribe step without changing subscriber state', function () {
     ]);
 
     $this->get($subscriber->unsubscribeUrl())
-        ->assertOk()
-        ->assertSee('Unsubscribe from the newsletter')
-        ->assertSee('name="_method" value="DELETE"', false)
-        ->assertSee($subscriber->email)
-        ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
+        ->assertOk()->assertSee('Unsubscribe from the newsletter')->assertSeeHtml('name="_method" value="DELETE"')->assertSee($subscriber->email)->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
 
     expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
+});
+
+it('generates expiring unsubscribe links', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+    ]);
+
+    expect($subscriber->unsubscribeUrl())->toContain('expires=');
 });
 
 it('unsubscribes with an explicit delete to a valid signed link', function () {

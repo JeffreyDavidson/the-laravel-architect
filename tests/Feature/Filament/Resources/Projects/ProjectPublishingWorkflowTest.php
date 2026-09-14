@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
@@ -30,7 +30,7 @@ it('publishes a project through Filament and exposes it publicly', function () {
     expect($project->refresh()->status)->toBe(PublishStatus::Published);
 
     $this->get(route('projects.show', $project))->assertOk();
-    $this->get('/sitemap.xml')->assertSee(route('projects.show', $project), false);
+    $this->get('/sitemap.xml')->assertSeeHtml(route('projects.show', $project));
 });
 
 it('hides a project again when Filament changes it back to draft', function () {
@@ -49,5 +49,5 @@ it('hides a project again when Filament changes it back to draft', function () {
     expect($project->refresh()->status)->toBe(PublishStatus::Draft);
 
     $this->get(route('projects.show', $project))->assertNotFound();
-    $this->get('/sitemap.xml')->assertDontSee(route('projects.show', $project), false);
+    $this->get('/sitemap.xml')->assertDontSeeHtml(route('projects.show', $project));
 });

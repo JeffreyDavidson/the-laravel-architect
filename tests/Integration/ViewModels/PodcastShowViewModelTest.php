@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\Paginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds a page-aware podcast payload', function () {
     $podcast = Podcast::query()->create([

@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('generates slugs from the configured source attributes', function () {
     $podcast = Podcast::query()->create([

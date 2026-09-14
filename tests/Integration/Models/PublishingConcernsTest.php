@@ -10,7 +10,7 @@ use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible) {
     $this->freezeSecond();

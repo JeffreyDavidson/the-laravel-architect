@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('renders the homepage without requesting external statistics on a cold cache', function () {
     Cache::flush();
@@ -46,9 +46,7 @@ it('presents featured projects without duplicated summaries or invented artwork'
 })->with([1, 2, 4]);
 
 it('omits selected work when no projects are featured', function () {
-    $this->get(route('home'))
-        ->assertOk()
-        ->assertDontSee('data-home-work', false);
+    $this->get(route('home'))->assertOk()->assertDontSeeHtml('data-home-work');
 });
 
 it('uses the active podcast artwork on the homepage', function () {
@@ -61,9 +59,7 @@ it('uses the active podcast artwork on the homepage', function () {
         'sort_order' => 1,
     ]);
 
-    $this->get(route('home'))
-        ->assertOk()
-        ->assertSee('/storage/podcasts/current-cover.webp', false);
+    $this->get(route('home'))->assertOk()->assertSeeHtml('/storage/podcasts/current-cover.webp');
 });
 
 it('flashes invalid newsletter input for recovery', function () {

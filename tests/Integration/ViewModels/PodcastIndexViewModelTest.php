@@ -6,7 +6,7 @@ use App\Models\Podcast;
 use App\ViewModels\PodcastIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the public podcast index payload', function () {
     Podcast::query()->create([

@@ -5,7 +5,7 @@ use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the public project index payload', function () {
     $laterProject = Project::query()->create([

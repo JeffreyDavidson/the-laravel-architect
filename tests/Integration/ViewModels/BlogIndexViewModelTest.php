@@ -9,7 +9,7 @@ use App\Presenters\PostPresenter;
 use App\ViewModels\BlogIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the public blog index payload', function () {
     $author = User::factory()->create();

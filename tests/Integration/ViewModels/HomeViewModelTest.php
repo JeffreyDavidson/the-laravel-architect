@@ -7,7 +7,7 @@ use App\ViewModels\HomeViewModel;
 use DateTimeInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the bounded public homepage payload', function () {
     foreach (range(1, 5) as $sortOrder) {

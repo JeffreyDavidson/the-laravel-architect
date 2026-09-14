@@ -7,7 +7,7 @@ use App\Models\User;
 use App\ViewModels\BlogCategoryViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds a paginated category archive payload', function () {
     $author = User::factory()->create();

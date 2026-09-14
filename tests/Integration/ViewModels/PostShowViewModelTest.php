@@ -7,7 +7,7 @@ use App\Models\User;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the post detail payload', function () {
     $author = User::factory()->create();

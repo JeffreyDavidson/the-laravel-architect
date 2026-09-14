@@ -4,7 +4,7 @@ use App\Actions\UnsubscribeFromNewsletter;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('marks a subscriber as unsubscribed and clears pending confirmation state', function () {
     $subscriber = Subscriber::query()->create([

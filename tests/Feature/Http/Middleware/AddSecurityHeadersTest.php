@@ -3,7 +3,7 @@
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 function expectedContentSecurityPolicy(?string $scriptNonce = null, bool $withVite = false): string
 {
@@ -47,10 +47,7 @@ it('adds security headers to public responses', function () {
         ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-        ->assertHeader('X-Content-Type-Options', 'nosniff')
-        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
-        ->assertSee('<script nonce="'.$nonce.'">', false)
-        ->assertSee('<script nonce="'.$nonce.'" type="application/ld+json">', false);
+        ->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN')->assertSeeHtml('<script nonce="'.$nonce.'">')->assertSeeHtml('<script nonce="'.$nonce.'" type="application/ld+json">');
 });
 
 it('adds transport security only to secure responses', function () {

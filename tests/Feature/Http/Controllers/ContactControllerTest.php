@@ -24,14 +24,7 @@ beforeEach(function () {
 it('renders the Turnstile widget on the contact page', function () {
     $response = $this->get(route('contact'));
 
-    $response
-        ->assertOk()
-        ->assertSee('data-turnstile-widget', false)
-        ->assertSee('data-sitekey="test-site-key"', false)
-        ->assertSee('data-action="contact-form"', false)
-        ->assertSee('class="absolute -top-[9999px] -left-[9999px]"', false)
-        ->assertDontSee('position:absolute;left:-9999px;top:-9999px;', false)
-        ->assertSee('JavaScript is required to complete the verification.', false);
+    $response->assertOk()->assertSeeHtml('data-turnstile-widget')->assertSeeHtml('data-sitekey="test-site-key"')->assertSeeHtml('data-action="contact-form"')->assertSeeHtml('class="absolute -top-[9999px] -left-[9999px]"')->assertDontSeeHtml('position:absolute;left:-9999px;top:-9999px;')->assertSeeHtml('JavaScript is required to complete the verification.');
 
     $content = $response->getContent();
     if (! is_string($content)) {
@@ -212,14 +205,7 @@ it('renders preserved values and accessible validation feedback', function () {
         ]);
 
     $this->get(route('contact'))
-        ->assertOk()
-        ->assertSee('Please review the highlighted fields.')
-        ->assertSee('value="Jane Doe"', false)
-        ->assertSeeInOrder(['value="modernization"', 'selected'], false)
-        ->assertSeeInOrder(['value="large"', 'selected'], false)
-        ->assertSee('aria-invalid="true" aria-describedby="email-error"', false)
-        ->assertSee('href="#email"', false)
-        ->assertSee('id="email-error"', false);
+        ->assertOk()->assertSee('Please review the highlighted fields.')->assertSeeHtml('value="Jane Doe"')->assertSeeHtmlInOrder(['value="modernization"', 'selected'])->assertSeeHtmlInOrder(['value="large"', 'selected'])->assertSeeHtml('aria-invalid="true" aria-describedby="email-error"')->assertSeeHtml('href="#email"')->assertSeeHtml('id="email-error"');
 });
 
 it('rate limits repeated contact submissions by ip address', function () {
