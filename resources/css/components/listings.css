@@ -1,12 +1,3 @@
-.related-card {
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.related-card:hover {
-    box-shadow: 0 12px 30px -12px var(--shadow-black-40);
-    border-color: var(--brand-alpha-20);
-}
-
 .blog-card--editorial .blog-card__artwork img {
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -14,10 +5,6 @@
 .blog-card--editorial:hover .blog-card__artwork img,
 .blog-card--editorial:focus-within .blog-card__artwork img {
     transform: scale(1.025);
-}
-
-:root:not(.dark) .related-card:hover {
-    box-shadow: 0 12px 30px var(--shadow-black-08);
 }
 
 .blog-card--editorial .blog-card__title,
@@ -39,8 +26,7 @@
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.category-pill,
-.tech-pill {
+.category-pill {
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -97,24 +83,4 @@
     .category-pill::after {
         transition: none;
     }
-}
-
-.tech-pill:hover {
-    background: var(--brand-alpha-12);
-    color: var(--color-brand-600);
-    border-color: var(--brand-alpha-30);
-}
-
-.link-btn {
-    transition: transform 0.2s ease;
-}
-
-.link-btn:hover {
-    transform: translateY(-2px);
-}
-
-:root:not(.dark) .tech-pill {
-    color: var(--color-gray-600);
-    border-color: var(--color-gray-300);
-    background: var(--bg-secondary);
 }

@@ -56,28 +56,6 @@
     box-shadow: 0 0 10px var(--brand-alpha-20);
 }
 
-.about-value-card {
-    position: relative;
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.about-value-card:hover {
-    transform: none;
-    box-shadow: none;
-}
-
-:root:not(.dark) .about-value-card {
-    background: var(--color-white) !important;
-    border-color: var(--shadow-black-08) !important;
-    box-shadow: 0 1px 3px var(--shadow-black-04);
-}
-
-:root:not(.dark) .about-value-card:hover {
-    border-color: var(--brand-alpha-20) !important;
-    box-shadow: 0 12px 30px var(--shadow-black-08);
-}
-
 .about-card-flip-container {
     perspective: 1200px;
     cursor: pointer;
@@ -133,11 +111,6 @@
     box-shadow: 0 4px 20px var(--shadow-black-08);
 }
 
-.about-card-deck {
-    position: relative;
-    margin-bottom: 16px;
-}
-
 .about-ghost-card {
     position: absolute;
     inset: 0;
@@ -175,11 +148,6 @@
 
 :root:not(.dark) .about-trading-card-glow {
     display: none;
-}
-
-:root:not(.dark) .about-stat-cell {
-    background: var(--bg-secondary) !important;
-    border-color: var(--color-gray-200) !important;
 }
 
 @keyframes cardSpin {
