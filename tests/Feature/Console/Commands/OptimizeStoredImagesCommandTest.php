@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 pest()->use(RefreshDatabase::class);
 
@@ -35,7 +36,14 @@ it('replaces legacy project images with optimized webp files', function () {
 
     $project = Project::query()->sole();
     $optimizedPath = $project->featured_image_path;
+    if (! is_string($optimizedPath)) {
+        throw new RuntimeException('The optimized project image path was not saved.');
+    }
+
     $image = getimagesize(Storage::disk('public')->path($optimizedPath));
+    if ($image === false) {
+        throw new RuntimeException('The optimized project image could not be read.');
+    }
 
     expect($optimizedPath)
         ->toStartWith('projects/')
