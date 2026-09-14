@@ -11,7 +11,7 @@
         ];
     @endphp
 
-    <header class="dark:border-brand-800 border-b border-gray-200 bg-white dark:bg-surface-page">
+    <header class="dark:border-brand-800 dark:bg-surface-page border-b border-gray-200 bg-white">
         <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.3fr_1fr] lg:items-end lg:gap-20 lg:px-8">
             <div>
                 <h1 class="max-w-2xl text-4xl leading-tight font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
@@ -95,7 +95,7 @@
 
     <section
         aria-labelledby="starting-heading"
-        class="dark:border-brand-800 border-y border-gray-200 bg-gray-50 dark:bg-surface-page"
+        class="dark:border-brand-800 dark:bg-surface-page border-y border-gray-200 bg-gray-50"
     >
         <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-20 lg:px-8">
             <div>

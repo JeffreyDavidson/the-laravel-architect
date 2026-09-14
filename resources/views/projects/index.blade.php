@@ -75,7 +75,7 @@
             </div>
             <a
                 href="{{ route('contact') }}"
-                class="focus-visible:outline-brand-500 w-fit shrink-0 rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-4"
+                class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 w-fit shrink-0 rounded-lg px-5 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
             >Discuss a Project</a>
         </div>
     </section>
