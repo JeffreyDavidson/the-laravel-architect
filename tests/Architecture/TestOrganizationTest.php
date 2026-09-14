@@ -37,7 +37,7 @@ it('keeps a one-to-one test mapping for application console commands', function 
             throw new RuntimeException("{$class} could not be loaded.");
         }
 
-        $signatures = (new ReflectionClass($class))->getAttributes(Signature::class);
+        $signatures = new ReflectionClass($class)->getAttributes(Signature::class);
 
         expect($signatures)->toHaveCount(1, "{$class} must declare one command signature.");
     }

@@ -70,7 +70,9 @@ test('mobile theme choice persists across navigation', async ({ page }) => {
 
     await expect(root).not.toHaveClass(/dark/);
     await page.getByRole('button', { name: 'Toggle menu' }).click();
+    await expect(page.locator('.theme-toggle-mobile')).toHaveAttribute('aria-pressed', 'false');
     await themeToggle.toggleMobile();
+    await expect(page.locator('.theme-toggle-mobile')).toHaveAttribute('aria-pressed', 'true');
     await expect.poll(() => page.evaluate(() => localStorage.getItem('theme'))).toBe('dark');
 
     await page.reload();

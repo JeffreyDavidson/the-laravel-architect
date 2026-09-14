@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('local');

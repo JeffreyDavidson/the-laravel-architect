@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Queries\RelatedPostsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('selects related posts by category, shared tags, and latest publication', function () {
     $author = User::factory()->create();

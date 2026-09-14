@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 use Psr\Log\LoggerInterface;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('public');

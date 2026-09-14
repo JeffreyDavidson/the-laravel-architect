@@ -6,7 +6,7 @@ use App\Models\Podcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 /**
  * @param  array<string, mixed>  $attributes
@@ -43,9 +43,7 @@ it('renders uploaded audio and gives it precedence over hosted audio', function 
 
     $response = $this->get(route('podcast.episode', [$podcast, $episode]));
 
-    $response->assertOk()
-        ->assertSee(Storage::disk('public')->url('episodes/audio/uploaded.mp3'), false)
-        ->assertDontSee('https://example.com/hosted.mp3', false);
+    $response->assertOk()->assertSeeHtml(Storage::disk('public')->url('episodes/audio/uploaded.mp3'))->assertDontSeeHtml('https://example.com/hosted.mp3');
 });
 
 it('renders hosted audio when no upload exists', function () {
@@ -53,9 +51,7 @@ it('renders hosted audio when no upload exists', function () {
         'audio_url' => 'https://cdn.example.com/hosted.mp3',
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertSee('https://cdn.example.com/hosted.mp3', false);
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('https://cdn.example.com/hosted.mp3');
 });
 
 it('renders only supported podcast embed URLs in an iframe', function () {
@@ -63,10 +59,7 @@ it('renders only supported podcast embed URLs in an iframe', function () {
         'embed_url' => 'https://open.spotify.com/embed/episode/abc123',
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertSee('src="https://open.spotify.com/embed/episode/abc123"', false)
-        ->assertSee('title="Episode media coverage podcast player"', false);
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('src="https://open.spotify.com/embed/episode/abc123"')->assertSeeHtml('title="Episode media coverage podcast player"');
 });
 
 it('does not render unsupported embed URLs', function () {
@@ -74,8 +67,5 @@ it('does not render unsupported embed URLs', function () {
         'embed_url' => 'https://malicious.example/embed/episode/abc123',
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertDontSee('malicious.example', false)
-        ->assertDontSee('<iframe', false);
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertDontSeeHtml('malicious.example')->assertDontSeeHtml('<iframe');
 });

@@ -3,7 +3,7 @@
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('does not mass assign its verification token hash', function () {
     $subscriber = new Subscriber;

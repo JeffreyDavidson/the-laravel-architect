@@ -5,7 +5,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Activitylog\Models\Activity;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('records operational post changes without recording long-form content', function () {
     $post = Post::query()->create([

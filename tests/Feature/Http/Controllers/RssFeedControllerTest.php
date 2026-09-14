@@ -6,16 +6,13 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('serves RSS metadata with the correct media type', function () {
     $response = $this->get(route('rss'));
 
     $response
-        ->assertOk()
-        ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
-        ->assertSee('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">', false)
-        ->assertSee('<atom:link href="'.route('rss').'" rel="self" type="application/rss+xml" />', false);
+        ->assertOk()->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8')->assertSeeHtml('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">')->assertSeeHtml('<atom:link href="'.route('rss').'" rel="self" type="application/rss+xml" />');
 });
 
 it('includes only currently published posts and safely escapes feed content', function () {
@@ -56,11 +53,5 @@ it('includes only currently published posts and safely escapes feed content', fu
 
     $response = $this->get(route('rss'));
 
-    $response
-        ->assertOk()
-        ->assertSee('<title>Laravel &amp; PHP &lt;Patterns&gt;</title>', false)
-        ->assertSee('<description>Safe &amp; useful &lt;summary&gt;</description>', false)
-        ->assertSee('<category>Architecture &amp; Design</category>', false)
-        ->assertDontSee('Draft feed post', false)
-        ->assertDontSee('Future feed post', false);
+    $response->assertOk()->assertSeeHtml('<title>Laravel &amp; PHP &lt;Patterns&gt;</title>')->assertSeeHtml('<description>Safe &amp; useful &lt;summary&gt;</description>')->assertSeeHtml('<category>Architecture &amp; Design</category>')->assertDontSeeHtml('Draft feed post')->assertDontSeeHtml('Future feed post');
 });

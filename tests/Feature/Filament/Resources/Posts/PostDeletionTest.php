@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);

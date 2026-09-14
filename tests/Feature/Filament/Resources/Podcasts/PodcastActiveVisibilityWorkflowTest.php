@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
@@ -31,9 +31,7 @@ it('controls public podcast visibility through the active toggle', function () {
         ->assertOk()
         ->assertDontSee($podcast->name);
     $this->get(route('podcast.show', $podcast))->assertNotFound();
-    $this->get('/sitemap.xml')
-        ->assertOk()
-        ->assertDontSee(route('podcast.show', $podcast), false);
+    $this->get('/sitemap.xml')->assertOk()->assertDontSeeHtml(route('podcast.show', $podcast));
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['is_active' => true])
@@ -46,7 +44,5 @@ it('controls public podcast visibility through the active toggle', function () {
     $this->get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSee($podcast->name);
-    $this->get('/sitemap.xml')
-        ->assertOk()
-        ->assertSee(route('podcast.show', $podcast), false);
+    $this->get('/sitemap.xml')->assertOk()->assertSeeHtml(route('podcast.show', $podcast));
 });

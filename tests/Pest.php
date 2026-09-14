@@ -2,5 +2,5 @@
 
 use Tests\TestCase;
 
-uses(TestCase::class)->in('Architecture', 'Browser', 'Feature', 'Integration');
-uses(PHPUnit\Framework\TestCase::class)->in('Unit');
+pest()->extend(TestCase::class)->in('Architecture', 'Browser', 'Feature', 'Integration');
+pest()->extend(PHPUnit\Framework\TestCase::class)->in('Unit');

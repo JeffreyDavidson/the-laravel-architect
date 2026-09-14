@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('finds the closest published episodes before and after the current episode', function () {
     $this->travelTo(Date::parse('2026-08-28 12:00:00'));

@@ -7,7 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('exposes scheduled posts across public surfaces exactly when due without changing their status', function () {
     $this->freezeSecond();

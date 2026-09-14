@@ -12,14 +12,14 @@ it('confirms the Nightwatch agent accepts connections', function () {
     $ingest->expects('ping');
     $nightwatch->ingest = $ingest;
 
-    (new NightwatchHealthMonitor($nightwatch))->ensureHealthy();
+    new NightwatchHealthMonitor($nightwatch)->ensureHealthy();
 });
 
 it('rejects a disabled Nightwatch installation', function () {
     $nightwatch = app(Core::class);
     $nightwatch->config['enabled'] = false;
 
-    expect(fn () => (new NightwatchHealthMonitor($nightwatch))->ensureHealthy())
+    expect(fn () => new NightwatchHealthMonitor($nightwatch)->ensureHealthy())
         ->toThrow(RuntimeException::class, 'Nightwatch is disabled.');
 });
 
@@ -31,6 +31,6 @@ it('does not expose an agent connection error', function () {
         ->throws(new RuntimeException('private ingest address'));
     $nightwatch->ingest = $ingest;
 
-    expect(fn () => (new NightwatchHealthMonitor($nightwatch))->ensureHealthy())
+    expect(fn () => new NightwatchHealthMonitor($nightwatch)->ensureHealthy())
         ->toThrow(RuntimeException::class, 'The Nightwatch agent is unavailable.');
 });

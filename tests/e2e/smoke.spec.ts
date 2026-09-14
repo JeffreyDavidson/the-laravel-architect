@@ -194,6 +194,8 @@ test('blog code blocks expose a keyboard-accessible copy action', async ({ page 
 
     await copyButton.focus();
     await expect(copyButton).toBeVisible();
+    await copyButton.click();
+    await expect(copyButton).toHaveAccessibleName('Copied');
 });
 
 test('blog syntax highlighting waits until the browser is idle', async ({ page }) => {
