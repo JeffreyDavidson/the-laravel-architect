@@ -3,7 +3,7 @@
 @php
     $base = 'inline-flex items-center gap-2 font-bold transition-[color,border-color,background-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400';
     $variants = [
-        'primary' => 'bg-brand-600 hover:bg-brand-700 text-white rounded-xl',
+        'primary' => 'bg-brand-action hover:bg-brand-action-hover text-white rounded-xl',
         'outline' => 'border border-gray-200 dark:border-surface-border hover:border-gray-400 dark:hover:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl bg-white dark:bg-surface-control',
     ];
     $sizes = [
