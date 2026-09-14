@@ -82,6 +82,10 @@
             "@php artisan config:clear --ansi",
             "vendor/bin/pest"
         ],
+        "test:parallel": [
+            "vendor/bin/pest --parallel --exclude-testsuite Browser",
+            "vendor/bin/pest --testsuite Browser"
+        ],
         "test:filament": "vendor/bin/filacheck --detailed",
         "test:rector": "PAO_DISABLE=1 vendor/bin/rector process --dry-run --no-progress-bar",
         "test:rector:pest": "PAO_DISABLE=1 vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar",

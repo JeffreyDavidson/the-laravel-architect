@@ -108,5 +108,8 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Run tests
-        run: vendor/bin/pest
+      - name: Run non-browser tests in parallel
+        run: vendor/bin/pest --parallel --exclude-testsuite Browser
+
+      - name: Run browser tests serially
+        run: vendor/bin/pest --testsuite Browser
