@@ -16,7 +16,29 @@ class ImageUploadOptimizer
 
     public function store(UploadedFile $file, ?string $directory, string $diskName): ?string
     {
-        $contents = $file->getContent();
+        return $this->storeContents($file->getContent(), $directory, $diskName);
+    }
+
+    public function storeContents(string $contents, ?string $directory, string $diskName): ?string
+    {
+        $optimized = $this->optimize($contents);
+
+        if ($optimized === null) {
+            return null;
+        }
+
+        return $this->storeOptimizedContents($optimized, $directory, $diskName);
+    }
+
+    public function storeOptimizedContents(string $contents, ?string $directory, string $diskName): ?string
+    {
+        $path = trim(($directory ?? '').'/'.Str::ulid().'.webp', '/');
+
+        return Storage::disk($diskName)->put($path, $contents, 'public') ? $path : null;
+    }
+
+    public function optimize(string $contents): ?string
+    {
 
         try {
             $image = Image::fromBytes($contents);
@@ -30,8 +52,6 @@ class ImageUploadOptimizer
             return null;
         }
 
-        $path = trim(($directory ?? '').'/'.Str::ulid().'.webp', '/');
-
-        return Storage::disk($diskName)->put($path, $optimized, 'public') ? $path : null;
+        return $optimized;
     }
 }
