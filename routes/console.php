@@ -31,6 +31,12 @@ Schedule::command('media:verify-responsive-images')
     ->withoutOverlapping()
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
+Schedule::command('media:find-orphans')
+    ->weeklyOn(0, '05:30')
+    ->environments(['production'])
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('queue:prune-failed', [
     '--hours' => config('health.failed_jobs.retention_hours'),
 ])

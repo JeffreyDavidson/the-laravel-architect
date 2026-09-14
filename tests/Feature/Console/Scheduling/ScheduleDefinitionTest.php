@@ -10,6 +10,7 @@ it('schedules operational monitoring and maintenance', function () {
         ->toContain('backup:clean')
         ->toContain('backup:monitor')
         ->toContain('media:verify-responsive-images')
+        ->toContain('media:find-orphans')
         ->toContain('queue:prune-failed --hours=168')
         ->not->toContain('app:monitor-failed-jobs');
 });
