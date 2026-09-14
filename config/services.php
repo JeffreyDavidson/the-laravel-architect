@@ -50,7 +50,7 @@ return [
         'siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         'contact_action' => env('TURNSTILE_CONTACT_ACTION', 'contact-form'),
         'allowed_hostnames' => array_values(array_filter(array_map(
-            trim(...),
+            'trim',
             explode(',', (string) env('TURNSTILE_ALLOWED_HOSTNAMES', '')),
         ))),
     ],
