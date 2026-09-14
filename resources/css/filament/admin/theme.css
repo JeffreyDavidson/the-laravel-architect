@@ -3,6 +3,22 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 
+@font-face {
+    font-family: 'IBM Plex Sans';
+    src: url('@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 /*
 |--------------------------------------------------------------------------
 | The Laravel Architect — Admin Theme
@@ -634,6 +650,22 @@
 
 /* ── Editorial Studio shell ── */
 :root {
+    --tla-ink: #1f2328;
+    --tla-muted: #424a53;
+    --tla-subtle: #656d76;
+    --tla-line: #d0d7de;
+    --tla-line-strong: #b8c2cc;
+    --tla-surface: #ffffff;
+    --tla-surface-raised: #ffffff;
+    --tla-accent: #4a7fbf;
+    --tla-page: #f6f8fa;
+    --tla-sidebar: #f6f8fa;
+    --tla-topbar: rgba(255, 255, 255, 0.92);
+    --tla-accent-soft: rgba(74, 127, 191, 0.1);
+    --tla-focus: rgba(74, 127, 191, 0.2);
+}
+
+.dark {
     --tla-ink: #f4f7fb;
     --tla-muted: rgba(210, 222, 238, 0.62);
     --tla-subtle: rgba(210, 222, 238, 0.42);
@@ -642,6 +674,227 @@
     --tla-surface: #121b2a;
     --tla-surface-raised: #172235;
     --tla-accent: #5b91ce;
+    --tla-page: #0f1724;
+    --tla-sidebar: #101927;
+    --tla-topbar: #0b1018;
+    --tla-accent-soft: rgba(91, 145, 206, 0.14);
+    --tla-focus: rgba(91, 145, 206, 0.24);
+}
+
+/* Shared site language for the light panel. Keeping this scoped to the
+ * non-dark root lets Filament's theme switcher retain the existing studio
+ * palette when an editor prefers dark mode. */
+:root:not(.dark) {
+    color-scheme: light;
+    font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+:root:not(.dark) .fi-body {
+    background: var(--tla-page);
+    color: var(--tla-ink);
+}
+
+:root:not(.dark) .fi-main-ctn,
+:root:not(.dark) .fi-main {
+    background: var(--tla-page);
+}
+
+:root:not(.dark) .fi-main {
+    max-width: none !important;
+    padding-inline: clamp(1rem, 3vw, 3rem) !important;
+}
+
+:root:not(.dark) .fi-topbar {
+    background: var(--tla-topbar);
+    border-color: var(--tla-line);
+    box-shadow: 0 1px 0 rgba(31, 35, 40, 0.04);
+    backdrop-filter: blur(18px);
+}
+
+:root:not(.dark) .fi-sidebar,
+:root:not(.dark) .fi-sidebar-header {
+    background: var(--tla-sidebar);
+    border-color: var(--tla-line);
+}
+
+:root:not(.dark) .fi-sidebar {
+    border-right: 1px solid var(--tla-line);
+}
+
+:root:not(.dark) .fi-body-has-topbar .fi-sidebar-header {
+    display: none !important;
+}
+
+:root:not(.dark) .fi-sidebar-nav {
+    gap: 0;
+    padding: 0.6rem 1rem 1rem 1.2rem;
+}
+
+:root:not(.dark) .fi-sidebar-group-label {
+    color: var(--tla-subtle);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: none;
+}
+
+:root:not(.dark) .fi-sidebar-item > a {
+    min-height: 1.9rem;
+    border-radius: 0.48rem;
+    color: var(--tla-muted);
+    padding-inline: 0.5rem;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+:root:not(.dark) .fi-sidebar-item > a:hover:not([aria-current='page']) {
+    background: rgba(74, 127, 191, 0.06);
+    color: var(--tla-ink);
+}
+
+:root:not(.dark) .fi-sidebar-item > a:focus-visible {
+    outline: 2px solid var(--tla-focus);
+    outline-offset: -2px;
+}
+
+:root:not(.dark) .fi-sidebar-item.fi-active > a {
+    background: var(--tla-accent-soft);
+    border: 1px solid rgba(74, 127, 191, 0.18);
+    color: #2b5f97;
+}
+
+:root:not(.dark) .tla-sidebar-primary {
+    border-color: rgba(74, 127, 191, 0.26);
+    background: linear-gradient(135deg, #4a7fbf, #963a5b);
+    box-shadow: 0 0.65rem 1.4rem rgba(74, 127, 191, 0.16);
+    color: #ffffff;
+}
+
+:root:not(.dark) .tla-sidebar-primary:focus-visible {
+    outline: 2px solid rgba(74, 127, 191, 0.48);
+}
+
+:root:not(.dark) .fi-page-heading,
+:root:not(.dark) .fi-section-header-heading {
+    color: var(--tla-ink);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+}
+
+:root:not(.dark) .fi-breadcrumbs {
+    color: var(--tla-subtle);
+}
+
+:root:not(.dark) .fi-breadcrumbs a:hover {
+    color: var(--tla-accent);
+}
+
+:root:not(.dark) .fi-ta-ctn,
+:root:not(.dark) .fi-section,
+:root:not(.dark) .fi-fo-component-ctn,
+:root:not(.dark) .fi-wi {
+    border: 1px solid var(--tla-line);
+    border-radius: 0.8rem;
+    background: var(--tla-surface);
+    box-shadow: 0 1px 2px rgba(31, 35, 40, 0.04);
+}
+
+:root:not(.dark) .fi-ta-header-ctn,
+:root:not(.dark) .fi-ta-content-ctn,
+:root:not(.dark) .fi-ta-footer-ctn,
+:root:not(.dark) .fi-section-content-ctn {
+    background: transparent;
+}
+
+:root:not(.dark) .fi-ta-header-ctn,
+:root:not(.dark) .fi-ta-footer-ctn,
+:root:not(.dark) .fi-section-header {
+    border-color: var(--tla-line);
+}
+
+:root:not(.dark) .fi-ta-header-cell {
+    color: var(--tla-subtle);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+:root:not(.dark) .fi-ta-row:hover td {
+    background: rgba(74, 127, 191, 0.04);
+}
+
+:root:not(.dark) .fi-fo-field-wrp-label {
+    color: var(--tla-muted);
+}
+
+:root:not(.dark) .fi-input-wrp,
+:root:not(.dark) .fi-select-input,
+:root:not(.dark) .fi-textarea-wrp {
+    background: #ffffff;
+    border-color: var(--tla-line-strong);
+}
+
+:root:not(.dark) .fi-input-wrp:focus-within,
+:root:not(.dark) .fi-textarea-wrp:focus-within {
+    border-color: var(--tla-accent);
+    box-shadow: 0 0 0 3px var(--tla-focus);
+}
+
+:root:not(.dark) .fi-btn.fi-color-primary {
+    background: var(--tla-accent);
+    box-shadow: 0 8px 20px rgba(74, 127, 191, 0.16);
+}
+
+:root:not(.dark) .fi-btn.fi-color-primary:hover {
+    background: #3f71aa;
+}
+
+:root:not(.dark) .fi-pagination-item-active,
+:root:not(.dark) .fi-tabs-tab-active {
+    border-color: var(--tla-accent);
+    background: var(--tla-accent);
+    color: #ffffff;
+}
+
+:root:not(.dark) .fi-modal-window,
+:root:not(.dark) .fi-dropdown-panel,
+:root:not(.dark) .fi-popover {
+    border: 1px solid var(--tla-line);
+    background: var(--tla-surface-raised);
+    box-shadow: 0 18px 40px rgba(31, 35, 40, 0.12);
+}
+
+:root:not(.dark) .fi-dropdown-list-item:hover {
+    background: var(--tla-accent-soft);
+}
+
+:root:not(.dark) .fi-simple-layout {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(74, 127, 191, 0.12), transparent 22rem),
+        radial-gradient(circle at 88% 88%, rgba(199, 75, 122, 0.08), transparent 24rem),
+        #f6f8fa;
+}
+
+:root:not(.dark) .fi-simple-page-content {
+    border: 1px solid var(--tla-line);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 45px rgba(31, 35, 40, 0.08);
+    padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+:root:not(.dark) .fi-simple-header-heading {
+    color: var(--tla-ink);
+}
+
+:root:not(.dark) .fi-simple-header-subheading {
+    color: var(--tla-subtle);
+}
+
+:root:not(.dark) .fi-simple-page .fi-btn.fi-color-primary {
+    min-height: 2.75rem;
+    font-weight: 700;
 }
 
 .dark .fi-body {

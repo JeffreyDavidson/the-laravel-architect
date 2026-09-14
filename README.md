@@ -24,7 +24,7 @@ php artisan make:filament-user --panel=admin --email=admin@example.test
 php artisan db:seed
 ```
 
-The email passed to the Filament command must match `ADMIN_EMAIL`. Seeders generate unknown random passwords when they must create a user, and they never reset an existing user's password. Set private production values for `ADMIN_EMAIL` and `CONTENT_AUTHOR_EMAIL` before seeding production data.
+The email passed to the Filament command must match `ADMIN_EMAIL`. The database seeder manages only the administrator account; it does not recreate editorial content. Restore content from a validated database backup or import a content:export-public archive when preparing another environment.
 
 ## Quality checks
 

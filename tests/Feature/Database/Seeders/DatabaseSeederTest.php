@@ -9,7 +9,6 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set('app.admin_email', 'admin@example.test');
-    config()->set('app.content_author_email', 'author@example.test');
 });
 
 it('does not create users with the former known seeder passwords', function () {
@@ -18,28 +17,18 @@ it('does not create users with the former known seeder passwords', function () {
     $admin = User::query()
         ->where('email', 'admin@example.test')
         ->sole();
-    $author = User::query()
-        ->where('email', 'author@example.test')
-        ->sole();
-
     expect(Hash::check('change-me-immediately', $admin->password))->toBeFalse()
-        ->and(Hash::check('temporary-password-change-me', $author->password))->toBeFalse()
+        ->and(User::query()->count())->toBe(1)
         ->and($admin->is_admin)->toBeTrue();
 });
 
-it('preserves existing user passwords when seeders run', function () {
+it('preserves the existing admin password when the seeder runs', function () {
     $admin = User::factory()->create([
         'email' => 'admin@example.test',
         'password' => 'chosen-admin-password',
     ]);
-    $author = User::factory()->create([
-        'email' => 'author@example.test',
-        'password' => 'chosen-author-password',
-    ]);
-
     $this->seed(DatabaseSeeder::class);
 
     expect(Hash::check('chosen-admin-password', $admin->refresh()->password))->toBeTrue()
-        ->and(Hash::check('chosen-author-password', $author->refresh()->password))->toBeTrue()
         ->and($admin->is_admin)->toBeTrue();
 });

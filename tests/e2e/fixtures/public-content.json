@@ -1,0 +1,112 @@
+{
+    "version": 1,
+    "exported_at": "2026-01-01T00:00:00+00:00",
+    "categories": [
+        {
+            "name": "E2E Personal",
+            "slug": "e2e-personal",
+            "description": "Synthetic personal content for browser tests."
+        },
+        {
+            "name": "E2E Career",
+            "slug": "e2e-career",
+            "description": "Synthetic career content for browser tests."
+        },
+        {
+            "name": "E2E Laravel",
+            "slug": "e2e-laravel",
+            "description": "Synthetic framework content for browser tests."
+        }
+    ],
+    "posts": [
+        {
+            "title": "E2E Welcome Post",
+            "slug": "e2e-welcome-post",
+            "excerpt": "A synthetic welcome post for browser tests.",
+            "content": "## Welcome\n\nThis post exists only for the browser suite.",
+            "featured_image_path": null,
+            "published_at": "2026-01-15T09:00:00+00:00",
+            "category_slug": "e2e-personal",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "E2E Journey Post",
+            "slug": "e2e-journey-post",
+            "excerpt": "A synthetic journey post for browser tests.",
+            "content": "## The journey\n\nA short synthetic story for the browser suite.",
+            "featured_image_path": null,
+            "published_at": "2026-01-22T09:00:00+00:00",
+            "category_slug": "e2e-personal",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "E2E Searchable Post",
+            "slug": "e2e-searchable-post",
+            "excerpt": "A searchable synthetic post for browser tests.",
+            "content": "## Search fixture\n\nSearchable post content for the browser suite.",
+            "featured_image_path": null,
+            "published_at": "2026-01-30T09:00:00+00:00",
+            "category_slug": "e2e-career",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "E2E Laravel Opinion",
+            "slug": "e2e-laravel-opinion",
+            "excerpt": "A synthetic framework post for browser tests.",
+            "content": "## The framework\n\nFramework content for the browser suite.",
+            "featured_image_path": null,
+            "published_at": "2026-02-05T09:00:00+00:00",
+            "category_slug": "e2e-laravel",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "E2E Code Example",
+            "slug": "e2e-code-example",
+            "excerpt": "A synthetic code post for browser tests.",
+            "content": "## A starting point\n\n\u0060\u0060\u0060php\nfinal class Example {}\n\u0060\u0060\u0060\n\nKeep the structure intentional.",
+            "featured_image_path": null,
+            "published_at": "2026-02-12T09:00:00+00:00",
+            "category_slug": "e2e-laravel",
+            "tags": [],
+            "seo": null
+        }
+    ],
+    "projects": [
+        {
+            "title": "E2E Project",
+            "slug": "e2e-project",
+            "description": "A synthetic project record for browser tests.",
+            "content": "<h2>What It Does</h2><p>This project exists only for the browser suite.</p>",
+            "featured_image_path": null,
+            "url": "https://example.test/e2e-project",
+            "github_url": null,
+            "tech_stack": ["PHP", "SQLite"],
+            "is_featured": true,
+            "sort_order": 1,
+            "tags": [],
+            "seo": null
+        }
+    ],
+    "podcasts": [
+        {
+            "name": "E2E Podcast",
+            "slug": "e2e-podcast",
+            "description": "A synthetic podcast record for browser tests.",
+            "long_description": null,
+            "cover_image_path": null,
+            "color": "#4A7FBF",
+            "apple_url": null,
+            "spotify_url": null,
+            "rss_url": null,
+            "youtube_url": null,
+            "sort_order": 1,
+            "seo": null
+        }
+    ],
+    "episodes": [],
+    "videos": []
+}

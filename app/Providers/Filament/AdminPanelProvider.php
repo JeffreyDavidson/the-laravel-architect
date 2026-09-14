@@ -12,6 +12,7 @@ use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -56,12 +57,13 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Amber,
             ])
-            ->darkMode(isForced: true)
+            ->darkMode()
             ->brandName('The Laravel Architect')
-            ->brandLogo('/images/logo-color-128.webp')
+            ->brandLogo('/images/elephant-companion-128.webp')
             ->brandLogoHeight('2.5rem')
             ->favicon('/images/favicon-32x32.png')
-            ->font('Inter')
+            ->font('IBM Plex Sans', provider: LocalFontProvider::class)
+            ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder

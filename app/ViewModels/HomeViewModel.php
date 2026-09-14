@@ -31,7 +31,6 @@ class HomeViewModel
                 ->take(3)
                 ->get(),
             'featuredProjects' => Project::published()
-                ->portfolio()
                 ->featured()
                 ->orderBy('sort_order')
                 ->take(4)
@@ -44,7 +43,7 @@ class HomeViewModel
                 ->take(3)
                 ->get(),
             'publishedPostCount' => Post::published()->count(),
-            'publishedProjectCount' => Project::published()->portfolio()->count(),
+            'publishedProjectCount' => Project::published()->count(),
             'seoSource' => new SEOData(
                 title: 'The Laravel Architect — Jeffrey Davidson',
                 description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
