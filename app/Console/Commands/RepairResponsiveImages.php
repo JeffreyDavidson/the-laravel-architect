@@ -11,8 +11,10 @@ use Illuminate\Contracts\Console\Isolatable;
 #[Description('Repair responsive image variants for stored project, post, and podcast media')]
 class RepairResponsiveImages extends Command implements Isolatable
 {
+    #[\Override]
     protected $isolated = true;
 
+    #[\Override]
     protected $isolatedExitCode = self::FAILURE;
 
     public function handle(): int

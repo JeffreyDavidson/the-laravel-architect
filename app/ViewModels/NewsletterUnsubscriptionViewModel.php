@@ -13,10 +13,10 @@ class NewsletterUnsubscriptionViewModel
         return [
             'actionUrl' => $actionUrl,
             'subscriber' => $subscriber,
-            'seoSource' => (new SEOData(
+            'seoSource' => new SEOData(
                 title: 'Unsubscribe',
                 description: 'Manage your subscription to The Laravel Architect newsletter.',
-            ))->markAsNoindex(),
+            )->markAsNoindex(),
         ];
     }
 }

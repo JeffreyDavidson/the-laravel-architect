@@ -11,10 +11,13 @@ use Filament\Widgets\Widget;
 
 class WelcomeWidget extends Widget
 {
+    #[\Override]
     protected string $view = 'filament.widgets.welcome-widget';
 
+    #[\Override]
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     protected static ?int $sort = -10;
 
     /**

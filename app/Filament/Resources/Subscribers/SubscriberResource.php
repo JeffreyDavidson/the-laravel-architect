@@ -13,12 +13,16 @@ use UnitEnum;
 
 class SubscriberResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Subscriber::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Newsletter';
 
+    #[\Override]
     protected static ?int $navigationSort = 7;
 
     public static function canCreate(): bool
