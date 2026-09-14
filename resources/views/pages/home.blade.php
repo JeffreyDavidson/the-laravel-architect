@@ -8,7 +8,7 @@
     {{-- ===== HERO ===== --}}
     <section
         data-home-hero
-        class="relative isolate overflow-hidden border-b border-surface-border-strong bg-surface-control text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:bg-surface-hero/18 md:after:bg-surface-hero/12"
+        class="border-surface-border-strong bg-surface-control after:bg-surface-hero/18 md:after:bg-surface-hero/12 relative isolate overflow-hidden border-b text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10"
     >
         <div class="absolute inset-x-0 top-16 bottom-0 -z-20 overflow-hidden md:inset-0">
             <picture
@@ -71,7 +71,7 @@
 
         <div class="mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-start px-4 py-16 pt-12 sm:min-h-[calc(100svh-4.5rem)] sm:items-center sm:px-6 md:pt-16 lg:px-8">
             <div class="max-w-2xl py-4 [text-shadow:0_2px_24px_rgb(0_0_0/0.28)]">
-                <p class="font-mono text-xs leading-normal font-semibold tracking-[0.12em] text-brand-200 uppercase">
+                <p class="text-brand-200 font-mono text-xs leading-normal font-semibold tracking-[0.12em] uppercase">
                     Jeffrey Davidson · The Laravel Architect
                 </p>
 
@@ -87,7 +87,7 @@
                 <div class="mt-9 flex flex-wrap gap-3">
                     <x-button
                         href="{{ route('contact') }}"
-                        class="min-h-11 rounded-lg border border-transparent px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold focus-visible:outline-brand-200 focus-visible:outline-offset-3"
+                        class="focus-visible:outline-brand-200 min-h-11 rounded-lg border border-transparent px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold focus-visible:outline-offset-3"
                     >Discuss a Project</x-button>
                     <a
                         href="{{ route('projects.index') }}"
@@ -188,7 +188,7 @@
                                 <x-post-artwork
                                     :post="$featured"
                                     sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
-                                    class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block min-h-60 overflow-hidden bg-surface-media md:min-h-[27rem]"
+                                    class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block min-h-60 overflow-hidden md:min-h-[27rem]"
                                 />
                                 <div class="flex flex-col justify-center p-7 sm:p-9">
                                     @if ($featured->category)
@@ -224,7 +224,7 @@
                                         <x-post-artwork
                                             :post="$post"
                                             sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
-                                            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block overflow-hidden bg-surface-media"
+                                            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block overflow-hidden"
                                         />
                                         <div class="p-6">
                                             @if ($post->category)
@@ -266,7 +266,7 @@
             <div class="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <a
                     href="{{ route('podcast.index') }}"
-                    class="group focus-visible:outline-brand-500 dark:border-brand-700 grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] dark:bg-surface-elevated"
+                    class="group focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-surface-elevated grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
                 >
                     @if ($podcast)
                         <div class="[&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-full [&_img]:max-w-64 md:[&_img]:max-w-none block bg-black">
@@ -332,7 +332,7 @@
     </section>
 
     {{-- ===== FINAL CTA ===== --}}
-    <section class="border-t border-gray-200 bg-gray-50 dark:border-white/5 dark:bg-surface-control">
+    <section class="dark:bg-surface-control border-t border-gray-200 bg-gray-50 dark:border-white/5">
         <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
             <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold tracking-widest text-green-800 uppercase dark:border-green-500/20 dark:bg-green-500/5 dark:text-green-400">
                 <span class="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400" aria-hidden="true"></span>

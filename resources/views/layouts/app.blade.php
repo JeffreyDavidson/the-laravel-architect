@@ -34,7 +34,7 @@
 <body class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
     <a
         href="#main-content"
-        class="bg-brand-600 focus:outline-brand-300 sr-only z-overlay rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
+        class="bg-brand-600 focus:outline-brand-300 z-overlay sr-only rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
     >
         Skip to content
     </a>
@@ -57,7 +57,7 @@
                         class="size-13 shrink-0 object-contain"
                     />
                     <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 font-mono text-meta font-medium tracking-micro uppercase transition-colors">The Laravel</span>
+                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 text-meta tracking-micro font-mono font-medium uppercase transition-colors">The Laravel</span>
                         <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-2xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
                     </span>
                 </a>
@@ -178,7 +178,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="dark:bg-brand-950 relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-surface-border">
+    <footer class="dark:bg-brand-950 dark:border-surface-border relative overflow-hidden border-t border-gray-200 bg-gray-50">
         <div class="relative mx-auto max-w-7xl px-4 pt-8 pb-8 sm:px-6 sm:pt-12 lg:px-8">
             {{-- Top section: Brand + Links --}}
             <div class="mb-8 flex flex-col justify-between gap-6 lg:mb-14 lg:flex-row lg:gap-10">
@@ -193,7 +193,7 @@
                             decoding="async"
                             class="h-10 w-10 rounded-full"
                         />
-                        <span class="flex items-baseline gap-1 text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white">
+                        <span class="group-hover:text-brand-600 flex items-baseline gap-1 text-gray-900 transition-colors dark:text-white">
                             <span class="text-meta font-semibold tracking-widest uppercase">The</span>
                             <span class="font-empera text-xl tracking-wide">Laravel</span>
                             <span class="text-meta font-semibold tracking-widest uppercase">Architect</span>
@@ -300,14 +300,14 @@
                         href="https://laravel.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400"
+                        class="hover:text-brand-600 text-gray-600 transition-colors dark:text-gray-400"
                     >Laravel</a>
                     &
                     <a
                         href="https://filamentphp.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400"
+                        class="hover:text-brand-600 text-gray-600 transition-colors dark:text-gray-400"
                         >Filament</a
                     >.
                 </p>

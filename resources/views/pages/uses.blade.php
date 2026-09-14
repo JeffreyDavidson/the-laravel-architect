@@ -6,7 +6,7 @@
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
-            <p class="text-brand-600 font-mono text-xs tracking-label uppercase">Toolkit / 05</p>
+            <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Toolkit / 05</p>
             <div>
                 <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl dark:text-white">
                     The tools behind the work.
@@ -29,7 +29,7 @@
 
     <nav
         aria-label="Jump to uses section"
-        class="border-b border-gray-200 bg-white lg:hidden dark:border-surface-border dark:bg-surface-page"
+        class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white lg:hidden"
     >
         <div class="mx-auto flex max-w-7xl gap-6 overflow-x-auto px-4 py-4 font-mono text-xs tracking-wide text-gray-600 uppercase sm:px-6 dark:text-gray-400">
             <a href="#hardware" class="hover:text-brand-600 whitespace-nowrap">Hardware</a>
@@ -41,7 +41,7 @@
     </nav>
 
     {{-- Content --}}
-    <div class="bg-gray-50 dark:bg-surface-page">
+    <div class="dark:bg-surface-page bg-gray-50">
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12 lg:px-8">
             <div class="flex flex-col gap-12 lg:flex-row">
                 {{-- Main Content --}}
@@ -146,7 +146,7 @@
                                 This Site Is Built With
                             </h2>
                         </div>
-                        <div class="grid grid-cols-2 border-y border-gray-200 sm:grid-cols-3 dark:border-surface-border">
+                        <div class="dark:border-surface-border grid grid-cols-2 border-y border-gray-200 sm:grid-cols-3">
                             @foreach ([
                                 ['icon' => '🐘', 'name' => 'Laravel '.config('public-site.technology.laravel'), 'desc' => 'Framework'],
                                 ['icon' => '🛡️', 'name' => 'Filament '.config('public-site.technology.filament'), 'desc' => 'Admin panel'],
@@ -170,7 +170,7 @@
                 <div class="hidden flex-shrink-0 lg:block lg:w-72">
                     <div class="space-y-6 lg:sticky lg:top-24">
                         {{-- Quick nav --}}
-                        <section class="border-t border-gray-200 pt-5 dark:border-surface-border">
+                        <section class="dark:border-surface-border border-t border-gray-200 pt-5">
                             <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">Jump To</h3>
                             <nav aria-label="Jump to uses section" class="space-y-2">
                                 <a
@@ -197,7 +197,7 @@
                         </section>
 
                         {{-- uses.tech --}}
-                        <section class="border-t border-gray-200 pt-5 dark:border-surface-border">
+                        <section class="dark:border-surface-border border-t border-gray-200 pt-5">
                             <h3 class="mb-3 text-xs font-semibold tracking-widest text-gray-500 uppercase">
                                 Inspired By
                             </h3>
