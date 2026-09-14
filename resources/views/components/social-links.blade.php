@@ -2,8 +2,8 @@
 
 @php
     $buttonLinks = [
-        ['name' => 'github', 'url' => 'https://github.com/JeffreyDavidson', 'label' => 'GitHub', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-[#4A7FBF]/50 hover:bg-[#4A7FBF]/5'],
-        ['name' => 'x-twitter', 'url' => 'https://x.com/thelaravelarch', 'label' => 'X / Twitter', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-[#4A7FBF]/50 hover:bg-[#4A7FBF]/5'],
+        ['name' => 'github', 'url' => 'https://github.com/JeffreyDavidson', 'label' => 'GitHub', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-brand-600/50 hover:bg-brand-600/5'],
+        ['name' => 'x-twitter', 'url' => 'https://x.com/thelaravelarch', 'label' => 'X / Twitter', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-brand-600/50 hover:bg-brand-600/5'],
         ['name' => 'youtube', 'url' => config('public-site.youtube.url'), 'label' => 'YouTube', 'hover' => 'hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/5'],
         ['name' => 'bluesky', 'url' => 'https://bsky.app/profile/thelaravelarch', 'label' => 'Bluesky', 'hover' => 'hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/5'],
         ['name' => 'instagram', 'url' => 'https://instagram.com/thelaravelarch', 'label' => 'Instagram', 'hover' => 'hover:text-pink-400 hover:border-pink-400/50 hover:bg-pink-400/5'],
@@ -25,7 +25,7 @@
                 href="{{ $link['url'] }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all dark:border-[#1e2a3a] dark:text-gray-400 {{ $link['hover'] }}"
+                class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all dark:border-surface-border dark:text-gray-400 {{ $link['hover'] }}"
                 title="{{ $link['label'] }}"
                 aria-label="{{ $link['label'] }}"
             >

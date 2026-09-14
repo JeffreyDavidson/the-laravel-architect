@@ -31,14 +31,17 @@ if (widget) {
     form?.addEventListener('pointerdown', loadWidget, { once: true });
 
     if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-            if (!entries.some((entry) => entry.isIntersecting)) {
-                return;
-            }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) {
+                    return;
+                }
 
-            observer.disconnect();
-            loadWidget();
-        }, { rootMargin: '300px' });
+                observer.disconnect();
+                loadWidget();
+            },
+            { rootMargin: '300px' },
+        );
 
         observer.observe(widget);
     } else {

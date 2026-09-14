@@ -3,7 +3,7 @@
 /* The editorial code palette mirrors the site's ink, paper, and blueprint colors. */
 code[class*='language-'],
 pre[class*='language-'] {
-    color: #e7edf3;
+    color: var(--text-code-light);
     text-shadow: none;
 }
 
@@ -11,12 +11,12 @@ pre[class*='language-'] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-    color: #7f8c9b;
+    color: var(--prism-comment);
 }
 
 .token.punctuation,
 .token.operator {
-    color: #aab6c4;
+    color: var(--prism-punctuation);
 }
 
 .token.namespace,
@@ -25,12 +25,12 @@ pre[class*='language-'] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-    color: #e08a98;
+    color: var(--prism-keyword);
 }
 
 .token.boolean,
 .token.number {
-    color: #efaa83;
+    color: var(--prism-string);
 }
 
 .token.selector,
@@ -39,22 +39,22 @@ pre[class*='language-'] {
 .token.char,
 .token.builtin,
 .token.inserted {
-    color: #d9c28f;
+    color: var(--prism-number);
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-    color: #86b8e2;
+    color: var(--prism-function);
 }
 
 .token.function,
 .token.class-name {
-    color: #a8cce8;
+    color: var(--color-brand-200);
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-    color: #e9b4be;
+    color: var(--prism-operator);
 }
