@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditEpisode extends EditRecord
 {
+    #[\Override]
     protected static string $resource = EpisodeResource::class;
 
     protected function getHeaderActions(): array

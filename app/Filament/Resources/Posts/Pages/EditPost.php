@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPost extends EditRecord
 {
+    #[\Override]
     protected static string $resource = PostResource::class;
 
     protected function getHeaderActions(): array

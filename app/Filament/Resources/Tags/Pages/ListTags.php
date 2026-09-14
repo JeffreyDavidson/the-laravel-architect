@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListTags extends ListRecords
 {
+    #[\Override]
     protected static string $resource = TagResource::class;
 
     protected function getHeaderActions(): array

@@ -14,7 +14,7 @@ trait HasPublishingConfiguration
             return self::$publishingStatusConfiguration;
         }
 
-        $attributes = (new \ReflectionClass(static::class))
+        $attributes = new \ReflectionClass(static::class)
             ->getAttributes(PublishingStatusAttribute::class);
 
         return self::$publishingStatusConfiguration = ($attributes[0] ?? null)?->newInstance()

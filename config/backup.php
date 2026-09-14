@@ -12,7 +12,7 @@ use Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays;
 use Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes;
 
 $backupDisks = array_values(array_filter(array_map(
-    'trim',
+    trim(...),
     explode(',', (string) env('BACKUP_DISKS', 'local')),
 )));
 

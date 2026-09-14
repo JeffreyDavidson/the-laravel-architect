@@ -65,46 +65,44 @@ class AdminPanelProvider extends PanelProvider
             ->font('IBM Plex Sans', provider: LocalFontProvider::class)
             ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-                return $builder
-                    ->items([
-                        ...Dashboard::getNavigationItems(),
-                    ])
-                    ->groups([
-                        NavigationGroup::make('Content')
-                            ->collapsible(false)
-                            ->items([
-                                ...PostResource::getNavigationItems(),
-                                ...CategoryResource::getNavigationItems(),
-                            ]),
-                        NavigationGroup::make('Podcasting')
-                            ->collapsible(false)
-                            ->items([
-                                ...PodcastResource::getNavigationItems(),
-                                ...EpisodeResource::getNavigationItems(),
-                            ]),
-                        NavigationGroup::make('Showcase')
-                            ->collapsible(false)
-                            ->items([
-                                ...ProjectResource::getNavigationItems(),
-                            ]),
-                        NavigationGroup::make('Taxonomy')
-                            ->collapsible(false)
-                            ->items([
-                                ...TagResource::getNavigationItems(),
-                            ]),
-                        NavigationGroup::make('Newsletter')
-                            ->collapsible(false)
-                            ->items([
-                                ...SubscriberResource::getNavigationItems(),
-                            ]),
-                        NavigationGroup::make('YouTube')
-                            ->collapsible(false)
-                            ->items([
-                                ...VideoResource::getNavigationItems(),
-                            ]),
-                    ]);
-            })
+            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $builder
+                ->items([
+                    ...Dashboard::getNavigationItems(),
+                ])
+                ->groups([
+                    NavigationGroup::make('Content')
+                        ->collapsible(false)
+                        ->items([
+                            ...PostResource::getNavigationItems(),
+                            ...CategoryResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Podcasting')
+                        ->collapsible(false)
+                        ->items([
+                            ...PodcastResource::getNavigationItems(),
+                            ...EpisodeResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Showcase')
+                        ->collapsible(false)
+                        ->items([
+                            ...ProjectResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Taxonomy')
+                        ->collapsible(false)
+                        ->items([
+                            ...TagResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Newsletter')
+                        ->collapsible(false)
+                        ->items([
+                            ...SubscriberResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('YouTube')
+                        ->collapsible(false)
+                        ->items([
+                            ...VideoResource::getNavigationItems(),
+                        ]),
+                ]))
             ->userMenuItems([
                 MenuItem::make()
                     ->label('View Site')

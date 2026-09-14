@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPodcast extends EditRecord
 {
+    #[\Override]
     protected static string $resource = PodcastResource::class;
 
     protected function getHeaderActions(): array

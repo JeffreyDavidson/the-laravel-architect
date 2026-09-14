@@ -16,10 +16,13 @@ use UnitEnum;
 
 class VideoResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Video::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'YouTube';
 
     public static function form(Schema $schema): Schema

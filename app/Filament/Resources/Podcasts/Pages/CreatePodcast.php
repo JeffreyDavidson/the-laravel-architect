@@ -7,5 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreatePodcast extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = PodcastResource::class;
 }

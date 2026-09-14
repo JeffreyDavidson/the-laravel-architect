@@ -13,7 +13,11 @@ class Subscriber extends Model
 {
     public function unsubscribeUrl(): string
     {
-        return URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $this]);
+        return URL::temporarySignedRoute(
+            'newsletter.unsubscribe',
+            now()->addYear(),
+            ['subscriber' => $this],
+        );
     }
 
     protected function casts(): array
