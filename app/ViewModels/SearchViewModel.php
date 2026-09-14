@@ -22,7 +22,7 @@ class SearchViewModel
         return [
             'query' => $query,
             'results' => $results,
-            'resultCount' => array_sum(array_map('count', $results)),
+            'resultCount' => array_sum(array_map(count(...), $results)),
             'seoSource' => new SEOData(
                 title: $query === '' ? 'Search' : 'Search results',
                 description: $query === ''
