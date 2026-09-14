@@ -8,7 +8,6 @@ use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
-    ->withoutParallel()
     ->withPaths([
         __DIR__.'/tests',
     ])
