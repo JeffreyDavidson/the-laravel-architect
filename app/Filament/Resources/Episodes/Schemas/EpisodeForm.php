@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Enums\PublishStatus;
+use App\Filament\Forms\Components\OptimizedImageUpload;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
@@ -83,10 +84,9 @@ class EpisodeForm
                             ->url()
                             ->maxLength(255)
                             ->helperText('If episode is also on YouTube'),
-                        FileUpload::make('featured_image_path')
+                        OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('episodes/images')
-                            ->image()
                             ->maxSize(10240),
                         TextInput::make('duration_minutes')
                             ->numeric()
