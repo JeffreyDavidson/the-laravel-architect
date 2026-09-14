@@ -65,7 +65,7 @@
                 {{-- Mobile hamburger --}}
                 <button
                     id="mobile-menu-btn"
-                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 md:hidden dark:text-gray-400 dark:hover:text-white"
+                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden dark:text-gray-400 dark:hover:text-white"
                     aria-label="Toggle menu"
                     aria-controls="mobile-menu"
                     aria-expanded="false"
@@ -75,7 +75,7 @@
                     </svg>
                 </button>
 
-                <div class="hidden items-center gap-8 md:flex">
+                <div class="hidden items-center gap-8 lg:flex">
                     <a
                         href="{{ route('services') }}"
                         @if (request()->routeIs('services')) aria-current="page" @endif
@@ -101,6 +101,11 @@
                         @if (request()->routeIs('about')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif"
                     >About</a>
+                    <a
+                        href="{{ route('search') }}"
+                        @if (request()->routeIs('search')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
+                    >Search</a>
                     <button
                         id="theme-toggle"
                         data-theme-toggle
@@ -121,7 +126,7 @@
             </div>
 
             {{-- Mobile menu --}}
-            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 md:hidden">
+            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 lg:hidden">
                 <div class="flex flex-col gap-3">
                     <a
                         href="{{ route('services') }}"
@@ -148,6 +153,11 @@
                         @if (request()->routeIs('about')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif"
                     >About</a>
+                    <a
+                        href="{{ route('search') }}"
+                        @if (request()->routeIs('search')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
+                    >Search</a>
                     <a
                         href="{{ route('uses') }}"
                         @if (request()->routeIs('uses')) aria-current="page" @endif
