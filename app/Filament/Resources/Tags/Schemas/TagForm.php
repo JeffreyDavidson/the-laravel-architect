@@ -42,24 +42,22 @@ class TagForm
                     })
                     ->maxLength(255)
                     ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                    ->rule(function (?Tag $record): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($record): void {
-                            if (! is_string($value) || preg_match('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $value) !== 1) {
-                                $fail('The slug must contain only lowercase letters, numbers, and single hyphens.');
+                    ->rule(fn (?Tag $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                        if (! is_string($value) || preg_match('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $value) !== 1) {
+                            $fail('The slug must contain only lowercase letters, numbers, and single hyphens.');
 
-                                return;
-                            }
+                            return;
+                        }
 
-                            $query = Tag::query()->where('slug->'.app()->getLocale(), $value);
+                        $query = Tag::query()->where('slug->'.app()->getLocale(), $value);
 
-                            if ($record !== null) {
-                                $query->whereKeyNot($record->getKey());
-                            }
+                        if ($record !== null) {
+                            $query->whereKeyNot($record->getKey());
+                        }
 
-                            if ($query->exists()) {
-                                $fail('The slug has already been taken.');
-                            }
-                        };
+                        if ($query->exists()) {
+                            $fail('The slug has already been taken.');
+                        }
                     }),
                 TextInput::make('type')
                     ->nullable(),

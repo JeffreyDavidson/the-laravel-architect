@@ -70,25 +70,25 @@
 
 @layer components {
     .podcast-wave-bar {
-        background: linear-gradient(to top, #4a7fbf, #7eb0dc);
+        background: linear-gradient(to top, var(--color-brand-600), var(--color-brand-300));
         animation: podcast-waveform var(--dur, 1.2s) ease-in-out infinite;
         animation-delay: var(--delay, 0s);
     }
 
     .podcast-orb-brand {
-        background: radial-gradient(circle, #4a7fbf, transparent 70%);
+        background: radial-gradient(circle, var(--color-brand-600), transparent 70%);
     }
 
     .podcast-brand-text {
-        color: #4a7fbf;
+        color: var(--color-brand-600);
     }
 
     .podcast-brand-bg {
-        background-color: #4a7fbf;
+        background-color: var(--color-brand-600);
     }
 
     .podcast-brand-icon {
-        background: linear-gradient(135deg, rgb(74 127 191 / 0.2), rgb(74 127 191 / 0.05));
+        background: linear-gradient(135deg, var(--brand-alpha-20), var(--brand-alpha-05));
     }
 
     .podcast-eq-bar {
@@ -106,7 +106,7 @@
     }
 
     .episode-card:hover {
-        background: rgb(255 255 255 / 0.02);
+        background: var(--white-02);
         transform: translateY(-2px);
     }
 
@@ -150,7 +150,7 @@
     }
 
     .ep-nav:hover {
-        border-color: rgb(255 255 255 / 0.1);
+        border-color: var(--white-10);
     }
 
     .ep-nav:hover .ep-nav-arrow {
@@ -158,27 +158,27 @@
     }
 
     .podcast-surface {
-        background: #ffffff;
-        border-color: rgb(229 231 235);
+        background: var(--bg-card);
+        border-color: var(--color-gray-200);
     }
 
     .podcast-page-border {
-        border-color: rgb(229 231 235);
+        border-color: var(--color-gray-200);
     }
 
     .podcast-vinyl {
-        background: rgb(229 231 235);
-        border-color: rgb(209 213 219);
+        background: var(--color-gray-200);
+        border-color: var(--color-gray-300);
     }
 
     .podcast-showcase {
-        --podcast-color: #4a7fbf;
+        --podcast-color: var(--color-brand-600);
 
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .podcast-showcase:hover {
-        box-shadow: 0 25px 60px -15px rgb(0 0 0 / 0.5);
+        box-shadow: 0 25px 60px -15px var(--shadow-black-50);
         transform: translateY(-6px);
     }
 
@@ -215,7 +215,7 @@
     }
 
     .podcast-vinyl-grooves {
-        background: repeating-radial-gradient(circle at center, transparent 0, transparent 8px, rgb(255 255 255 / 0.02) 8px, rgb(255 255 255 / 0.02) 9px);
+        background: repeating-radial-gradient(circle at center, transparent 0, transparent 8px, var(--white-02) 8px, var(--white-02) 9px);
     }
 
     .podcast-vinyl-center {
@@ -263,7 +263,7 @@
 
     .podcast-prose {
         --tw-prose-links: var(--podcast-color);
-        --tw-prose-code: #e47a9d;
+        --tw-prose-code: var(--accent-pink);
     }
 
     .topic-pill {
@@ -282,7 +282,7 @@
     }
 
     .format-card:hover {
-        border-color: rgb(255 255 255 / 0.1);
+        border-color: var(--white-10);
         transform: translateY(-4px);
     }
 
@@ -305,37 +305,37 @@
     :root:not(.dark) .topic-pill {
         background: transparent !important;
         border-color: currentColor !important;
-        color: #245b91;
+        color: var(--color-archive-link);
     }
 
     :root:not(.dark) .podcast-accent-text,
     :root:not(.dark) .podcast-badge {
-        color: #245b91;
+        color: var(--color-archive-link);
     }
 
     :root:not(.dark) .podcast-badge {
-        background: rgb(36 91 145 / 0.08);
+        background: var(--archive-link-alpha-08);
     }
 
     :root:not(.dark) .podcast-showcase {
-        box-shadow: 0 2px 12px rgb(0 0 0 / 0.04);
+        box-shadow: 0 2px 12px var(--shadow-black-04);
     }
 
     :root:not(.dark) .podcast-showcase:hover {
-        box-shadow: 0 12px 40px rgb(0 0 0 / 0.08);
+        box-shadow: 0 12px 40px var(--shadow-black-08);
     }
 
     .dark .podcast-surface {
-        background: #0d1117;
-        border-color: #1e2a3a;
+        background: var(--color-surface-control);
+        border-color: var(--color-surface-border);
     }
 
     .dark .podcast-page-border {
-        border-color: #1e2a3a;
+        border-color: var(--color-surface-border);
     }
 
     .dark .podcast-vinyl {
-        background: #111111;
-        border-color: #222222;
+        background: var(--color-surface-black);
+        border-color: var(--color-surface-border-dark);
     }
 }

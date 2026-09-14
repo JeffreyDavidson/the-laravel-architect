@@ -52,7 +52,8 @@ class PublicContentArchive
             ->published()
             ->with(['category', 'tags', 'seo'])
             ->orderBy('published_at')
-            ->get()
+            ->orderBy('id')
+            ->lazy(100)
             ->map(fn (Post $post): array => [
                 ...$this->attributes($post, self::POST_FIELDS),
                 'category_slug' => $post->category?->slug,
@@ -66,7 +67,8 @@ class PublicContentArchive
             ->published()
             ->with(['tags', 'seo'])
             ->orderBy('sort_order')
-            ->get()
+            ->orderBy('id')
+            ->lazy(100)
             ->map(fn (Project $project): array => [
                 ...$this->attributes($project, self::PROJECT_FIELDS),
                 'tech_stack' => $project->tech_stack,
@@ -80,7 +82,8 @@ class PublicContentArchive
             ->active()
             ->with('seo')
             ->orderBy('sort_order')
-            ->get()
+            ->orderBy('id')
+            ->lazy(100)
             ->map(fn (Podcast $podcast): array => [
                 ...$this->attributes($podcast, self::PODCAST_FIELDS),
                 'seo' => $this->seo($podcast),
@@ -93,7 +96,8 @@ class PublicContentArchive
             ->whereHas('podcast', fn (Builder $query): Builder => $query->active())
             ->with(['podcast', 'tags', 'seo'])
             ->orderBy('published_at')
-            ->get()
+            ->orderBy('id')
+            ->lazy(100)
             ->map(fn (Episode $episode): array => [
                 ...$this->attributes($episode, self::EPISODE_FIELDS),
                 'podcast_slug' => $episode->podcast?->slug,
@@ -109,7 +113,9 @@ class PublicContentArchive
             'categories' => Category::query()
                 ->whereHas('publishedPosts')
                 ->orderBy('name')
-                ->get(['name', 'slug', 'description'])
+                ->orderBy('id')
+                ->select(['name', 'slug', 'description'])
+                ->lazy(100)
                 ->map(fn (Category $category): array => $this->attributes($category, ['name', 'slug', 'description']))
                 ->values()
                 ->all(),
@@ -120,7 +126,9 @@ class PublicContentArchive
             'videos' => Video::query()
                 ->published()
                 ->orderBy('published_at')
-                ->get(self::VIDEO_FIELDS)
+                ->orderBy('id')
+                ->select(self::VIDEO_FIELDS)
+                ->lazy(100)
                 ->map(fn (Video $video): array => $this->attributes($video, self::VIDEO_FIELDS))
                 ->values()
                 ->all(),

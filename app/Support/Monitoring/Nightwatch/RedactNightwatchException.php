@@ -7,10 +7,10 @@ use Laravel\Nightwatch\Records\Exception;
 use Laravel\Nightwatch\State\CommandState;
 use Laravel\Nightwatch\State\RequestState;
 
-final class RedactNightwatchException
+final readonly class RedactNightwatchException
 {
     /** @param Core<RequestState|CommandState> $nightwatch */
-    public function __construct(private readonly Core $nightwatch) {}
+    public function __construct(private Core $nightwatch) {}
 
     public function __invoke(Exception $exception): bool
     {

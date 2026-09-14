@@ -16,9 +16,13 @@ function initializePublicShell() {
         document.querySelectorAll('.theme-toggle-label').forEach((label) => {
             label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
         });
+        document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+            toggle.setAttribute('aria-pressed', String(isDark));
+        });
 
         if (themeColor) {
-            themeColor.content = isDark ? '#0D1117' : '#ffffff';
+            themeColor.content =
+                getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || 'transparent';
         }
     }
 

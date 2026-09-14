@@ -17,14 +17,19 @@ use UnitEnum;
 
 class ProjectResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Project::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCodeBracket;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Showcase';
 
+    #[\Override]
     protected static ?int $navigationSort = 5;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
