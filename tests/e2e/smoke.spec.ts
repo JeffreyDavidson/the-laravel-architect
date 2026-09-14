@@ -188,10 +188,20 @@ test('static public pages avoid downloading optional interaction bundles', async
 });
 
 test('blog code blocks expose a keyboard-accessible copy action', async ({ page }) => {
+    await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+                writeText: async () => {},
+            },
+        });
+    });
+
     await page.goto('/blog/e2e-code-example');
 
-    const copyButton = page.getByRole('button', { name: 'Copy code' }).first();
+    const copyButton = page.locator('.copy-btn').first();
 
+    await expect(copyButton).toHaveAccessibleName('Copy code');
     await copyButton.focus();
     await expect(copyButton).toBeVisible();
     await copyButton.click();
