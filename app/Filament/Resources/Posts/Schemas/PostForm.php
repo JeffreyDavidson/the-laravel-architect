@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Enums\PublishStatus;
+use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -54,10 +54,9 @@ class PostForm
 
                 Section::make('Media & Metadata')
                     ->schema([
-                        FileUpload::make('featured_image_path')
+                        OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('posts')
-                            ->image()
                             ->maxSize(10240)
                             ->columnSpanFull(),
                         Select::make('category_id')

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Podcasts\Schemas;
 
+use App\Filament\Forms\Components\OptimizedImageUpload;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -45,10 +45,9 @@ class PodcastForm
                             ->rows(5)
                             ->helperText('Full about section for the podcast page')
                             ->columnSpanFull(),
-                        FileUpload::make('cover_image_path')
+                        OptimizedImageUpload::make('cover_image_path')
                             ->disk('public')
                             ->directory('podcasts')
-                            ->image()
                             ->maxSize(10240),
                         ColorPicker::make('color')
                             ->default('#6366f1')
