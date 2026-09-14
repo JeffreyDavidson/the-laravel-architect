@@ -17,7 +17,7 @@
                 <x-svg-icon name="chevron-left" class="h-4 w-4" />
                 All Posts
             </a>
-            <p class="text-brand-600 mb-4 font-mono text-xs tracking-[0.18em] uppercase">Filed under</p>
+            <p class="text-brand-600 mb-4 font-mono text-xs tracking-label uppercase">Filed under</p>
             <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl dark:text-white">
                 {{ $category->name }}
             </h1>

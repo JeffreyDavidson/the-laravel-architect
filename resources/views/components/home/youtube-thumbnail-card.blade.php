@@ -6,7 +6,7 @@
     rel="noopener noreferrer"
     {{ $attributes->class('thumbnail-card block overflow-hidden rounded-xl transition-[border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400') }}
 >
-    <div class="relative aspect-video overflow-hidden bg-gray-100 dark:bg-[#111111]">
+    <div class="relative aspect-video overflow-hidden bg-gray-100 dark:bg-surface-black">
         @if ($video->thumbnail_url)
             <img
                 src="{{ $video->thumbnail_url }}"
@@ -32,7 +32,7 @@
         @endif
 
         @if (\App\Presenters\VideoPresenter::from($video)->duration())
-            <div class="absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] text-white">
+            <div class="absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-meta text-white">
                 {{ \App\Presenters\VideoPresenter::from($video)->duration() }}
             </div>
         @endif

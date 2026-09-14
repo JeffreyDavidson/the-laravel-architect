@@ -19,7 +19,7 @@
     @endphp
 
     {{-- Hero --}}
-    <div class="dark:border-brand-700 relative overflow-hidden border-b border-gray-200 bg-white dark:bg-[#0b1016]">
+    <div class="dark:border-brand-700 relative overflow-hidden border-b border-gray-200 bg-white dark:bg-surface-page">
         <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
             <div class="flex flex-col items-center gap-8 md:flex-row md:gap-16 lg:gap-20">
                 {{-- Trading Card (Flip) --}}
@@ -41,7 +41,7 @@
                                         <div class="about-trading-card-inner dark:bg-brand-900 relative overflow-hidden rounded-2xl bg-white shadow-2xl">
                                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
                                                 <span class="font-mono text-xs tracking-wider text-gray-500 uppercase dark:text-gray-500">Developer Card</span>
-                                                <span class="border-accent-400/20 bg-accent-400/5 text-accent-400 rounded-full border px-1.5 py-0.5 text-[10px] font-bold tracking-wider whitespace-nowrap uppercase">Legendary</span>
+                                                <span class="border-accent-400/20 bg-accent-400/5 text-accent-400 rounded-full border px-1.5 py-0.5 text-meta font-bold tracking-wider whitespace-nowrap uppercase">Legendary</span>
                                             </div>
                                             <div class="dark:border-brand-700 relative mx-4 flex-1 overflow-hidden rounded-xl border-4 border-gray-300">
                                                 <img
@@ -62,7 +62,7 @@
                                                 </h2>
                                                 <div class="mt-1 flex items-center justify-center gap-2">
                                                     <div class="bg-brand-600/20 h-px flex-1"></div>
-                                                    <p class="text-brand-600 text-xs font-semibold tracking-[0.2em] uppercase">
+                                                    <p class="text-brand-600 text-xs font-semibold tracking-micro uppercase">
                                                         Laravel Architect
                                                     </p>
                                                     <div class="bg-brand-600/20 h-px flex-1"></div>
@@ -89,7 +89,7 @@
                                                     </h2>
                                                     <div class="mt-0.5 flex items-center justify-center gap-2">
                                                         <div class="bg-accent-600/20 h-px flex-1"></div>
-                                                        <p class="text-accent-700 dark:text-accent-300 text-xs font-semibold tracking-[0.2em] uppercase">
+                                                        <p class="text-accent-700 dark:text-accent-300 text-xs font-semibold tracking-micro uppercase">
                                                             Stats &amp; Specs
                                                         </p>
                                                         <div class="bg-accent-600/20 h-px flex-1"></div>
@@ -100,27 +100,27 @@
                                                 <div class="px-4 pb-3">
                                                     <div class="grid grid-cols-2 gap-2">
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">8.4</span>
                                                         </div>
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.laravel') }}</span>
                                                         </div>
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">Stack</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">Stack</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">TALL</span>
                                                         </div>
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">Role</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">Role</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Sr. Software Eng</span>
                                                         </div>
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">Works</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">Works</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Remote</span>
                                                         </div>
                                                         <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="block text-[10px] tracking-wider text-gray-500 uppercase dark:text-gray-400">Call Me When</span>
+                                                            <span class="block text-meta tracking-wider text-gray-500 uppercase dark:text-gray-400">Call Me When</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
                                                         </div>
                                                     </div>
@@ -145,7 +145,7 @@
                         <svg class="h-4 w-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
-                        <span class="text-[12px] font-medium tracking-wide text-gray-600 dark:text-gray-300">Click card to flip</span>
+                        <span class="text-meta-sm font-medium tracking-wide text-gray-600 dark:text-gray-300">Click card to flip</span>
                         <svg class="h-3.5 w-3.5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
                         </svg>
@@ -165,13 +165,10 @@
                     </p>
 
                     <div class="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
-                        <a
-                            href="{{ route('contact') }}"
-                            class="bg-brand-600 hover:bg-brand-500 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
-                        >
+                        <x-button href="{{ route('contact') }}" size="sm" class="rounded-lg px-5 py-2.5 font-semibold">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             Get in Touch
-                        </a>
+                        </x-button>
                         <a
                             href="https://github.com/JeffreyDavidson"
                             target="_blank"
@@ -189,7 +186,7 @@
     </div>
 
     {{-- The Story --}}
-    <div class="bg-gray-50 dark:bg-[#0b1016]">
+    <div class="bg-gray-50 dark:bg-surface-page">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
             <div class="flex flex-col gap-16 lg:flex-row">
                 {{-- Main story --}}
@@ -390,7 +387,7 @@
     </div>
 
     {{-- CTA --}}
-    <div class="dark:border-brand-700 relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:bg-[#0b1016]">
+    <div class="dark:border-brand-700 relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:bg-surface-page">
         {{-- Floating orbs --}}
         <div class="hidden"></div>
 

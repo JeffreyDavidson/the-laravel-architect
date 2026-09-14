@@ -7,7 +7,7 @@
 @section('content')
     <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
         {{-- ===== EPISODE HERO ===== --}}
-        <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
+        <section class="border-b border-gray-200 bg-white dark:border-surface-border dark:bg-surface-page">
             <div class="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
                 {{-- Breadcrumb --}}
                 <nav aria-label="Breadcrumb" class="relative z-10 mb-8 flex items-center gap-2 text-sm text-gray-500">
@@ -40,7 +40,7 @@
                                 class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56"
                             />
                         @else
-                            <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56 dark:border-[#1e2a3a] dark:bg-[#111820]">
+                            <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56 dark:border-surface-border dark:bg-surface-raised">
                                 <svg class="podcast-accent-text h-20 w-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                             </div>
                         @endif
@@ -98,7 +98,7 @@
         </section>
 
         {{-- ===== MAIN CONTENT ===== --}}
-        <div class="bg-gray-50 dark:bg-[#0b1016]">
+        <div class="bg-gray-50 dark:bg-surface-page">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
                 <div class="flex flex-col gap-12 lg:flex-row">
                     {{-- Left Column --}}
@@ -112,7 +112,7 @@
                         {{-- Custom Audio Player --}}
                         @if ($audioUrl)
                             <div
-                                class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
+                                class="mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-surface-border dark:bg-surface-control"
                                 data-audio-player
                                 data-playing="false"
                             >
@@ -138,7 +138,7 @@
                                 {{-- Progress bar --}}
                                 <div class="px-6 py-2">
                                     <div class="group relative h-5">
-                                        <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[#1e2a3a]">
+                                        <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-surface-border">
                                             <div
                                                 class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full"
                                                 data-audio-progress
@@ -193,7 +193,7 @@
                                             class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
                                         >
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" /></svg>
-                                            <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">15</span>
+                                            <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-meta text-gray-600">15</span>
                                         </button>
 
                                         {{-- Play/Pause --}}
@@ -216,7 +216,7 @@
                                             class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
                                         >
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" /></svg>
-                                            <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-[10px] text-gray-600">30</span>
+                                            <span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-meta text-gray-600">30</span>
                                         </button>
                                     </div>
 
@@ -226,7 +226,7 @@
                                             type="button"
                                             data-audio-speed
                                             aria-label="Playback speed 1 times. Activate to change."
-                                            class="rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white"
+                                            class="rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-surface-border dark:text-gray-400 dark:hover:text-white"
                                         >
                                             <span data-audio-speed-label>1x</span>
                                         </button>
@@ -237,7 +237,7 @@
 
                         {{-- Supported podcast embeds --}}
                         @if ($embedUrl)
-                            <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 dark:border-[#1e2a3a]">
+                            <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 dark:border-surface-border">
                                 <iframe
                                     src="{{ $embedUrl }}"
                                     title="{{ $episode->title }} podcast player"
@@ -252,7 +252,7 @@
 
                         {{-- Description Fallback (no audio, no show_notes, no youtube, no embed) --}}
                         @if (! $audioUrl && ! $episode->show_notes && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedUrl)
-                            <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
+                            <div class="relative mb-10 rounded-2xl border border-gray-200 bg-white p-8 dark:border-surface-border dark:bg-surface-control">
                                 <div class="podcast-accent-text absolute top-6 left-6 text-6xl leading-none opacity-15">
                                     "
                                 </div>
@@ -266,13 +266,13 @@
 
                         {{-- YouTube Embed --}}
                         @if ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu'))
-                            <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 dark:border-[#1e2a3a]">
+                            <div class="mb-10 overflow-hidden rounded-2xl border border-gray-200 dark:border-surface-border">
                                 @php
                                     preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/', $episode->youtube_url, $matches);
                                     $videoId = $matches[1] ?? null;
                                 @endphp
                                 @if ($videoId)
-                                    <div class="relative aspect-video w-full bg-[#0b1016]" data-youtube-facade>
+                                    <div class="relative aspect-video w-full bg-surface-page" data-youtube-facade>
                                         <template data-youtube-player>
                                             <iframe
                                                 src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
@@ -297,7 +297,7 @@
                                                 <svg class="ml-1 h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                             </span>
                                             <span>
-                                                <span class="text-brand-300 block font-mono text-xs tracking-[0.18em] uppercase">Video episode</span>
+                                                <span class="text-brand-300 block font-mono text-xs tracking-label uppercase">Video episode</span>
                                                 <span class="mt-2 block text-lg font-semibold">Watch on YouTube</span>
                                             </span>
                                         </button>
@@ -324,7 +324,7 @@
                                         href="{{ $embedLink }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="share-btn inline-flex items-center gap-2 rounded-lg border border-[#1DB954]/20 bg-[#1DB954]/10 px-4 py-2.5 text-sm font-medium text-[#1DB954] transition-colors hover:bg-[#1DB954]/20"
+                                        class="share-btn inline-flex items-center gap-2 rounded-lg border border-social-spotify/20 bg-social-spotify/10 px-4 py-2.5 text-sm font-medium text-social-spotify transition-colors hover:bg-social-spotify/20"
                                     >
                                         <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" /></svg>
                                         Podcast platform
@@ -346,7 +346,7 @@
 
                         {{-- Guest Feature Card --}}
                         @if ($episode->guest_name)
-                            <div class="mb-10 rounded-2xl border border-gray-200 bg-white p-6 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
+                            <div class="mb-10 rounded-2xl border border-gray-200 bg-white p-6 dark:border-surface-border dark:bg-surface-control">
                                 <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
                                     Featured Guest
                                 </h3>
@@ -388,7 +388,7 @@
                                     </span>
                                     Show Notes
                                 </h2>
-                                <div class="podcast-prose prose prose-invert prose-lg prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-[#0D1117] prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-[#1e2a3a] prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400 max-w-none">
+                                <div class="podcast-prose prose prose-invert prose-lg prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-surface-border prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400 max-w-none">
                                     {!!
                                         Str::markdown($episode->show_notes, [
                                             'html_input' => 'strip',
@@ -407,7 +407,7 @@
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($episode->tags as $tag)
-                                        <span class="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-gray-600 dark:border-[#1e2a3a] dark:text-gray-400">{{ $tag->name }}</span>
+                                        <span class="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-gray-600 dark:border-surface-border dark:text-gray-400">{{ $tag->name }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -415,7 +415,7 @@
 
                         {{-- Empty State Fallback --}}
                         @if (! $audioUrl && ! $episode->show_notes && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedLink)
-                            <div class="mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center dark:border-[#1e2a3a]">
+                            <div class="mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center dark:border-surface-border">
                                 <svg class="mx-auto mb-4 h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <p class="text-lg font-semibold text-gray-600 dark:text-gray-400">
                                     Full episode details coming soon
@@ -431,7 +431,7 @@
                     <div class="flex-shrink-0 lg:w-80">
                         <div class="space-y-6 lg:sticky lg:top-8">
                             {{-- About This Podcast --}}
-                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
+                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-surface-border dark:bg-surface-control">
                                 <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
                                     About This Podcast
                                 </h3>
@@ -464,7 +464,7 @@
                             </div>
 
                             {{-- Episode Details --}}
-                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
+                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-surface-border dark:bg-surface-control">
                                 <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
                                     Episode Details
                                 </h3>
@@ -507,7 +507,7 @@
                             </div>
 
                             {{-- Share Episode --}}
-                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-[#1e2a3a] dark:bg-[#0D1117]">
+                            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-surface-border dark:bg-surface-control">
                                 <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
                                     Share Episode
                                 </h3>
@@ -517,7 +517,7 @@
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on X"
-                                        class="share-btn flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white"
+                                        class="share-btn flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-surface-border dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                                     </a>
@@ -526,7 +526,7 @@
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on LinkedIn"
-                                        class="share-btn flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white"
+                                        class="share-btn flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-surface-border dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                                     </a>
@@ -534,7 +534,7 @@
                                         type="button"
                                         data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}"
                                         aria-label="Copy episode link"
-                                        class="share-btn flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-[#1e2a3a] dark:text-gray-400 dark:hover:text-white"
+                                        class="share-btn flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:border-surface-border dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
                                     </button>
@@ -545,12 +545,12 @@
                 </div>
 
                 {{-- Prev / Next Navigation --}}
-                <div class="mt-16 border-t border-gray-200 pt-8 dark:border-[#1e2a3a]">
+                <div class="mt-16 border-t border-gray-200 pt-8 dark:border-surface-border">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         @if ($prevEpisode)
                             <a
                                 href="{{ route('podcast.episode', [$podcast, $prevEpisode]) }}"
-                                class="ep-nav group rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
+                                class="ep-nav group rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:bg-white dark:border-surface-border dark:bg-surface-control"
                             >
                                 <div class="flex items-center gap-3">
                                     <svg class="ep-nav-arrow h-5 w-5 flex-shrink-0 text-gray-600 transition-transform [--arrow-dir:-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
@@ -573,7 +573,7 @@
                         @if ($nextEpisode)
                             <a
                                 href="{{ route('podcast.episode', [$podcast, $nextEpisode]) }}"
-                                class="ep-nav group rounded-2xl border border-gray-200 p-5 text-right transition-all duration-300 hover:bg-white dark:border-[#1e2a3a] dark:bg-[#0D1117]"
+                                class="ep-nav group rounded-2xl border border-gray-200 p-5 text-right transition-all duration-300 hover:bg-white dark:border-surface-border dark:bg-surface-control"
                             >
                                 <div class="flex items-center justify-end gap-3">
                                     <div class="min-w-0">

@@ -6,7 +6,7 @@
 
 @section('content')
     <div
-        class="article-progress bg-brand-500 fixed top-0 left-0 z-[60] h-0.5 w-full"
+        class="article-progress bg-brand-500 fixed top-0 left-0 z-overlay h-0.5 w-full"
         data-article-progress
         aria-hidden="true"
     ></div>
@@ -122,7 +122,7 @@
 
         @if ($relatedPosts->count())
             <section
-                class="dark:border-brand-800/50 border-t border-gray-200 bg-gray-50 py-14 sm:py-20 dark:bg-[#0b1016]"
+                class="dark:border-brand-800/50 border-t border-gray-200 bg-gray-50 py-14 sm:py-20 dark:bg-surface-page"
                 aria-labelledby="related-posts-heading"
             >
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

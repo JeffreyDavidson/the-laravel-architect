@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/elephant-companion-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/elephant-companion-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0D1117" />
+    <meta name="theme-color" content="transparent" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
     {!! seo($seoSource ?? null) !!}
     @if (config('services.fathom.site_id'))
@@ -34,7 +34,7 @@
 <body class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
     <a
         href="#main-content"
-        class="bg-brand-600 focus:outline-brand-300 sr-only z-[60] rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
+        class="bg-brand-600 focus:outline-brand-300 sr-only z-overlay rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
     >
         Skip to content
     </a>
@@ -57,7 +57,7 @@
                         class="size-13 shrink-0 object-contain"
                     />
                     <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 font-mono text-[10px] font-medium tracking-[0.2em] uppercase transition-colors">The Laravel</span>
+                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 font-mono text-meta font-medium tracking-micro uppercase transition-colors">The Laravel</span>
                         <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-2xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
                     </span>
                 </a>
@@ -103,9 +103,11 @@
                     >About</a>
                     <button
                         id="theme-toggle"
+                        data-theme-toggle
                         class="dark:hover:bg-brand-800/50 rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         title="Toggle theme"
                         aria-label="Toggle theme"
+                        aria-pressed="false"
                     >
                         <svg id="theme-icon-dark" class="hidden h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                         <svg id="theme-icon-light" class="hidden h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -152,8 +154,10 @@
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif"
                     >Uses</a>
                     <button
+                        data-theme-toggle
                         class="theme-toggle-mobile flex items-center gap-2 px-2 py-1 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         aria-label="Toggle theme"
+                        aria-pressed="false"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                         <span class="theme-toggle-label">Light Mode</span>
@@ -174,7 +178,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="dark:bg-brand-950 relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-[#1e2a3a]">
+    <footer class="dark:bg-brand-950 relative overflow-hidden border-t border-gray-200 bg-gray-50 dark:border-surface-border">
         <div class="relative mx-auto max-w-7xl px-4 pt-8 pb-8 sm:px-6 sm:pt-12 lg:px-8">
             {{-- Top section: Brand + Links --}}
             <div class="mb-8 flex flex-col justify-between gap-6 lg:mb-14 lg:flex-row lg:gap-10">
@@ -189,10 +193,10 @@
                             decoding="async"
                             class="h-10 w-10 rounded-full"
                         />
-                        <span class="flex items-baseline gap-1 text-gray-900 transition-colors group-hover:text-[#4A7FBF] dark:text-white">
-                            <span class="text-[10px] font-semibold tracking-widest uppercase">The</span>
+                        <span class="flex items-baseline gap-1 text-gray-900 transition-colors group-hover:text-brand-600 dark:text-white">
+                            <span class="text-meta font-semibold tracking-widest uppercase">The</span>
                             <span class="font-empera text-xl tracking-wide">Laravel</span>
-                            <span class="text-[10px] font-semibold tracking-widest uppercase">Architect</span>
+                            <span class="text-meta font-semibold tracking-widest uppercase">Architect</span>
                         </span>
                     </a>
                     <p class="mb-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
@@ -296,14 +300,14 @@
                         href="https://laravel.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-600 transition-colors hover:text-[#4A7FBF] dark:text-gray-400"
+                        class="text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400"
                     >Laravel</a>
                     &
                     <a
                         href="https://filamentphp.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-600 transition-colors hover:text-[#4A7FBF] dark:text-gray-400"
+                        class="text-gray-600 transition-colors hover:text-brand-600 dark:text-gray-400"
                         >Filament</a
                     >.
                 </p>

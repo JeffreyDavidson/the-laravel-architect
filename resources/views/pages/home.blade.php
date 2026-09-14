@@ -8,7 +8,7 @@
     {{-- ===== HERO ===== --}}
     <section
         data-home-hero
-        class="relative isolate overflow-hidden border-b border-[#263241] bg-[#0d1117] text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:bg-[#04080d]/18 md:after:bg-[#04080d]/12"
+        class="relative isolate overflow-hidden border-b border-surface-border-strong bg-surface-control text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10 after:bg-surface-hero/18 md:after:bg-surface-hero/12"
     >
         <div class="absolute inset-x-0 top-16 bottom-0 -z-20 overflow-hidden md:inset-0">
             <picture
@@ -71,13 +71,13 @@
 
         <div class="mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-start px-4 py-16 pt-12 sm:min-h-[calc(100svh-4.5rem)] sm:items-center sm:px-6 md:pt-16 lg:px-8">
             <div class="max-w-2xl py-4 [text-shadow:0_2px_24px_rgb(0_0_0/0.28)]">
-                <p class="font-mono text-xs leading-normal font-semibold tracking-[0.12em] text-[#9fc5e5] uppercase">
+                <p class="font-mono text-xs leading-normal font-semibold tracking-[0.12em] text-brand-200 uppercase">
                     Jeffrey Davidson · The Laravel Architect
                 </p>
 
                 <h1 class="mt-5 text-5xl leading-[1.02] font-semibold tracking-[-0.045em] text-white sm:text-6xl xl:text-[4.5rem]">
                     Laravel systems,<br />
-                    <span class="text-[#83b9e5]">easier to change.</span>
+                    <span class="text-brand-300">easier to change.</span>
                 </h1>
 
                 <p class="mt-6 max-w-lg text-lg leading-8 text-slate-300">
@@ -85,13 +85,13 @@
                 </p>
 
                 <div class="mt-9 flex flex-wrap gap-3">
-                    <a
+                    <x-button
                         href="{{ route('contact') }}"
-                        class="inline-flex min-h-11 items-center justify-center rounded-lg border border-transparent bg-[#356d9f] px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold text-white transition-colors duration-150 hover:bg-[#2b5b87] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#9fc5e5]"
-                    >Discuss a Project</a>
+                        class="min-h-11 rounded-lg border border-transparent px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold focus-visible:outline-brand-200 focus-visible:outline-offset-3"
+                    >Discuss a Project</x-button>
                     <a
                         href="{{ route('projects.index') }}"
-                        class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-500 bg-[#090f17]/60 px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold text-[#eef4fa] transition-colors duration-150 hover:border-[#8fa3b8] hover:bg-[#162231] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#9fc5e5]"
+                        class="bg-surface-page/60 hover:bg-brand-900 focus-visible:outline-brand-200 text-brand-50 hover:border-brand-300 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-500 px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-3"
                     >View Projects</a>
                 </div>
             </div>
@@ -188,7 +188,7 @@
                                 <x-post-artwork
                                     :post="$featured"
                                     sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
-                                    class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block min-h-60 overflow-hidden bg-[#172334] md:min-h-[27rem]"
+                                    class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block min-h-60 overflow-hidden bg-surface-media md:min-h-[27rem]"
                                 />
                                 <div class="flex flex-col justify-center p-7 sm:p-9">
                                     @if ($featured->category)
@@ -224,7 +224,7 @@
                                         <x-post-artwork
                                             :post="$post"
                                             sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
-                                            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block overflow-hidden bg-[#172334]"
+                                            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover block overflow-hidden bg-surface-media"
                                         />
                                         <div class="p-6">
                                             @if ($post->category)
@@ -266,7 +266,7 @@
             <div class="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <a
                     href="{{ route('podcast.index') }}"
-                    class="group focus-visible:outline-brand-500 dark:border-brand-700 grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] dark:bg-[#161b22]"
+                    class="group focus-visible:outline-brand-500 dark:border-brand-700 grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] dark:bg-surface-elevated"
                 >
                     @if ($podcast)
                         <div class="[&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-full [&_img]:max-w-64 md:[&_img]:max-w-none block bg-black">
@@ -332,7 +332,7 @@
     </section>
 
     {{-- ===== FINAL CTA ===== --}}
-    <section class="border-t border-gray-200 bg-gray-50 dark:border-white/5 dark:bg-[#0D1117]">
+    <section class="border-t border-gray-200 bg-gray-50 dark:border-white/5 dark:bg-surface-control">
         <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
             <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold tracking-widest text-green-800 uppercase dark:border-green-500/20 dark:bg-green-500/5 dark:text-green-400">
                 <span class="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400" aria-hidden="true"></span>
@@ -348,13 +348,10 @@
             </p>
 
             <div class="flex flex-wrap justify-center gap-4">
-                <a
-                    href="{{ route('contact') }}"
-                    class="group bg-brand-600 hover:bg-brand-500 inline-flex items-center gap-2 rounded-xl px-8 py-4 text-lg font-semibold text-white transition-colors"
-                >
+                <x-button href="{{ route('contact') }}" size="lg" class="group font-semibold">
                     Discuss a Project
                     <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                </a>
+                </x-button>
                 <a
                     href="{{ route('projects.index') }}"
                     class="hover:border-brand-500 hover:text-brand-700 dark:border-brand-800 dark:hover:border-brand-500 inline-flex items-center gap-2 rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold text-gray-700 transition-colors dark:text-gray-300 dark:hover:text-white"
