@@ -1,0 +1,112 @@
+{
+    "version": 1,
+    "exported_at": "2026-01-01T00:00:00+00:00",
+    "categories": [
+        {
+            "name": "Personal",
+            "slug": "personal",
+            "description": "Personal stories, reflections, and life updates."
+        },
+        {
+            "name": "Career",
+            "slug": "career",
+            "description": "Career advice, lessons learned, and professional growth."
+        },
+        {
+            "name": "Laravel",
+            "slug": "laravel",
+            "description": "Laravel tutorials, opinions, and deep dives."
+        }
+    ],
+    "posts": [
+        {
+            "title": "Hello World: Why I'm Starting This Blog",
+            "slug": "hello-world-why-im-starting-this-blog",
+            "excerpt": "An introduction to The Laravel Architect.",
+            "content": "## Welcome\n\nThis is the first post in the archive.",
+            "featured_image_path": null,
+            "published_at": "2026-01-15T09:00:00+00:00",
+            "category_slug": "personal",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "From Kansas to Florida: A Developer's Journey",
+            "slug": "from-kansas-to-florida-a-developers-journey",
+            "excerpt": "A developer's journey from Kansas to Florida.",
+            "content": "## The journey\n\nA story about building a career in software.",
+            "featured_image_path": null,
+            "published_at": "2026-01-22T09:00:00+00:00",
+            "category_slug": "personal",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "What 15 Years of Web Development Taught Me",
+            "slug": "what-15-years-of-web-development-taught-me",
+            "excerpt": "Lessons from fifteen years of web development.",
+            "content": "## Lessons learned\n\nExperience compounds when you keep shipping.",
+            "featured_image_path": null,
+            "published_at": "2026-01-30T09:00:00+00:00",
+            "category_slug": "career",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "Why I Still Choose Laravel in 2026",
+            "slug": "why-i-still-choose-laravel-in-2026",
+            "excerpt": "Why Laravel remains a practical choice.",
+            "content": "## The framework\n\nLaravel keeps the common path productive.",
+            "featured_image_path": null,
+            "published_at": "2026-02-05T09:00:00+00:00",
+            "category_slug": "laravel",
+            "tags": [],
+            "seo": null
+        },
+        {
+            "title": "How I Structure Every Laravel Project",
+            "slug": "how-i-structure-every-laravel-project",
+            "excerpt": "A practical Laravel project structure.",
+            "content": "## A starting point\n\n\u0060\u0060\u0060php\nfinal class Example {}\n\u0060\u0060\u0060\n\nKeep the structure intentional.",
+            "featured_image_path": null,
+            "published_at": "2026-02-12T09:00:00+00:00",
+            "category_slug": "laravel",
+            "tags": [],
+            "seo": null
+        }
+    ],
+    "projects": [
+        {
+            "title": "Ringside",
+            "slug": "ringside",
+            "description": "A wrestling promotion management platform for booking events, managing rosters, tracking championships, and organizing storylines.",
+            "content": "<h2>What It Does</h2><p>Ringside brings wrestling promotion management into one application.</p>",
+            "featured_image_path": null,
+            "url": "https://theringside.app",
+            "github_url": "https://github.com/JeffreyDavidson/Ringside",
+            "tech_stack": ["Laravel", "Livewire", "PHP"],
+            "is_featured": true,
+            "sort_order": 1,
+            "tags": [],
+            "seo": null
+        }
+    ],
+    "podcasts": [
+        {
+            "name": "Coffee with The Laravel Architect",
+            "slug": "coffee-with-the-laravel-architect",
+            "description": "Deep dives into Laravel, PHP, architecture patterns, and conversations with the people building the modern web.",
+            "long_description": null,
+            "cover_image_path": null,
+            "color": "#4A7FBF",
+            "apple_url": null,
+            "spotify_url": null,
+            "rss_url": null,
+            "youtube_url": null,
+            "sort_order": 1,
+            "seo": null
+        }
+    ],
+    "episodes": [],
+    "videos": []
+}
