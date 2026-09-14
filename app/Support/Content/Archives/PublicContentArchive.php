@@ -52,6 +52,7 @@ class PublicContentArchive
             ->published()
             ->with(['category', 'tags', 'seo'])
             ->orderBy('published_at')
+            ->orderBy('id')
             ->lazy(100)
             ->map(fn (Post $post): array => [
                 ...$this->attributes($post, self::POST_FIELDS),
@@ -66,6 +67,7 @@ class PublicContentArchive
             ->published()
             ->with(['tags', 'seo'])
             ->orderBy('sort_order')
+            ->orderBy('id')
             ->lazy(100)
             ->map(fn (Project $project): array => [
                 ...$this->attributes($project, self::PROJECT_FIELDS),
@@ -80,6 +82,7 @@ class PublicContentArchive
             ->active()
             ->with('seo')
             ->orderBy('sort_order')
+            ->orderBy('id')
             ->lazy(100)
             ->map(fn (Podcast $podcast): array => [
                 ...$this->attributes($podcast, self::PODCAST_FIELDS),
@@ -93,6 +96,7 @@ class PublicContentArchive
             ->whereHas('podcast', fn (Builder $query): Builder => $query->active())
             ->with(['podcast', 'tags', 'seo'])
             ->orderBy('published_at')
+            ->orderBy('id')
             ->lazy(100)
             ->map(fn (Episode $episode): array => [
                 ...$this->attributes($episode, self::EPISODE_FIELDS),
@@ -109,6 +113,7 @@ class PublicContentArchive
             'categories' => Category::query()
                 ->whereHas('publishedPosts')
                 ->orderBy('name')
+                ->orderBy('id')
                 ->select(['name', 'slug', 'description'])
                 ->lazy(100)
                 ->map(fn (Category $category): array => $this->attributes($category, ['name', 'slug', 'description']))
@@ -121,6 +126,7 @@ class PublicContentArchive
             'videos' => Video::query()
                 ->published()
                 ->orderBy('published_at')
+                ->orderBy('id')
                 ->select(self::VIDEO_FIELDS)
                 ->lazy(100)
                 ->map(fn (Video $video): array => $this->attributes($video, self::VIDEO_FIELDS))
