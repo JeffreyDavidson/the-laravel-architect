@@ -40,7 +40,9 @@ it('stores a validated image through the Filament project form', function () {
         throw new RuntimeException('Expected a stored project image path.');
     }
 
-    expect($path)->toStartWith('projects/');
+    expect($path)
+        ->toStartWith('projects/')
+        ->toEndWith('.webp');
     Storage::disk('public')->assertExists($path);
 });
 
