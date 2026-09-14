@@ -41,7 +41,7 @@
 <div {{ $attributes->class(['service-card-v2 fade-up', $colors['card']]) }}>
     <span class="service-number {{ $colors['text'] }}">{{ $number }}</span>
 
-    <div class="relative z-10 mb-5 inline-block rounded-lg border {{ $colors['border'] }} bg-[#0a0e14] px-4 py-2.5 font-mono text-sm">
+    <div class="relative z-10 mb-5 inline-block rounded-lg border {{ $colors['border'] }} bg-surface-card px-4 py-2.5 font-mono text-sm">
         <span class="text-gray-500">$</span>
         <span class="{{ $colors['text'] }}">php artisan</span>
         <span class="text-white">{{ $command }}</span><span class="relative -top-px {{ $colors['text'] }}">▊</span>

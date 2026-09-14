@@ -7,7 +7,7 @@
 @section('content')
     <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
         {{-- ===== PODCAST HERO ===== --}}
-        <section class="border-b border-gray-200 bg-white dark:border-[#1e2a3a] dark:bg-[#0b1016]">
+        <section class="border-b border-gray-200 bg-white dark:border-surface-border dark:bg-surface-page">
             <div class="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 {{-- Breadcrumb --}}
                 <a
@@ -31,7 +31,7 @@
                                 class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56"
                             />
                         @else
-                            <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56 dark:border-[#1e2a3a] dark:bg-[#111820]">
+                            <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56 dark:border-surface-border dark:bg-surface-raised">
                                 <svg class="podcast-accent-text h-20 w-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                             </div>
                         @endif
@@ -76,7 +76,7 @@
                                     href="{{ $podcast->spotify_url }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="subscribe-btn inline-flex items-center gap-2 rounded-xl border border-[#1DB954]/20 bg-[#1DB954]/10 px-5 py-2.5 text-sm font-medium text-[#1DB954] transition-colors hover:bg-[#1DB954]/20"
+                                    class="subscribe-btn inline-flex items-center gap-2 rounded-xl border border-social-spotify/20 bg-social-spotify/10 px-5 py-2.5 text-sm font-medium text-social-spotify transition-colors hover:bg-social-spotify/20"
                                 >
                                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" /></svg>
                                     Spotify
@@ -87,7 +87,7 @@
                                     href="{{ $podcast->apple_url }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="subscribe-btn inline-flex items-center gap-2 rounded-xl border border-[#D56DFB]/20 bg-[#D56DFB]/10 px-5 py-2.5 text-sm font-medium text-[#D56DFB] transition-colors hover:bg-[#D56DFB]/20"
+                                    class="subscribe-btn inline-flex items-center gap-2 rounded-xl border border-social-overcast/20 bg-social-overcast/10 px-5 py-2.5 text-sm font-medium text-social-overcast transition-colors hover:bg-social-overcast/20"
                                 >
                                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5.34 0A5.328 5.328 0 000 5.34v13.32A5.328 5.328 0 005.34 24h13.32A5.328 5.328 0 0024 18.66V5.34A5.328 5.328 0 0018.66 0H5.34z" /></svg>
                                     Apple Podcasts
@@ -116,7 +116,7 @@
                                 </a>
                             @endif
                             @unless ($podcast->spotify_url || $podcast->apple_url || $podcast->youtube_url || $podcast->rss_url)
-                                <span class="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 px-5 py-2.5 text-sm text-gray-500 dark:border-[#1e2a3a]">
+                                <span class="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 px-5 py-2.5 text-sm text-gray-500 dark:border-surface-border">
                                     <span class="podcast-live-dot h-1.5 w-1.5 rounded-full"></span>
                                     Subscribe links coming soon
                                 </span>
@@ -129,7 +129,7 @@
 
         {{-- ===== ABOUT ===== --}}
         @if ($podcast->long_description)
-            <section class="border-b border-gray-200 dark:border-[#1e2a3a]">
+            <section class="border-b border-gray-200 dark:border-surface-border">
                 <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
                     <div class="max-w-3xl">
                         <h2 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
@@ -149,11 +149,11 @@
 
         {{-- ===== LATEST EPISODE FEATURE ===== --}}
         @if ($latestEpisode)
-            <section class="border-b border-gray-200 dark:border-[#1e2a3a]">
+            <section class="border-b border-gray-200 dark:border-surface-border">
                 <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
                     <a
                         href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}"
-                        class="group hover:border-brand-600/50 block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-colors dark:border-[#1e2a3a] dark:bg-[#0D1117]"
+                        class="group hover:border-brand-600/50 block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-colors dark:border-surface-border dark:bg-surface-control"
                     >
                         {{-- Top accent --}}
                         <div class="podcast-accent-bg h-[2px]"></div>
@@ -211,7 +211,7 @@
         @endif
 
         {{-- ===== ALL EPISODES ===== --}}
-        <section class="bg-gray-50 dark:bg-[#0b1016]">
+        <section class="bg-gray-50 dark:bg-surface-page">
             <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 <div class="mb-8 flex items-center justify-between">
                     <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">
@@ -227,7 +227,7 @@
                         @foreach ($episodes as $episode)
                             <a
                                 href="{{ route('podcast.episode', [$podcast, $episode]) }}"
-                                class="episode-card group flex items-center gap-5 rounded-xl border border-gray-200 bg-white p-4 md:p-5 dark:border-[#1e2a3a] dark:bg-[#0D1117]/50"
+                                class="episode-card group flex items-center gap-5 rounded-xl border border-gray-200 bg-white p-4 md:p-5 dark:border-surface-border dark:bg-surface-control/50"
                             >
                                 {{-- Episode number / play icon --}}
                                 <div class="podcast-accent-bg-faint relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl">
@@ -276,7 +276,7 @@
 
                     <div class="mt-8">{{ $episodes->links() }}</div>
                 @else
-                    <div class="rounded-2xl border border-dashed border-gray-200 py-20 text-center dark:border-[#1e2a3a]">
+                    <div class="rounded-2xl border border-dashed border-gray-200 py-20 text-center dark:border-surface-border">
                         <div class="podcast-accent-bg-soft mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
                             <svg class="podcast-accent-text h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                         </div>

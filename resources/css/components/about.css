@@ -41,7 +41,7 @@
     top: 1.5rem;
     width: 2px;
     height: calc(100% - 0.5rem);
-    background: rgba(30, 42, 58, 0.9);
+    background: var(--surface-timeline);
 }
 
 .about-timeline-item:last-child::after {
@@ -49,11 +49,11 @@
 }
 
 :root:not(.dark) .about-timeline-item::after {
-    background: rgba(0, 0, 0, 0.1);
+    background: var(--shadow-black-10);
 }
 
 :root:not(.dark) .about-timeline-item::before {
-    box-shadow: 0 0 10px rgba(74, 127, 191, 0.2);
+    box-shadow: 0 0 10px var(--brand-alpha-20);
 }
 
 .about-value-card {
@@ -68,14 +68,14 @@
 }
 
 :root:not(.dark) .about-value-card {
-    background: white !important;
-    border-color: rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: var(--color-white) !important;
+    border-color: var(--shadow-black-08) !important;
+    box-shadow: 0 1px 3px var(--shadow-black-04);
 }
 
 :root:not(.dark) .about-value-card:hover {
-    border-color: rgba(74, 127, 191, 0.2) !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border-color: var(--brand-alpha-20) !important;
+    box-shadow: 0 12px 30px var(--shadow-black-08);
 }
 
 .about-card-flip-container {
@@ -129,8 +129,8 @@
 }
 
 :root:not(.dark) .about-trading-card-inner {
-    background: white !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: var(--color-white) !important;
+    box-shadow: 0 4px 20px var(--shadow-black-08);
 }
 
 .about-card-deck {
@@ -142,8 +142,8 @@
     position: absolute;
     inset: 0;
     border-radius: 1.25rem;
-    border: 2px solid rgba(74, 127, 191, 0.15);
-    background: rgba(17, 24, 32, 0.8);
+    border: 2px solid var(--brand-alpha-15);
+    background: var(--surface-ghost);
     pointer-events: none;
 }
 
@@ -160,8 +160,8 @@
 }
 
 :root:not(.dark) .about-ghost-card {
-    background: rgba(240, 240, 245, 0.9);
-    border-color: rgba(74, 127, 191, 0.1);
+    background: var(--surface-ghost-light);
+    border-color: var(--brand-alpha-10);
 }
 
 .about-holo-border {
@@ -178,8 +178,8 @@
 }
 
 :root:not(.dark) .about-stat-cell {
-    background: #f9fafb !important;
-    border-color: #e5e7eb !important;
+    background: var(--bg-secondary) !important;
+    border-color: var(--color-gray-200) !important;
 }
 
 @keyframes cardSpin {

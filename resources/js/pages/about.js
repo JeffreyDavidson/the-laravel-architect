@@ -15,9 +15,7 @@ function initializeAboutCard() {
         flipCount += 1;
         isAnimating = !reduceMotion;
         container.setAttribute('aria-pressed', String(flipCount % 2 === 1));
-        card.style.transition = reduceMotion
-            ? 'none'
-            : 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        card.style.transition = reduceMotion ? 'none' : 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
         card.style.transform = `rotateX(0deg) rotateY(${flipCount * 180}deg) scale(1)`;
 
         if (reduceMotion) {

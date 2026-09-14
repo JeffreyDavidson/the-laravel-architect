@@ -13,9 +13,9 @@
 
 .article-toc-link {
     display: block;
-    border-left: 1px solid rgb(156 163 175 / 0.35);
+    border-left: 1px solid var(--border-gray);
     padding: 0.4rem 0 0.4rem 0.9rem;
-    color: rgb(107 114 128);
+    color: var(--color-gray-500);
     font-size: 0.8125rem;
     line-height: 1.35;
     transition: border-color 160ms ease, color 160ms ease;
@@ -23,19 +23,19 @@
 
 .article-toc-link:hover,
 .article-toc-link[aria-current="true"] {
-    border-color: #4a7fbf;
-    color: #4a7fbf;
+    border-color: var(--color-brand-600);
+    color: var(--color-brand-600);
 }
 
 .dark .article-toc-link {
-    border-color: rgb(74 127 191 / 0.25);
-    color: rgb(156 163 175);
+    border-color: var(--brand-alpha-25);
+    color: var(--color-gray-400);
 }
 
 .dark .article-toc-link:hover,
 .dark .article-toc-link[aria-current="true"] {
-    border-color: #6fa3d6;
-    color: #a8cce8;
+    border-color: var(--color-brand-400);
+    color: var(--color-brand-200);
 }
 
 .article-prose h2,

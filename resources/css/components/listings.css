@@ -3,8 +3,8 @@
 }
 
 .related-card:hover {
-    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.4);
-    border-color: rgba(74, 127, 191, 0.2);
+    box-shadow: 0 12px 30px -12px var(--shadow-black-40);
+    border-color: var(--brand-alpha-20);
 }
 
 .blog-card--editorial .blog-card__artwork img {
@@ -17,7 +17,7 @@
 }
 
 :root:not(.dark) .related-card:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 30px var(--shadow-black-08);
 }
 
 .blog-card--editorial .blog-card__title,
@@ -100,9 +100,9 @@
 }
 
 .tech-pill:hover {
-    background: rgba(74, 127, 191, 0.12);
+    background: var(--brand-alpha-12);
     color: var(--color-brand-600);
-    border-color: rgba(74, 127, 191, 0.3);
+    border-color: var(--brand-alpha-30);
 }
 
 .link-btn {
@@ -114,7 +114,7 @@
 }
 
 :root:not(.dark) .tech-pill {
-    color: #4b5563;
-    border-color: #d1d5db;
-    background: #f9fafb;
+    color: var(--color-gray-600);
+    border-color: var(--color-gray-300);
+    background: var(--bg-secondary);
 }

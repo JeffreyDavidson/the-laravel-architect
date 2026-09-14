@@ -1,7 +1,7 @@
 @props(['item'])
 
 @php
-    $classes = 'group flex items-start gap-4 border-t border-gray-200 py-5 transition-colors duration-200 hover:border-brand-600/40 dark:border-[#1e2a3a] dark:hover:border-brand-500/50';
+    $classes = 'group flex items-start gap-4 border-t border-gray-200 py-5 transition-colors duration-200 hover:border-brand-600/40 dark:border-surface-border dark:hover:border-brand-500/50';
 @endphp
 
 @if (isset($item['url']))

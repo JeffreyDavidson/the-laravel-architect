@@ -10,7 +10,7 @@
 
 <div {{
     $attributes->class([
-        'about-value-card border-t border-gray-200 py-6 dark:border-[#1e2a3a]',
+        'about-value-card border-t border-gray-200 py-6 dark:border-surface-border',
         'about-value-card-accent' => $accent,
     ])
 }}>
