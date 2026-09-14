@@ -812,11 +812,8 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     expect($manifest)
         ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
-        ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf');
-
-    expect(implode("\n", array_column($manifest, 'file')))
-        ->not->toContain('Empera-Vintage')
-        ->not->toContain('Empera-Regular.ttf');
+        ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf')
+        ->and(implode("\n", array_column($manifest, 'file')))->not->toContain('Empera-Vintage')->not->toContain('Empera-Regular.ttf');
 });
 
 it('renders one concise client-focused services section', function () {
