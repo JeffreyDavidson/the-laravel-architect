@@ -8,7 +8,6 @@ beforeEach(function () {
         'app.url' => 'https://thelaravelarchitect.com',
         'app.key' => 'base64:production-key',
         'app.admin_email' => 'admin@thelaravelarchitect.com',
-        'app.content_author_email' => 'author@thelaravelarchitect.com',
         'session.secure' => true,
         'queue.default' => 'database',
         'mail.default' => 'resend',

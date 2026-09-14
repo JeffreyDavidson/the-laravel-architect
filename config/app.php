@@ -88,8 +88,6 @@ return [
 
     'admin_email' => env('ADMIN_EMAIL', 'admin@example.test'),
 
-    'content_author_email' => env('CONTENT_AUTHOR_EMAIL', 'author@example.test'),
-
     /*
     |--------------------------------------------------------------------------
     | Encryption Key

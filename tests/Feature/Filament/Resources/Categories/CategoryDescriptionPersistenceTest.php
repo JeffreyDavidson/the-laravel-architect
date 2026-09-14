@@ -4,7 +4,6 @@ use App\Filament\Resources\Categories\Pages\CreateCategory;
 use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Models\Category;
 use App\Models\User;
-use Database\Seeders\BlogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -43,23 +42,6 @@ it('persists a category description when editing a category', function () {
         ->assertHasNoFormErrors();
 
     expect($category->refresh()->description)->toBe('Updated description.');
-});
-
-it('creates and refreshes category descriptions from the blog seeder', function () {
-    Category::query()->create([
-        'name' => 'Personal',
-        'slug' => 'personal',
-        'description' => null,
-    ]);
-
-    $this->seed(BlogSeeder::class);
-
-    expect(Category::query()->where('name', 'Personal')->value('description'))
-        ->toBe('Personal stories, reflections, and life updates.')
-        ->and(Category::query()->where('name', 'Career')->value('description'))
-        ->toBe('Career advice, lessons learned, and professional growth.')
-        ->and(Category::query()->where('name', 'Laravel')->value('description'))
-        ->toBe('Laravel tutorials, opinions, and deep dives.');
 });
 
 it('renders the persisted description on the public category page', function () {
