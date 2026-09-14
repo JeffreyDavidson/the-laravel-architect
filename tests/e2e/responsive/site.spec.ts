@@ -2,6 +2,7 @@ import { devices, expect, test } from '@playwright/test';
 import { MainNavigation } from '../components/MainNavigation';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { assertNoHighImpactAccessibilityViolations, assertNoHorizontalOverflow } from '../support/accessibility';
+import { E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD } from '../support/admin';
 
 const publicRoutes = [
     '/',
@@ -78,14 +79,12 @@ test('mobile theme choice persists across navigation', async ({ page }) => {
 });
 
 test('an administrator can use the mobile login and navigation', async ({ page }) => {
-    test.skip(!process.env.E2E_ADMIN_EMAIL || !process.env.E2E_ADMIN_PASSWORD);
-
     await page.goto('/admin/login');
     await assertNoHorizontalOverflow(page);
     await assertNoHighImpactAccessibilityViolations(page);
 
-    await page.locator('input[type="email"]').fill(process.env.E2E_ADMIN_EMAIL!);
-    await page.locator('input[type="password"]').fill(process.env.E2E_ADMIN_PASSWORD!);
+    await page.locator('input[type="email"]').fill(E2E_ADMIN_EMAIL);
+    await page.locator('input[type="password"]').fill(E2E_ADMIN_PASSWORD);
     await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/admin\/?$/);
