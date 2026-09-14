@@ -79,3 +79,26 @@ it('renders the empty search state and rejects oversized queries', function () {
 
     $this->get(route('search', ['q' => str_repeat('x', 121)]))->assertNotFound();
 });
+
+it('finds episodes by transcript content', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'A Conversation About Boundaries',
+        'slug' => 'a-conversation-about-boundaries',
+        'description' => 'A practical architecture discussion.',
+        'transcript' => 'We explore event-driven Laravel systems.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('search', ['q' => 'event-driven']))
+        ->assertOk()
+        ->assertSee($episode->title)
+        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
+});

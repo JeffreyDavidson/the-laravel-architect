@@ -86,6 +86,7 @@ class SearchQuery
                         ->whereRaw("title LIKE ? ESCAPE '\\'", [$like])
                         ->orWhereRaw("description LIKE ? ESCAPE '\\'", [$like])
                         ->orWhereRaw("show_notes LIKE ? ESCAPE '\\'", [$like])
+                        ->orWhereRaw("transcript LIKE ? ESCAPE '\\'", [$like])
                         ->orWhereRaw("guest_name LIKE ? ESCAPE '\\'", [$like]);
                 })
                 ->latest('published_at')
