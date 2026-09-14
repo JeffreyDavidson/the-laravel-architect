@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
@@ -95,6 +96,7 @@ class AdminPanelProvider extends PanelProvider
                     NavigationGroup::make('Newsletter')
                         ->collapsible(false)
                         ->items([
+                            ...NewsletterIssueResource::getNavigationItems(),
                             ...SubscriberResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('YouTube')

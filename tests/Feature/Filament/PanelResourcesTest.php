@@ -2,6 +2,7 @@
 
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
@@ -32,6 +33,7 @@ it('renders each registered resource index for an authorized user', function (st
 })->with([
     CategoryResource::class,
     EpisodeResource::class,
+    NewsletterIssueResource::class,
     PodcastResource::class,
     PostResource::class,
     ProjectResource::class,

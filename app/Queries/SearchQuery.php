@@ -3,6 +3,7 @@
 namespace App\Queries;
 
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -73,6 +74,20 @@ class SearchQuery
                 ->limit(12)
                 ->get()
                 ->map(fn (Podcast $podcast): array => $this->podcastResult($podcast))
+                ->all(),
+            'Newsletter' => NewsletterIssue::query()
+                ->select(['id', 'title', 'slug', 'excerpt', 'content', 'published_at'])
+                ->published()
+                ->where(function (Builder $issuesQuery) use ($like): void {
+                    $issuesQuery
+                        ->whereRaw("title LIKE ? ESCAPE '\\'", [$like])
+                        ->orWhereRaw("excerpt LIKE ? ESCAPE '\\'", [$like])
+                        ->orWhereRaw("content LIKE ? ESCAPE '\\'", [$like]);
+                })
+                ->latest('published_at')
+                ->limit(12)
+                ->get()
+                ->map(fn (NewsletterIssue $issue): array => $this->newsletterResult($issue))
                 ->all(),
             'Episodes' => Episode::query()
                 ->select(['id', 'podcast_id', 'title', 'slug', 'description', 'published_at'])
@@ -162,6 +177,18 @@ class SearchQuery
             'description' => $episode->description,
             'url' => route('podcast.episode', [$podcast, $episode]),
             'meta' => $episode->publishedAt()?->format('M j, Y') ?? 'Episode',
+            'external' => false,
+        ];
+    }
+
+    /** @return array{title: string, description: string|null, url: string, meta: string, external: bool} */
+    private function newsletterResult(NewsletterIssue $issue): array
+    {
+        return [
+            'title' => $issue->title,
+            'description' => $issue->excerpt,
+            'url' => route('newsletter.issue', $issue),
+            'meta' => $issue->publishedAt()?->format('M j, Y') ?? 'Newsletter',
             'external' => false,
         ];
     }

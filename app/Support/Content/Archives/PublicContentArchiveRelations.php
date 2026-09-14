@@ -3,6 +3,7 @@
 namespace App\Support\Content\Archives;
 
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -24,7 +25,7 @@ class PublicContentArchiveRelations
      * @param  array<string, mixed>|null  $attributes
      * @param  list<string>  $fields
      */
-    public function syncSeo(Post|Project|Podcast|Episode $model, ?array $attributes, array $fields): void
+    public function syncSeo(Post|Project|Podcast|Episode|NewsletterIssue $model, ?array $attributes, array $fields): void
     {
         if ($attributes === null) {
             $model->seo()->delete();
