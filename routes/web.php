@@ -15,6 +15,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
@@ -34,6 +35,7 @@ Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationC
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
 Route::get('/uses', UsesController::class)->name('uses');
+Route::get('/search', SearchController::class)->name('search');
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
