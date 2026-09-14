@@ -40,7 +40,8 @@ const budgets = [
     {
         entry: 'resources/css/app.css',
         label: 'Public stylesheet',
-        maxGzipBytes: 17 * 1024,
+        // The shared theme tokens live in app.css and are intentionally shipped once globally.
+        maxGzipBytes: 18 * 1024,
     },
     {
         entry: 'resources/fonts/empera/Empera-Regular.woff2',

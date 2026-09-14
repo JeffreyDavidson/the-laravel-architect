@@ -38,36 +38,164 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* Shared public theme tokens. Page-specific styles consume these values so
+   changing the visual system never requires editing templates or components. */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-card: #ffffff;
+    --bg-inset: #f0f3f6;
+    --text-primary: #1f2328;
+    --text-secondary: #424a53;
+    --text-tertiary: #656d76;
+    --border-primary: #d0d7de;
+    --brand-pill-text: #2d6aa3;
+    --brand-pill-bg: rgb(74 127 191 / 0.1);
+    --brand-pill-border: rgb(74 127 191 / 0.25);
+    --accent-pill-text: #a3456a;
+    --accent-pill-bg: rgb(196 112 136 / 0.1);
+    --accent-pill-border: rgb(196 112 136 / 0.25);
+    --green-pill-text: #16794a;
+    --green-pill-bg: rgb(22 121 74 / 0.08);
+    --green-pill-border: rgb(22 121 74 / 0.25);
+    --amber-pill-text: #78350f;
+    --amber-pill-bg: rgb(245 158 11 / 0.1);
+    --amber-pill-border: rgb(245 158 11 / 0.3);
+    --glass-card-bg: rgb(246 248 250 / 0.9);
+    --glass-card-border: rgb(0 0 0 / 0.1);
+    --countdown-bg: #f6f8fa;
+    --countdown-border: #d0d7de;
+    --youtube-card-bg: #ffffff;
+    --youtube-card-border: #e5e7eb;
+    --surface-timeline: rgb(30 42 58 / 0.9);
+    --surface-ghost: rgb(17 24 32 / 0.8);
+    --surface-ghost-light: rgb(240 240 245 / 0.9);
+    --surface-service-hover: #141d29;
+    --surface-podcast: #111a27;
+    --surface-light-card: #f7f9fc;
+    --text-light-muted: #b8c4d1;
+    --text-light-subtle: #4a5565;
+    --text-dark-muted: #a8b3c2;
+    --text-dark-secondary: #c5d0de;
+    --text-dark-primary: #dbe5f0;
+    --text-code: #c9d1d9;
+    --text-code-light: #e7edf3;
+    --text-inline-code: #376fa9;
+    --text-inline-code-light: #1a56a8;
+    --border-gray: rgb(156 163 175 / 0.35);
+    --accent-green: #22c55e;
+    --accent-amber: #f59e0b;
+    --accent-pink: #e47a9d;
+    --accent-pink-dark: #a3456a;
+    --accent-green-dark: #14733b;
+    --accent-amber-dark: #855400;
+    --shadow-black-04: rgb(0 0 0 / 0.04);
+    --shadow-black-06: rgb(0 0 0 / 0.06);
+    --shadow-black-08: rgb(0 0 0 / 0.08);
+    --shadow-black-10: rgb(0 0 0 / 0.1);
+    --shadow-black-24: rgb(0 0 0 / 0.24);
+    --shadow-black-40: rgb(0 0 0 / 0.4);
+    --shadow-black-50: rgb(0 0 0 / 0.5);
+    --brand-alpha-05: rgb(74 127 191 / 0.05);
+    --brand-alpha-06: rgb(74 127 191 / 0.06);
+    --brand-alpha-10: rgb(74 127 191 / 0.1);
+    --brand-alpha-12: rgb(74 127 191 / 0.12);
+    --brand-alpha-15: rgb(74 127 191 / 0.15);
+    --brand-alpha-20: rgb(74 127 191 / 0.2);
+    --brand-alpha-25: rgb(74 127 191 / 0.25);
+    --brand-alpha-30: rgb(74 127 191 / 0.3);
+    --brand-alpha-40: rgb(74 127 191 / 0.4);
+    --brand-alpha-50: rgb(74 127 191 / 0.5);
+    --error-alpha-10: rgb(239 68 68 / 0.1);
+    --error-alpha-15: rgb(239 68 68 / 0.15);
+    --error-alpha-20: rgb(239 68 68 / 0.2);
+    --error-alpha-30: rgb(239 68 68 / 0.3);
+    --copy-green: #4ade80;
+    --copy-green-alpha-10: rgb(74 222 128 / 0.1);
+    --copy-green-alpha-30: rgb(74 222 128 / 0.3);
+    --archive-link-alpha-08: rgb(36 91 145 / 0.08);
+    --hero-steam: rgb(238 244 250 / 0.52);
+    --hero-steam-shadow: rgb(159 197 229 / 0.3);
+    --hero-blueprint: rgb(131 185 229 / 0.3);
+    --hero-node: rgb(228 122 157 / 0.72);
+    --hero-track: rgb(131 185 229 / 0.18);
+    --hero-travel: rgb(159 197 229 / 0.9);
+    --hero-sweep: rgb(131 185 229 / 0.45);
+    --prism-comment: #7f8c9b;
+    --prism-punctuation: #aab6c4;
+    --prism-keyword: #e08a98;
+    --prism-string: #efaa83;
+    --prism-number: #d9c28f;
+    --prism-function: #86b8e2;
+    --prism-operator: #e9b4be;
+    --status-success: #1a7f37;
+    --status-warning: #92600a;
+    --white-02: rgb(255 255 255 / 0.02);
+    --white-15: rgb(255 255 255 / 0.15);
+    --white-55: rgb(255 255 255 / 0.55);
+    --white-90: rgb(255 255 255 / 0.9);
+    --white-10: rgb(255 255 255 / 0.1);
+}
+
+.dark {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: rgb(26 29 33 / 0.6);
+    --bg-inset: #222529;
+    --text-primary: #ffffff;
+    --text-secondary: #c9d1d9;
+    --text-tertiary: #8b949e;
+    --border-primary: rgb(74 127 191 / 0.15);
+    --brand-pill-text: #7eb0dc;
+    --brand-pill-bg: rgb(74 127 191 / 0.1);
+    --brand-pill-border: rgb(74 127 191 / 0.2);
+    --accent-pill-text: #e0a0aa;
+    --accent-pill-bg: rgb(196 112 136 / 0.1);
+    --accent-pill-border: rgb(196 112 136 / 0.2);
+    --green-pill-text: #86efac;
+    --green-pill-bg: rgb(34 197 94 / 0.1);
+    --green-pill-border: rgb(34 197 94 / 0.2);
+    --amber-pill-text: #fcd34d;
+    --amber-pill-bg: rgb(245 158 11 / 0.1);
+    --amber-pill-border: rgb(245 158 11 / 0.2);
+    --glass-card-bg: rgb(26 29 33 / 0.6);
+    --glass-card-border: rgb(74 127 191 / 0.15);
+    --countdown-bg: #111111;
+    --countdown-border: rgb(255 255 255 / 0.1);
+    --youtube-card-bg: rgb(26 29 33 / 0.6);
+    --youtube-card-border: rgb(74 127 191 / 0.15);
+}
+
 /* Keep muted dark-mode text readable against the site's deep surfaces. */
 .dark .text-gray-500 {
-    color: #a8b3c2 !important;
+    color: var(--text-dark-muted) !important;
 }
 
 .dark .text-gray-600 {
-    color: #c5d0de !important;
+    color: var(--text-dark-secondary) !important;
 }
 
 .dark .text-gray-700 {
-    color: #dbe5f0 !important;
+    color: var(--text-dark-primary) !important;
 }
 
 .dark .text-brand-600 {
-    color: #82acdc !important;
+    color: var(--color-brand-300) !important;
 }
 
 .dark .bg-brand-600 {
-    background-color: #3f6fa8 !important;
+    background-color: var(--color-brand-action) !important;
 }
 
 /* Preserve the same contrast guarantees when the public site is in light mode. */
 :root:not(.dark) .text-brand-400,
 :root:not(.dark) .text-brand-500,
 :root:not(.dark) .text-brand-600 {
-    color: #245b91 !important;
+    color: var(--color-archive-link) !important;
 }
 
 :root:not(.dark) .bg-brand-600 {
-    background-color: #3f6fa8 !important;
+    background-color: var(--color-brand-action) !important;
 }
 
 .nav-link {
@@ -140,6 +268,8 @@
     --color-brand-800: #222529;
     --color-brand-700: #2b3a4e;
     --color-brand-600: #4a7fbf;
+    --color-brand-action: #3f6fa8;
+    --color-brand-action-hover: #345f91;
     --color-brand-500: #5088c5;
     --color-brand-400: #6fa3d6;
     --color-brand-300: #7eb0dc;
@@ -149,6 +279,23 @@
 
     --color-surface-page: #0b1016;
     --color-surface-border: #1e2a3a;
+    --color-surface-control: #0d1117;
+    --color-surface-raised: #111820;
+    --color-surface-elevated: #161b22;
+    --color-surface-media: #172334;
+    --color-surface-hero: #04080d;
+    --color-surface-border-strong: #263241;
+    --color-surface-black: #111111;
+    --color-surface-border-dark: #222222;
+    --color-surface-card: #101722;
+    --color-surface-ink: #eef4fa;
+    --color-surface-highlight: #83b9e5;
+    --color-social-spotify: #1db954;
+    --color-social-overcast: #d56dfb;
+    --color-status-error: #cf222e;
+    --color-status-success: #1a7f37;
+    --color-status-warning: #92600a;
+    --color-status-info: #0550ae;
     --color-archive-muted: #6b7280;
     --color-archive-link: #245b91;
     --color-archive-count: #5c6675;
@@ -158,6 +305,19 @@
     --color-accent-500: #d4808f;
     --color-accent-400: #e0a0aa;
     --color-accent-300: #efb6c2;
+
+    /* Repeated typographic and layering roles used by public Blade markup. */
+    --text-meta: 0.625rem;
+    --text-meta--line-height: 1.4;
+    --text-meta-sm: 0.75rem;
+    --text-meta-sm--line-height: 1.4;
+    --tracking-label: 0.18em;
+    --tracking-micro: 0.2em;
+    --z-overlay: 60;
+}
+
+@utility z-overlay {
+    z-index: var(--z-overlay);
 }
 
 .dark {
@@ -168,16 +328,16 @@
 
 /* Light mode prose */
 :root:not(.dark) .prose {
-    --tw-prose-body: #424a53;
-    --tw-prose-headings: #1f2328;
-    --tw-prose-links: #4a7fbf;
-    --tw-prose-bold: #1f2328;
-    --tw-prose-code: #4a7fbf;
+    --tw-prose-body: var(--text-secondary);
+    --tw-prose-headings: var(--text-primary);
+    --tw-prose-links: var(--color-brand-600);
+    --tw-prose-bold: var(--text-primary);
+    --tw-prose-code: var(--color-brand-600);
 }
 
 /* Code blocks stay dark in both modes */
 :root:not(.dark) .prose pre {
-    background: #0d1117 !important;
+    background: var(--color-surface-control) !important;
 }
 
 /* Light mode subtle background patterns */
@@ -189,21 +349,21 @@
 /* Code block styling for blog posts */
 .prose pre {
     position: relative;
-    background: #0d1117 !important;
-    border: 1px solid rgba(74, 127, 191, 0.2);
+    background: var(--color-surface-control) !important;
+    border: 1px solid var(--brand-alpha-20);
     border-radius: 8px;
 }
 
 .prose pre code {
-    color: #e7edf3;
+    color: var(--text-code-light);
 }
 
 .prose :not(pre) > code {
-    color: #376fa9;
+    color: var(--text-inline-code);
 }
 
 .dark .prose :not(pre) > code {
-    color: #a8cce8;
+    color: var(--color-brand-200);
 }
 
 .copy-btn {
@@ -212,10 +372,10 @@
     top: 0.5rem;
     right: 0.5rem;
     padding: 0.375rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--white-10);
     border-radius: 0.375rem;
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.55);
+    background: var(--white-10);
+    color: var(--white-55);
     cursor: pointer;
     opacity: 0;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
@@ -228,39 +388,39 @@
 }
 
 .copy-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.9);
+    background: var(--white-15);
+    color: var(--white-90);
 }
 
 .copy-btn.copied {
-    border-color: rgba(74, 222, 128, 0.3);
-    background: rgba(74, 222, 128, 0.1);
-    color: #4ade80;
+    border-color: var(--copy-green-alpha-30);
+    background: var(--copy-green-alpha-10);
+    color: var(--copy-green);
 }
 
 .prose code {
-    color: #c9d1d9;
+    color: var(--text-code);
     font-family: var(--font-mono);
 }
 
 :root:not(.dark) .prose :not(pre) > code {
-    color: #1a56a8;
+    color: var(--text-inline-code-light);
 }
 :root:not(.dark) .prose pre code {
-    color: #c9d1d9;
+    color: var(--text-code);
 }
 
 .prose :not(pre) > code {
-    background: rgba(74, 127, 191, 0.15);
+    background: var(--brand-alpha-15);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.875em;
 }
 
 :root:not(.dark) .prose :not(pre) > code {
-    background: rgba(74, 127, 191, 0.1);
-    border: 1px solid rgba(74, 127, 191, 0.2);
-    color: #1a56a8;
+    background: var(--brand-alpha-10);
+    border: 1px solid var(--brand-alpha-20);
+    color: var(--text-inline-code-light);
 }
 
 .prose :not(pre) > code::before,
