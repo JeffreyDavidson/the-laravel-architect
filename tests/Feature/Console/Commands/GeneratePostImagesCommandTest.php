@@ -110,7 +110,6 @@ it('propagates generator failures without persisting an image path', function ()
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     expect(fn () => Artisan::call('posts:generate-images'))
-        ->toThrow(RuntimeException::class, 'Image generation failed.');
-
-    expect($post->refresh()->featured_image_path)->toBeNull();
+        ->toThrow(RuntimeException::class, 'Image generation failed.')
+        ->and($post->refresh()->featured_image_path)->toBeNull();
 });

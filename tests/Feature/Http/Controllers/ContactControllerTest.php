@@ -107,8 +107,8 @@ it('rejects a contact submission when Turnstile verification fails', function ()
         ->assertSessionHasErrors('cf-turnstile-response')
         ->assertSessionHasInput('name', 'Jane Doe');
 
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
-    expect(session()->getOldInput('cf-turnstile-response'))->toBeNull();
+    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0)
+        ->and(session()->getOldInput('cf-turnstile-response'))->toBeNull();
     Mail::assertNothingQueued();
 });
 
@@ -195,9 +195,8 @@ it('does not count invalid submissions against the rate limit', function () {
         'email' => 'not-an-email',
         'type' => 'consulting',
         'budget' => 'medium',
-    ]);
-
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
+    ])
+        ->and(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
     Mail::assertNothingQueued();
     Http::assertNothingSent();
 });
@@ -241,9 +240,8 @@ it('rate limits repeated contact submissions by ip address', function () {
         'email' => 'jane@example.com',
         'type' => 'consulting',
         'message' => 'Can you help with an audit?',
-    ]);
-
-    expect(session()->getOldInput())->not->toHaveKey('website');
+    ])
+        ->and(session()->getOldInput())->not->toHaveKey('website');
 
     Mail::assertNothingQueued();
     Http::assertNothingSent();

@@ -83,10 +83,10 @@
             "vendor/bin/pest"
         ],
         "test:filament": "vendor/bin/filacheck --detailed",
-        "test:rector": "vendor/bin/rector process --dry-run --no-progress-bar",
-        "test:rector:pest": "vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar",
-        "test:types": "vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table",
-        "test:types:pest": "APP_ENV=testing vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --memory-limit=1G --no-progress --error-format=table",
+        "test:rector": "PAO_DISABLE=1 vendor/bin/rector process --dry-run --no-progress-bar",
+        "test:rector:pest": "PAO_DISABLE=1 vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar",
+        "test:types": "PAO_DISABLE=1 vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table",
+        "test:types:pest": "PAO_DISABLE=1 APP_ENV=testing vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --memory-limit=1G --no-progress --error-format=table",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",

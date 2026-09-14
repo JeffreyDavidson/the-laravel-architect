@@ -95,16 +95,7 @@ it('uses stable item positions and page metadata for an unfiltered archive page'
     if (! is_array($structuredData) || ! isset($structuredData['@graph']) || ! is_array($structuredData['@graph'])) {
         throw new RuntimeException('Expected JSON-LD graph data.');
     }
-
-    $itemList = null;
-
-    foreach ($structuredData['@graph'] as $graphItem) {
-        if (is_array($graphItem) && ($graphItem['@type'] ?? null) === 'ItemList') {
-            $itemList = $graphItem;
-
-            break;
-        }
-    }
+    $itemList = array_find($structuredData['@graph'], fn ($graphItem) => is_array($graphItem) && ($graphItem['@type'] ?? null) === 'ItemList');
 
     if (
         ! is_array($itemList)

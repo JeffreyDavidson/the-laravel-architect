@@ -5,6 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
+        "format": "prettier --write \"resources/js/**/*.js\"",
+        "format:check": "prettier --check \"resources/js/**/*.js\"",
         "test:assets": "node scripts/check-asset-budgets.mjs",
         "test:e2e": "playwright test",
         "test:e2e:production": "playwright test --config=playwright.production.config.ts"

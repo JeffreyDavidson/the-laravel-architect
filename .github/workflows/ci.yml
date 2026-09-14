@@ -78,6 +78,9 @@ jobs:
       - name: Run test static analysis
         run: composer test:types:pest
 
+      - name: Check Rector rules
+        run: composer test:rector && composer test:rector:pest
+
       - name: Check Filament code quality
         run: composer test:filament
 
@@ -86,6 +89,9 @@ jobs:
 
       - name: Check asset budgets
         run: npm run test:assets
+
+      - name: Check frontend formatting
+        run: npm run format:check
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
