@@ -40,13 +40,21 @@ class FindOrphanedMedia extends Command implements Isolatable
         if (! $delete) {
             $this->line('No files were deleted. Pass --delete to remove the listed orphans.');
 
+            if ($report['orphaned'] > 0 || $report['missing'] > 0) {
+                $this->error('Media storage requires review.');
+
+                return self::FAILURE;
+            }
+
             return self::SUCCESS;
         }
 
         $this->info("Deleted {$report['deleted']} orphaned files.");
 
-        if ($report['failed'] > 0) {
-            $this->error("Failed to delete {$report['failed']} orphaned files.");
+        if ($report['failed'] > 0 || $report['missing'] > 0) {
+            if ($report['failed'] > 0) {
+                $this->error("Failed to delete {$report['failed']} orphaned files.");
+            }
 
             return self::FAILURE;
         }

@@ -30,7 +30,8 @@ it('reports orphaned files while preserving referenced sources and variants', fu
         ->expectsOutputToContain('Orphaned: orphan/unused.png')
         ->expectsOutputToContain('Found 1 orphaned files')
         ->expectsOutputToContain('No files were deleted')
-        ->assertSuccessful();
+        ->expectsOutputToContain('Media storage requires review.')
+        ->assertFailed();
 
     Storage::disk('public')->assertExists([
         $referencedPath,
@@ -73,5 +74,23 @@ it('reports missing referenced files without treating them as orphans', function
     $this->artisanCommand('media:find-orphans')
         ->expectsOutputToContain('Found 0 orphaned files')
         ->expectsOutputToContain('Missing referenced files: 1.')
+        ->expectsOutputToContain('Media storage requires review.')
+        ->assertFailed();
+});
+
+it('succeeds when all stored files are referenced', function () {
+    $path = 'projects/project.webp';
+    Storage::disk('public')->put($path, 'referenced');
+
+    Project::withoutEvents(fn () => Project::query()->create([
+        'title' => 'Project',
+        'slug' => 'project',
+        'description' => 'Description',
+        'status' => PublishStatus::Published,
+        'featured_image_path' => $path,
+    ]));
+
+    $this->artisanCommand('media:find-orphans')
+        ->expectsOutputToContain('Found 0 orphaned files')
         ->assertSuccessful();
 });
