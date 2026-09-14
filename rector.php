@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
+    ->withoutParallel()
     ->withPaths([
         __DIR__.'/app',
         __DIR__.'/bootstrap/app.php',
