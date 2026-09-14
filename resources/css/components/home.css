@@ -4,22 +4,6 @@
 @keyframes eq-4 { 0%, 100% { height: 20px; } 50% { height: 10px; } }
 @keyframes eq-5 { 0%, 100% { height: 6px; } 50% { height: 22px; } }
 
-@keyframes recording-pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
-}
-
-@keyframes fill-bar {
-    from {
-        width: 0%;
-    }
-}
-
 @layer components {
     .eq-bar {
         display: inline-block;
@@ -48,35 +32,6 @@
     :root:not(.dark) .podcast-card:hover {
         border-color: var(--brand-alpha-30);
         box-shadow: 0 4px 20px var(--brand-alpha-12);
-    }
-
-    .rec-dot {
-        animation: recording-pulse 1.5s ease-in-out infinite;
-    }
-
-    .thumbnail-card {
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .thumbnail-card:hover {
-        border-color: var(--error-alpha-30);
-    }
-
-    .subscriber-bar-fill {
-        width: var(--subscriber-progress, 0%);
-        animation: fill-bar 2s ease-out 0.5s both;
-    }
-
-    .yt-play-button {
-        box-shadow: 0 8px 24px var(--shadow-black-24);
-    }
-
-    .stat-number-suffix {
-        color: var(--text-tertiary);
-    }
-
-    .project-card-title {
-        color: var(--project-title-color);
     }
 
 }

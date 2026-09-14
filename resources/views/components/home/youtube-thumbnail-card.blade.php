@@ -4,7 +4,7 @@
     href="{{ $video->youtube_url }}"
     target="_blank"
     rel="noopener noreferrer"
-    {{ $attributes->class('thumbnail-card block overflow-hidden rounded-xl transition-[border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400') }}
+    {{ $attributes->class('block overflow-hidden rounded-xl border border-[var(--youtube-card-border)] bg-[var(--youtube-card-bg)] transition-[border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 hover:border-[var(--error-alpha-30)]') }}
 >
     <div class="dark:bg-surface-black relative aspect-video overflow-hidden bg-gray-100">
         @if ($video->thumbnail_url)
