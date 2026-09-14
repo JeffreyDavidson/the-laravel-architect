@@ -24,7 +24,7 @@
             <div class="flex flex-col items-center gap-8 md:flex-row md:gap-16 lg:gap-20">
                 {{-- Trading Card (Flip) --}}
                 <div class="relative flex-shrink-0">
-                    <div class="about-card-deck">
+                    <div class="relative mb-4">
                         <div class="about-ghost-card about-ghost-card-2"></div>
                         <div class="about-ghost-card about-ghost-card-1"></div>
                         <div
@@ -99,27 +99,27 @@
                                                 {{-- Stats grid --}}
                                                 <div class="px-4 pb-3">
                                                     <div class="grid grid-cols-2 gap-2">
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">8.4</span>
                                                         </div>
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.laravel') }}</span>
                                                         </div>
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Stack</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">TALL</span>
                                                         </div>
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Role</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Sr. Software Eng</span>
                                                         </div>
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Works</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Remote</span>
                                                         </div>
-                                                        <div class="about-stat-cell dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Call Me When</span>
                                                             <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
                                                         </div>

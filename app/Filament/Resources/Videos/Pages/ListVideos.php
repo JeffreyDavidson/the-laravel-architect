@@ -7,5 +7,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListVideos extends ListRecords
 {
+    #[\Override]
     protected static string $resource = VideoResource::class;
 }

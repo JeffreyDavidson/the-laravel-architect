@@ -182,7 +182,7 @@
             {{-- Sidebar --}}
             <div class="flex-shrink-0 space-y-6 lg:w-80">
                 {{-- What to Expect --}}
-                <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
+                <section class="dark:border-surface-border border-t border-gray-200 pt-6">
                     <h3 class="mb-4 flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                         <x-svg-icon name="info" class="text-brand-600 h-4 w-4" />
                         What to Expect
@@ -208,7 +208,7 @@
                 </section>
 
                 {{-- Services --}}
-                <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
+                <section class="dark:border-surface-border border-t border-gray-200 pt-6">
                     <h3 class="mb-4 flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                         <x-svg-icon name="settings" class="text-brand-600 h-4 w-4" />
                         Services
@@ -236,7 +236,7 @@
                 </section>
 
                 {{-- Connect --}}
-                <section class="border-t border-gray-200 pt-6 dark:border-[#1e2a3a]">
+                <section class="dark:border-surface-border border-t border-gray-200 pt-6">
                     <h3 class="mb-4 flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                         <x-svg-icon name="chat" class="text-brand-600 h-4 w-4" />
                         Other Ways to Connect

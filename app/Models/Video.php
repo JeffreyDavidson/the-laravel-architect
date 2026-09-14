@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -29,13 +30,15 @@ class Video extends Model
         ];
     }
 
-    public function getYoutubeUrlAttribute(): string
+    /** @return Attribute<string, never> */
+    protected function youtubeUrl(): Attribute
     {
-        return "https://www.youtube.com/watch?v={$this->youtube_id}";
+        return Attribute::make(get: fn () => "https://www.youtube.com/watch?v={$this->youtube_id}");
     }
 
-    public function getEmbedUrlAttribute(): string
+    /** @return Attribute<string, never> */
+    protected function embedUrl(): Attribute
     {
-        return "https://www.youtube.com/embed/{$this->youtube_id}";
+        return Attribute::make(get: fn () => "https://www.youtube.com/embed/{$this->youtube_id}");
     }
 }

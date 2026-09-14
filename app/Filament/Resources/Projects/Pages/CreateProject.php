@@ -7,5 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateProject extends CreateRecord
 {
+    #[\Override]
     protected static string $resource = ProjectResource::class;
 }

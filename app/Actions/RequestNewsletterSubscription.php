@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Throwable;
 
-final class RequestNewsletterSubscription
+final readonly class RequestNewsletterSubscription
 {
     private const int CONFIRMATION_COOLDOWN_SECONDS = 900;
 
@@ -18,7 +18,7 @@ final class RequestNewsletterSubscription
 
     private const int LOCK_WAIT_SECONDS = 5;
 
-    public function __construct(private readonly Mailer $mailer) {}
+    public function __construct(private Mailer $mailer) {}
 
     public function handle(string $email): void
     {

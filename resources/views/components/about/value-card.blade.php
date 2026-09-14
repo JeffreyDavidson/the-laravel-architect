@@ -10,8 +10,7 @@
 
 <div {{
     $attributes->class([
-        'about-value-card border-t border-gray-200 py-6 dark:border-[#1e2a3a]',
-        'about-value-card-accent' => $accent,
+        'relative overflow-hidden border-t border-gray-200 bg-white py-6 transition-[border-color,box-shadow] duration-300 hover:border-brand-600/20 hover:shadow-sm dark:border-surface-border dark:bg-transparent dark:hover:border-brand-600/20',
     ])
 }}>
     <x-public.section-icon :variant="$accent ? 'accent' : 'brand'" class="mb-4"> {{ $icon }} </x-public.section-icon>

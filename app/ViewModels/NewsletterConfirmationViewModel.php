@@ -13,10 +13,10 @@ class NewsletterConfirmationViewModel
         return [
             'actionUrl' => $actionUrl,
             'subscriber' => $subscriber,
-            'seoSource' => (new SEOData(
+            'seoSource' => new SEOData(
                 title: 'Confirm Your Subscription',
                 description: 'Confirm your subscription to The Laravel Architect newsletter.',
-            ))->markAsNoindex(),
+            )->markAsNoindex(),
         ];
     }
 }

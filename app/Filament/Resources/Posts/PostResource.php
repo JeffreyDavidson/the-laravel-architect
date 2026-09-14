@@ -19,14 +19,19 @@ use UnitEnum;
 
 class PostResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Post::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Content';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function getNavigationBadge(): ?string

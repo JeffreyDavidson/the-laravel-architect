@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditTag extends EditRecord
 {
+    #[\Override]
     protected static string $resource = TagResource::class;
 
     protected function getHeaderActions(): array
