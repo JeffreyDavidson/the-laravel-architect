@@ -18,8 +18,8 @@ for (const width of [390, 768, 1280]) {
                 path: testInfo.outputPath('project-index.png'),
                 fullPage: true,
             });
-            await projectIndexPage.openProject('Ringside');
-            await expect(page).toHaveURL(/\/projects\/ringside$/);
+            await projectIndexPage.openProject('E2E Project');
+            await expect(page).toHaveURL(/\/projects\/e2e-project$/);
         });
     }
 }

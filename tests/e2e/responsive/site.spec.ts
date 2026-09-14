@@ -9,12 +9,12 @@ const publicRoutes = [
     '/about',
     '/services',
     '/blog',
-    '/blog/how-i-structure-every-laravel-project',
+    '/blog/e2e-code-example',
     '/contact',
     '/podcasts',
     '/privacy',
     '/projects',
-    '/projects/ringside',
+    '/projects/e2e-project',
     '/uses',
 ];
 

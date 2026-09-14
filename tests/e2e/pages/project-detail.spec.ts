@@ -9,8 +9,8 @@ for (const width of [390, 768, 1280]) {
 
             await page.setViewportSize({ width, height: 900 });
             await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
-            await projectDetailPage.goto('ringside');
-            await projectDetailPage.expectLoaded('Ringside');
+            await projectDetailPage.goto('e2e-project');
+            await projectDetailPage.expectLoaded('E2E Project');
             await expect(page.getByRole('link', { name: 'Explore the code' })).toHaveCount(0);
             await expect(page.locator('main a[href*="github.com"]')).toHaveCount(0);
             await assertNoHorizontalOverflow(page);
