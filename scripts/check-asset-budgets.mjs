@@ -159,6 +159,11 @@ const budgets = [
         maxBytes: 145 * 1024,
     },
     {
+        entry: 'resources/images/home-writing-fallback-384.webp',
+        label: 'Homepage writing fallback (384px)',
+        maxBytes: 35 * 1024,
+    },
+    {
         entry: 'resources/images/home-writing-fallback-768.webp',
         label: 'Homepage writing fallback (768px)',
         maxBytes: 65 * 1024,
@@ -167,6 +172,11 @@ const budgets = [
         entry: 'resources/images/home-writing-fallback-1280.webp',
         label: 'Homepage writing fallback (1280px)',
         maxBytes: 180 * 1024,
+    },
+    {
+        entry: 'resources/images/home-writing-review-384.webp',
+        label: 'Homepage writing review artwork (384px)',
+        maxBytes: 45 * 1024,
     },
     {
         entry: 'resources/images/home-writing-review-768.webp',
@@ -179,6 +189,11 @@ const budgets = [
         maxBytes: 190 * 1024,
     },
     {
+        entry: 'resources/images/home-writing-modules-384.webp',
+        label: 'Homepage writing modules artwork (384px)',
+        maxBytes: 30 * 1024,
+    },
+    {
         entry: 'resources/images/home-writing-modules-768.webp',
         label: 'Homepage writing modules artwork (768px)',
         maxBytes: 50 * 1024,
@@ -189,6 +204,11 @@ const budgets = [
         maxBytes: 120 * 1024,
     },
     {
+        entry: 'resources/images/post-hello-world-384.webp',
+        label: 'Hello World article artwork (384px)',
+        maxBytes: 40 * 1024,
+    },
+    {
         entry: 'resources/images/post-hello-world-768.webp',
         label: 'Hello World article artwork (768px)',
         maxBytes: 70 * 1024,
@@ -197,6 +217,11 @@ const budgets = [
         entry: 'resources/images/post-hello-world-1280.webp',
         label: 'Hello World article artwork (1280px)',
         maxBytes: 170 * 1024,
+    },
+    {
+        entry: 'resources/images/post-kansas-florida-384.webp',
+        label: 'Kansas to Florida article artwork (384px)',
+        maxBytes: 45 * 1024,
     },
     {
         entry: 'resources/images/post-kansas-florida-768.webp',

@@ -217,7 +217,12 @@ it('renders bundled editorial artwork and article navigation for seeded posts', 
             'published_at' => now()->subDay(),
         ]);
 
-        $this->get(route('blog.show', $post))->assertOk()->assertSeeHtml("data-post-artwork=\"{$slug}\"")->assertSeeHtml($asset)->assertSeeHtml('data-article-toc');
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSeeHtml("data-post-artwork=\"{$slug}\"")
+            ->assertSeeHtml($asset)
+            ->assertSeeHtml(str_replace('-768', '-384', $asset))
+            ->assertSeeHtml('data-article-toc');
     }
 
     $blog = $this->get(route('blog.index'))
@@ -767,7 +772,14 @@ it('gives every homepage article a responsive image', function () {
         ]);
     }
 
-    $this->get(route('home'))->assertOk()->assertSeeHtml('home-writing-fallback-768')->assertSeeHtml('home-writing-review-768')->assertSeeHtml('home-writing-modules-768');
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('home-writing-fallback-384')
+        ->assertSeeHtml('home-writing-fallback-768')
+        ->assertSeeHtml('home-writing-review-384')
+        ->assertSeeHtml('home-writing-review-768')
+        ->assertSeeHtml('home-writing-modules-384')
+        ->assertSeeHtml('home-writing-modules-768');
 });
 
 it('places the theme bootstrap inside the document head', function () {
