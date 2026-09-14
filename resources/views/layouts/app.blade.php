@@ -65,7 +65,7 @@
                 {{-- Mobile hamburger --}}
                 <button
                     id="mobile-menu-btn"
-                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 md:hidden dark:text-gray-400 dark:hover:text-white"
+                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden dark:text-gray-400 dark:hover:text-white"
                     aria-label="Toggle menu"
                     aria-controls="mobile-menu"
                     aria-expanded="false"
@@ -75,7 +75,7 @@
                     </svg>
                 </button>
 
-                <div class="hidden items-center gap-8 md:flex">
+                <div class="hidden items-center gap-8 lg:flex">
                     <a
                         href="{{ route('services') }}"
                         @if (request()->routeIs('services')) aria-current="page" @endif
@@ -126,7 +126,7 @@
             </div>
 
             {{-- Mobile menu --}}
-            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 md:hidden">
+            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 lg:hidden">
                 <div class="flex flex-col gap-3">
                     <a
                         href="{{ route('services') }}"
