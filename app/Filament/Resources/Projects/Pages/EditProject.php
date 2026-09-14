@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditProject extends EditRecord
 {
+    #[\Override]
     protected static string $resource = ProjectResource::class;
 
     protected function getHeaderActions(): array

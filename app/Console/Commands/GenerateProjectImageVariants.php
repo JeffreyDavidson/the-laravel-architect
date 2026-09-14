@@ -14,8 +14,10 @@ use Illuminate\Contracts\Console\Isolatable;
 #[Description('Generate responsive WebP variants for existing project images')]
 class GenerateProjectImageVariants extends Command implements Isolatable
 {
+    #[\Override]
     protected $isolated = true;
 
+    #[\Override]
     protected $isolatedExitCode = self::FAILURE;
 
     public function handle(ResponsiveImageVariants $images, ResponsiveImageWorkflow $workflow): int

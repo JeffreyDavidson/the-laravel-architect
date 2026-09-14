@@ -5,7 +5,7 @@ use App\Models\Project;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the project detail payload', function () {
     $project = Project::query()->create([

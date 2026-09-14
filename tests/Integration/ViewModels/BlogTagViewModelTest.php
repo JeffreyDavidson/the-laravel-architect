@@ -8,7 +8,7 @@ use App\Models\User;
 use App\ViewModels\BlogTagViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds a paginated tag archive payload', function () {
     $author = User::factory()->create();

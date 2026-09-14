@@ -5,7 +5,7 @@ use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('builds the public project index payload', function () {
     $laterProject = Project::query()->create([
@@ -29,14 +29,6 @@ it('builds the public project index payload', function () {
         'sort_order' => 0,
         'status' => PublishStatus::Draft,
     ]);
-    Project::query()->create([
-        'title' => 'The Laravel Architect',
-        'slug' => 'the-laravel-architect',
-        'description' => 'The site itself is not portfolio work.',
-        'sort_order' => 0,
-        'status' => PublishStatus::Published,
-    ]);
-
     $data = app(ProjectIndexViewModel::class)
         ->data();
 

@@ -49,7 +49,6 @@ class VerifyProductionConfiguration extends Command
             [$this->usesAsynchronousQueue(config('queue.default')), 'QUEUE_CONNECTION must use an asynchronous driver.'],
             [$this->usesDeliveringMailer(config('mail.default')), 'MAIL_MAILER must use a delivering transport.'],
             [$this->isProductionEmail(config('app.admin_email')), 'ADMIN_EMAIL must use a private production address.'],
-            [$this->isProductionEmail(config('app.content_author_email')), 'CONTENT_AUTHOR_EMAIL must use a private production address.'],
             [$this->isProductionEmail(config('mail.contact_to')), 'MAIL_CONTACT_TO must use a monitored production address.'],
             [$this->isProductionEmail(config('backup.notifications.mail.to')), 'BACKUP_NOTIFICATION_EMAIL must use a monitored production address.'],
             [$this->isConfigured(config('services.turnstile.site_key')), 'TURNSTILE_SITE_KEY must be configured.'],

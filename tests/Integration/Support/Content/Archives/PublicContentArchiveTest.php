@@ -11,7 +11,7 @@ use App\Support\Content\Archives\PublicContentArchive;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 /**
  * @return list<array<array-key, mixed>>
@@ -33,6 +33,23 @@ function publicArchiveRecords(mixed $value): array
     }
 
     return $records;
+}
+
+/** @return list<string> */
+function publicArchiveSlugs(mixed $value): array
+{
+    $records = publicArchiveRecords($value);
+    $slugs = [];
+
+    foreach ($records as $record) {
+        if (! is_string($record['slug'] ?? null)) {
+            throw new RuntimeException('The archive record did not contain a slug.');
+        }
+
+        $slugs[] = $record['slug'];
+    }
+
+    return $slugs;
 }
 
 /**
@@ -90,6 +107,124 @@ function publicArchiveProject(mixed $value): array
 
     return ['slug' => $value['slug'], 'tech_stack' => $techStack];
 }
+
+test('exports every public record exactly once when lazy chunk sort values tie', function (): void {
+    $this->travelTo('2026-09-01 12:00:00');
+
+    $recordCount = 101;
+    $timestamp = now()->subDay()->toDateTimeString();
+    $author = User::factory()->create();
+
+    $categories = [];
+
+    foreach (range(1, $recordCount) as $index) {
+        $categories[] = [
+            'name' => 'Tied category',
+            'slug' => "tied-category-{$index}",
+            'description' => 'A public category.',
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+    }
+
+    DB::table('categories')->insert($categories);
+    $categoryIds = Category::query()->orderBy('id')->pluck('id')->all();
+
+    $posts = [];
+    $projects = [];
+
+    foreach (range(1, $recordCount) as $index) {
+        $posts[] = [
+            'title' => 'Tied post',
+            'slug' => "tied-post-{$index}",
+            'content' => 'Public content.',
+            'category_id' => $categoryIds[$index - 1],
+            'user_id' => $author->getKey(),
+            'status' => PublishStatus::Published->value,
+            'published_at' => $timestamp,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+        $projects[] = [
+            'title' => 'Tied project',
+            'slug' => "tied-project-{$index}",
+            'description' => 'A public project.',
+            'sort_order' => 0,
+            'status' => PublishStatus::Published->value,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+    }
+
+    DB::table('posts')->insert($posts);
+    DB::table('projects')->insert($projects);
+
+    $podcasts = [];
+
+    foreach (range(1, $recordCount) as $index) {
+        $podcasts[] = [
+            'name' => 'Tied podcast',
+            'slug' => "tied-podcast-{$index}",
+            'description' => 'A public podcast.',
+            'is_active' => true,
+            'sort_order' => 0,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+    }
+
+    DB::table('podcasts')->insert($podcasts);
+    $podcastId = Podcast::query()->orderBy('id')->value('id');
+
+    $episodes = [];
+    $videos = [];
+
+    foreach (range(1, $recordCount) as $index) {
+        $episodes[] = [
+            'podcast_id' => $podcastId,
+            'title' => 'Tied episode',
+            'slug' => "tied-episode-{$index}",
+            'description' => 'A public episode.',
+            'status' => PublishStatus::Published->value,
+            'published_at' => $timestamp,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+        $videos[] = [
+            'youtube_id' => "tied-video-{$index}",
+            'title' => 'Tied video',
+            'slug' => "tied-video-{$index}",
+            'description' => 'A public video.',
+            'published_at' => $timestamp,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
+        ];
+    }
+
+    DB::table('episodes')->insert($episodes);
+    DB::table('videos')->insert($videos);
+
+    $archive = app(PublicContentArchive::class)->export();
+
+    foreach ([
+        'categories' => 'tied-category',
+        'posts' => 'tied-post',
+        'projects' => 'tied-project',
+        'podcasts' => 'tied-podcast',
+        'episodes' => 'tied-episode',
+        'videos' => 'tied-video',
+    ] as $type => $prefix) {
+        $slugs = publicArchiveSlugs($archive[$type] ?? null);
+        sort($slugs);
+        $expectedSlugs = array_map(
+            fn (int $index): string => "{$prefix}-{$index}",
+            range(1, $recordCount),
+        );
+        sort($expectedSlugs);
+
+        expect($slugs)->toHaveCount($recordCount)->and($slugs)->toBe($expectedSlugs);
+    }
+});
 
 test('export query count stays bounded as tagged content grows', function (): void {
     $project = Project::query()->create([

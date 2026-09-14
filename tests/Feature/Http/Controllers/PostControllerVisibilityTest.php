@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 /** @param array<string, mixed> $overrides */
 function createBlogPost(array $overrides = []): Post
@@ -72,10 +72,7 @@ MARKDOWN,
 
     $this->get(route('blog.show', $post))
         ->assertOk()
-        ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')
-        ->assertSeeHtml('This is <strong>rendered</strong> content.')
-        ->assertDontSee("<script>alert('unsafe')</script>", false)
-        ->assertDontSee('javascript:', false);
+        ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
 });
 
 it('counts only published posts in blog categories', function () {

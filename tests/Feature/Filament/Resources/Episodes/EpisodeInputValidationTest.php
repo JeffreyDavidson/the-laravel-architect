@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('rejects episode text inputs longer than their database columns', function (string $field) {
     $this->actingAs(User::factory()->create(['is_admin' => true]));

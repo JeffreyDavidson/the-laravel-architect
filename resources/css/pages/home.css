@@ -1,105 +1,16 @@
-    /* ===== CSS CUSTOM PROPERTIES - THEME SYSTEM ===== */
-    :root {
-        /* Backgrounds */
-        --bg-primary: #ffffff;
-        --bg-secondary: #f6f8fa;
-        --bg-tertiary: #eaeef2;
-        --bg-card: #ffffff;
-        --bg-card-hover: #f6f8fa;
-        --bg-inset: #f0f3f6;
-
-        /* Text */
-        --text-primary: #1f2328;
-        --text-secondary: #424a53;
-        --text-tertiary: #656d76;
-        --text-muted: #8b949e;
-
-        /* Borders */
-        --border-primary: #d0d7de;
-        --border-secondary: #e5e7eb;
-        --border-subtle: rgba(0,0,0,0.06);
-
-        /* Brand colors for pills/links */
-        --brand-pill-text: #2d6aa3;
-        --brand-pill-bg: rgba(74,127,191,0.1);
-        --brand-pill-border: rgba(74,127,191,0.25);
-        --accent-pill-text: #a3456a;
-        --accent-pill-bg: rgba(196,112,136,0.1);
-        --accent-pill-border: rgba(196,112,136,0.25);
-        --green-pill-text: #16794a;
-        --green-pill-bg: rgba(22,121,74,0.08);
-        --green-pill-border: rgba(22,121,74,0.25);
-        --amber-pill-text: #78350f;
-        --amber-pill-bg: rgba(245,158,11,0.1);
-        --amber-pill-border: rgba(245,158,11,0.3);
-
-        /* Specific components */
-        --glass-card-bg: rgba(246,248,250,0.9);
-        --glass-card-border: rgba(0,0,0,0.1);
-        --podcast-card-bg: #ffffff;
-        --podcast-card-border: #e5e7eb;
-        --marquee-bg: #f6f8fa;
-        --countdown-bg: #f6f8fa;
-        --countdown-border: #d0d7de;
-        --youtube-card-bg: #ffffff;
-        --youtube-card-border: #e5e7eb;
-    }
-
-    .dark {
-        --bg-primary: #0D1117;
-        --bg-secondary: #161b22;
-        --bg-tertiary: #1a1d21;
-        --bg-card: rgba(26, 29, 33, 0.6);
-        --bg-card-hover: rgba(26, 29, 33, 0.8);
-        --bg-inset: #222529;
-
-        --text-primary: #ffffff;
-        --text-secondary: #c9d1d9;
-        --text-tertiary: #8b949e;
-        --text-muted: #484f58;
-
-        --border-primary: rgba(74, 127, 191, 0.15);
-        --border-secondary: rgba(255,255,255,0.06);
-        --border-subtle: rgba(255,255,255,0.03);
-
-        --brand-pill-text: #7eb0dc;
-        --brand-pill-bg: rgba(74,127,191,0.1);
-        --brand-pill-border: rgba(74,127,191,0.2);
-        --accent-pill-text: #e0a0aa;
-        --accent-pill-bg: rgba(196,112,136,0.1);
-        --accent-pill-border: rgba(196,112,136,0.2);
-        --green-pill-text: #86efac;
-        --green-pill-bg: rgba(34,197,94,0.1);
-        --green-pill-border: rgba(34,197,94,0.2);
-        --amber-pill-text: #fcd34d;
-        --amber-pill-bg: rgba(245,158,11,0.1);
-        --amber-pill-border: rgba(245,158,11,0.2);
-
-        --glass-card-bg: rgba(26, 29, 33, 0.6);
-        --glass-card-border: rgba(74, 127, 191, 0.15);
-        --podcast-card-bg: transparent;
-        --podcast-card-border: transparent;
-        --marquee-bg: #0D1117;
-        --countdown-bg: #111111;
-        --countdown-border: rgba(255,255,255,0.1);
-        --youtube-card-bg: rgba(26, 29, 33, 0.6);
-        --youtube-card-border: rgba(74, 127, 191, 0.15);
-    }
-
-
     .glass-card {
         background: var(--glass-card-bg);
         border: 1px solid var(--glass-card-border);
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .glass-card:hover {
-        border-color: rgba(74, 127, 191, 0.5);
-        box-shadow: 0 12px 30px rgba(74, 127, 191, 0.1);
+        border-color: var(--brand-alpha-50);
+        box-shadow: 0 12px 30px var(--brand-alpha-10);
     }
     /* Light mode hover: different shadow */
     :root:not(.dark) .glass-card:hover {
-        border-color: rgba(74, 127, 191, 0.3);
-        box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+        border-color: var(--brand-alpha-30);
+        box-shadow: 0 10px 26px var(--shadow-black-06);
     }
 
     .home-page h1,
@@ -139,10 +50,10 @@
 
     .hero-steam {
         fill: none;
-        stroke: rgb(238 244 250 / 0.52);
+        stroke: var(--hero-steam);
         stroke-linecap: round;
         stroke-width: 6;
-        filter: blur(0.9px) drop-shadow(0 0 5px rgb(159 197 229 / 0.3));
+        filter: blur(0.9px) drop-shadow(0 0 5px var(--hero-steam-shadow));
         opacity: 0;
         transform-box: fill-box;
         transform-origin: center bottom;
@@ -159,7 +70,7 @@
 
     .hero-blueprint-pulse {
         fill: none;
-        stroke: rgb(131 185 229 / 0.3);
+        stroke: var(--hero-blueprint);
         stroke-width: 2;
         opacity: 0;
         transform-box: fill-box;
@@ -169,7 +80,7 @@
 
     .hero-node-pulse {
         fill: none;
-        stroke: rgb(228 122 157 / 0.72);
+        stroke: var(--hero-node);
         stroke-width: 3;
         opacity: 0;
         transform-box: fill-box;
@@ -186,19 +97,19 @@
     }
 
     .hero-signal-track {
-        stroke: rgb(131 185 229 / 0.18);
+        stroke: var(--hero-track);
         stroke-width: 3;
     }
 
     .hero-signal-travel {
-        stroke: rgb(159 197 229 / 0.9);
+        stroke: var(--hero-travel);
         stroke-width: 4;
         stroke-dasharray: 10 122;
         animation: heroSignalTravel 4.5s linear infinite;
     }
 
     .hero-grid-sweep {
-        stroke: rgb(131 185 229 / 0.45);
+        stroke: var(--hero-sweep);
         stroke-width: 2;
         stroke-dasharray: 36 330;
         opacity: 0;
@@ -308,11 +219,11 @@
 
     /* ===== Image-led homepage sections ===== */
     .credibility-heading h2 {
-        color: #ffffff;
+        color: var(--text-white);
     }
 
     .credibility-heading p {
-        color: #b8c4d1;
+        color: var(--text-light-muted);
     }
 
     .credibility-heading {
@@ -378,14 +289,14 @@
     /* ===== Equalizer Bars ===== */
     /* ===== Browser Frame ===== */
     .browser-frame {
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid var(--white-10);
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 0 40px rgba(239, 68, 68, 0.2), 0 0 80px rgba(239, 68, 68, 0.1);
+        box-shadow: 0 0 40px var(--error-alpha-20), 0 0 80px var(--error-alpha-10);
         transition: box-shadow 0.3s;
     }
     .browser-frame:hover {
-        box-shadow: 0 0 60px rgba(239, 68, 68, 0.3), 0 0 100px rgba(239, 68, 68, 0.15);
+        box-shadow: 0 0 60px var(--error-alpha-30), 0 0 100px var(--error-alpha-15);
     }
     .browser-dots span {
         width: 10px; height: 10px; border-radius: 50%; display: inline-block;
@@ -407,7 +318,7 @@
 
     /* ===== Newsletter Glow ===== */
     .newsletter-input:focus {
-        box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.4);
+        box-shadow: 0 0 0 2px var(--brand-alpha-40);
         outline: none;
     }
 
@@ -442,129 +353,11 @@
         opacity: 0.3;
     }
     :root:not(.dark) .marquee-item {
-        color: #4a5565;
+        color: var(--text-light-subtle);
     }
     :root:not(.dark) .marquee-item:hover svg,
     :root:not(.dark) .marquee-item:hover img {
         opacity: 0.7;
-    }
-
-    /* YouTube video player — light mode inversion */
-    :root:not(.dark) .yt-video-player {
-        background: #f6f8fa !important;
-        color: #1f2328 !important;
-    }
-    /* Left: webcam/presenter side */
-    :root:not(.dark) .yt-video-player .yt-presenter {
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-presenter p.text-white\/60 {
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-presenter .border-white\/10 {
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-    /* Divider */
-    :root:not(.dark) .yt-video-player .yt-divider {
-        background: #d0d7de !important;
-    }
-    /* Right: browser/editor side */
-    :root:not(.dark) .yt-video-player .yt-browser {
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-browser-chrome {
-        background: #f6f8fa !important;
-        border-bottom-color: #d0d7de !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-address-bar {
-        background: #eaeef2 !important;
-    }
-    /* Light syntax for the YouTube code preview */
-    :root:not(.dark) .yt-video-player .text-\[\#ff7b72\] { color: #cf222e !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#d2a8ff\] { color: #8250df !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#79c0ff\] { color: #0550ae !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#a5d6ff\] { color: #0a3069 !important; }
-    :root:not(.dark) .yt-video-player .text-\[\#ffa657\] { color: #953800 !important; }
-    :root:not(.dark) .yt-video-player .text-gray-600 { color: #656d76 !important; }
-    :root:not(.dark) .yt-video-player .text-gray-500 { color: #656d76 !important; }
-    /* Terminal strip */
-    :root:not(.dark) .yt-video-player .yt-terminal {
-        background: #eaeef2 !important;
-        border-top-color: #d0d7de !important;
-        color: #424a53 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-\[\#1e2a3a\] {
-        color: #d0d7de !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-green-400\/60 {
-        color: #1a7f37 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-terminal .text-green-500 {
-        color: #1a7f37 !important;
-    }
-    /* Cursor */
-    :root:not(.dark) .yt-video-player .bg-\[\#4A7FBF\] {
-        background: #0550ae !important;
-    }
-    /* Bottom overlay — light frosted bar */
-    :root:not(.dark) .yt-video-player .yt-bottom-bar {
-        background: rgba(246,248,250,0.92) !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-white {
-        color: #1f2328 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-400 {
-        color: #656d76 !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .text-gray-500 {
-        color: #8b949e !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .bg-white\/10 {
-        background: rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .ring-red-500\/30 {
-        --tw-ring-color: rgba(239,68,68,0.15) !important;
-    }
-    /* Subscribe button keeps white text on red */
-    :root:not(.dark) .yt-video-player .yt-bottom-bar .yt-subscribe.text-white {
-        color: #ffffff !important;
-    }
-    /* REC indicator */
-    :root:not(.dark) .yt-video-player .text-red-500 {
-        color: #cf222e !important;
-    }
-    /* Mobile thumbnail */
-    :root:not(.dark) .yt-video-player .text-white\/80 {
-        color: #1f2328 !important;
-    }
-    /* Progress bar track */
-    :root:not(.dark) .yt-video-player .yt-progress-track {
-        background: rgba(0,0,0,0.1) !important;
-    }
-    /* Video player embed — clean framing on white */
-    :root:not(.dark) .yt-video-wrapper {
-        border: 2px solid #d0d7de !important;
-        border-radius: 1rem !important;
-        overflow: hidden !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
-    }
-    :root:not(.dark) .yt-video-wrapper:hover {
-        border-color: rgba(239,68,68,0.4) !important;
-        box-shadow: 0 12px 40px rgba(239,68,68,0.1), 0 4px 16px rgba(0,0,0,0.08) !important;
-    }
-    /* Thumbnail cards light mode */
-    :root:not(.dark) .thumbnail-card {
-        border: 1px solid #d0d7de !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
-        background: #ffffff !important;
-    }
-    :root:not(.dark) .thumbnail-card:hover {
-        border-color: rgba(239,68,68,0.3) !important;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
-    }
-    :root:not(.dark) .yt-duration-badge {
-        background: rgba(0,0,0,0.6) !important;
-        color: #ffffff !important;
     }
 
     /* Countdown digits use theme variables */

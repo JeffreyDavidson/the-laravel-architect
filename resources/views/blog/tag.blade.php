@@ -17,7 +17,7 @@
                 <x-svg-icon name="chevron-left" class="h-4 w-4" />
                 All Posts
             </a>
-            <p class="text-brand-600 mb-4 font-mono text-xs tracking-[0.18em] uppercase">Tagged note</p>
+            <p class="text-brand-600 tracking-label mb-4 font-mono text-xs uppercase">Tagged note</p>
             <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl dark:text-white">
                 {{ $tag->name }}
             </h1>

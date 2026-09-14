@@ -15,4 +15,10 @@ return RectorConfig::configure()
         __DIR__.'/routes',
     ])
     ->withPhpSets()
-    ->withComposerBased(laravel: true);
+    ->withComposerBased(laravel: true)
+    ->withSkip([
+        // Preserve Laravel's default configuration style in these framework-owned files.
+        __DIR__.'/config/backup.php',
+        __DIR__.'/config/database.php',
+        __DIR__.'/config/services.php',
+    ]);

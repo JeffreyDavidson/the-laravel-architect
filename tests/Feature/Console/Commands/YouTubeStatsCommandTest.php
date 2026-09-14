@@ -5,7 +5,7 @@ use App\Services\YouTubeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('succeeds without calling YouTube when there are no videos', function () {
     $youtube = Double::for(YouTubeService::class);

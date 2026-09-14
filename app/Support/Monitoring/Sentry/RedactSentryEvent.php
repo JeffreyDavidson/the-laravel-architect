@@ -2,13 +2,12 @@
 
 namespace App\Support\Monitoring\Sentry;
 
-use Sentry\Breadcrumb;
 use Sentry\Event;
 use Sentry\EventHint;
 
-final class RedactSentryEvent
+final readonly class RedactSentryEvent
 {
-    public function __construct(private readonly SanitizeSentryData $sanitizer) {}
+    public function __construct(private SanitizeSentryData $sanitizer) {}
 
     public function __invoke(Event $event, ?EventHint $hint = null): Event
     {
@@ -20,7 +19,7 @@ final class RedactSentryEvent
         }
 
         $event->setBreadcrumb(array_map(
-            fn (Breadcrumb $breadcrumb): Breadcrumb => $this->sanitizer->breadcrumb($breadcrumb),
+            $this->sanitizer->breadcrumb(...),
             $event->getBreadcrumbs(),
         ));
 
@@ -30,7 +29,7 @@ final class RedactSentryEvent
 
         if ($event->getMessage() !== null) {
             $messageParams = array_map(
-                fn (string $parameter): string => $this->sanitizer->string($parameter),
+                $this->sanitizer->string(...),
                 $event->getMessageParams(),
             );
 

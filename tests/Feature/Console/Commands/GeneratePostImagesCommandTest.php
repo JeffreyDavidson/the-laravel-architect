@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('succeeds without invoking the generator when no posts need images', function () {
     $generator = Double::for(FeaturedImageGenerator::class);
@@ -110,7 +110,6 @@ it('propagates generator failures without persisting an image path', function ()
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     expect(fn () => Artisan::call('posts:generate-images'))
-        ->toThrow(RuntimeException::class, 'Image generation failed.');
-
-    expect($post->refresh()->featured_image_path)->toBeNull();
+        ->toThrow(RuntimeException::class, 'Image generation failed.')
+        ->and($post->refresh()->featured_image_path)->toBeNull();
 });

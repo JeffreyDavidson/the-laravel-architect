@@ -5,7 +5,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('allows administrators to manage subscriber records without allowing creation or updates', function () {
     $administrator = User::factory()->create(['is_admin' => true]);

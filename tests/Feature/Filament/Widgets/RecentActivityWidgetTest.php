@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('renders an empty state when there is no recent activity', function () {
     livewire(RecentActivityWidget::class)

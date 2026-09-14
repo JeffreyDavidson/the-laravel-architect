@@ -4,7 +4,7 @@ use App\Actions\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('marks a subscriber as verified and clears pending state', function () {
     $subscriber = Subscriber::query()->create([

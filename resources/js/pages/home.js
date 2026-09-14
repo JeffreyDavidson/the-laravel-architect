@@ -10,45 +10,51 @@ function initializeRevealAnimations(reduceMotion) {
         return;
     }
 
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
-            }
-
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target);
-        });
-    }, { threshold: 0.1 });
-
-    revealElements.forEach((element) => revealObserver.observe(element));
-
-    const countObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
-            }
-
-            const target = Number(entry.target.dataset.target);
-            let current = 0;
-
-            function step() {
-                current += Math.ceil(target / 30);
-
-                if (current >= target) {
-                    entry.target.textContent = target;
-
+    const revealObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
                     return;
                 }
 
-                entry.target.textContent = current;
-                requestAnimationFrame(step);
-            }
+                entry.target.classList.add('visible');
+                revealObserver.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.1 },
+    );
 
-            step();
-            countObserver.unobserve(entry.target);
-        });
-    }, { threshold: 0.5 });
+    revealElements.forEach((element) => revealObserver.observe(element));
+
+    const countObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                const target = Number(entry.target.dataset.target);
+                let current = 0;
+
+                function step() {
+                    current += Math.ceil(target / 30);
+
+                    if (current >= target) {
+                        entry.target.textContent = target;
+
+                        return;
+                    }
+
+                    entry.target.textContent = current;
+                    requestAnimationFrame(step);
+                }
+
+                step();
+                countObserver.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.5 },
+    );
 
     countElements.forEach((element) => countObserver.observe(element));
 }

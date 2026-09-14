@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListEpisodes extends ListRecords
 {
+    #[\Override]
     protected static string $resource = EpisodeResource::class;
 
     protected function getHeaderActions(): array

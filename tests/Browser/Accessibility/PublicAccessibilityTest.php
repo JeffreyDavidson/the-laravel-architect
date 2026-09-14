@@ -14,7 +14,7 @@ use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
 use Tests\Browser\Pages\ProjectIndexPage;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Http::fake([
@@ -41,7 +41,7 @@ it('keeps newsletter validation accessible and preserves the submitted email', f
     $page = HomePage::visit();
 
     $page->script('document.querySelector("#newsletter-email").form.noValidate = true');
-    (new NewsletterForm($page))->submit('not-an-email');
+    new NewsletterForm($page)->submit('not-an-email');
 
     $page->assertPresent('#newsletter-email-error')
         ->assertValue('#newsletter-email', 'not-an-email')

@@ -48,12 +48,7 @@
             aria-describedby="{{ $errors->has('email') ? 'newsletter-email-error newsletter-privacy' : 'newsletter-privacy' }}"
             class="newsletter-input border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
         />
-        <button
-            type="submit"
-            class="bg-brand-600 hover:bg-brand-500 rounded-lg px-6 py-3 text-base font-semibold text-white transition-colors sm:text-sm"
-        >
-            Subscribe
-        </button>
+        <x-button type="submit" class="rounded-lg text-base font-semibold sm:text-sm">Subscribe</x-button>
     </form>
     <p id="newsletter-privacy" class="mx-auto mt-3 max-w-md text-xs text-gray-600 dark:text-gray-400">
         Confirmation is required. See the

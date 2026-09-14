@@ -10,7 +10,7 @@ use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible) {
     $this->freezeSecond();
@@ -50,7 +50,7 @@ it('keeps date-based visibility consistent between model checks and database sco
 ]);
 
 it('does not make a project public merely because it has a scheduled status', function () {
-    expect((new Project(['status' => PublishStatus::Scheduled]))->isPublished())->toBeFalse();
+    expect(new Project(['status' => PublishStatus::Scheduled])->isPublished())->toBeFalse();
 });
 
 it('shares publishing behavior with projects despite their project status enum', function () {

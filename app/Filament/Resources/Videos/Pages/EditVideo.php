@@ -7,5 +7,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditVideo extends EditRecord
 {
+    #[\Override]
     protected static string $resource = VideoResource::class;
 }

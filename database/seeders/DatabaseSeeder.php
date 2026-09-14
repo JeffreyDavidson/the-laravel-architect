@@ -22,11 +22,5 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $jeffrey->forceFill(['is_admin' => true])->save();
-
-        $this->call([
-            BlogSeeder::class,
-            PodcastSeeder::class,
-            ProjectSeeder::class,
-        ]);
     }
 }

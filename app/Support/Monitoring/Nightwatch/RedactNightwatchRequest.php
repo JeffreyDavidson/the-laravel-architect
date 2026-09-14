@@ -7,10 +7,10 @@ use Laravel\Nightwatch\Records\Request;
 use Laravel\Nightwatch\State\CommandState;
 use Laravel\Nightwatch\State\RequestState;
 
-final class RedactNightwatchRequest
+final readonly class RedactNightwatchRequest
 {
     /** @param Core<RequestState|CommandState> $nightwatch */
-    public function __construct(private readonly Core $nightwatch) {}
+    public function __construct(private Core $nightwatch) {}
 
     public function __invoke(Request $request): bool
     {

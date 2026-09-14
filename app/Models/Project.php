@@ -12,8 +12,6 @@ use App\Models\Contracts\Publishable;
 use App\Observers\ProjectObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -44,13 +42,6 @@ class Project extends Model implements Publishable
             'is_featured' => 'boolean',
             'status' => PublishStatus::class,
         ];
-    }
-
-    /** @param Builder<Project> $query */
-    #[Scope]
-    protected function portfolio(Builder $query): void
-    {
-        $query->where('slug', '!=', 'the-laravel-architect');
     }
 
     public function getDynamicSEOData(): SEOData
