@@ -23,12 +23,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-
-<IfModule mod_headers.c>
-    <IfModule mod_setenvif.c>
-        SetEnvIf Request_URI "^/build/assets/" immutable_asset
-        SetEnvIf Request_URI "^/storage/.*\.(?:avif|gif|jpe?g|png|svg|webp|woff2?)$" immutable_asset
-    </IfModule>
-
-    Header set Cache-Control "public, max-age=31536000, immutable" env=immutable_asset
-</IfModule>
