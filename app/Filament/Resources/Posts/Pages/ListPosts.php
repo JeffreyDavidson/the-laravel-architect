@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListPosts extends ListRecords
 {
+    #[\Override]
     protected static string $resource = PostResource::class;
 
     protected function getHeaderActions(): array

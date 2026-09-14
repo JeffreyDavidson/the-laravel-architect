@@ -17,7 +17,7 @@ use UnexpectedValueException;
 
 class FeaturedImageGenerator
 {
-    private ImageManager $manager;
+    private readonly ImageManager $manager;
 
     private int $width = 1200;
 

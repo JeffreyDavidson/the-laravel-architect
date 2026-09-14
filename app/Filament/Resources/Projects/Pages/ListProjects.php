@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListProjects extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ProjectResource::class;
 
     protected function getHeaderActions(): array

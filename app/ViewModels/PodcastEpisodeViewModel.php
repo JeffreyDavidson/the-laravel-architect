@@ -8,7 +8,7 @@ use App\Queries\EpisodeNavigationQuery;
 
 class PodcastEpisodeViewModel
 {
-    public function __construct(private EpisodeNavigationQuery $episodeNavigationQuery) {}
+    public function __construct(private readonly EpisodeNavigationQuery $episodeNavigationQuery) {}
 
     /** @return array{podcast: Podcast, episode: Episode, nextEpisode: ?Episode, prevEpisode: ?Episode, seoSource: Episode} */
     public function data(Podcast $podcast, Episode $episode): array

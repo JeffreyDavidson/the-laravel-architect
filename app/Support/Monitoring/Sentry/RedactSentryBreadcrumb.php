@@ -4,9 +4,9 @@ namespace App\Support\Monitoring\Sentry;
 
 use Sentry\Breadcrumb;
 
-final class RedactSentryBreadcrumb
+final readonly class RedactSentryBreadcrumb
 {
-    public function __construct(private readonly SanitizeSentryData $sanitizer) {}
+    public function __construct(private SanitizeSentryData $sanitizer) {}
 
     public function __invoke(Breadcrumb $breadcrumb): Breadcrumb
     {

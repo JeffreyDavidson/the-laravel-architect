@@ -46,11 +46,13 @@ class Podcast extends Model
     protected static function booted(): void
     {
         static::deleting(function (Podcast $podcast): void {
-            $podcast->episodeMediaPathsForDeletion = $podcast->episodes()
-                ->get()
-                ->flatMap(fn (Episode $episode): array => $episode->storedMediaPaths())
-                ->values()
-                ->all();
+            $paths = [];
+
+            foreach ($podcast->episodes()->cursor() as $episode) {
+                array_push($paths, ...$episode->storedMediaPaths());
+            }
+
+            $podcast->episodeMediaPathsForDeletion = array_values(array_unique($paths));
         });
 
         static::deleted(function (Podcast $podcast): void {

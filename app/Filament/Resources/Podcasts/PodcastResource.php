@@ -17,14 +17,19 @@ use UnitEnum;
 
 class PodcastResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Podcast::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMicrophone;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Podcasting';
 
+    #[\Override]
     protected static ?int $navigationSort = 3;
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema

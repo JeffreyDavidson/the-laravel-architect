@@ -17,12 +17,16 @@ use UnitEnum;
 
 class TagResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = Tag::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Taxonomy';
 
+    #[\Override]
     protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
