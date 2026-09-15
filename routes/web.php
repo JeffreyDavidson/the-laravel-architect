@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\BlogTagController;
 use App\Http\Controllers\ContactController;
@@ -45,6 +46,7 @@ Route::get('/newsletter/rss', NewsletterRssFeedController::class)->name('newslet
 Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
 Route::get('/uses', UsesController::class)->name('uses');
 Route::get('/search', SearchController::class)->name('search');
+Route::get('/archive', ArchiveController::class)->name('archive.index');
 
 // Signed content previews
 Route::middleware('signed')->prefix('preview')->group(function (): void {

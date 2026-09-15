@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
+use App\Models\ContactInquiry;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 
@@ -40,6 +41,10 @@ Schedule::command('media:find-orphans')
 Schedule::command('queue:prune-failed', [
     '--hours' => config('health.failed_jobs.retention_hours'),
 ])
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
+Schedule::command('model:prune', ['--model' => ContactInquiry::class])
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
