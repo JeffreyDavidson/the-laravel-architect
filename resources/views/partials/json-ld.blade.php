@@ -256,6 +256,19 @@
                 'url' => route('podcast.show', $podcast),
             ];
         }
+    } elseif (request()->routeIs('archive.index') && isset($items)) {
+        $collectionPage = [
+            'name' => 'Archive',
+            'url' => isset($seoSource) ? $seoSource->canonical_url : route('archive.index'),
+        ];
+        $collectionPositionOffset = ($items->currentPage() - 1) * $items->perPage();
+
+        foreach ($items as $archiveItem) {
+            $collectionItems[] = [
+                'name' => $archiveItem['title'],
+                'url' => $archiveItem['url'],
+            ];
+        }
     }
 
     if ($collectionPage) {
@@ -326,6 +339,8 @@
         $breadcrumbItems[] = ['name' => 'Privacy', 'url' => route('privacy')];
     } elseif (request()->routeIs('uses')) {
         $breadcrumbItems[] = ['name' => 'Uses', 'url' => route('uses')];
+    } elseif (request()->routeIs('archive.index')) {
+        $breadcrumbItems[] = ['name' => 'Archive', 'url' => isset($seoSource) ? $seoSource->canonical_url : route('archive.index')];
     }
 
     if (count($breadcrumbItems) > 1) {
