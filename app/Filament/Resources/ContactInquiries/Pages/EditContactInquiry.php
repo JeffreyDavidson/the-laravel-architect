@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditContactInquiry extends EditRecord
 {
+    #[\Override]
     protected static string $resource = ContactInquiryResource::class;
 
     protected function getHeaderActions(): array

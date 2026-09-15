@@ -17,16 +17,22 @@ use UnitEnum;
 
 class ContactInquiryResource extends Resource
 {
+    #[\Override]
     protected static ?string $model = ContactInquiry::class;
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Inquiry inbox';
 
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function canCreate(): bool

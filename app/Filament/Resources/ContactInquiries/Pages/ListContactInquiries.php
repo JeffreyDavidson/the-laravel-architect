@@ -7,5 +7,6 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListContactInquiries extends ListRecords
 {
+    #[\Override]
     protected static string $resource = ContactInquiryResource::class;
 }
