@@ -36,7 +36,7 @@ class PostsTable
                 TextColumn::make('readiness')
                     ->label('Readiness')
                     ->state(fn (Post $record): string => new ContentReadiness($record)->label())
-                    ->description(fn (Post $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->description(fn (Post $record): string => new ContentReadiness($record)->missingSummary())
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('author.name')

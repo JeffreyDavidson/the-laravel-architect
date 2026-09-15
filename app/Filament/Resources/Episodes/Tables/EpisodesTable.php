@@ -36,7 +36,7 @@ class EpisodesTable
                 TextColumn::make('readiness')
                     ->label('Readiness')
                     ->state(fn (Episode $record): string => new ContentReadiness($record)->label())
-                    ->description(fn (Episode $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->description(fn (Episode $record): string => new ContentReadiness($record)->missingSummary())
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('podcast.name')

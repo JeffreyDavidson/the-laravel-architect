@@ -31,7 +31,7 @@ class VideosTable
                 TextColumn::make('readiness')
                     ->label('Readiness')
                     ->state(fn (Video $record): string => new ContentReadiness($record)->label())
-                    ->description(fn (Video $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->description(fn (Video $record): string => new ContentReadiness($record)->missingSummary())
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('view_count')

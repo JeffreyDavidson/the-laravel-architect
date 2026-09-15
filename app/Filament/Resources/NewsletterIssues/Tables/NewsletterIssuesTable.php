@@ -30,7 +30,7 @@ class NewsletterIssuesTable
                 TextColumn::make('readiness')
                     ->label('Readiness')
                     ->state(fn (NewsletterIssue $record): string => new ContentReadiness($record)->label())
-                    ->description(fn (NewsletterIssue $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->description(fn (NewsletterIssue $record): string => new ContentReadiness($record)->missingSummary())
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('status')
