@@ -86,8 +86,8 @@ it('browses published public content in one chronological archive', function () 
         throw new RuntimeException('Expected archive response content.');
     }
 
-    $episodePosition = strpos($content, $episode->title);
-    $postPosition = strpos($content, $post->title);
+    $episodePosition = strpos($content, (string) $episode->title);
+    $postPosition = strpos($content, (string) $post->title);
 
     if ($episodePosition === false || $postPosition === false) {
         throw new RuntimeException('Expected archive records in response content.');
