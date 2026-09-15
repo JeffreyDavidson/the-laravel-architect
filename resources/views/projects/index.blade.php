@@ -27,26 +27,26 @@
                             for="project-technology"
                             class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                         >Technology</label>
-                        <x-form.select id="project-technology" name="technology" variant="compact">
-                            <option value="">All technologies</option>
-                            @foreach ($technologies as $technology)
-                                <option value="{{ $technology }}" @selected($selectedTechnology === $technology)>
-                                    {{ $technology }}
-                                </option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.select
+                            id="project-technology"
+                            name="technology"
+                            :options="$technologies->mapWithKeys(fn (string $technology): array => [$technology => $technology])->all()"
+                            placeholder="All technologies"
+                            :value="$selectedTechnology"
+                            variant="compact"
+                        />
                     </div>
                     <div class="w-full sm:max-w-xs">
                         <label for="project-tag" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >Topic</label>
-                        <x-form.select id="project-tag" name="tag" variant="compact">
-                            <option value="">All topics</option>
-                            @foreach ($tags as $tag)
-                                <option value="{{ $tag->slug }}" @selected($selectedTag === $tag->slug)>
-                                    {{ $tag->name }}
-                                </option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.select
+                            id="project-tag"
+                            name="tag"
+                            :options="$tags->mapWithKeys(fn (\Spatie\Tags\Tag $tag): array => [$tag->slug => $tag->name])->all()"
+                            placeholder="All topics"
+                            :value="$selectedTag"
+                            variant="compact"
+                        />
                     </div>
                     <button
                         type="submit"

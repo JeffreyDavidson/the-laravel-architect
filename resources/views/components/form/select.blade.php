@@ -1,10 +1,14 @@
 @props([
     'id',
     'name',
+    'options' => [],
+    'placeholder' => null,
+    'value' => null,
     'variant' => 'default',
 ])
 
 @php($hasError = $errors->has($name))
+@php($selectedValue = old($name, $value))
 @php($selectClasses = $variant === 'compact'
     ? 'w-full appearance-none rounded-lg border bg-white px-3 py-2.5 pr-10 text-base text-gray-900 outline-none transition-all focus:ring-1 dark:bg-surface-control dark:text-gray-200'
     : 'w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-base text-gray-900 outline-none transition-all focus:ring-2 dark:bg-surface-control dark:text-gray-200 sm:text-sm')
@@ -22,6 +26,14 @@
             ])
         }}
     >
+        @if ($placeholder !== null)
+            <option value="" @selected(blank($selectedValue))>{{ $placeholder }}</option>
+        @endif
+        @foreach ($options as $optionValue => $optionLabel)
+            <option value="{{ $optionValue }}" @selected((string) $selectedValue === (string) $optionValue)>
+                {{ $optionLabel }}
+            </option>
+        @endforeach
         {{ $slot }}
     </select>
     <x-heroicon-o-chevron-down
