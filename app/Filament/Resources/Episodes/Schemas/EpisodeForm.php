@@ -90,8 +90,7 @@ class EpisodeForm
                             ->helperText('If episode is also on YouTube'),
                         OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
-                            ->directory('episodes/images')
-                            ->maxSize(10240),
+                            ->directory('episodes/images'),
                         TextInput::make('duration_minutes')
                             ->numeric()
                             ->label('Duration (minutes)'),
