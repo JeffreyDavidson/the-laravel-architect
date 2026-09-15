@@ -53,11 +53,12 @@ class ContactController
 
         RateLimiter::hit($key, 3600);
 
-        $projectTitle = filled($request->string('project')->trim()->toString())
+        $projectSlug = $request->string('project')->trim()->toString();
+        $projectTitle = filled($projectSlug)
             ? Project::query()
                 ->published()
-                ->where('slug', $request->string('project')->trim()->toString())
-                ->value('title')
+                ->where('slug', $projectSlug)
+                ->first()?->title
             : null;
 
         $sendContactMessage->handle($request->toData($projectTitle));
