@@ -51,10 +51,14 @@
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                             <span class="podcast-badge rounded-lg px-3 py-1.5 font-mono text-sm font-bold">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
-                            <time
-                                datetime="{{ $episode->published_at->toDateString() }}"
-                                class="text-sm text-gray-500"
-                            >{{ $episode->published_at->format('F d, Y') }}</time>
+                            @if ($episode->published_at)
+                                <time
+                                    datetime="{{ $episode->published_at->toDateString() }}"
+                                    class="text-sm text-gray-500"
+                                >{{ $episode->published_at->format('F d, Y') }}</time>
+                            @else
+                                <span class="text-sm text-gray-500">Draft preview</span>
+                            @endif
                             @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                 <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -250,8 +254,8 @@
                             </div>
                         @endif
 
-                        {{-- Description Fallback (no audio, no show_notes, no youtube, no embed) --}}
-                        @if (! $audioUrl && ! $episode->show_notes && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedUrl)
+                        {{-- Description Fallback (no audio, no show_notes, no transcript, no youtube, no embed) --}}
+                        @if (! $audioUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedUrl)
                             <div class="dark:border-surface-border dark:bg-surface-control relative mb-10 rounded-2xl border border-gray-200 bg-white p-8">
                                 <div class="podcast-accent-text absolute top-6 left-6 text-6xl leading-none opacity-15">
                                     "
@@ -399,6 +403,34 @@
                             </div>
                         @endif
 
+                        {{-- Transcript --}}
+                        @if ($episode->transcript)
+                            <section class="mb-12" aria-labelledby="episode-transcript-heading">
+                                <h2 id="episode-transcript-heading" class="sr-only">Transcript</h2>
+                                <details class="dark:border-surface-border dark:bg-surface-control overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg font-extrabold text-gray-900 marker:hidden dark:text-white">
+                                        <span class="flex items-center gap-3">
+                                            <span class="podcast-accent-bg-soft flex h-8 w-8 items-center justify-center rounded-lg">
+                                                <svg class="podcast-accent-text h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8m-8 4h5m8-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </span>
+                                            Transcript
+                                        </span>
+                                        <span class="text-sm font-semibold text-gray-500">Read transcript</span>
+                                    </summary>
+                                    <div class="dark:border-surface-border border-t border-gray-200 px-6 py-6 md:px-8">
+                                        <div class="podcast-prose prose prose-invert prose-lg prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-surface-border prose-li:text-gray-600 dark:prose-li:text-gray-400 prose-p:text-gray-600 dark:prose-p:text-gray-400 max-w-none">
+                                            {!!
+                                                Str::markdown($episode->transcript, [
+                                                    'html_input' => 'strip',
+                                                    'allow_unsafe_links' => false,
+                                                ])
+                                            !!}
+                                        </div>
+                                    </div>
+                                </details>
+                            </section>
+                        @endif
+
                         {{-- Tags --}}
                         @if ($episode->tags->count())
                             <div class="mb-12">
@@ -414,7 +446,7 @@
                         @endif
 
                         {{-- Empty State Fallback --}}
-                        @if (! $audioUrl && ! $episode->show_notes && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedLink)
+                        @if (! $audioUrl && ! $episode->show_notes && ! $episode->transcript && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedLink)
                             <div class="dark:border-surface-border mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center">
                                 <svg class="mx-auto mb-4 h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <p class="text-lg font-semibold text-gray-600 dark:text-gray-400">
@@ -478,7 +510,11 @@
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Published</dt>
                                         <dd class="text-gray-700 dark:text-gray-300">
-                                            <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                            @if ($episode->published_at)
+                                                <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                            @else
+                                                Draft preview
+                                            @endif
                                         </dd>
                                     </div>
                                     @if (\App\Presenters\EpisodePresenter::from($episode)->duration())

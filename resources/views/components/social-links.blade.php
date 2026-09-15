@@ -25,6 +25,7 @@
                 href="{{ $link['url'] }}"
                 target="_blank"
                 rel="noopener noreferrer"
+                @if ($link['name'] === 'github') data-fathom-event="github profile click" @endif
                 class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all dark:border-surface-border dark:text-gray-400 {{ $link['hover'] }}"
                 title="{{ $link['label'] }}"
                 aria-label="{{ $link['label'] }}"
@@ -40,6 +41,7 @@
                 href="{{ $link['url'] }}"
                 target="_blank"
                 rel="noopener noreferrer"
+                @if ($link['name'] === 'github') data-fathom-event="github profile click" @endif
                 class="flex items-center gap-3 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             >
                 <x-svg-icon :name="$link['name']" class="h-5 w-5 flex-shrink-0" />

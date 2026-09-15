@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Category;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -256,6 +257,31 @@ test('export query count stays bounded as tagged content grows', function (): vo
 
     expect($archive['projects'])->toHaveCount(10)
         ->and($expandedQueryCount)->toBe($initialQueryCount);
+});
+
+it('exports and synchronizes published newsletter issues', function () {
+    $issue = NewsletterIssue::query()->create([
+        'title' => 'Production newsletter issue',
+        'slug' => 'production-newsletter-issue',
+        'excerpt' => 'A public issue.',
+        'content' => 'Issue content.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $archive = app(PublicContentArchive::class)->export();
+    $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
+
+    expect($issues)->toHaveCount(1)
+        ->and($issues[0]['slug'])->toBe($issue->slug)
+        ->and($issues[0]['content'])->toBe('Issue content.');
+
+    NewsletterIssue::query()->delete();
+
+    $counts = app(PublicContentArchive::class)->sync($archive);
+
+    expect($counts['newsletter_issues'])->toBe(1)
+        ->and(NewsletterIssue::query()->sole()->title)->toBe('Production newsletter issue');
 });
 
 test('only public content and its presentation data are exported', function (): void {

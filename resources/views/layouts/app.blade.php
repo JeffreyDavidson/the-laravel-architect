@@ -31,7 +31,10 @@
     @include('partials.json-ld')
     @stack('head')
 </head>
-<body class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
+<body
+    @if (session('fathom_event')) data-fathom-event-on-load="{{ session('fathom_event') }}" @endif
+    class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100"
+>
     <a
         href="#main-content"
         class="bg-brand-600 focus:outline-brand-300 z-overlay sr-only rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
@@ -65,7 +68,7 @@
                 {{-- Mobile hamburger --}}
                 <button
                     id="mobile-menu-btn"
-                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 md:hidden dark:text-gray-400 dark:hover:text-white"
+                    class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden dark:text-gray-400 dark:hover:text-white"
                     aria-label="Toggle menu"
                     aria-controls="mobile-menu"
                     aria-expanded="false"
@@ -75,7 +78,7 @@
                     </svg>
                 </button>
 
-                <div class="hidden items-center gap-8 md:flex">
+                <div class="hidden items-center gap-8 lg:flex">
                     <a
                         href="{{ route('services') }}"
                         @if (request()->routeIs('services')) aria-current="page" @endif
@@ -101,6 +104,11 @@
                         @if (request()->routeIs('about')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif"
                     >About</a>
+                    <a
+                        href="{{ route('search') }}"
+                        @if (request()->routeIs('search')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
+                    >Search</a>
                     <button
                         id="theme-toggle"
                         data-theme-toggle
@@ -121,7 +129,7 @@
             </div>
 
             {{-- Mobile menu --}}
-            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 md:hidden">
+            <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 lg:hidden">
                 <div class="flex flex-col gap-3">
                     <a
                         href="{{ route('services') }}"
@@ -149,6 +157,11 @@
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('about')) is-active text-gray-900 dark:text-white @endif"
                     >About</a>
                     <a
+                        href="{{ route('search') }}"
+                        @if (request()->routeIs('search')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
+                    >Search</a>
+                    <a
                         href="{{ route('uses') }}"
                         @if (request()->routeIs('uses')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('uses')) is-active text-gray-900 dark:text-white @endif"
@@ -171,6 +184,15 @@
             </div>
         </div>
     </nav>
+
+    @if (request()->routeIs('preview.*'))
+        <div
+            class="border-b border-amber-500/20 bg-amber-500/10 px-4 py-3 text-center text-sm font-semibold text-amber-700 dark:text-amber-300"
+            role="status"
+        >
+            Preview mode · This content is not public yet.
+        </div>
+    @endif
 
     {{-- Content --}}
     <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
@@ -275,6 +297,12 @@
                                     href="/rss"
                                     class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                                 >RSS Feed</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="{{ route('newsletter.index') }}"
+                                    class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                >Newsletter archive</a>
                             </li>
                             <li>
                                 <a

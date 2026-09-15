@@ -61,6 +61,26 @@ it('returns null at both ends when there are no adjacent published episodes', fu
         ]);
 });
 
+it('returns null navigation for an episode without a publication date', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about Laravel architecture.',
+        'is_active' => true,
+    ]);
+    $episode = createEpisodeNavigationEpisode($podcast, 'Draft episode', now()->subDay(), PublishStatus::Draft);
+    $episode->update(['published_at' => null]);
+
+    $navigation = app(EpisodeNavigationQuery::class)
+        ->get($podcast, $episode->refresh());
+
+    expect($navigation)
+        ->toBe([
+            'previous' => null,
+            'next' => null,
+        ]);
+});
+
 function createEpisodeNavigationEpisode(
     Podcast $podcast,
     string $title,

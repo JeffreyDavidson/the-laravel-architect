@@ -5,6 +5,7 @@ namespace App\ViewModels;
 use App\Models\Post;
 use App\Queries\RelatedPostsQuery;
 use Illuminate\Database\Eloquent\Collection;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PostShowViewModel
 {
@@ -28,5 +29,24 @@ class PostShowViewModel
             'relatedPosts' => $this->relatedPostsQuery->get($post),
             'seoSource' => $post,
         ];
+    }
+
+    /**
+     * @return array{
+     *     post: Post,
+     *     relatedPosts: Collection<int, Post>,
+     *     seoSource: SEOData,
+     * }
+     */
+    public function previewData(Post $post): array
+    {
+        $data = $this->data($post);
+        $data['seoSource'] = new SEOData(
+            title: $post->title.' — Preview',
+            description: $post->excerpt,
+            robots: 'noindex, nofollow',
+        );
+
+        return $data;
     }
 }

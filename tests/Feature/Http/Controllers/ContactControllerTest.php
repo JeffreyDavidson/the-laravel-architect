@@ -45,6 +45,8 @@ it('silently accepts honeypot submissions without sending mail', function () {
         'website' => 'filled-by-bot',
     ])->assertSessionHas('success');
 
+    expect(session()->has('fathom_event'))->toBeFalse();
+
     Mail::assertNothingQueued();
     Http::assertNothingSent();
 });
@@ -64,7 +66,8 @@ it('queues both contact messages after a valid submission', function () {
         'type' => 'consulting',
         'message' => 'Can you help with an audit?',
         'cf-turnstile-response' => 'valid-token',
-    ])->assertSessionHas('success');
+    ])->assertSessionHas('success')
+        ->assertSessionHas('fathom_event', 'contact form submission');
 
     Mail::assertQueued(
         ContactMessageReceived::class,

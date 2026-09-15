@@ -16,10 +16,75 @@
         </header>
 
         <div class="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
+            @if ($technologies->isNotEmpty() || $tags->isNotEmpty())
+                <form
+                    method="GET"
+                    action="{{ route('projects.index') }}"
+                    class="dark:border-brand-800 mb-10 flex flex-col gap-4 border-y border-gray-200 py-6 sm:flex-row sm:items-end"
+                >
+                    <div class="w-full sm:max-w-xs">
+                        <label
+                            for="project-technology"
+                            class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >Technology</label>
+                        <select
+                            id="project-technology"
+                            name="technology"
+                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
+                        >
+                            <option value="">All technologies</option>
+                            @foreach ($technologies as $technology)
+                                <option value="{{ $technology }}" @selected($selectedTechnology === $technology)>
+                                    {{ $technology }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-full sm:max-w-xs">
+                        <label for="project-tag" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >Topic</label>
+                        <select
+                            id="project-tag"
+                            name="tag"
+                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
+                        >
+                            <option value="">All topics</option>
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->slug }}" @selected($selectedTag === $tag->slug)>
+                                    {{ $tag->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button
+                        type="submit"
+                        class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
+                    >
+                        Filter projects
+                    </button>
+                    @if ($hasFilters)
+                        <a
+                            href="{{ route('projects.index') }}"
+                            class="text-brand-700 hover:text-brand-900 dark:text-brand-300 dark:hover:text-brand-100 px-1 py-2.5 text-sm font-semibold"
+                        >Clear filters</a>
+                    @endif
+                </form>
+            @endif
+
             @if ($projects->isEmpty())
-                <p class="dark:border-brand-800 border-t border-gray-200 pt-8 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                    Project details aren’t available here yet. Get in touch if you’d like to discuss my work.
-                </p>
+                @if ($hasFilters)
+                    <p class="dark:border-brand-800 border-t border-gray-200 pt-8 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                        No projects match those filters.
+                        <a
+                            href="{{ route('projects.index') }}"
+                            class="text-brand-700 hover:text-brand-900 dark:text-brand-300 dark:hover:text-brand-100 font-semibold"
+                        >Show all projects</a>
+                    </p>
+                @else
+                    <p class="dark:border-brand-800 border-t border-gray-200 pt-8 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                        Project details aren’t available here yet. Get in touch if you’d like to discuss my work.
+                    </p>
+                @endif
             @else
                 @if ($projects->where('is_featured', true)->isNotEmpty())
                     <section aria-labelledby="featured-projects-heading">

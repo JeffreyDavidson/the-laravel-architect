@@ -173,6 +173,7 @@
                             href="https://github.com/JeffreyDavidson"
                             target="_blank"
                             rel="noopener noreferrer"
+                            data-fathom-event="github profile click"
                             aria-label="Jeffrey Davidson on GitHub"
                             class="dark:border-brand-700 focus-visible:outline-brand-400 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:border-gray-400 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-white dark:hover:border-gray-600"
                         >

@@ -1,7 +1,13 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Models\Category;
+use App\Models\Episode;
+use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -46,6 +52,66 @@ it('offers a contact path when no published projects are available', function ()
     $response->assertOk()->assertSee('Project details aren’t available here yet.')->assertSeeHtml(route('contact'))->assertDontSeeHtml('data-project-entry')->assertDontSeeHtml('featured-projects-heading')->assertDontSeeHtml('more-projects-heading');
 });
 
+it('filters published projects by technology and topic', function () {
+    $tag = Tag::query()->create([
+        'name' => ['en' => 'Laravel'],
+        'slug' => ['en' => 'laravel'],
+    ]);
+    $matchingProject = Project::query()->create([
+        'title' => 'Laravel project',
+        'description' => 'A Laravel project.',
+        'tech_stack' => ['Laravel', 'Filament'],
+        'status' => PublishStatus::Published,
+    ]);
+    $matchingProject->attachTag($tag);
+    Project::query()->create([
+        'title' => 'Vue project',
+        'description' => 'A Vue project.',
+        'tech_stack' => ['Vue'],
+        'status' => PublishStatus::Published,
+    ]);
+
+    $this->get(route('projects.index', ['technology' => 'laravel', 'tag' => 'laravel']))
+        ->assertOk()
+        ->assertSee('Laravel project')
+        ->assertDontSee('Vue project')
+        ->assertSeeHtml('value="Laravel" selected')
+        ->assertSeeHtml('value="laravel" selected');
+});
+
+it('explains when valid project filters have no matching projects', function () {
+    $laravelTag = Tag::query()->create([
+        'name' => ['en' => 'Laravel'],
+        'slug' => ['en' => 'laravel'],
+    ]);
+    $vueTag = Tag::query()->create([
+        'name' => ['en' => 'Vue'],
+        'slug' => ['en' => 'vue'],
+    ]);
+
+    $laravelProject = Project::query()->create([
+        'title' => 'Laravel project',
+        'description' => 'A Laravel project.',
+        'tech_stack' => ['Laravel'],
+        'status' => PublishStatus::Published,
+    ]);
+    $laravelProject->attachTag($laravelTag);
+    $vueProject = Project::query()->create([
+        'title' => 'Vue project',
+        'description' => 'A Vue project.',
+        'tech_stack' => ['Vue'],
+        'status' => PublishStatus::Published,
+    ]);
+    $vueProject->attachTag($vueTag);
+
+    $this->get(route('projects.index', ['technology' => 'Laravel', 'tag' => 'vue']))
+        ->assertOk()
+        ->assertSee('No projects match those filters.')
+        ->assertSeeHtml(route('projects.index'))
+        ->assertDontSee('Laravel project')
+        ->assertDontSee('Vue project');
+});
+
 it('uses responsive uploaded images in either project group', function (bool $featured) {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('showcase.png', 1280, 720);
@@ -85,7 +151,7 @@ it('keeps repository URLs out of public project markup and structured data', fun
         ->assertSee('Discuss a similar project');
 
     if ($website !== null) {
-        $response->assertSeeHtml($website);
+        $response->assertSeeHtml($website)->assertSeeHtml('data-fathom-event="project live link click"');
     }
 
     expect($project->refresh()->github_url)->toBe('https://github.com/example/confidential-repository');
@@ -109,7 +175,85 @@ MARKDOWN,
 
     $this->get(route('projects.show', $project))
         ->assertOk()
-        ->assertSeeHtml('<h2>Project approach</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
+        ->assertSeeHtml('id="project-story"')->assertSee('Project story')->assertSeeHtml('<h2>Project approach</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
+});
+
+it('links project metadata to the corresponding project filters', function () {
+    $tag = Tag::query()->create([
+        'name' => ['en' => 'Architecture'],
+        'slug' => ['en' => 'architecture'],
+    ]);
+    $project = Project::query()->create([
+        'title' => 'Metadata project',
+        'description' => 'A project with useful metadata.',
+        'tech_stack' => ['Laravel'],
+        'status' => PublishStatus::Published,
+    ]);
+    $project->attachTag($tag);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('Project story')
+        ->assertSeeHtml('aria-label="Technologies used for Metadata project"')
+        ->assertSeeHtml(route('projects.index', ['technology' => 'Laravel']))
+        ->assertSeeHtml('aria-label="Topics covered by Metadata project"')
+        ->assertSeeHtml(route('projects.index', ['tag' => 'architecture']))
+        ->assertSee('Metadata project', false);
+});
+
+it('shows published writing and podcast episodes connected by project tags', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about architecture.',
+        'is_active' => true,
+    ]);
+    $tag = Tag::query()->create([
+        'name' => ['en' => 'Architecture'],
+        'slug' => ['en' => 'architecture'],
+    ]);
+    $project = Project::query()->create([
+        'title' => 'Connected project',
+        'description' => 'A project with related content.',
+        'status' => PublishStatus::Published,
+    ]);
+    $project->attachTag($tag);
+
+    $post = Post::query()->create([
+        'title' => 'Connected article',
+        'slug' => 'connected-article',
+        'excerpt' => 'A connected article.',
+        'content' => 'Article content.',
+        'category_id' => $category->getKey(),
+        'user_id' => $author->getKey(),
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $post->attachTag($tag);
+
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->getKey(),
+        'title' => 'Connected episode',
+        'slug' => 'connected-episode',
+        'description' => 'A connected episode.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subHours(2),
+    ]);
+    $episode->attachTag($tag);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('Keep exploring')
+        ->assertSee('Connected article')
+        ->assertSee('Listen next')
+        ->assertSee('Connected episode')
+        ->assertSeeHtml(route('blog.show', $post))
+        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
 });
 
 it('loads only the related projects displayed on a project page', function () {

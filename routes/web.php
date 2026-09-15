@@ -6,15 +6,21 @@ use App\Http\Controllers\BlogTagController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterConfirmationController;
+use App\Http\Controllers\NewsletterIssueController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\NewsletterUnsubscriptionController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\PodcastEpisodeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PreviewEpisodeController;
+use App\Http\Controllers\PreviewNewsletterIssueController;
+use App\Http\Controllers\PreviewPostController;
+use App\Http\Controllers\PreviewProjectController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
@@ -33,7 +39,18 @@ Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationCo
 Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'store'])->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])->name('newsletter.confirm.store');
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
+Route::get('/newsletter', [NewsletterIssueController::class, 'index'])->name('newsletter.index');
+Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
 Route::get('/uses', UsesController::class)->name('uses');
+Route::get('/search', SearchController::class)->name('search');
+
+// Signed content previews
+Route::middleware('signed')->prefix('preview')->group(function (): void {
+    Route::get('/posts/{post:slug}', PreviewPostController::class)->name('preview.post');
+    Route::get('/projects/{project:slug}', PreviewProjectController::class)->name('preview.project');
+    Route::get('/episodes/{episode:slug}', PreviewEpisodeController::class)->name('preview.episode');
+    Route::get('/newsletter/{newsletterIssue:slug}', PreviewNewsletterIssueController::class)->name('preview.newsletter-issue');
+});
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');

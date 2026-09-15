@@ -6,12 +6,16 @@ use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class ProjectController
 {
-    public function index(ProjectIndexViewModel $projectIndexViewModel): View
+    public function index(Request $request, ProjectIndexViewModel $projectIndexViewModel): View
     {
-        return view('projects.index', $projectIndexViewModel->data());
+        return view('projects.index', $projectIndexViewModel->data([
+            'technology' => $request->string('technology')->trim()->toString(),
+            'tag' => $request->string('tag')->trim()->toString(),
+        ]));
     }
 
     public function show(Project $project, ProjectShowViewModel $projectShowViewModel): View

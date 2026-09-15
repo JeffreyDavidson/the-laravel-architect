@@ -58,4 +58,10 @@
         >privacy notice</a>
         for how your email is handled.
     </p>
+    @unless (request()->routeIs('newsletter.index'))
+        <a
+            href="{{ route('newsletter.index') }}"
+            class="text-brand-600 dark:text-brand-300 mt-5 inline-flex text-sm font-semibold hover:underline"
+        >Browse the newsletter archive <span aria-hidden="true" class="ml-1">→</span></a>
+    @endunless
 </div>
