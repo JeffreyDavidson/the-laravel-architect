@@ -95,7 +95,8 @@
                             that security check under its own privacy practices.
                         </p>
                         <p>
-                            When configured, the site loads Fathom Analytics to understand aggregate site traffic.
+                            When configured, the site loads Fathom Analytics to understand aggregate site traffic and
+                            conversions such as newsletter signups, contact submissions, and outbound project links.
                             Podcast pages may include a YouTube player; loading or using that player can send
                             information to YouTube under its own privacy practices.
                         </p>

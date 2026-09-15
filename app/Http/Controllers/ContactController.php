@@ -48,6 +48,9 @@ class ContactController
 
         $sendContactMessage->handle($request->toData());
 
-        return back()->with('success', 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.');
+        return back()->with([
+            'success' => 'Message sent! I\'ll get back to you within 24–48 hours. A copy has been sent to your email.',
+            'fathom_event' => 'contact form submission',
+        ]);
     }
 }

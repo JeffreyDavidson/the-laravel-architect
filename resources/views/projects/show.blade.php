@@ -34,6 +34,7 @@
                                 href="{{ $project->url }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                data-fathom-event="project live link click"
                                 class="text-brand-700 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 mt-6 inline-flex items-center gap-2 rounded py-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 dark:hover:text-white"
                             >
                                 Visit the project<span class="sr-only"> (opens in a new tab)</span>
