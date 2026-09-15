@@ -27,13 +27,14 @@ it('renders inquiry details for an authorized administrator', function () {
         ->assertSee('Jane Doe')
         ->assertSee('jane@example.com');
 
-    livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()])
-        ->assertOk()
-        ->assertSchemaStateSet([
-            'name' => 'Jane Doe',
-            'email' => 'jane@example.com',
-            'message' => 'Please review my application.',
-        ]);
+    $component = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
+
+    $component->assertOk();
+    $component->assertSchemaStateSet([
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'message' => 'Please review my application.',
+    ]);
 });
 
 it('updates only inquiry status and private notes', function () {

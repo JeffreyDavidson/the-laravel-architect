@@ -11,7 +11,7 @@ it('prunes inquiries older than the configured retention period', function () {
     $oldInquiry = ContactInquiry::factory()->create(['created_at' => now()->subDays(181)]);
     $recentInquiry = ContactInquiry::factory()->create(['created_at' => now()->subDays(179)]);
 
-    $this->artisan('model:prune', ['--model' => ContactInquiry::class])
+    $this->artisanCommand('model:prune', ['--model' => ContactInquiry::class])
         ->assertSuccessful();
 
     expect(ContactInquiry::query()->find($oldInquiry->id))->toBeNull()
