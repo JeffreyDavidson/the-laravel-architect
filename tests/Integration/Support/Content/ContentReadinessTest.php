@@ -127,6 +127,6 @@ it('reports complete public details for each content type that supports readines
     ]);
 
     foreach ([$post, $project, $podcast, $episode, $issue, $video] as $record) {
-        expect((new ContentReadiness($record))->isReady())->toBeTrue();
+        expect(new ContentReadiness($record)->isReady())->toBeTrue();
     }
 });
