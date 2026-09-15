@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NewsletterIssues\Tables;
 
 use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
+use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -45,7 +46,9 @@ class NewsletterIssuesTable
                 Action::make('view_on_site')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (NewsletterIssue $record): string => route('newsletter.issue', $record))
+                    ->url(fn (NewsletterIssue $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
+                        ? route('newsletter.issue', $record)
+                        : $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([
