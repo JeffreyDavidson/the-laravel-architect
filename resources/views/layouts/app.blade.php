@@ -31,7 +31,10 @@
     @include('partials.json-ld')
     @stack('head')
 </head>
-<body class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
+<body
+    @if (session('fathom_event')) data-fathom-event-on-load="{{ session('fathom_event') }}" @endif
+    class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100"
+>
     <a
         href="#main-content"
         class="bg-brand-600 focus:outline-brand-300 z-overlay sr-only rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
