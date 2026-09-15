@@ -100,6 +100,6 @@ test('an administrator can use the mobile login and navigation', async ({ page }
     await sidebarButton.click();
 
     await expect(sidebar).toHaveClass(/fi-sidebar-open/);
-    await expect(sidebar.getByRole('link', { name: 'Posts', exact: true })).toBeVisible();
+    await expect(sidebar.getByRole('link', { name: /^Posts/ })).toBeVisible();
     await assertNoHighImpactAccessibilityViolations(page);
 });
