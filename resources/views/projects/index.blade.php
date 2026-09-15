@@ -16,7 +16,7 @@
         </header>
 
         <div class="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
-            @if ($technologies->isNotEmpty() || $tags->isNotEmpty())
+            @if ($technologyOptions !== [] || $tagOptions !== [])
                 <form
                     method="GET"
                     action="{{ route('projects.index') }}"
@@ -30,7 +30,7 @@
                         <x-form.select
                             id="project-technology"
                             name="technology"
-                            :options="$technologies->mapWithKeys(fn (string $technology): array => [$technology => $technology])->all()"
+                            :options="$technologyOptions"
                             placeholder="All technologies"
                             :value="$selectedTechnology"
                             variant="compact"
@@ -42,7 +42,7 @@
                         <x-form.select
                             id="project-tag"
                             name="tag"
-                            :options="$tags->mapWithKeys(fn (\Spatie\Tags\Tag $tag): array => [$tag->slug => $tag->name])->all()"
+                            :options="$tagOptions"
                             placeholder="All topics"
                             :value="$selectedTag"
                             variant="compact"

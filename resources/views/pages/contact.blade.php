@@ -104,8 +104,8 @@
                             id="type"
                             name="type"
                             :autofocus="$firstErrorField === 'type'"
-                            :options="collect(\App\Enums\ContactType::cases())->mapWithKeys(fn (\App\Enums\ContactType $type): array => [$type->value => $type->getLabel()])->all()"
-                            :value="\App\Enums\ContactType::Freelance->value"
+                            :options="$contactTypeOptions"
+                            :value="$defaultContactType"
                         />
                     </div>
 
@@ -115,7 +115,7 @@
                         <x-form.select
                             id="budget"
                             name="budget"
-                            :options="collect(\App\Enums\ContactBudget::cases())->mapWithKeys(fn (\App\Enums\ContactBudget $budget): array => [$budget->value => $budget->getLabel()])->all()"
+                            :options="$contactBudgetOptions"
                             placeholder="Prefer not to say"
                         />
                     </div>
