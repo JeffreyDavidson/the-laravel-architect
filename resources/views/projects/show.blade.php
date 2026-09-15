@@ -5,13 +5,21 @@
         <section class="dark:border-brand-800 dark:bg-brand-950 border-b border-gray-200 bg-white py-10 sm:py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <nav aria-label="Breadcrumb" class="mb-10">
-                    <a
-                        href="{{ route('projects.index') }}"
-                        class="text-brand-700 focus-visible:outline-brand-500 dark:text-brand-300 inline-flex items-center gap-2 rounded py-2 text-sm font-medium hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-                    >
-                        <x-heroicon-o-arrow-long-left class="size-5 shrink-0" aria-hidden="true" />
-                        All projects
-                    </a>
+                    <ol class="flex min-w-0 items-center gap-2 text-sm">
+                        <li>
+                            <a
+                                href="{{ route('projects.index') }}"
+                                class="text-brand-700 focus-visible:outline-brand-500 dark:text-brand-300 inline-flex items-center gap-2 rounded py-2 font-medium hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
+                            >
+                                <x-heroicon-o-arrow-long-left class="size-5 shrink-0" aria-hidden="true" />
+                                All projects
+                            </a>
+                        </li>
+                        <li aria-hidden="true" class="text-gray-400 dark:text-gray-600">/</li>
+                        <li aria-current="page" class="min-w-0 truncate text-gray-600 dark:text-gray-400">
+                            {{ $project->title }}
+                        </li>
+                    </ol>
                 </nav>
                 <div class="grid gap-6 lg:grid-cols-2 lg:gap-16">
                     <h1 class="min-w-0 text-4xl font-semibold tracking-tight text-balance break-words text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
@@ -51,9 +59,17 @@
                     @if ($project->tech_stack)
                         <div class="mt-6">
                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Built with</h3>
-                            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                            <ul
+                                aria-label="Technologies used for {{ $project->title }}"
+                                class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6 text-gray-600 dark:text-gray-400"
+                            >
                                 @foreach ($project->tech_stack as $tech)
-                                    <li>{{ $tech }}</li>
+                                    <li>
+                                        <a
+                                            href="{{ route('projects.index', ['technology' => $tech]) }}"
+                                            class="text-brand-700 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 rounded underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+                                        >{{ $tech }}</a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
@@ -61,15 +77,29 @@
                     @if ($project->tags->isNotEmpty())
                         <div class="mt-6">
                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Areas of focus</h3>
-                            <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
+                            <ul
+                                aria-label="Topics covered by {{ $project->title }}"
+                                class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6 text-gray-600 dark:text-gray-400"
+                            >
                                 @foreach ($project->tags as $tag)
-                                    <li>{{ $tag->name }}</li>
+                                    <li>
+                                        <a
+                                            href="{{ route('projects.index', ['tag' => $tag->slug]) }}"
+                                            class="text-brand-700 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 rounded underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
+                                        >{{ $tag->name }}</a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
                 </div>
                 <div class="min-w-0">
+                    <h2
+                        id="project-story"
+                        class="mb-6 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
+                    >
+                        Project story
+                    </h2>
                     @if ($project->content)
                         <x-prose class="prose-headings:font-semibold prose-h2:mt-10 prose-h2:text-2xl prose-h3:text-xl prose-p:leading-8 prose-pre:overflow-x-auto [&_h2:first-child]:mt-0 [&_img]:rounded-xl break-words">
                             {!!
