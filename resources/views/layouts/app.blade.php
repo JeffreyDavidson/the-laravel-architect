@@ -108,6 +108,11 @@
                         @if (request()->routeIs('search')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
                     >Search</a>
+                    <a
+                        href="{{ route('archive.index') }}"
+                        @if (request()->routeIs('archive.*')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors @if(request()->routeIs('archive.*')) is-active text-gray-900 dark:text-white @endif"
+                    >Archive</a>
                     <button
                         id="theme-toggle"
                         data-theme-toggle
@@ -160,6 +165,11 @@
                         @if (request()->routeIs('search')) aria-current="page" @endif
                         class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('search')) is-active text-gray-900 dark:text-white @endif"
                     >Search</a>
+                    <a
+                        href="{{ route('archive.index') }}"
+                        @if (request()->routeIs('archive.*')) aria-current="page" @endif
+                        class="nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 @if(request()->routeIs('archive.*')) is-active text-gray-900 dark:text-white @endif"
+                    >Archive</a>
                     <a
                         href="{{ route('uses') }}"
                         @if (request()->routeIs('uses')) aria-current="page" @endif
@@ -302,6 +312,12 @@
                                     href="{{ route('newsletter.index') }}"
                                     class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                                 >Newsletter archive</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="{{ route('archive.index') }}"
+                                    class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                >Full archive</a>
                             </li>
                             <li>
                                 <a

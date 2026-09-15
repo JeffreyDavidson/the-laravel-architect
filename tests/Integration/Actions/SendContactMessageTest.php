@@ -3,10 +3,15 @@
 use App\Actions\SendContactMessage;
 use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
+use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
 use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
+use App\Models\ContactInquiry;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+
+pest()->use(RefreshDatabase::class);
 
 it('queues the contact message for the site owner and a confirmation for the sender', function () {
     Mail::fake();
@@ -21,6 +26,12 @@ it('queues the contact message for the site owner and a confirmation for the sen
             message: 'Can you help with an audit?',
             projectTitle: 'The Laravel Architect',
         ));
+
+    expect(ContactInquiry::query()->sole())
+        ->name->toBe('Jane Doe')
+        ->email->toBe('jane@example.com')
+        ->message->toBe('Can you help with an audit?')
+        ->status->toBe(ContactInquiryStatus::New);
 
     Mail::assertQueued(
         ContactMessageReceived::class,
