@@ -65,6 +65,16 @@
 
                 <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
                     @csrf
+                    @if ($selectedProject)
+                        <div class="border-brand-500/30 bg-brand-500/10 text-brand-800 dark:text-brand-200 rounded-xl border p-4 text-sm">
+                            <p class="font-semibold">Project inquiry</p>
+                            <p class="mt-1">
+                                I’ll include <span class="font-medium">{{ $selectedProject->title }}</span> with your
+                                message.
+                            </p>
+                        </div>
+                        <input type="hidden" name="project" value="{{ $selectedProject->slug }}" />
+                    @endif
                     {{-- Honeypot: hidden from humans, bots fill it --}}
                     <div class="absolute -top-[9999px] -left-[9999px]" aria-hidden="true">
                         <input type="text" name="website" tabindex="-1" autocomplete="off" value="" />

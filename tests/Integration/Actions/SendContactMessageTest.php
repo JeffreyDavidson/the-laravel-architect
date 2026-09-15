@@ -19,6 +19,7 @@ it('queues the contact message for the site owner and a confirmation for the sen
             type: ContactType::Consulting,
             budget: ContactBudget::Medium,
             message: 'Can you help with an audit?',
+            projectTitle: 'The Laravel Architect',
         ));
 
     Mail::assertQueued(
@@ -28,6 +29,7 @@ it('queues the contact message for the site owner and a confirmation for the sen
             && $mail->senderEmail === 'jane@example.com'
             && $mail->contactType === 'consulting'
             && $mail->budget === 'medium'
+            && $mail->projectTitle === 'The Laravel Architect'
             && $mail->contactMessage === 'Can you help with an audit?',
     );
     Mail::assertQueued(
@@ -36,6 +38,7 @@ it('queues the contact message for the site owner and a confirmation for the sen
             && $mail->senderName === 'Jane Doe'
             && $mail->contactType === 'consulting'
             && $mail->budget === 'medium'
+            && $mail->projectTitle === 'The Laravel Architect'
             && $mail->contactMessage === 'Can you help with an audit?',
     );
 });

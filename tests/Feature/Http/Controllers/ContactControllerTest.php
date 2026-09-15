@@ -1,12 +1,17 @@
 <?php
 
+use App\Enums\PublishStatus;
 use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
+use App\Models\Project;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+
+pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set([
@@ -35,6 +40,40 @@ it('renders the Turnstile widget on the contact page', function () {
         ->toBe(0);
 });
 
+it('keeps a published project selected on the contact page', function () {
+    $project = Project::query()->create([
+        'title' => 'Selected project',
+        'slug' => 'selected-project',
+        'description' => 'A project description.',
+        'status' => PublishStatus::Published,
+    ]);
+
+    $this->get(route('contact', ['project' => $project->slug]))
+        ->assertOk()
+        ->assertSee('Project inquiry')
+        ->assertSee($project->title)
+        ->assertSeeHtml('name="project" value="'.$project->slug.'"');
+});
+
+it('rejects a draft project context on contact submissions', function () {
+    $project = Project::query()->create([
+        'title' => 'Draft project',
+        'slug' => 'draft-project',
+        'description' => 'A project description.',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    $this->post(route('contact.submit'), [
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'type' => 'consulting',
+        'project' => $project->slug,
+        'message' => 'Can you help with an audit?',
+    ])->assertSessionHasErrors('project');
+
+    Mail::assertNothingQueued();
+});
+
 it('silently accepts honeypot submissions without sending mail', function () {
     $this->post(route('contact.submit'), [
         'name' => 'Spam Bot',
@@ -52,6 +91,13 @@ it('silently accepts honeypot submissions without sending mail', function () {
 });
 
 it('queues both contact messages after a valid submission', function () {
+    $project = Project::query()->create([
+        'title' => 'Inquiry project',
+        'slug' => 'inquiry-project',
+        'description' => 'A project description.',
+        'status' => PublishStatus::Published,
+    ]);
+
     Http::fake([
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response([
             'success' => true,
@@ -64,6 +110,7 @@ it('queues both contact messages after a valid submission', function () {
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
+        'project' => $project->slug,
         'message' => 'Can you help with an audit?',
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHas('success')
@@ -72,11 +119,13 @@ it('queues both contact messages after a valid submission', function () {
     Mail::assertQueued(
         ContactMessageReceived::class,
         fn (ContactMessageReceived $mail): bool => $mail->senderEmail === 'jane@example.com'
+            && $mail->projectTitle === 'Inquiry project'
             && str_contains($mail->render(), 'Can you help with an audit?'),
     );
     Mail::assertQueued(
         ContactMessageConfirmation::class,
         fn (ContactMessageConfirmation $mail): bool => $mail->senderName === 'Jane Doe'
+            && $mail->projectTitle === 'Inquiry project'
             && str_contains($mail->render(), 'Here\'s a copy of your message.'),
     );
     expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(1);
