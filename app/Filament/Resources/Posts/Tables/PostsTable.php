@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
 use App\Models\Post;
+use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
@@ -57,9 +58,9 @@ class PostsTable
                 Action::make('view_on_site')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (Post $record): string => $record->isPublished()
+                    ->url(fn (Post $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
                         ? route('blog.show', $record)
-                        : $record->previewUrl())
+                        : $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc');

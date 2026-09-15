@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\URL;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -41,15 +40,6 @@ class Post extends Model implements Publishable
     use HasTags;
     use LogsActivity;
     use ManagesStoredMedia;
-
-    public function previewUrl(): string
-    {
-        return URL::temporarySignedRoute(
-            'preview.post',
-            now()->addHours(2),
-            ['post' => $this],
-        );
-    }
 
     protected function casts(): array
     {

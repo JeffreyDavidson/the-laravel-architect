@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Episodes\Tables;
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
+use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
@@ -51,7 +52,7 @@ class EpisodesTable
                 Action::make('preview')
                     ->label('Preview')
                     ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Episode $record): string => $record->previewUrl())
+                    ->url(fn (Episode $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([

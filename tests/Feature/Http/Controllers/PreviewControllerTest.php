@@ -8,6 +8,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
+use App\Support\Content\PreviewUrlGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 
@@ -60,10 +61,12 @@ it('renders signed previews for unpublished content', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    $this->get($post->previewUrl())->assertOk()->assertSee($post->title)->assertSee('Preview mode')->assertSee('noindex, nofollow');
-    $this->get($project->previewUrl())->assertOk()->assertSee($project->title);
-    $this->get($episode->previewUrl())->assertOk()->assertSee($episode->title)->assertSee('Draft preview');
-    $this->get($issue->previewUrl())->assertOk()->assertSee($issue->title);
+    $previewUrlGenerator = app(PreviewUrlGenerator::class);
+
+    $this->get($previewUrlGenerator->for($post))->assertOk()->assertSee($post->title)->assertSee('Preview mode')->assertSee('noindex, nofollow');
+    $this->get($previewUrlGenerator->for($project))->assertOk()->assertSee($project->title);
+    $this->get($previewUrlGenerator->for($episode))->assertOk()->assertSee($episode->title)->assertSee('Draft preview');
+    $this->get($previewUrlGenerator->for($issue))->assertOk()->assertSee($issue->title);
 });
 
 it('rejects unsigned preview URLs', function () {

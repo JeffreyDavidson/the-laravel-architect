@@ -9,7 +9,6 @@ use App\Models\Contracts\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\URL;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -25,15 +24,6 @@ class NewsletterIssue extends Model implements Publishable
 {
     use HasPublishingStatus;
     use HasSEO;
-
-    public function previewUrl(): string
-    {
-        return URL::temporarySignedRoute(
-            'preview.newsletter-issue',
-            now()->addHours(2),
-            ['newsletterIssue' => $this],
-        );
-    }
 
     protected function casts(): array
     {

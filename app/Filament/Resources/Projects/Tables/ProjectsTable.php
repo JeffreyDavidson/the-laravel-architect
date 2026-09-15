@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Models\Project;
+use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -60,7 +61,7 @@ class ProjectsTable
                 Action::make('preview')
                     ->label('Preview')
                     ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Project $record): string => $record->previewUrl())
+                    ->url(fn (Project $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([

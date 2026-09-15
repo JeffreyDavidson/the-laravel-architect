@@ -13,7 +13,6 @@ use App\Observers\ProjectObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\URL;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -35,15 +34,6 @@ class Project extends Model implements Publishable
     use HasTags;
     use LogsActivity;
     use ManagesStoredMedia;
-
-    public function previewUrl(): string
-    {
-        return URL::temporarySignedRoute(
-            'preview.project',
-            now()->addHours(2),
-            ['project' => $this],
-        );
-    }
 
     protected function casts(): array
     {

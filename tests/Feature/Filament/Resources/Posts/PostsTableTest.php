@@ -4,6 +4,7 @@ use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\Post;
 use App\Models\User;
+use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -42,6 +43,6 @@ it('links the view on site action to a signed preview for a draft', function () 
     ]);
 
     livewire(ListPosts::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($post), $post->previewUrl())
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($post), app(PreviewUrlGenerator::class)->for($post))
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($post));
 });
