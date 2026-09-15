@@ -1,8 +1,11 @@
 <?php
 
 use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
+use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\ContentReadinessWidget;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -44,8 +47,14 @@ it('shows the content areas that still need public details', function () {
         ->assertSee('Project stories')
         ->assertSee('Podcast links')
         ->assertSee('Episode details')
+        ->assertSee('Post content')
+        ->assertSee('Newsletter issues')
+        ->assertSee('Video metadata')
         ->assertSee('Review content')
         ->assertSeeHtml('href="'.ProjectResource::getUrl('index').'"')
         ->assertSeeHtml('href="'.PodcastResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.EpisodeResource::getUrl('index').'"');
+        ->assertSeeHtml('href="'.EpisodeResource::getUrl('index').'"')
+        ->assertSeeHtml('href="'.PostResource::getUrl('index').'"')
+        ->assertSeeHtml('href="'.NewsletterIssueResource::getUrl('index').'"')
+        ->assertSeeHtml('href="'.VideoResource::getUrl('index').'"');
 });
