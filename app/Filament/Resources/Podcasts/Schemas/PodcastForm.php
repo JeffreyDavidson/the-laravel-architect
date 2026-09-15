@@ -47,8 +47,7 @@ class PodcastForm
                             ->columnSpanFull(),
                         OptimizedImageUpload::make('cover_image_path')
                             ->disk('public')
-                            ->directory('podcasts')
-                            ->maxSize(10240),
+                            ->directory('podcasts'),
                         ColorPicker::make('color')
                             ->default('#6366f1')
                             ->helperText('Brand color for this show'),

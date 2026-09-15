@@ -64,8 +64,7 @@ class ProjectForm
                         OptimizedImageUpload::make('featured_image_path')
                             ->helperText('Upload a real product screenshot, ideally 1600 × 900 or larger. Keep its original colors; the site adds the TLA frame. Remove private data first. An image placeholder appears until you upload one.')
                             ->disk('public')
-                            ->directory('projects')
-                            ->maxSize(10240),
+                            ->directory('projects'),
                         TagsInput::make('tech_stack')
                             ->helperText('e.g. Laravel, Vue.js, Tailwind CSS'),
                     ])->columns(2),

@@ -57,7 +57,6 @@ class PostForm
                         OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('posts')
-                            ->maxSize(10240)
                             ->columnSpanFull(),
                         Select::make('category_id')
                             ->relationship('category', 'name')
