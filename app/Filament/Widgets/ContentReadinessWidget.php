@@ -3,13 +3,19 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
+use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Resources\Videos\VideoResource;
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
+use App\Models\Video;
+use App\Support\Content\ContentReadiness;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 
 class ContentReadinessWidget extends Widget
 {
@@ -27,54 +33,99 @@ class ContentReadinessWidget extends Widget
      */
     protected function getViewData(): array
     {
+        $posts = Post::query()
+            ->with('seo')
+            ->withCount('tags')
+            ->get();
+        $projects = Project::query()
+            ->with('seo')
+            ->withCount('tags')
+            ->get();
+        $podcasts = Podcast::query()
+            ->active()
+            ->with('seo')
+            ->get();
+        $episodes = Episode::query()
+            ->with('seo')
+            ->withCount('tags')
+            ->get();
+        $newsletterIssues = NewsletterIssue::query()
+            ->with('seo')
+            ->get();
+        $videos = Video::query()->get();
+
         return [
             'items' => [
                 [
                     'label' => 'Project previews',
                     'description' => 'Add an optimized featured image to each project.',
-                    'count' => Project::query()->where(fn (Builder $query): Builder => $query
-                        ->whereNull('featured_image_path')
-                        ->orWhere('featured_image_path', '')
-                    )->count(),
+                    'count' => $this->missingCount($projects, 'featured_image'),
                     'url' => ProjectResource::getUrl('index'),
                 ],
                 [
                     'label' => 'Project stories',
                     'description' => 'Finish the case study for each project.',
-                    'count' => Project::query()->where(fn (Builder $query): Builder => $query
-                        ->whereNull('content')
-                        ->orWhere('content', '')
-                    )->count(),
+                    'count' => $this->missingCount($projects, 'case_study'),
                     'url' => ProjectResource::getUrl('index'),
                 ],
                 [
                     'label' => 'Podcast links',
                     'description' => 'Add at least one place listeners can subscribe.',
-                    'count' => Podcast::query()
-                        ->active()
-                        ->whereNull('apple_url')
-                        ->whereNull('spotify_url')
-                        ->whereNull('rss_url')
-                        ->whereNull('youtube_url')
-                        ->count(),
+                    'count' => $this->missingCount($podcasts, 'subscribe_link'),
                     'url' => PodcastResource::getUrl('index'),
                 ],
                 [
                     'label' => 'Episode details',
-                    'description' => 'Add show notes, audio, a transcript, or guest details.',
-                    'count' => Episode::query()
-                        ->whereNull('show_notes')
-                        ->whereNull('transcript')
-                        ->whereNull('audio_url')
-                        ->whereNull('audio_path')
-                        ->whereNull('embed_url')
-                        ->whereNull('youtube_url')
-                        ->whereNull('guest_name')
-                        ->doesntHave('tags')
-                        ->count(),
+                    'description' => 'Add a playable episode source and show notes.',
+                    'count' => $this->missingCount($episodes, 'episode_media'),
                     'url' => EpisodeResource::getUrl('index'),
+                ],
+                [
+                    'label' => 'Post content',
+                    'description' => 'Add an excerpt, image, and SEO description to each post.',
+                    'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image', 'seo_description']),
+                    'url' => PostResource::getUrl('index'),
+                ],
+                [
+                    'label' => 'Newsletter issues',
+                    'description' => 'Add an excerpt and SEO description before sending an issue.',
+                    'count' => $this->missingAnyCount($newsletterIssues, ['excerpt', 'seo_description']),
+                    'url' => NewsletterIssueResource::getUrl('index'),
+                ],
+                [
+                    'label' => 'Video metadata',
+                    'description' => 'Complete the description, thumbnail, duration, and sync data.',
+                    'count' => $this->missingAnyCount($videos, ['description', 'thumbnail', 'duration', 'synced']),
+                    'url' => VideoResource::getUrl('index'),
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param  iterable<Post|Project|Podcast|Episode|NewsletterIssue|Video>  $records
+     */
+    private function missingCount(iterable $records, string $check): int
+    {
+        return $this->missingAnyCount($records, [$check]);
+    }
+
+    /**
+     * @param  iterable<Post|Project|Podcast|Episode|NewsletterIssue|Video>  $records
+     * @param  list<string>  $checks
+     */
+    private function missingAnyCount(iterable $records, array $checks): int
+    {
+        $missing = 0;
+
+        foreach ($records as $record) {
+            $readiness = new ContentReadiness($record);
+
+            if (array_any($checks, fn (string $check): bool => ! $readiness->checkComplete($check))) {
+                $missing++;
+            }
+        }
+
+        return $missing;
     }
 }
