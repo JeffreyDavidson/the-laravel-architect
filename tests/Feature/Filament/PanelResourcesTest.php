@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
@@ -35,6 +36,7 @@ it('renders each registered resource index for an authorized user', function (st
     $this->get($url)->assertOk();
 })->with([
     CategoryResource::class,
+    ContactInquiryResource::class,
     EpisodeResource::class,
     NewsletterIssueResource::class,
     PodcastResource::class,
@@ -55,7 +57,7 @@ it('registers visible navigation items for every admin section', function () {
     }
 
     expect(collect($navigation)->map(fn (NavigationGroup $group): ?string => $group->getLabel())->all())
-        ->toContain('Content', 'Podcasting', 'Showcase', 'Taxonomy', 'Newsletter', 'YouTube');
+        ->toContain('Content', 'Podcasting', 'Showcase', 'Taxonomy', 'Newsletter', 'YouTube', 'Operations');
 });
 
 it('renders the publishing dashboard for an authorized user', function () {

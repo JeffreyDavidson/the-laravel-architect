@@ -43,5 +43,9 @@ Schedule::command('queue:prune-failed', [
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
+Schedule::command('model:prune', ['--model' => 'App\\Models\\ContactInquiry'])
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
 Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
 Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();
