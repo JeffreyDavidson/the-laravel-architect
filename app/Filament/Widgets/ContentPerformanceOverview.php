@@ -33,6 +33,7 @@ class ContentPerformanceOverview extends StatsOverviewWidget
     #[\Override]
     protected ?string $description = 'A snapshot of the published library, audience, and video engagement.';
 
+    /** @return list<Stat> */
     protected function getStats(): array
     {
         return [

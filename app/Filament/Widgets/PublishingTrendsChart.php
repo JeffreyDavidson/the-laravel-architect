@@ -23,6 +23,12 @@ class PublishingTrendsChart extends ChartWidget
     #[\Override]
     protected ?string $description = 'Published content over the last six months.';
 
+    /**
+     * @return array{
+     *     datasets: array<int, array{label: string, data: list<int>}>,
+     *     labels: array<int, string>,
+     * }
+     */
     protected function getData(): array
     {
         $months = collect(range(5, 0))

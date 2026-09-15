@@ -61,9 +61,15 @@ it('plots published content by month and excludes drafts and older records', fun
 
     $this->actingAs($administrator);
 
-    $component = livewire(PublishingTrendsChart::class);
-    $reflection = new ReflectionMethod($component->instance(), 'getData');
-    $data = $reflection->invoke($component->instance());
+    $widget = new class extends PublishingTrendsChart
+    {
+        /** @return array{datasets: array<int, array{label: string, data: list<int>}>, labels: array<int, string>} */
+        public function data(): array
+        {
+            return $this->getData();
+        }
+    };
+    $data = $widget->data();
 
     expect($data['labels'])->toBe(['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'])
         ->and($data['datasets'][0])->toMatchArray([
@@ -79,7 +85,7 @@ it('plots published content by month and excludes drafts and older records', fun
             'data' => [1, 0, 0, 0, 0, 0],
         ]);
 
-    $component
+    livewire(PublishingTrendsChart::class)
         ->assertSee('Publishing activity')
         ->assertSee('Published content over the last six months.');
 });

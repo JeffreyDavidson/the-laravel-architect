@@ -14,6 +14,7 @@ use App\Models\Post;
 use App\Models\Subscriber;
 use App\Models\User;
 use App\Models\Video;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -78,9 +79,15 @@ it('summarizes published content and audience data for administrators', function
 
     $this->actingAs($administrator);
 
-    $component = livewire(ContentPerformanceOverview::class);
-    $reflection = new ReflectionMethod($component->instance(), 'getStats');
-    $stats = $reflection->invoke($component->instance());
+    $widget = new class extends ContentPerformanceOverview
+    {
+        /** @return list<Stat> */
+        public function stats(): array
+        {
+            return $this->getStats();
+        }
+    };
+    $stats = $widget->stats();
 
     expect($stats)->toHaveCount(6)
         ->and($stats[0]->getValue())->toBe(1)
@@ -90,7 +97,7 @@ it('summarizes published content and audience data for administrators', function
         ->and($stats[4]->getValue())->toBe(1)
         ->and($stats[5]->getValue())->toBe('1,234');
 
-    $component
+    livewire(ContentPerformanceOverview::class)
         ->assertSee('Content performance')
         ->assertSee('Published posts')
         ->assertSee('Published episodes')
