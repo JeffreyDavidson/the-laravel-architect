@@ -1,5 +1,17 @@
 # Project agent guidance
 
+## Branch naming
+
+- Do not add a `codex/` prefix to branches.
+- Use the conventional `<type>/<short-description>` format: `feature/`, `feat/`, `fix/`, `hotfix/`, `refactor/`, `docs/`, `test/`, `chore/`, or `release/`.
+- Keep descriptions lowercase, concise, and hyphen-separated. For example: `docs/boost-rules-and-docs-cleanup`.
+
+## Git and pull requests
+
+- Use conventional type-based branch names, such as `chore/remove-claude-specific-files`.
+- Use a conventional commit type in branch names and commit messages: `feat`, `fix`, `refactor`, `chore`, `docs`, or `test`.
+- Write pull request bodies as actual multiline Markdown. When using the GitHub CLI, prefer `--body-file` or a command input that preserves real newlines; never pass literal `\\n` sequences.
+
 ## Frontend styling
 
 - Use Tailwind utilities directly in Blade for layout, typography, colors, spacing, responsive behavior, and interaction states. Do not introduce custom component CSS classes for styling that utilities can express.
