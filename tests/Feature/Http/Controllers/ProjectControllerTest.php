@@ -178,7 +178,7 @@ MARKDOWN,
         ->assertSeeHtml('id="project-story"')->assertSee('Project story')->assertSeeHtml('<h2>Project approach</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
 });
 
-it('links project metadata to the corresponding project filters', function () {
+it('renders project metadata without filter links', function () {
     $tag = Tag::query()->create([
         'name' => ['en' => 'Architecture'],
         'slug' => ['en' => 'architecture'],
@@ -195,9 +195,9 @@ it('links project metadata to the corresponding project filters', function () {
         ->assertOk()
         ->assertSee('Project story')
         ->assertSeeHtml('aria-label="Technologies used for Metadata project"')
-        ->assertSeeHtml(route('projects.index', ['technology' => 'Laravel']))
+        ->assertDontSeeHtml('href="'.route('projects.index', ['technology' => 'Laravel']).'"')
         ->assertSeeHtml('aria-label="Topics covered by Metadata project"')
-        ->assertSeeHtml(route('projects.index', ['tag' => 'architecture']))
+        ->assertDontSeeHtml('href="'.route('projects.index', ['tag' => 'architecture']).'"')
         ->assertSee('Metadata project', false);
 });
 

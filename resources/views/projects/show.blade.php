@@ -66,10 +66,7 @@
                             >
                                 @foreach ($project->tech_stack as $tech)
                                     <li>
-                                        <a
-                                            href="{{ route('projects.index', ['technology' => $tech]) }}"
-                                            class="text-brand-700 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 rounded underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
-                                        >{{ $tech }}</a>
+                                        <x-projects.topic-pill :label="$tech" />
                                     </li>
                                 @endforeach
                             </ul>
@@ -84,10 +81,7 @@
                             >
                                 @foreach ($project->tags as $tag)
                                     <li>
-                                        <a
-                                            href="{{ route('projects.index', ['tag' => $tag->slug]) }}"
-                                            class="text-brand-700 hover:text-brand-900 focus-visible:outline-brand-500 dark:text-brand-300 rounded underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
-                                        >{{ $tag->name }}</a>
+                                        <x-projects.topic-pill :label="$tag->name" />
                                     </li>
                                 @endforeach
                             </ul>
