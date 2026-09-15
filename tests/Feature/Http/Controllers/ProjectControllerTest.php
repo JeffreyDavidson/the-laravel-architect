@@ -1,8 +1,13 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Models\Category;
+use App\Models\Episode;
+use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -194,6 +199,61 @@ it('links project metadata to the corresponding project filters', function () {
         ->assertSeeHtml('aria-label="Topics covered by Metadata project"')
         ->assertSeeHtml(route('projects.index', ['tag' => 'architecture']))
         ->assertSee('Metadata project', false);
+});
+
+it('shows published writing and podcast episodes connected by project tags', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Architecture',
+        'slug' => 'architecture',
+    ]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about architecture.',
+        'is_active' => true,
+    ]);
+    $tag = Tag::query()->create([
+        'name' => ['en' => 'Architecture'],
+        'slug' => ['en' => 'architecture'],
+    ]);
+    $project = Project::query()->create([
+        'title' => 'Connected project',
+        'description' => 'A project with related content.',
+        'status' => PublishStatus::Published,
+    ]);
+    $project->attachTag($tag);
+
+    $post = Post::query()->create([
+        'title' => 'Connected article',
+        'slug' => 'connected-article',
+        'excerpt' => 'A connected article.',
+        'content' => 'Article content.',
+        'category_id' => $category->getKey(),
+        'user_id' => $author->getKey(),
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $post->attachTag($tag);
+
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->getKey(),
+        'title' => 'Connected episode',
+        'slug' => 'connected-episode',
+        'description' => 'A connected episode.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subHours(2),
+    ]);
+    $episode->attachTag($tag);
+
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('Keep exploring')
+        ->assertSee('Connected article')
+        ->assertSee('Listen next')
+        ->assertSee('Connected episode')
+        ->assertSeeHtml(route('blog.show', $post))
+        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
 });
 
 it('loads only the related projects displayed on a project page', function () {
