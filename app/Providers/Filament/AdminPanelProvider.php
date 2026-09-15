@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\MediaHealth;
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
@@ -103,6 +104,11 @@ class AdminPanelProvider extends PanelProvider
                         ->collapsible(false)
                         ->items([
                             ...VideoResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Operations')
+                        ->collapsible(false)
+                        ->items([
+                            ...MediaHealth::getNavigationItems(),
                         ]),
                 ]))
             ->userMenuItems([
