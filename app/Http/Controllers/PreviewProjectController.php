@@ -10,6 +10,6 @@ class PreviewProjectController
 {
     public function __invoke(Project $project, ProjectShowViewModel $viewModel): View
     {
-        return view('projects.show', $viewModel->data($project, preview: true));
+        return view('projects.show', $viewModel->previewData($project));
     }
 }

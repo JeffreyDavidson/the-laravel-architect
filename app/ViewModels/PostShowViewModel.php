@@ -17,23 +17,36 @@ class PostShowViewModel
      * @return array{
      *     post: Post,
      *     relatedPosts: Collection<int, Post>,
-     *     seoSource: Post|SEOData,
+     *     seoSource: Post,
      * }
      */
-    public function data(Post $post, bool $preview = false): array
+    public function data(Post $post): array
     {
         $post->load(['category', 'tags', 'author']);
 
         return [
             'post' => $post,
             'relatedPosts' => $this->relatedPostsQuery->get($post),
-            'seoSource' => $preview
-                ? new SEOData(
-                    title: $post->title.' — Preview',
-                    description: $post->excerpt,
-                    robots: 'noindex, nofollow',
-                )
-                : $post,
+            'seoSource' => $post,
         ];
+    }
+
+    /**
+     * @return array{
+     *     post: Post,
+     *     relatedPosts: Collection<int, Post>,
+     *     seoSource: SEOData,
+     * }
+     */
+    public function previewData(Post $post): array
+    {
+        $data = $this->data($post);
+        $data['seoSource'] = new SEOData(
+            title: $post->title.' — Preview',
+            description: $post->excerpt,
+            robots: 'noindex, nofollow',
+        );
+
+        return $data;
     }
 }

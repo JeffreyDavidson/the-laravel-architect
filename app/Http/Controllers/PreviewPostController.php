@@ -10,6 +10,6 @@ class PreviewPostController
 {
     public function __invoke(Post $post, PostShowViewModel $viewModel): View
     {
-        return view('blog.show', $viewModel->data($post, preview: true));
+        return view('blog.show', $viewModel->previewData($post));
     }
 }

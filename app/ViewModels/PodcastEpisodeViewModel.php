@@ -11,8 +11,8 @@ class PodcastEpisodeViewModel
 {
     public function __construct(private readonly EpisodeNavigationQuery $episodeNavigationQuery) {}
 
-    /** @return array{podcast: Podcast, episode: Episode, nextEpisode: ?Episode, prevEpisode: ?Episode, seoSource: Episode|SEOData} */
-    public function data(Podcast $podcast, Episode $episode, bool $preview = false): array
+    /** @return array{podcast: Podcast, episode: Episode, nextEpisode: ?Episode, prevEpisode: ?Episode, seoSource: Episode} */
+    public function data(Podcast $podcast, Episode $episode): array
     {
         $episode->load(['podcast', 'tags']);
 
@@ -23,13 +23,20 @@ class PodcastEpisodeViewModel
             'episode' => $episode,
             'nextEpisode' => $navigation['next'],
             'prevEpisode' => $navigation['previous'],
-            'seoSource' => $preview
-                ? new SEOData(
-                    title: $episode->title.' — Preview',
-                    description: $episode->description,
-                    robots: 'noindex, nofollow',
-                )
-                : $episode,
+            'seoSource' => $episode,
         ];
+    }
+
+    /** @return array{podcast: Podcast, episode: Episode, nextEpisode: ?Episode, prevEpisode: ?Episode, seoSource: SEOData} */
+    public function previewData(Podcast $podcast, Episode $episode): array
+    {
+        $data = $this->data($podcast, $episode);
+        $data['seoSource'] = new SEOData(
+            title: $episode->title.' — Preview',
+            description: $episode->description,
+            robots: 'noindex, nofollow',
+        );
+
+        return $data;
     }
 }

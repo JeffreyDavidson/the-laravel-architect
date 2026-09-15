@@ -8,19 +8,26 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 class NewsletterIssueViewModel
 {
     /**
-     * @return array{issue: NewsletterIssue, seoSource: NewsletterIssue|SEOData}
+     * @return array{issue: NewsletterIssue, seoSource: NewsletterIssue}
      */
-    public function data(NewsletterIssue $issue, bool $preview = false): array
+    public function data(NewsletterIssue $issue): array
     {
         return [
             'issue' => $issue,
-            'seoSource' => $preview
-                ? new SEOData(
-                    title: $issue->title.' — Preview',
-                    description: $issue->excerpt,
-                    robots: 'noindex, nofollow',
-                )
-                : $issue,
+            'seoSource' => $issue,
         ];
+    }
+
+    /** @return array{issue: NewsletterIssue, seoSource: SEOData} */
+    public function previewData(NewsletterIssue $issue): array
+    {
+        $data = $this->data($issue);
+        $data['seoSource'] = new SEOData(
+            title: $issue->title.' — Preview',
+            description: $issue->excerpt,
+            robots: 'noindex, nofollow',
+        );
+
+        return $data;
     }
 }

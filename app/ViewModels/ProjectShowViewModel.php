@@ -17,23 +17,36 @@ class ProjectShowViewModel
      * @return array{
      *     project: Project,
      *     otherProjects: Collection<int, Project>,
-     *     seoSource: Project|SEOData,
+     *     seoSource: Project,
      * }
      */
-    public function data(Project $project, bool $preview = false): array
+    public function data(Project $project): array
     {
         $project->load('tags');
 
         return [
             'project' => $project,
             'otherProjects' => $this->relatedProjectsQuery->get($project),
-            'seoSource' => $preview
-                ? new SEOData(
-                    title: $project->title.' — Preview',
-                    description: $project->description,
-                    robots: 'noindex, nofollow',
-                )
-                : $project,
+            'seoSource' => $project,
         ];
+    }
+
+    /**
+     * @return array{
+     *     project: Project,
+     *     otherProjects: Collection<int, Project>,
+     *     seoSource: SEOData,
+     * }
+     */
+    public function previewData(Project $project): array
+    {
+        $data = $this->data($project);
+        $data['seoSource'] = new SEOData(
+            title: $project->title.' — Preview',
+            description: $project->description,
+            robots: 'noindex, nofollow',
+        );
+
+        return $data;
     }
 }
