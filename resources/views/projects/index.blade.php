@@ -16,7 +16,7 @@
         </header>
 
         <div class="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8">
-            @if ($technologies->isNotEmpty() || $tags->isNotEmpty())
+            @if ($technologyOptions !== [] || $tagOptions !== [])
                 <form
                     method="GET"
                     action="{{ route('projects.index') }}"
@@ -27,34 +27,26 @@
                             for="project-technology"
                             class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                         >Technology</label>
-                        <select
+                        <x-form.select
                             id="project-technology"
                             name="technology"
-                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
-                        >
-                            <option value="">All technologies</option>
-                            @foreach ($technologies as $technology)
-                                <option value="{{ $technology }}" @selected($selectedTechnology === $technology)>
-                                    {{ $technology }}
-                                </option>
-                            @endforeach
-                        </select>
+                            :options="$technologyOptions"
+                            placeholder="All technologies"
+                            :value="$selectedTechnology"
+                            variant="compact"
+                        />
                     </div>
                     <div class="w-full sm:max-w-xs">
                         <label for="project-tag" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >Topic</label>
-                        <select
+                        <x-form.select
                             id="project-tag"
                             name="tag"
-                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
-                        >
-                            <option value="">All topics</option>
-                            @foreach ($tags as $tag)
-                                <option value="{{ $tag->slug }}" @selected($selectedTag === $tag->slug)>
-                                    {{ $tag->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                            :options="$tagOptions"
+                            placeholder="All topics"
+                            :value="$selectedTag"
+                            variant="compact"
+                        />
                     </div>
                     <button
                         type="submit"

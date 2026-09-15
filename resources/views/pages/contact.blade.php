@@ -100,31 +100,24 @@
                     <div>
                         <label for="type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >What can I help with?</label>
-                        <x-form.select id="type" name="type" :autofocus="$firstErrorField === 'type'">
-                            @foreach (\App\Enums\ContactType::cases() as $type)
-                                <option
-                                    value="{{ $type->value }}"
-                                    @selected(old('type', \App\Enums\ContactType::Freelance->value) === $type->value)
-                                >
-                                    {{ $type->getLabel() }}
-                                </option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.select
+                            id="type"
+                            name="type"
+                            :autofocus="$firstErrorField === 'type'"
+                            :options="$contactTypeOptions"
+                            :value="$defaultContactType"
+                        />
                     </div>
 
                     <div>
                         <label for="budget" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >Budget Range <span class="text-gray-600">(optional)</span></label>
-                        <x-form.select id="budget" name="budget">
-                            <option value="" @selected(old('budget') === null || old('budget') === '')>
-                                Prefer not to say
-                            </option>
-                            @foreach (\App\Enums\ContactBudget::cases() as $budget)
-                                <option value="{{ $budget->value }}" @selected(old('budget') === $budget->value)>
-                                    {{ $budget->getLabel() }}
-                                </option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.select
+                            id="budget"
+                            name="budget"
+                            :options="$contactBudgetOptions"
+                            placeholder="Prefer not to say"
+                        />
                     </div>
 
                     <div>
