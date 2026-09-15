@@ -6,6 +6,7 @@ Thanks for reaching out! Here's a copy of your message. I'll get back to you wit
 
 Type: {{ $contactType }}
 Budget: {{ $budget ?? 'Not specified' }}
+Project: {{ $projectTitle ?? 'Not specified' }}
 
 Message:
 {{ $contactMessage }}

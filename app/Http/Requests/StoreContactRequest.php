@@ -5,13 +5,14 @@ namespace App\Http\Requests;
 use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
+use App\Enums\PublishStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class StoreContactRequest extends FormRequest
 {
-    public function toData(): ContactMessageData
+    public function toData(?string $projectTitle = null): ContactMessageData
     {
         $validated = $this->safe();
 
@@ -21,6 +22,7 @@ class StoreContactRequest extends FormRequest
             type: ContactType::from($validated->string('type')->toString()),
             budget: $validated->enum('budget', ContactBudget::class),
             message: $validated->string('message')->toString(),
+            projectTitle: $projectTitle,
         );
     }
 
@@ -42,6 +44,12 @@ class StoreContactRequest extends FormRequest
             'type' => ['required', 'string', Rule::enum(ContactType::class)],
             'budget' => ['nullable', 'string', Rule::enum(ContactBudget::class)],
             'message' => ['required', 'string', 'max:5000'],
+            'project' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::exists('projects', 'slug')->where('status', PublishStatus::Published->value),
+            ],
         ];
     }
 }

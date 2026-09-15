@@ -25,7 +25,9 @@ for (const width of [390, 768, 1280]) {
                     exact: true,
                 })
                 .click();
-            await expect(page).toHaveURL(/\/contact$/);
+            await expect(page).toHaveURL(/\/contact\?project=e2e-project$/);
+            await expect(page.getByText('Project inquiry')).toBeVisible();
+            await expect(page.getByText('E2E Project', { exact: true })).toBeVisible();
         });
     }
 }

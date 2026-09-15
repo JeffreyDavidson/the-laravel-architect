@@ -163,6 +163,20 @@ test('blog archive search, reset, and category links work without JavaScript', a
     await context.close();
 });
 
+test('public archive search can filter content types and highlight matches', async ({ page }) => {
+    await page.goto('/search');
+
+    await page.getByRole('searchbox', { name: 'Search the site' }).fill('E2E');
+    await page.getByRole('combobox', { name: 'Filter by content type' }).selectOption('projects');
+    await page.getByRole('button', { name: 'Search', exact: true }).click();
+
+    await expect(page).toHaveURL(/\/search\?q=E2E&type=projects$/);
+    await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'E2E Project', exact: true })).toBeVisible();
+    await expect(page.locator('h2').filter({ hasText: 'Writing' })).toHaveCount(0);
+    await expect(page.locator('mark').filter({ hasText: 'E2E' })).toBeVisible();
+});
+
 test('blog category filtering preserves the editorial hierarchy', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/blog');

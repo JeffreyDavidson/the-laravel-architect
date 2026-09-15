@@ -61,11 +61,11 @@ it('searches published content across every public content type', function () {
     $this->get(route('search', ['q' => 'Laravel']))
         ->assertOk()
         ->assertSee('5 results for')
-        ->assertSee($post->title)
+        ->assertSeeHtml('>Laravel</mark> Search Patterns')
         ->assertSee($project->title)
-        ->assertSee($podcast->name)
-        ->assertSee($episode->title)
-        ->assertSee($video->title)
+        ->assertSeeHtml('>Laravel</mark> Conversations')
+        ->assertSeeHtml('Searching with <mark')
+        ->assertSeeHtml('>Laravel</mark> Search on YouTube')
         ->assertSeeHtml(route('blog.show', $post))
         ->assertSeeHtml(route('projects.show', $project))
         ->assertSeeHtml(route('podcast.show', $podcast))
@@ -73,6 +73,36 @@ it('searches published content across every public content type', function () {
         ->assertSeeHtml($video->youtube_url)
         ->assertDontSee('Private Laravel Search Notes')
         ->assertSeeHtml('<meta name="robots" content="noindex, follow">');
+});
+
+it('filters search results by content type and highlights matching text', function () {
+    $author = User::factory()->create();
+    $project = Project::query()->create([
+        'title' => 'Laravel Projects',
+        'slug' => 'laravel-projects',
+        'description' => 'A project about Laravel.',
+        'status' => PublishStatus::Published,
+    ]);
+    Post::query()->create([
+        'title' => 'Laravel Writing',
+        'slug' => 'laravel-writing',
+        'content' => 'Writing about Laravel.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $this->get(route('search', ['q' => 'Laravel', 'type' => 'projects']))
+        ->assertOk()
+        ->assertSee('1 result for')
+        ->assertSeeHtml('>Laravel</mark> Projects')
+        ->assertSeeHtml('<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark>')
+        ->assertDontSee('Laravel Writing')
+        ->assertSeeHtml('name="type"');
+});
+
+it('rejects an unknown search content type', function () {
+    $this->get(route('search', ['q' => 'Laravel', 'type' => 'unknown']))->assertNotFound();
 });
 
 it('renders the empty search state and rejects oversized queries', function () {
