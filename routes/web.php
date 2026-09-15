@@ -13,6 +13,10 @@ use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\PodcastEpisodeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PreviewEpisodeController;
+use App\Http\Controllers\PreviewNewsletterIssueController;
+use App\Http\Controllers\PreviewPostController;
+use App\Http\Controllers\PreviewProjectController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RssFeedController;
@@ -39,6 +43,14 @@ Route::get('/newsletter', [NewsletterIssueController::class, 'index'])->name('ne
 Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
 Route::get('/uses', UsesController::class)->name('uses');
 Route::get('/search', SearchController::class)->name('search');
+
+// Signed content previews
+Route::middleware('signed')->prefix('preview')->group(function (): void {
+    Route::get('/posts/{post:slug}', PreviewPostController::class)->name('preview.post');
+    Route::get('/projects/{project:slug}', PreviewProjectController::class)->name('preview.project');
+    Route::get('/episodes/{episode:slug}', PreviewEpisodeController::class)->name('preview.episode');
+    Route::get('/newsletter/{newsletterIssue:slug}', PreviewNewsletterIssueController::class)->name('preview.newsletter-issue');
+});
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');

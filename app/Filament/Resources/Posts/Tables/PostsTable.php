@@ -57,7 +57,9 @@ class PostsTable
                 Action::make('view_on_site')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (Post $record): string => route('blog.show', $record))
+                    ->url(fn (Post $record): string => $record->isPublished()
+                        ? route('blog.show', $record)
+                        : $record->previewUrl())
                     ->openUrlInNewTab(),
             ])
             ->defaultSort('created_at', 'desc');

@@ -35,8 +35,13 @@
                     href="{{ route('about') }}"
                     class="hover:text-brand-600 dark:hover:text-brand-300 font-medium text-gray-900 dark:text-gray-200"
                 >{{ $post->author->name ?? 'Jeffrey Davidson' }}</a>
-                <span aria-hidden="true">·</span>
-                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
+                @if ($post->published_at)
+                    <span aria-hidden="true">·</span>
+                    <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
+                @else
+                    <span aria-hidden="true">·</span>
+                    <span>Draft preview</span>
+                @endif
                 <span aria-hidden="true">·</span>
                 <span>{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min read</span>
             </div>

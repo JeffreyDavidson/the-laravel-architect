@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Episodes\Tables;
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -44,6 +46,13 @@ class EpisodesTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
+            ])
+            ->recordActions([
+                Action::make('preview')
+                    ->label('Preview')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->url(fn (Episode $record): string => $record->previewUrl())
+                    ->openUrlInNewTab(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

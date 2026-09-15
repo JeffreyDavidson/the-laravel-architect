@@ -51,10 +51,14 @@
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                             <span class="podcast-badge rounded-lg px-3 py-1.5 font-mono text-sm font-bold">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
-                            <time
-                                datetime="{{ $episode->published_at->toDateString() }}"
-                                class="text-sm text-gray-500"
-                            >{{ $episode->published_at->format('F d, Y') }}</time>
+                            @if ($episode->published_at)
+                                <time
+                                    datetime="{{ $episode->published_at->toDateString() }}"
+                                    class="text-sm text-gray-500"
+                                >{{ $episode->published_at->format('F d, Y') }}</time>
+                            @else
+                                <span class="text-sm text-gray-500">Draft preview</span>
+                            @endif
                             @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                 <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -506,7 +510,11 @@
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Published</dt>
                                         <dd class="text-gray-700 dark:text-gray-300">
-                                            <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                            @if ($episode->published_at)
+                                                <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                            @else
+                                                Draft preview
+                                            @endif
                                         </dd>
                                     </div>
                                     @if (\App\Presenters\EpisodePresenter::from($episode)->duration())

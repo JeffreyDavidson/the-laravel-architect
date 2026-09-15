@@ -182,6 +182,15 @@
         </div>
     </nav>
 
+    @if (request()->routeIs('preview.*'))
+        <div
+            class="border-b border-amber-300 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200"
+            role="status"
+        >
+            Preview mode · This content is not public yet.
+        </div>
+    @endif
+
     {{-- Content --}}
     <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
         @yield('content')

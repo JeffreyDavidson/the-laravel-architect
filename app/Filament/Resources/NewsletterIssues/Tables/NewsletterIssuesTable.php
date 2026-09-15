@@ -45,7 +45,9 @@ class NewsletterIssuesTable
                 Action::make('view_on_site')
                     ->label('View on site')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (NewsletterIssue $record): string => route('newsletter.issue', $record))
+                    ->url(fn (NewsletterIssue $record): string => $record->isPublished()
+                        ? route('newsletter.issue', $record)
+                        : $record->previewUrl())
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([
