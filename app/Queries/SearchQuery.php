@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Enums\SearchContentType;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -15,7 +16,7 @@ class SearchQuery
     /**
      * @return array<string, array<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>
      */
-    public function get(?string $query): array
+    public function get(?string $query, ?SearchContentType $type = null): array
     {
         $query = is_string($query) ? trim($query) : '';
 
@@ -25,7 +26,7 @@ class SearchQuery
 
         $like = '%'.addcslashes($query, '\\%_').'%';
 
-        return [
+        $results = [
             'Writing' => Post::query()
                 ->select(['id', 'title', 'slug', 'excerpt', 'published_at'])
                 ->published()
@@ -125,6 +126,12 @@ class SearchQuery
                 ->map(fn (Video $video): array => $this->videoResult($video))
                 ->all(),
         ];
+
+        if ($type === null) {
+            return $results;
+        }
+
+        return [$type->label() => $results[$type->label()] ?? []];
     }
 
     /** @return array{title: string, description: string|null, url: string, meta: string, external: bool} */

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SearchContentType;
 use App\Http\Requests\SearchRequest;
 use App\Queries\SearchQuery;
 use App\ViewModels\SearchViewModel;
@@ -12,10 +13,12 @@ class SearchController
     public function __invoke(SearchRequest $request, SearchQuery $searchQuery, SearchViewModel $viewModel): View
     {
         $query = $request->string('q')->toString();
+        $type = $request->enum('type', SearchContentType::class);
 
         return view('search.index', $viewModel->data(
-            $searchQuery->get($query),
+            $searchQuery->get($query, $type),
             $query,
+            $type,
         ));
     }
 }
