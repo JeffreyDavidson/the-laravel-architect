@@ -13,5 +13,6 @@ final readonly class ContactMessageData
         public ContactType $type,
         public ?ContactBudget $budget,
         public string $message,
+        public ?string $projectTitle = null,
     ) {}
 }

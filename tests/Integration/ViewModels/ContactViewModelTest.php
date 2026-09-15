@@ -23,6 +23,7 @@ it('provides the existing page SEO metadata', function () {
             ContactBudget::Enterprise->value => '$50,000+',
         ])
         ->and($data['defaultContactType'])->toBe(ContactType::Freelance->value)
+        ->and($data['selectedProject'])->toBeNull()
         ->and($data['seoSource']->title)->toBe('Contact')
         ->and($data['seoSource']->description)->toBe('Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.');
 });

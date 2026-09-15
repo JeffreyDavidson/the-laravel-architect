@@ -55,5 +55,6 @@ it('maps only validated fields into typed contact data', function (ContactType $
         ->and($data->type)->toBe($type)
         ->and($data->budget)->toBe($budget)
         ->and($data->message)->toBe('A project inquiry.')
-        ->and(get_object_vars($data))->toHaveCount(5);
+        ->and($data->projectTitle)->toBeNull()
+        ->and(get_object_vars($data))->toHaveCount(6);
 })->with(ContactType::cases())->with([null, ...ContactBudget::cases()]);

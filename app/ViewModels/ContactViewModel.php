@@ -4,6 +4,7 @@ namespace App\ViewModels;
 
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
+use App\Models\Project;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ContactViewModel
@@ -14,9 +15,10 @@ class ContactViewModel
      *     contactTypeOptions: array<string, string>,
      *     contactBudgetOptions: array<string, string>,
      *     defaultContactType: string,
+     *     selectedProject: Project|null,
      * }
      */
-    public function data(): array
+    public function data(?Project $selectedProject = null): array
     {
         return [
             'contactTypeOptions' => collect(ContactType::cases())
@@ -26,6 +28,7 @@ class ContactViewModel
                 ->mapWithKeys(fn (ContactBudget $budget): array => [$budget->value => $budget->getLabel()])
                 ->all(),
             'defaultContactType' => ContactType::Freelance->value,
+            'selectedProject' => $selectedProject,
             'seoSource' => new SEOData(
                 title: 'Contact',
                 description: 'Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.',

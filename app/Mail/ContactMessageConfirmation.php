@@ -18,6 +18,7 @@ class ContactMessageConfirmation extends Mailable implements ShouldQueue
         public readonly string $contactType,
         public readonly ?string $budget,
         public readonly string $contactMessage,
+        public readonly ?string $projectTitle = null,
     ) {}
 
     public function envelope(): Envelope
