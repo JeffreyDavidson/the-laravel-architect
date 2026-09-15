@@ -48,9 +48,8 @@ it('returns cached traffic and conversion aggregates', function () {
         'contact_submissions' => 7,
         'project_live_link_clicks' => 7,
         'github_profile_clicks' => 7,
-    ]);
-
-    expect(FathomAnalyticsService::overview())->toEqual($overview);
+    ])
+        ->and(FathomAnalyticsService::overview())->toEqual($overview);
 
     Http::assertSentCount(5);
 });
