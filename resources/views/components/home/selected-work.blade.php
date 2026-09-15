@@ -20,7 +20,6 @@
                     <article data-project-entry class="py-8 sm:py-12">
                         <a
                             href="{{ route('projects.show', $project) }}"
-                            aria-label="Preview {{ $project->title }}"
                             class="focus-visible:outline-brand-300 mb-8 block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
                         >
                             <x-projects.artwork :project="$project" detail />
