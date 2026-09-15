@@ -92,6 +92,24 @@
     gap: 1.25rem;
 }
 
+/* The custom gray palette is intentionally dark, so Filament's default
+ * stats text shades need an explicit readable color in both theme modes. */
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-label,
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description,
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color {
+    color: var(--tla-muted);
+}
+
+.dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-label,
+.dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description,
+.dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color {
+    color: #d2deee;
+}
+
+.dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color .fi-icon {
+    color: #9fc0e5;
+}
+
 /* ── Auth / simple pages ── */
 .dark .fi-simple-layout {
     position: relative;
