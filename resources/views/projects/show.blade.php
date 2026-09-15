@@ -120,6 +120,44 @@
         </section>
     </article>
 
+    @if ($relatedPosts->isNotEmpty() || $relatedEpisodes->isNotEmpty())
+        <section
+            aria-labelledby="related-content-heading"
+            class="dark:border-brand-800 dark:bg-brand-950 border-y border-gray-200 bg-white py-12 sm:py-16"
+        >
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <h2
+                    id="related-content-heading"
+                    class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl dark:text-white"
+                >
+                    Keep exploring
+                </h2>
+                <p class="mt-3 max-w-2xl text-base leading-7 text-gray-600 dark:text-gray-400">
+                    Read and listen to more work connected to this project.
+                </p>
+
+                @if ($relatedPosts->isNotEmpty())
+                    <div class="mt-8 grid gap-8 md:grid-cols-2">
+                        @foreach ($relatedPosts as $relatedPost)
+                            <x-blog-card :post="$relatedPost" :showTags="false" :showExcerpt="true" />
+                        @endforeach
+                    </div>
+                @endif
+
+                @if ($relatedEpisodes->isNotEmpty())
+                    <div @class(['mt-10' => $relatedPosts->isNotEmpty()])>
+                        <h3 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Listen next</h3>
+                        <div class="mt-2 grid gap-8 md:grid-cols-2">
+                            @foreach ($relatedEpisodes as $relatedEpisode)
+                                <x-projects.related-episode-card :episode="$relatedEpisode" />
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
+
     <section
         aria-labelledby="project-contact-heading"
         class="dark:border-brand-800 dark:bg-brand-900/30 border-y border-gray-200 bg-gray-50 py-10 sm:py-14"
