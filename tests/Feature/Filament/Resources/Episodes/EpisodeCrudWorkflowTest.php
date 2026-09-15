@@ -31,6 +31,7 @@ it('creates an episode through the authenticated resource form', function () {
             'title' => 'Episode workflow coverage',
             'slug' => 'episode-workflow-coverage',
             'description' => 'Episode description',
+            'transcript' => 'Episode transcript content.',
             'status' => PublishStatus::Draft,
         ])
         ->call('create')
@@ -40,6 +41,7 @@ it('creates an episode through the authenticated resource form', function () {
         ->title->toBe('Episode workflow coverage')
         ->slug->toBe('episode-workflow-coverage')
         ->podcast_id->toBe($this->podcast->id)
+        ->transcript->toBe('Episode transcript content.')
         ->status->toBe(PublishStatus::Draft);
 });
 
@@ -57,6 +59,7 @@ it('updates an episode through the authenticated resource form', function () {
             'title' => 'Updated episode title',
             'slug' => 'updated-episode-title',
             'description' => 'Updated description',
+            'transcript' => 'Updated transcript content.',
             'status' => PublishStatus::Published,
         ])
         ->call('save')
@@ -66,6 +69,7 @@ it('updates an episode through the authenticated resource form', function () {
         ->title->toBe('Updated episode title')
         ->slug->toBe('updated-episode-title')
         ->description->toBe('Updated description')
+        ->transcript->toBe('Updated transcript content.')
         ->status->toBe(PublishStatus::Published);
 });
 

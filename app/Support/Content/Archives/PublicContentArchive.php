@@ -5,6 +5,7 @@ namespace App\Support\Content\Archives;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -21,7 +22,7 @@ use Spatie\Tags\Tag;
 /**
  * @phpstan-type ContentRecord array<string, mixed>
  * @phpstan-type ContentRecords list<ContentRecord>
- * @phpstan-type ArchiveRecords array{categories: ContentRecords, posts: ContentRecords, projects: ContentRecords, podcasts: ContentRecords, episodes: ContentRecords, videos: ContentRecords}
+ * @phpstan-type ArchiveRecords array{categories: ContentRecords, posts: ContentRecords, projects: ContentRecords, podcasts: ContentRecords, episodes: ContentRecords, newsletter_issues: ContentRecords, videos: ContentRecords}
  */
 class PublicContentArchive
 {
@@ -39,7 +40,9 @@ class PublicContentArchive
 
     private const array PODCAST_FIELDS = ['name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'sort_order'];
 
-    private const array EPISODE_FIELDS = ['title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'published_at'];
+    private const array EPISODE_FIELDS = ['title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'published_at'];
+
+    private const array NEWSLETTER_ISSUE_FIELDS = ['title', 'slug', 'excerpt', 'content', 'published_at'];
 
     private const array VIDEO_FIELDS = ['youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at'];
 
@@ -107,6 +110,19 @@ class PublicContentArchive
             ->values()
             ->all();
 
+        $newsletterIssues = NewsletterIssue::query()
+            ->published()
+            ->with('seo')
+            ->orderBy('published_at')
+            ->orderBy('id')
+            ->lazy(100)
+            ->map(fn (NewsletterIssue $issue): array => [
+                ...$this->attributes($issue, self::NEWSLETTER_ISSUE_FIELDS),
+                'seo' => $this->seo($issue),
+            ])
+            ->values()
+            ->all();
+
         return [
             'version' => self::VERSION,
             'exported_at' => now()->toAtomString(),
@@ -123,6 +139,7 @@ class PublicContentArchive
             'projects' => $projects,
             'podcasts' => $podcasts,
             'episodes' => $episodes,
+            'newsletter_issues' => $newsletterIssues,
             'videos' => Video::query()
                 ->published()
                 ->orderBy('published_at')
@@ -197,6 +214,16 @@ class PublicContentArchive
                 $this->relations->syncSeo($episode, $this->nullableRecord($attributes['seo'] ?? null, 'episode SEO'), self::SEO_FIELDS);
             }
 
+            foreach ($records['newsletter_issues'] as $attributes) {
+                $issue = NewsletterIssue::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $issue->fill([
+                    ...$this->only($attributes, self::NEWSLETTER_ISSUE_FIELDS),
+                    'status' => PublishStatus::Published,
+                ]);
+                $issue->save();
+                $this->relations->syncSeo($issue, $this->nullableRecord($attributes['seo'] ?? null, 'newsletter issue SEO'), self::SEO_FIELDS);
+            }
+
             foreach ($records['videos'] as $attributes) {
                 Video::query()->updateOrCreate(
                     ['youtube_id' => $this->stringValue($attributes, 'youtube_id')],
@@ -204,7 +231,7 @@ class PublicContentArchive
                 );
             }
 
-            return collect(['categories', 'posts', 'projects', 'podcasts', 'episodes', 'videos'])
+            return collect(['categories', 'posts', 'projects', 'podcasts', 'episodes', 'newsletter_issues', 'videos'])
                 ->mapWithKeys(fn (string $type): array => [$type => count($records[$type])])
                 ->all();
         }));
@@ -284,7 +311,7 @@ class PublicContentArchive
     }
 
     /** @return array<string, mixed>|null */
-    private function seo(Post|Project|Podcast|Episode $model): ?array
+    private function seo(Post|Project|Podcast|Episode|NewsletterIssue $model): ?array
     {
         $seo = $model->seo;
 
@@ -316,6 +343,7 @@ class PublicContentArchive
         Project::query()->published()->update(['status' => PublishStatus::Draft->value]);
         Podcast::query()->active()->update(['is_active' => false]);
         Episode::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
+        NewsletterIssue::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()->update(['published_at' => null]);
     }
 

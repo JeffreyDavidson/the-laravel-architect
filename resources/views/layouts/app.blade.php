@@ -288,6 +288,12 @@
                             </li>
                             <li>
                                 <a
+                                    href="{{ route('newsletter.index') }}"
+                                    class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                >Newsletter archive</a>
+                            </li>
+                            <li>
+                                <a
                                     href="https://uses.tech"
                                     target="_blank"
                                     rel="noopener noreferrer"

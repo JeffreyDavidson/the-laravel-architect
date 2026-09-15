@@ -60,6 +60,10 @@ class EpisodeForm
                         MarkdownEditor::make('show_notes')
                             ->label('Show Notes')
                             ->columnSpanFull(),
+                        MarkdownEditor::make('transcript')
+                            ->label('Transcript')
+                            ->helperText('Optional episode transcript. Markdown is supported.')
+                            ->columnSpanFull(),
                     ])->columns(2),
 
                 Section::make('Media')
