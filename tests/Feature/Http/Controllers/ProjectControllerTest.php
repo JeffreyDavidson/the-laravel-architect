@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Project;
+use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -44,6 +45,66 @@ it('offers a contact path when no published projects are available', function ()
     $response = $this->get(route('projects.index'));
 
     $response->assertOk()->assertSee('Project details aren’t available here yet.')->assertSeeHtml(route('contact'))->assertDontSeeHtml('data-project-entry')->assertDontSeeHtml('featured-projects-heading')->assertDontSeeHtml('more-projects-heading');
+});
+
+it('filters published projects by technology and topic', function () {
+    $tag = Tag::query()->create([
+        'name' => ['en' => 'Laravel'],
+        'slug' => ['en' => 'laravel'],
+    ]);
+    $matchingProject = Project::query()->create([
+        'title' => 'Laravel project',
+        'description' => 'A Laravel project.',
+        'tech_stack' => ['Laravel', 'Filament'],
+        'status' => PublishStatus::Published,
+    ]);
+    $matchingProject->attachTag($tag);
+    Project::query()->create([
+        'title' => 'Vue project',
+        'description' => 'A Vue project.',
+        'tech_stack' => ['Vue'],
+        'status' => PublishStatus::Published,
+    ]);
+
+    $this->get(route('projects.index', ['technology' => 'laravel', 'tag' => 'laravel']))
+        ->assertOk()
+        ->assertSee('Laravel project')
+        ->assertDontSee('Vue project')
+        ->assertSeeHtml('value="Laravel" selected')
+        ->assertSeeHtml('value="laravel" selected');
+});
+
+it('explains when valid project filters have no matching projects', function () {
+    $laravelTag = Tag::query()->create([
+        'name' => ['en' => 'Laravel'],
+        'slug' => ['en' => 'laravel'],
+    ]);
+    $vueTag = Tag::query()->create([
+        'name' => ['en' => 'Vue'],
+        'slug' => ['en' => 'vue'],
+    ]);
+
+    $laravelProject = Project::query()->create([
+        'title' => 'Laravel project',
+        'description' => 'A Laravel project.',
+        'tech_stack' => ['Laravel'],
+        'status' => PublishStatus::Published,
+    ]);
+    $laravelProject->attachTag($laravelTag);
+    $vueProject = Project::query()->create([
+        'title' => 'Vue project',
+        'description' => 'A Vue project.',
+        'tech_stack' => ['Vue'],
+        'status' => PublishStatus::Published,
+    ]);
+    $vueProject->attachTag($vueTag);
+
+    $this->get(route('projects.index', ['technology' => 'Laravel', 'tag' => 'vue']))
+        ->assertOk()
+        ->assertSee('No projects match those filters.')
+        ->assertSeeHtml(route('projects.index'))
+        ->assertDontSee('Laravel project')
+        ->assertDontSee('Vue project');
 });
 
 it('uses responsive uploaded images in either project group', function (bool $featured) {
