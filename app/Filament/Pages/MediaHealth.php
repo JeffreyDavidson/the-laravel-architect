@@ -23,16 +23,22 @@ class MediaHealth extends Page implements HasTable
 {
     use InteractsWithTable;
 
+    #[\Override]
     protected static ?string $title = 'Media Health';
 
+    #[\Override]
     protected static ?string $navigationLabel = 'Media Health';
 
+    #[\Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
+    #[\Override]
     protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     protected static ?int $navigationSort = 1;
 
+    #[\Override]
     protected string $view = 'filament.pages.media-health';
 
     public function table(Table $table): Table
