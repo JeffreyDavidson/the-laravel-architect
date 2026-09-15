@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\EditorialCalendar;
 use App\Filament\Pages\MediaHealth;
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
@@ -75,6 +76,7 @@ class AdminPanelProvider extends PanelProvider
                     NavigationGroup::make('Content')
                         ->collapsible(false)
                         ->items([
+                            ...EditorialCalendar::getNavigationItems(),
                             ...PostResource::getNavigationItems(),
                             ...CategoryResource::getNavigationItems(),
                         ]),
