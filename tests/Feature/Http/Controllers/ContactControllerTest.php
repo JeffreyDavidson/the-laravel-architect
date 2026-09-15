@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
+use App\Models\ContactInquiry;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
@@ -87,6 +88,7 @@ it('silently accepts honeypot submissions without sending mail', function () {
     expect(session()->has('fathom_event'))->toBeFalse();
 
     Mail::assertNothingQueued();
+    expect(ContactInquiry::query()->count())->toBe(0);
     Http::assertNothingSent();
 });
 
@@ -122,6 +124,11 @@ it('queues both contact messages after a valid submission', function () {
             && $mail->projectTitle === 'Inquiry project'
             && str_contains($mail->render(), 'Can you help with an audit?'),
     );
+    expect(ContactInquiry::query()->sole())
+        ->name->toBe('Jane Doe')
+        ->email->toBe('jane@example.com')
+        ->message->toBe('Can you help with an audit?')
+        ->project_title->toBe('Inquiry project');
     Mail::assertQueued(
         ContactMessageConfirmation::class,
         fn (ContactMessageConfirmation $mail): bool => $mail->senderName === 'Jane Doe'
@@ -155,6 +162,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
     expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0)
         ->and(session()->getOldInput('cf-turnstile-response'))->toBeNull();
     Mail::assertNothingQueued();
+    expect(ContactInquiry::query()->count())->toBe(0);
 });
 
 it('rejects Turnstile responses with invalid request context', function (array $turnstileResponse) {

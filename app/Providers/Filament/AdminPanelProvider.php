@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\MediaHealth;
 use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
@@ -108,6 +109,7 @@ class AdminPanelProvider extends PanelProvider
                     NavigationGroup::make('Operations')
                         ->collapsible(false)
                         ->items([
+                            ...ContactInquiryResource::getNavigationItems(),
                             ...MediaHealth::getNavigationItems(),
                         ]),
                 ]))
