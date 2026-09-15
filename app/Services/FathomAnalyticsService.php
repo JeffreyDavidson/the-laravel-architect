@@ -23,12 +23,12 @@ use Throwable;
  */
 final class FathomAnalyticsService
 {
-    private const BASE_URL = 'https://api.usefathom.com/v1';
+    private const string BASE_URL = 'https://api.usefathom.com/v1';
 
-    private const CACHE_KEY_PREFIX = 'fathom.analytics.overview';
+    private const string CACHE_KEY_PREFIX = 'fathom.analytics.overview';
 
     /** @var array<string, string> */
-    private const EVENT_NAMES = [
+    private const array EVENT_NAMES = [
         'newsletter_signups' => 'newsletter signup',
         'contact_submissions' => 'contact form submission',
         'project_live_link_clicks' => 'project live link click',
