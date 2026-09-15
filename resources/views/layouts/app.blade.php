@@ -48,7 +48,6 @@
             <div class="flex h-16 items-center justify-between">
                 <a
                     href="{{ route('home') }}"
-                    aria-label="Homepage"
                     class="group focus-visible:outline-brand-500 flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                 >
                     <img
@@ -205,10 +204,10 @@
             {{-- Top section: Brand + Links --}}
             <div class="mb-8 flex flex-col justify-between gap-6 lg:mb-14 lg:flex-row lg:gap-10">
                 <div class="max-w-sm">
-                    <a href="{{ route('home') }}" aria-label="Homepage" class="group mb-3 flex items-center gap-3">
+                    <a href="{{ route('home') }}" class="group mb-3 flex items-center gap-3">
                         <img
                             src="/images/elephant-companion-128.webp"
-                            alt="The Laravel Architect"
+                            alt=""
                             width="40"
                             height="40"
                             loading="lazy"
@@ -233,9 +232,9 @@
                 {{-- Links columns --}}
                 <div class="flex gap-10 sm:gap-16">
                     <div>
-                        <h4 class="mb-3 text-xs font-semibold tracking-widest text-gray-500 uppercase dark:text-gray-500">
+                        <h2 class="mb-3 text-xs font-semibold tracking-widest text-gray-500 uppercase dark:text-gray-500">
                             Navigate
-                        </h4>
+                        </h2>
                         <ul role="list" class="space-y-2 text-sm">
                             <li>
                                 <a
@@ -276,9 +275,9 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="mb-3 text-xs font-semibold tracking-widest text-gray-500 uppercase dark:text-gray-500">
+                        <h2 class="mb-3 text-xs font-semibold tracking-widest text-gray-500 uppercase dark:text-gray-500">
                             Resources
-                        </h4>
+                        </h2>
                         <ul role="list" class="space-y-2 text-sm">
                             <li>
                                 <a
