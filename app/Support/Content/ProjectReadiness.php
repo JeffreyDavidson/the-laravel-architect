@@ -4,9 +4,9 @@ namespace App\Support\Content;
 
 use App\Models\Project;
 
-final class ProjectReadiness
+final readonly class ProjectReadiness
 {
-    public function __construct(private readonly Project $project) {}
+    public function __construct(private Project $project) {}
 
     /**
      * @return array<string, array{label: string, complete: bool}>
@@ -43,13 +43,7 @@ final class ProjectReadiness
 
     public function isReady(): bool
     {
-        foreach ($this->checks() as $check) {
-            if (! $check['complete']) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->checks(), fn ($check) => $check['complete']);
     }
 
     public function label(): string

@@ -28,7 +28,7 @@ class ProjectsTable
                     ->searchable(),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Project $record): string => (new ProjectReadiness($record))->label())
+                    ->state(fn (Project $record): string => new ProjectReadiness($record)->label())
                     ->description(function (Project $record): string {
                         $readiness = new ProjectReadiness($record);
 
@@ -75,47 +75,41 @@ class ProjectsTable
                         'needs_case_study' => 'Needs case study',
                         'needs_details' => 'Needs project details',
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return match ($data['value'] ?? null) {
-                            'ready' => $query
-                                ->whereNotNull('description')
-                                ->where('description', '!=', '')
-                                ->whereNotNull('content')
-                                ->where('content', '!=', '')
-                                ->whereNotNull('featured_image_path')
-                                ->where('featured_image_path', '!=', '')
-                                ->where(function (Builder $query): Builder {
-                                    return $query
-                                        ->where('url', '!=', '')
-                                        ->whereNotNull('url')
-                                        ->orWhere(function (Builder $query): Builder {
-                                            return $query->whereNotNull('github_url')->where('github_url', '!=', '');
-                                        });
+                    ->query(fn (Builder $query, array $data): Builder => match ($data['value'] ?? null) {
+                        'ready' => $query
+                            ->whereNotNull('description')
+                            ->where('description', '!=', '')
+                            ->whereNotNull('content')
+                            ->where('content', '!=', '')
+                            ->whereNotNull('featured_image_path')
+                            ->where('featured_image_path', '!=', '')
+                            ->where(fn (Builder $query): Builder => $query
+                                ->where('url', '!=', '')
+                                ->whereNotNull('url')
+                                ->orWhere(fn (Builder $query): Builder => $query->whereNotNull('github_url')->where('github_url', '!=', '')))
+                            ->whereNotNull('tech_stack')
+                            ->where('tech_stack', '!=', '[]')
+                            ->whereHas('tags'),
+                        'needs_image' => $query->where(fn (Builder $query): Builder => $query
+                            ->whereNull('featured_image_path')
+                            ->orWhere('featured_image_path', '')),
+                        'needs_case_study' => $query->where(fn (Builder $query): Builder => $query
+                            ->whereNull('content')
+                            ->orWhere('content', '')),
+                        'needs_details' => $query->where(function (Builder $query): void {
+                            $query
+                                ->whereNull('description')
+                                ->orWhere('description', '')
+                                ->orWhere(function (Builder $query): void {
+                                    $query
+                                        ->where(fn (Builder $query): Builder => $query->whereNull('url')->orWhere('url', ''))
+                                        ->where(fn (Builder $query): Builder => $query->whereNull('github_url')->orWhere('github_url', ''));
                                 })
-                                ->whereNotNull('tech_stack')
-                                ->where('tech_stack', '!=', '[]')
-                                ->whereHas('tags'),
-                            'needs_image' => $query->where(fn (Builder $query): Builder => $query
-                                ->whereNull('featured_image_path')
-                                ->orWhere('featured_image_path', '')),
-                            'needs_case_study' => $query->where(fn (Builder $query): Builder => $query
-                                ->whereNull('content')
-                                ->orWhere('content', '')),
-                            'needs_details' => $query->where(function (Builder $query): void {
-                                $query
-                                    ->whereNull('description')
-                                    ->orWhere('description', '')
-                                    ->orWhere(function (Builder $query): void {
-                                        $query
-                                            ->where(fn (Builder $query): Builder => $query->whereNull('url')->orWhere('url', ''))
-                                            ->where(fn (Builder $query): Builder => $query->whereNull('github_url')->orWhere('github_url', ''));
-                                    })
-                                    ->orWhereNull('tech_stack')
-                                    ->orWhere('tech_stack', '[]')
-                                    ->orWhereDoesntHave('tags');
-                            }),
-                            default => $query,
-                        };
+                                ->orWhereNull('tech_stack')
+                                ->orWhere('tech_stack', '[]')
+                                ->orWhereDoesntHave('tags');
+                        }),
+                        default => $query,
                     }),
             ])
             ->recordActions([
