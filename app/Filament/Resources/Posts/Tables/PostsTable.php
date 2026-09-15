@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
 use App\Models\Post;
+use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -12,12 +13,16 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query
+                ->with(['category', 'seo'])
+                ->withCount('tags'))
             ->columns([
                 ImageColumn::make('featured_image_path')
                     ->label('Image')
@@ -28,6 +33,12 @@ class PostsTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
+                TextColumn::make('readiness')
+                    ->label('Readiness')
+                    ->state(fn (Post $record): string => new ContentReadiness($record)->label())
+                    ->description(fn (Post $record): string => new ContentReadiness($record)->missingSummary())
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('author.name')
                     ->label('Author')
                     ->sortable(),

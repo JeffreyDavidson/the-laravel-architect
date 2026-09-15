@@ -14,9 +14,9 @@
                     <span
                         @class([
                             'tla-dashboard-action__icon',
-                            'tla-dashboard-action__icon--blue' => $index === 0,
-                            'tla-dashboard-action__icon--pink' => $index === 1,
-                            'tla-dashboard-action__icon--green' => $index === 2,
+                            'tla-dashboard-action__icon--blue' => in_array($index, [0, 4], true),
+                            'tla-dashboard-action__icon--pink' => in_array($index, [1, 5], true),
+                            'tla-dashboard-action__icon--green' => in_array($index, [2, 6], true),
                             'tla-dashboard-action__icon--amber' => $index === 3,
                         ])
                     >{{ $item['count'] }}</span>

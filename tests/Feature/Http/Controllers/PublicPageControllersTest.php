@@ -168,6 +168,7 @@ it('renders the core public pages', function (string $uri, string $copy) {
     ['/blog', 'Blog'],
     ['/projects', 'Projects'],
     ['/podcasts', 'Podcast'],
+    ['/archive', 'Archive'],
 ]);
 
 it('renders page-specific SEO metadata', function () {

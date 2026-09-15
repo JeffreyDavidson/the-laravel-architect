@@ -58,9 +58,12 @@
                             <p class="leading-relaxed">
                                 The contact form asks for your name, email address, inquiry type, an optional budget
                                 range, and your message. The application sends those details by email to Jeffrey and
-                                sends a confirmation copy to you. It does not save contact messages in the application
-                                database, though messages may remain in the email system while the inquiry is handled
-                                and for reasonable business records.
+                                sends a confirmation copy to you, and stores the inquiry in the private admin inbox so
+                                Jeffrey can track follow-up. Inquiry names, email addresses, messages, project context,
+                                and private notes are encrypted in the application database. Records are automatically
+                                pruned after the configured retention period (180 days by default), and may be deleted
+                                sooner once the inquiry is resolved. Email records may remain in the email system while
+                                the inquiry is handled and for reasonable business records.
                             </p>
                         </div>
                         <div>
