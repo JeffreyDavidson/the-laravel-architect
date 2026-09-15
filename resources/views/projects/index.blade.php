@@ -27,46 +27,26 @@
                             for="project-technology"
                             class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                         >Technology</label>
-                        <div class="relative">
-                            <select
-                                id="project-technology"
-                                name="technology"
-                                class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 pr-10 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
-                            >
-                                <option value="">All technologies</option>
-                                @foreach ($technologies as $technology)
-                                    <option value="{{ $technology }}" @selected($selectedTechnology === $technology)>
-                                        {{ $technology }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-heroicon-o-chevron-down
-                                class="pointer-events-none absolute inset-y-0 right-3 my-auto size-4 text-gray-500 dark:text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </div>
+                        <x-form.select id="project-technology" name="technology" variant="compact">
+                            <option value="">All technologies</option>
+                            @foreach ($technologies as $technology)
+                                <option value="{{ $technology }}" @selected($selectedTechnology === $technology)>
+                                    {{ $technology }}
+                                </option>
+                            @endforeach
+                        </x-form.select>
                     </div>
                     <div class="w-full sm:max-w-xs">
                         <label for="project-tag" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
                             >Topic</label>
-                        <div class="relative">
-                            <select
-                                id="project-tag"
-                                name="tag"
-                                class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 pr-10 text-base text-gray-900 focus:ring-1 focus:outline-none dark:text-gray-100"
-                            >
-                                <option value="">All topics</option>
-                                @foreach ($tags as $tag)
-                                    <option value="{{ $tag->slug }}" @selected($selectedTag === $tag->slug)>
-                                        {{ $tag->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-heroicon-o-chevron-down
-                                class="pointer-events-none absolute inset-y-0 right-3 my-auto size-4 text-gray-500 dark:text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </div>
+                        <x-form.select id="project-tag" name="tag" variant="compact">
+                            <option value="">All topics</option>
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->slug }}" @selected($selectedTag === $tag->slug)>
+                                    {{ $tag->name }}
+                                </option>
+                            @endforeach
+                        </x-form.select>
                     </div>
                     <button
                         type="submit"
