@@ -10,6 +10,7 @@ use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\ContentPerformanceOverview;
+use App\Filament\Widgets\FathomTrafficOverview;
 use App\Filament\Widgets\PublishingTrendsChart;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -68,5 +69,6 @@ it('renders the publishing dashboard for an authorized user', function () {
 it('registers the private analytics widgets on the publishing dashboard', function () {
     expect(Filament::getWidgets())
         ->toContain(ContentPerformanceOverview::class)
+        ->toContain(FathomTrafficOverview::class)
         ->toContain(PublishingTrendsChart::class);
 });

@@ -82,11 +82,17 @@ it('exposes podcast navigation, dates, and share actions to assistive technology
         'episode_number' => 12,
         'season_number' => 1,
         'description' => 'A practical discussion about application boundaries.',
+        'transcript' => <<<'MARKDOWN'
+## Architecture notes
+
+Clear boundaries make this episode easier to follow.
+MARKDOWN,
         'duration_minutes' => 42,
         'status' => PublishStatus::Published,
         'published_at' => '2026-08-20 12:00:00',
     ]);
 
+    $this->withVite();
     $page = PodcastEpisodePage::visit($podcast, $episode);
 
     $page->assertPresent('nav[aria-label="Breadcrumb"]')
@@ -95,6 +101,14 @@ it('exposes podcast navigation, dates, and share actions to assistive technology
         ->assertAttribute('a[aria-label="Share Designing Clear Boundaries on X"]', 'aria-label', 'Share Designing Clear Boundaries on X')
         ->assertAttribute('a[aria-label="Share Designing Clear Boundaries on LinkedIn"]', 'aria-label', 'Share Designing Clear Boundaries on LinkedIn')
         ->assertScript('Array.from(document.querySelectorAll("a.share-btn svg")).every((icon) => icon.getAttribute("aria-hidden") === "true")')
+        ->assertPresent('[data-transcript-search]')
+        ->assertScript('document.querySelector("[data-transcript-tools]").hidden === false')
+        ->assertPresent('[data-transcript-anchor]')
+        ->assertScript('document.querySelector("[data-transcript-content] h2, [data-transcript-content] h3, [data-transcript-content] h4").id.startsWith("transcript-")')
+        ->click('Read transcript')
+        ->fill('Search transcript', 'boundaries')
+        ->assertScript('document.querySelector("[data-transcript-status]").textContent === "1 match found"')
+        ->assertScript('document.querySelectorAll("[data-transcript-match]").length === 1')
         ->assertNoJavaScriptErrors();
 });
 

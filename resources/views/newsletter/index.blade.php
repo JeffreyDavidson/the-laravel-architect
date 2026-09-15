@@ -1,5 +1,14 @@
 @extends('layouts.app')
 
+@push('head')
+    <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="The Laravel Architect Newsletter"
+        href="{{ route('newsletter.rss') }}"
+    />
+@endpush
+
 @section('content')
     <div class="dark:bg-surface-page bg-gray-50">
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
@@ -35,6 +44,10 @@
                         href="#newsletter-signup"
                         class="text-brand-600 dark:text-brand-300 text-sm font-semibold hover:underline"
                     >Subscribe by email</a>
+                    <a
+                        href="{{ route('newsletter.rss') }}"
+                        class="text-brand-600 dark:text-brand-300 text-sm font-semibold hover:underline"
+                    >Subscribe via RSS</a>
                 </div>
 
                 <div class="mt-8 grid gap-6 md:grid-cols-2">
