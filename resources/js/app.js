@@ -12,7 +12,7 @@ if (document.querySelector('[data-article]')) {
     import('./pages/blog');
 }
 
-if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-audio-player]')) {
+if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-audio-player], [data-transcript]')) {
     import('./pages/podcast');
 }
 

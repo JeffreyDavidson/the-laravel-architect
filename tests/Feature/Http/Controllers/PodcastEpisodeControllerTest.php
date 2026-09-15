@@ -42,7 +42,19 @@ MARKDOWN,
         'published_at' => now()->subDay(),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('<h3>Topics Covered</h3>')->assertSeeHtml('<strong>domain boundaries</strong>')->assertSeeHtml('<a href="https://laravel.com/docs">Laravel documentation</a>')->assertSee('Read transcript')->assertSeeHtml('<h3>Transcript</h3>')->assertSeeHtml('<strong>episode</strong>')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('<a href="javascript:');
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSeeHtml('<h3>Topics Covered</h3>')
+        ->assertSeeHtml('<strong>domain boundaries</strong>')
+        ->assertSeeHtml('<a href="https://laravel.com/docs">Laravel documentation</a>')
+        ->assertSee('Read transcript')
+        ->assertSee('data-transcript')
+        ->assertSee('data-transcript-search')
+        ->assertSee('data-transcript-content')
+        ->assertSeeHtml('<h3>Transcript</h3>')
+        ->assertSeeHtml('<strong>episode</strong>')
+        ->assertDontSeeHtml("<script>alert('unsafe')</script>")
+        ->assertDontSeeHtml('<a href="javascript:');
 });
 
 it('does not render an empty transcript section', function () {
