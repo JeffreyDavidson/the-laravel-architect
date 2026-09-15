@@ -14,8 +14,8 @@ class ProjectIndexViewModel
      * @param  array<string, mixed>  $filters
      * @return array{
      *     projects: EloquentCollection<int, Project>,
-     *     technologies: Collection<int, non-empty-string>,
-     *     tags: Collection<int, Tag>,
+     *     technologyOptions: array<string, non-empty-string>,
+     *     tagOptions: array<string, string>,
      *     selectedTechnology: string|null,
      *     selectedTag: string|null,
      *     hasFilters: bool,
@@ -63,8 +63,12 @@ class ProjectIndexViewModel
 
         return [
             'projects' => $projects,
-            'technologies' => $technologies,
-            'tags' => $tags,
+            'technologyOptions' => $technologies
+                ->mapWithKeys(fn (string $technology): array => [$technology => $technology])
+                ->all(),
+            'tagOptions' => $tags
+                ->mapWithKeys(fn (Tag $tag): array => [$tag->slug => $tag->name])
+                ->all(),
             'selectedTechnology' => $selectedTechnology,
             'selectedTag' => $selectedTag,
             'hasFilters' => $selectedTechnology !== null || $selectedTag !== null,
