@@ -37,7 +37,8 @@ it('reports a project as ready when all public details are present', function ()
         'slug' => ['en' => 'laravel'],
     ]));
 
-    $readiness = new ProjectReadiness($project->fresh(['tags']));
+    $project->load('tags');
+    $readiness = new ProjectReadiness($project);
 
     expect($readiness->isReady())->toBeTrue()
         ->and($readiness->label())->toBe('Ready')
