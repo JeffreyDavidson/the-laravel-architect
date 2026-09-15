@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Models\Project;
+use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
-use App\Support\Content\ProjectReadiness;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,15 +22,17 @@ class ProjectsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withCount('tags'))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query
+                ->with('seo')
+                ->withCount('tags'))
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Project $record): string => new ProjectReadiness($record)->label())
+                    ->state(fn (Project $record): string => new ContentReadiness($record)->label())
                     ->description(function (Project $record): string {
-                        $readiness = new ProjectReadiness($record);
+                        $readiness = new ContentReadiness($record);
 
                         return $readiness->progress().' · '.$readiness->missingSummary();
                     })

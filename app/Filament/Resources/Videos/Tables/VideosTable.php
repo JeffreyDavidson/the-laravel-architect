@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\Videos\Tables;
 
+use App\Filament\Resources\Videos\VideoResource;
+use App\Models\Video;
+use App\Support\Content\ContentReadiness;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -24,6 +28,12 @@ class VideosTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
+                TextColumn::make('readiness')
+                    ->label('Readiness')
+                    ->state(fn (Video $record): string => new ContentReadiness($record)->label())
+                    ->description(fn (Video $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('view_count')
                     ->label('Views')
                     ->numeric()
@@ -51,6 +61,10 @@ class VideosTable
             ->filters([
                 TernaryFilter::make('is_featured')
                     ->label('Featured'),
+            ])
+            ->recordActions([
+                EditAction::make()
+                    ->url(fn (Video $record): string => VideoResource::getUrl('edit', ['record' => $record])),
             ])
             ->defaultSort('published_at', 'desc')
             ->toolbarActions([

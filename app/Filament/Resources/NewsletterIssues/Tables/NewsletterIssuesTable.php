@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NewsletterIssues\Tables;
 
 use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
+use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -13,17 +14,25 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class NewsletterIssuesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('seo'))
             ->columns([
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
                     ->limit(60),
+                TextColumn::make('readiness')
+                    ->label('Readiness')
+                    ->state(fn (NewsletterIssue $record): string => new ContentReadiness($record)->label())
+                    ->description(fn (NewsletterIssue $record): string => (new ContentReadiness($record))->missingSummary())
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
