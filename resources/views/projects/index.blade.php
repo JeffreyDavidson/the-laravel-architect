@@ -50,14 +50,14 @@
                     </div>
                     <button
                         type="submit"
-                        class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
+                        class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 inline-flex h-11 items-center rounded-lg px-5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
                     >
                         Filter projects
                     </button>
                     @if ($hasFilters)
                         <a
                             href="{{ route('projects.index') }}"
-                            class="text-brand-700 hover:text-brand-900 dark:text-brand-300 dark:hover:text-brand-100 px-1 py-2.5 text-sm font-semibold"
+                            class="text-brand-700 hover:text-brand-900 dark:text-brand-300 dark:hover:text-brand-100 inline-flex h-11 items-center px-1 text-sm font-semibold"
                         >Clear filters</a>
                     @endif
                 </form>
