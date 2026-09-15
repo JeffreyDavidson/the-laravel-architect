@@ -15,13 +15,14 @@ class OptimizedImageUpload extends FileUpload
 
         $this
             ->image()
+            ->maxSize(ImageUploadOptimizer::MAX_FILE_SIZE_KB)
+            ->helperText(ImageUploadOptimizer::UPLOAD_HELPER_TEXT)
             ->automaticallyResizeImagesToWidth((string) ImageUploadOptimizer::MAX_DIMENSION)
             ->automaticallyResizeImagesToHeight((string) ImageUploadOptimizer::MAX_DIMENSION)
             ->automaticallyResizeImagesMode('contain')
             ->automaticallyUpscaleImagesWhenResizing(false)
             ->saveUploadedFileUsing(
-                fn (BaseFileUpload $component, TemporaryUploadedFile $file, ImageUploadOptimizer $optimizer): ?string => $optimizer->store($file, $component->getDirectory(), $component->getDiskName())
-                    ?? $component->saveUploadedFile($file),
+                fn (BaseFileUpload $component, TemporaryUploadedFile $file, ImageUploadOptimizer $optimizer): ?string => $optimizer->store($file, $component->getDirectory(), $component->getDiskName()),
             );
     }
 }

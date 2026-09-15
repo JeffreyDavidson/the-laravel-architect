@@ -12,6 +12,10 @@ class ImageUploadOptimizer
 {
     public const int MAX_DIMENSION = 1600;
 
+    public const int MAX_FILE_SIZE_KB = 10240;
+
+    public const string UPLOAD_HELPER_TEXT = 'Images are converted to WebP and resized to a maximum of 1600 px per side. Maximum upload size: 10 MB.';
+
     private const int QUALITY = 82;
 
     public function store(UploadedFile $file, ?string $directory, string $diskName): ?string

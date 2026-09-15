@@ -36,6 +36,7 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../**/*.blade.php';
+@source not '../views/filament/**/*';
 @source '../**/*.js';
 
 /* Shared public theme tokens. Page-specific styles consume these values so

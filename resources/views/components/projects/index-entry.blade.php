@@ -3,7 +3,6 @@
 <article data-project-entry class="grid gap-6 py-8 sm:gap-8 sm:py-12 lg:grid-cols-2 lg:items-center lg:gap-16">
     <a
         href="{{ route('projects.show', $project) }}"
-        aria-label="Explore {{ $project->title }}"
         class="focus-visible:outline-brand-500 block min-w-0 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
     >
         <x-projects.artwork :project="$project" :priority="$priority" />
