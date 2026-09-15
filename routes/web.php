@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterConfirmationController;
 use App\Http\Controllers\NewsletterIssueController;
+use App\Http\Controllers\NewsletterRssFeedController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\NewsletterUnsubscriptionController;
 use App\Http\Controllers\OgImageController;
@@ -40,6 +41,7 @@ Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationC
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe');
 Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])->middleware(['signed', 'throttle:newsletter-confirm'])->name('newsletter.unsubscribe.store');
 Route::get('/newsletter', [NewsletterIssueController::class, 'index'])->name('newsletter.index');
+Route::get('/newsletter/rss', NewsletterRssFeedController::class)->name('newsletter.rss');
 Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
 Route::get('/uses', UsesController::class)->name('uses');
 Route::get('/search', SearchController::class)->name('search');
