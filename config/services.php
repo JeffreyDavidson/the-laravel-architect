@@ -42,6 +42,7 @@ return [
 
     'fathom' => [
         'site_id' => env('FATHOM_SITE_ID'),
+        'api_token' => env('FATHOM_API_TOKEN'),
     ],
 
     'turnstile' => [
