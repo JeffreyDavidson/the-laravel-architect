@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SearchContentType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SearchRequest extends FormRequest
 {
@@ -20,6 +22,7 @@ class SearchRequest extends FormRequest
     {
         return [
             'q' => ['nullable', 'string', 'max:120'],
+            'type' => ['nullable', 'string', Rule::enum(SearchContentType::class)],
         ];
     }
 
