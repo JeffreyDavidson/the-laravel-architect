@@ -24,6 +24,39 @@ The Forge deployment should install locked Composer dependencies, build assets, 
 
 Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
 
+### Production Forge deploy script
+
+Keep the production site's Forge script synchronized with this checked-in copy. The release must be activated only after dependencies, checks, migrations, assets, and the Nightwatch marker have been prepared. Recreate `public/storage` in the new release before activation:
+
+```bash
+set -e
+$CREATE_RELEASE()
+cd $FORGE_RELEASE_DIRECTORY
+
+test -n "${FORGE_DEPLOY_COMMIT:-}"
+test "$(git rev-parse HEAD)" = "$FORGE_DEPLOY_COMMIT"
+
+$FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+$FORGE_PHP artisan app:verify-production --no-ansi
+$FORGE_PHP artisan optimize
+$FORGE_PHP artisan migrate --force
+
+export NODE_OPTIONS="--max-old-space-size=1024"
+npm ci --production=false
+npm run build
+
+$FORGE_PHP artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT"
+
+# Recreate the public storage link in the new release
+rm -f public/storage
+$FORGE_PHP artisan storage:link
+
+$ACTIVATE_RELEASE()
+```
+
+`$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
+
 ### Observability environments
 
 Create separate `production` and `staging` environments in Nightwatch. Connect each Forge site to its matching Nightwatch environment so it receives an environment-specific token and agent process. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
