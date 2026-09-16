@@ -10,6 +10,11 @@ class RecordQueueHeartbeat implements ShouldQueue
 {
     use Queueable;
 
+    public int $tries = 3;
+
+    /** @var list<int> */
+    public array $backoff = [5, 15, 30];
+
     public function handle(RuntimeHealthMonitor $runtimeHealthMonitor): void
     {
         $runtimeHealthMonitor->recordQueueHeartbeat();
