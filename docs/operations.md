@@ -53,9 +53,10 @@ rm -f public/storage
 $FORGE_PHP artisan storage:link
 
 $ACTIVATE_RELEASE()
+$RESTART_QUEUES()
 ```
 
-`$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
+`$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
 
 ### Observability environments
 
@@ -98,7 +99,7 @@ After enabling or changing Nightwatch, refresh the application's cached configur
 
 ### Nightwatch deployment tracking
 
-Forge exposes the immutable release commit as `FORGE_DEPLOY_COMMIT`. Run Nightwatch's deployment command after the release caches have been rebuilt and the queue worker has been restarted:
+Forge exposes the immutable release commit as `FORGE_DEPLOY_COMMIT`. Run Nightwatch's deployment command from the new release after its caches and assets are ready. The Forge script sends this deployment marker before activating the release:
 
 ```bash
 php artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT"
