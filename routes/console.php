@@ -4,6 +4,7 @@ use App\Jobs\RecordQueueHeartbeat;
 use App\Models\ContactInquiry;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
+use Laravel\Nightwatch\Console\Sample;
 
 Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();
@@ -11,6 +12,7 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
 })
     ->name('runtime-health:heartbeat')
     ->everyMinute()
+    ->tap(Sample::rate(0.1))
     ->withoutOverlapping(5)
     ->onOneServer();
 
