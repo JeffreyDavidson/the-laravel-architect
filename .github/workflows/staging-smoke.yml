@@ -1,0 +1,51 @@
+name: Staging smoke
+
+on:
+  schedule:
+    - cron: '37 */12 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: staging-smoke
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout staging baseline
+        uses: actions/checkout@v6
+        with:
+          ref: develop
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run bounded staging smoke tests
+        env:
+          PRODUCTION_BASE_URL: https://staging.thelaravelarchitect.com
+        run: npm run test:e2e:production
+
+      - name: Upload browser failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: staging-smoke-failures-${{ github.run_attempt }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
