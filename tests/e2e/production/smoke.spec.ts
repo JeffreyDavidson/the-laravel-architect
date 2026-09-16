@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+const baseUrl = new URL(process.env.PRODUCTION_BASE_URL ?? 'https://thelaravelarchitect.com');
+
 const publicRoutes = [
     '/',
     '/about',
@@ -31,9 +33,15 @@ test('critical production routes are available', async ({ page, request }) => {
 
 test('the admin entry point redirects to authentication', async ({ request }) => {
     const response = await request.get('/admin', { maxRedirects: 0 });
+    const redirectUrl = new URL(response.headers().location ?? '', baseUrl);
+    const redirectsToAdminLogin = redirectUrl.origin === baseUrl.origin && redirectUrl.pathname === '/admin/login';
+    const redirectsToCloudflareAccess =
+        redirectUrl.protocol === 'https:' &&
+        redirectUrl.hostname.endsWith('.cloudflareaccess.com') &&
+        redirectUrl.pathname === `/cdn-cgi/access/login/${baseUrl.hostname}`;
 
     expect(response.status()).toBe(302);
-    expect(response.headers().location).toContain('/admin/login');
+    expect(redirectsToAdminLogin || redirectsToCloudflareAccess).toBe(true);
 });
 
 test('production responses include the required security headers', async ({ request }) => {
@@ -41,10 +49,15 @@ test('production responses include the required security headers', async ({ requ
         const response = await request.get(route);
         const headers = response.headers();
         const frameOptions = (headers['x-frame-options'] ?? '').split(',').map((value) => value.trim());
+        const frameAncestors = headers['content-security-policy']
+            ?.split(';')
+            .map((directive) => directive.trim())
+            .find((directive) => directive.startsWith('frame-ancestors '));
 
-        expect(headers['content-security-policy']).toContain("frame-ancestors 'self'");
+        expect(["frame-ancestors 'self'", "frame-ancestors 'none'"]).toContain(frameAncestors);
         expect(headers['strict-transport-security']).toContain('max-age=31536000');
-        expect(frameOptions.every((value) => value === 'SAMEORIGIN')).toBe(true);
+        expect(frameOptions.length).toBeGreaterThan(0);
+        expect(frameOptions.every((value) => ['SAMEORIGIN', 'DENY'].includes(value))).toBe(true);
         expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     }
 });
