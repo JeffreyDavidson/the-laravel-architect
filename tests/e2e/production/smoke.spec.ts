@@ -1,6 +1,22 @@
 import { expect, test } from '@playwright/test';
 
-const publicRoutes = ['/', '/projects', '/privacy'];
+const publicRoutes = [
+    '/',
+    '/about',
+    '/archive',
+    '/blog',
+    '/contact',
+    '/newsletter',
+    '/newsletter/rss',
+    '/podcasts',
+    '/privacy',
+    '/projects',
+    '/rss',
+    '/search?q=accessibility',
+    '/services',
+    '/sitemap.xml',
+    '/uses',
+];
 
 test('critical production routes are available', async ({ page, request }) => {
     await expect((await request.get('/up')).status()).toBe(200);
@@ -24,9 +40,7 @@ test('production responses include the required security headers', async ({ requ
     for (const route of publicRoutes) {
         const response = await request.get(route);
         const headers = response.headers();
-        const frameOptions = (headers['x-frame-options'] ?? '')
-            .split(',')
-            .map((value) => value.trim());
+        const frameOptions = (headers['x-frame-options'] ?? '').split(',').map((value) => value.trim());
 
         expect(headers['content-security-policy']).toContain("frame-ancestors 'self'");
         expect(headers['strict-transport-security']).toContain('max-age=31536000');
