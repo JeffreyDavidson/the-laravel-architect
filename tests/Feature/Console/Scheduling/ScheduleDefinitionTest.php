@@ -23,7 +23,7 @@ it('samples runtime heartbeat traces at ten percent', function () {
         ->filter(fn (Event $event): bool => $event->description === 'runtime-health:heartbeat')
         ->sole();
 
-    $sampleRates = (new ReflectionProperty(Core::class, 'scheduledTasksSampleRates'))
+    $sampleRates = new ReflectionProperty(Core::class, 'scheduledTasksSampleRates')
         ->getValue(app(Core::class));
 
     /** @var WeakMap<Event, float> $sampleRates */
