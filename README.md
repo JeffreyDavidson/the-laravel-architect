@@ -123,7 +123,7 @@ The application is hosted through Laravel Forge. A deployment should install loc
 
 Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, Nightwatch agent, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
-The production smoke workflow runs every six hours and on demand. Along with `npm run test:e2e:production`, it provides bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled production smoke failures reach a monitored inbox.
+The production smoke workflow runs every six hours and on demand. The staging smoke workflow runs every twelve hours and on demand against the deployed `develop` baseline. Both workflows run `npm run test:e2e:production` to provide bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled smoke failures reach a monitored inbox.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 

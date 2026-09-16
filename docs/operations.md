@@ -118,6 +118,7 @@ The command fails when the checked-out commit differs, migrations are pending, t
 - The Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
+- The manually dispatched `Staging smoke` GitHub Actions workflow passes against `staging.thelaravelarchitect.com`. It runs every twelve hours against the deployed `develop` baseline.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
 
