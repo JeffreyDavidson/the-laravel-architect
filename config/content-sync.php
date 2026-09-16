@@ -2,7 +2,7 @@
 
 return [
     'production' => [
-        'php_binary' => env('CONTENT_SYNC_PRODUCTION_PHP_BINARY', '/usr/bin/php8.4'),
+        'php_binary' => env('CONTENT_SYNC_PRODUCTION_PHP_BINARY', '/usr/bin/php8.5'),
         'site_path' => env('CONTENT_SYNC_PRODUCTION_SITE_PATH', '/home/forge/thelaravelarchitect.com/current'),
     ],
 
