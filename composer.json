@@ -29,6 +29,7 @@
         "spatie/laravel-tags": "^4.11"
     },
     "require-dev": {
+        "christophrumpel/missing-livewire-assertions": "^4.0",
         "driftingly/rector-laravel": "^2.6",
         "jasonmccreary/double": "^0.7.0",
         "larastan/larastan": "^3.8",
