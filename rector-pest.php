@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
+use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -13,4 +14,7 @@ return RectorConfig::configure()
     ->withSets([
         PestSetList::CODING_STYLE,
     ])
-    ->withComposerBased(laravel: true);
+    ->withComposerBased(laravel: true)
+    ->withSkip([
+        AssertSeeToAssertSeeHtmlRector::class,
+    ]);

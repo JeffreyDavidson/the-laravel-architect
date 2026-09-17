@@ -108,7 +108,7 @@ it('accepts and caches a legitimate zero subscriber count', function () {
 it('does not call YouTube when no channel videos are requested', function () {
     Http::fake();
 
-    expect(app(YouTubeService::class)->getChannelVideos(0))->toBe([]);
+    expect(app(YouTubeService::class)->getChannelVideos(0))->toBeEmpty();
 
     Http::assertNothingSent();
 });
@@ -154,7 +154,7 @@ it('skips malformed video detail items', function () {
         ]),
     ]);
 
-    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBe([]);
+    expect(app(YouTubeService::class)->getVideoDetails(['video-1']))->toBeEmpty();
 });
 
 it('uses zero for malformed video statistics', function () {
