@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 it('keeps the Feature suite organized by responsibility', function () {
-    expect(File::files(base_path('tests/Feature')))->toBe([]);
+    expect(File::files(base_path('tests/Feature')))->toBeEmpty();
 });
 
 it('keeps a one-to-one test mapping for application console commands', function () {

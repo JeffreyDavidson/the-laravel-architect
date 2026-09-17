@@ -23,8 +23,8 @@ it('replaces sensitive request metadata with the route template', function () {
     expect($redacted)->toBeTrue()
         ->and($request->url)->toBe('/newsletter/confirm/{subscriber}/{token}')
         ->and($nightwatch->executionState->executionPreview)->toBe('GET /newsletter/confirm/{subscriber}/{token}')
-        ->and($request->ip)->toBe('')
-        ->and($request->headers->all())->toBe([]);
+        ->and($request->ip)->toBeEmpty()
+        ->and($request->headers->all())->toBeEmpty();
 });
 
 it('does not retain arbitrary paths for unmatched routes', function () {
@@ -40,7 +40,7 @@ it('does not retain arbitrary paths for unmatched routes', function () {
 
     expect($request->url)->toBe('[unmatched route]')
         ->and($nightwatch->executionState->executionPreview)->toBe('GET [unmatched route]')
-        ->and($request->ip)->toBe('');
+        ->and($request->ip)->toBeEmpty();
 });
 
 function nightwatchRequest(string $url, string $routePath, string $ip): Request
