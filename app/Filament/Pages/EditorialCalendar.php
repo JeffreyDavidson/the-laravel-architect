@@ -126,7 +126,7 @@ class EditorialCalendar extends Page
     }
 
     /**
-     * @param Collection<int, CalendarEntry> $entries
+     * @param  Collection<int, CalendarEntry>  $entries
      * @return Collection<int, ScheduledCalendarEntry>
      */
     private function entriesForDate(Collection $entries, string $dateKey): Collection
