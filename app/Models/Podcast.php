@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\TracksActivity;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Models\Concerns\TracksActivity;
 use App\Observers\PodcastObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -28,6 +28,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Podcast extends Model
 {
     use TracksActivity;
+
     private const string DEFAULT_COLOR = '#6366f1';
 
     /** @var array<int, string> */

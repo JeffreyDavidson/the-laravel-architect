@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Concerns\TracksActivity;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
+use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -18,9 +18,9 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 #[Sluggable(from: 'title')]
 class Video extends Model
 {
-    use TracksActivity;
     use Featurable;
     use HasPublicationDate;
+    use TracksActivity;
 
     protected function casts(): array
     {

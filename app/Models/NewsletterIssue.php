@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\TracksActivity;
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\TracksActivity;
 use App\Models\Contracts\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -23,9 +23,9 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
  */
 class NewsletterIssue extends Model implements Publishable
 {
-    use TracksActivity;
     use HasPublishingStatus;
     use HasSEO;
+    use TracksActivity;
 
     protected function casts(): array
     {
