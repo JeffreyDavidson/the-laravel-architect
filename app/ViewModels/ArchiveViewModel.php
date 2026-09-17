@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Enums\SearchContentType;
@@ -30,7 +32,7 @@ class ArchiveViewModel
             'yearOptions' => array_combine($years, $years),
             'selectedYear' => $selectedYear,
             'seoSource' => new SEOData(
-                title: $selectedType === null && $selectedYear === null ? 'Archive' : 'Archive results',
+                title: ! $selectedType instanceof SearchContentType && $selectedYear === null ? 'Archive' : 'Archive results',
                 description: 'Browse writing, projects, podcasts, episodes, newsletters, and videos from The Laravel Architect.',
                 url: $url,
                 canonical_url: $url,

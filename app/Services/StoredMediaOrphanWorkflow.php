@@ -134,7 +134,7 @@ class StoredMediaOrphanWorkflow
                 });
         }
 
-        return compact('paths', 'sources');
+        return ['paths' => $paths, 'sources' => $sources];
     }
 
     private function normalize(string $path): string

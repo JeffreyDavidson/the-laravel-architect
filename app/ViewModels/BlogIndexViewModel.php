@@ -125,8 +125,8 @@ class BlogIndexViewModel
                 title: $title,
                 description: $description,
                 url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
-                canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
                 robots: $query === '' ? null : 'noindex, follow',
+                canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
             ),
         ];
     }

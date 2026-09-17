@@ -57,7 +57,7 @@ final class GenerateSitemap
         ] as $page) {
             $xml .= '<url>';
             $xml .= '<loc>'.$page['url'].'</loc>';
-            if ($page['lastmod'] !== null) {
+            if ($page['lastmod'] instanceof CarbonInterface) {
                 $xml .= '<lastmod>'.$page['lastmod']->toW3cString().'</lastmod>';
             }
             $xml .= '<changefreq>'.$page['freq'].'</changefreq>';
@@ -85,7 +85,7 @@ final class GenerateSitemap
 
             $xml .= '<url>';
             $xml .= '<loc>'.route('blog.category', $category).'</loc>';
-            if ($updatedAt !== null) {
+            if ($updatedAt instanceof CarbonInterface) {
                 $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
             }
             $xml .= '<changefreq>weekly</changefreq>';
@@ -104,7 +104,7 @@ final class GenerateSitemap
 
             $xml .= '<url>';
             $xml .= '<loc>'.route('blog.tag', $tag).'</loc>';
-            if ($updatedAt !== null) {
+            if ($updatedAt instanceof CarbonInterface) {
                 $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
             }
             $xml .= '<changefreq>weekly</changefreq>';
@@ -119,7 +119,7 @@ final class GenerateSitemap
 
             $xml .= '<url>';
             $xml .= '<loc>'.route('podcast.show', $podcast).'</loc>';
-            if ($updatedAt !== null) {
+            if ($updatedAt instanceof CarbonInterface) {
                 $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
             }
             $xml .= '<changefreq>weekly</changefreq>';
@@ -168,7 +168,7 @@ final class GenerateSitemap
                 continue;
             }
 
-            if ($latestUpdatedAt === null || $updatedAt->greaterThan($latestUpdatedAt)) {
+            if (! $latestUpdatedAt instanceof CarbonInterface || $updatedAt->greaterThan($latestUpdatedAt)) {
                 $latestUpdatedAt = $updatedAt;
             }
         }
