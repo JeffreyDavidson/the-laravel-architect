@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Support\Monitoring\Health;
 
 use Laravel\Nightwatch\Core;
@@ -24,7 +26,7 @@ class NightwatchHealthMonitor
         try {
             $this->nightwatch->ingest->ping();
         } catch (Throwable $exception) {
-            throw new RuntimeException('The Nightwatch agent is unavailable.', previous: $exception);
+            throw new RuntimeException('The Nightwatch agent is unavailable.', $exception->getCode(), previous: $exception);
         }
     }
 }

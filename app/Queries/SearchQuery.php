@@ -127,7 +127,7 @@ class SearchQuery
                 ->all(),
         ];
 
-        if ($type === null) {
+        if (! $type instanceof SearchContentType) {
             return $results;
         }
 

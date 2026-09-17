@@ -22,7 +22,7 @@ class RecentActivityWidget extends Widget
     {
         $activities = collect();
 
-        Post::latest('updated_at')->take(3)->get()->each(function (Post $post) use ($activities) {
+        Post::latest('updated_at')->take(3)->get()->each(function (Post $post) use ($activities): void {
             $updatedAt = $post->updated_at;
 
             $activities->push([

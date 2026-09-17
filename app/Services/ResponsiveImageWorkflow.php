@@ -51,7 +51,7 @@ class ResponsiveImageWorkflow
                 $warning("Skipped {$label} {$key}: its source image is missing or unsupported.");
             });
 
-        return compact('generated', 'skipped', 'failed');
+        return ['generated' => $generated, 'skipped' => $skipped, 'failed' => $failed];
     }
 
     /**
@@ -75,6 +75,6 @@ class ResponsiveImageWorkflow
                 }
             });
 
-        return compact('checked', 'failed');
+        return ['checked' => $checked, 'failed' => $failed];
     }
 }

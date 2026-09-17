@@ -21,20 +21,20 @@ class GenerateNewsletterRssFeed
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
         $xml .= "<channel>\n";
         $xml .= '<title>The Laravel Architect Newsletter</title>'."\n";
-        $xml .= '<link>'.self::escape($siteUrl)."</link>\n";
+        $xml .= '<link>'.$this->escape($siteUrl)."</link>\n";
         $xml .= '<description>Practical Laravel architecture notes, tutorials, and updates from The Laravel Architect.</description>'."\n";
         $xml .= "<language>en-us</language>\n";
         $xml .= "<lastBuildDate>{$lastBuild}</lastBuildDate>\n";
-        $xml .= '<atom:link href="'.self::escape($feedUrl).'" rel="self" type="application/rss+xml" />'."\n";
+        $xml .= '<atom:link href="'.$this->escape($feedUrl).'" rel="self" type="application/rss+xml" />'."\n";
 
         foreach ($issues as $issue) {
             $link = route('newsletter.issue', $issue);
 
             $xml .= "<item>\n";
-            $xml .= '<title>'.self::escape($issue->title)."</title>\n";
-            $xml .= '<link>'.self::escape($link)."</link>\n";
-            $xml .= '<guid isPermaLink="true">'.self::escape($link)."</guid>\n";
-            $xml .= '<description>'.self::escape($issue->excerpt ?? '')."</description>\n";
+            $xml .= '<title>'.$this->escape($issue->title)."</title>\n";
+            $xml .= '<link>'.$this->escape($link)."</link>\n";
+            $xml .= '<guid isPermaLink="true">'.$this->escape($link)."</guid>\n";
+            $xml .= '<description>'.$this->escape($issue->excerpt ?? '')."</description>\n";
             $xml .= '<pubDate>'.($issue->publishedAt()?->toRssString() ?? now()->toRssString())."</pubDate>\n";
             $xml .= "</item>\n";
         }
@@ -42,7 +42,7 @@ class GenerateNewsletterRssFeed
         return $xml."</channel>\n</rss>";
     }
 
-    private static function escape(string $value): string
+    private function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_XML1, 'UTF-8');
     }

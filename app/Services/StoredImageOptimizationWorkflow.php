@@ -107,7 +107,7 @@ class StoredImageOptimizationWorkflow
                 $optimized++;
             });
 
-        return compact('optimized', 'skipped', 'failed');
+        return ['optimized' => $optimized, 'skipped' => $skipped, 'failed' => $failed];
     }
 
     private function isValidOptimizedImage(string $path): bool

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use RalphJSmit\Laravel\SEO\Support\SEOData;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Concerns\Featurable;
@@ -33,12 +35,12 @@ class Video extends Model
     /** @return Attribute<string, never> */
     protected function youtubeUrl(): Attribute
     {
-        return Attribute::make(get: fn () => "https://www.youtube.com/watch?v={$this->youtube_id}");
+        return Attribute::make(get: fn (): string => "https://www.youtube.com/watch?v={$this->youtube_id}");
     }
 
     /** @return Attribute<string, never> */
     protected function embedUrl(): Attribute
     {
-        return Attribute::make(get: fn () => "https://www.youtube.com/embed/{$this->youtube_id}");
+        return Attribute::make(get: fn (): string => "https://www.youtube.com/embed/{$this->youtube_id}");
     }
 }
