@@ -198,7 +198,7 @@ it('renders project metadata without filter links', function () {
         ->assertDontSeeHtml('href="'.route('projects.index', ['technology' => 'Laravel']).'"')
         ->assertSeeHtml('aria-label="Topics covered by Metadata project"')
         ->assertDontSeeHtml('href="'.route('projects.index', ['tag' => 'architecture']).'"')
-        ->assertSee('Metadata project', false);
+        ->assertSeeHtml('Metadata project');
 });
 
 it('shows published writing and podcast episodes connected by project tags', function () {
