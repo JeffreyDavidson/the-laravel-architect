@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\TracksActivity;
+
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasFeaturedImage;
@@ -31,6 +33,7 @@ use Spatie\Tags\HasTags;
  */
 class Episode extends Model implements Publishable
 {
+    use TracksActivity;
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;

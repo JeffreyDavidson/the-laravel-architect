@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\TracksActivity;
+
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\Featurable;
@@ -27,6 +29,7 @@ use Spatie\Tags\HasTags;
 /** @property-read string|null $featured_image_url */
 class Project extends Model implements Publishable
 {
+    use TracksActivity;
     use Featurable;
     use HasFeaturedImage;
     use HasPublishingStatus;
