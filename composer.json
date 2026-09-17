@@ -10,7 +10,6 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.5",
         "filament/filament": "^5.7",
         "filament/spatie-laravel-tags-plugin": "^5.0",
         "intervention/image": "^4.0",
@@ -21,6 +20,7 @@
         "league/flysystem-aws-s3-v3": "^3.30",
         "league/flysystem-sftp-v3": "^3.0",
         "nunomaduro/laravel-sluggable": "^1.0",
+        "php": "^8.5",
         "ralphjsmit/laravel-filament-seo": "^2.2",
         "ralphjsmit/laravel-seo": "^1.8",
         "resend/resend-laravel": "^1.3",
