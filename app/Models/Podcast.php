@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
-
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Observers\PodcastObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;

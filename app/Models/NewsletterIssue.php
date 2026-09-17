@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
-
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasPublishingStatus;

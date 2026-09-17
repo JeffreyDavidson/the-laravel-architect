@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
-
 use Spatie\Tags\Tag as SpatieTag;
 
 class Tag extends SpatieTag

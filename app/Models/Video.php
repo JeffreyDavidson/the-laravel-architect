@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
-
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
