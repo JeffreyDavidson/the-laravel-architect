@@ -7,6 +7,7 @@ use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Models\Concerns\TracksActivity;
 use App\Models\Contracts\Publishable;
 use App\Observers\PostObserver;
 use App\Services\OgImageCache;
@@ -40,6 +41,7 @@ class Post extends Model implements Publishable
     use HasTags;
     use LogsActivity;
     use ManagesStoredMedia;
+    use TracksActivity;
 
     protected function casts(): array
     {

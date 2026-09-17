@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\TracksActivity;
 use Spatie\Tags\Tag as SpatieTag;
 
 class Tag extends SpatieTag
 {
+    use TracksActivity;
+
     public static function bootHasSlug(): void
     {
         static::creating(function (SpatieTag $model): void {

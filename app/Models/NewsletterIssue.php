@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\TracksActivity;
 use App\Models\Contracts\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class NewsletterIssue extends Model implements Publishable
 {
     use HasPublishingStatus;
     use HasSEO;
+    use TracksActivity;
 
     protected function casts(): array
     {

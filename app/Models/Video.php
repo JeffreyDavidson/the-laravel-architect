@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
+use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,7 @@ class Video extends Model
 {
     use Featurable;
     use HasPublicationDate;
+    use TracksActivity;
 
     protected function casts(): array
     {
