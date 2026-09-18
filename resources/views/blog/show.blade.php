@@ -1,4 +1,4 @@
-<x-layouts.app :seo-source="$seoSource ?? null">
+<x-layouts.site :seo-source="$seoSource ?? null">
     <x-slot:head>
         @include('partials.json-ld')
         @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
@@ -170,4 +170,4 @@
             </section>
         @endif
     </article>
-</x-layouts.app>
+    </x-layouts.app>

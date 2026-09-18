@@ -1,4 +1,4 @@
-<x-layouts.app :seo-source="$seoSource ?? null">
+<x-layouts.site :seo-source="$seoSource ?? null">
     <x-slot:head>
         @include('partials.json-ld')
 
@@ -38,4 +38,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+    </x-layouts.app>
