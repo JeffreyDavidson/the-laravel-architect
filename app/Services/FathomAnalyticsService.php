@@ -52,11 +52,13 @@ final class FathomAnalyticsService
             return null;
         }
 
-        return Cache::remember(
-            self::CACHE_KEY_PREFIX.'.'.$siteId,
+        $cached = Cache::remember(
+            self::CACHE_KEY_PREFIX.'.v2.'.$siteId,
             now()->addMinutes(10),
-            fn (): ?array => self::fetchOverview($siteId, $token),
+            fn (): array => ['overview' => self::fetchOverview($siteId, $token)],
         );
+
+        return $cached['overview'];
     }
 
     /**

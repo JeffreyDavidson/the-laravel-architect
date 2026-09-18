@@ -74,6 +74,7 @@ class PublicContentArchive
             ->lazy(100)
             ->map(fn (Project $project): array => [
                 ...$this->attributes($project, self::PROJECT_FIELDS),
+                'github_url' => null,
                 'tech_stack' => $project->tech_stack,
                 'tags' => $this->tags($project),
                 'seo' => $this->seo($project),
@@ -241,7 +242,7 @@ class PublicContentArchive
      * @param  array<string, mixed>  $archive
      * @return list<string>
      */
-    public function mediaPaths(array $archive): array
+    public function mediaPaths(array $archive, bool $imagesOnly = false): array
     {
         $records = $this->validator->validate($archive, self::VERSION);
 
@@ -249,7 +250,7 @@ class PublicContentArchive
 
         foreach (['posts', 'projects', 'podcasts', 'episodes'] as $type) {
             foreach ($records[$type] as $attributes) {
-                foreach (['featured_image_path', 'cover_image_path', 'audio_path'] as $field) {
+                foreach ($imagesOnly ? ['featured_image_path', 'cover_image_path'] : ['featured_image_path', 'cover_image_path', 'audio_path'] as $field) {
                     if (filled($attributes[$field] ?? null)) {
                         $paths[] = $this->media->validatePath($attributes[$field]);
                     }
@@ -261,6 +262,15 @@ class PublicContentArchive
         sort($paths);
 
         return $paths;
+    }
+
+    /**
+     * @param  array<string, mixed>  $archive
+     * @return list<string>
+     */
+    public function imagePaths(array $archive): array
+    {
+        return $this->mediaPaths($archive, imagesOnly: true);
     }
 
     /** @return array<string, mixed> */

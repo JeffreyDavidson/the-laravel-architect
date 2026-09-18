@@ -16,7 +16,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use UnitEnum;
 
 class MediaHealth extends Page implements HasTable
@@ -45,21 +44,7 @@ class MediaHealth extends Page implements HasTable
     {
         return $table
             ->records(function (MediaHealthReport $report, ?string $search, array $filters): array {
-                $records = collect($report->records());
-
-                if (filled($search)) {
-                    $search = Str::lower($search);
-                    $records = $records->filter(fn (array $record): bool => Str::contains(
-                        Str::lower($record['title'].' '.$record['filename']),
-                        $search,
-                    ));
-                }
-
-                $type = $this->filterValue($filters, 'type');
-
-                if ($type !== null) {
-                    $records = $records->filter(fn (array $record): bool => $record['type_key'] === $type);
-                }
+                $records = collect($report->records($this->filterValue($filters, 'type'), $search));
 
                 $status = $this->filterValue($filters, 'status');
 

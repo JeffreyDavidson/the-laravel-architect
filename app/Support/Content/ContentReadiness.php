@@ -178,7 +178,7 @@ final readonly class ContentReadiness
                 'label' => 'Episode media',
                 'complete' => filled($episode->audio_url)
                     || filled($episode->audio_path)
-                    || filled($episode->embed_url)
+                    || $episode->publicEmbedUrl() !== null
                     || filled($episode->youtube_url),
             ],
             'show_notes' => [

@@ -36,12 +36,12 @@ class WelcomeWidget extends Widget
     {
         return [
             'posts' => Post::query()->count(),
-            'publishedPosts' => Post::query()->where('status', PublishStatus::Published)->count(),
+            'publishedPosts' => Post::query()->published()->count(),
             'draftPosts' => Post::query()->where('status', PublishStatus::Draft)->count(),
             'inReviewPosts' => Post::query()->where('status', PublishStatus::InReview)->count(),
             'projects' => Project::query()->count(),
             'featuredProjects' => Project::query()->where('is_featured', true)->count(),
-            'subscribers' => Subscriber::count(),
+            'subscribers' => Subscriber::query()->active()->count(),
             'videos' => Video::count(),
         ];
     }

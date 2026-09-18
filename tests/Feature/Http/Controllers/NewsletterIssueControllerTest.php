@@ -6,6 +6,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
+it('gives each newsletter archive page its own canonical URL', function () {
+    foreach (range(1, 13) as $number) {
+        NewsletterIssue::query()->create([
+            'title' => "Issue {$number}", 'slug' => "issue-{$number}", 'content' => 'Content',
+            'status' => PublishStatus::Published, 'published_at' => now()->subDays($number),
+        ]);
+    }
+    $url = route('newsletter.index', ['page' => 2]);
+
+    $this->get($url)->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
+        ->assertSeeHtml('<title>Newsletter Archive — Page 2 — Jeffrey Davidson</title>');
+});
+
 it('lists published newsletter issues and excludes drafts', function () {
     $published = NewsletterIssue::query()->create([
         'title' => 'Building Better Boundaries',

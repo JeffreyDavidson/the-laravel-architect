@@ -15,6 +15,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
+it('does not consider unsupported embeds playable media', function (string $url, bool $complete) {
+    $episode = Episode::query()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description', 'embed_url' => $url]);
+
+    expect(new ContentReadiness($episode)->checkComplete('episode_media'))->toBe($complete);
+})->with([
+    'unsupported host' => ['https://example.com/embed/episode', false],
+    'insecure embed' => ['http://open.spotify.com/embed/episode/123', false],
+    'supported embed' => ['https://open.spotify.com/embed/episode/123', true],
+]);
+
 it('reports actionable missing details for every supported content type', function () {
     $user = User::factory()->create();
     $records = [

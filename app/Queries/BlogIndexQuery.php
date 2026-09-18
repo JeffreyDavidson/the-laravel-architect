@@ -68,6 +68,7 @@ final class BlogIndexQuery
 
         $posts = $postsQuery
             ->paginate(self::POSTS_PER_PAGE)
+            ->withPath(route('blog.index'))
             ->appends(array_filter([
                 'q' => $search !== '' ? $search : null,
                 'category' => $categorySlug,

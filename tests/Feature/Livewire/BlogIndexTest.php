@@ -10,6 +10,28 @@ use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
+it('updates collection metadata and preserves real pagination links', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
+    foreach (range(1, 13) as $number) {
+        createBlogIndexComponentPost($author, $category, "Article {$number}");
+    }
+
+    Livewire::test(BlogIndex::class)
+        ->assertSeeHtml('href="'.e(route('blog.index', ['page' => 2])).'"')
+        ->call('gotoPage', 2)
+        ->assertDispatched('blog-metadata-updated', function (string $event, array $data): bool {
+            $schemas = $data['structuredData'] ?? null;
+            if (! is_array($schemas)) {
+                return false;
+            }
+            $items = array_find($schemas, fn (mixed $schema): bool => is_array($schema) && ($schema['@type'] ?? null) === 'ItemList');
+
+            return $data['canonicalUrl'] === route('blog.index', ['page' => 2])
+                && data_get($items, 'itemListElement.0.position') === 13;
+        });
+});
+
 it('filters published posts by search and category without leaving the component', function () {
     $author = User::factory()->create();
     $category = Category::query()->create([

@@ -22,6 +22,7 @@ class BlogTagViewModel
             ->withAnyTags([$tag])
             ->with(['category', 'author'])
             ->latest('published_at')
+            ->latest('id')
             ->paginate(10);
 
         abort_if($posts->currentPage() > $posts->lastPage(), 404);

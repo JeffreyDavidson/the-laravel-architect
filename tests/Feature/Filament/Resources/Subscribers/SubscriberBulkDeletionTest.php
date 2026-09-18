@@ -17,8 +17,8 @@ beforeEach(function () {
 
 it('deletes selected subscribers through the table bulk action', function () {
     $subscribers = collect([
-        Subscriber::query()->create(['email' => 'first-bulk-delete@example.com']),
-        Subscriber::query()->create(['email' => 'second-bulk-delete@example.com']),
+        Subscriber::query()->create(['email' => 'first-bulk-delete@example.com', 'verified_at' => now()]),
+        Subscriber::query()->create(['email' => 'second-bulk-delete@example.com', 'verified_at' => now()]),
     ]);
 
     livewire(ListSubscribers::class)

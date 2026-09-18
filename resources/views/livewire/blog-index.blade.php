@@ -115,7 +115,7 @@
             </div>
 
             @if ($posts->hasPages())
-                <div class="pt-10">{{ $posts->links(data: ['scrollTo' => false]) }}</div>
+                <div class="pt-10">{{ $posts->links('pagination.blog') }}</div>
             @endif
         </section>
     </div>

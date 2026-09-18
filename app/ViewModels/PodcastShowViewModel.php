@@ -22,6 +22,7 @@ class PodcastShowViewModel
         $episodes = $podcast->publishedEpisodes()
             ->with('tags')
             ->latest('published_at')
+            ->latest('id')
             ->paginate(20);
 
         abort_if($episodes->currentPage() > $episodes->lastPage(), 404);

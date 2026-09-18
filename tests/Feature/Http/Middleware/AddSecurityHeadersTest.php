@@ -68,8 +68,7 @@ it('adds security headers to admin responses', function () {
     }
 
     $this->get($loginUrl)
-        ->assertOk()
-        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
+        ->assertOk()->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())->assertSeeHtml('livewire-standard.js')
         ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
         ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')

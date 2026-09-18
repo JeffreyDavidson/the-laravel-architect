@@ -13,11 +13,40 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 use Psr\Log\LoggerInterface;
+use RalphJSmit\Laravel\SEO\Models\SEO;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('public');
+});
+
+it('deletes owned episode metadata and tag links with its podcast', function () {
+    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
+    $episode = $podcast->episodes()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $episode->attachTag('Architecture');
+    $seoIds = [$podcast->seo()->sole()->getKey(), $episode->seo()->sole()->getKey()];
+
+    $podcast->delete();
+
+    $this->assertModelMissing($episode);
+    expect(DB::table('taggables')->where('taggable_type', $episode->getMorphClass())->where('taggable_id', $episode->id)->exists())->toBeFalse()
+        ->and(SEO::query()->whereKey($seoIds)->exists())->toBeFalse();
+});
+
+it('preserves owned content when podcast deletion rolls back', function () {
+    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
+    $episode = $podcast->episodes()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $episode->attachTag('Architecture');
+    $seoIds = [$podcast->seo()->sole()->getKey(), $episode->seo()->sole()->getKey()];
+
+    DB::beginTransaction();
+    $podcast->delete();
+    DB::rollBack();
+
+    $this->assertModelExists($episode);
+    expect($episode->tags()->count())->toBe(1)
+        ->and(SEO::query()->whereKey($seoIds)->count())->toBe(2);
 });
 
 it('deletes the previous file when native media is replaced', function () {

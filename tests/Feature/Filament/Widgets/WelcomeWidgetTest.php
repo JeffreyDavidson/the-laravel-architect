@@ -25,6 +25,7 @@ it('renders the publishing and project statistics', function () {
             'content' => 'Content',
             'user_id' => $user->id,
             'status' => $status,
+            'published_at' => $status === PublishStatus::Published ? now()->subDay() : null,
         ]);
     }
 

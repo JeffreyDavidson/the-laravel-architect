@@ -2,6 +2,7 @@
 
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
+use App\Support\Newsletter\UnsubscribeUrlGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -142,7 +143,7 @@ it('shows an unsubscribe step without changing subscriber state', function () {
         'verified_at' => now(),
     ]);
 
-    $this->get($subscriber->unsubscribeUrl())
+    $this->get(app(UnsubscribeUrlGenerator::class)->for($subscriber))
         ->assertOk()->assertSee('Unsubscribe from the newsletter')->assertSeeHtml('name="_method" value="DELETE"')->assertSee($subscriber->email)->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
 
     expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
@@ -153,7 +154,7 @@ it('generates expiring unsubscribe links', function () {
         'email' => 'reader@example.com',
     ]);
 
-    expect($subscriber->unsubscribeUrl())->toContain('expires=');
+    expect(app(UnsubscribeUrlGenerator::class)->for($subscriber))->toContain('expires=');
 });
 
 it('unsubscribes with an explicit delete to a valid signed link', function () {
@@ -163,7 +164,7 @@ it('unsubscribes with an explicit delete to a valid signed link', function () {
         'verified_at' => now(),
     ]);
 
-    $this->delete($subscriber->unsubscribeUrl())
+    $this->delete(app(UnsubscribeUrlGenerator::class)->for($subscriber))
         ->assertRedirect(route('home'))
         ->assertSessionHas('newsletter_success', 'You have been unsubscribed.');
 

@@ -100,8 +100,12 @@ it('supports blog search and reset with Livewire', function (): void {
         ->assertPathIs('/blog')
         ->assertSee('E2E Searchable Post')
         ->assertDontSee('E2E Welcome Post')
+        ->assertTitle('Search results — Jeffrey Davidson')
+        ->assertScript("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)['@graph'].find(item => item['@type'] === 'ItemList').numberOfItems === 1")
         ->click('[data-blog-clear]')
-        ->assertSee('E2E Welcome Post');
+        ->assertSee('E2E Welcome Post')
+        ->assertTitle('Blog — Jeffrey Davidson')
+        ->assertNoJavaScriptErrors();
 });
 
 it('supports search filters and preserves the selected result type', function (): void {
@@ -155,4 +159,9 @@ it('allows an administrator to reach the dashboard', function (): void {
         ->assertSee('Dashboard')
         ->assertPresent('nav a[href*="posts"]')
         ->assertNoAccessibilityIssues(1);
+
+    $page->click('New post')
+        ->assertPathIs('/admin/posts/create')
+        ->assertPresent('.CodeMirror')
+        ->assertNoJavaScriptErrors();
 });

@@ -5,7 +5,7 @@ if (document.querySelector('.about-card-flip-container')) {
 }
 
 if (document.querySelector('[data-blog-filter]')) {
-    import('./pages/blog-index');
+    import('./pages/blog-index').then(() => import('./livewire'));
 }
 
 if (document.querySelector('[data-article]')) {

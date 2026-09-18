@@ -9,8 +9,21 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
+
+it('does not query unrelated content types for a filtered search', function () {
+    DB::enableQueryLog();
+
+    $this->get(route('search', ['q' => 'Architecture', 'type' => 'projects']))->assertOk();
+
+    $queries = collect(DB::getQueryLog())->pluck('query')->implode("\n");
+    DB::disableQueryLog();
+
+    expect($queries)->toContain('from "projects"')
+        ->not->toContain('from "posts"', 'from "podcasts"', 'from "episodes"', 'from "newsletter_issues"', 'from "videos"');
+});
 
 it('searches published content across every public content type', function () {
     $author = User::factory()->create();

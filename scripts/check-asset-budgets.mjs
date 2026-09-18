@@ -95,6 +95,11 @@ const budgets = [
         maxGzipBytes: 2 * 1024,
     },
     {
+        entry: 'resources/js/livewire.js',
+        label: 'Blog-only CSP-safe Livewire runtime',
+        maxGzipBytes: 110 * 1024,
+    },
+    {
         entry: 'resources/js/pages/contact.js',
         label: 'Contact verification loader',
         maxGzipBytes: 2 * 1024,

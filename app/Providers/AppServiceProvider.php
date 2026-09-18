@@ -16,14 +16,17 @@ use App\Support\Seo\StructuredDataBuilder;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as ViewInstance;
 use Laravel\Nightwatch\Facades\Nightwatch;
+use Livewire\Livewire;
 use Sentry\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +48,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Use a distinct URL so previously cached CSP bundles cannot reach Filament.
+        Livewire::setScriptRoute(fn (array $handle, string $path): RoutingRoute => Route::get(
+            dirname($path).'/livewire-standard.js',
+            $handle,
+        ));
+
         Nightwatch::user(app(ResolveNightwatchUser::class));
         Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));

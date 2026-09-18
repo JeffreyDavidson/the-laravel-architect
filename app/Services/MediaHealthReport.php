@@ -6,9 +6,11 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Throwable;
 
 class MediaHealthReport
@@ -23,16 +25,29 @@ class MediaHealthReport
     public function __construct(private readonly ResponsiveImageVariants $images) {}
 
     /** @return array<string, array{type: string, type_key: string, record_key: string, title: string, filename: string, dimensions: string, file_size: string, source_status: string, variants: string, status: string, status_color: string, repairable: bool}> */
-    public function records(): array
+    public function records(?string $typeFilter = null, ?string $search = null): array
     {
         $records = [];
 
         foreach (self::SOURCES as $type => $source) {
+            if ($typeFilter !== null && $type !== $typeFilter) {
+                continue;
+            }
+
             $source['model']::query()
                 ->select(['id', $source['title'], $source['path']])
                 ->orderBy('id')
-                ->get()
-                ->each(function (Model $model) use (&$records, $type, $source): void {
+                ->lazyById(100)
+                ->each(function (Model $model) use (&$records, $type, $source, $search): void {
+                    $title = $model->getAttribute($source['title']);
+                    $path = $model->getAttribute($source['path']);
+                    if (filled($search) && ! Str::contains(
+                        Str::lower((is_string($title) ? $title : '').' '.(is_string($path) ? basename($path) : '')),
+                        Str::lower($search),
+                    )) {
+                        return;
+                    }
+
                     $record = $this->inspect($model, $type, $source);
                     $records[$record['type_key'].':'.$record['record_key']] = $record;
                 });
@@ -91,12 +106,18 @@ class MediaHealthReport
         }
 
         try {
-            $image = Image::fromStorage($path, 'public');
-            $base['dimensions'] = "{$image->width()} × {$image->height()}";
-            $base['file_size'] = Number::fileSize($disk->size($path));
-            $base['source_status'] = $image->mimeType() === 'image/webp'
-                && $image->width() <= ImageUploadOptimizer::MAX_DIMENSION
-                && $image->height() <= ImageUploadOptimizer::MAX_DIMENSION
+            $size = $disk->size($path);
+            $key = 'media-image-metadata.'.hash('sha256', $disk->path($path).':'.$disk->lastModified($path).':'.$size);
+            $metadata = Cache::remember($key, now()->addMinutes(5), function () use ($path): array {
+                $image = Image::fromStorage($path, 'public');
+
+                return ['width' => $image->width(), 'height' => $image->height(), 'mime' => $image->mimeType()];
+            });
+            $base['dimensions'] = "{$metadata['width']} × {$metadata['height']}";
+            $base['file_size'] = Number::fileSize($size);
+            $base['source_status'] = $metadata['mime'] === 'image/webp'
+                && $metadata['width'] <= ImageUploadOptimizer::MAX_DIMENSION
+                && $metadata['height'] <= ImageUploadOptimizer::MAX_DIMENSION
                 ? 'Optimized'
                 : 'Needs optimization';
         } catch (Throwable) {
@@ -105,7 +126,7 @@ class MediaHealthReport
             return $base;
         }
 
-        $variantsReady = $this->images->hasRequiredVariants($path);
+        $variantsReady = $this->images->hasRequiredVariants($path, $metadata['width']);
         $base['variants'] = $variantsReady ? 'Ready' : 'Missing';
         $base['repairable'] = ! $variantsReady;
 

@@ -43,7 +43,8 @@ it('reports orphaned files while preserving referenced sources and variants', fu
 it('deletes only orphaned files when requested', function () {
     $referencedPath = 'projects/project.webp';
     Storage::disk('public')->put($referencedPath, 'referenced');
-    Storage::disk('public')->put('orphan/unused.png', 'unused');
+    Storage::disk('public')->put('projects/unused.png', 'unused');
+    touch(Storage::disk('public')->path('projects/unused.png'), now()->subDays(2)->getTimestamp());
 
     Project::withoutEvents(fn () => Project::query()->create([
         'title' => 'Project',
@@ -54,12 +55,31 @@ it('deletes only orphaned files when requested', function () {
     ]));
 
     $this->artisanCommand('media:find-orphans', ['--delete' => true])
-        ->expectsOutputToContain('Deleted: orphan/unused.png')
+        ->expectsOutputToContain('Deleted: projects/unused.png')
         ->expectsOutputToContain('Deleted 1 orphaned files')
         ->assertSuccessful();
 
     Storage::disk('public')->assertExists($referencedPath);
-    Storage::disk('public')->assertMissing('orphan/unused.png');
+    Storage::disk('public')->assertMissing('projects/unused.png');
+});
+
+it('preserves embedded attachments, unmanaged files, and recent uploads', function () {
+    foreach (['projects/attachment.png', 'attachments/download.pdf', 'projects/recent.png'] as $path) {
+        Storage::disk('public')->put($path, 'file');
+    }
+    touch(Storage::disk('public')->path('projects/attachment.png'), now()->subDays(2)->getTimestamp());
+    touch(Storage::disk('public')->path('attachments/download.pdf'), now()->subDays(2)->getTimestamp());
+    Project::withoutEvents(fn () => Project::query()->create([
+        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
+        'content' => '![Screenshot](/storage/projects/attachment.png)',
+        'status' => PublishStatus::Draft,
+    ]));
+
+    $this->artisanCommand('media:find-orphans', ['--delete' => true])
+        ->expectsOutputToContain('Deleted 0 orphaned files')
+        ->assertFailed();
+
+    Storage::disk('public')->assertExists(['projects/attachment.png', 'attachments/download.pdf', 'projects/recent.png']);
 });
 
 it('reports missing referenced files without treating them as orphans', function () {

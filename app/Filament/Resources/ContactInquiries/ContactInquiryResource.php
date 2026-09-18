@@ -35,6 +35,9 @@ class ContactInquiryResource extends Resource
     #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[\Override]
+    protected static bool $isGloballySearchable = false;
+
     public static function canCreate(): bool
     {
         return false;

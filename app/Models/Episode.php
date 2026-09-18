@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
+use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;
@@ -33,6 +34,7 @@ use Spatie\Tags\HasTags;
  */
 class Episode extends Model implements Publishable
 {
+    use DeletesOwnedContent;
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;

@@ -8,7 +8,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 
-#[Signature('media:find-orphans {--delete : Delete files that are not referenced by stored media records}')]
+#[Signature('media:find-orphans {--delete : Delete unreferenced files older than 24 hours within managed media directories}')]
 #[Description('Find unreferenced files on the public media disk')]
 class FindOrphanedMedia extends Command implements Isolatable
 {
@@ -25,7 +25,7 @@ class FindOrphanedMedia extends Command implements Isolatable
 
         foreach ($report['files'] as $file) {
             $status = $delete
-                ? ($file['deleted'] ? 'Deleted' : 'Unable to delete')
+                ? ($file['deleted'] ? 'Deleted' : 'Retained')
                 : 'Orphaned';
 
             $this->line("{$status}: {$file['path']} (".$this->formatBytes($file['size']).')');
@@ -38,7 +38,7 @@ class FindOrphanedMedia extends Command implements Isolatable
         }
 
         if (! $delete) {
-            $this->line('No files were deleted. Pass --delete to remove the listed orphans.');
+            $this->line('No files were deleted. Pass --delete to remove eligible orphans in managed directories after a 24-hour grace period.');
 
             if ($report['orphaned'] > 0 || $report['missing'] > 0) {
                 $this->error('Media storage requires review.');
@@ -51,7 +51,11 @@ class FindOrphanedMedia extends Command implements Isolatable
 
         $this->info("Deleted {$report['deleted']} orphaned files.");
 
-        if ($report['failed'] > 0 || $report['missing'] > 0) {
+        if ($report['skipped'] > 0) {
+            $this->warn("Retained {$report['skipped']} files requiring review or a longer grace period.");
+        }
+
+        if ($report['failed'] > 0 || $report['missing'] > 0 || $report['skipped'] > 0) {
             if ($report['failed'] > 0) {
                 $this->error("Failed to delete {$report['failed']} orphaned files.");
             }
