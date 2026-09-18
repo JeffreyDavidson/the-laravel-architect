@@ -1,7 +1,7 @@
 const expandSidebarGroups = () => {
     window.localStorage.removeItem('collapsedGroups');
 
-    document.querySelectorAll('.fi-sidebar-group').forEach((group) => {
+    document.querySelectorAll('.fi-sidebar-group').forEach(group => {
         group.classList.remove('fi-collapsed');
 
         const items = group.querySelector('.fi-sidebar-group-items');

@@ -17,7 +17,7 @@ function initializeFathomEvents() {
         trackFathomEvent(pageLoadEvent);
     }
 
-    document.querySelectorAll('[data-fathom-event]').forEach((element) => {
+    document.querySelectorAll('[data-fathom-event]').forEach(element => {
         element.addEventListener('click', () => {
             const eventName = element.getAttribute('data-fathom-event');
 
