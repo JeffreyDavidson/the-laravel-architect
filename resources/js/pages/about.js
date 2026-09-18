@@ -1,6 +1,6 @@
 function initializeAboutCard() {
-    const container = document.querySelector('.about-card-flip-container');
-    const card = document.querySelector('.about-card-flip');
+    const container = document.querySelector('[data-about-card]');
+    const card = document.querySelector('[data-about-card-surface]');
 
     if (!container || !card) {
         return;

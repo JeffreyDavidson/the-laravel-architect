@@ -8,8 +8,9 @@
 ])
 
 <a
+    data-reveal
     href="{{ $href }}"
-    {{ $attributes->class('podcast-card fade-up group relative overflow-hidden rounded-xl border border-brand-200 bg-white p-8 transition-[border-color,background-color,box-shadow] duration-300 hover:border-brand-600/50 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:border-brand-600/30 dark:bg-transparent') }}
+    {{ $attributes->class('data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate,border-color,background-color,box-shadow] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease] group relative overflow-hidden rounded-xl border border-brand-200 border-t-[3px] border-t-brand-600 bg-white p-8 transition-[border-color,background-color,box-shadow] duration-300 hover:border-brand-600/50 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 dark:border-brand-600/30 dark:border-t dark:bg-transparent') }}
 >
     <div class="mb-4 flex items-start justify-between">
         <img
@@ -24,7 +25,16 @@
 
         <div class="flex h-8 items-end gap-1">
             @for ($i = 0; $i < 5; $i++)
-                <span class="eq-bar bg-brand-400"></span>
+                <span
+                    @class([
+                        'inline-block w-[3px] rounded-[2px] align-bottom bg-brand-400 motion-reduce:animate-none',
+                        'h-2 animate-[eq-1_1.2s_ease-in-out_infinite]' => $i === 0,
+                        'h-4 animate-[eq-2_1s_ease-in-out_infinite_0.1s]' => $i === 1,
+                        'h-3 animate-[eq-3_1.4s_ease-in-out_infinite_0.2s]' => $i === 2,
+                        'h-5 animate-[eq-4_0.9s_ease-in-out_infinite_0.3s]' => $i === 3,
+                        'h-1.5 animate-[eq-5_1.1s_ease-in-out_infinite_0.15s]' => $i === 4,
+                    ])
+                ></span>
             @endfor
         </div>
     </div>

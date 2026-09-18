@@ -8,8 +8,8 @@
     >
         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg font-extrabold text-gray-900 marker:hidden dark:text-white">
             <span class="flex items-center gap-3">
-                <span class="podcast-accent-bg-soft flex h-8 w-8 items-center justify-center rounded-lg">
-                    <svg class="podcast-accent-text h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8m-8 4h5m8-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
+                    <svg class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8m-8 4h5m8-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </span>
                 Transcript
             </span>
@@ -39,7 +39,7 @@
             <x-markdown
                 :content="$content"
                 data-transcript-content
-                class="podcast-prose prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-600 dark:prose-p:text-gray-600 dark:prose-p:text-gray-400"
+                class="prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-600 dark:prose-p:text-gray-600 dark:prose-p:text-gray-400 [--tw-prose-code:var(--accent-pink)] [--tw-prose-links:var(--podcast-color)]"
             />
         </div>
     </details>

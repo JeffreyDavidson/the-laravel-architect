@@ -1,8 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <x-slot:head>
-        @vite('resources/css/pages/listings-entry.css')
-    </x-slot:head>
-
     <div class="blog-index dark:bg-surface-page bg-gray-50">
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">

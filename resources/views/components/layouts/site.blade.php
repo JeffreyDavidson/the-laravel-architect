@@ -65,7 +65,14 @@
         </div>
     @endif
 
-    <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
+    <main
+        id="main-content"
+        tabindex="-1"
+        @class([
+            'isolate',
+            '[&_h1]:font-semibold [&_h1]:text-balance [&_h1]:tracking-[-0.025em] [&_h1]:leading-normal [&_h2]:font-semibold [&_h2]:text-balance [&_h2]:tracking-[-0.025em] [&_h3]:font-semibold [&_h3]:text-balance [&_p]:text-pretty' => request()->routeIs('home'),
+        ])
+    >
         {!! $content ?? '' !!}
     </main>
 

@@ -1,8 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <x-slot:head>
-        @vite('resources/css/pages/article-entry.css')
-    </x-slot:head>
-
     <article>
         <header class="mx-auto max-w-4xl px-4 pt-12 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:px-8 lg:pt-20">
             <a
@@ -30,7 +26,8 @@
         <div class="mx-auto max-w-3xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8 lg:pb-20">
             <x-markdown
                 :content="$issue->content"
-                class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300"
+                data-article-prose
+                class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300"
             />
 
             <div class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">

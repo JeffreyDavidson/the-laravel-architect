@@ -408,3 +408,119 @@
     background-repeat: repeat;
     background-size: 256px 256px;
 }
+
+/* Custom motion primitives; component styles live in Blade utilities. */
+@keyframes eq-1 { 0%, 100% { height: 8px; } 50% { height: 24px; } }
+
+@keyframes eq-2 { 0%, 100% { height: 16px; } 50% { height: 8px; } }
+
+@keyframes eq-3 { 0%, 100% { height: 12px; } 50% { height: 28px; } }
+
+@keyframes eq-4 { 0%, 100% { height: 20px; } 50% { height: 10px; } }
+
+@keyframes eq-5 { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+
+@keyframes podcast-equalize {
+    0% {
+        transform: scaleY(0.15);
+    }
+
+    50% {
+        transform: scaleY(1);
+    }
+
+    100% {
+        transform: scaleY(0.3);
+    }
+}
+
+@keyframes podcast-player-waveform {
+    from {
+        transform: scaleY(var(--from));
+    }
+
+    to {
+        transform: scaleY(var(--to));
+    }
+}
+
+@keyframes heroSteam {
+        0% {
+            opacity: 0;
+            transform: translate3d(0, 8px, 0) scale(0.82);
+        }
+        18%, 72% {
+            opacity: 0.95;
+        }
+        100% {
+            opacity: 0;
+            transform: translate3d(18px, -56px, 0) scale(1.28);
+        }
+    }
+
+@keyframes heroBlueprintPulse {
+        0% {
+            opacity: 0;
+            transform: scale(0.82);
+        }
+        25% {
+            opacity: 0.6;
+        }
+        100% {
+            opacity: 0;
+            transform: scale(1.28);
+        }
+    }
+
+@keyframes heroNodePulse {
+        0%, 100% {
+            opacity: 0;
+            transform: scale(0.88);
+        }
+        18% {
+            opacity: 0.9;
+        }
+        48% {
+            opacity: 0.2;
+            transform: scale(1.18);
+        }
+    }
+
+@keyframes heroSignalTravel {
+        from {
+            stroke-dashoffset: 132;
+        }
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+@keyframes heroGridSweep {
+        0%, 100% {
+            opacity: 0;
+            stroke-dashoffset: 366;
+        }
+        35%, 65% {
+            opacity: 0.7;
+        }
+        80% {
+            opacity: 0;
+            stroke-dashoffset: 0;
+        }
+    }
+
+@keyframes marqueeScroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-25%); }
+    }
+
+@keyframes article-reading-progress {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+::view-transition-group(*) {
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}

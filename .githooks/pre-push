@@ -10,7 +10,10 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     [[ "$local_sha" == 0000000000000000000000000000000000000000 ]] && continue
     files=$(git diff-tree --no-commit-id --name-only -r "$remote_sha..$local_sha" -- '*.php' || true)
     if [[ -n "$files" ]]; then
-        mapfile -t changed_files <<< "$files"
+        changed_files=()
+        while IFS= read -r file; do
+            changed_files+=("$file")
+        done <<< "$files"
         php scripts/check-method-chaining.php "${changed_files[@]}"
     fi
 done

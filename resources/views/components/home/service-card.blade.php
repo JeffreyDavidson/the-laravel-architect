@@ -38,7 +38,10 @@
     ][$variant];
 @endphp
 
-<div {{ $attributes->class(['group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 border-t-[3px] border-t-[var(--card-color)] bg-white p-10 transition-[background-color,border-color] duration-200 hover:border-[var(--card-color)] hover:bg-[var(--surface-service-hover)] dark:border-white/10 dark:border-t-[var(--card-color)] dark:bg-surface-card', $colors['card'], 'fade-up']) }}>
+<div
+    data-reveal
+    {{ $attributes->class(['group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 border-t-[3px] border-t-[var(--card-color)] bg-white p-10 transition-[background-color,border-color] duration-200 hover:border-[var(--card-color)] hover:bg-[var(--surface-service-hover)] dark:border-white/10 dark:border-t-[var(--card-color)] dark:bg-surface-card', $colors['card'], 'data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease]']) }}
+>
     <span class="pointer-events-none absolute -top-2 right-4 font-mono text-8xl leading-none font-black text-black opacity-[0.04] transition-opacity duration-200 group-hover:opacity-[0.08] dark:text-white">{{ $number }}</span>
 
     <div class="relative z-10 mb-5 inline-block rounded-lg border {{ $colors['border'] }} bg-inset px-4 py-2.5 font-mono text-sm text-[var(--text-primary)] dark:bg-surface-control dark:text-[var(--text-code)]">

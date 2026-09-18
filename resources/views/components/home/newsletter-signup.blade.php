@@ -1,4 +1,4 @@
-<div {{ $attributes->merge(['class' => 'newsletter-card relative overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-6 shadow-sm dark:border-brand-800/50 dark:bg-brand-900/50 dark:shadow-none sm:p-10']) }}>
+<div {{ $attributes->merge(['class' => ' relative overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-6 shadow-sm dark:border-brand-800/50 dark:bg-brand-900/50 dark:shadow-none sm:p-10']) }}>
     <svg class="text-brand-400 mx-auto mb-4 h-10 w-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
     </svg>
@@ -46,7 +46,7 @@
             value="{{ old('email') }}"
             aria-invalid="{{ $errors->has('email') ? 'true' : 'false' }}"
             aria-describedby="{{ $errors->has('email') ? 'newsletter-email-error newsletter-privacy' : 'newsletter-privacy' }}"
-            class="newsletter-input border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
+            class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:shadow-[0_0_0_2px_var(--brand-alpha-40)] focus:outline-none sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
         />
         <x-button type="submit" class="rounded-lg text-base font-semibold sm:text-sm">Subscribe</x-button>
     </form>

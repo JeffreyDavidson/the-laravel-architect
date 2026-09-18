@@ -1,6 +1,6 @@
 import './public-shell';
 
-if (document.querySelector('.about-card-flip-container')) {
+if (document.querySelector('[data-about-card]')) {
     import('./pages/about');
 }
 

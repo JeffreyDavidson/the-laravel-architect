@@ -45,23 +45,23 @@
             @if ($categories->isNotEmpty())
                 <nav aria-label="Filter articles by category" class="-mx-1 overflow-x-auto px-1">
                     <div class="flex min-w-max items-center gap-6">
-                        <a
+                        <x-blog.category-filter
                             href="{{ route('blog.index', array_filter(['q' => $query !== '' ? $query : null], fn ($value) => $value !== null)) }}"
                             wire:click.prevent="selectCategory"
-                            @if ($categorySlug === null) aria-current="page" @endif
-                            class="category-pill @if ($categorySlug === null) active @endif"
+                            :active="$categorySlug === null"
+                            :count="$publishedPostCount"
                         >
-                            All <span>{{ $publishedPostCount }}</span>
-                        </a>
+                            All
+                        </x-blog.category-filter>
                         @foreach ($categories as $category)
-                            <a
+                            <x-blog.category-filter
                                 href="{{ route('blog.index', array_filter(['q' => $query !== '' ? $query : null, 'category' => $category->slug], fn ($value) => $value !== null)) }}"
                                 wire:click.prevent="selectCategory(@js($category->slug))"
-                                @if ($categorySlug === $category->slug) aria-current="page" @endif
-                                class="category-pill @if ($categorySlug === $category->slug) active @endif"
+                                :active="$categorySlug === $category->slug"
+                                :count="$category->posts_count"
                             >
-                                {{ $category->name }} <span>{{ $category->posts_count }}</span>
-                            </a>
+                                {{ $category->name }}
+                            </x-blog.category-filter>
                         @endforeach
                     </div>
                 </nav>

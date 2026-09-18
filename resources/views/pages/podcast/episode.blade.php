@@ -1,8 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <x-slot:head>
-        @vite('resources/css/pages/podcast-entry.css')
-    </x-slot:head>
-
     <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
         {{-- ===== EPISODE HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
@@ -39,7 +35,7 @@
                             />
                         @else
                             <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56">
-                                <svg class="podcast-accent-text h-20 w-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
+                                <svg class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                             </div>
                         @endif
                     </div>
@@ -48,7 +44,7 @@
                     <div class="min-w-0 flex-1 text-center lg:text-left">
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                            <span class="podcast-badge rounded-lg px-3 py-1.5 font-mono text-sm font-bold">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
+                            <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
                             @if ($episode->published_at)
                                 <time
                                     datetime="{{ $episode->published_at->toDateString() }}"
@@ -90,7 +86,7 @@
                                     class="h-5 w-5 rounded object-cover"
                                 />
                             @else
-                                <svg class="podcast-accent-text h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
+                                <svg class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                             @endif
                             {{ $podcast->name }}
                         </a>
@@ -108,7 +104,7 @@
                         {{-- Custom Audio Player --}}
                         @if ($audioUrl)
                             <div
-                                class="dark:border-surface-border dark:bg-surface-control mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white"
+                                class="group/player dark:border-surface-border dark:bg-surface-control mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white"
                                 data-audio-player
                                 data-playing="false"
                             >
@@ -124,7 +120,7 @@
                                     >
                                         @for ($i = 0; $i < 80; $i++)
                                             <div
-                                                class="waveform-bar podcast-accent-bg h-full w-[3px] rounded-full"
+                                                class="h-full w-[3px] origin-bottom animate-[podcast-player-waveform_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [animation-play-state:paused] group-data-[playing=true]/player:[animation-play-state:running] motion-reduce:animate-none"
                                                 style="--from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;"
                                             ></div>
                                         @endfor
@@ -136,7 +132,7 @@
                                     <div class="group relative h-5">
                                         <div class="bg-surface-border pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full">
                                             <div
-                                                class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full"
+                                                class="absolute inset-y-0 left-0 w-0 rounded-full bg-[var(--podcast-color)]"
                                                 data-audio-progress
                                             ></div>
                                         </div>
@@ -198,7 +194,7 @@
                                             data-audio-play
                                             aria-label="Play episode"
                                             aria-pressed="false"
-                                            class="podcast-accent-bg flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform hover:scale-105"
+                                            class="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--podcast-color)] text-white transition-transform hover:scale-105"
                                         >
                                             <svg data-audio-play-icon aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                             <svg data-audio-pause-icon hidden aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
@@ -249,7 +245,7 @@
                         {{-- Description Fallback (no audio, no show_notes, no transcript, no youtube, no embed) --}}
                         @if (! $audioUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedUrl)
                             <div class="dark:border-surface-border dark:bg-surface-control relative mb-10 rounded-2xl border border-gray-200 bg-white p-8">
-                                <div class="podcast-accent-text absolute top-6 left-6 text-6xl leading-none opacity-15">
+                                <div class="text-archive-link absolute top-6 left-6 text-6xl leading-none opacity-15 dark:text-[var(--podcast-color)]">
                                     "
                                 </div>
                                 <div class="pt-4 pl-8">
@@ -320,7 +316,7 @@
                                         href="{{ $embedLink }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="share-btn border-social-spotify/20 bg-social-spotify/10 text-social-spotify hover:bg-social-spotify/20 inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors"
+                                        class="border-social-spotify/20 bg-social-spotify/10 text-social-spotify hover:bg-social-spotify/20 inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors hover:-translate-y-0.5 motion-reduce:transition-none"
                                     >
                                         <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" /></svg>
                                         Podcast platform
@@ -331,7 +327,7 @@
                                         href="{{ $episode->youtube_url }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="share-btn inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                                        class="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:-translate-y-0.5 hover:bg-red-500/20 motion-reduce:transition-none"
                                     >
                                         <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
                                         YouTube
@@ -347,7 +343,7 @@
                                     Featured Guest
                                 </h3>
                                 <div class="flex items-start gap-4">
-                                    <div class="podcast-badge flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full text-xl font-bold">
+                                    <div class="text-archive-link flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[var(--archive-link-alpha-08)] text-xl font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">
                                         {{ substr($episode->guest_name, 0, 1) }}
                                     </div>
                                     <div>
@@ -364,7 +360,7 @@
                                                 href="{{ $episode->guest_url }}"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                class="podcast-accent-text mt-2 inline-flex items-center gap-1.5 text-sm hover:underline"
+                                                class="text-archive-link mt-2 inline-flex items-center gap-1.5 text-sm hover:underline dark:text-[var(--podcast-color)]"
                                             >
                                                 {{ parse_url($episode->guest_url, PHP_URL_HOST) }}
                                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -432,8 +428,8 @@
                                                 class="h-12 w-12 rounded-lg object-cover"
                                             />
                                         @else
-                                            <div class="podcast-accent-bg-soft flex h-12 w-12 items-center justify-center rounded-lg">
-                                                <svg class="podcast-accent-text h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
+                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
+                                                <svg class="text-archive-link h-6 w-6 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
                                             </div>
                                         @endif
                                         <div class="min-w-0">
@@ -457,7 +453,7 @@
                                 <dl class="space-y-3 text-sm">
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Episode</dt>
-                                        <dd class="podcast-accent-text font-mono font-semibold">
+                                        <dd class="text-archive-link font-mono font-semibold dark:text-[var(--podcast-color)]">
                                             {{ \App\Presenters\EpisodePresenter::from($episode)->code() }}
                                         </dd>
                                     </div>
@@ -507,7 +503,7 @@
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on X"
-                                        class="share-btn dark:border-surface-border flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                        class="dark:border-surface-border flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                                     </a>
@@ -516,7 +512,7 @@
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on LinkedIn"
-                                        class="share-btn dark:border-surface-border flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                        class="dark:border-surface-border flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                                     </a>
@@ -524,7 +520,7 @@
                                         type="button"
                                         data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}"
                                         aria-label="Copy episode link"
-                                        class="share-btn dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                                        class="dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     >
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
                                     </button>
