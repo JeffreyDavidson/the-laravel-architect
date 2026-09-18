@@ -1,3 +1,5 @@
+@props(['item', 'linked' => false])
+
 <span class="mt-0.5 flex-shrink-0 text-xl">{{ $item['icon'] }}</span>
 <div class="min-w-0 flex-1">
     <div class="flex items-center gap-2">

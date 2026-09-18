@@ -1,4 +1,3 @@
-@props(['class' => ''])
-<div {{ $attributes->merge(['class' => 'rounded-2xl border border-gray-200 dark:border-surface-border bg-white dark:bg-surface-control ' . $class]) }}>
+<div {{ $attributes->class('rounded-2xl border border-gray-200 bg-white dark:border-surface-border dark:bg-surface-control') }}>
     {{ $slot }}
 </div>

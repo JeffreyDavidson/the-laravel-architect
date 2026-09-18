@@ -28,18 +28,10 @@
         </header>
 
         <div class="mx-auto max-w-3xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8 lg:pb-20">
-            <x-prose class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-none">
-                {!!
-                    Str::markdown(
-                        $issue->content,
-                        [
-                            'html_input' => 'strip',
-                            'allow_unsafe_links' => false,
-                            'heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => ''],
-                        ],
-                    )
-                !!}
-            </x-prose>
+            <x-markdown
+                :content="$issue->content"
+                class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300"
+            />
 
             <div class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
                 <a

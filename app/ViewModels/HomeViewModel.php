@@ -14,6 +14,7 @@ class HomeViewModel
     /**
      * @return array{
      *     latestPosts: Collection<int, Post>,
+     *     featuredPost: Post|null,
      *     featuredProjects: Collection<int, Project>,
      *     podcast: Podcast|null,
      *     latestYouTubeVideos: Collection<int, Video>,
@@ -24,12 +25,15 @@ class HomeViewModel
      */
     public function data(): array
     {
+        $latestPosts = Post::published()
+            ->with(['category', 'tags'])
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
         return [
-            'latestPosts' => Post::published()
-                ->with(['category', 'tags'])
-                ->latest('published_at')
-                ->take(3)
-                ->get(),
+            'latestPosts' => $latestPosts,
+            'featuredPost' => $latestPosts->first(),
             'featuredProjects' => Project::published()
                 ->featured()
                 ->orderBy('sort_order')
