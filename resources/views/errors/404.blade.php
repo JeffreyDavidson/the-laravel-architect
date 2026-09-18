@@ -1,8 +1,8 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
 
-@section('title', '404 | Page Not Found')
-
-@section('content')
     <div class="dark:bg-surface-page flex min-h-[80vh] items-center bg-white">
         <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-20 sm:px-6 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-14 lg:px-8">
             <p class="text-brand-600 tracking-label font-mono text-sm uppercase">Error / 404</p>
@@ -38,4 +38,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.app>

@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
 
-@section('title', "Tagged: {$tag->name}")
+        @vite('resources/css/pages/listings-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/listings-entry.css')
-@endpush
-
-@section('content')
     {{-- Hero --}}
     <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
@@ -40,4 +38,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.app>

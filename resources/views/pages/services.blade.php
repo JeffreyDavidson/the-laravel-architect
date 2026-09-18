@@ -1,8 +1,8 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
 
-@section('title', 'Services')
-
-@section('content')
     @php
         $services = [
             ['id' => 'build', 'icon' => 'heroicon-o-squares-2x2', 'title' => 'Build your application', 'description' => 'Turn the way your business works into software that supports it. From a new product to an internal tool, start with the workflows that matter most.', 'examples' => ['Custom Laravel applications and new features', 'Admin panels and tools for everyday operations', 'Data modeling and integrations'], 'tools' => 'Laravel · Filament · Livewire'],
@@ -155,4 +155,4 @@
             >Discuss your project <x-heroicon-o-arrow-long-right class="size-5" aria-hidden="true"
         /></x-button>
     </section>
-@endsection
+</x-layouts.app>

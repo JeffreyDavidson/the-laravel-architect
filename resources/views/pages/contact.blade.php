@@ -1,8 +1,8 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
 
-@section('title', 'Contact')
-
-@section('content')
     {{-- Hero --}}
     <x-hero-section>
         <div class="max-w-3xl">
@@ -249,4 +249,4 @@
             </div>
         </div>
     </x-page-section>
-@endsection
+</x-layouts.app>

@@ -1,10 +1,9 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+        @vite('resources/css/pages/home-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/home-entry.css')
-@endpush
-
-@section('content')
     {{-- ===== HERO ===== --}}
     <section
         data-home-hero
@@ -361,5 +360,4 @@
             </div>
         </div>
     </section>
-
-@endsection
+</x-layouts.app>

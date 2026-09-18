@@ -1,6 +1,7 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
     <article data-project-detail>
         <section class="dark:border-brand-800 dark:bg-brand-950 border-b border-gray-200 bg-white py-10 sm:py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -193,4 +194,4 @@
             </div>
         </section>
     @endif
-@endsection
+</x-layouts.app>

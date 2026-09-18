@@ -1,10 +1,9 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+        @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
+    </x-slot:head>
 
-@push('head')
-    @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
-@endpush
-
-@section('content')
     <div
         class="article-progress bg-brand-500 z-overlay fixed top-0 left-0 h-0.5 w-full"
         data-article-progress
@@ -171,4 +170,4 @@
             </section>
         @endif
     </article>
-@endsection
+</x-layouts.app>

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
 
-@section('title', 'Projects')
-
-@section('content')
     <div data-project-index>
         <header class="pt-12 pb-10 sm:pt-20 sm:pb-14">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -136,4 +136,4 @@
             >Discuss a Project</a>
         </div>
     </section>
-@endsection
+</x-layouts.app>

@@ -1,6 +1,7 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
+    </x-slot:head>
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt command="newsletter:unsubscribe" />
@@ -18,4 +19,4 @@
             </form>
         </div>
     </x-page-section>
-@endsection
+</x-layouts.app>

@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
 
-@section('title', 'About')
+        @vite('resources/css/pages/about-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/about-entry.css')
-@endpush
-
-@section('content')
     @php
         $timelineItems = [
             ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
@@ -412,4 +410,4 @@
             </x-button>
         </div>
     </div>
-@endsection
+</x-layouts.app>

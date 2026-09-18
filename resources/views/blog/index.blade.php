@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<x-layouts.app :seo-source="$seoSource ?? null">
+    <x-slot:head>
+        @include('partials.json-ld')
 
-@section('title', 'Blog')
+        @vite('resources/css/pages/listings-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/listings-entry.css')
-@endpush
-
-@section('content')
     <div class="blog-index dark:bg-surface-page bg-gray-50" data-blog-filter>
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
@@ -142,4 +140,4 @@
             </section>
         </div>
     </div>
-@endsection
+</x-layouts.app>
