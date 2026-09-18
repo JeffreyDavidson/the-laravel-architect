@@ -5,10 +5,10 @@
         @if ($previous)
             <a
                 href="{{ route('podcast.episode', [$podcast, $previous]) }}"
-                class="ep-nav group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:bg-white"
+                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center gap-3">
-                    <svg class="ep-nav-arrow h-5 w-5 flex-shrink-0 text-gray-600 transition-transform [--arrow-dir:-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    <svg class="h-5 w-5 flex-shrink-0 text-gray-600 transition-transform [--arrow-dir:-4px] group-hover:translate-x-[var(--arrow-dir,4px)] motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                     <div class="min-w-0">
                         <span class="text-xs tracking-wide text-gray-500 uppercase">Previous Episode</span>
                         <p class="mt-0.5 truncate font-semibold transition-opacity group-hover:opacity-80">
@@ -28,7 +28,7 @@
         @if ($next)
             <a
                 href="{{ route('podcast.episode', [$podcast, $next]) }}"
-                class="ep-nav group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-all duration-300 hover:bg-white"
+                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-all duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center justify-end gap-3">
                     <div class="min-w-0">
@@ -41,7 +41,7 @@
                             @if (\App\Presenters\EpisodePresenter::from($next)->duration()) ·{{ \App\Presenters\EpisodePresenter::from($next)->duration() }}@endif
                         </span>
                     </div>
-                    <svg class="ep-nav-arrow h-5 w-5 flex-shrink-0 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <svg class="h-5 w-5 flex-shrink-0 text-gray-600 transition-transform group-hover:translate-x-[var(--arrow-dir,4px)] motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </div>
             </a>
         @else

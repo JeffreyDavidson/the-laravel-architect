@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
@@ -136,6 +137,19 @@ it('exposes the code copy action and delayed syntax highlighting', function (): 
 
     $page->assertScript("document.documentElement.dataset.codeHighlightingState === 'ready'")
         ->assertPresent('.prose code .token');
+});
+
+it('builds styled article navigation from the Blade template', function (): void {
+    $this->withVite();
+    $post = Post::query()->where('slug', 'e2e-code-example')->sole();
+    $post->update(['content' => "## First section\n\nIntroduction.\n\n## Second section\n\nDetails."]);
+
+    $page = $this->browserPage(route('blog.show', $post), 'desktop');
+
+    $page->assertCount('[data-article-toc-link]', 4)
+        ->assertAttribute('aside [data-article-toc-link="first-section"]', 'href', '#first-section')
+        ->assertScript("getComputedStyle(document.querySelector('[data-article-toc-link]')).borderLeftWidth === '1px'")
+        ->assertNoJavaScriptErrors();
 });
 
 it('allows an administrator to reach the dashboard', function (): void {

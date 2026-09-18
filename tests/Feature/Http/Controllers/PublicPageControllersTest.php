@@ -718,18 +718,25 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     $manifest = assetManifest();
 
-    $this->get(route('home'))->assertOk()->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')->assertDontSeeHtml('fonts.bunny.net')->assertDontSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/css/pages/home-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/about-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/listings-entry.css']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1536.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-640.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-320.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-512.webp']['file'])->assertSeeHtml($manifest['resources/js/app.js']['file']);
+    $this->get(route('home'))->assertOk()->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')->assertDontSeeHtml('fonts.bunny.net')->assertDontSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1536.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-640.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-320.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-512.webp']['file'])->assertSeeHtml($manifest['resources/js/app.js']['file']);
 
-    $this->get(route('about'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/css/pages/about-entry.css']['file'])->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"')->assertDontSeeHtml($manifest['resources/css/pages/home-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/listings-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/podcast-entry.css']['file']);
+    $this->get(route('about'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"');
 
-    $this->get(route('blog.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/css/pages/listings-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/about-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/home-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/podcast-entry.css']['file']);
+    $this->get(route('blog.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('projects.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/listings-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/about-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/home-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/podcast-entry.css']['file']);
+    $this->get(route('projects.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('podcast.index'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/css/pages/podcast-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/about-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/listings-entry.css']['file'])->assertDontSeeHtml($manifest['resources/css/pages/home-entry.css']['file']);
+    $this->get(route('podcast.index'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
     expect($manifest)
         ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
+        ->not->toHaveKeys([
+            'resources/css/pages/home-entry.css',
+            'resources/css/pages/about-entry.css',
+            'resources/css/pages/article-entry.css',
+            'resources/css/pages/listings-entry.css',
+            'resources/css/pages/podcast-entry.css',
+        ])
         ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf')
         ->and(implode("\n", array_column($manifest, 'file')))->not->toContain('Empera-Vintage')->not->toContain('Empera-Regular.ttf');
 });
@@ -848,7 +855,7 @@ it('renders keyboard accessible podcast audio controls', function () {
         'published_at' => now()->subDays(2),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('data-audio-player')->assertSeeHtml('data-audio-play')->assertSeeHtml('data-audio-speed')->assertSeeHtml('aria-label="Seek episode"')->assertSeeHtml('aria-label="Skip back 15 seconds"')->assertSeeHtml('aria-label="Skip forward 30 seconds"')->assertSeeHtml('aria-label="Play episode"')->assertSeeHtml('class="podcast-accent-bg absolute inset-y-0 left-0 w-0 rounded-full"')->assertSeeHtml('data-audio-progress')->assertSeeHtml('[--arrow-dir:-4px]')->assertDontSeeHtml('style="width: 0;"')->assertDontSeeHtml('style="--arrow-dir:')->assertDontSeeHtml('x-data=')->assertDontSeeHtml('@click=');
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('data-audio-player')->assertSeeHtml('data-audio-play')->assertSeeHtml('data-audio-speed')->assertSeeHtml('aria-label="Seek episode"')->assertSeeHtml('aria-label="Skip back 15 seconds"')->assertSeeHtml('aria-label="Skip forward 30 seconds"')->assertSeeHtml('aria-label="Play episode"')->assertSeeHtml('data-audio-progress')->assertSeeHtml('[--arrow-dir:-4px]')->assertDontSeeHtml('style="width: 0;"')->assertDontSeeHtml('style="--arrow-dir:')->assertDontSeeHtml('x-data=')->assertDontSeeHtml('@click=');
 });
 
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {

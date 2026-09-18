@@ -83,17 +83,17 @@ function initializeArticleNavigation() {
         return;
     }
 
-    const headings = Array.from(article.querySelectorAll('.article-prose h2[id]'));
+    const headings = Array.from(article.querySelectorAll('[data-article-prose] h2[id]'));
     const tocContainers = document.querySelectorAll('[data-article-toc]');
     const tocLists = document.querySelectorAll('[data-article-toc-list]');
+    const linkTemplate = article.querySelector('[data-article-toc-template]');
 
-    if (headings.length > 1) {
+    if (headings.length > 1 && linkTemplate) {
         tocLists.forEach((list) => {
             headings.forEach((heading) => {
-                const link = document.createElement('a');
+                const link = linkTemplate.content.firstElementChild.cloneNode(true);
 
                 link.href = `#${heading.id}`;
-                link.className = 'article-toc-link';
                 link.textContent = heading.textContent;
                 link.dataset.articleTocLink = heading.id;
                 list.appendChild(link);

@@ -32,8 +32,12 @@
         <dl class="grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-8 {{ $columns }}">
             @foreach ($proofPoints as $point)
                 <div class="text-center">
-                    <dd class="stat-number tabular-nums">
-                        <span class="count-up" data-target="{{ $point['value'] }}">{{ $point['value'] }}</span
+                    <dd class="font-mono text-[2rem] leading-none font-extrabold text-[var(--text-primary)] tabular-nums sm:text-5xl">
+                        <span
+                            data-count-up
+                            class="inline-block"
+                            data-target="{{ $point['value'] }}"
+                            >{{ $point['value'] }}</span
                         >{{ $point['suffix'] }}
                     </dd>
                     <dt class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">{{ $point['label'] }}</dt>

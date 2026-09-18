@@ -1,10 +1,10 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <x-slot:head>
-        @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
+        @vite('resources/css/prism.css')
     </x-slot:head>
 
     <div
-        class="article-progress bg-brand-500 z-overlay fixed top-0 left-0 h-0.5 w-full"
+        class="bg-brand-500 z-overlay fixed top-0 left-0 h-0.5 w-full origin-left [transform:scaleX(0)] [animation:article-reading-progress_linear] [animation-timeline:scroll(root)] motion-reduce:transform-none motion-reduce:animate-none"
         data-article-progress
         aria-hidden="true"
     ></div>
@@ -54,6 +54,10 @@
             />
         </div>
 
+        <template data-article-toc-template>
+            <a class="hover:border-brand-600 hover:text-brand-600 aria-[current=true]:border-brand-600 aria-[current=true]:text-brand-600 dark:hover:border-brand-400 dark:hover:text-brand-200 dark:aria-[current=true]:border-brand-400 dark:aria-[current=true]:text-brand-200 block border-l border-[var(--border-gray)] py-[0.4rem] pl-[0.9rem] text-[0.8125rem] leading-[1.35] text-gray-500 transition-[border-color,color] duration-160 ease-[ease] motion-reduce:transition-none dark:border-[var(--brand-alpha-25)] dark:text-gray-400"></a>
+        </template>
+
         <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[13rem_minmax(0,70ch)] lg:gap-16 lg:px-8 lg:py-20">
             <aside class="hidden lg:block" aria-label="Article navigation">
                 <nav class="sticky top-24" data-article-toc hidden>
@@ -77,7 +81,8 @@
                 <x-markdown
                     :content="$post->content"
                     heading-ids
-                    class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]"
+                    data-article-prose
+                    class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]"
                 />
 
                 @if ($post->tags->count())
