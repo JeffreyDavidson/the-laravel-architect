@@ -78,17 +78,17 @@ it('supports keyboard interaction on the about card', function (): void {
     expect($card->getAttribute('aria-pressed'))->toBe('true');
 });
 
-it('keeps Alpine off pages with native interactions', function (): void {
+it('keeps Alpine off pages without Livewire', function (): void {
     $this->withVite();
 
-    foreach (['/', '/about', '/blog'] as $route) {
+    foreach (['/', '/about'] as $route) {
         $page = $this->browserPage($route, 'desktop');
 
         expect($page->page()->evaluate('typeof window.Alpine'))->toBe('undefined');
     }
 });
 
-it('supports blog search and reset without Alpine', function (): void {
+it('supports blog search and reset with Livewire', function (): void {
     $this->withVite();
 
     $page = $this->browserPage('/blog', 'desktop');

@@ -19,6 +19,7 @@
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.30",
         "league/flysystem-sftp-v3": "^3.0",
+        "livewire/livewire": "^4.4",
         "nunomaduro/laravel-sluggable": "^1.0",
         "php": "^8.5",
         "ralphjsmit/laravel-filament-seo": "^2.2",

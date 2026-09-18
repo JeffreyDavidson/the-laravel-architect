@@ -6,8 +6,12 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use App\Presenters\PostPresenter;
+use App\Queries\BlogIndexQuery;
 use App\ViewModels\BlogIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 pest()->use(RefreshDatabase::class);
 
@@ -37,8 +41,7 @@ it('builds the public blog index payload', function () {
         status: PublishStatus::Draft,
     );
 
-    $data = app(BlogIndexViewModel::class)
-        ->data();
+    $data = blogIndexViewModelData();
 
     expect($data)->toHaveKeys(['posts', 'categories', 'seoSource'])
         ->and($data['posts']->getCollection()->modelKeys())->toBe([
@@ -86,7 +89,7 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         }
     }
 
-    $data = app(BlogIndexViewModel::class)->data(['q' => 'boundaries']);
+    $data = blogIndexViewModelData(['q' => 'boundaries']);
 
     expect($data['posts']->total())->toBe(1)
         ->and($data['posts']->sole()->title)->toBe('Another Article')
@@ -99,7 +102,7 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         'title match' => 'Title Match',
         'excerpt match' => 'Unrelated',
     ] as $term => $expectedTitle) {
-        $filtered = app(BlogIndexViewModel::class)->data(['q' => $term]);
+        $filtered = blogIndexViewModelData(['q' => $term]);
 
         expect($filtered['posts']->sole()->title)->toBe($expectedTitle);
     }
@@ -114,9 +117,33 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         'published_at' => now(),
     ]);
 
-    expect(app(BlogIndexViewModel::class)->data(['q' => '%'])['posts']->sole()->is($literal))->toBeTrue()
-        ->and(app(BlogIndexViewModel::class)->data(['q' => '_'])['posts']->sole()->is($literal))->toBeTrue();
+    expect(blogIndexViewModelData(['q' => '%'])['posts']->sole()->is($literal))->toBeTrue()
+        ->and(blogIndexViewModelData(['q' => '_'])['posts']->sole()->is($literal))->toBeTrue();
 });
+
+/**
+ * @param  array{q?: string, category?: string}  $filters
+ * @return array{
+ *     posts: LengthAwarePaginator<int, Post>,
+ *     categories: Collection<int, Category>,
+ *     publishedPostCount: int,
+ *     query: string,
+ *     categorySlug: string|null,
+ *     selectedCategory: Category|null,
+ *     seoSource: SEOData,
+ * }
+ */
+function blogIndexViewModelData(array $filters = []): array
+{
+    $query = trim($filters['q'] ?? '');
+    $categorySlug = $filters['category'] ?? null;
+
+    return app(BlogIndexViewModel::class)->data(
+        app(BlogIndexQuery::class)->results($query, $categorySlug),
+        $query,
+        $categorySlug,
+    );
+}
 
 function createBlogIndexViewModelPost(
     User $author,
