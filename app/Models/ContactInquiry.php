@@ -37,7 +37,7 @@ class ContactInquiry extends Model
     }
 
     /** @return Builder<ContactInquiry> */
-    protected function prunable(): Builder
+    public function prunable(): Builder
     {
         return ContactInquiry::query()->where(
             'created_at',

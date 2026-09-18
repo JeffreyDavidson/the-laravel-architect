@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Queries\BlogIndexQuery;
+use App\Support\Seo\StructuredDataBuilder;
 use App\ViewModels\BlogIndexViewModel;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
@@ -13,14 +14,19 @@ final class BlogIndex extends Component
 {
     use WithPagination;
 
+    /** @var array<string, mixed>|null */
+    private ?array $initialData = null;
+
     #[Url(as: 'q', history: true, except: '')]
     public string $search = '';
 
-    #[Url(as: 'category', history: true, except: '')]
+    #[Url(as: 'category', history: true, except: null)]
     public ?string $categorySlug = null;
 
-    public function mount(?string $search = null, ?string $categorySlug = null): void
+    /** @param array<string, mixed>|null $initialData */
+    public function mount(?string $search = null, ?string $categorySlug = null, ?array $initialData = null): void
     {
+        $this->initialData = $initialData;
         if ($search !== null) {
             $this->search = $search;
         }
@@ -64,8 +70,12 @@ final class BlogIndex extends Component
         $this->resetPage();
     }
 
-    public function render(BlogIndexQuery $blogIndexQuery, BlogIndexViewModel $blogIndexViewModel): View
+    public function render(BlogIndexQuery $blogIndexQuery, BlogIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
     {
+        if ($this->initialData !== null) {
+            return view('livewire.blog-index', $this->initialData);
+        }
+
         $data = $blogIndexViewModel->data(
             $blogIndexQuery->results($this->search, $this->categorySlug),
             $this->search,
@@ -78,6 +88,7 @@ final class BlogIndex extends Component
             description: $data['seoSource']->description,
             canonicalUrl: $data['seoSource']->canonical_url,
             robots: $data['seoSource']->robots,
+            structuredData: $structuredDataBuilder->build($data, 'blog.index'),
         );
 
         return view('livewire.blog-index', $data);

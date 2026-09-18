@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\Category;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -15,6 +16,7 @@ final class GenerateSitemap
     public function handle(): string
     {
         $posts = Post::published()
+            ->select(['id', 'slug', 'category_id', 'published_at', 'updated_at'])
             ->with('tags')
             ->latest('published_at')
             ->get();
@@ -26,9 +28,10 @@ final class GenerateSitemap
             ->get();
         $podcasts = Podcast::query()
             ->active()
-            ->with('publishedEpisodes')
+            ->with('publishedEpisodes:id,podcast_id,slug,updated_at')
             ->get();
-        $projects = Project::published()->get();
+        $projects = Project::published()->get(['id', 'slug', 'updated_at']);
+        $issues = NewsletterIssue::query()->published()->get(['id', 'slug', 'updated_at']);
         $podcastModels = [];
 
         foreach ($podcasts as $podcast) {
@@ -54,6 +57,8 @@ final class GenerateSitemap
             ['url' => route('blog.index'), 'priority' => '0.9', 'freq' => 'weekly', 'lastmod' => $this->latestUpdatedAt($posts)],
             ['url' => route('podcast.index'), 'priority' => '0.8', 'freq' => 'weekly', 'lastmod' => $latestPodcastUpdatedAt],
             ['url' => route('projects.index'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => $this->latestUpdatedAt($projects)],
+            ['url' => route('newsletter.index'), 'priority' => '0.8', 'freq' => 'weekly', 'lastmod' => $this->latestUpdatedAt($issues)],
+            ['url' => route('archive.index'), 'priority' => '0.7', 'freq' => 'weekly', 'lastmod' => null],
         ] as $page) {
             $xml .= '<url>';
             $xml .= '<loc>'.$page['url'].'</loc>';
@@ -151,6 +156,14 @@ final class GenerateSitemap
             $xml .= '<changefreq>monthly</changefreq>';
             $xml .= '<priority>0.6</priority>';
             $xml .= '</url>';
+        }
+
+        foreach ($issues as $issue) {
+            $xml .= '<url><loc>'.route('newsletter.issue', $issue).'</loc>';
+            if ($issue->updated_at !== null) {
+                $xml .= '<lastmod>'.$issue->updated_at->toW3cString().'</lastmod>';
+            }
+            $xml .= '<changefreq>monthly</changefreq><priority>0.6</priority></url>';
         }
 
         return $xml.'</urlset>';

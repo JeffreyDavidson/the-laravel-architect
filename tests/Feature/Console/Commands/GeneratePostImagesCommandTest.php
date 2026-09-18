@@ -5,11 +5,36 @@ use App\Models\Post;
 use App\Models\User;
 use App\Services\FeaturedImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 
 pest()->use(RefreshDatabase::class);
+
+it('refreshes responsive variants when generation overwrites the same source path', function () {
+    Storage::fake('public');
+    $path = 'posts/same.webp';
+    Storage::disk('public')->put($path, UploadedFile::fake()->image('same.webp', 1280, 8)->getContent());
+    Post::query()->create([
+        'title' => 'Same path', 'slug' => 'same-path', 'content' => 'Content',
+        'user_id' => User::factory()->create()->id, 'featured_image_path' => $path,
+    ]);
+    Storage::disk('public')->assertExists('posts/responsive/same-1280.webp');
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->expects('generate')->resolves(function () use ($path): string {
+        Storage::disk('public')->put($path, UploadedFile::fake()->image('same.webp', 640, 8)->getContent());
+
+        return $path;
+    });
+    app()->instance(FeaturedImageGenerator::class, $generator);
+
+    $this->artisanCommand('posts:generate-images', ['--force' => true])->assertSuccessful();
+
+    Storage::disk('public')->assertExists('posts/responsive/same-640.webp');
+    Storage::disk('public')->assertMissing('posts/responsive/same-1280.webp');
+});
 
 it('succeeds without invoking the generator when no posts need images', function () {
     $generator = Double::for(FeaturedImageGenerator::class);

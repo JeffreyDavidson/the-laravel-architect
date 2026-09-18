@@ -5,6 +5,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
+it('only counts verified subscriptions that have not unsubscribed as active', function () {
+    $active = Subscriber::query()->create(['email' => 'active@example.test', 'verified_at' => now()]);
+    $pending = Subscriber::query()->create(['email' => 'pending@example.test']);
+    $unsubscribed = Subscriber::query()->create(['email' => 'gone@example.test', 'verified_at' => now(), 'unsubscribed_at' => now()]);
+
+    expect(Subscriber::query()->active()->pluck('id')->all())->toBe([$active->id])
+        ->and($active->isActive())->toBeTrue()
+        ->and($pending->isActive())->toBeFalse()
+        ->and($unsubscribed->isActive())->toBeFalse();
+});
+
 it('does not mass assign its verification token hash', function () {
     $subscriber = new Subscriber;
 

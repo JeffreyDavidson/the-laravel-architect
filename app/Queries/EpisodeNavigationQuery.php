@@ -6,6 +6,7 @@ namespace App\Queries;
 
 use App\Models\Episode;
 use App\Models\Podcast;
+use Illuminate\Database\Eloquent\Builder;
 
 class EpisodeNavigationQuery
 {
@@ -21,12 +22,16 @@ class EpisodeNavigationQuery
 
         return [
             'previous' => $podcast->publishedEpisodes()
-                ->where('published_at', '<', $episode->published_at)
+                ->where(fn (Builder $query) => $query->where('published_at', '<', $episode->published_at)
+                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)->where('id', '<', $episode->id)))
                 ->latest('published_at')
+                ->latest('id')
                 ->first(),
             'next' => $podcast->publishedEpisodes()
-                ->where('published_at', '>', $episode->published_at)
+                ->where(fn (Builder $query) => $query->where('published_at', '>', $episode->published_at)
+                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)->where('id', '>', $episode->id)))
                 ->oldest('published_at')
+                ->oldest('id')
                 ->first(),
         ];
     }

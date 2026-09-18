@@ -72,7 +72,7 @@
     <x-site.footer />
     @stack('scripts')
     @if (request()->routeIs('blog.index'))
-        @livewireScripts
+        @livewireScriptConfig
     @endif
 </body>
 </html>

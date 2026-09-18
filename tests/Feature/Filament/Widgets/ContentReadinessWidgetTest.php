@@ -16,6 +16,23 @@ use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
+it('includes audio-only episodes in the queue until show notes are provided', function () {
+    Episode::query()->create([
+        'title' => 'Needs show notes', 'slug' => 'needs-show-notes', 'description' => 'Description',
+        'audio_url' => 'https://example.test/episode.mp3',
+    ]);
+
+    livewire(ContentReadinessWidget::class)->assertViewHas('items', function (array $items): bool {
+        foreach ($items as $item) {
+            if (is_array($item) && ($item['label'] ?? null) === 'Episode details') {
+                return ($item['count'] ?? null) === 1;
+            }
+        }
+
+        return false;
+    });
+});
+
 it('shows the content areas that still need public details', function () {
     Project::query()->create([
         'title' => 'Needs content',

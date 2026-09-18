@@ -39,7 +39,7 @@ it('summarizes published content and audience data for administrators', function
         'user_id' => $administrator->id,
         'status' => 'draft',
     ]);
-    Episode::query()->create([
+    $episode = Episode::query()->create([
         'title' => 'Published episode',
         'slug' => 'published-episode',
         'description' => 'Description',
@@ -53,17 +53,19 @@ it('summarizes published content and audience data for administrators', function
         'status' => 'published',
         'published_at' => now(),
     ]);
-    Subscriber::query()->create(['email' => 'active@example.test']);
+    Subscriber::query()->create(['email' => 'active@example.test', 'verified_at' => now()]);
+    Subscriber::query()->create(['email' => 'pending@example.test']);
     Subscriber::query()->create([
         'email' => 'unsubscribed@example.test',
         'unsubscribed_at' => now(),
     ]);
-    Podcast::query()->create([
+    $podcast = Podcast::query()->create([
         'name' => 'Active podcast',
         'slug' => 'active-podcast',
         'description' => 'Description',
         'is_active' => true,
     ]);
+    $episode->update(['podcast_id' => $podcast->id]);
     Podcast::query()->create([
         'name' => 'Archived podcast',
         'slug' => 'archived-podcast',

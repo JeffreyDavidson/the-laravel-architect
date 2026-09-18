@@ -71,7 +71,7 @@ class ResponsiveImageVariants
         Storage::disk('public')->delete(array_values($this->paths($originalPath)));
     }
 
-    public function hasRequiredVariants(string $originalPath): bool
+    public function hasRequiredVariants(string $originalPath, ?int $sourceWidth = null): bool
     {
         $disk = Storage::disk('public');
 
@@ -80,7 +80,7 @@ class ResponsiveImageVariants
         }
 
         try {
-            $sourceWidth = Image::fromStorage($originalPath, 'public')->width();
+            $sourceWidth ??= Image::fromStorage($originalPath, 'public')->width();
         } catch (ImageException) {
             return false;
         }

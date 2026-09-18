@@ -58,6 +58,12 @@ it('accepts a safe production configuration', function () {
         ->assertSuccessful();
 });
 
+it('does not mistake a differently named local disk for an off-server backup', function () {
+    config()->set('backup.backup.destination.disks', ['local', 'public']);
+
+    $this->artisanCommand('app:verify-production')->assertFailed();
+});
+
 it('accepts an isolated staging observability configuration', function () {
     config()->set([
         'app.deployment_environment' => 'staging',

@@ -31,17 +31,17 @@ class SubscribersTable
                     ->dateTime('M j, Y')
                     ->sortable()
                     ->label('Unsubscribed')
-                    ->placeholder('Active'),
+                    ->placeholder(fn (Subscriber $record): string => $record->isActive() ? 'Active' : 'Pending confirmation'),
                 IconColumn::make('is_active')
                     ->label('Status')
-                    ->state(fn (Subscriber $record): bool => is_null($record->unsubscribed_at))
+                    ->state(fn (Subscriber $record): bool => $record->isActive())
                     ->boolean(),
             ])
             ->defaultSort('subscribed_at', 'desc')
             ->filters([
                 Filter::make('active')
                     ->label('Active only')
-                    ->query(fn (Builder $query) => $query->whereNull('unsubscribed_at'))
+                    ->query(fn (Builder $query) => $query->whereNotNull('verified_at')->whereNull('unsubscribed_at'))
                     ->default(),
             ])
             ->toolbarActions([

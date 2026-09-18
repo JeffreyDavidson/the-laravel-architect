@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
+use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
@@ -31,6 +32,7 @@ use Spatie\Tags\HasTags;
  */
 class Project extends Model implements Publishable
 {
+    use DeletesOwnedContent;
     use Featurable;
     use HasFeaturedImage;
     use HasPublishingStatus;

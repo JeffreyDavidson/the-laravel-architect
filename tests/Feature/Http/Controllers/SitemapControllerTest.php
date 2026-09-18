@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -12,6 +13,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
+
+it('includes the newsletter archive and only public newsletter issues', function () {
+    $published = NewsletterIssue::query()->create(['title' => 'Public issue', 'slug' => 'public-issue', 'content' => 'Content', 'status' => PublishStatus::Published, 'published_at' => now()->subDay()]);
+    $draft = NewsletterIssue::query()->create(['title' => 'Draft issue', 'slug' => 'draft-issue', 'content' => 'Content']);
+
+    $this->get(route('sitemap'))->assertSeeHtml(route('newsletter.index'))->assertSeeHtml(route('newsletter.issue', $published))->assertDontSeeHtml(route('newsletter.issue', $draft));
+});
 
 it('only includes public content in the sitemap', function () {
     $user = User::query()->create([

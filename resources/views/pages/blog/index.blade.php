@@ -19,6 +19,10 @@
             </div>
         </header>
 
-        <livewire:blog-index :search="$query ?? ''" :category-slug="$categorySlug ?? null" />
+        <livewire:blog-index
+            :search="$query ?? ''"
+            :category-slug="$categorySlug ?? null"
+            :initial-data="$initialData"
+        />
     </div>
 </x-layouts.site>

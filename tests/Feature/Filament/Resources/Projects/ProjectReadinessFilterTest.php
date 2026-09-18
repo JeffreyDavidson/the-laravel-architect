@@ -4,6 +4,7 @@ use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
+use App\Support\Content\ContentReadiness;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Livewire\livewire;
@@ -13,6 +14,26 @@ pest()->use(RefreshDatabase::class);
 beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
 });
+
+it('keeps readiness filters consistent with badges for blank project details', function (string $attribute, mixed $value) {
+    $project = Project::query()->create([
+        'title' => 'Almost ready', 'slug' => 'almost-ready', 'description' => 'Description',
+        'content' => 'Case study', 'featured_image_path' => 'projects/ready.webp',
+        'url' => 'https://example.test', 'tech_stack' => ['Laravel'], $attribute => $value,
+    ]);
+    $project->attachTag('Laravel');
+
+    livewire(ListProjects::class)->filterTable('readiness', 'ready')->assertCanNotSeeTableRecords([$project]);
+    livewire(ListProjects::class)->filterTable('readiness', 'needs_details')->assertCanSeeTableRecords([$project]);
+
+    expect(new ContentReadiness($project)->isReady())->toBeFalse();
+})->with([
+    'empty technology' => ['tech_stack', ['']],
+    'whitespace technology' => ['tech_stack', ["\t\n"]],
+    'non-string technology' => ['tech_stack', [1]],
+    'blank description' => ['description', " \t\n"],
+    'blank links' => ['url', "\t"],
+]);
 
 it('filters projects that are ready to publish', function () {
     $ready = Project::query()->create([

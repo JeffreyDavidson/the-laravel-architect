@@ -20,11 +20,13 @@ class PostController
         $query = is_string($filters['q'] ?? null) ? $filters['q'] : '';
         $categorySlug = is_string($filters['category'] ?? null) ? $filters['category'] : null;
 
-        return view('pages.blog.index', $blogIndexViewModel->data(
+        $data = $blogIndexViewModel->data(
             $blogIndexQuery->results($query, $categorySlug),
             $query,
             $categorySlug,
-        ));
+        );
+
+        return view('pages.blog.index', [...$data, 'initialData' => $data]);
     }
 
     public function show(Post $post, PostShowViewModel $postShowViewModel): View

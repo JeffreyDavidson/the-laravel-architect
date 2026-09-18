@@ -18,6 +18,7 @@ it('renders the subscriber list for an authorized user', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'subscriber-page-coverage@example.com',
         'subscribed_at' => now(),
+        'verified_at' => now(),
     ]);
 
     livewire(ListSubscribers::class)

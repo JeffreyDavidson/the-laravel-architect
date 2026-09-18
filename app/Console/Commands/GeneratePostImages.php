@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Post;
 use App\Services\FeaturedImageGenerator;
+use App\Services\ResponsiveImageVariants;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -12,7 +13,7 @@ use Illuminate\Console\Command;
 #[Description('Generate featured images for posts that don\'t have one')]
 class GeneratePostImages extends Command
 {
-    public function handle(FeaturedImageGenerator $generator): int
+    public function handle(FeaturedImageGenerator $generator, ResponsiveImageVariants $images): int
     {
         $query = Post::with('category');
 
@@ -31,6 +32,11 @@ class GeneratePostImages extends Command
         foreach ($posts as $post) {
             $filename = $generator->generate($post);
             $post->update(['featured_image_path' => $filename]);
+            if (! $post->wasChanged('featured_image_path') && ! $images->generate($filename)) {
+                $this->error('Responsive post image regeneration failed.');
+
+                return self::FAILURE;
+            }
             $this->info("Generated: {$filename}");
         }
 

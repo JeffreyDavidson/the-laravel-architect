@@ -13,6 +13,46 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
+it('rolls back the image path when an updated listener fails', function () {
+    $path = 'projects/original.png';
+    Storage::disk('public')->put($path, UploadedFile::fake()->image('original.png', 100, 100)->getContent());
+    $project = Project::withoutEvents(fn () => Project::query()->create([
+        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
+        'status' => PublishStatus::Draft, 'featured_image_path' => $path,
+    ]));
+    Project::updated(function (): never {
+        throw new RuntimeException('An updated listener failed.');
+    });
+
+    $this->artisanCommand('media:optimize-images')->assertFailed();
+
+    expect($project->refresh()->featured_image_path)->toBe($path);
+    Storage::disk('public')->assertExists($path);
+});
+
+it('keeps the committed replacement if an after-commit listener fails', function () {
+    $path = 'projects/original.png';
+    Storage::disk('public')->put($path, UploadedFile::fake()->image('original.png', 100, 100)->getContent());
+    $project = Project::withoutEvents(fn () => Project::query()->create([
+        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
+        'status' => PublishStatus::Draft, 'featured_image_path' => $path,
+    ]));
+    Project::updated(function (Project $project): void {
+        $project->getConnection()->afterCommit(function (): never {
+            throw new RuntimeException('After-commit callback failed.');
+        });
+    });
+
+    $this->artisanCommand('media:optimize-images')->assertFailed();
+
+    $replacement = $project->refresh()->featured_image_path;
+    if (! is_string($replacement)) {
+        throw new RuntimeException('The committed replacement path was missing.');
+    }
+    expect($replacement)->not->toBe($path);
+    Storage::disk('public')->assertExists($replacement);
+});
+
 it('replaces legacy project images with optimized webp files', function () {
     $originalPath = 'legacy/project.png';
     Storage::disk('public')->put(

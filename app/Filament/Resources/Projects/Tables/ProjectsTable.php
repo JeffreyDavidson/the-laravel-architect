@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Models\Project;
+use App\Queries\ProjectReadinessQuery;
 use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
@@ -77,41 +78,8 @@ class ProjectsTable
                         'needs_case_study' => 'Needs case study',
                         'needs_details' => 'Needs project details',
                     ])
-                    ->query(fn (Builder $query, array $data): Builder => match ($data['value'] ?? null) {
-                        'ready' => $query
-                            ->whereNotNull('description')
-                            ->where('description', '!=', '')
-                            ->whereNotNull('content')
-                            ->where('content', '!=', '')
-                            ->whereNotNull('featured_image_path')
-                            ->where('featured_image_path', '!=', '')
-                            ->where(fn (Builder $query): Builder => $query
-                                ->where('url', '!=', '')
-                                ->whereNotNull('url')
-                                ->orWhere(fn (Builder $query): Builder => $query->whereNotNull('github_url')->where('github_url', '!=', '')))
-                            ->whereNotNull('tech_stack')
-                            ->where('tech_stack', '!=', '[]')
-                            ->whereHas('tags'),
-                        'needs_image' => $query->where(fn (Builder $query): Builder => $query
-                            ->whereNull('featured_image_path')
-                            ->orWhere('featured_image_path', '')),
-                        'needs_case_study' => $query->where(fn (Builder $query): Builder => $query
-                            ->whereNull('content')
-                            ->orWhere('content', '')),
-                        'needs_details' => $query->where(function (Builder $query): void {
-                            $query
-                                ->whereNull('description')
-                                ->orWhere('description', '')
-                                ->orWhere(function (Builder $query): void {
-                                    $query
-                                        ->where(fn (Builder $query): Builder => $query->whereNull('url')->orWhere('url', ''))
-                                        ->where(fn (Builder $query): Builder => $query->whereNull('github_url')->orWhere('github_url', ''));
-                                })
-                                ->orWhereNull('tech_stack')
-                                ->orWhere('tech_stack', '[]')
-                                ->orWhereDoesntHave('tags');
-                        }),
-                        default => $query,
+                    ->query(function (Builder $query, array $data): void {
+                        app(ProjectReadinessQuery::class)->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
                     }),
             ])
             ->recordActions([

@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
+test('public archives exclude private project repository URLs', function () {
+    Project::query()->create([
+        'title' => 'Public case study', 'slug' => 'public-case-study', 'description' => 'Description',
+        'status' => PublishStatus::Published, 'github_url' => 'https://github.com/example/confidential-project',
+    ]);
+
+    $archive = app(PublicContentArchive::class)->export();
+
+    expect(json_encode($archive, JSON_THROW_ON_ERROR))->not->toContain('confidential-project');
+});
+
 /**
  * @return list<array<array-key, mixed>>
  */

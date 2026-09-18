@@ -3,16 +3,30 @@
 namespace App\Services;
 
 use App\Models\Episode;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use RalphJSmit\Laravel\SEO\Models\SEO;
 use Throwable;
 
 class StoredMediaOrphanWorkflow
 {
+    private const array OWNED_DIRECTORIES = ['projects/', 'posts/', 'podcasts/', 'episodes/images/', 'episodes/audio/'];
+
+    private const array CONTENT_ATTRIBUTES = [
+        [Post::class, 'content'],
+        [Project::class, 'content'],
+        [Podcast::class, 'long_description'],
+        [Episode::class, 'show_notes'],
+        [Episode::class, 'transcript'],
+        [NewsletterIssue::class, 'content'],
+        [SEO::class, 'image'],
+    ];
+
     private const array MEDIA_ATTRIBUTES = [
         [Project::class, 'featured_image_path', true],
         [Post::class, 'featured_image_path', true],
@@ -29,6 +43,7 @@ class StoredMediaOrphanWorkflow
      *     orphanedBytes: int,
      *     deleted: int,
      *     failed: int,
+     *     skipped: int,
      *     missing: int,
      *     files: list<array{path: string, size: int, deleted: bool}>
      * }
@@ -37,6 +52,7 @@ class StoredMediaOrphanWorkflow
     {
         $disk = Storage::disk('public');
         $references = $this->references();
+        $content = $this->contentReferences();
         $files = [];
         $orphanedBytes = 0;
 
@@ -47,7 +63,7 @@ class StoredMediaOrphanWorkflow
                 continue;
             }
 
-            if (isset($references['paths'][$path])) {
+            if (isset($references['paths'][$path]) || $this->isEmbedded($path, $content)) {
                 continue;
             }
 
@@ -64,10 +80,20 @@ class StoredMediaOrphanWorkflow
 
         $deleted = 0;
         $failed = 0;
+        $skipped = 0;
 
         if ($delete) {
             foreach ($files as $index => $file) {
                 try {
+                    if (! array_any(self::OWNED_DIRECTORIES, fn (string $directory): bool => str_starts_with($file['path'], $directory))
+                        || $disk->lastModified($file['path']) > now()->subDay()->getTimestamp()
+                        || isset($this->references()['paths'][$file['path']])
+                        || $this->isEmbedded($file['path'], $this->contentReferences())) {
+                        $skipped++;
+
+                        continue;
+                    }
+
                     $wasDeleted = $disk->delete($file['path']);
                 } catch (Throwable) {
                     $wasDeleted = false;
@@ -95,9 +121,32 @@ class StoredMediaOrphanWorkflow
             'orphanedBytes' => $orphanedBytes,
             'deleted' => $deleted,
             'failed' => $failed,
+            'skipped' => $skipped,
             'missing' => $missing,
             'files' => $files,
         ];
+    }
+
+    /** @return list<string> */
+    private function contentReferences(): array
+    {
+        $content = [];
+
+        foreach (self::CONTENT_ATTRIBUTES as [$modelClass, $column]) {
+            foreach ($modelClass::query()->whereNotNull($column)->pluck($column) as $value) {
+                if (is_string($value)) {
+                    $content[] = rawurldecode($value);
+                }
+            }
+        }
+
+        return $content;
+    }
+
+    /** @param list<string> $content */
+    private function isEmbedded(string $path, array $content): bool
+    {
+        return array_any($content, fn (string $value): bool => str_contains($value, $path));
     }
 
     /**
