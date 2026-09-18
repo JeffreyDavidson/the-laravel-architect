@@ -1,17 +1,4 @@
-<x-layouts.site
-    :seo-source="$seoSource ?? null"
-    :post="$post ?? null"
-    :podcast="$podcast ?? null"
-    :episode="$episode ?? null"
-    :project="$project ?? null"
-    :posts="$posts ?? null"
-    :selected-category="$selectedCategory ?? null"
-    :category="$category ?? null"
-    :tag="$tag ?? null"
-    :projects="$projects ?? null"
-    :episodes="$episodes ?? null"
-    :items="$items ?? null"
->
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <div class="dark:bg-surface-page min-h-[60vh] bg-gray-50">
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">

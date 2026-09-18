@@ -1,17 +1,4 @@
-<x-layouts.site
-    :seo-source="$seoSource ?? null"
-    :post="$post ?? null"
-    :podcast="$podcast ?? null"
-    :episode="$episode ?? null"
-    :project="$project ?? null"
-    :posts="$posts ?? null"
-    :selected-category="$selectedCategory ?? null"
-    :category="$category ?? null"
-    :tag="$tag ?? null"
-    :projects="$projects ?? null"
-    :episodes="$episodes ?? null"
-    :items="$items ?? null"
->
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     @php
         $services = [
             ['id' => 'build', 'icon' => 'heroicon-o-squares-2x2', 'title' => 'Build your application', 'description' => 'Turn the way your business works into software that supports it. From a new product to an internal tool, start with the workflows that matter most.', 'examples' => ['Custom Laravel applications and new features', 'Admin panels and tools for everyday operations', 'Data modeling and integrations'], 'tools' => 'Laravel · Filament · Livewire'],

@@ -1,17 +1,4 @@
-<x-layouts.site
-    :seo-source="$seoSource ?? null"
-    :post="$post ?? null"
-    :podcast="$podcast ?? null"
-    :episode="$episode ?? null"
-    :project="$project ?? null"
-    :posts="$posts ?? null"
-    :selected-category="$selectedCategory ?? null"
-    :category="$category ?? null"
-    :tag="$tag ?? null"
-    :projects="$projects ?? null"
-    :episodes="$episodes ?? null"
-    :items="$items ?? null"
->
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">

@@ -1,16 +1,6 @@
 @props([
     'seoSource' => null,
-    'post' => null,
-    'podcast' => null,
-    'episode' => null,
-    'project' => null,
-    'posts' => null,
-    'selectedCategory' => null,
-    'category' => null,
-    'tag' => null,
-    'projects' => null,
-    'episodes' => null,
-    'items' => null,
+    'structuredData' => [],
 ])
 
 @php
@@ -38,20 +28,7 @@
     <meta name="theme-color" content="transparent" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
     {!! seo($seoSource ?? null) !!}
-    <x-json-ld
-        :seo-source="$seoSource"
-        :post="$post"
-        :podcast="$podcast"
-        :episode="$episode"
-        :project="$project"
-        :posts="$posts"
-        :selected-category="$selectedCategory"
-        :category="$category"
-        :tag="$tag"
-        :projects="$projects"
-        :episodes="$episodes"
-        :items="$items"
-    />
+    <x-json-ld :schemas="$structuredData" />
     @if (config('services.fathom.site_id'))
         <script
             nonce="{{ Vite::cspNonce() }}"
