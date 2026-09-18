@@ -80,9 +80,12 @@ class AppServiceProvider extends ServiceProvider
             'projects.*',
             'search.index',
         ], function (ViewInstance $view): void {
+            /** @var array<string, mixed> $pageData */
+            $pageData = $view->getData();
+
             $view->with(
                 'structuredData',
-                app(StructuredDataBuilder::class)->build($view->getData()),
+                app(StructuredDataBuilder::class)->build($pageData),
             );
         });
     }
