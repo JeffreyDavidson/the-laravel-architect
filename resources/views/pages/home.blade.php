@@ -372,4 +372,4 @@
             </div>
         </div>
     </section>
-    </x-layouts.app>
+</x-layouts.site>

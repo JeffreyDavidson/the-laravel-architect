@@ -62,4 +62,4 @@
             </div>
         </div>
     </article>
-    </x-layouts.app>
+</x-layouts.site>

@@ -182,4 +182,4 @@
             </section>
         @endif
     </article>
-    </x-layouts.app>
+</x-layouts.site>

@@ -12,7 +12,6 @@
     :episodes="$episodes ?? null"
     :items="$items ?? null"
 >
-    <x-slot:head></x-slot:head>
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt command="newsletter:unsubscribe" />
@@ -30,4 +29,4 @@
             </form>
         </div>
     </x-page-section>
-    </x-layouts.app>
+</x-layouts.site>

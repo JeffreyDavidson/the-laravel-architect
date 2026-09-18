@@ -110,4 +110,4 @@
             </section>
         </main>
     </div>
-    </x-layouts.app>
+</x-layouts.site>

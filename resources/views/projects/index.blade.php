@@ -12,8 +12,6 @@
     :episodes="$episodes ?? null"
     :items="$items ?? null"
 >
-    <x-slot:head></x-slot:head>
-
     <div data-project-index>
         <header class="pt-12 pb-10 sm:pt-20 sm:pb-14">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -147,4 +145,4 @@
             >Discuss a Project</a>
         </div>
     </section>
-    </x-layouts.app>
+</x-layouts.site>

@@ -12,8 +12,6 @@
     :episodes="$episodes ?? null"
     :items="$items ?? null"
 >
-    <x-slot:head></x-slot:head>
-
     {{-- Hero --}}
     <x-hero-section>
         <div class="max-w-3xl">
@@ -260,4 +258,4 @@
             </div>
         </div>
     </x-page-section>
-    </x-layouts.app>
+</x-layouts.site>

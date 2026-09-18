@@ -12,8 +12,6 @@
     :episodes="$episodes ?? null"
     :items="$items ?? null"
 >
-    <x-slot:head></x-slot:head>
-
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
@@ -228,4 +226,4 @@
             </div>
         </div>
     </div>
-    </x-layouts.app>
+</x-layouts.site>

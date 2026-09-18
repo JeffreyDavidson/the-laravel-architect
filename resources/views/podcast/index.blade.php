@@ -112,4 +112,4 @@
             @endif
         </div>
     </div>
-    </x-layouts.app>
+</x-layouts.site>

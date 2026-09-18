@@ -12,8 +12,6 @@
     :episodes="$episodes ?? null"
     :items="$items ?? null"
 >
-    <x-slot:head></x-slot:head>
-
     <x-hero-section>
         <x-terminal-prompt command="privacy:read" />
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl dark:text-white">
@@ -187,4 +185,4 @@
             </aside>
         </div>
     </x-page-section>
-    </x-layouts.app>
+</x-layouts.site>
