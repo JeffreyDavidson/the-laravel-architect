@@ -29,6 +29,9 @@
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
     {!! seo($seoSource ?? null) !!}
     <x-json-ld :schemas="$structuredData" />
+    @if (request()->routeIs('blog.index'))
+        @livewireStyles
+    @endif
     @if (config('services.fathom.site_id'))
         <script
             nonce="{{ Vite::cspNonce() }}"
@@ -68,5 +71,8 @@
 
     <x-site.footer />
     @stack('scripts')
+    @if (request()->routeIs('blog.index'))
+        @livewireScripts
+    @endif
 </body>
 </html>
