@@ -27,6 +27,7 @@ use Spatie\Tags\HasTags;
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
+ * @property Carbon|null $updated_at
  * @property-read string|null $featured_image_url
  * @property-read Podcast|null $podcast
  */
@@ -45,6 +46,7 @@ class Episode extends Model implements Publishable
         return [
             'status' => PublishStatus::class,
             'published_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 

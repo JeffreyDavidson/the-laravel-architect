@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Contact')
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     {{-- Hero --}}
     <x-hero-section>
         <div class="max-w-3xl">
@@ -249,4 +245,4 @@
             </div>
         </div>
     </x-page-section>
-@endsection
+</x-layouts.site>

@@ -1,3 +1,12 @@
+@props([
+    'seoSource' => null,
+    'structuredData' => [],
+])
+
+@php
+    $content = $slot->toHtml();
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark scroll-smooth">
 <head>
@@ -19,6 +28,7 @@
     <meta name="theme-color" content="transparent" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
     {!! seo($seoSource ?? null) !!}
+    <x-json-ld :schemas="$structuredData" />
     @if (config('services.fathom.site_id'))
         <script
             nonce="{{ Vite::cspNonce() }}"
@@ -28,8 +38,7 @@
         ></script>
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @include('partials.json-ld')
-    @stack('head')
+    {!! $head ?? '' !!}
 </head>
 <body
     @if (session('fathom_event')) data-fathom-event-on-load="{{ session('fathom_event') }}" @endif
@@ -205,7 +214,7 @@
 
     {{-- Content --}}
     <main id="main-content" tabindex="-1" class="isolate @if(request()->routeIs('home')) home-page @endif">
-        @yield('content')
+        {!! $content ?? '' !!}
     </main>
 
     {{-- Footer --}}

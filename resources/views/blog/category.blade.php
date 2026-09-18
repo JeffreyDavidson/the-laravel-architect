@@ -1,12 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/listings-entry.css')
+    </x-slot:head>
 
-@section('title', $category->name)
-
-@push('head')
-    @vite('resources/css/pages/listings-entry.css')
-@endpush
-
-@section('content')
     {{-- Hero --}}
     <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
@@ -43,4 +39,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.site>

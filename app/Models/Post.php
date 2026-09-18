@@ -30,6 +30,7 @@ use Spatie\Tags\HasTags;
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
+ * @property Carbon|null $updated_at
  * @property-read string|null $featured_image_url
  * @property-read Category|null $category
  */
@@ -49,6 +50,7 @@ class Post extends Model implements Publishable
             'status' => PublishStatus::class,
             'published_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 

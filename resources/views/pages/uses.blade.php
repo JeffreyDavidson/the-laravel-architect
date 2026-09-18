@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Uses')
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     {{-- Hero --}}
     <x-hero-section>
         <div class="grid gap-6 md:grid-cols-[8rem_1fr] md:gap-10">
@@ -217,4 +213,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.site>

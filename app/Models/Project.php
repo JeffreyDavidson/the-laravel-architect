@@ -25,7 +25,10 @@ use Spatie\Tags\HasTags;
 #[ObservedBy(ProjectObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus(publishedAt: null)]
-/** @property-read string|null $featured_image_url */
+/**
+ * @property array<int, string>|null $tech_stack
+ * @property-read string|null $featured_image_url
+ */
 class Project extends Model implements Publishable
 {
     use Featurable;

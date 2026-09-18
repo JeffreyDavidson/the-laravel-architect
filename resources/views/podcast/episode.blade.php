@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/podcast-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/podcast-entry.css')
-@endpush
-
-@section('content')
     <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
         {{-- ===== EPISODE HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
@@ -664,4 +662,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.site>

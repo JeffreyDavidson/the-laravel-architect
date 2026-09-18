@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/home-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/home-entry.css')
-@endpush
-
-@section('content')
     {{-- ===== HERO ===== --}}
     <section
         data-home-hero
@@ -361,5 +359,4 @@
             </div>
         </div>
     </section>
-
-@endsection
+</x-layouts.site>

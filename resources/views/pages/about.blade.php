@@ -1,12 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/about-entry.css')
+    </x-slot:head>
 
-@section('title', 'About')
-
-@push('head')
-    @vite('resources/css/pages/about-entry.css')
-@endpush
-
-@section('content')
     @php
         $timelineItems = [
             ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
@@ -412,4 +408,4 @@
             </x-button>
         </div>
     </div>
-@endsection
+</x-layouts.site>

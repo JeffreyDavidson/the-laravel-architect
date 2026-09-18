@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt command="newsletter:confirm" />
@@ -17,4 +15,4 @@
             </form>
         </div>
     </x-page-section>
-@endsection
+</x-layouts.site>

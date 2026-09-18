@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
+    </x-slot:head>
 
-@push('head')
-    @vite(['resources/css/pages/article-entry.css', 'resources/css/prism.css'])
-@endpush
-
-@section('content')
     <div
         class="article-progress bg-brand-500 z-overlay fixed top-0 left-0 h-0.5 w-full"
         data-article-progress
@@ -171,4 +169,4 @@
             </section>
         @endif
     </article>
-@endsection
+</x-layouts.site>

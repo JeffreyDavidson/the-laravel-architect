@@ -1,15 +1,13 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="The Laravel Architect Newsletter"
+            href="{{ route('newsletter.rss') }}"
+        />
+    </x-slot:head>
 
-@push('head')
-    <link
-        rel="alternate"
-        type="application/rss+xml"
-        title="The Laravel Architect Newsletter"
-        href="{{ route('newsletter.rss') }}"
-    />
-@endpush
-
-@section('content')
     <div class="dark:bg-surface-page bg-gray-50">
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
@@ -99,4 +97,4 @@
             </section>
         </main>
     </div>
-@endsection
+</x-layouts.site>

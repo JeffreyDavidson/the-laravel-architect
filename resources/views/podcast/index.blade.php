@@ -1,12 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/podcast-entry.css')
+    </x-slot:head>
 
-@section('title', 'Podcast')
-
-@push('head')
-    @vite('resources/css/pages/podcast-entry.css')
-@endpush
-
-@section('content')
     <x-hero-section>
         <div class="grid gap-8 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-10">
             <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Audio / 03</p>
@@ -103,4 +99,4 @@
             @endif
         </div>
     </div>
-@endsection
+</x-layouts.site>

@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Archive')
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <div class="dark:bg-surface-page bg-gray-50">
         <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
@@ -131,4 +127,4 @@
             </section>
         </main>
     </div>
-@endsection
+</x-layouts.site>

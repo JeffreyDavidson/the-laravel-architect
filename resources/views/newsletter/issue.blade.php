@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+    <x-slot:head>
+        @vite('resources/css/pages/article-entry.css')
+    </x-slot:head>
 
-@push('head')
-    @vite('resources/css/pages/article-entry.css')
-@endpush
-
-@section('content')
     <article>
         <header class="mx-auto max-w-4xl px-4 pt-12 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:px-8 lg:pt-20">
             <a
@@ -51,4 +49,4 @@
             </div>
         </div>
     </article>
-@endsection
+</x-layouts.site>
