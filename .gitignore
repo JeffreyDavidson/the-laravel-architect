@@ -27,3 +27,6 @@ Thumbs.db
 
 # Private notes
 notes/
+
+# Local Impeccable output
+.impeccable/
