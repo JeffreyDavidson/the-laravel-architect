@@ -13,7 +13,6 @@ use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Carbon;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final class StructuredDataBuilder
@@ -103,15 +102,13 @@ final class StructuredDataBuilder
         }
 
         $postUrl = route('blog.show', $post);
-        $publishedAt = $post->getAttribute('published_at');
-        $updatedAt = $post->getAttribute('updated_at');
         $article = [
             '@type' => 'Article',
             '@id' => $postUrl.'#article',
             'url' => $postUrl,
             'headline' => $post->title,
-            'datePublished' => $publishedAt instanceof Carbon ? $publishedAt->toIso8601String() : null,
-            'dateModified' => $updatedAt instanceof Carbon ? $updatedAt->toIso8601String() : null,
+            'datePublished' => $post->published_at?->toIso8601String(),
+            'dateModified' => $post->updated_at?->toIso8601String(),
             'author' => [
                 '@type' => 'Person',
                 '@id' => $authorUrl.'#person',
@@ -183,10 +180,8 @@ final class StructuredDataBuilder
             $podcastEpisode['description'] = $episode->description;
         }
 
-        $publishedAt = $episode->getAttribute('published_at');
-
-        if ($publishedAt instanceof Carbon) {
-            $podcastEpisode['datePublished'] = $publishedAt->toIso8601String();
+        if ($episode->published_at) {
+            $podcastEpisode['datePublished'] = $episode->published_at->toIso8601String();
         }
 
         if ($episode->episode_number !== null) {
@@ -237,17 +232,8 @@ final class StructuredDataBuilder
             $projectCaseStudy['image'] = $project->featured_image_url;
         }
 
-        $techStack = $project->tech_stack;
-
-        if (is_array($techStack)) {
-            $technologyNames = array_values(array_filter(
-                $techStack,
-                fn (mixed $technology): bool => is_string($technology),
-            ));
-
-            if ($technologyNames !== []) {
-                $projectCaseStudy['keywords'] = implode(', ', $technologyNames);
-            }
+        if ($project->tech_stack) {
+            $projectCaseStudy['keywords'] = implode(', ', $project->tech_stack);
         }
 
         if ($project->url) {
