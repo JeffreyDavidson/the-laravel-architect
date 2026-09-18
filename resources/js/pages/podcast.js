@@ -1,3 +1,5 @@
+import { copyText } from '../utils/clipboard';
+
 const copyIcon =
     '<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>';
 const copiedIcon =
@@ -11,7 +13,18 @@ function initializePodcastCopyButton() {
     }
 
     button.addEventListener('click', async () => {
-        await navigator.clipboard.writeText(button.dataset.podcastCopyUrl);
+        const copied = await copyText(button.dataset.podcastCopyUrl ?? '');
+
+        if (!copied) {
+            button.setAttribute('aria-label', 'Copy failed');
+
+            window.setTimeout(() => {
+                button.setAttribute('aria-label', 'Copy episode link');
+            }, 2000);
+
+            return;
+        }
+
         button.innerHTML = copiedIcon;
         button.setAttribute('aria-label', 'Episode link copied');
 
@@ -287,19 +300,12 @@ function initializeTranscript(details) {
         anchor.addEventListener('click', async () => {
             const url = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
 
-            if (!navigator.clipboard?.writeText) {
-                return;
-            }
-
-            try {
-                await navigator.clipboard.writeText(url);
+            if (await copyText(url)) {
                 anchor.setAttribute('aria-label', 'Section link copied');
 
                 window.setTimeout(() => {
                     anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
                 }, 2000);
-            } catch {
-                // The anchor still navigates to the section when clipboard access is unavailable.
             }
         });
 

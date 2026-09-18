@@ -1,15 +1,3 @@
-@property --card-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
-
-@property --holo-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
-
 .about-timeline-item {
     position: relative;
     padding-left: 2rem;
@@ -142,23 +130,11 @@
 }
 
 
-.about-trading-card-glow {
-    display: none;
-}
-
-:root:not(.dark) .about-trading-card-glow {
-    display: none;
-}
-
-@keyframes cardSpin {
-    to { --card-angle: 360deg; }
-}
-
-@keyframes holoSpin {
-    to { --holo-angle: 360deg; }
-}
-
-@keyframes glowPulse {
-    0%, 100% { opacity: 0.08; transform: scale(1); }
-    50% { opacity: 0.15; transform: scale(1.05); }
+@media (prefers-reduced-motion: reduce) {
+    .about-timeline-item,
+    .about-timeline-item::before,
+    .about-card-flip,
+    .about-trading-card-inner {
+        transition: none;
+    }
 }

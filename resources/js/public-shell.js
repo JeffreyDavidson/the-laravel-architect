@@ -38,9 +38,8 @@ function initializePublicShell() {
 
         menuButton.setAttribute('aria-expanded', String(isOpen));
     });
-    themeToggle.addEventListener('click', toggleTheme);
-    document.querySelectorAll('.theme-toggle-mobile').forEach((button) => {
-        button.addEventListener('click', toggleTheme);
+    document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', toggleTheme);
     });
     updateThemeControls();
 }
