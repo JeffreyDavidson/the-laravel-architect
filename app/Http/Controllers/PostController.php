@@ -12,13 +12,13 @@ class PostController
 {
     public function index(BlogIndexRequest $request, BlogIndexViewModel $blogIndexViewModel): View
     {
-        return view('blog.index', $blogIndexViewModel->data($request->validated()));
+        return view('pages.blog.index', $blogIndexViewModel->data($request->validated()));
     }
 
     public function show(Post $post, PostShowViewModel $postShowViewModel): View
     {
         abort_unless($post->isPublished(), 404);
 
-        return view('blog.show', $postShowViewModel->data($post));
+        return view('pages.blog.show', $postShowViewModel->data($post));
     }
 }

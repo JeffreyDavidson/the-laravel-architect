@@ -13,7 +13,7 @@ class NewsletterConfirmationController
 {
     public function create(Request $request, Subscriber $subscriber, NewsletterConfirmationViewModel $viewModel): View
     {
-        return view('newsletter.confirm', $viewModel->data($subscriber, $request->fullUrl()));
+        return view('pages.newsletter.confirm', $viewModel->data($subscriber, $request->fullUrl()));
     }
 
     public function store(

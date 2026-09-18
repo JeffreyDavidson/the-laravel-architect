@@ -10,6 +10,6 @@ class BlogTagController
 {
     public function __invoke(Tag $tag, BlogTagViewModel $blogTagViewModel): View
     {
-        return view('blog.tag', $blogTagViewModel->data($tag));
+        return view('pages.blog.tag', $blogTagViewModel->data($tag));
     }
 }

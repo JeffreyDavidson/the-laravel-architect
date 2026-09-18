@@ -10,6 +10,6 @@ class BlogCategoryController
 {
     public function __invoke(Category $category, BlogCategoryViewModel $blogCategoryViewModel): View
     {
-        return view('blog.category', $blogCategoryViewModel->data($category));
+        return view('pages.blog.category', $blogCategoryViewModel->data($category));
     }
 }

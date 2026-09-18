@@ -18,6 +18,6 @@ class PodcastEpisodeController
         abort_unless($episode->isPublished(), 404);
         abort_unless($episode->podcast_id === $podcast->id, 404);
 
-        return view('podcast.episode', $viewModel->data($podcast, $episode));
+        return view('pages.podcast.episode', $viewModel->data($podcast, $episode));
     }
 }
