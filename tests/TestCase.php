@@ -36,6 +36,11 @@ abstract class TestCase extends BaseTestCase
 
     protected function browserPage(string $url, string $device): AwaitableWebpage
     {
+        return $this->browserPageWithTheme($url, $device);
+    }
+
+    protected function browserPageWithTheme(string $url, string $device, string $theme = 'light'): AwaitableWebpage
+    {
         $devices = \visit($url)->on();
         $page = match ($device) {
             'mobile' => $devices->mobile(),
@@ -43,6 +48,10 @@ abstract class TestCase extends BaseTestCase
             default => throw new \InvalidArgumentException("Unsupported browser test device: {$device}"),
         };
 
-        return $page->wait(0);
+        return match ($theme) {
+            'dark' => $page->inDarkMode()->wait(0),
+            'light' => $page->inLightMode()->wait(0),
+            default => throw new \InvalidArgumentException("Unsupported browser theme: {$theme}"),
+        };
     }
 }

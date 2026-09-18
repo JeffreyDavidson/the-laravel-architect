@@ -41,7 +41,7 @@ npm audit --omit=dev
 
 See [`tests/TESTING.md`](tests/TESTING.md) for the boundary between Unit, Integration, Feature, Browser, Architecture, and Playwright e2e tests.
 
-CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Pest Browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled.
 
 The separate Dependency audit workflow checks locked PHP dependencies and production JavaScript dependencies every Monday at 08:43 UTC and supports manual runs. This catches newly published advisories between releases without changing dependencies.
 
@@ -123,7 +123,7 @@ The application is hosted through Laravel Forge. A deployment should install loc
 
 Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, Nightwatch agent, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
-The production smoke workflow runs every six hours and on demand. The staging smoke workflow runs every twelve hours and on demand against the deployed `develop` baseline. Both workflows run `npm run test:e2e:production` to provide bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled smoke failures reach a monitored inbox.
+The production smoke workflow runs every six hours and on demand. The staging smoke workflow runs every twelve hours and on demand against the deployed `develop` baseline. Both workflows run the grouped Pest production smoke test with `PRODUCTION_BASE_URL` to provide bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled smoke failures reach a monitored inbox.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 
