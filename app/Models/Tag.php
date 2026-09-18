@@ -28,7 +28,7 @@ class Tag extends SpatieTag
         });
     }
 
-    public function resolveRouteBinding($value, $field = null)
+    public function resolveRouteBinding($value, $field = null): static
     {
         $locale = app()->getLocale();
 
