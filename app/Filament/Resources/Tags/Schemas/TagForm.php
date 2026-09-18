@@ -51,7 +51,7 @@ class TagForm
 
                         $query = Tag::query()->where('slug->'.app()->getLocale(), $value);
 
-                        if ($record !== null) {
+                        if ($record instanceof Tag) {
                             $query->whereKeyNot($record->getKey());
                         }
 

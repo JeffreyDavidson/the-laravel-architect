@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Privacy')
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <x-hero-section>
         <x-terminal-prompt command="privacy:read" />
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl dark:text-white">
@@ -176,4 +172,4 @@
             </aside>
         </div>
     </x-page-section>
-@endsection
+</x-layouts.site>

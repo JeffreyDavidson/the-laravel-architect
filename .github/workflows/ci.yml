@@ -67,10 +67,10 @@ jobs:
           php artisan config:clear --ansi
           touch database/database.sqlite
           php artisan migrate --force --seed
-          php artisan content:import-public tests/e2e/fixtures/public-content.json
+          php artisan content:import-public tests/Browser/fixtures/public-content.json
 
       - name: Check code style
-        run: ./vendor/bin/pint --test
+        run: composer lint:check
 
       - name: Run static analysis
         run: composer test:types
@@ -95,18 +95,6 @@ jobs:
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
-
-      - name: Run browser smoke and accessibility checks
-        run: npm run test:e2e
-
-      - name: Upload browser failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v6
-        with:
-          name: playwright-failures-${{ github.run_attempt }}
-          path: test-results/
-          if-no-files-found: ignore
-          retention-days: 7
 
       - name: Run non-browser tests in parallel
         run: vendor/bin/pest --parallel --exclude-testsuite Browser

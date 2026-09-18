@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
@@ -30,7 +31,14 @@ it('renders validated search filters with pagination metadata and accessible res
 
     $url = route('blog.index', ['q' => 'Laravel', 'category' => 'laravel', 'page' => 2]);
 
+    DB::enableQueryLog();
+
     $this->get($url)->assertOk()->assertSeeHtml('Showing 13–13 of 13 articles.')->assertSeeHtml('name="q"')->assertSeeHtml('value="Laravel"')->assertSeeHtml('name="category"')->assertSeeHtml('<meta name="robots" content="noindex, follow">')->assertSeeHtml('<link rel="canonical" href="'.route('blog.index', ['category' => 'laravel']).'">')->assertSeeHtml('Read article:');
+
+    $queries = collect(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    expect($queries->filter(fn (array $query): bool => str_contains($query['query'], 'from "posts"') && str_contains($query['query'], 'limit 12'))->count())->toBe(1);
 });
 
 it('returns not found for an out-of-range public blog page', function () {

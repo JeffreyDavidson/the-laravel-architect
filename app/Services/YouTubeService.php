@@ -106,7 +106,7 @@ class YouTubeService
                 }
             }
 
-            if (! empty($videoIds)) {
+            if ($videoIds !== []) {
                 $details = $this->getVideoDetails($videoIds);
                 $videos = array_merge($videos, $details);
             }

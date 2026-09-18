@@ -1,20 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\Category;
 use App\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class BlogIndexViewModel
 {
-    private const int POSTS_PER_PAGE = 12;
-
     /**
-     * @param  array<string, mixed>  $filters
+     * @param  array{
+     *     posts: LengthAwarePaginator<int, Post>,
+     *     categories: Collection<int, Category>,
+     *     publishedPostCount: int,
+     *     selectedCategory: Category|null,
+     * }  $results
      * @return array{
      *     posts: LengthAwarePaginator<int, Post>,
      *     categories: Collection<int, Category>,
@@ -25,68 +29,12 @@ class BlogIndexViewModel
      *     seoSource: SEOData,
      * }
      */
-    public function data(array $filters = []): array
+    public function data(array $results, string $query, ?string $categorySlug): array
     {
-        $queryInput = $filters['q'] ?? null;
-        $categoryInput = $filters['category'] ?? null;
-        $query = is_string($queryInput) ? trim($queryInput) : '';
-        $categorySlug = is_string($categoryInput) ? $categoryInput : null;
-        $selectedCategory = $categorySlug !== null && $categorySlug !== ''
-            ? Category::query()->where('slug', $categorySlug)->firstOrFail()
-            : null;
-
-        $postsQuery = Post::query()
-            ->select([
-                'id',
-                'title',
-                'slug',
-                'excerpt',
-                'content',
-                'featured_image_path',
-                'category_id',
-                'published_at',
-            ])
-            ->published()
-            ->with([
-                'category:id,name,slug',
-                'tags:id,name,slug,type',
-            ])
-            ->orderByDesc('published_at')
-            ->orderByDesc('id');
-
-        if ($selectedCategory) {
-            $postsQuery->whereBelongsTo($selectedCategory);
-        }
-
-        if ($query !== '') {
-            $postsQuery->where(function (Builder $postsQuery) use ($query): void {
-                $like = '%'.addcslashes($query, '\\%_').'%';
-
-                $postsQuery
-                    ->whereRaw("title LIKE ? ESCAPE '\\'", [$like])
-                    ->orWhereRaw("excerpt LIKE ? ESCAPE '\\'", [$like])
-                    ->orWhereHas('tags', function (Builder $tagQuery) use ($like): void {
-                        $locale = app()->getLocale();
-                        $tagQuery->whereRaw(
-                            "json_extract(\"tags\".\"name\", ?) LIKE ? ESCAPE '\\'",
-                            ["$.{$locale}", $like],
-                        );
-                    });
-            });
-        }
-
-        $posts = $postsQuery
-            ->paginate(self::POSTS_PER_PAGE)
-            ->appends(array_filter([
-                'q' => $query !== '' ? $query : null,
-                'category' => $categorySlug,
-            ], fn (?string $value): bool => $value !== null));
-
-        abort_if($posts->currentPage() > $posts->lastPage(), 404);
-
-        $publishedPostCount = $selectedCategory === null && $query === ''
-            ? $posts->total()
-            : Post::published()->count();
+        $posts = $results['posts'];
+        $categories = $results['categories'];
+        $publishedPostCount = $results['publishedPostCount'];
+        $selectedCategory = $results['selectedCategory'];
 
         $canonicalParameters = array_filter([
             'category' => $categorySlug,
@@ -114,9 +62,7 @@ class BlogIndexViewModel
 
         return [
             'posts' => $posts,
-            'categories' => Category::query()
-                ->withCount(['publishedPosts as posts_count'])
-                ->get(),
+            'categories' => $categories,
             'publishedPostCount' => $publishedPostCount,
             'query' => $query,
             'categorySlug' => $categorySlug,
@@ -125,8 +71,8 @@ class BlogIndexViewModel
                 title: $title,
                 description: $description,
                 url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
-                canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
                 robots: $query === '' ? null : 'noindex, follow',
+                canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
             ),
         ];
     }

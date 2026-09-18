@@ -121,7 +121,7 @@ class ArchiveQuery
                 ->published(),
         ];
 
-        if ($type === null) {
+        if (! $type instanceof SearchContentType) {
             return array_values($queries);
         }
 

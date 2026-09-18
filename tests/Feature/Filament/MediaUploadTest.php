@@ -75,7 +75,7 @@ it('stores validated audio through the Filament episode form', function () {
             'slug' => 'episode',
             'description' => 'Description',
             'status' => PublishStatus::Draft,
-            'audio_path' => UploadedFile::fake()->create('episode.mp3', 1000, 'audio/mpeg'),
+            'audio_path' => UploadedFile::fake()->create('episode.mp3', 13000, 'audio/mpeg'),
         ])
         ->call('create')
         ->assertHasNoFormErrors();

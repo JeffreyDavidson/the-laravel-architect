@@ -9,6 +9,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Process;
+use Spatie\Backup\BackupDestination\Backup;
 use Spatie\Backup\BackupDestination\BackupDestination;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
@@ -107,7 +108,7 @@ class VerifyDeployment extends Command
             $newestBackup = $destination->newestBackup();
 
             if (! $destination->isReachable()
-                || $newestBackup === null
+                || ! $newestBackup instanceof Backup
                 || $newestBackup->date()->lt(now()->subHours($maxAge))) {
                 return 'One or more backup destinations do not contain a fresh backup.';
             }

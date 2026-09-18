@@ -36,8 +36,8 @@ class SearchViewModel
                     ? 'Search the writing, projects, podcasts, episodes, and videos from The Laravel Architect.'
                     : "Search results for {$query} on The Laravel Architect.",
                 url: route('search'),
-                canonical_url: route('search'),
                 robots: 'noindex, follow',
+                canonical_url: route('search'),
             ),
         ];
     }

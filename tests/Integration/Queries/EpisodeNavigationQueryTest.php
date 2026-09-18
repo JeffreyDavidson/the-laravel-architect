@@ -11,6 +11,19 @@ use Illuminate\Support\Str;
 
 pest()->use(RefreshDatabase::class);
 
+it('uses record IDs to navigate episodes with the same publication timestamp', function () {
+    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
+    $date = now()->subDay();
+    $previous = createEpisodeNavigationEpisode($podcast, 'First', $date);
+    $current = createEpisodeNavigationEpisode($podcast, 'Second', $date);
+    $next = createEpisodeNavigationEpisode($podcast, 'Third', $date);
+
+    $navigation = app(EpisodeNavigationQuery::class)->get($podcast, $current);
+
+    expect($navigation['previous']?->id)->toBe($previous->id)
+        ->and($navigation['next']?->id)->toBe($next->id);
+});
+
 it('finds the closest published episodes before and after the current episode', function () {
     $this->travelTo(Date::parse('2026-08-28 12:00:00'));
 

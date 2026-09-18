@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
+use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +20,7 @@ class Video extends Model
 {
     use Featurable;
     use HasPublicationDate;
+    use TracksActivity;
 
     protected function casts(): array
     {
@@ -33,12 +37,12 @@ class Video extends Model
     /** @return Attribute<string, never> */
     protected function youtubeUrl(): Attribute
     {
-        return Attribute::make(get: fn () => "https://www.youtube.com/watch?v={$this->youtube_id}");
+        return Attribute::make(get: fn (): string => "https://www.youtube.com/watch?v={$this->youtube_id}");
     }
 
     /** @return Attribute<string, never> */
     protected function embedUrl(): Attribute
     {
-        return Attribute::make(get: fn () => "https://www.youtube.com/embed/{$this->youtube_id}");
+        return Attribute::make(get: fn (): string => "https://www.youtube.com/embed/{$this->youtube_id}");
     }
 }

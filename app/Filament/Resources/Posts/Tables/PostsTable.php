@@ -28,7 +28,7 @@ class PostsTable
                     ->label('Image')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
+                    ->defaultImageUrl(fn (): string => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()

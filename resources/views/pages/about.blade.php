@@ -1,12 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'About')
-
-@push('head')
-    @vite('resources/css/pages/about-entry.css')
-@endpush
-
-@section('content')
+<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     @php
         $timelineItems = [
             ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
@@ -25,20 +17,32 @@
                 {{-- Trading Card (Flip) --}}
                 <div class="relative flex-shrink-0">
                     <div class="relative mb-4">
-                        <div class="about-ghost-card about-ghost-card-2"></div>
-                        <div class="about-ghost-card about-ghost-card-1"></div>
+                        <div class="pointer-events-none absolute inset-0 -z-2 [transform:translateY(16px)_translateX(8px)_scale(0.94)] rounded-[1.25rem] border-2 border-[var(--brand-alpha-10)] bg-[var(--surface-ghost-light)] opacity-20 dark:border-[var(--brand-alpha-15)] dark:bg-[var(--surface-ghost)]"></div>
+                        <div class="pointer-events-none absolute inset-0 -z-1 [transform:translateY(8px)_translateX(4px)_scale(0.97)] rounded-[1.25rem] border-2 border-[var(--brand-alpha-10)] bg-[var(--surface-ghost-light)] opacity-40 dark:border-[var(--brand-alpha-15)] dark:bg-[var(--surface-ghost)]"></div>
                         <div
-                            class="about-card-flip-container focus-visible:outline-brand-400 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4"
+                            data-about-card
+                            x-data="aboutCard"
+                            x-bind:aria-pressed="flipped"
+                            x-on:click="flipCard"
+                            x-on:keydown.enter.prevent="flipCard"
+                            x-on:keydown.space.prevent="flipCard"
+                            x-on:mousemove="tilt"
+                            x-on:mouseleave="resetTilt"
+                            class="focus-visible:outline-brand-400 cursor-pointer rounded-2xl perspective-[1200px] focus-visible:outline-2 focus-visible:outline-offset-4"
                             role="button"
                             tabindex="0"
                             aria-label="Flip Jeffrey Davidson developer card"
                             aria-pressed="false"
                         >
-                            <div class="about-card-flip w-[250px] md:w-[250px] lg:w-[300px]">
+                            <div
+                                data-about-card-surface
+                                x-bind:style="cardStyle"
+                                class="relative w-[250px] transition-transform duration-800 ease-[cubic-bezier(0.16,1,0.3,1)] transform-3d motion-reduce:transition-none md:w-[250px] lg:w-[300px]"
+                            >
                                 {{-- FRONT: Portrait --}}
-                                <div class="about-card-front">
-                                    <div class="about-holo-border relative">
-                                        <div class="about-trading-card-inner dark:bg-brand-900 relative overflow-hidden rounded-2xl bg-white shadow-2xl">
+                                <div class="h-full w-full backface-hidden">
+                                    <div class="relative h-full">
+                                        <div class="dark:bg-brand-900 relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_20px_var(--shadow-black-08)] transition-shadow duration-400 ease-[ease] transform-3d motion-reduce:transition-none dark:shadow-2xl">
                                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
                                                 <span class="font-mono text-xs tracking-wider text-gray-500 uppercase dark:text-gray-500">Developer Card</span>
                                                 <span class="border-accent-400/20 bg-accent-400/5 text-accent-400 text-meta rounded-full border px-1.5 py-0.5 font-bold tracking-wider whitespace-nowrap uppercase">Legendary</span>
@@ -73,15 +77,15 @@
                                 </div>
 
                                 {{-- BACK: Stats --}}
-                                <div class="about-card-back">
-                                    <div class="about-holo-border relative">
-                                        <div class="about-trading-card-inner dark:bg-brand-900 relative overflow-hidden rounded-2xl bg-white shadow-2xl">
+                                <div class="absolute inset-0 h-full w-full [transform:rotateY(180deg)] backface-hidden">
+                                    <div class="relative h-full">
+                                        <div class="dark:bg-brand-900 relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_20px_var(--shadow-black-08)] transition-shadow duration-400 ease-[ease] transform-3d motion-reduce:transition-none dark:shadow-2xl">
                                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
                                                 <span class="font-mono text-xs tracking-wider text-gray-500 uppercase dark:text-gray-400">Stat Sheet</span>
                                                 <span class="font-mono text-xs tracking-wider text-gray-500 uppercase dark:text-gray-400">#001</span>
                                             </div>
 
-                                            <div class="about-stats-content">
+                                            <div class="flex flex-1 flex-col justify-center">
                                                 {{-- Name plate on back too --}}
                                                 <div class="px-5 pt-2 pb-3 text-center">
                                                     <h2 class="font-empera text-lg tracking-wide text-gray-900 dark:text-white">
@@ -412,4 +416,4 @@
             </x-button>
         </div>
     </div>
-@endsection
+</x-layouts.site>

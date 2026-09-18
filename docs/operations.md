@@ -14,9 +14,13 @@ For a migration that changes media or database structure, do not proceed without
 
 ## Synchronizing public production content to staging
 
-Run `php artisan content:sync-production` from the staging release to replace staging's public content with the current production versions. The command transfers only published posts and projects, referenced categories and tags, active podcasts and their published episodes, published videos, their SEO metadata, and referenced public media.
+Run `php artisan content:sync-production --staging` from the staging release to replace staging's public content with the current production versions. The flag permits `APP_ENV=production` only on `staging.thelaravelarchitect.com`; local environments do not require it. The command transfers only published posts, projects and newsletter issues, referenced categories and tags, active podcasts and their published episodes, published videos, their SEO metadata, and referenced public media. Responsive image variants are regenerated after media transfer, including same-path replacements.
 
-The synchronization refuses to run in production. It maps posts to a non-login staging content owner and never exports production users, subscribers, authentication data, review notes, activity logs, failed jobs, cache or session data, credentials, or environment configuration. Content that is no longer public in production is unpublished in staging while staging-only drafts remain intact.
+Synchronization and archive import share a target guard that always rejects production hostnames, regardless of `APP_ENV` or the staging flag. Synchronization maps posts to a non-login staging content owner and never exports private project repository URLs, production users, subscribers, authentication data, review notes, activity logs, failed jobs, cache or session data, credentials, or environment configuration. Content that is no longer public in production is unpublished in staging while staging-only drafts remain intact.
+
+## Reviewing orphaned media
+
+`php artisan media:find-orphans` only reports candidates. Its optional `--delete` mode is destructive and requires operator approval. It deletes only unreferenced files in managed media directories after a 24-hour grace period, rechecking record and embedded-content references before deletion. Attachments referenced by Markdown and SEO images are retained. Unknown directories and recent uploads are retained for review; they are not automatically safe to delete. A nonzero result can therefore mean retained candidates or missing referenced files, not just a failed storage operation. Take a recoverable backup before any approved cleanup.
 
 ## Deploying
 

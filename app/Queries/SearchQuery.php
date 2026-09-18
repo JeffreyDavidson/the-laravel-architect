@@ -26,8 +26,8 @@ class SearchQuery
 
         $like = '%'.addcslashes($query, '\\%_').'%';
 
-        $results = [
-            'Writing' => Post::query()
+        $searches = [
+            'Writing' => fn (): array => Post::query()
                 ->select(['id', 'title', 'slug', 'excerpt', 'published_at'])
                 ->published()
                 ->where(function (Builder $postsQuery) use ($like): void {
@@ -47,7 +47,7 @@ class SearchQuery
                 ->get()
                 ->map(fn (Post $post): array => $this->postResult($post))
                 ->all(),
-            'Projects' => Project::query()
+            'Projects' => fn (): array => Project::query()
                 ->select(['id', 'title', 'slug', 'description', 'sort_order', 'updated_at'])
                 ->published()
                 ->where(function (Builder $projectsQuery) use ($like): void {
@@ -62,7 +62,7 @@ class SearchQuery
                 ->get()
                 ->map(fn (Project $project): array => $this->projectResult($project))
                 ->all(),
-            'Podcasts' => Podcast::query()
+            'Podcasts' => fn (): array => Podcast::query()
                 ->select(['id', 'name', 'slug', 'description', 'long_description', 'sort_order'])
                 ->active()
                 ->where(function (Builder $podcastsQuery) use ($like): void {
@@ -76,7 +76,7 @@ class SearchQuery
                 ->get()
                 ->map(fn (Podcast $podcast): array => $this->podcastResult($podcast))
                 ->all(),
-            'Newsletter' => NewsletterIssue::query()
+            'Newsletter' => fn (): array => NewsletterIssue::query()
                 ->select(['id', 'title', 'slug', 'excerpt', 'content', 'published_at'])
                 ->published()
                 ->where(function (Builder $issuesQuery) use ($like): void {
@@ -90,7 +90,7 @@ class SearchQuery
                 ->get()
                 ->map(fn (NewsletterIssue $issue): array => $this->newsletterResult($issue))
                 ->all(),
-            'Episodes' => Episode::query()
+            'Episodes' => fn (): array => Episode::query()
                 ->select(['id', 'podcast_id', 'title', 'slug', 'description', 'published_at'])
                 ->published()
                 ->whereHas('podcast', function (Builder $podcastQuery): void {
@@ -112,7 +112,7 @@ class SearchQuery
                 ->map(fn (Episode $episode): array => $this->episodeResult($episode))
                 ->values()
                 ->all(),
-            'Videos' => Video::query()
+            'Videos' => fn (): array => Video::query()
                 ->select(['id', 'youtube_id', 'title', 'slug', 'description', 'published_at'])
                 ->published()
                 ->where(function (Builder $videosQuery) use ($like): void {
@@ -127,11 +127,11 @@ class SearchQuery
                 ->all(),
         ];
 
-        if ($type === null) {
-            return $results;
+        if ($type instanceof SearchContentType) {
+            $searches = [$type->label() => $searches[$type->label()]];
         }
 
-        return [$type->label() => $results[$type->label()] ?? []];
+        return array_map(fn (callable $search): array => $search(), $searches);
     }
 
     /** @return array{title: string, description: string|null, url: string, meta: string, external: bool} */

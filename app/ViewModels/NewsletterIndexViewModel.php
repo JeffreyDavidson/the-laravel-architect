@@ -23,13 +23,16 @@ class NewsletterIndexViewModel
 
         abort_if($issues->currentPage() > $issues->lastPage(), 404);
 
+        $url = route('newsletter.index', $issues->onFirstPage() ? [] : ['page' => $issues->currentPage()]);
+        $pageSuffix = $issues->onFirstPage() ? '' : " — Page {$issues->currentPage()}";
+
         return [
             'issues' => $issues,
             'seoSource' => new SEOData(
-                title: 'Newsletter Archive',
+                title: 'Newsletter Archive'.$pageSuffix,
                 description: 'Practical Laravel architecture notes, tutorials, and updates from Jeffrey Davidson.',
-                url: route('newsletter.index'),
-                canonical_url: route('newsletter.index'),
+                url: $url,
+                canonical_url: $url,
             ),
         ];
     }

@@ -3,11 +3,15 @@
 use App\Models\Post;
 use App\Support\Content\Archives\ProductionContentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
 
 test('production public content can be synchronized into staging', function (): void {
+    Storage::fake('public');
+    Storage::disk('public')->put('posts/production.webp', UploadedFile::fake()->image('production.webp', 1280, 8)->getContent());
     $source = Double::for(ProductionContentSource::class);
     $source->expects('exportTo')->resolves(function (mixed $path = null): void {
         if (! is_string($path)) {
@@ -25,6 +29,7 @@ test('production public content can be synchronized into staging', function (): 
         ->assertSuccessful();
 
     expect(Post::query()->where('slug', 'production-post')->exists())->toBeTrue();
+    Storage::disk('public')->assertExists(['posts/responsive/production-640.webp', 'posts/responsive/production-1280.webp']);
 });
 
 test('production public content sync refuses to run in production', function (): void {

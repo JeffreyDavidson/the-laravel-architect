@@ -15,7 +15,7 @@ class ArchiveController
         $type = $request->enum('type', SearchContentType::class);
         $year = $request->integer('year') ?: null;
 
-        return view('archive.index', $viewModel->data(
+        return view('pages.archive', $viewModel->data(
             $archiveQuery->get($type, $year),
             $archiveQuery->years(),
             $type,

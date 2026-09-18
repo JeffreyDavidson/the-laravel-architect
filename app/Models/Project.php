@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
+use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Models\Concerns\TracksActivity;
 use App\Models\Contracts\Publishable;
 use App\Observers\ProjectObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -24,9 +26,13 @@ use Spatie\Tags\HasTags;
 #[ObservedBy(ProjectObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus(publishedAt: null)]
-/** @property-read string|null $featured_image_url */
+/**
+ * @property array<int, string>|null $tech_stack
+ * @property-read string|null $featured_image_url
+ */
 class Project extends Model implements Publishable
 {
+    use DeletesOwnedContent;
     use Featurable;
     use HasFeaturedImage;
     use HasPublishingStatus;
@@ -34,6 +40,7 @@ class Project extends Model implements Publishable
     use HasTags;
     use LogsActivity;
     use ManagesStoredMedia;
+    use TracksActivity;
 
     protected function casts(): array
     {

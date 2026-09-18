@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\ManagesStoredMedia;
+use App\Models\Concerns\TracksActivity;
 use App\Observers\PodcastObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -26,11 +28,11 @@ use Spatie\Activitylog\Support\LogOptions;
 /** @property-read Collection<int, Episode> $publishedEpisodes */
 class Podcast extends Model
 {
+    use TracksActivity;
+
     private const string DEFAULT_COLOR = '#6366f1';
 
-    /** @var array<int, string> */
-    private array $episodeMediaPathsForDeletion = [];
-
+    use DeletesOwnedContent;
     use HasSEO;
     use LogsActivity;
     use ManagesStoredMedia;
@@ -43,21 +45,15 @@ class Podcast extends Model
         ];
     }
 
-    protected static function booted(): void
+    protected function performDeleteOnModel(): void
     {
-        static::deleting(function (Podcast $podcast): void {
-            $paths = [];
-
-            foreach ($podcast->episodes()->cursor() as $episode) {
-                array_push($paths, ...$episode->storedMediaPaths());
+        foreach ($this->episodes()->lazyById() as $episode) {
+            if ($episode->delete() !== true) {
+                throw new \RuntimeException('Podcast deletion was cancelled because an episode could not be deleted.');
             }
+        }
 
-            $podcast->episodeMediaPathsForDeletion = array_values(array_unique($paths));
-        });
-
-        static::deleted(function (Podcast $podcast): void {
-            $podcast->queueStoredMediaPathsCleanup($podcast->episodeMediaPathsForDeletion);
-        });
+        parent::performDeleteOnModel();
     }
 
     /** @return HasMany<Episode, $this> */

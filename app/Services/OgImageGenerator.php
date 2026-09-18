@@ -39,7 +39,7 @@ class OgImageGenerator
 
         // Geometric pattern overlay - subtle grid
         for ($x = 0; $x < $width; $x += 60) {
-            $image->drawLine(function (LineFactory $line) use ($x, $height) {
+            $image->drawLine(function (LineFactory $line) use ($x, $height): void {
                 $line->from($x, 0);
                 $line->to($x, $height);
                 $line->color('141922');
@@ -47,7 +47,7 @@ class OgImageGenerator
             });
         }
         for ($y = 0; $y < $height; $y += 60) {
-            $image->drawLine(function (LineFactory $line) use ($y, $width) {
+            $image->drawLine(function (LineFactory $line) use ($y, $width): void {
                 $line->from(0, $y);
                 $line->to($width, $y);
                 $line->color('141922');
@@ -56,19 +56,19 @@ class OgImageGenerator
         }
 
         // Decorative circles
-        $image->drawCircle(function (CircleFactory $circle) {
+        $image->drawCircle(function (CircleFactory $circle): void {
             $circle->at(900, 120);
             $circle->radius(80);
             $circle->border('1a2332', 2);
         });
-        $image->drawCircle(function (CircleFactory $circle) {
+        $image->drawCircle(function (CircleFactory $circle): void {
             $circle->at(1050, 400);
             $circle->radius(120);
             $circle->border('1a2332', 2);
         });
 
         // Brand accent line at top
-        $image->drawRectangle(function (RectangleFactory $rect) use ($width) {
+        $image->drawRectangle(function (RectangleFactory $rect) use ($width): void {
             $rect->at(0, 0);
             $rect->size($width, 4);
             $rect->background('4A7FBF');
@@ -77,7 +77,7 @@ class OgImageGenerator
         // Category label
         $category = $post->getRelation('category');
         $categoryName = $category instanceof Category ? $category->name : 'Blog';
-        $image->text(strtoupper($categoryName), 80, 180, function (FontFactory $font) {
+        $image->text(strtoupper($categoryName), 80, 180, function (FontFactory $font): void {
             $font->filename($this->fontSemiBold);
             $font->size(18);
             $font->color('4A7FBF');
@@ -89,7 +89,7 @@ class OgImageGenerator
         $lines = $this->wordWrap($title, 28);
         $yOffset = 230;
         foreach ($lines as $line) {
-            $image->text($line, 80, $yOffset, function (FontFactory $font) {
+            $image->text($line, 80, $yOffset, function (FontFactory $font): void {
                 $font->filename($this->fontBold);
                 $font->size(48);
                 $font->color('ffffff');
@@ -99,14 +99,14 @@ class OgImageGenerator
         }
 
         // Branding at bottom
-        $image->text('The Laravel Architect', 80, 560, function (FontFactory $font) {
+        $image->text('The Laravel Architect', 80, 560, function (FontFactory $font): void {
             $font->filename($this->fontRegular);
             $font->size(20);
             $font->color('6b7280');
         });
 
         // Code bracket motif
-        $image->text('{ }', 1050, 560, function (FontFactory $font) {
+        $image->text('{ }', 1050, 560, function (FontFactory $font): void {
             $font->filename($this->fontBold);
             $font->size(32);
             $font->color('1a2332');

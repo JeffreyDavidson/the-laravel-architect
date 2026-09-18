@@ -67,24 +67,18 @@ final class AddSecurityHeaders
         ];
 
         if (app()->isLocal()) {
-            array_push(
-                $scriptSources,
-                'http://localhost:*',
-                'http://127.0.0.1:*',
-                'https://localhost:*',
-                'https://127.0.0.1:*',
-            );
-            array_push(
-                $connectSources,
-                'http://localhost:*',
-                'http://127.0.0.1:*',
-                'https://localhost:*',
-                'https://127.0.0.1:*',
-                'ws://localhost:*',
-                'ws://127.0.0.1:*',
-                'wss://localhost:*',
-                'wss://127.0.0.1:*',
-            );
+            $scriptSources[] = 'http://localhost:*';
+            $scriptSources[] = 'http://127.0.0.1:*';
+            $scriptSources[] = 'https://localhost:*';
+            $scriptSources[] = 'https://127.0.0.1:*';
+            $connectSources[] = 'http://localhost:*';
+            $connectSources[] = 'http://127.0.0.1:*';
+            $connectSources[] = 'https://localhost:*';
+            $connectSources[] = 'https://127.0.0.1:*';
+            $connectSources[] = 'ws://localhost:*';
+            $connectSources[] = 'ws://127.0.0.1:*';
+            $connectSources[] = 'wss://localhost:*';
+            $connectSources[] = 'wss://127.0.0.1:*';
         }
 
         $directives = [

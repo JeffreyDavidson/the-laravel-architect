@@ -1,11 +1,11 @@
 function initializeRevealAnimations(reduceMotion) {
-    const revealElements = document.querySelectorAll('.fade-up');
-    const countElements = document.querySelectorAll('.count-up');
+    const revealElements = document.querySelectorAll('[data-reveal]');
+    const countElements = document.querySelectorAll('[data-count-up]');
 
-    revealElements.forEach((element) => element.classList.add('reveal-pending'));
+    revealElements.forEach((element) => (element.dataset.reveal = 'pending'));
 
     if (reduceMotion || !('IntersectionObserver' in window)) {
-        revealElements.forEach((element) => element.classList.add('visible'));
+        revealElements.forEach((element) => (element.dataset.reveal = 'visible'));
 
         return;
     }
@@ -17,7 +17,7 @@ function initializeRevealAnimations(reduceMotion) {
                     return;
                 }
 
-                entry.target.classList.add('visible');
+                entry.target.dataset.reveal = 'visible';
                 revealObserver.unobserve(entry.target);
             });
         },

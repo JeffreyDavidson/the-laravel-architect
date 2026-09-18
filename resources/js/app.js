@@ -1,26 +1,44 @@
 import './public-shell';
+import { registerSiteHeader } from './site-header';
+import { registerCopyButton } from './copy-button';
 
-if (document.querySelector('.about-card-flip-container')) {
-    import('./pages/about');
+async function initializePublicUi() {
+    const runtime = window.livewireScriptConfig ? await import('./livewire') : await import('./alpine');
+
+    registerSiteHeader(runtime.Alpine);
+    registerCopyButton(runtime.Alpine);
+
+    if (document.querySelector('[data-about-card]')) {
+        const { registerAboutCard } = await import('./pages/about');
+        registerAboutCard(runtime.Alpine);
+    }
+
+    if (document.querySelector('[data-blog-filter]')) {
+        await import('./pages/blog-index');
+    }
+
+    if (document.querySelector('[data-article]')) {
+        const { initializeBlog } = await import('./pages/blog');
+        initializeBlog();
+    }
+
+    if (
+        document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-audio-player], [data-transcript]')
+    ) {
+        const { initializePodcast } = await import('./pages/podcast');
+        initializePodcast(runtime.Alpine);
+    }
+
+    runtime.start();
 }
 
-if (document.querySelector('[data-blog-filter]')) {
-    import('./pages/blog-index');
-}
-
-if (document.querySelector('[data-article]')) {
-    import('./pages/blog');
-}
-
-if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-audio-player], [data-transcript]')) {
-    import('./pages/podcast');
-}
+initializePublicUi();
 
 if (document.querySelector('[data-turnstile-widget]')) {
     import('./pages/contact');
 }
 
-if (document.querySelector('.home-page')) {
+if (document.querySelector('[data-home-hero]')) {
     import('./pages/home');
 }
 

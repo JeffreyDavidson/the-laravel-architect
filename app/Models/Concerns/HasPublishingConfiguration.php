@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\Attributes\PublishingStatus;
 use App\Models\Attributes\PublishingStatus as PublishingStatusAttribute;
 
 trait HasPublishingConfiguration
@@ -10,7 +11,7 @@ trait HasPublishingConfiguration
 
     protected static function publishingStatusConfiguration(): PublishingStatusAttribute
     {
-        if (self::$publishingStatusConfiguration !== null) {
+        if (self::$publishingStatusConfiguration instanceof PublishingStatus) {
             return self::$publishingStatusConfiguration;
         }
 

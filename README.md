@@ -32,7 +32,7 @@ The email passed to the Filament command must match `ADMIN_EMAIL`. The database 
 composer test
 composer test:types
 composer test:filament
-vendor/bin/pint --test
+composer lint:check
 npm run build
 npm run test:assets
 composer audit --locked
@@ -41,7 +41,7 @@ npm audit --omit=dev
 
 See [`tests/TESTING.md`](tests/TESTING.md) for the boundary between Unit, Integration, Feature, Browser, Architecture, and Playwright e2e tests.
 
-CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Playwright browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled, and failed browser checks retain screenshots and traces for seven days.
+CI validates Composer configuration and runs dependency auditing, formatting, static analysis, asset compilation and budget checks for the public and admin bundles, Pest Browser checks, and the Pest suite on pull requests targeting `develop` or `main` and on pushes to `main`. Both protected branches require the `Laravel` check, so the already-verified pull request is not run a second time after it is squash-merged into `develop`. Superseded runs are cancelled.
 
 The separate Dependency audit workflow checks locked PHP dependencies and production JavaScript dependencies every Monday at 08:43 UTC and supports manual runs. This catches newly published advisories between releases without changing dependencies.
 
@@ -65,6 +65,8 @@ Public pages are server-rendered Blade views. Controllers pass simple page data 
 
 Public interaction modules live in `resources/js`, shared presentation rules live in `resources/css`, and both are compiled through Vite. Compressed budgets guard the public entry points and lazy modules in CI. The Filament theme is a separate budgeted Vite entry loaded only by the admin panel. Editorial images that participate in the build live in `resources/images` and are referenced with `Vite::asset()`. Files that must retain a stable direct URL for browsers or third-party consumers, such as favicons and Filament branding, remain in `public`. The asset-budget check rejects unexpected files in `public/images`, so new images must either use the Vite pipeline or be intentionally added to the direct-URL allowlist.
 
+Public presentation styles live in Tailwind utility classes on the owning Blade pages and components, compiled into one `resources/css/app.css` bundle. There are no page-specific CSS entry points. Shared CSS retains fonts, theme tokens, animation keyframes, and browser integration rules; Prism and the Filament admin theme remain separate integrations. JavaScript uses data attributes for behavior hooks, and article navigation clones its styled link markup from a Blade template.
+
 The blog archive returns 12 articles per page, ordered by publication date and ID. Its GET search and category filters work without JavaScript and persist in pagination links. Search covers article titles, excerpts, and localized tag names; `%` and `_` are literal search characters. Search result pages are excluded from indexing, and invalid filters or out-of-range pages return 404.
 
 Scheduled posts and episodes become public when their publication date arrives, without a scheduler job or a stored status change. Drafts, posts in review, undated content, and future content remain private; episodes also require an active podcast. Projects require Published status. Admin forms generate an initial slug but preserve it when titles change, and explicit slug edits retain uniqueness validation.
@@ -77,7 +79,7 @@ Generated post OG images are cached on the private local filesystem. Cache valid
 
 The Filament panel is available at `/admin`. Panel admission requires the native `is_admin` flag, resource actions are protected by Laravel policies, and app-based multi-factor authentication is required in production.
 
-Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files; deleting a podcast also removes media owned by its database-cascaded episodes. Project and post featured images and podcast cover images retain their original upload as the canonical fallback and generate 640px and 1280px WebP variants for responsive public rendering. Bundled podcast cover fallbacks provide 128px, 320px, and 512px Vite-managed variants for smaller episode artwork. Replacing or deleting an uploaded image also removes its variants. Run `php artisan storage:link` on a new environment, then use `php artisan media:repair-responsive-images` when backfilling or repairing existing uploads.
+Uploaded images and audio are validated and stored through Laravel's `public` filesystem disk. Models store explicit file paths and remove replaced or record-owned files. Content deletion runs transactionally and removes owned SEO records; podcast deletion invokes each episode's model lifecycle so tags and media are also cleaned up. Project and post featured images and podcast cover images retain their original upload as the canonical fallback and generate 640px and 1280px WebP variants for responsive public rendering. Bundled podcast cover fallbacks provide 128px, 320px, and 512px Vite-managed variants for smaller episode artwork. Replacing or deleting an uploaded image also removes its variants. Run `php artisan storage:link` on a new environment, then use `php artisan media:repair-responsive-images` when backfilling or repairing existing uploads. Episode audio supports 250 MB at both the temporary-upload and form-validation stages; image fields retain their 10 MB limit. PHP and web-server request limits must also permit the intended audio size.
 
 Media removal waits for a successful database commit, including responsive variants, post OG caches, and media from cascaded episode deletions. Public episode playback prefers uploaded audio over an external audio URL, while retaining both stored inputs for editors. HTTPS Spotify embed URLs and Apple Podcasts embed URLs can render in the public player; unsupported embed hosts are omitted.
 
@@ -86,6 +88,12 @@ Newsletter subscriptions use a signed, expiring double-opt-in link followed by a
 Newsletter confirmation emails have a 15-minute cooldown per normalized email address, coordinated through hashed cache keys and an atomic lock. Repeated requests during that window preserve the existing confirmation link, including requests from different IP addresses. An enqueue failure leaves retries available; the public response does not disclose subscription status.
 
 Application responses set a constrained Content Security Policy plus cross-origin isolation, clickjacking, transport-security, MIME-sniffing, referrer, and browser-feature policy headers globally. Public scripts use a per-request nonce instead of `unsafe-inline` or `unsafe-eval`; the Filament admin path retains those allowances for framework compatibility.
+
+Public UI state uses named CSP-safe Alpine components for navigation, theme controls, the about card, copy feedback, video activation, and audio controls. Pages without Livewire load standalone `@alpinejs/csp`; the blog uses Alpine bundled with Livewire's CSP-safe runtime. Components register before the selected runtime starts, so each page has exactly one Alpine instance. Native browser helpers still handle transcript highlighting, article navigation, homepage observers, syntax highlighting, Turnstile, and analytics.
+
+The blog bundles Livewire's CSP-safe runtime through Vite only when its script configuration is present. Filament uses the standard Livewire runtime; do not enable `livewire.csp_safe` globally. Rebuild frontend assets after Livewire upgrades. The controller supplies the initial blog payload to the component once; subsequent component updates refresh title, canonical URL, social metadata, robots, and JSON-LD together. Pagination retains real links for visitors without JavaScript. Structured-data generation is separated into article, podcast, and collection builders behind `StructuredDataBuilder`.
+
+Queued contact and newsletter mail payloads are encrypted. Newsletter confirmation URLs are rendered without HTML escaping in the plain-text message. `UnsubscribeUrlGenerator` owns signed unsubscribe links, and only verified, non-unsubscribed subscribers count as an active audience.
 
 The `/up` health endpoint verifies both the Laravel runtime and access to the migrated application database. Production monitoring should treat any non-200 response as unhealthy.
 
@@ -123,7 +131,7 @@ The application is hosted through Laravel Forge. A deployment should install loc
 
 Run `php artisan app:verify-production` after loading the production environment and before applying migrations. After deployment, run `php artisan app:verify-deployment EXPECTED_COMMIT_SHA`; it verifies the checked-out commit, pending migrations, Nightwatch agent, scheduler and queue heartbeats, and backup freshness without printing sensitive values.
 
-The production smoke workflow runs every six hours and on demand. The staging smoke workflow runs every twelve hours and on demand against the deployed `develop` baseline. Both workflows run `npm run test:e2e:production` to provide bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled smoke failures reach a monitored inbox.
+The production smoke workflow runs every six hours and on demand. The staging smoke workflow runs every twelve hours and on demand against the deployed `develop` baseline. Both workflows run the grouped Pest production smoke test with `PRODUCTION_BASE_URL` to provide bounded, read-only checks for critical routes, the admin redirect, and response security headers. The repository owner should keep GitHub Actions failure notifications enabled so scheduled smoke failures reach a monitored inbox.
 
 Public contact and newsletter messages are queued on the configured Laravel queue. Production must run and monitor a long-lived queue worker for the `default` queue, restart it during deployments, and alert on failed jobs. A successful form response means the message was accepted for delivery, not that the mail provider has delivered it.
 

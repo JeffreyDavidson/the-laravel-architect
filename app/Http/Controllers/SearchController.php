@@ -15,7 +15,7 @@ class SearchController
         $query = $request->string('q')->toString();
         $type = $request->enum('type', SearchContentType::class);
 
-        return view('search.index', $viewModel->data(
+        return view('pages.search', $viewModel->data(
             $searchQuery->get($query, $type),
             $query,
             $type,

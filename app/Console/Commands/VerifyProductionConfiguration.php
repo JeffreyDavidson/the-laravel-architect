@@ -174,7 +174,8 @@ class VerifyProductionConfiguration extends Command
     {
         return is_array($disks) && array_any(
             $disks,
-            fn (mixed $disk): bool => is_string($disk) && $disk !== 'local',
+            fn (mixed $disk): bool => is_string($disk)
+                && in_array(config("filesystems.disks.{$disk}.driver"), ['s3', 'sftp'], true),
         );
     }
 

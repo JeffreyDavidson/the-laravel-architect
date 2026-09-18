@@ -12,15 +12,21 @@ use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
 use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
 use App\Support\Monitoring\Sentry\RedactSentryEvent;
+use App\Support\Seo\StructuredDataBuilder;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View as ViewInstance;
 use Laravel\Nightwatch\Facades\Nightwatch;
+use Livewire\Livewire;
 use Sentry\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +48,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Use a distinct URL so previously cached CSP bundles cannot reach Filament.
+        Livewire::setScriptRoute(fn (array $handle, string $path): RoutingRoute => Route::get(
+            dirname($path).'/livewire-standard.js',
+            $handle,
+        ));
+
         Nightwatch::user(app(ResolveNightwatchUser::class));
         Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
@@ -66,5 +78,18 @@ class AppServiceProvider extends ServiceProvider
         if (is_string($appUrl) && str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
+
+        View::composer([
+            'errors.404',
+            'pages.*',
+        ], function (ViewInstance $view): void {
+            /** @var array<string, mixed> $pageData */
+            $pageData = $view->getData();
+
+            $view->with(
+                'structuredData',
+                app(StructuredDataBuilder::class)->build($pageData),
+            );
+        });
     }
 }

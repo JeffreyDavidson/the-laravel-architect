@@ -188,7 +188,7 @@ class FeaturedImageGenerator
     {
         // Large orb top-right
         for ($r = 300; $r > 0; $r -= 3) {
-            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors) {
+            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors): void {
                 $circle->at(1000, 100);
                 $circle->radius($r);
                 $circle->background($colors[0].'02');
@@ -197,7 +197,7 @@ class FeaturedImageGenerator
 
         // Smaller orb bottom-left
         for ($r = 200; $r > 0; $r -= 3) {
-            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors) {
+            $image->drawCircle(function (CircleFactory $circle) use ($r, $colors): void {
                 $circle->at(200, 530);
                 $circle->radius($r);
                 $circle->background($colors[1].'02');
@@ -210,7 +210,7 @@ class FeaturedImageGenerator
         $spacing = 32;
         for ($x = 0; $x < $this->width; $x += $spacing) {
             for ($y = 0; $y < $this->height; $y += $spacing) {
-                $image->drawCircle(function (CircleFactory $circle) use ($x, $y) {
+                $image->drawCircle(function (CircleFactory $circle) use ($x, $y): void {
                     $circle->at($x, $y);
                     $circle->radius(1);
                     $circle->background('#ffffff05');
@@ -223,7 +223,7 @@ class FeaturedImageGenerator
     private function drawAccentLines(ImageInterface $image, array $colors): void
     {
         // Top accent line (partial)
-        $image->drawLine(function (LineFactory $line) use ($colors) {
+        $image->drawLine(function (LineFactory $line) use ($colors): void {
             $line->from(0, 2);
             $line->to((int) ($this->width * 0.3), 2);
             $line->color($colors[0]);
@@ -231,7 +231,7 @@ class FeaturedImageGenerator
         });
 
         // Right side vertical accent
-        $image->drawLine(function (LineFactory $line) use ($colors) {
+        $image->drawLine(function (LineFactory $line) use ($colors): void {
             $line->from($this->width - 2, 0);
             $line->to($this->width - 2, (int) ($this->height * 0.25));
             $line->color($colors[2].'80');
@@ -259,7 +259,7 @@ class FeaturedImageGenerator
 
             // Line number
             $lineNum = str_pad((string) ($i + 1), 2, ' ', STR_PAD_LEFT);
-            $image->text($lineNum, $startX, $y, function (FontFactory $font) use ($monoFont) {
+            $image->text($lineNum, $startX, $y, function (FontFactory $font) use ($monoFont): void {
                 $font->filename($monoFont);
                 $font->size(15);
                 $font->color('#484f5840');
@@ -269,7 +269,7 @@ class FeaturedImageGenerator
             if ($text && $type) {
                 $color = $this->syntaxColors[$type] ?? '#c9d1d9';
                 // Reduce opacity for a subtle, background feel
-                $image->text($text, $startX + $lineNumberWidth, $y, function (FontFactory $font) use ($monoFont, $color) {
+                $image->text($text, $startX + $lineNumberWidth, $y, function (FontFactory $font) use ($monoFont, $color): void {
                     $font->filename($monoFont);
                     $font->size(16);
                     $font->color($color.'90');
@@ -294,7 +294,7 @@ class FeaturedImageGenerator
             }
 
             $color = $this->syntaxColors[$type] ?? '#c9d1d9';
-            $image->text($text, $startX2, $y, function (FontFactory $font) use ($monoFont, $color) {
+            $image->text($text, $startX2, $y, function (FontFactory $font) use ($monoFont, $color): void {
                 $font->filename($monoFont);
                 $font->size(14);
                 $font->color($color.'40');
@@ -306,7 +306,7 @@ class FeaturedImageGenerator
     {
         $monoFont = $this->getMonoFont();
 
-        $image->text(strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color) {
+        $image->text(strtoupper($categoryName), 60, $this->height - 40, function (FontFactory $font) use ($monoFont, $color): void {
             $font->filename($monoFont);
             $font->size(11);
             $font->color($color.'a0');
@@ -317,7 +317,7 @@ class FeaturedImageGenerator
     {
         $monoFont = $this->getMonoFont();
 
-        $image->text('thelaravelarchitect.com', $this->width - 230, $this->height - 40, function (FontFactory $font) use ($monoFont) {
+        $image->text('thelaravelarchitect.com', $this->width - 230, $this->height - 40, function (FontFactory $font) use ($monoFont): void {
             $font->filename($monoFont);
             $font->size(11);
             $font->color('#484f5880');

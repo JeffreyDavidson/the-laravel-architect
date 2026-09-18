@@ -40,39 +40,13 @@ const budgets = [
     {
         entry: 'resources/css/app.css',
         label: 'Public stylesheet',
-        // Shared theme tokens and public filter controls live in app.css and
-        // are intentionally shipped once globally.
-        maxGzipBytes: 18.5 * 1024,
+        // One public bundle owns generated Blade utilities, theme tokens and keyframes.
+        maxGzipBytes: 22 * 1024,
     },
     {
         entry: 'resources/fonts/empera/Empera-Regular.woff2',
         label: 'Brand font',
         maxGzipBytes: 8 * 1024,
-    },
-    {
-        entry: 'resources/css/pages/home-entry.css',
-        label: 'Homepage stylesheet',
-        maxGzipBytes: 5 * 1024,
-    },
-    {
-        entry: 'resources/css/pages/about-entry.css',
-        label: 'About stylesheet',
-        maxGzipBytes: 2 * 1024,
-    },
-    {
-        entry: 'resources/css/pages/listings-entry.css',
-        label: 'Blog and projects stylesheet',
-        maxGzipBytes: 1 * 1024,
-    },
-    {
-        entry: 'resources/css/pages/article-entry.css',
-        label: 'Blog article stylesheet',
-        maxGzipBytes: 2 * 1024,
-    },
-    {
-        entry: 'resources/css/pages/podcast-entry.css',
-        label: 'Podcast stylesheet',
-        maxGzipBytes: 2 * 1024,
     },
     {
         entry: 'resources/js/app.js',
@@ -93,6 +67,16 @@ const budgets = [
         entry: 'resources/js/pages/blog-index.js',
         label: 'Blog index filtering',
         maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/alpine.js',
+        label: 'Standalone CSP-safe Alpine runtime',
+        maxGzipBytes: 25 * 1024,
+    },
+    {
+        entry: 'resources/js/livewire.js',
+        label: 'Blog-only CSP-safe Livewire runtime',
+        maxGzipBytes: 110 * 1024,
     },
     {
         entry: 'resources/js/pages/contact.js',

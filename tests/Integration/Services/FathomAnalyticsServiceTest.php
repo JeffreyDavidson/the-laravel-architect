@@ -57,5 +57,7 @@ it('returns cached traffic and conversion aggregates', function () {
 it('returns no overview when the pageview request fails', function () {
     Http::fake(fn () => Http::response([], 500));
 
-    expect(FathomAnalyticsService::overview())->toBeNull();
+    expect(FathomAnalyticsService::overview())->toBeNull()
+        ->and(FathomAnalyticsService::overview())->toBeNull();
+    Http::assertSentCount(2);
 });

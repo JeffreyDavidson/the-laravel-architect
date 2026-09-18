@@ -11,13 +11,13 @@ class PodcastController
 {
     public function index(PodcastIndexViewModel $podcastIndexViewModel): View
     {
-        return view('podcast.index', $podcastIndexViewModel->data());
+        return view('pages.podcast.index', $podcastIndexViewModel->data());
     }
 
     public function show(Podcast $podcast, PodcastShowViewModel $podcastShowViewModel): View
     {
         abort_unless($podcast->is_active, 404);
 
-        return view('podcast.show', $podcastShowViewModel->data($podcast));
+        return view('pages.podcast.show', $podcastShowViewModel->data($podcast));
     }
 }

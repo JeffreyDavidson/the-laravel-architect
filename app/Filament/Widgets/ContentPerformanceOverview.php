@@ -17,6 +17,7 @@ use App\Models\Video;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
 
 class ContentPerformanceOverview extends StatsOverviewWidget
@@ -42,12 +43,12 @@ class ContentPerformanceOverview extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedDocumentText)
                 ->color('info')
                 ->url(PostResource::getUrl('index')),
-            Stat::make('Published episodes', Episode::query()->published()->count())
+            Stat::make('Published episodes', Episode::query()->published()->whereHas('podcast', fn (Builder $query) => $query->where('is_active', true))->count())
                 ->description('Across active shows')
                 ->descriptionIcon(Heroicon::OutlinedMusicalNote)
                 ->color('success')
                 ->url(EpisodeResource::getUrl('index')),
-            Stat::make('Newsletter subscribers', Subscriber::query()->whereNull('unsubscribed_at')->count())
+            Stat::make('Newsletter subscribers', Subscriber::query()->active()->count())
                 ->description('Active audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
                 ->color('warning')

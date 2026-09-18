@@ -3,20 +3,20 @@
 namespace App\Console\Commands;
 
 use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentImportGuard;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Uri;
 use Throwable;
 
 #[Signature('content:import-public {path : Absolute path to a JSON archive} {--staging : Permit an import on the staging hostname when APP_ENV is production}')]
 #[Description('Import a public-content archive into staging or another non-production environment')]
 class ImportPublicContent extends Command
 {
-    public function handle(PublicContentArchive $archive): int
+    public function handle(PublicContentArchive $archive, PublicContentImportGuard $guard): int
     {
-        if ($this->importIsBlocked()) {
+        if (! $guard->allows((bool) $this->option('staging'))) {
             $this->error('Public content cannot be imported into production.');
 
             return self::FAILURE;
@@ -41,26 +41,5 @@ class ImportPublicContent extends Command
         $this->info(collect($counts)->map(fn (int $count, string $type): string => "{$count} {$type}")->join(', ').' synchronized.');
 
         return self::SUCCESS;
-    }
-
-    private function importIsBlocked(): bool
-    {
-        $url = config('app.url');
-
-        if (! is_string($url)) {
-            return true;
-        }
-
-        $host = Uri::of($url)->host();
-
-        if (in_array($host, ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'], true)) {
-            return true;
-        }
-
-        if (! app()->isProduction()) {
-            return false;
-        }
-
-        return ! $this->option('staging') || $host !== 'staging.thelaravelarchitect.com';
     }
 }

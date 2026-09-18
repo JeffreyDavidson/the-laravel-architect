@@ -36,23 +36,23 @@ class ContentReadinessWidget extends Widget
         $posts = Post::query()
             ->with('seo')
             ->withCount('tags')
-            ->get();
+            ->lazyById(100);
         $projects = Project::query()
             ->with('seo')
             ->withCount('tags')
-            ->get();
+            ->lazyById(100);
         $podcasts = Podcast::query()
             ->active()
             ->with('seo')
-            ->get();
+            ->lazyById(100);
         $episodes = Episode::query()
-            ->with('seo')
+            ->with(['seo', 'podcast'])
             ->withCount('tags')
-            ->get();
+            ->lazyById(100);
         $newsletterIssues = NewsletterIssue::query()
             ->with('seo')
-            ->get();
-        $videos = Video::query()->get();
+            ->lazyById(100);
+        $videos = Video::query()->lazyById(100);
 
         return [
             'items' => [
@@ -77,7 +77,7 @@ class ContentReadinessWidget extends Widget
                 [
                     'label' => 'Episode details',
                     'description' => 'Add a playable episode source and show notes.',
-                    'count' => $this->missingCount($episodes, 'episode_media'),
+                    'count' => $this->missingAnyCount($episodes, ['episode_media', 'show_notes']),
                     'url' => EpisodeResource::getUrl('index'),
                 ],
                 [
@@ -119,9 +119,9 @@ class ContentReadinessWidget extends Widget
         $missing = 0;
 
         foreach ($records as $record) {
-            $readiness = new ContentReadiness($record);
+            $readinessChecks = new ContentReadiness($record)->checks();
 
-            if (array_any($checks, fn (string $check): bool => ! $readiness->checkComplete($check))) {
+            if (array_any($checks, fn (string $check): bool => ! ($readinessChecks[$check]['complete'] ?? false))) {
                 $missing++;
             }
         }

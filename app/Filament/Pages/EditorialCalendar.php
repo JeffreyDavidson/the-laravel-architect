@@ -20,7 +20,8 @@ use UnitEnum;
 /**
  * @phpstan-type CalendarEntry array{date: string|null, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
  * @phpstan-type UnscheduledEntry array{date: null, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
- * @phpstan-type CalendarDay array{date: string, day: int, isCurrentMonth: bool, isToday: bool, entries: Collection<int, CalendarEntry>}
+ * @phpstan-type ScheduledCalendarEntry array{date: string, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
+ * @phpstan-type CalendarDay array{date: string, day: int, isCurrentMonth: bool, isToday: bool, entries: Collection<int, ScheduledCalendarEntry>}
  */
 class EditorialCalendar extends Page
 {
@@ -98,7 +99,6 @@ class EditorialCalendar extends Page
         $gridStart = $month->copy()->startOfMonth()->startOfWeek(Carbon::SUNDAY);
         $gridEnd = $month->copy()->endOfMonth()->endOfWeek(Carbon::SATURDAY);
         $entries = $this->entries($gridStart, $gridEnd);
-        $entriesByDate = $entries->groupBy(fn (array $entry): string => $entry['date'] ?? 'unscheduled');
         /** @var Collection<int, CalendarDay> $days */
         $days = collect();
 
@@ -110,7 +110,7 @@ class EditorialCalendar extends Page
                 'day' => $date->day,
                 'isCurrentMonth' => $date->month === $month->month,
                 'isToday' => $date->isToday(),
-                'entries' => $entriesByDate->get($dateKey, collect()),
+                'entries' => $this->entriesForDate($entries, $dateKey),
             ]);
         }
 
@@ -123,6 +123,26 @@ class EditorialCalendar extends Page
                 ->mapWithKeys(fn (int $count, string|int $status): array => [(string) $status => $count])
                 ->all(),
         ];
+    }
+
+    /**
+     * @param  Collection<int, CalendarEntry>  $entries
+     * @return Collection<int, ScheduledCalendarEntry>
+     */
+    private function entriesForDate(Collection $entries, string $dateKey): Collection
+    {
+        return $entries
+            ->filter(fn (array $entry): bool => $entry['date'] === $dateKey)
+            ->map(fn (array $entry): array => [
+                'date' => (string) $entry['date'],
+                'title' => $entry['title'],
+                'type' => $entry['type'],
+                'typeKey' => $entry['typeKey'],
+                'statusLabel' => $entry['statusLabel'],
+                'statusColor' => $entry['statusColor'],
+                'url' => $entry['url'],
+            ])
+            ->values();
     }
 
     private function selectedMonth(): Carbon
