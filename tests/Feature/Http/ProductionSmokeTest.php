@@ -62,7 +62,7 @@ it('returns the required security headers on public routes', function (): void {
     foreach ($routes as $route) {
         /** @var array<string, list<string>> $headers */
         $headers = Http::timeout(15)->get($baseUrl.$route)->headers();
-        $frameOptions = array_map('trim', explode(',', $headers['x-frame-options'][0] ?? ''));
+        $frameOptions = array_map(trim(...), explode(',', $headers['x-frame-options'][0] ?? ''));
         $contentSecurityPolicy = $headers['content-security-policy'][0] ?? '';
 
         expect($frameOptions)->not->toBe([''])
