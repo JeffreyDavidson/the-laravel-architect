@@ -1,21 +1,3 @@
-@keyframes podcast-waveform {
-    0%, 100% {
-        height: 20%;
-    }
-
-    25% {
-        height: 80%;
-    }
-
-    50% {
-        height: 40%;
-    }
-
-    75% {
-        height: 90%;
-    }
-}
-
 @keyframes podcast-equalize {
     0% {
         transform: scaleY(0.15);
@@ -40,62 +22,7 @@
     }
 }
 
-@keyframes podcast-spin-slow {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes podcast-float {
-    0%, 100% {
-        transform: translate(0, 0);
-    }
-
-    25% {
-        transform: translate(10px, -15px);
-    }
-
-    50% {
-        transform: translate(-5px, -25px);
-    }
-
-    75% {
-        transform: translate(-15px, -10px);
-    }
-}
-
 @layer components {
-    .podcast-wave-bar {
-        background: linear-gradient(to top, var(--color-brand-600), var(--color-brand-300));
-        animation: podcast-waveform var(--dur, 1.2s) ease-in-out infinite;
-        animation-delay: var(--delay, 0s);
-    }
-
-    .podcast-orb-brand {
-        background: radial-gradient(circle, var(--color-brand-600), transparent 70%);
-    }
-
-    .podcast-brand-text {
-        color: var(--color-brand-600);
-    }
-
-    .podcast-brand-bg {
-        background-color: var(--color-brand-600);
-    }
-
-    .podcast-brand-icon {
-        background: linear-gradient(135deg, var(--brand-alpha-20), var(--brand-alpha-05));
-    }
-
-    .podcast-eq-bar {
-        animation: podcast-equalize var(--dur) ease-in-out infinite alternate;
-        transform-origin: bottom;
-    }
-
     .eq-bar {
         animation: podcast-equalize var(--dur) ease-in-out infinite alternate;
         transform-origin: bottom;
@@ -157,85 +84,6 @@
         transform: translateX(var(--arrow-dir, 4px));
     }
 
-    .podcast-surface {
-        background: var(--bg-card);
-        border-color: var(--color-gray-200);
-    }
-
-    .podcast-page-border {
-        border-color: var(--color-gray-200);
-    }
-
-    .podcast-vinyl {
-        background: var(--color-gray-200);
-        border-color: var(--color-gray-300);
-    }
-
-    .podcast-showcase {
-        --podcast-color: var(--color-brand-600);
-
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .podcast-showcase:hover {
-        box-shadow: 0 25px 60px -15px var(--shadow-black-50);
-        transform: translateY(-6px);
-    }
-
-    .podcast-showcase:hover .showcase-glow {
-        opacity: 1;
-    }
-
-    .podcast-showcase:hover .showcase-artwork {
-        transform: scale(1.05) rotate(-1deg);
-    }
-
-    .podcast-showcase:hover .showcase-arrow {
-        transform: translateX(4px);
-    }
-
-    .podcast-showcase-glow {
-        box-shadow: inset 0 0 80px color-mix(in srgb, var(--podcast-color) 7%, transparent), 0 0 60px color-mix(in srgb, var(--podcast-color) 4%, transparent);
-    }
-
-    .podcast-showcase-rule {
-        background: linear-gradient(90deg, transparent, var(--podcast-color), transparent);
-    }
-
-    .showcase-artwork {
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .showcase-arrow {
-        transition: transform 0.3s ease;
-    }
-
-    .vinyl-spin {
-        animation: podcast-spin-slow 8s linear infinite;
-    }
-
-    .podcast-vinyl-grooves {
-        background: repeating-radial-gradient(circle at center, transparent 0, transparent 8px, var(--white-02) 8px, var(--white-02) 9px);
-    }
-
-    .podcast-vinyl-center {
-        background: color-mix(in srgb, var(--podcast-color) 20%, transparent);
-        border: 2px solid color-mix(in srgb, var(--podcast-color) 27%, transparent);
-    }
-
-    .podcast-showcase:hover .vinyl-spin {
-        animation-duration: 3s;
-    }
-
-    .podcast-cover-shadow {
-        box-shadow: 0 20px 40px color-mix(in srgb, var(--podcast-color) 13%, transparent);
-    }
-
-    .podcast-cover-placeholder {
-        background: linear-gradient(135deg, color-mix(in srgb, var(--podcast-color) 27%, transparent), color-mix(in srgb, var(--podcast-color) 7%, transparent));
-        box-shadow: 0 20px 40px color-mix(in srgb, var(--podcast-color) 13%, transparent);
-    }
-
     .podcast-accent-text {
         color: var(--podcast-color);
     }
@@ -266,48 +114,6 @@
         --tw-prose-code: var(--accent-pink);
     }
 
-    .topic-pill {
-        background: color-mix(in srgb, var(--podcast-color) 3%, transparent);
-        border-color: color-mix(in srgb, var(--podcast-color) 15%, transparent);
-        color: var(--podcast-color);
-        transition: all 0.2s ease;
-    }
-
-    .topic-pill:hover {
-        transform: translateY(-1px);
-    }
-
-    .format-card {
-        transition: all 0.3s ease;
-    }
-
-    .format-card:hover {
-        border-color: var(--white-10);
-        transform: translateY(-4px);
-    }
-
-    .format-card:hover .format-icon {
-        transform: scale(1.1);
-    }
-
-    .format-icon {
-        transition: transform 0.3s ease;
-    }
-
-    .podcast-float {
-        animation: podcast-float 8s ease-in-out infinite;
-    }
-
-    .podcast-float-reverse {
-        animation: podcast-float 10s ease-in-out infinite reverse;
-    }
-
-    :root:not(.dark) .topic-pill {
-        background: transparent !important;
-        border-color: currentColor !important;
-        color: var(--color-archive-link);
-    }
-
     :root:not(.dark) .podcast-accent-text,
     :root:not(.dark) .podcast-badge {
         color: var(--color-archive-link);
@@ -317,25 +123,17 @@
         background: var(--archive-link-alpha-08);
     }
 
-    :root:not(.dark) .podcast-showcase {
-        box-shadow: 0 2px 12px var(--shadow-black-04);
-    }
-
-    :root:not(.dark) .podcast-showcase:hover {
-        box-shadow: 0 12px 40px var(--shadow-black-08);
-    }
-
-    .dark .podcast-surface {
-        background: var(--color-surface-control);
-        border-color: var(--color-surface-border);
-    }
-
-    .dark .podcast-page-border {
-        border-color: var(--color-surface-border);
-    }
-
-    .dark .podcast-vinyl {
-        background: var(--color-surface-black);
-        border-color: var(--color-surface-border-dark);
+    @media (prefers-reduced-motion: reduce) {
+        .eq-bar,
+        .episode-card,
+        .ep-play,
+        .ep-number,
+        .subscribe-btn,
+        .share-btn,
+        .waveform-bar,
+        .ep-nav-arrow {
+            animation: none;
+            transition: none;
+        }
     }
 }
