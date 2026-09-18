@@ -117,11 +117,4 @@ return [
 
     'contact_to' => env('MAIL_CONTACT_TO', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
 
-    'markdown' => [
-        'theme' => 'architect',
-        'paths' => [
-            resource_path('views/vendor/mail'),
-        ],
-    ],
-
 ];

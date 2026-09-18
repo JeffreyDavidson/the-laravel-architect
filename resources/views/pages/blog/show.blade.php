@@ -74,19 +74,11 @@
                     <nav class="mt-3" aria-label="Article navigation" data-article-toc-list></nav>
                 </details>
 
-                <x-prose class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]">
-                    {!!
-                        Str::markdown(
-                            $post->content,
-                            [
-                                'html_input' => 'strip',
-                                'allow_unsafe_links' => false,
-                                'heading_permalink' => ['insert' => 'none', 'apply_id_to_heading' => true, 'id_prefix' => ''],
-                            ],
-                            [new League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension],
-                        )
-                    !!}
-                </x-prose>
+                <x-markdown
+                    :content="$post->content"
+                    heading-ids
+                    class="article-prose prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]"
+                />
 
                 @if ($post->tags->count())
                     <div class="mt-12 border-t border-gray-200 pt-7 dark:border-gray-800">

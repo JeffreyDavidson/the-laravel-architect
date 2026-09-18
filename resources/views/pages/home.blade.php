@@ -176,33 +176,32 @@
                 />
                 <div class="grid gap-6">
                     {{-- Featured post --}}
-                    @if ($latestPosts->first())
-                        @php $featured = $latestPosts->first(); @endphp
+                    @if ($featuredPost)
                         <article class="blog-featured group fade-up hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200">
                             <a
-                                href="{{ route('blog.show', $featured) }}"
+                                href="{{ route('blog.show', $featuredPost) }}"
                                 class="grid md:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]"
                             >
                                 <x-post-artwork
-                                    :post="$featured"
+                                    :post="$featuredPost"
                                     sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
                                     class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block min-h-60 overflow-hidden md:min-h-[27rem]"
                                 />
                                 <div class="flex flex-col justify-center p-7 sm:p-9">
-                                    @if ($featured->category)
-                                        <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $featured->category->name }}</span>
+                                    @if ($featuredPost->category)
+                                        <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $featuredPost->category->name }}</span>
                                     @endif
                                     <h3 class="group-hover:text-brand-400 mt-2 mb-4 text-2xl font-semibold text-gray-900 transition-colors md:text-3xl dark:text-white">
-                                        {{ $featured->title }}
+                                        {{ $featuredPost->title }}
                                     </h3>
                                     <p class="line-clamp-3 max-w-3xl text-base text-gray-600 dark:text-gray-400">
-                                        {{ $featured->excerpt }}
+                                        {{ $featuredPost->excerpt }}
                                     </p>
                                     <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
-                                        <time datetime="{{ $featured->published_at->toDateString() }}">{{ $featured->published_at->format('M d, Y') }}</time>
+                                        <time datetime="{{ $featuredPost->published_at->toDateString() }}">{{ $featuredPost->published_at->format('M d, Y') }}</time>
                                         <span>·</span>
                                         <span
-                                            >{{ \App\Presenters\PostPresenter::from($featured)->readingTime() }} min
+                                            >{{ \App\Presenters\PostPresenter::from($featuredPost)->readingTime() }} min
                                             read</span>
                                     </div>
                                 </div>
