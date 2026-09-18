@@ -71,14 +71,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         View::composer([
-            'archive.index',
-            'blog.*',
             'errors.404',
-            'newsletter.*',
             'pages.*',
-            'podcast.*',
-            'projects.*',
-            'search.index',
         ], function (ViewInstance $view): void {
             /** @var array<string, mixed> $pageData */
             $pageData = $view->getData();

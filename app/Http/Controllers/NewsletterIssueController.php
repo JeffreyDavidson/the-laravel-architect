@@ -11,13 +11,13 @@ class NewsletterIssueController
 {
     public function index(NewsletterIndexViewModel $viewModel): View
     {
-        return view('newsletter.index', $viewModel->data());
+        return view('pages.newsletter.index', $viewModel->data());
     }
 
     public function show(NewsletterIssue $newsletterIssue, NewsletterIssueViewModel $viewModel): View
     {
         abort_unless($newsletterIssue->isPublished(), 404);
 
-        return view('newsletter.issue', $viewModel->data($newsletterIssue));
+        return view('pages.newsletter.issue', $viewModel->data($newsletterIssue));
     }
 }

@@ -15,6 +15,6 @@ class PreviewEpisodeController
 
         abort_unless($podcast instanceof Podcast, 404);
 
-        return view('podcast.episode', $viewModel->previewData($podcast, $episode));
+        return view('pages.podcast.episode', $viewModel->previewData($podcast, $episode));
     }
 }

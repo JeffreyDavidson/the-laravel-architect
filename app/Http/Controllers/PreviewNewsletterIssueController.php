@@ -10,6 +10,6 @@ class PreviewNewsletterIssueController
 {
     public function __invoke(NewsletterIssue $newsletterIssue, NewsletterIssueViewModel $viewModel): View
     {
-        return view('newsletter.issue', $viewModel->previewData($newsletterIssue));
+        return view('pages.newsletter.issue', $viewModel->previewData($newsletterIssue));
     }
 }

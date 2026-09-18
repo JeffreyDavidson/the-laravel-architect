@@ -12,7 +12,7 @@ class ProjectController
 {
     public function index(Request $request, ProjectIndexViewModel $projectIndexViewModel): View
     {
-        return view('projects.index', $projectIndexViewModel->data([
+        return view('pages.projects.index', $projectIndexViewModel->data([
             'technology' => $request->string('technology')->trim()->toString(),
             'tag' => $request->string('tag')->trim()->toString(),
         ]));
@@ -22,6 +22,6 @@ class ProjectController
     {
         abort_unless($project->isPublished(), 404);
 
-        return view('projects.show', $projectShowViewModel->data($project));
+        return view('pages.projects.show', $projectShowViewModel->data($project));
     }
 }
