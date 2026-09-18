@@ -1,20 +1,18 @@
-<x-layouts.site :seo-source="$seoSource ?? null">
-    <x-slot:head>
-        <x-json-ld
-            :seo-source="$seoSource ?? null"
-            :post="$post ?? null"
-            :podcast="$podcast ?? null"
-            :episode="$episode ?? null"
-            :project="$project ?? null"
-            :posts="$posts ?? null"
-            :selected-category="$selectedCategory ?? null"
-            :category="$category ?? null"
-            :tag="$tag ?? null"
-            :projects="$projects ?? null"
-            :episodes="$episodes ?? null"
-            :items="$items ?? null"
-        />
-    </x-slot:head>
+<x-layouts.site
+    :seo-source="$seoSource ?? null"
+    :post="$post ?? null"
+    :podcast="$podcast ?? null"
+    :episode="$episode ?? null"
+    :project="$project ?? null"
+    :posts="$posts ?? null"
+    :selected-category="$selectedCategory ?? null"
+    :category="$category ?? null"
+    :tag="$tag ?? null"
+    :projects="$projects ?? null"
+    :episodes="$episodes ?? null"
+    :items="$items ?? null"
+>
+    <x-slot:head></x-slot:head>
 
     <div data-project-index>
         <header class="pt-12 pb-10 sm:pt-20 sm:pb-14">

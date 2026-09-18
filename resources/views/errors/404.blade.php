@@ -1,20 +1,18 @@
-<x-layouts.site :seo-source="$seoSource ?? null">
-    <x-slot:head>
-        <x-json-ld
-            :seo-source="$seoSource ?? null"
-            :post="$post ?? null"
-            :podcast="$podcast ?? null"
-            :episode="$episode ?? null"
-            :project="$project ?? null"
-            :posts="$posts ?? null"
-            :selected-category="$selectedCategory ?? null"
-            :category="$category ?? null"
-            :tag="$tag ?? null"
-            :projects="$projects ?? null"
-            :episodes="$episodes ?? null"
-            :items="$items ?? null"
-        />
-    </x-slot:head>
+<x-layouts.site
+    :seo-source="$seoSource ?? null"
+    :post="$post ?? null"
+    :podcast="$podcast ?? null"
+    :episode="$episode ?? null"
+    :project="$project ?? null"
+    :posts="$posts ?? null"
+    :selected-category="$selectedCategory ?? null"
+    :category="$category ?? null"
+    :tag="$tag ?? null"
+    :projects="$projects ?? null"
+    :episodes="$episodes ?? null"
+    :items="$items ?? null"
+>
+    <x-slot:head></x-slot:head>
 
     <div class="dark:bg-surface-page flex min-h-[80vh] items-center bg-white">
         <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-20 sm:px-6 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-14 lg:px-8">
