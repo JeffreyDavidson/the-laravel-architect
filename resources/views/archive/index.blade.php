@@ -1,6 +1,19 @@
 <x-layouts.site :seo-source="$seoSource ?? null">
     <x-slot:head>
-        @include('partials.json-ld')
+        <x-json-ld
+            :seo-source="$seoSource ?? null"
+            :post="$post ?? null"
+            :podcast="$podcast ?? null"
+            :episode="$episode ?? null"
+            :project="$project ?? null"
+            :posts="$posts ?? null"
+            :selected-category="$selectedCategory ?? null"
+            :category="$category ?? null"
+            :tag="$tag ?? null"
+            :projects="$projects ?? null"
+            :episodes="$episodes ?? null"
+            :items="$items ?? null"
+        />
     </x-slot:head>
 
     <div class="dark:bg-surface-page bg-gray-50">

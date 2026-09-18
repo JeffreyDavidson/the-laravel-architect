@@ -1,3 +1,18 @@
+@props([
+    'seoSource' => null,
+    'post' => null,
+    'podcast' => null,
+    'episode' => null,
+    'project' => null,
+    'posts' => null,
+    'selectedCategory' => null,
+    'category' => null,
+    'tag' => null,
+    'projects' => null,
+    'episodes' => null,
+    'items' => null,
+])
+
 @php
     $siteUrl = route('home');
     $siteName = 'The Laravel Architect';
