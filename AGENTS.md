@@ -20,36 +20,6 @@
 - Check the message before every commit and verify the final commit subject before merging a pull request. Do not rely on squash merging to excuse nonconforming feature-branch commits.
 - Write pull request bodies as actual multiline Markdown. When using the GitHub CLI, prefer `--body-file` or a command input that preserves real newlines; never pass literal `\\n` sequences.
 
-## Frontend styling
-
-- Use Tailwind utilities directly in Blade for layout, typography, colors, spacing, responsive behavior, and interaction states. Do not introduce custom component CSS classes for styling that utilities can express.
-- Reuse Blade components when utility-heavy markup repeats. Keep custom CSS for font/theme declarations, keyframes, third-party integration, or behavior that genuinely cannot be expressed clearly with utilities.
-- Preserve JavaScript hooks independently from styling, preferably with data attributes.
-
-## Controllers
-
-- Use singular resource controller names, such as `ProjectController`.
-- Application controllers are standalone classes; do not reintroduce an empty shared base controller.
-- Page ViewModels own SEO metadata and the `seoSource` view payload. Controllers inject the appropriate ViewModel; keep request handling and visibility checks in controllers.
-- Controllers must not contain private methods. Keep controllers focused on translating HTTP requests and responses, and move supporting behavior into an appropriately named action, query, builder, or other cohesive application boundary.
-
-## Actions
-
-- Actions in `App\Actions` expose a public, non-static `handle()` method, never `__invoke()`. Call actions explicitly with `->handle(...)`.
-
-## Data transfer objects
-
-- Native `final readonly` classes in `app/Data` describe data crossing application boundaries. They do not fetch data, send mail, or depend on HTTP requests.
-- `StoreContactRequest::toData()` maps validated input into `ContactMessageData`, retaining `ContactType` and nullable `ContactBudget` enums. The controller calls it only after honeypot, rate-limit, and Turnstile checks. `SendContactMessage::handle()` accepts that DTO and converts enums to their existing string values at the mailable boundary. Existing queued-mail fields and rendered content remain unchanged.
-- `YouTubeService` normalizes external responses into `YouTubeVideoData` objects. The sync command reads typed properties and uses the explicit `toArray()` mapping for new records. Updates continue to preserve curated slugs, publication dates, and featured status. Missing optional API fields remain null; malformed statistics retain the existing zero fallback.
-- Simple newsletter arguments, ViewModel payloads, and YouTube's separate statistics arrays remain unchanged. Do not add DTOs automatically for every array or introduce a shared DTO base class.
-
-## Testing
-
-- Keep structural controller rules in `tests/Architecture`; HTTP controller behavior belongs in `tests/Feature/Http/Controllers`.
-- Use `jasonmccreary/double` for test doubles. Do not introduce direct Mockery mocks or Laravel facade spies; swap a Double-backed contract into the container or facade instead.
-- Prefer Pest expectation chaining as recommended by `Pest\Rector\Rules\ChainExpectCallsRector`, including `->and()` for different values. This overrides the global preference for separate method-call lines where it conflicts with the rule. Do not disable expectation chaining solely to preserve existing test formatting; use Pint for final formatting and preserve test behavior.
-
 ## Releases
 
 - After a verified release, synchronize `develop` directly to `main` with a fast-forward-only merge and push. Never open a downstream pull request from `main` into `develop`.
