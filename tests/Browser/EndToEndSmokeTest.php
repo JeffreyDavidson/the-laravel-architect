@@ -26,7 +26,11 @@ it('loads public routes without high impact accessibility issues in both themes'
     // Audit settled content, independently of scroll-reveal animation timing.
     $page->script('document.querySelectorAll("[data-reveal]").forEach(element => { element.style.transition = "none"; element.dataset.reveal = "visible"; });');
 
-    expect($page->page()->locator('body')->count())->toBeGreaterThan(0);
+    expect(
+        $page->page()
+            ->locator('body')
+            ->count()
+    )->toBeGreaterThan(0);
 
     $page->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
@@ -51,7 +55,9 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
     $page->resize(1280, 720);
 
     foreach (['Discuss a Project', 'View Projects'] as $label) {
-        $link = $page->page()->locator('[data-home-hero]')->getByRole('link', ['name' => $label, 'exact' => true]);
+        $link = $page->page()
+            ->locator('[data-home-hero]')
+            ->getByRole('link', ['name' => $label, 'exact' => true]);
         $box = $link->boundingBox();
 
         if ($box === null) {
@@ -67,7 +73,10 @@ it('initializes homepage reveal animations', function (): void {
 
     $page = HomePage::visit();
 
-    $page->page()->locator('[data-reveal]')->first()->scrollIntoViewIfNeeded();
+    $page->page()
+        ->locator('[data-reveal]')
+        ->first()
+        ->scrollIntoViewIfNeeded();
 
     $page->assertScript('document.querySelector("[data-reveal]").dataset.reveal === "visible"')
         ->assertNoJavaScriptErrors();
@@ -88,13 +97,15 @@ it('supports keyboard interaction on the about card', function (): void {
     $this->withVite();
 
     $page = $this->browserPage('/about', 'desktop');
-    $card = $page->page()->getByRole('button', ['name' => 'Flip Jeffrey Davidson developer card']);
+    $card = $page->page()
+        ->getByRole('button', ['name' => 'Flip Jeffrey Davidson developer card']);
 
-    expect($card->getAttribute('aria-pressed'))->toBe('false');
+    $page->assertScript('document.querySelector("[data-about-card-surface]").style.transform !== ""')
+        ->assertAttribute('[data-about-card]', 'aria-pressed', 'false');
     $card->focus();
     $card->press('Enter');
 
-    expect($card->getAttribute('aria-pressed'))->toBe('true');
+    $page->assertAttribute('[data-about-card]', 'aria-pressed', 'true');
     $card->press('Space');
     $page->assertAttribute('[data-about-card]', 'aria-pressed', 'false')
         ->assertNoJavaScriptErrors();
@@ -123,8 +134,12 @@ it('supports blog search and reset with Livewire', function (): void {
         ->click('#theme-toggle')
         ->assertNoJavaScriptErrors();
 
-    $page->page()->locator('#blog-search')->fill('searchable post');
-    $page->page()->locator('#blog-search')->press('Enter');
+    $page->page()
+        ->locator('#blog-search')
+        ->fill('searchable post');
+    $page->page()
+        ->locator('#blog-search')
+        ->press('Enter');
 
     $page
         ->assertPathIs('/blog')
@@ -143,16 +158,26 @@ it('supports search filters and preserves the selected result type', function ()
 
     $page = $this->browserPage('/search', 'desktop');
 
-    $page->page()->locator('#site-search')->fill('E2E');
-    $page->page()->locator('#search-type')->selectOption('projects');
-    $page->page()->getByRole('button', ['name' => 'Search', 'exact' => true])->click();
+    $page->page()
+        ->locator('#site-search')
+        ->fill('E2E');
+    $page->page()
+        ->locator('#search-type')
+        ->selectOption('projects');
+    $page->page()
+        ->getByRole('button', ['name' => 'Search', 'exact' => true])
+        ->click();
 
     $page
         ->assertPathIs('/search')
         ->assertSee('E2E Project')
         ->assertDontSeeIn('h2', 'Writing');
 
-    expect($page->page()->locator('mark')->textContent())->toContain('E2E');
+    expect(
+        $page->page()
+            ->locator('mark')
+            ->textContent()
+    )->toContain('E2E');
 });
 
 it('exposes the code copy action and delayed syntax highlighting', function (): void {
@@ -180,7 +205,8 @@ it('reports clipboard failure without claiming the code was copied', function ()
 
 it('keeps audio controls synchronized with the media element', function (): void {
     $this->withVite();
-    $podcast = Podcast::query()->where('slug', 'e2e-podcast')->sole();
+    $podcast = Podcast::query()->where('slug', 'e2e-podcast')
+        ->sole();
     $episode = Episode::query()->create([
         'podcast_id' => $podcast->id,
         'title' => 'Audio controls',
@@ -232,7 +258,8 @@ it('keeps audio controls synchronized with the media element', function (): void
 
 it('loads the podcast video only on activation and copies its share link', function (): void {
     $this->withVite();
-    $podcast = Podcast::query()->where('slug', 'e2e-podcast')->sole();
+    $podcast = Podcast::query()->where('slug', 'e2e-podcast')
+        ->sole();
     $episode = Episode::query()->create([
         'podcast_id' => $podcast->id,
         'title' => 'Video controls',
@@ -256,7 +283,8 @@ it('loads the podcast video only on activation and copies its share link', funct
 
 it('builds styled article navigation from the Blade template', function (): void {
     $this->withVite();
-    $post = Post::query()->where('slug', 'e2e-code-example')->sole();
+    $post = Post::query()->where('slug', 'e2e-code-example')
+        ->sole();
     $post->update(['content' => "## First section\n\nIntroduction.\n\n## Second section\n\nDetails."]);
 
     $page = $this->browserPage(route('blog.show', $post), 'desktop');
@@ -279,9 +307,15 @@ it('allows an administrator to reach the dashboard', function (): void {
 
     $page = $this->browserPageWithTheme('/admin/login', 'desktop', 'dark');
 
-    $page->page()->locator('input[type="email"]')->fill('e2e-admin@example.test');
-    $page->page()->locator('input[type="password"]')->fill('e2e-password');
-    $page->page()->locator('button[type="submit"]')->click();
+    $page->page()
+        ->locator('input[type="email"]')
+        ->fill('e2e-admin@example.test');
+    $page->page()
+        ->locator('input[type="password"]')
+        ->fill('e2e-password');
+    $page->page()
+        ->locator('button[type="submit"]')
+        ->click();
 
     $page
         ->assertPathIs('/admin')
