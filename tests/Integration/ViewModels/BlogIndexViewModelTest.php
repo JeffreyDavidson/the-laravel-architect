@@ -9,6 +9,9 @@ use App\Presenters\PostPresenter;
 use App\Queries\BlogIndexQuery;
 use App\ViewModels\BlogIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 pest()->use(RefreshDatabase::class);
 
@@ -120,7 +123,15 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
 
 /**
  * @param  array{q?: string, category?: string}  $filters
- * @return array<string, mixed>
+ * @return array{
+ *     posts: LengthAwarePaginator<int, Post>,
+ *     categories: Collection<int, Category>,
+ *     publishedPostCount: int,
+ *     query: string,
+ *     categorySlug: string|null,
+ *     selectedCategory: Category|null,
+ *     seoSource: SEOData,
+ * }
  */
 function blogIndexViewModelData(array $filters = []): array
 {
