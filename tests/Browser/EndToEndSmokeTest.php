@@ -1,10 +1,14 @@
 <?php
 
+use App\Enums\PublishStatus;
+use App\Models\Episode;
+use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
 use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\PodcastEpisodePage;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,7 +23,14 @@ it('loads public routes without high impact accessibility issues in both themes'
 
     $page = $this->browserPageWithTheme($route, 'desktop', $theme);
 
-    expect($page->page()->locator('body')->count())->toBeGreaterThan(0);
+    // Audit settled content, independently of scroll-reveal animation timing.
+    $page->script('document.querySelectorAll("[data-reveal]").forEach(element => { element.style.transition = "none"; element.dataset.reveal = "visible"; });');
+
+    expect(
+        $page->page()
+            ->locator('body')
+            ->count()
+    )->toBeGreaterThan(0);
 
     $page->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
@@ -44,7 +55,9 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
     $page->resize(1280, 720);
 
     foreach (['Discuss a Project', 'View Projects'] as $label) {
-        $link = $page->page()->locator('[data-home-hero]')->getByRole('link', ['name' => $label, 'exact' => true]);
+        $link = $page->page()
+            ->locator('[data-home-hero]')
+            ->getByRole('link', ['name' => $label, 'exact' => true]);
         $box = $link->boundingBox();
 
         if ($box === null) {
@@ -53,6 +66,20 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
 
         expect($box['y'] + $box['height'])->toBeLessThanOrEqual(720);
     }
+});
+
+it('initializes homepage reveal animations', function (): void {
+    $this->withVite();
+
+    $page = HomePage::visit();
+
+    $page->page()
+        ->locator('[data-reveal]')
+        ->first()
+        ->scrollIntoViewIfNeeded();
+
+    $page->assertScript('document.querySelector("[data-reveal]").dataset.reveal === "visible"')
+        ->assertNoJavaScriptErrors();
 });
 
 it('supports the homepage services link', function (): void {
@@ -70,22 +97,30 @@ it('supports keyboard interaction on the about card', function (): void {
     $this->withVite();
 
     $page = $this->browserPage('/about', 'desktop');
-    $card = $page->page()->getByRole('button', ['name' => 'Flip Jeffrey Davidson developer card']);
+    $card = $page->page()
+        ->getByRole('button', ['name' => 'Flip Jeffrey Davidson developer card']);
 
-    expect($card->getAttribute('aria-pressed'))->toBe('false');
+    $page->assertScript('document.querySelector("[data-about-card-surface]").style.transform !== ""')
+        ->assertAttribute('[data-about-card]', 'aria-pressed', 'false');
     $card->focus();
     $card->press('Enter');
 
-    expect($card->getAttribute('aria-pressed'))->toBe('true');
+    $page->assertAttribute('[data-about-card]', 'aria-pressed', 'true');
+    $card->press('Space');
+    $page->assertAttribute('[data-about-card]', 'aria-pressed', 'false')
+        ->assertNoJavaScriptErrors();
 });
 
-it('keeps Alpine off pages without Livewire', function (): void {
+it('loads standalone Alpine without Livewire on non-Livewire pages', function (): void {
     $this->withVite();
 
     foreach (['/', '/about'] as $route) {
         $page = $this->browserPage($route, 'desktop');
 
-        expect($page->page()->evaluate('typeof window.Alpine'))->toBe('undefined');
+        $page->assertScript("typeof window.Alpine === 'object'")
+            ->assertScript("typeof window.Livewire === 'undefined'")
+            ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/livewire-'))")
+            ->assertNoJavaScriptErrors();
     }
 });
 
@@ -94,8 +129,17 @@ it('supports blog search and reset with Livewire', function (): void {
 
     $page = $this->browserPage('/blog', 'desktop');
 
-    $page->page()->locator('#blog-search')->fill('searchable post');
-    $page->page()->locator('#blog-search')->press('Enter');
+    $page->assertScript("typeof window.Livewire === 'object' && typeof window.Alpine === 'object'")
+        ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/alpine-'))")
+        ->click('#theme-toggle')
+        ->assertNoJavaScriptErrors();
+
+    $page->page()
+        ->locator('#blog-search')
+        ->fill('searchable post');
+    $page->page()
+        ->locator('#blog-search')
+        ->press('Enter');
 
     $page
         ->assertPathIs('/blog')
@@ -114,16 +158,26 @@ it('supports search filters and preserves the selected result type', function ()
 
     $page = $this->browserPage('/search', 'desktop');
 
-    $page->page()->locator('#site-search')->fill('E2E');
-    $page->page()->locator('#search-type')->selectOption('projects');
-    $page->page()->getByRole('button', ['name' => 'Search', 'exact' => true])->click();
+    $page->page()
+        ->locator('#site-search')
+        ->fill('E2E');
+    $page->page()
+        ->locator('#search-type')
+        ->selectOption('projects');
+    $page->page()
+        ->getByRole('button', ['name' => 'Search', 'exact' => true])
+        ->click();
 
     $page
         ->assertPathIs('/search')
         ->assertSee('E2E Project')
         ->assertDontSeeIn('h2', 'Writing');
 
-    expect($page->page()->locator('mark')->textContent())->toContain('E2E');
+    expect(
+        $page->page()
+            ->locator('mark')
+            ->textContent()
+    )->toContain('E2E');
 });
 
 it('exposes the code copy action and delayed syntax highlighting', function (): void {
@@ -139,9 +193,99 @@ it('exposes the code copy action and delayed syntax highlighting', function (): 
         ->assertPresent('.prose code .token');
 });
 
+it('reports clipboard failure without claiming the code was copied', function (): void {
+    $this->withVite();
+    $page = $this->browserPage(route('blog.show', 'e2e-code-example'), 'desktop');
+    $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Denied"); } } }); document.execCommand = () => false;');
+
+    $page->click('.copy-btn')
+        ->assertAttribute('.copy-btn', 'aria-label', 'Copy failed')
+        ->assertNoJavaScriptErrors();
+});
+
+it('keeps audio controls synchronized with the media element', function (): void {
+    $this->withVite();
+    $podcast = Podcast::query()->where('slug', 'e2e-podcast')
+        ->sole();
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Audio controls',
+        'description' => 'A deterministic media control test.',
+        'audio_url' => 'https://example.test/audio.mp3',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $page = PodcastEpisodePage::visit($podcast, $episode);
+    $page->assertScript('document.querySelector("[data-audio]").controls === false')
+        ->assertNoJavaScriptErrors();
+    $page->script(<<<'JS'
+        const audio = document.querySelector('[data-audio]');
+        Object.defineProperties(audio, {
+            duration: { configurable: true, value: 120 },
+            currentTime: { configurable: true, writable: true, value: 30 },
+            paused: { configurable: true, writable: true, value: true },
+            ended: { configurable: true, writable: true, value: false },
+        });
+        audio.play = async () => { audio.paused = false; audio.dispatchEvent(new Event('play')); };
+        audio.pause = () => { audio.paused = true; audio.dispatchEvent(new Event('pause')); };
+        audio.dispatchEvent(new Event('loadedmetadata'));
+        JS);
+
+    $page->assertSeeIn('[data-audio-current-time]', '0:30')
+        ->assertSeeIn('[data-audio-duration]', '2:00')
+        ->click('[data-audio-play]')
+        ->assertAttribute('[data-audio-play]', 'aria-label', 'Pause episode')
+        ->assertAttribute('[data-audio-player]', 'data-playing', 'true')
+        ->click('[data-audio-play]')
+        ->assertAttribute('[data-audio-player]', 'data-playing', 'false')
+        ->click('[data-audio-skip-back]')
+        ->assertSeeIn('[data-audio-current-time]', '0:15')
+        ->click('[data-audio-skip-forward]')
+        ->assertSeeIn('[data-audio-current-time]', '0:45')
+        ->click('[data-audio-speed]')
+        ->assertSeeIn('[data-audio-speed-label]', '1.25x')
+        ->assertScript('document.querySelector("[data-audio]").playbackRate === 1.25');
+
+    $page->script('const seek = document.querySelector("[data-audio-seek]"); seek.value = 75; seek.dispatchEvent(new Event("input", { bubbles: true }));');
+    $page->assertAttribute('[data-audio-seek]', 'aria-valuetext', '1:30 of 2:00')
+        ->assertScript('document.querySelector("[data-audio-progress]").style.width === "75%"');
+    $page->script('const audio = document.querySelector("[data-audio]"); audio.ended = true; audio.dispatchEvent(new Event("ended")); audio.play = async () => { throw new Error("Playback denied"); }; void 0;');
+    $page->click('[data-audio-play]')
+        ->assertAttribute('[data-audio-play]', 'aria-label', 'Play episode')
+        ->assertAttribute('[data-audio-player]', 'data-playing', 'false')
+        ->assertNoJavaScriptErrors();
+});
+
+it('loads the podcast video only on activation and copies its share link', function (): void {
+    $this->withVite();
+    $podcast = Podcast::query()->where('slug', 'e2e-podcast')
+        ->sole();
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Video controls',
+        'description' => 'A click-to-load video.',
+        'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $page = PodcastEpisodePage::visit($podcast, $episode);
+    $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>"; Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
+
+    $page->assertNotPresent('[data-youtube-facade] iframe')
+        ->assertEnabled('[data-youtube-play]')
+        ->click('[data-youtube-play]')
+        ->assertCount('[data-youtube-facade] iframe', 1)
+        ->assertScript('document.querySelector("[data-youtube-play]").hidden')
+        ->click('[data-podcast-copy-url]')
+        ->assertAttribute('[data-podcast-copy-url]', 'aria-label', 'Episode link copied')
+        ->assertScript('window.copiedEpisodeUrl === document.querySelector("[data-podcast-copy-url]").dataset.podcastCopyUrl')
+        ->assertNoJavaScriptErrors();
+});
+
 it('builds styled article navigation from the Blade template', function (): void {
     $this->withVite();
-    $post = Post::query()->where('slug', 'e2e-code-example')->sole();
+    $post = Post::query()->where('slug', 'e2e-code-example')
+        ->sole();
     $post->update(['content' => "## First section\n\nIntroduction.\n\n## Second section\n\nDetails."]);
 
     $page = $this->browserPage(route('blog.show', $post), 'desktop');
@@ -164,9 +308,15 @@ it('allows an administrator to reach the dashboard', function (): void {
 
     $page = $this->browserPageWithTheme('/admin/login', 'desktop', 'dark');
 
-    $page->page()->locator('input[type="email"]')->fill('e2e-admin@example.test');
-    $page->page()->locator('input[type="password"]')->fill('e2e-password');
-    $page->page()->locator('button[type="submit"]')->click();
+    $page->page()
+        ->locator('input[type="email"]')
+        ->fill('e2e-admin@example.test');
+    $page->page()
+        ->locator('input[type="password"]')
+        ->fill('e2e-password');
+    $page->page()
+        ->locator('button[type="submit"]')
+        ->click();
 
     $page
         ->assertPathIs('/admin')

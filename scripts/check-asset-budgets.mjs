@@ -69,6 +69,11 @@ const budgets = [
         maxGzipBytes: 2 * 1024,
     },
     {
+        entry: 'resources/js/alpine.js',
+        label: 'Standalone CSP-safe Alpine runtime',
+        maxGzipBytes: 25 * 1024,
+    },
+    {
         entry: 'resources/js/livewire.js',
         label: 'Blog-only CSP-safe Livewire runtime',
         maxGzipBytes: 110 * 1024,

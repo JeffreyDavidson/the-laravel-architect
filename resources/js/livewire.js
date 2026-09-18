@@ -1,3 +1,7 @@
-import { Livewire } from '../../vendor/livewire/livewire/dist/livewire.csp.esm';
+import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.csp.esm';
 
-Livewire.start();
+export { Alpine };
+
+export function start() {
+    Livewire.start();
+}
