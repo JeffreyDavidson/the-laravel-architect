@@ -16,9 +16,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Date;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final class StructuredDataBuilder
+final readonly class StructuredDataBuilder
 {
-    public function __construct(private readonly Request $request) {}
+    public function __construct(private Request $request) {}
 
     /**
      * @param  array<string, mixed>  $pageData
@@ -240,7 +240,7 @@ final class StructuredDataBuilder
         if (is_array($project->tech_stack)) {
             $technologyNames = array_values(array_filter(
                 $project->tech_stack,
-                fn (mixed $technology): bool => is_string($technology),
+                is_string(...),
             ));
 
             if ($technologyNames !== []) {
@@ -266,9 +266,9 @@ final class StructuredDataBuilder
         $collectionItems = [];
         $positionOffset = 0;
 
-        if ($this->request->routeIs('blog.index') && ($posts = $this->posts($pageData)) !== null) {
+        if ($this->request->routeIs('blog.index') && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator) {
             $collectionPage = [
-                'name' => ($selectedCategory = $this->category($pageData, 'selectedCategory')) !== null
+                'name' => ($selectedCategory = $this->category($pageData, 'selectedCategory')) instanceof Category
                     ? $selectedCategory->name.' Articles'
                     : 'Blog',
                 'url' => $this->canonicalUrl($seoSource, route('blog.index')),
@@ -279,8 +279,8 @@ final class StructuredDataBuilder
                 $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
             }
         } elseif ($this->request->routeIs('blog.category')
-            && ($posts = $this->posts($pageData)) !== null
-            && ($category = $this->category($pageData)) !== null) {
+            && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator
+            && ($category = $this->category($pageData)) instanceof Category) {
             $collectionPage = [
                 'name' => $category->name.' Articles',
                 'url' => $this->canonicalUrl($seoSource, route('blog.category', $category)),
@@ -291,8 +291,8 @@ final class StructuredDataBuilder
                 $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
             }
         } elseif ($this->request->routeIs('blog.tag')
-            && ($posts = $this->posts($pageData)) !== null
-            && ($tag = $this->tag($pageData)) !== null) {
+            && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator
+            && ($tag = $this->tag($pageData)) instanceof Tag) {
             $collectionPage = [
                 'name' => $tag->name.' Articles',
                 'url' => $this->canonicalUrl($seoSource, route('blog.tag', $tag)),
@@ -302,15 +302,15 @@ final class StructuredDataBuilder
             foreach ($posts as $post) {
                 $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
             }
-        } elseif ($this->request->routeIs('projects.index') && ($projects = $this->projects($pageData)) !== null) {
+        } elseif ($this->request->routeIs('projects.index') && ($projects = $this->projects($pageData)) instanceof EloquentCollection) {
             $collectionPage = ['name' => 'Projects', 'url' => route('projects.index')];
 
             foreach ($projects as $project) {
                 $collectionItems[] = ['name' => $project->title, 'url' => route('projects.show', $project)];
             }
         } elseif ($this->request->routeIs('podcast.show')
-            && ($podcast = $this->podcast($pageData)) !== null
-            && ($episodes = $this->episodes($pageData)) !== null) {
+            && ($podcast = $this->podcast($pageData)) instanceof Podcast
+            && ($episodes = $this->episodes($pageData)) instanceof LengthAwarePaginator) {
             $collectionPage = [
                 'name' => $podcast->name.' Episodes',
                 'url' => $this->canonicalUrl($seoSource, route('podcast.show', $podcast)),
@@ -330,7 +330,7 @@ final class StructuredDataBuilder
             if ($podcast instanceof Podcast) {
                 $collectionItems[] = ['name' => $podcast->name, 'url' => route('podcast.show', $podcast)];
             }
-        } elseif ($this->request->routeIs('archive.index') && ($items = $this->items($pageData)) !== null) {
+        } elseif ($this->request->routeIs('archive.index') && ($items = $this->items($pageData)) instanceof LengthAwarePaginator) {
             $collectionPage = [
                 'name' => 'Archive',
                 'url' => $this->canonicalUrl($seoSource, route('archive.index')),
@@ -396,10 +396,10 @@ final class StructuredDataBuilder
         } elseif ($this->request->routeIs('blog.show') && $post instanceof Post) {
             $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
             $breadcrumbs[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
-        } elseif ($this->request->routeIs('blog.category') && $category !== null) {
+        } elseif ($this->request->routeIs('blog.category') && $category instanceof Category) {
             $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
             $breadcrumbs[] = ['name' => $category->name, 'url' => $this->canonicalUrl($seoSource, route('blog.category', $category))];
-        } elseif ($this->request->routeIs('blog.tag') && $tag !== null) {
+        } elseif ($this->request->routeIs('blog.tag') && $tag instanceof Tag) {
             $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
             $breadcrumbs[] = ['name' => $tag->name, 'url' => $this->canonicalUrl($seoSource, route('blog.tag', $tag))];
         } elseif ($this->request->routeIs('projects.index')) {
