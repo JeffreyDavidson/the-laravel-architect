@@ -32,7 +32,7 @@ The email passed to the Filament command must match `ADMIN_EMAIL`. The database 
 composer test
 composer test:types
 composer test:filament
-vendor/bin/pint --test
+composer lint:check
 npm run build
 npm run test:assets
 composer audit --locked

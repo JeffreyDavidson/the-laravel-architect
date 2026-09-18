@@ -90,6 +90,8 @@
             "@php artisan config:clear --ansi",
             "vendor/bin/pest"
         ],
+        "lint": "vendor/bin/pint --blade",
+        "lint:check": "vendor/bin/pint --blade --test",
         "test:parallel": [
             "vendor/bin/pest --parallel --exclude-testsuite Browser",
             "vendor/bin/pest --testsuite Browser"
