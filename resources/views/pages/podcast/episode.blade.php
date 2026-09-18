@@ -322,6 +322,8 @@
                                         <button
                                             type="button"
                                             data-youtube-play
+                                            disabled
+                                            x-bind:disabled="false"
                                             x-on:click="load"
                                             x-bind:hidden="loaded"
                                             aria-label="Play {{ $episode->title }} on YouTube"

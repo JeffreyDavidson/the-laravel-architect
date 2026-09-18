@@ -272,6 +272,7 @@ it('loads the podcast video only on activation and copies its share link', funct
     $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>"; Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
 
     $page->assertNotPresent('[data-youtube-facade] iframe')
+        ->assertEnabled('[data-youtube-play]')
         ->click('[data-youtube-play]')
         ->assertCount('[data-youtube-facade] iframe', 1)
         ->assertScript('document.querySelector("[data-youtube-play]").hidden')
