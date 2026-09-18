@@ -2,17 +2,17 @@ function initializeRevealAnimations(reduceMotion) {
     const revealElements = document.querySelectorAll('[data-reveal]');
     const countElements = document.querySelectorAll('[data-count-up]');
 
-    revealElements.forEach((element) => (element.dataset.reveal = 'pending'));
+    revealElements.forEach(element => (element.dataset.reveal = 'pending'));
 
     if (reduceMotion || !('IntersectionObserver' in window)) {
-        revealElements.forEach((element) => (element.dataset.reveal = 'visible'));
+        revealElements.forEach(element => (element.dataset.reveal = 'visible'));
 
         return;
     }
 
     const revealObserver = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
+        entries => {
+            entries.forEach(entry => {
                 if (!entry.isIntersecting) {
                     return;
                 }
@@ -24,11 +24,11 @@ function initializeRevealAnimations(reduceMotion) {
         { threshold: 0.1 },
     );
 
-    revealElements.forEach((element) => revealObserver.observe(element));
+    revealElements.forEach(element => revealObserver.observe(element));
 
     const countObserver = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
+        entries => {
+            entries.forEach(entry => {
                 if (!entry.isIntersecting) {
                     return;
                 }
@@ -56,7 +56,7 @@ function initializeRevealAnimations(reduceMotion) {
         { threshold: 0.5 },
     );
 
-    countElements.forEach((element) => countObserver.observe(element));
+    countElements.forEach(element => countObserver.observe(element));
 }
 
 function initializeHomepage() {
