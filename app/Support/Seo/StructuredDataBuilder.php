@@ -13,6 +13,7 @@ use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Date;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final class StructuredDataBuilder
@@ -107,8 +108,12 @@ final class StructuredDataBuilder
             '@id' => $postUrl.'#article',
             'url' => $postUrl,
             'headline' => $post->title,
-            'datePublished' => $post->published_at?->toIso8601String(),
-            'dateModified' => $post->updated_at?->toIso8601String(),
+            'datePublished' => $post->published_at !== null
+                ? Date::parse($post->published_at)->toIso8601String()
+                : null,
+            'dateModified' => $post->updated_at !== null
+                ? Date::parse($post->updated_at)->toIso8601String()
+                : null,
             'author' => [
                 '@type' => 'Person',
                 '@id' => $authorUrl.'#person',
@@ -181,7 +186,7 @@ final class StructuredDataBuilder
         }
 
         if ($episode->published_at) {
-            $podcastEpisode['datePublished'] = $episode->published_at->toIso8601String();
+            $podcastEpisode['datePublished'] = Date::parse($episode->published_at)->toIso8601String();
         }
 
         if ($episode->episode_number !== null) {
@@ -232,8 +237,15 @@ final class StructuredDataBuilder
             $projectCaseStudy['image'] = $project->featured_image_url;
         }
 
-        if ($project->tech_stack) {
-            $projectCaseStudy['keywords'] = implode(', ', $project->tech_stack);
+        if (is_array($project->tech_stack)) {
+            $technologyNames = array_values(array_filter(
+                $project->tech_stack,
+                fn (mixed $technology): bool => is_string($technology),
+            ));
+
+            if ($technologyNames !== []) {
+                $projectCaseStudy['keywords'] = implode(', ', $technologyNames);
+            }
         }
 
         if ($project->url) {
