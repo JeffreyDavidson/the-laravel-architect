@@ -685,7 +685,7 @@ it('provides a valid legacy favicon fallback', function () {
 });
 
 it('keeps public technology and channel details consistent', function () {
-    $this->get(route('about'))->assertOk()->assertSeeHtml('aria-label="Flip Jeffrey Davidson developer card"')->assertSeeHtml('aria-pressed="false"')->assertDontSeeHtml('x-data=')
+    $this->get(route('about'))->assertOk()->assertSeeHtml('aria-label="Flip Jeffrey Davidson developer card"')->assertSeeHtml('aria-pressed="false"')->assertSeeHtml('x-data="siteHeader"')
         ->assertSee(configuredString(config('public-site.technology.laravel')))
         ->assertSee('I share practical Laravel videos');
 
@@ -722,9 +722,9 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     $this->get(route('about'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"');
 
-    $this->get(route('blog.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file']);
+    $this->get(route('blog.index'))->assertOk()->assertSeeHtml('x-data="siteHeader"')->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('projects.index'))->assertOk()->assertDontSeeHtml('x-data=')->assertSeeHtml($manifest['resources/css/app.css']['file']);
+    $this->get(route('projects.index'))->assertOk()->assertSeeHtml('x-data="siteHeader"')->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
     $this->get(route('podcast.index'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
@@ -825,7 +825,7 @@ it('renders accessible podcast episode embeds and external links', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('Play Designing Laravel Applications on YouTube')->assertSeeHtml('title="Designing Laravel Applications on YouTube"')->assertSeeHtml('www.youtube-nocookie.com/embed/dQw4w9WgXcQ')->assertSeeHtml('data-youtube-facade')->assertSeeHtml('data-youtube-player')->assertSeeHtml('data-youtube-play')->assertDontSeeHtml('x-data=')->assertDontSeeHtml('src="https://www.youtube.com/embed/')->assertSeeHtml('rel="noopener noreferrer"')->assertSeeHtml('data-podcast-copy-url=')->assertSeeHtml('style="--podcast-color: #2563eb;"')->assertDontSeeHtml('<style>')->assertDontSeeHtml('onclick=');
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('Play Designing Laravel Applications on YouTube')->assertSeeHtml('title="Designing Laravel Applications on YouTube"')->assertSeeHtml('www.youtube-nocookie.com/embed/dQw4w9WgXcQ')->assertSeeHtml('data-youtube-facade')->assertSeeHtml('data-youtube-player')->assertSeeHtml('data-youtube-play')->assertSeeHtml('x-data="siteHeader"')->assertDontSeeHtml('src="https://www.youtube.com/embed/')->assertSeeHtml('rel="noopener noreferrer"')->assertSeeHtml('data-podcast-copy-url=')->assertSeeHtml('style="--podcast-color: #2563eb;"')->assertDontSeeHtml('<style>')->assertDontSeeHtml('onclick=');
 
     $this->get(route('podcast.show', $podcast))->assertOk()->assertSeeHtml('style="--podcast-color: #2563eb;"')->assertSeeHtml('[--dur:0.7s]')->assertDontSeeHtml('style="--dur:')->assertDontSeeHtml('<style>');
 });
@@ -855,7 +855,7 @@ it('renders keyboard accessible podcast audio controls', function () {
         'published_at' => now()->subDays(2),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('data-audio-player')->assertSeeHtml('data-audio-play')->assertSeeHtml('data-audio-speed')->assertSeeHtml('aria-label="Seek episode"')->assertSeeHtml('aria-label="Skip back 15 seconds"')->assertSeeHtml('aria-label="Skip forward 30 seconds"')->assertSeeHtml('aria-label="Play episode"')->assertSeeHtml('data-audio-progress')->assertSeeHtml('[--arrow-dir:-4px]')->assertDontSeeHtml('style="width: 0;"')->assertDontSeeHtml('style="--arrow-dir:')->assertDontSeeHtml('x-data=')->assertDontSeeHtml('@click=');
+    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('data-audio-player')->assertSeeHtml('data-audio-play')->assertSeeHtml('data-audio-speed')->assertSeeHtml('aria-label="Seek episode"')->assertSeeHtml('aria-label="Skip back 15 seconds"')->assertSeeHtml('aria-label="Skip forward 30 seconds"')->assertSeeHtml('aria-label="Play episode"')->assertSeeHtml('data-audio-progress')->assertSeeHtml('[--arrow-dir:-4px]')->assertDontSeeHtml('style="width: 0;"')->assertDontSeeHtml('style="--arrow-dir:')->assertSeeHtml('x-data="siteHeader"')->assertDontSeeHtml('@click=');
 });
 
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {

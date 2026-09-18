@@ -21,6 +21,13 @@
                         <div class="pointer-events-none absolute inset-0 -z-1 [transform:translateY(8px)_translateX(4px)_scale(0.97)] rounded-[1.25rem] border-2 border-[var(--brand-alpha-10)] bg-[var(--surface-ghost-light)] opacity-40 dark:border-[var(--brand-alpha-15)] dark:bg-[var(--surface-ghost)]"></div>
                         <div
                             data-about-card
+                            x-data="aboutCard"
+                            x-bind:aria-pressed="flipped"
+                            x-on:click="flipCard"
+                            x-on:keydown.enter.prevent="flipCard"
+                            x-on:keydown.space.prevent="flipCard"
+                            x-on:mousemove="tilt"
+                            x-on:mouseleave="resetTilt"
                             class="focus-visible:outline-brand-400 cursor-pointer rounded-2xl perspective-[1200px] focus-visible:outline-2 focus-visible:outline-offset-4"
                             role="button"
                             tabindex="0"
@@ -29,6 +36,7 @@
                         >
                             <div
                                 data-about-card-surface
+                                x-bind:style="cardStyle"
                                 class="relative w-[250px] transition-transform duration-800 ease-[cubic-bezier(0.16,1,0.3,1)] transform-3d motion-reduce:transition-none md:w-[250px] lg:w-[300px]"
                             >
                                 {{-- FRONT: Portrait --}}

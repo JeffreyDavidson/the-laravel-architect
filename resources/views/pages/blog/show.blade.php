@@ -54,6 +54,10 @@
             />
         </div>
 
+        <template data-code-copy-template>
+            <x-copy-button class="copy-btn" />
+        </template>
+
         <template data-article-toc-template>
             <a class="hover:border-brand-600 hover:text-brand-600 aria-[current=true]:border-brand-600 aria-[current=true]:text-brand-600 dark:hover:border-brand-400 dark:hover:text-brand-200 dark:aria-[current=true]:border-brand-400 dark:aria-[current=true]:text-brand-200 block border-l border-[var(--border-gray)] py-[0.4rem] pl-[0.9rem] text-[0.8125rem] leading-[1.35] text-gray-500 transition-[border-color,color] duration-160 ease-[ease] motion-reduce:transition-none dark:border-[var(--brand-alpha-25)] dark:text-gray-400"></a>
         </template>

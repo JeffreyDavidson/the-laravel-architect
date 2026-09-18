@@ -106,9 +106,22 @@
                             <div
                                 class="group/player dark:border-surface-border dark:bg-surface-control mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white"
                                 data-audio-player
+                                x-data="audioPlayer"
+                                x-bind:data-playing="playingAttribute"
                                 data-playing="false"
                             >
-                                <audio controls data-audio preload="metadata">
+                                <audio
+                                    controls
+                                    data-audio
+                                    preload="metadata"
+                                    x-ref="audio"
+                                    x-on:loadedmetadata="updateProgress"
+                                    x-on:durationchange="updateProgress"
+                                    x-on:timeupdate="updateProgress"
+                                    x-on:play="updatePlaybackState"
+                                    x-on:pause="updatePlaybackState"
+                                    x-on:ended="updatePlaybackState"
+                                >
                                     <source src="{{ $audioUrl }}" type="audio/mpeg" />
                                 </audio>
 
@@ -134,6 +147,7 @@
                                             <div
                                                 class="absolute inset-y-0 left-0 w-0 rounded-full bg-[var(--podcast-color)]"
                                                 data-audio-progress
+                                                x-bind:style="progressStyle"
                                             ></div>
                                         </div>
                                         <input
@@ -143,14 +157,17 @@
                                             step="0.1"
                                             value="0"
                                             data-audio-seek
+                                            x-bind:value="percentage"
+                                            x-bind:aria-valuetext="seekLabel"
+                                            x-on:input="seek"
                                             aria-label="Seek episode"
                                             aria-valuetext="0:00 of 0:00"
                                             class="absolute inset-0 h-5 w-full cursor-pointer opacity-0"
                                         />
                                     </div>
                                     <div class="mt-2 flex justify-between font-mono text-xs text-gray-600">
-                                        <span data-audio-current-time>0:00</span>
-                                        <span data-audio-duration>0:00</span>
+                                        <span data-audio-current-time x-text="elapsedLabel">0:00</span>
+                                        <span data-audio-duration x-text="durationLabel">0:00</span>
                                     </div>
                                 </div>
 
@@ -181,6 +198,7 @@
                                         <button
                                             type="button"
                                             data-audio-skip-back
+                                            x-on:click="skipBack"
                                             aria-label="Skip back 15 seconds"
                                             class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
                                         >
@@ -192,18 +210,37 @@
                                         <button
                                             type="button"
                                             data-audio-play
+                                            x-on:click="togglePlayback"
+                                            x-bind:aria-label="playLabel"
+                                            x-bind:aria-pressed="playing"
                                             aria-label="Play episode"
                                             aria-pressed="false"
                                             class="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--podcast-color)] text-white transition-transform hover:scale-105"
                                         >
-                                            <svg data-audio-play-icon aria-hidden="true" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                                            <svg data-audio-pause-icon hidden aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
+                                            <svg
+                                                data-audio-play-icon
+                                                x-bind:hidden="playing"
+                                                aria-hidden="true"
+                                                class="ml-0.5 h-5 w-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            ><path d="M8 5v14l11-7z" /></svg>
+                                            <svg
+                                                data-audio-pause-icon
+                                                x-bind:hidden="paused"
+                                                hidden
+                                                aria-hidden="true"
+                                                class="h-5 w-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            ><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
                                         </button>
 
                                         {{-- Skip forward 30s --}}
                                         <button
                                             type="button"
                                             data-audio-skip-forward
+                                            x-on:click="skipForward"
                                             aria-label="Skip forward 30 seconds"
                                             class="relative text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
                                         >
@@ -217,10 +254,12 @@
                                         <button
                                             type="button"
                                             data-audio-speed
+                                            x-on:click="cycleSpeed"
+                                            x-bind:aria-label="speedDescription"
                                             aria-label="Playback speed 1 times. Activate to change."
                                             class="dark:border-surface-border rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                                         >
-                                            <span data-audio-speed-label>1x</span>
+                                            <span data-audio-speed-label x-text="speedLabel">1x</span>
                                         </button>
                                     </div>
                                 </div>
@@ -264,8 +303,12 @@
                                     $videoId = $matches[1] ?? null;
                                 @endphp
                                 @if ($videoId)
-                                    <div class="bg-surface-page relative aspect-video w-full" data-youtube-facade>
-                                        <template data-youtube-player>
+                                    <div
+                                        class="bg-surface-page relative aspect-video w-full"
+                                        data-youtube-facade
+                                        x-data="youtubePlayer"
+                                    >
+                                        <template data-youtube-player x-if="loaded">
                                             <iframe
                                                 src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
                                                 title="{{ $episode->title }} on YouTube"
@@ -279,6 +322,8 @@
                                         <button
                                             type="button"
                                             data-youtube-play
+                                            x-on:click="load"
+                                            x-bind:hidden="loaded"
                                             aria-label="Play {{ $episode->title }} on YouTube"
                                             class="group focus-visible:outline-brand-400 absolute inset-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center text-white transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-[-4px]"
                                         >
@@ -516,14 +561,13 @@
                                     >
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                                     </a>
-                                    <button
-                                        type="button"
+                                    <x-copy-button
+                                        label="Copy episode link"
+                                        success="Episode link copied"
+                                        :text="route('podcast.episode', [$podcast, $episode])"
                                         data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}"
-                                        aria-label="Copy episode link"
                                         class="dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
-                                    >
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                                    </button>
+                                    />
                                 </div>
                             </div>
                         </div>

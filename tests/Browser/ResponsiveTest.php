@@ -58,10 +58,16 @@ it('opens mobile navigation and navigates to the blog', function (): void {
     expect($page->page()->locator('#mobile-menu')->isVisible())->toBeTrue()
         ->and($menuButton->getAttribute('aria-expanded'))->toBe('true');
 
+    $menuButton->press('Escape');
+    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'false')
+        ->assertScript('document.querySelector("#mobile-menu").hidden');
+    $menuButton->click();
+
     $page->page()->locator('#mobile-menu')->getByRole('link', ['name' => 'Writing', 'exact' => true])->click();
 
     $page->assertPathIs('/blog')
-        ->assertSee('Notes from the work.');
+        ->assertSee('Notes from the work.')
+        ->assertNoJavaScriptErrors();
 });
 
 it('persists the mobile theme choice across navigation', function (): void {
@@ -83,4 +89,5 @@ it('persists the mobile theme choice across navigation', function (): void {
     $page->page()->reload();
 
     expect($page->page()->locator('html')->getAttribute('class'))->toContain('dark');
+    $page->assertNoJavaScriptErrors();
 });

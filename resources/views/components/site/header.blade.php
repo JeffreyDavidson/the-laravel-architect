@@ -10,7 +10,11 @@
     ];
 @endphp
 
-<nav class="dark:border-brand-800/50 dark:bg-brand-950/90 sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-lg">
+<nav
+    x-data="siteHeader"
+    x-on:keydown.escape="closeMenu"
+    class="dark:border-brand-800/50 dark:bg-brand-950/90 sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-lg"
+>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <a
@@ -33,6 +37,9 @@
 
             <button
                 id="mobile-menu-btn"
+                x-ref="menuButton"
+                x-on:click="toggleMenu"
+                x-bind:aria-expanded="menuOpen"
                 class="focus-visible:outline-brand-500 dark:hover:bg-brand-800 inline-flex size-12 items-center justify-center rounded-md p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden dark:text-gray-400 dark:hover:text-white"
                 aria-label="Toggle menu"
                 aria-controls="mobile-menu"
@@ -64,7 +71,12 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="dark:border-brand-800/50 hidden border-t border-gray-200 py-4 lg:hidden">
+        <div
+            id="mobile-menu"
+            hidden
+            x-bind:hidden="menuClosed"
+            class="dark:border-brand-800/50 border-t border-gray-200 py-4 lg:hidden"
+        >
             <div class="flex flex-col gap-3">
                 @foreach ([...$links, ['label' => 'Uses', 'route' => 'uses', 'active' => 'uses']] as $link)
                     <a
