@@ -2,12 +2,13 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 use Tests\Browser\Pages\HomePage;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    $this->artisan('content:import-public', [
+    $this->artisanCommand('content:import-public', [
         'path' => base_path('tests/Browser/fixtures/public-content.json'),
     ])->assertSuccessful();
 });
@@ -45,8 +46,11 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
         $link = $page->page()->locator('[data-home-hero]')->getByRole('link', ['name' => $label, 'exact' => true]);
         $box = $link->boundingBox();
 
-        expect($box)->not->toBeNull()
-            ->and($box['y'] + $box['height'])->toBeLessThanOrEqual(720);
+        if ($box === null) {
+            throw new RuntimeException("The {$label} link is not visible.");
+        }
+
+        expect($box['y'] + $box['height'])->toBeLessThanOrEqual(720);
     }
 });
 
@@ -140,7 +144,7 @@ it('allows an administrator to reach the dashboard', function (): void {
         'is_admin' => true,
     ]);
 
-    $page = $this->browserPage('/admin/login', 'desktop', 'dark');
+    $page = $this->browserPageWithTheme('/admin/login', 'desktop', 'dark');
 
     $page->page()->locator('input[type="email"]')->fill('e2e-admin@example.test');
     $page->page()->locator('input[type="password"]')->fill('e2e-password');

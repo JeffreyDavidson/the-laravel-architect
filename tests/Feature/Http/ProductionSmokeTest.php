@@ -4,14 +4,22 @@ use Illuminate\Support\Facades\Http;
 
 pest()->group('production');
 
+function productionSmokeBaseUrl(): ?string
+{
+    $baseUrl = getenv('PRODUCTION_BASE_URL');
+
+    return is_string($baseUrl) && $baseUrl !== '' ? rtrim($baseUrl, '/') : null;
+}
+
 beforeEach(function (): void {
-    if (! is_string(env('PRODUCTION_BASE_URL'))) {
+    if (productionSmokeBaseUrl() === null) {
         $this->markTestSkipped('Set PRODUCTION_BASE_URL to run production smoke tests.');
     }
 });
 
 it('serves the critical public routes', function (): void {
-    $baseUrl = rtrim((string) env('PRODUCTION_BASE_URL'), '/');
+    $baseUrl = productionSmokeBaseUrl();
+    assert($baseUrl !== null);
     $routes = [
         '/',
         '/about',
@@ -33,12 +41,13 @@ it('serves the critical public routes', function (): void {
     foreach ($routes as $route) {
         $response = Http::timeout(15)->get($baseUrl.$route);
 
-        expect($response->successful(), $route)->toBeTrue();
+        expect($response->successful())->toBeTrue($route);
     }
 });
 
 it('redirects the admin entry point to authentication', function (): void {
-    $baseUrl = rtrim((string) env('PRODUCTION_BASE_URL'), '/');
+    $baseUrl = productionSmokeBaseUrl();
+    assert($baseUrl !== null);
     $response = Http::withoutRedirecting()->timeout(15)->get($baseUrl.'/admin');
 
     expect($response->status())->toBe(302)
@@ -46,10 +55,12 @@ it('redirects the admin entry point to authentication', function (): void {
 });
 
 it('returns the required security headers on public routes', function (): void {
-    $baseUrl = rtrim((string) env('PRODUCTION_BASE_URL'), '/');
+    $baseUrl = productionSmokeBaseUrl();
+    assert($baseUrl !== null);
     $routes = ['/', '/about', '/archive', '/blog', '/contact', '/projects'];
 
     foreach ($routes as $route) {
+        /** @var array<string, list<string>> $headers */
         $headers = Http::timeout(15)->get($baseUrl.$route)->headers();
         $frameOptions = array_map('trim', explode(',', $headers['x-frame-options'][0] ?? ''));
         $contentSecurityPolicy = $headers['content-security-policy'][0] ?? '';

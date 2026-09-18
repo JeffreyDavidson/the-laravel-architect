@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    $this->artisan('content:import-public', [
+    $this->artisanCommand('content:import-public', [
         'path' => base_path('tests/Browser/fixtures/public-content.json'),
     ])->assertSuccessful();
 });
@@ -19,6 +20,13 @@ it('keeps public routes within the mobile viewport', function (string $route): v
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
     })');
+
+    if (! is_array($dimensions)
+        || ! isset($dimensions['clientWidth'], $dimensions['scrollWidth'])
+        || ! is_int($dimensions['clientWidth'])
+        || ! is_int($dimensions['scrollWidth'])) {
+        throw new RuntimeException('The browser viewport dimensions were not returned.');
+    }
 
     expect($dimensions['scrollWidth'])->toBeLessThanOrEqual($dimensions['clientWidth'])
         ->and($page->page()->locator('body')->isVisible())->toBeTrue();
