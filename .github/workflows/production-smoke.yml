@@ -22,6 +22,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, mbstring, openssl, pdo, pdo_sqlite, tokenizer, xml, zip
+          coverage: none
+
+      - name: Configure private Composer repository
+        env:
+          FILAMENTEXAMPLES_COMPOSER_USERNAME: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+          FILAMENTEXAMPLES_COMPOSER_PASSWORD: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+        run: composer config --global --auth http-basic.satis.filamentexamples.com "$FILAMENTEXAMPLES_COMPOSER_USERNAME" "$FILAMENTEXAMPLES_COMPOSER_PASSWORD"
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -37,13 +53,4 @@ jobs:
       - name: Run bounded production smoke tests
         env:
           PRODUCTION_BASE_URL: https://thelaravelarchitect.com
-        run: npm run test:e2e:production
-
-      - name: Upload browser failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v6
-        with:
-          name: production-smoke-failures-${{ github.run_attempt }}
-          path: test-results/
-          if-no-files-found: ignore
-          retention-days: 7
+        run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
