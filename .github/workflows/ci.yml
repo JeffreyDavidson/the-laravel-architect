@@ -70,7 +70,7 @@ jobs:
           php artisan content:import-public tests/Browser/fixtures/public-content.json
 
       - name: Check code style
-        run: ./vendor/bin/pint --test
+        run: ./vendor/bin/pint --blade --test
 
       - name: Run static analysis
         run: composer test:types
