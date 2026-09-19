@@ -18,6 +18,7 @@ class RelatedProjectsQuery
             ->whereKeyNot($project->getKey())
             ->with('tags')
             ->orderBy('sort_order')
+            ->orderBy('id')
             ->take($limit)
             ->get();
     }

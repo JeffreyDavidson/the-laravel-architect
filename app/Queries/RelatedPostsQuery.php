@@ -21,6 +21,7 @@ class RelatedPostsQuery
             ->where('category_id', $post->category_id)
             ->with(['category', 'tags'])
             ->latest('published_at')
+            ->latest('id')
             ->take($limit)
             ->get();
 
@@ -31,6 +32,7 @@ class RelatedPostsQuery
                 ->withAnyTags($post->tags)
                 ->with(['category', 'tags'])
                 ->latest('published_at')
+                ->latest('id')
                 ->take($limit - $relatedPosts->count())
                 ->get();
 
@@ -43,6 +45,7 @@ class RelatedPostsQuery
                 ->whereKeyNot($post->getKey())
                 ->with(['category', 'tags'])
                 ->latest('published_at')
+                ->latest('id')
                 ->take($limit - $relatedPosts->count())
                 ->get();
 

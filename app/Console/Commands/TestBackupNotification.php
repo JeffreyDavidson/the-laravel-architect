@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Notifications\BackupDeliveryTest;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Notification;
 
 #[Signature('app:test-backup-notification')]
 #[Description('Send a test message through the configured backup notification mail channel')]
-class SendBackupNotificationTest extends Command
+class TestBackupNotification extends Command
 {
     public function handle(): int
     {

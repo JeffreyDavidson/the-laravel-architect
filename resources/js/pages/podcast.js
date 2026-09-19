@@ -12,7 +12,7 @@ function transcriptSlug(value) {
 }
 
 function clearTranscriptMatches(content) {
-    content.querySelectorAll('[data-transcript-match]').forEach((match) => {
+    content.querySelectorAll('[data-transcript-match]').forEach(match => {
         match.replaceWith(document.createTextNode(match.textContent ?? ''));
     });
 
@@ -37,7 +37,7 @@ function highlightTranscriptMatches(content, query) {
 
     let matches = 0;
 
-    textNodes.forEach((textNode) => {
+    textNodes.forEach(textNode => {
         const text = textNode.textContent ?? '';
         const normalizedText = text.toLocaleLowerCase();
         let searchStart = 0;
@@ -92,7 +92,7 @@ function initializeTranscript(details) {
 
     const usedIds = new Set();
 
-    content.querySelectorAll('h2, h3, h4').forEach((heading) => {
+    content.querySelectorAll('h2, h3, h4').forEach(heading => {
         if (!(heading instanceof HTMLElement)) {
             return;
         }

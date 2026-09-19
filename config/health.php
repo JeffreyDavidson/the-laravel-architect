@@ -1,9 +1,6 @@
 <?php
 
 return [
-    'backup' => [
-        'max_age_hours' => (int) env('BACKUP_MAX_AGE_HOURS', 36),
-    ],
     'failed_jobs' => [
         'retention_hours' => (int) env('QUEUE_FAILED_JOB_RETENTION_HOURS', 168),
     ],

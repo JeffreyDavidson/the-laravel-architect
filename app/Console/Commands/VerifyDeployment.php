@@ -1,40 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
-use App\Support\Monitoring\Health\NightwatchHealthMonitor;
-use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Services\DeploymentVerifier;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Database\Migrations\Migrator;
-use Illuminate\Support\Facades\Process;
-use Spatie\Backup\BackupDestination\Backup;
-use Spatie\Backup\BackupDestination\BackupDestination;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
-#[Description('Verify the deployed commit, migrations, monitoring, runtime heartbeats, and backup freshness')]
+#[Description('Verify the deployed commit, migrations, monitoring, and runtime heartbeats')]
 class VerifyDeployment extends Command
 {
-    public function __construct(
-        private readonly Migrator $migrator,
-        private readonly RuntimeHealthMonitor $runtimeHealthMonitor,
-        private readonly NightwatchHealthMonitor $nightwatchHealthMonitor,
-    ) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(DeploymentVerifier $verifier): int
     {
-        $failures = array_filter([
-            $this->commitFailure(),
-            $this->migrationFailure(),
-            $this->runtimeFailure(),
-            $this->nightwatchDeploymentFailure(),
-            $this->nightwatchFailure(),
-            $this->backupFailure(),
-            $this->responsiveMediaFailure(),
-        ]);
+        $commit = trim((string) $this->argument('commit'));
+        $failures = $verifier->failures($commit);
 
         if ($failures !== []) {
             $this->error('Deployment verification failed:');
@@ -49,99 +31,5 @@ class VerifyDeployment extends Command
         $this->info('Deployment verification passed.');
 
         return self::SUCCESS;
-    }
-
-    private function commitFailure(): ?string
-    {
-        $expectedCommit = trim((string) $this->argument('commit'));
-        $result = Process::run(['git', 'rev-parse', 'HEAD']);
-
-        if (! $result->successful()) {
-            return 'The deployed Git commit could not be read.';
-        }
-
-        $deployedCommit = trim($result->output());
-
-        return hash_equals($expectedCommit, $deployedCommit)
-            ? null
-            : 'The deployed Git commit does not match the expected release.';
-    }
-
-    private function migrationFailure(): ?string
-    {
-        $files = $this->migrator->getMigrationFiles(database_path('migrations'));
-        $ran = $this->migrator->getRepository()->getRan();
-        $pending = array_diff(array_keys($files), $ran);
-
-        return $pending === []
-            ? null
-            : 'The application has pending database migrations.';
-    }
-
-    private function runtimeFailure(): ?string
-    {
-        try {
-            $this->runtimeHealthMonitor->ensureHealthy();
-        } catch (\RuntimeException) {
-            return 'The scheduler or queue worker heartbeat is stale.';
-        }
-
-        return null;
-    }
-
-    private function backupFailure(): ?string
-    {
-        $name = config('backup.backup.name');
-        $disks = config('backup.backup.destination.disks');
-        $maxAge = config('health.backup.max_age_hours');
-
-        if (! is_string($name) || ! is_array($disks) || ! is_int($maxAge) || $maxAge < 1) {
-            return 'Backup freshness configuration is invalid.';
-        }
-
-        foreach ($disks as $disk) {
-            if (! is_string($disk)) {
-                return 'Backup freshness configuration is invalid.';
-            }
-
-            $destination = BackupDestination::create($disk, $name);
-            $newestBackup = $destination->newestBackup();
-
-            if (! $destination->isReachable()
-                || ! $newestBackup instanceof Backup
-                || $newestBackup->date()->lt(now()->subHours($maxAge))) {
-                return 'One or more backup destinations do not contain a fresh backup.';
-            }
-        }
-
-        return null;
-    }
-
-    private function nightwatchFailure(): ?string
-    {
-        try {
-            $this->nightwatchHealthMonitor->ensureHealthy();
-        } catch (\RuntimeException) {
-            return 'The Nightwatch agent is unavailable.';
-        }
-
-        return null;
-    }
-
-    private function nightwatchDeploymentFailure(): ?string
-    {
-        $expectedCommit = trim((string) $this->argument('commit'));
-        $nightwatchDeployment = config('nightwatch.deployment');
-
-        return is_string($nightwatchDeployment) && hash_equals($expectedCommit, $nightwatchDeployment)
-            ? null
-            : 'Nightwatch is not configured with the expected deployment identifier.';
-    }
-
-    private function responsiveMediaFailure(): ?string
-    {
-        return $this->callSilent('media:verify-responsive-images') === self::SUCCESS
-            ? null
-            : 'One or more stored images are missing required responsive variants.';
     }
 }

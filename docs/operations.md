@@ -1,6 +1,84 @@
-# Production operations
+# Deployment operations
 
-This runbook is for deployments to the Laravel Forge production server.
+This runbook covers isolated staging and explicitly approved production
+deployments on Laravel Forge. See [the release process](releases.md) for branch
+policy and promotion gates. A merge into `main` does not deploy production.
+
+## Staged-release setup and cutover
+
+Targets in organization `jeffrey-davidson`, server `cold-moon` (753072): staging
+site 3366565 and production site 3044519. Direct push-to-deploy was disabled for
+both sites on 2026-09-19; production's `/up` health check remains enabled. GitHub
+environments were created with main-only branch policies; production requires
+Jeffrey's review and permits self-review. Both environments disallow administrator
+bypass. The staged-release workflow is merged into `develop` but remains
+inactive until the release reaches `main` and `STAGED_RELEASES_ENABLED=true` is
+set. Both sites now have the shared pinned Forge deployment script saved, and
+the uncached deployment-marker Nginx location is installed on both sites.
+
+Complete these steps before setting the GitHub repository variable
+`STAGED_RELEASES_ENABLED=true`:
+
+1. Create GitHub environments `staging` and `production`, allowing deployments
+   from `main` only. Require Jeffrey's approval for `production` and disallow
+   administrator bypass. Self-approval must remain possible for a single-person
+   operator who dispatches and approves their own deployment.
+2. Store each site's own existing Forge hook as its environment's
+   `FORGE_DEPLOY_HOOK` secret. Never use a production hook in staging or a broad
+   account API token when the site hook is sufficient. Supplying these secrets
+   grants CI deployment authority and requires explicit operator approval.
+3. Configure a Cloudflare Access service token authorized only for this staging
+   application. Store `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` in both
+   GitHub environments: production promotion needs read access to staging to
+   revalidate the approved candidate. Do not make staging public. Credential
+   creation and access-policy changes require separate approval; never paste
+   tokens into chat, logs, repository files or workflow inputs.
+4. Configure both sites for branch `main`, with Forge push-to-deploy **off**.
+   CI triggers staging only after tests pass; production uses the manual
+   promotion workflow. Do not manually redeploy staging while it is being
+   reviewed or promoted. A one-off operational deployment must use the same
+   revision pinning and approval requirements.
+5. Install the shared Forge script below for each site. Production script or
+   Nginx changes require immediate confirmation of the target. Do not trigger a
+   production deployment during setup. Do not enable the workflows while either
+   site still uses an unpinned script.
+6. Add an exact Nginx location for the revision marker within each site's server
+   block, preserving the existing configuration and validating it before reload:
+
+   ```nginx
+   location = /deployment.json {
+       try_files $uri =404;
+       add_header Cache-Control "no-store" always;
+   }
+   ```
+
+   Bypass Cloudflare caching for `/deployment.json` and `/up`. The marker exposes
+   only a source revision and Forge deployment ID, never environment values.
+7. Finish staging runtime setup: isolated persistent SQLite and storage,
+   database queue/cache tables, `QUEUE_CONNECTION=database`,
+   `CACHE_STORE=database`, and `BACKUP_MEDIA_PATH` pointing to staging's own
+   persistent `storage/app/public`. Keep `MAIL_MAILER=log` or an approved sandbox,
+   and never reuse production backup/storage write credentials. Staging local
+   backups are not a substitute for production's B2 backup policy.
+8. Add one Forge database queue worker (`default` queue, timeout 60 seconds,
+   tries 3) and a per-minute scheduler against the staging `current` directory.
+   Confirm timeout stays below the queue's 90-second retry interval. Review all
+   scheduled tasks before enabling them: backups, pruning and YouTube sync are
+   not all production-only. Preserve the working Nightwatch agent; do not add a
+   duplicate. Refresh staging configuration, observe both fresh heartbeats,
+   then enable `RUNTIME_HEALTH_ENABLED=true` and refresh configuration again.
+9. After the migration PR reaches `main`, enable the repository variable and
+   rerun successful push CI for that commit to exercise automatic staging.
+   Verify Access, the noncached revision marker, runtime checks and HTTP smoke
+   suite before using production promotion. Record the successful staging run.
+
+On 2026-09-19, the staging queue/cache/media-path environment entries were
+activated and cached configuration was refreshed. Forge now reports one running
+database queue worker and an installed per-minute scheduler; runtime health is
+enabled. Both Forge deployment scripts are installed and pinned, and the
+staging and production Nginx configurations contain the exact uncached
+`/deployment.json` location. Do not enable the staged-release workflow until a
+pinned staging deployment has been verified.
 
 ## Before deploying
 
@@ -26,23 +104,45 @@ Synchronization and archive import share a target guard that always rejects prod
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
 
-Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
+For production, run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting. Do not force production mail or backup credentials into staging to satisfy this production-specific verifier.
 
-### Production Forge deploy script
+### Shared staging and production Forge deploy script
 
-Keep the production site's Forge script synchronized with this checked-in copy. The release must be activated only after dependencies, checks, migrations, assets, and the Nightwatch marker have been prepared. Recreate `public/storage` in the new release before activation:
+Install this script only after the revision-marker setup above is complete.
+Forge's `forge_deploy_commit` parameter is metadata, not checkout pinning. The
+separate `revision` hook parameter becomes `FORGE_VAR_REVISION`; validate and
+check out that exact main-branch commit before executing any application code.
+Direct Deploy-button requests without a revision intentionally fail closed.
 
 ```bash
 set -e
+
+test "$FORGE_SITE_BRANCH" = main
+case "$FORGE_SITE_ID" in
+    3366565) test "$FORGE_SITE_ROOT" = /home/forge/staging.thelaravelarchitect.com ;;
+    3044519) test "$FORGE_SITE_ROOT" = /home/forge/thelaravelarchitect.com ;;
+    *) exit 1 ;;
+esac
+[[ "${FORGE_VAR_REVISION:-}" =~ ^[a-f0-9]{40}$ ]]
+test "$FORGE_DEPLOY_COMMIT" = "$FORGE_VAR_REVISION"
+
 $CREATE_RELEASE()
 cd $FORGE_RELEASE_DIRECTORY
 
-test -n "${FORGE_DEPLOY_COMMIT:-}"
-test "$(git rev-parse HEAD)" = "$FORGE_DEPLOY_COMMIT"
+if test "$(git rev-parse --is-shallow-repository)" = true; then
+    git fetch --unshallow origin
+fi
+git fetch --no-tags origin main
+git merge-base --is-ancestor "$FORGE_VAR_REVISION" origin/main
+git checkout --detach "$FORGE_VAR_REVISION"
+test "$(git rev-parse HEAD)" = "$FORGE_VAR_REVISION"
+test ! -e public/deployment.json
 
 $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-$FORGE_PHP artisan app:verify-production --no-ansi
+if test "$FORGE_SITE_ID" = 3044519; then
+    $FORGE_PHP artisan app:verify-production --no-ansi
+fi
 $FORGE_PHP artisan optimize
 $FORGE_PHP artisan migrate --force
 
@@ -58,6 +158,23 @@ $FORGE_PHP artisan storage:link
 
 $ACTIVATE_RELEASE()
 $RESTART_QUEUES()
+
+# Allow the real scheduler and worker to populate heartbeat checks after cache changes.
+tla_verified=false
+for tla_attempt in $(seq 1 24); do
+    if $FORGE_PHP artisan app:verify-deployment "$FORGE_VAR_REVISION" --no-ansi; then
+        tla_verified=true
+        break
+    fi
+    sleep 5
+done
+test "$tla_verified" = true
+test "$(readlink -f "$FORGE_SITE_PATH")" = "$(pwd -P)"
+[[ "$FORGE_DEPLOYMENT_ID" =~ ^[1-9][0-9]*$ ]]
+# This is the completion signal. Publish only after activation and verification.
+printf '{"revision":"%s","deployment_id":"%s"}\n' \
+    "$FORGE_VAR_REVISION" "$FORGE_DEPLOYMENT_ID" > public/deployment.json.tmp
+mv public/deployment.json.tmp public/deployment.json
 ```
 
 `$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
@@ -128,7 +245,7 @@ After enabling runtime monitoring or clearing the application cache, run `php ar
 
 When a release introduces responsive uploaded images, run `php artisan media:repair-responsive-images` once after the persistent public-media directory is mounted. The command repairs projects, posts, and podcasts in one bounded, isolated run while preserving original uploads, creating WebP derivatives beside them, skipping derivatives that already pass verification, and returning a failure if any source file is missing, unsupported, or still unhealthy after the aggregate verification pass. Concurrent repair or resource-specific generation runs are rejected so they cannot race over the same derivatives. Use `--force` only when a release intentionally requires every valid derivative to be re-encoded. The resource-specific generation commands remain available for targeted recovery. Use `php artisan media:verify-responsive-images` separately for read-only checks; it reports aggregate results without exposing stored paths and does not modify media. Do not remove the original images.
 
-Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and run `php artisan media:repair-responsive-images` or restore the affected media before the next release.
+Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and arrange an approved repair or restore. Existing media damage is not automatically a release failure; releases that change media behavior still require targeted media verification.
 
 Failed derivative generation during an admin upload leaves the original upload and any previously valid derivatives available, and writes a path-free warning identifying the appropriate retry command. Do not add stored media paths to that log context.
 
@@ -136,13 +253,31 @@ Do not run a standalone production migration unless the deployment itself cannot
 
 ## After deploying
 
-Run the deployment verifier with the immutable commit expected for the release:
+Run the deployment verifier from the active site's `current` directory with the immutable commit expected for the release, not from an inactive release directory:
 
 ```bash
 php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 ```
 
-The command fails when the checked-out commit differs, migrations are pending, the Nightwatch agent is unavailable, queue or scheduler heartbeats are stale, any configured backup disk lacks a fresh backup, or stored media lacks a required responsive variant. Then verify all of the following against the deployed commit:
+The command fails when the checked-out commit differs, migrations are pending, the Nightwatch deployment identifier differs, the Nightwatch agent is unavailable, or queue or scheduler heartbeats are stale. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
+
+### Ownership of operational checks
+
+| Responsibility | Owner |
+| --- | --- |
+| Release preparation, activation, queue supervision, scheduler cron | Forge |
+| Public application readiness after deployment | Forge deployment health check calling `/up` |
+| Application configuration and telemetry privacy safeguards | `app:verify-production` before migrations |
+| Active checkout, migrations, runtime heartbeats, Nightwatch | `app:verify-deployment` after activation |
+| Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email |
+| Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email |
+| Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
+
+The production site's Forge deployment health check was enabled on 2026-09-19 with `https://thelaravelarchitect.com/up` as its URL. Keep it enabled and require HTTP 200 from this endpoint. Reconfirm the setting in Forge when changing deployment configuration. Forge owns the external request, while the application owns its database and heartbeat checks. A running Supervisor process is not proof that queue jobs are executing, so retain the queued heartbeat. Allow heartbeat initialization after clearing cache before expecting readiness. See [Forge deployment health checks](https://laravel.com/forge/docs/sites/deployments#deployment-health-checks).
+
+Backup monitoring uses the same configured disks as backup creation, with a maximum age of one day and a 5,000 MB storage limit in `config/backup.php`. It runs daily at 04:00 and emails failures. This is periodic detection, not continuous monitoring. The obsolete `BACKUP_MAX_AGE_HOURS` setting is no longer read; remove it during an approved environment maintenance change if present. Validated pre-migration backups and restore drills remain required independently of the release verifier.
+
+Then verify all of the following against the deployed commit:
 
 - Production `HEAD` matches the expected commit.
 - `php artisan migrate:status` has no pending migrations.
@@ -156,7 +291,7 @@ The command fails when the checked-out commit differs, migrations are pending, t
 - The Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
-- The manually dispatched `Staging smoke` GitHub Actions workflow passes against `staging.thelaravelarchitect.com`. It runs every twelve hours against the deployed `develop` baseline.
+- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
 
@@ -164,18 +299,12 @@ For content or authorization changes, also verify the affected public route and 
 
 ### Off-server destinations
 
-The production server and Synology NAS must both be connected to the private Tailscale network. Backblaze B2 provides an independent encrypted cloud copy through its S3-compatible API. Configure these values through the production secret manager, never in the repository:
+Production uses `b2-backups` as its sole scheduled backup destination, confirmed and retained by operator decision on 2026-09-19. Backup creation and monitoring must cover that same destination. Local and NAS copies are not required by the current policy; adding another destination requires a separate operational decision. This leaves B2 as the only off-server backup destination, so preserve archive encryption, failure notifications, and regular restore validation.
+
+Backblaze B2 provides an encrypted off-server copy through its S3-compatible API. Configure these values through the production secret manager, never in the repository:
 
 ```dotenv
-BACKUP_DISKS=local,nas-backups,b2-backups
-BACKUP_SFTP_HOST=<NAS Tailscale address>
-BACKUP_SFTP_PORT=22
-BACKUP_SFTP_USERNAME=<dedicated backup user>
-BACKUP_SFTP_PASSWORD=<dedicated backup password>
-BACKUP_SFTP_ROOT=/laravel-backups
-BACKUP_SFTP_HOST_FINGERPRINT=<verified Flysystem-compatible fingerprint>
-BACKUP_SFTP_TIMEOUT=30
-BACKUP_SFTP_MAX_TRIES=3
+BACKUP_DISKS=b2-backups
 BACKUP_B2_KEY_ID=<bucket-scoped key ID>
 BACKUP_B2_APPLICATION_KEY=<bucket-scoped application key>
 BACKUP_B2_REGION=us-east-005
@@ -184,11 +313,9 @@ BACKUP_B2_ENDPOINT=https://s3.us-east-005.backblazeb2.com
 BACKUP_ARCHIVE_PASSWORD=<independent archive password>
 ```
 
-Obtain the SSH host key through a separately trusted channel before configuring `BACKUP_SFTP_HOST_FINGERPRINT`. First verify its standard OpenSSH SHA-256 fingerprint. Then convert that same verified key to the format expected by the installed `league/flysystem-sftp-v3` adapter. For an ED25519 key, the adapter expects the lowercase SHA-512 digest of the decoded public-key blob with colon-separated byte pairs, not the `SHA256:...` value displayed by OpenSSH. Recheck this behavior when upgrading the adapter, and never accept an unexpected replacement key during a deployment.
-
 Restrict the B2 application key to the TLA backup bucket with read and write access. Keep the bucket private, retain client-side archive encryption, and do not reuse the Mouse28 key or bucket. The configured endpoint must use HTTPS on Backblaze's `backblazeb2.com` domain.
 
-After changing these values, refresh the configuration and prove all destinations work:
+After an approved change to these values, refresh the configuration and prove the B2 destination works:
 
 ```bash
 php artisan config:clear
@@ -197,7 +324,7 @@ php artisan backup:run
 php artisan backup:monitor
 ```
 
-Confirm a new encrypted archive exists on the `local`, `nas-backups`, and `b2-backups` disks, then complete the restore drill below using a copy downloaded from B2. A successful connection to either off-server destination does not prove that an application backup can be restored.
+Confirm a new encrypted archive exists on the `b2-backups` disk, then complete the restore drill below using a copy downloaded from B2. A successful connection does not prove that an application backup can be restored.
 
 An exit-zero backup command is not enough. Independently verify:
 

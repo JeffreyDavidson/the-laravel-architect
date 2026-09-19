@@ -1,0 +1,63 @@
+name: Deploy staging
+
+on:
+    workflow_run:
+        workflows: [CI]
+        types: [completed]
+        branches: [main]
+
+concurrency:
+    group: release-promotion
+    cancel-in-progress: false
+
+permissions:
+    contents: read
+    deployments: write
+
+jobs:
+    staging:
+        if: >-
+            vars.STAGED_RELEASES_ENABLED == 'true' &&
+            github.event.workflow_run.conclusion == 'success' &&
+            github.event.workflow_run.event == 'push' &&
+            github.event.workflow_run.head_branch == 'main' &&
+            github.event.workflow_run.head_repository.full_name == github.repository
+        name: Stage ${{ github.event.workflow_run.head_sha }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 25
+        environment: staging
+        env:
+            EXPECTED_REVISION: ${{ github.event.workflow_run.head_sha }}
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha }}
+                  fetch-depth: 0
+            - name: Reject obsolete candidates
+              run: |
+                  test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+                  git fetch origin main
+                  test "$(git rev-parse origin/main)" = "$EXPECTED_REVISION"
+            - uses: ./.github/actions/deployment-runtime
+              with:
+                  composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+                  composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+            - name: Deploy and verify the tested revision
+              env:
+                  FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: node scripts/forge-deployment.mjs deploy staging "$EXPECTED_REVISION"
+            - name: Run application smoke checks
+              env:
+                  PRODUCTION_BASE_URL: https://staging.thelaravelarchitect.com
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
+            - name: Recheck the serving revision after smoke tests
+              env:
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: |
+                  node scripts/forge-deployment.mjs verify staging "$EXPECTED_REVISION"
+                  printf 'Staging verified: `%s`. Review this revision before manual production promotion.\n' "$EXPECTED_REVISION" >> "$GITHUB_STEP_SUMMARY"

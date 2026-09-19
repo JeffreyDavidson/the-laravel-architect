@@ -8,10 +8,10 @@
 
 ## Git and pull requests
 
-- Use `develop` as the integration branch and `main` as the release branch. Reserve `development` for environment names, not new branch names.
-- Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.
-- Squash merge feature, fix, refactor, chore, docs, and test branches into `develop` through pull requests.
-- Squash merge `hotfix/` branches into `main`; merge `release/` branches into `main` with regular merge commits. Do not rebase-merge pull requests.
+- Use `main` as the single permanent integration branch. It contains reviewed, releasable code, not necessarily the revision currently deployed to production.
+- Create focused working branches from an up-to-date `main`; do not commit feature work directly to `main`.
+- Squash merge working branches into `main` through pull requests with required CI. Do not rebase-merge pull requests.
+- During the one-time transition described in `docs/releases.md`, preserve the unreleased `develop` ancestry with a regular merge into `main`. Do not delete `develop` or discard its work before that transition is verified.
 - Before merging, verify the pull request's head branch, base branch, and merge method.
 - Every new commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type: description`, with an optional scope (`type(scope): description`) and optional breaking-change marker (`type(scope)!: description`).
 - Use lowercase types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Use `feat` for new features and `fix` for bug fixes; branch prefixes such as `feature/`, `hotfix/`, and `release/` are not commit types.
@@ -22,19 +22,21 @@
 
 ## Releases
 
-- After a verified release, synchronize `develop` directly to `main` with a fast-forward-only merge and push. Never open a downstream pull request from `main` into `develop`.
-- Never squash, rebase, create a merge commit, or force-push while synchronizing `develop` after a release.
-- If branch protection blocks the direct synchronization, temporarily relax only the required-pull-request rule, restore it immediately after the push, and verify the protection is active again.
+- Successful CI on `main` may deploy that exact revision to staging. Production requires a separate manual promotion and explicit approval of the tested revision.
+- Follow `docs/releases.md`; do not use a moving branch tip or Forge's commit label as proof of the deployed checkout.
+- Keep calendar release tags immutable. Record the deployed revision and verification result independently of the tag.
+- Do not create routine release branches, synchronize `develop` after releases, or relax branch protection to perform release bookkeeping.
+- Base emergency fixes on the verified deployed revision when `main` has unreleased work; agree the exceptional release path before deploying, and forward-port the fix to `main`.
 
 ## Post-merge synchronization and cleanup
 
-- After a verified PR merge into `develop`, include local synchronization and merged-branch cleanup in the workflow without waiting for a separate request.
-- Verify the PR is merged on GitHub; do not infer completion from a user message. With a clean working tree, switch to `develop` and pull `origin develop` with `--ff-only`. Stop if local changes, divergence, or another worktree prevent this safely.
+- After a verified PR merge into `main`, include local synchronization and merged-branch cleanup in the workflow without waiting for a separate request.
+- Verify the PR is merged on GitHub; do not infer completion from a user message. With a clean working tree, switch to `main` and pull `origin main` with `--ff-only`. Stop if local changes, divergence, or another worktree prevent this safely.
 - Clean up the merged PR's local and remote head branches only after verifying each existing tip exactly matches the PR's merged head commit. For an explicit broader cleanup request, apply the same checks to every candidate. Squash merges require PR evidence, not just `git branch --merged`.
 - Never delete `main`, `develop`, branches with post-merge commits, or branches checked out in another worktree. Do not remove worktrees or discard uncommitted changes as part of cleanup.
 - Prefer normal local branch deletion; force-delete a local squash-merged branch only after the checks above prove its work is merged. Verify remote tips again before deletion and use an expected-tip guard where supported.
 - Treat a request to merge as authorization for this verified cleanup, subject to execution-policy restrictions. Never bypass a denied operation; report what remains blocked. This file does not override tool permissions or production-operation confirmation requirements.
-- Verify the synchronized branch matches its remote and report synchronization, deleted branches, and any skipped or blocked cleanup. Follow the release-specific rules above when the PR targets `main`.
+- Verify the synchronized branch matches its remote and report synchronization, deleted branches, and any skipped or blocked cleanup. A PR merge never authorizes a production deployment.
 
 ===
 
@@ -142,8 +144,28 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Deployment
 
-- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
-- Activate the `deploying-to-cloud` skill whenever deploying to Laravel Cloud, configuring Cloud environments or resources, using the Cloud CLI, or troubleshooting Cloud deployments.
+- Production deployment uses Laravel Forge.
+- Read `docs/operations.md` before production work.
+- Follow the confirmation requirements for production mutations.
+- Use the deployment verifier before and after releases.
+
+=== documentation rules ===
+
+# Documentation
+
+- Keep `README.md` concise and repository-oriented.
+- Put architecture details in `docs/architecture.md`.
+- Put testing guidance in `docs/testing.md`.
+- Put deployment and operational procedures in `docs/operations.md`.
+- Update the relevant documentation when behavior or operational workflows change.
+
+=== local development rules ===
+
+# Local development
+
+- Use Laravel Herd for HTTP serving.
+- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
+- Use the project Composer scripts for queues, logs, tests, and asset development.
 
 === herd rules ===
 

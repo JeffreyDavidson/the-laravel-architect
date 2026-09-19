@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Tag;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
@@ -17,6 +18,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
@@ -48,6 +50,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::bind('tag', static fn (string $value): Tag => Tag::query()
+            ->where('slug->'.App::getLocale(), $value)
+            ->firstOrFail());
+
         // Use a distinct URL so previously cached CSP bundles cannot reach Filament.
         Livewire::setScriptRoute(fn (array $handle, string $path): RoutingRoute => Route::get(
             dirname($path).'/livewire-standard.js',

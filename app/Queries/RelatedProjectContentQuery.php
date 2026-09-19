@@ -38,6 +38,7 @@ class RelatedProjectContentQuery
                 ->withAnyTags($project->tags)
                 ->with(['category', 'tags'])
                 ->latest('published_at')
+                ->latest('id')
                 ->take($limit)
                 ->get(),
             'episodes' => Episode::published()
@@ -47,6 +48,7 @@ class RelatedProjectContentQuery
                 ->withAnyTags($project->tags)
                 ->with(['podcast', 'tags'])
                 ->latest('published_at')
+                ->latest('id')
                 ->take($limit)
                 ->get(),
         ];

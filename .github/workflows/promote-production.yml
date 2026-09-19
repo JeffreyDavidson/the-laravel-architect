@@ -1,0 +1,78 @@
+name: Promote production
+run-name: Promote ${{ inputs.revision }} from staging run ${{ inputs.staging_run_id }}
+
+on:
+    workflow_dispatch:
+        inputs:
+            revision:
+                description: Full 40-character SHA reviewed on staging
+                required: true
+                type: string
+            staging_run_id:
+                description: Successful Deploy staging workflow run ID for that SHA
+                required: true
+                type: string
+
+concurrency:
+    group: release-promotion
+    cancel-in-progress: false
+
+permissions:
+    contents: read
+    actions: read
+    deployments: write
+
+jobs:
+    production:
+        if: github.ref == 'refs/heads/main' && vars.STAGED_RELEASES_ENABLED == 'true'
+        name: Approve production ${{ inputs.revision }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 25
+        environment: production
+        env:
+            EXPECTED_REVISION: ${{ inputs.revision }}
+            STAGING_RUN_ID: ${{ inputs.staging_run_id }}
+        steps:
+            - name: Validate the successful staging run
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  [[ "$EXPECTED_REVISION" =~ ^[a-f0-9]{40}$ ]]
+                  [[ "$STAGING_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+                  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID" |
+                    jq -e --arg sha "$EXPECTED_REVISION" --arg repo "$GITHUB_REPOSITORY" '
+                      .conclusion == "success" and .status == "completed" and
+                      .event == "workflow_run" and .head_branch == "main" and
+                      .head_sha == $sha and .head_repository.full_name == $repo and
+                      .path == ".github/workflows/deploy-staging.yml"'
+                  # A disabled or skipped deployment job is not successful staging evidence.
+                  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID/jobs" |
+                    jq -e --arg name "Stage $EXPECTED_REVISION" '
+                      any(.jobs[]; .name == $name and .conclusion == "success")'
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ inputs.revision }}
+                  fetch-depth: 0
+            - name: Verify reviewed main ancestry
+              run: |
+                  test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
+                  git fetch origin main
+                  git merge-base --is-ancestor "$EXPECTED_REVISION" origin/main
+            - uses: ./.github/actions/deployment-runtime
+              with:
+                  composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+                  composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+            - name: Recheck staging and deploy the approved production revision
+              env:
+                  FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: node scripts/forge-deployment.mjs deploy production "$EXPECTED_REVISION"
+            - name: Run production smoke checks
+              env:
+                  PRODUCTION_BASE_URL: https://thelaravelarchitect.com
+              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
+            - name: Recheck the serving production revision
+              run: |
+                  node scripts/forge-deployment.mjs verify production "$EXPECTED_REVISION"
+                  printf 'Production verified: `%s`. Record the immutable release tag and deployment result.\n' "$EXPECTED_REVISION" >> "$GITHUB_STEP_SUMMARY"

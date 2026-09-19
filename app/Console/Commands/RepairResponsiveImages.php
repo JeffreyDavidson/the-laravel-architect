@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Services\ResponsiveImageRepairWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -19,26 +20,42 @@ class RepairResponsiveImages extends Command implements Isolatable
     #[\Override]
     protected $isolatedExitCode = self::FAILURE;
 
-    public function handle(): int
+    public function handle(ResponsiveImageRepairWorkflow $workflow): int
     {
-        $arguments = $this->option('force') ? ['--force' => true] : [];
-        $status = self::SUCCESS;
+        $report = $workflow->repair((bool) $this->option('force'));
 
-        foreach ([
-            'projects:generate-image-variants',
-            'posts:generate-image-variants',
-            'podcasts:generate-image-variants',
-        ] as $command) {
-            if ($this->call($command, $arguments) !== self::SUCCESS) {
-                $status = self::FAILURE;
+        foreach ($report['warnings'] as $warning) {
+            $this->warn($warning);
+        }
+
+        foreach ($report['generations'] as $label => $result) {
+            $noun = $result['generated'] === 1 ? $label : "{$label}s";
+            $this->info("Generated responsive images for {$result['generated']} {$noun}.");
+
+            if ($result['skipped'] > 0) {
+                $skippedNoun = $result['skipped'] === 1 ? $label : "{$label}s";
+                $this->line("Skipped {$result['skipped']} already verified {$skippedNoun}.");
             }
         }
 
-        if ($this->call('media:verify-responsive-images') !== self::SUCCESS) {
-            $status = self::FAILURE;
+        $failures = 0;
+
+        foreach ($report['verification'] as $label => $result) {
+            $verified = $result['checked'] - $result['failed'];
+            $this->line(ucfirst($label).": {$result['checked']} checked, {$verified} verified, {$result['failed']} failed.");
+            $failures += $result['failed'];
         }
 
-        if ($status === self::FAILURE) {
+        if ($failures > 0) {
+            $this->error('Responsive image verification failed.');
+        } else {
+            $this->info('Responsive image verification passed.');
+        }
+
+        $successful = $failures === 0
+            && array_all($report['generations'], fn (array $result): bool => $result['failed'] === 0);
+
+        if (! $successful) {
             $this->error('Responsive image repair completed with failures.');
 
             return self::FAILURE;
