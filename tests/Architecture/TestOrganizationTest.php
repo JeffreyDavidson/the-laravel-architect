@@ -42,3 +42,9 @@ it('keeps a one-to-one test mapping for application console commands', function 
         expect($signatures)->toHaveCount(1, "{$class} must declare one command signature.");
     }
 });
+
+it('uses action-oriented command class names without a redundant suffix', function () {
+    foreach (File::files(app_path('Console/Commands')) as $file) {
+        expect($file->getFilename())->not->toEndWith('Command.php');
+    }
+});

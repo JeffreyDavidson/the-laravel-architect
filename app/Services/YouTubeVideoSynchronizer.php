@@ -1,37 +1,27 @@
 <?php
 
-namespace App\Console\Commands;
+declare(strict_types=1);
+
+namespace App\Services;
 
 use App\Models\Video;
-use App\Services\YouTubeService;
-use Illuminate\Console\Attributes\Description;
-use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-#[Signature('youtube:sync {--limit=50 : Maximum videos to fetch}')]
-#[Description('Sync videos from YouTube channel')]
-class YouTubeSyncCommand extends Command
+final readonly class YouTubeVideoSynchronizer
 {
-    public function handle(YouTubeService $youtube): int
+    public function __construct(private YouTubeService $youtube) {}
+
+    /** @return array{created: int, updated: int} */
+    public function synchronize(int $limit): array
     {
-        $this->info('Fetching videos from YouTube...');
-
-        try {
-            $videos = $youtube->getChannelVideos((int) $this->option('limit'));
-        } catch (\RuntimeException $e) {
-            $this->error($e->getMessage());
-
-            return self::FAILURE;
-        }
-
-        $synced = 0;
+        $videos = $this->youtube->getChannelVideos($limit);
+        $created = 0;
         $updated = 0;
 
         foreach ($videos as $videoData) {
             $video = Video::query()->where('youtube_id', $videoData->youtubeId)->first();
 
-            if ($video) {
+            if ($video instanceof Video) {
                 $video->update([
                     'title' => $videoData->title,
                     'description' => $videoData->description,
@@ -43,19 +33,22 @@ class YouTubeSyncCommand extends Command
                     'synced_at' => now(),
                 ]);
                 $updated++;
-            } else {
-                Video::query()->create([
-                    ...$videoData->toArray(),
-                    'slug' => $this->uniqueSlug($videoData->title, $videoData->youtubeId),
-                    'synced_at' => now(),
-                ]);
-                $synced++;
+
+                continue;
             }
+
+            Video::query()->create([
+                ...$videoData->toArray(),
+                'slug' => $this->uniqueSlug($videoData->title, $videoData->youtubeId),
+                'synced_at' => now(),
+            ]);
+            $created++;
         }
 
-        $this->info("Done! {$synced} new, {$updated} updated.");
-
-        return self::SUCCESS;
+        return [
+            'created' => $created,
+            'updated' => $updated,
+        ];
     }
 
     private function uniqueSlug(string $title, string $youtubeId): string
@@ -67,7 +60,6 @@ class YouTubeSyncCommand extends Command
         }
 
         $youtubeIdSlug = Str::substr($youtubeIdSlug, 0, 48);
-
         $baseSlug = Str::slug($title);
 
         if ($baseSlug === '') {

@@ -1,32 +1,26 @@
 <?php
 
-namespace App\Console\Commands;
+declare(strict_types=1);
+
+namespace App\Services;
 
 use App\Models\Video;
-use App\Services\YouTubeService;
-use Illuminate\Console\Attributes\Description;
-use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
-#[Signature('youtube:stats')]
-#[Description('Update view/like/comment counts for all synced videos')]
-class YouTubeStatsCommand extends Command
+final class YouTubeVideoStatsSynchronizer
 {
-    public function handle(YouTubeService $youtube): int
+    /**
+     * @return array{videoCount: int, updated: int}
+     */
+    public function synchronize(YouTubeService $youtube): array
     {
         $videoCount = Video::query()->count();
 
         if ($videoCount === 0) {
-            $this->info('No videos to update. Run youtube:sync first.');
-
-            return self::SUCCESS;
+            return ['videoCount' => 0, 'updated' => 0];
         }
-
-        $this->info("Updating stats for {$videoCount} videos...");
 
         $updated = 0;
 
-        // YouTube API allows up to 50 IDs per request.
         foreach (Video::query()->lazyById(50)->chunk(50) as $videos) {
             $videoIds = [];
 
@@ -42,21 +36,15 @@ class YouTubeStatsCommand extends Command
                 continue;
             }
 
-            try {
-                $stats = $youtube->getStatsForVideos($videoIds);
-            } catch (\RuntimeException $e) {
-                $this->error($e->getMessage());
-
-                return self::FAILURE;
-            }
+            $stats = $youtube->getStatsForVideos($videoIds);
 
             if ($stats === []) {
                 continue;
             }
 
             $syncedAt = now();
-            $updates = [];
             $videosByYouTubeId = $videos->keyBy('youtube_id');
+            $updates = [];
 
             foreach ($stats as $youtubeId => $counts) {
                 $video = $videosByYouTubeId->get($youtubeId);
@@ -84,8 +72,9 @@ class YouTubeStatsCommand extends Command
             $updated += count($updates);
         }
 
-        $this->info("Updated stats for {$updated} videos.");
-
-        return self::SUCCESS;
+        return [
+            'videoCount' => $videoCount,
+            'updated' => $updated,
+        ];
     }
 }
