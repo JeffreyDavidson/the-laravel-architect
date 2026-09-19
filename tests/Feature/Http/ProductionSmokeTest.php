@@ -66,8 +66,9 @@ it('returns the required security headers on public routes', function (): void {
     $routes = ['/', '/about', '/archive', '/blog', '/contact', '/projects'];
 
     foreach ($routes as $route) {
+        $request = Http::timeout(15);
+        $response = $request->get($baseUrl.$route);
         /** @var array<string, list<string>> $headers */
-        $response = Http::timeout(15)->get($baseUrl.$route);
         $headers = $response->headers();
         $frameOptionHeader = $headers['x-frame-options'][0] ?? '';
         $frameOptions = array_map(trim(...), explode(',', $frameOptionHeader));
