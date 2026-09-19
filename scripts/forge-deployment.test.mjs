@@ -5,6 +5,7 @@ import {
     deploymentHook,
     readMarker,
     requestHeaders,
+    transportFailureMetadata,
     transportFailureReason,
     validateRevision,
     verifyRelease,
@@ -67,6 +68,15 @@ test('classifies transport failures without exposing error details', () => {
     assert.equal(transportFailureReason({ name: 'TimeoutError' }), 'timeout');
     assert.equal(transportFailureReason({ cause: { code: 'ECONNRESET' } }), 'connection failure');
     assert.equal(transportFailureReason(new Error('test-secret')), 'network failure');
+});
+
+test('reports only safe transport metadata', () => {
+    assert.equal(
+        transportFailureMetadata({ name: 'TypeError', code: 'UND_ERR_SOCKET', cause: { code: 'ECONNRESET' } }),
+        '; error=TypeError, code=UND_ERR_SOCKET, cause=ECONNRESET',
+    );
+    assert.equal(transportFailureMetadata(new Error('test-secret')), '; error=Error');
+    assert.equal(transportFailureMetadata({ message: 'test-secret', code: 'not-safe' }), '');
 });
 
 test('reports a Forge hook redirect without following it', async () => {
