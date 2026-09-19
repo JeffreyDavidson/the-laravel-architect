@@ -17,7 +17,7 @@
 /public/hot
 /public/storage
 /test-results
-/tests/Browser/Screenshots
+/tests/Browser/Screenshots/
 /storage/*.key
 /storage/pail
 /vendor
@@ -29,4 +29,7 @@ Thumbs.db
 notes/
 
 # Local Impeccable output
-.impeccable/
+/.impeccable/critique/
+/.impeccable/mocks/decision/
+/.impeccable/questions/
+/.impeccable/review/
