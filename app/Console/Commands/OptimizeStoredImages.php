@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\Episode;
-use App\Models\Podcast;
-use App\Models\Post;
-use App\Models\Project;
 use App\Services\StoredImageOptimizationWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -26,27 +22,19 @@ class OptimizeStoredImages extends Command implements Isolatable
 
     public function handle(StoredImageOptimizationWorkflow $workflow): int
     {
-        $status = self::SUCCESS;
         $dryRun = (bool) $this->option('dry-run');
         $force = (bool) $this->option('force');
 
-        foreach ([
-            [Project::class, 'featured_image_path', 'projects', 'project'],
-            [Post::class, 'featured_image_path', 'posts', 'post'],
-            [Podcast::class, 'cover_image_path', 'podcasts', 'podcast'],
-            [Episode::class, 'featured_image_path', 'episodes/images', 'episode'],
-        ] as [$modelClass, $pathColumn, $directory, $label]) {
-            $result = $workflow->optimize(
-                $modelClass,
-                $pathColumn,
-                $directory,
-                $label,
-                $dryRun,
-                $force,
-                function (string $message): void {
-                    $this->warn($message);
-                },
-            );
+        $report = $workflow->optimizeAll(
+            $dryRun,
+            $force,
+            function (string $message): void {
+                $this->warn($message);
+            },
+        );
+
+        foreach ($report['results'] as $result) {
+            $label = $result['label'];
 
             $noun = $result['optimized'] === 1 ? $label : "{$label}s";
             $verb = $dryRun ? 'Would optimize' : 'Optimized';
@@ -57,12 +45,9 @@ class OptimizeStoredImages extends Command implements Isolatable
                 $this->line("Skipped {$result['skipped']} already optimized {$skippedNoun}.");
             }
 
-            if ($result['failed'] > 0) {
-                $status = self::FAILURE;
-            }
         }
 
-        if ($status === self::FAILURE) {
+        if ($report['failed'] > 0) {
             $this->error('Stored image optimization completed with failures.');
 
             return self::FAILURE;
