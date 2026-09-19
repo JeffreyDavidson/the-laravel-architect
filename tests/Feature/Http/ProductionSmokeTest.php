@@ -80,8 +80,8 @@ it('returns the required security headers on public routes', function (): void {
         $frameExpectation = expect($frameOptions);
         $eachExpectation = $frameExpectation->each;
         $eachExpectation->toBeIn(['SAMEORIGIN', 'DENY']);
-        expect($contentSecurityPolicy)->toMatch("/frame-ancestors ('self'|'none')/");
-        expect($headers['strict-transport-security'][0] ?? '')->toContain('max-age=31536000');
-        expect($headers['referrer-policy'][0] ?? '')->toBe('strict-origin-when-cross-origin');
+        expect($contentSecurityPolicy)->toMatch("/frame-ancestors ('self'|'none')/")
+            ->and($headers['strict-transport-security'][0] ?? '')->toContain('max-age=31536000')
+            ->and($headers['referrer-policy'][0] ?? '')->toBe('strict-origin-when-cross-origin');
     }
 });
