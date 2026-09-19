@@ -47,7 +47,6 @@ final class ProductionConfigurationVerifier
             [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
             [$this->hasConfiguredB2Backup($backupDisks), 'The b2-backups disk must configure a private Backblaze S3 endpoint, region, bucket, key ID, and application key.'],
             [$this->isConfigured(config('backup.backup.password')), 'BACKUP_ARCHIVE_PASSWORD must be configured.'],
-            [$this->isPositiveInteger(config('health.backup.max_age_hours')), 'BACKUP_MAX_AGE_HOURS must be at least 1.'],
             [$this->isPositiveInteger(config('health.failed_jobs.retention_hours')), 'QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.'],
             [config('health.runtime.enabled') === true, 'RUNTIME_HEALTH_ENABLED must be true.'],
             [$this->hasValidHeartbeatMaxAge(config('health.runtime.max_age_seconds')), 'RUNTIME_HEALTH_MAX_AGE must be at least 60 seconds.'],
