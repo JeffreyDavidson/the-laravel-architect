@@ -1,6 +1,79 @@
-# Production operations
+# Deployment operations
 
-This runbook is for deployments to the Laravel Forge production server.
+This runbook covers isolated staging and explicitly approved production
+deployments on Laravel Forge. See [the release process](releases.md) for branch
+policy and promotion gates. A merge into `main` does not deploy production.
+
+## Staged-release setup and cutover
+
+Targets in organization `jeffrey-davidson`, server `cold-moon` (753072): staging
+site 3366565 and production site 3044519. Direct push-to-deploy was disabled for
+both sites on 2026-09-19; production's `/up` health check remains enabled. GitHub
+environments were created with main-only branch policies; production requires
+Jeffrey's review and permits self-review. Both environments disallow administrator
+bypass. The workflow and script below are the target configuration, not evidence
+of live activation.
+
+Complete these steps before setting the GitHub repository variable
+`STAGED_RELEASES_ENABLED=true`:
+
+1. Create GitHub environments `staging` and `production`, allowing deployments
+   from `main` only. Require Jeffrey's approval for `production` and disallow
+   administrator bypass. Self-approval must remain possible for a single-person
+   operator who dispatches and approves their own deployment.
+2. Store each site's own existing Forge hook as its environment's
+   `FORGE_DEPLOY_HOOK` secret. Never use a production hook in staging or a broad
+   account API token when the site hook is sufficient. Supplying these secrets
+   grants CI deployment authority and requires explicit operator approval.
+3. Configure a Cloudflare Access service token authorized only for this staging
+   application. Store `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` in both
+   GitHub environments: production promotion needs read access to staging to
+   revalidate the approved candidate. Do not make staging public. Credential
+   creation and access-policy changes require separate approval; never paste
+   tokens into chat, logs, repository files or workflow inputs.
+4. Configure both sites for branch `main`, with Forge push-to-deploy **off**.
+   CI triggers staging only after tests pass; production uses the manual
+   promotion workflow. Do not manually redeploy staging while it is being
+   reviewed or promoted. A one-off operational deployment must use the same
+   revision pinning and approval requirements.
+5. Install the shared Forge script below for each site. Production script or
+   Nginx changes require immediate confirmation of the target. Do not trigger a
+   production deployment during setup. Do not enable the workflows while either
+   site still uses an unpinned script.
+6. Add an exact Nginx location for the revision marker within each site's server
+   block, preserving the existing configuration and validating it before reload:
+
+   ```nginx
+   location = /deployment.json {
+       try_files $uri =404;
+       add_header Cache-Control "no-store" always;
+   }
+   ```
+
+   Bypass Cloudflare caching for `/deployment.json` and `/up`. The marker exposes
+   only a source revision and Forge deployment ID, never environment values.
+7. Finish staging runtime setup: isolated persistent SQLite and storage,
+   database queue/cache tables, `QUEUE_CONNECTION=database`,
+   `CACHE_STORE=database`, and `BACKUP_MEDIA_PATH` pointing to staging's own
+   persistent `storage/app/public`. Keep `MAIL_MAILER=log` or an approved sandbox,
+   and never reuse production backup/storage write credentials. Staging local
+   backups are not a substitute for production's B2 backup policy.
+8. Add one Forge database queue worker (`default` queue, timeout 60 seconds,
+   tries 3) and a per-minute scheduler against the staging `current` directory.
+   Confirm timeout stays below the queue's 90-second retry interval. Review all
+   scheduled tasks before enabling them: backups, pruning and YouTube sync are
+   not all production-only. Preserve the working Nightwatch agent; do not add a
+   duplicate. Refresh staging configuration, observe both fresh heartbeats,
+   then enable `RUNTIME_HEALTH_ENABLED=true` and refresh configuration again.
+9. After the migration PR reaches `main`, enable the repository variable and
+   rerun successful push CI for that commit to exercise automatic staging.
+   Verify Access, the noncached revision marker, runtime checks and HTTP smoke
+   suite before using production promotion. Record the successful staging run.
+
+On 2026-09-19, the staging queue/cache/media-path environment entries were saved
+but had not yet been activated: cached configuration still used `sync` and
+`file`, and runtime health was disabled. Do not confuse saved environment values
+with verified running workers or scheduler configuration.
 
 ## Before deploying
 
@@ -26,23 +99,45 @@ Synchronization and archive import share a target guard that always rejects prod
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
 
-Run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting.
+For production, run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting. Do not force production mail or backup credentials into staging to satisfy this production-specific verifier.
 
-### Production Forge deploy script
+### Shared staging and production Forge deploy script
 
-Keep the production site's Forge script synchronized with this checked-in copy. The release must be activated only after dependencies, checks, migrations, assets, and the Nightwatch marker have been prepared. Recreate `public/storage` in the new release before activation:
+Install this script only after the revision-marker setup above is complete.
+Forge's `forge_deploy_commit` parameter is metadata, not checkout pinning. The
+separate `revision` hook parameter becomes `FORGE_VAR_REVISION`; validate and
+check out that exact main-branch commit before executing any application code.
+Direct Deploy-button requests without a revision intentionally fail closed.
 
 ```bash
 set -e
+
+test "$FORGE_SITE_BRANCH" = main
+case "$FORGE_SITE_ID" in
+    3366565) test "$FORGE_SITE_ROOT" = /home/forge/staging.thelaravelarchitect.com ;;
+    3044519) test "$FORGE_SITE_ROOT" = /home/forge/thelaravelarchitect.com ;;
+    *) exit 1 ;;
+esac
+[[ "${FORGE_VAR_REVISION:-}" =~ ^[a-f0-9]{40}$ ]]
+test "$FORGE_DEPLOY_COMMIT" = "$FORGE_VAR_REVISION"
+
 $CREATE_RELEASE()
 cd $FORGE_RELEASE_DIRECTORY
 
-test -n "${FORGE_DEPLOY_COMMIT:-}"
-test "$(git rev-parse HEAD)" = "$FORGE_DEPLOY_COMMIT"
+if test "$(git rev-parse --is-shallow-repository)" = true; then
+    git fetch --unshallow origin
+fi
+git fetch --no-tags origin main
+git merge-base --is-ancestor "$FORGE_VAR_REVISION" origin/main
+git checkout --detach "$FORGE_VAR_REVISION"
+test "$(git rev-parse HEAD)" = "$FORGE_VAR_REVISION"
+test ! -e public/deployment.json
 
 $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-$FORGE_PHP artisan app:verify-production --no-ansi
+if test "$FORGE_SITE_ID" = 3044519; then
+    $FORGE_PHP artisan app:verify-production --no-ansi
+fi
 $FORGE_PHP artisan optimize
 $FORGE_PHP artisan migrate --force
 
@@ -58,6 +153,23 @@ $FORGE_PHP artisan storage:link
 
 $ACTIVATE_RELEASE()
 $RESTART_QUEUES()
+
+# Allow the real scheduler and worker to populate heartbeat checks after cache changes.
+tla_verified=false
+for tla_attempt in $(seq 1 24); do
+    if $FORGE_PHP artisan app:verify-deployment "$FORGE_VAR_REVISION" --no-ansi; then
+        tla_verified=true
+        break
+    fi
+    sleep 5
+done
+test "$tla_verified" = true
+test "$(readlink -f "$FORGE_SITE_PATH")" = "$(pwd -P)"
+[[ "$FORGE_DEPLOYMENT_ID" =~ ^[1-9][0-9]*$ ]]
+# This is the completion signal. Publish only after activation and verification.
+printf '{"revision":"%s","deployment_id":"%s"}\n' \
+    "$FORGE_VAR_REVISION" "$FORGE_DEPLOYMENT_ID" > public/deployment.json.tmp
+mv public/deployment.json.tmp public/deployment.json
 ```
 
 `$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
@@ -174,7 +286,7 @@ Then verify all of the following against the deployed commit:
 - The Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
-- The manually dispatched `Staging smoke` GitHub Actions workflow passes against `staging.thelaravelarchitect.com`. It runs every twelve hours against the deployed `develop` baseline.
+- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
 

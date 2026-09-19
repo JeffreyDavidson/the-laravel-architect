@@ -54,6 +54,9 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Test deployment safeguards
+        run: node --test scripts/forge-deployment.test.mjs
+
       - name: Audit PHP dependencies
         run: composer audit --locked
 

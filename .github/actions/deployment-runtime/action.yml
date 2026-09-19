@@ -1,0 +1,28 @@
+name: Deployment smoke runtime
+description: Install locked dependencies for the existing HTTP smoke suite.
+inputs:
+    composer-username:
+        required: true
+        description: Private Composer repository username
+    composer-password:
+        required: true
+        description: Private Composer repository password
+runs:
+    using: composite
+    steps:
+        - uses: shivammathur/setup-php@v2
+          with:
+              php-version: '8.5'
+              extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, mbstring, openssl, pdo, pdo_sqlite, tokenizer, xml, zip
+              coverage: none
+        - uses: actions/setup-node@v6
+          with:
+              node-version: '22'
+        - name: Install PHP dependencies
+          shell: bash
+          env:
+              COMPOSER_USERNAME: ${{ inputs.composer-username }}
+              COMPOSER_PASSWORD: ${{ inputs.composer-password }}
+          run: |
+              composer config --global --auth http-basic.satis.filamentexamples.com "$COMPOSER_USERNAME" "$COMPOSER_PASSWORD"
+              composer install --no-interaction --prefer-dist --no-progress
