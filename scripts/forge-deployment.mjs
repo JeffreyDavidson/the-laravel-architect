@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
@@ -134,16 +134,13 @@ async function requestWithCurl(url, init, options) {
 }
 
 function runCurl(command, args, options) {
-    return new Promise((resolve, reject) => {
-        execFile(command, args, options, (error, stdout) => {
-            if (error) {
-                reject(error);
-                return;
-            }
+    const result = spawnSync(command, args, { ...options, encoding: 'utf8' });
 
-            resolve({ stdout });
-        });
-    });
+    if (result.error) {
+        throw result.error;
+    }
+
+    return { stdout: result.stdout };
 }
 
 export async function readMarker(environment, options = {}, allowMissing = false) {
