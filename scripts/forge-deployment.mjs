@@ -1,5 +1,4 @@
 import { spawnSync } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
 
@@ -184,7 +183,7 @@ function runCurl(command, args, options) {
 
 export async function readMarker(environment, options = {}, allowMissing = false) {
     const response = await request(
-        `${siteFor(environment).origin}/deployment.json?check=${randomUUID()}`,
+        `${siteFor(environment).origin}/deployment.json`,
         { headers: requestHeaders(environment, options) },
         options,
     );
@@ -221,7 +220,7 @@ export async function verifyRelease(environment, revision, options = {}) {
         throw new Error('The serving revision does not match the approved commit.');
     }
     const response = await request(
-        `${siteFor(environment).origin}/up?check=${randomUUID()}`,
+        `${siteFor(environment).origin}/up`,
         { headers: requestHeaders(environment, options) },
         options,
     );
