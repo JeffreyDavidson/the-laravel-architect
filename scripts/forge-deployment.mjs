@@ -1,6 +1,10 @@
+import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 const sites = {
     staging: { id: '3366565', origin: 'https://staging.thelaravelarchitect.com' },
@@ -78,6 +82,10 @@ export function requestHeaders(environment, options) {
 }
 
 async function request(url, init, options) {
+    if (init.method === 'POST' && options.triggerTransport === 'curl') {
+        return requestWithCurl(url, init, options);
+    }
+
     try {
         return await (options.fetch ?? fetch)(url, {
             ...init,
@@ -88,6 +96,40 @@ async function request(url, init, options) {
         });
     } catch (error) {
         // URLs can contain the Forge hook token; never report the underlying error.
+        throw new Error(
+            `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
+        );
+    }
+}
+
+async function requestWithCurl(url, init, options) {
+    const args = [
+        '--silent',
+        '--show-error',
+        '--request',
+        init.method,
+        '--connect-timeout',
+        '10',
+        '--max-time',
+        '15',
+        '--output',
+        '/dev/null',
+        '--write-out',
+        '%{http_code}',
+        String(url),
+    ];
+
+    try {
+        const { stdout } = await (options.curl ?? execFileAsync)('curl', args, { timeout: 15000 });
+        const status = Number(stdout.trim());
+
+        if (!Number.isInteger(status) || status < 100) {
+            throw new Error('Forge returned no valid HTTP status.');
+        }
+
+        return new Response(null, { status });
+    } catch (error) {
+        // The hook URL contains a credential; never report curl's command or output.
         throw new Error(
             `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
         );
@@ -201,6 +243,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             hook: process.env.FORGE_DEPLOY_HOOK,
             clientId: process.env.CF_ACCESS_CLIENT_ID,
             clientSecret: process.env.CF_ACCESS_CLIENT_SECRET,
+            triggerTransport: 'curl',
         };
         if (!['deploy', 'verify'].includes(operation)) {
             throw new Error('Use deploy or verify with an environment and full commit SHA.');

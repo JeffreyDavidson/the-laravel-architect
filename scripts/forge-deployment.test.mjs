@@ -165,6 +165,29 @@ test('waits for a new deployment ID and triggers Forge only once', async () => {
     assert.equal(requests.find(request => request.init.method === 'POST').init.headers, undefined);
 });
 
+test('uses curl for Forge triggers when configured', async () => {
+    const responses = [marker(1), marker(2), marker(2), new Response('healthy')];
+    let curlCalls = 0;
+
+    const result = await deployRelease('staging', revision, {
+        ...access,
+        hook,
+        triggerTransport: 'curl',
+        delay: async () => {},
+        curl: async (command, args) => {
+            curlCalls++;
+            assert.equal(command, 'curl');
+            assert.deepEqual(args.slice(0, 2), ['--silent', '--show-error']);
+            assert.equal(args.at(-1).startsWith('https://forge.laravel.com/servers/753072/sites/3366565/deploy/http?'), true);
+            return { stdout: '202' };
+        },
+        fetch: async () => responses.shift(),
+    });
+
+    assert.equal(result.deployment_id, 2);
+    assert.equal(curlCalls, 1);
+});
+
 test('does not trigger production when staging no longer matches approval', async () => {
     let calls = 0;
     await assert.rejects(
