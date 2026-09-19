@@ -42,6 +42,12 @@ jobs:
               with:
                   composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
                   composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+            - name: Check Forge runner connectivity
+              run: >-
+                  curl --silent --show-error --connect-timeout 10 --max-time 15
+                  --output /dev/null
+                  --write-out 'Forge reachability: HTTP %{http_code}; remote_ip=%{remote_ip}; ssl_verify=%{ssl_verify_result}\n'
+                  https://forge.laravel.com
             - name: Deploy and verify the tested revision
               env:
                   FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
