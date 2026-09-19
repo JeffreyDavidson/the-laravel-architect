@@ -79,7 +79,10 @@ export function requestHeaders(environment, options) {
 }
 
 async function request(url, init, options) {
-    if (init.method === 'POST' && options.triggerTransport === 'curl') {
+    if (
+        (init.method === 'POST' && options.triggerTransport === 'curl') ||
+        (init.method !== 'POST' && options.readTransport === 'curl')
+    ) {
         return requestWithCurl(url, init, options);
     }
 
@@ -109,22 +112,58 @@ async function requestWithCurl(url, init, options) {
         '10',
         '--max-time',
         '15',
-        '--output',
-        '/dev/null',
-        '--write-out',
-        '%{http_code}',
-        String(url),
     ];
+
+    for (const [name, value] of Object.entries(init.headers ?? {})) {
+        args.push('--header', `${name}: ${value}`);
+    }
+
+    if (init.method === 'POST') {
+        args.push('--output', '/dev/null', '--write-out', '%{http_code}');
+    } else {
+        args.push(
+            '--dump-header',
+            '-',
+            '--output',
+            '-',
+            '--write-out',
+            '\n__DEPLOYMENT_STATUS__:%{http_code}\n',
+        );
+    }
+
+    args.push(String(url));
 
     try {
         const { stdout } = await (options.curl ?? runCurl)('curl', args, { timeout: 15000 });
-        const status = Number(String(stdout ?? '').trim());
+        const output = String(stdout ?? '');
+        const statusMarker = output.match(/\n__DEPLOYMENT_STATUS__:(\d{3})\s*$/);
+        const status = Number(statusMarker?.[1] ?? output.trim());
 
         if (!Number.isInteger(status) || status < 100) {
             throw new Error('Forge returned no valid HTTP status.');
         }
 
-        return { status, ok: status >= 200 && status < 300 };
+        if (init.method === 'POST') {
+            return { status, ok: status >= 200 && status < 300 };
+        }
+
+        const responseOutput = output.slice(0, statusMarker?.index ?? output.length);
+        const separator = responseOutput.indexOf('\r\n\r\n');
+        const headerText = separator >= 0 ? responseOutput.slice(0, separator) : '';
+        const body = separator >= 0 ? responseOutput.slice(separator + 4) : '';
+        const headers = new Headers();
+        for (const line of headerText.split(/\r?\n/).slice(1)) {
+            const separatorIndex = line.indexOf(':');
+            if (separatorIndex > 0) {
+                headers.set(line.slice(0, separatorIndex), line.slice(separatorIndex + 1).trim());
+            }
+        }
+
+        return {
+            status,
+            headers,
+            json: async () => JSON.parse(body),
+        };
     } catch (error) {
         // The hook URL contains a credential; never report curl's command or output.
         throw new Error(
@@ -263,6 +302,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             clientId: process.env.CF_ACCESS_CLIENT_ID,
             clientSecret: process.env.CF_ACCESS_CLIENT_SECRET,
             triggerTransport: 'curl',
+            readTransport: 'curl',
         };
         if (!['deploy', 'verify', 'wait'].includes(operation)) {
             throw new Error('Use deploy, verify, or wait with an environment and full commit SHA.');

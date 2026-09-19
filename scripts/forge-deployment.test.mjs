@@ -188,6 +188,25 @@ test('uses curl for Forge triggers when configured', async () => {
     assert.equal(curlCalls, 1);
 });
 
+test('uses curl for release verification when configured', async () => {
+    const body = JSON.stringify({ revision, deployment_id: 2 });
+    const result = await readMarker('staging', {
+        ...access,
+        readTransport: 'curl',
+        curl: async (command, args) => {
+            assert.equal(command, 'curl');
+            assert.equal(args.includes('--dump-header'), true);
+            assert.equal(args.at(-1).startsWith('https://staging.thelaravelarchitect.com/deployment.json?'), true);
+
+            return {
+                stdout: `HTTP/2 200\r\ncache-control: no-store\r\nage: 0\r\ncf-cache-status: MISS\r\n\r\n${body}\n__DEPLOYMENT_STATUS__:200\n`,
+            };
+        },
+    });
+
+    assert.deepEqual(result, { revision, deployment_id: 2 });
+});
+
 test('does not trigger production when staging no longer matches approval', async () => {
     let calls = 0;
     await assert.rejects(
