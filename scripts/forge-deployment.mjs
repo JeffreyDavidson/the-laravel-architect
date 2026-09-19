@@ -105,6 +105,7 @@ async function requestWithCurl(url, init, options) {
     const args = [
         '--silent',
         '--show-error',
+        '--http1.1',
         '--request',
         init.method,
         '--connect-timeout',
