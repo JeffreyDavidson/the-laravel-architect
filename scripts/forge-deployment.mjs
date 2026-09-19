@@ -127,7 +127,7 @@ async function requestWithCurl(url, init, options) {
             throw new Error('Forge returned no valid HTTP status.');
         }
 
-        return new Response(null, { status });
+        return { status, ok: status >= 200 && status < 300 };
     } catch (error) {
         // The hook URL contains a credential; never report curl's command or output.
         throw new Error(
