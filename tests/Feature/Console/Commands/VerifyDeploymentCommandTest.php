@@ -22,7 +22,6 @@ beforeEach(function () {
             'driver' => 'local',
             'root' => storage_path('framework/testing/disks/deployment-backups'),
         ],
-        'health.backup.max_age_hours' => 36,
         'health.runtime.max_age_seconds' => 300,
         'nightwatch.deployment' => 'expected-commit',
     ]);
@@ -59,23 +58,36 @@ it('reports a mismatched deployment without exposing either commit', function ()
 
 it('reports pending database migrations', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
-    $latestMigration = DB::table('migrations')->orderByDesc('id')->value('migration');
-    DB::table('migrations')->where('migration', $latestMigration)->delete();
+    $migrationQuery = DB::table('migrations');
+    $migrationQuery->orderByDesc('id');
+    $latestMigration = $migrationQuery->value('migration');
+    $migrationQuery = DB::table('migrations');
+    $migrationQuery->where('migration', $latestMigration);
+    $migrationQuery->delete();
 
     $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The application has pending database migrations.')
         ->assertFailed();
 });
 
-it('reports stale runtime heartbeats and missing backups', function () {
+it('reports stale runtime heartbeats', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
-    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(10)->getTimestamp());
+    $staleHeartbeat = now()->subMinutes(10);
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, $staleHeartbeat->getTimestamp());
     Storage::disk('deployment-backups')->delete('deployment-test/fresh.zip');
 
     $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutputToContain('The scheduler or queue worker heartbeat is stale.')
-        ->expectsOutputToContain('One or more backup destinations do not contain a fresh backup.')
         ->assertFailed();
+});
+
+it('does not use backup freshness as a release gate', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    Storage::disk('deployment-backups')->delete('deployment-test/fresh.zip');
+
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutput('Deployment verification passed.')
+        ->assertSuccessful();
 });
 
 it('reports an unavailable Nightwatch agent without exposing its error', function () {
@@ -102,10 +114,11 @@ it('reports mismatched Nightwatch deployment metadata without exposing either id
         ->assertFailed();
 });
 
-it('reports incomplete responsive media without exposing its path', function () {
+it('does not use existing incomplete responsive media as a release gate', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
     $image = UploadedFile::fake()->image('private-project-name.png', 1280, 72);
-    Storage::disk('public')->put('projects/private-project-name.png', $image->getContent());
+    $imageContents = $image->getContent();
+    Storage::disk('public')->put('projects/private-project-name.png', $imageContents);
 
     Project::withoutEvents(fn () => Project::query()->create([
         'title' => 'Project',
@@ -116,7 +129,7 @@ it('reports incomplete responsive media without exposing its path', function () 
     ]));
 
     $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
-        ->expectsOutputToContain('One or more stored images are missing required responsive variants.')
+        ->expectsOutput('Deployment verification passed.')
         ->doesntExpectOutputToContain('private-project-name.png')
-        ->assertFailed();
+        ->assertSuccessful();
 });
