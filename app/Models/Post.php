@@ -11,7 +11,6 @@ use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Models\Contracts\Publishable;
 use App\Observers\PostObserver;
-use App\Services\OgImageCache;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -60,21 +59,6 @@ class Post extends Model implements Publishable
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
-    }
-
-    protected static function booted(): void
-    {
-        static::deleted(function (Post $post): void {
-            $postKey = $post->getKey();
-
-            if (! is_int($postKey) && ! is_string($postKey)) {
-                return;
-            }
-
-            $post->getConnection()->afterCommit(function () use ($postKey): void {
-                app(OgImageCache::class)->forgetByKey($postKey);
-            });
-        });
     }
 
     /** @return BelongsTo<User, $this> */

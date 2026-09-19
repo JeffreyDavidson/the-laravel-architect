@@ -10,6 +10,7 @@ final class GenerateRssFeed
     {
         $posts = Post::published()
             ->latest('published_at')
+            ->latest('id')
             ->with('category')
             ->take(20)
             ->get();
@@ -22,15 +23,15 @@ final class GenerateRssFeed
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
         $xml .= "<channel>\n";
         $xml .= "<title>The Laravel Architect</title>\n";
-        $xml .= "<link>{$siteUrl}</link>\n";
+        $xml .= '<link>'.$this->escape($siteUrl)."</link>\n";
         $xml .= "<description>Deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.</description>\n";
         $xml .= "<language>en-us</language>\n";
         $xml .= "<lastBuildDate>{$lastBuild}</lastBuildDate>\n";
-        $xml .= "<atom:link href=\"{$feedUrl}\" rel=\"self\" type=\"application/rss+xml\" />\n";
+        $xml .= '<atom:link href="'.$this->escape($feedUrl).'" rel="self" type="application/rss+xml" />'."\n";
 
         foreach ($posts as $post) {
             $title = htmlspecialchars($post->title, ENT_XML1, 'UTF-8');
-            $link = route('blog.show', $post);
+            $link = $this->escape(route('blog.show', $post));
             $description = htmlspecialchars($post->excerpt ?? '', ENT_XML1, 'UTF-8');
             $pubDate = $post->publishedAt()?->toRssString() ?? now()->toRssString();
 
@@ -42,7 +43,7 @@ final class GenerateRssFeed
             $xml .= "<pubDate>{$pubDate}</pubDate>\n";
 
             if ($post->category) {
-                $category = htmlspecialchars($post->category->name, ENT_XML1, 'UTF-8');
+                $category = $this->escape($post->category->name);
                 $xml .= "<category>{$category}</category>\n";
             }
 
@@ -50,5 +51,10 @@ final class GenerateRssFeed
         }
 
         return $xml."</channel>\n</rss>";
+    }
+
+    private function escape(string $value): string
+    {
+        return htmlspecialchars($value, ENT_XML1, 'UTF-8');
     }
 }

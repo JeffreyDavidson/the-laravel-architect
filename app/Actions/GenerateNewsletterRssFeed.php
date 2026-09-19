@@ -10,6 +10,7 @@ class GenerateNewsletterRssFeed
     {
         $issues = NewsletterIssue::published()
             ->latest('published_at')
+            ->latest('id')
             ->take(20)
             ->get();
 
