@@ -11,8 +11,11 @@ site 3366565 and production site 3044519. Direct push-to-deploy was disabled for
 both sites on 2026-09-19; production's `/up` health check remains enabled. GitHub
 environments were created with main-only branch policies; production requires
 Jeffrey's review and permits self-review. Both environments disallow administrator
-bypass. The workflow and script below are the target configuration, not evidence
-of live activation.
+bypass. The staged-release workflow is merged into `develop` but remains
+inactive until the release reaches `main` and `STAGED_RELEASES_ENABLED=true` is
+set. Production's pinned Forge deployment script is saved, and the uncached
+deployment-marker Nginx location is installed on both sites. The staging Forge
+deployment script still must be installed before activating the workflow.
 
 Complete these steps before setting the GitHub repository variable
 `STAGED_RELEASES_ENABLED=true`:
@@ -70,10 +73,13 @@ Complete these steps before setting the GitHub repository variable
    Verify Access, the noncached revision marker, runtime checks and HTTP smoke
    suite before using production promotion. Record the successful staging run.
 
-On 2026-09-19, the staging queue/cache/media-path environment entries were saved
-but had not yet been activated: cached configuration still used `sync` and
-`file`, and runtime health was disabled. Do not confuse saved environment values
-with verified running workers or scheduler configuration.
+On 2026-09-19, the staging queue/cache/media-path environment entries were
+activated and cached configuration was refreshed. Forge now reports one running
+database queue worker and an installed per-minute scheduler; runtime health is
+enabled. The staging and production Nginx configurations contain the exact
+uncached `/deployment.json` location. Do not enable the staged-release workflow
+until the staging Forge deployment script is installed and a pinned staging
+deployment has been verified.
 
 ## Before deploying
 
