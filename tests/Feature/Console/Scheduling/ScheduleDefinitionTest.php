@@ -15,16 +15,20 @@ it('schedules operational monitoring and maintenance', function () {
         ->toContain('media:verify-responsive-images')
         ->toContain('media:find-orphans')
         ->toContain('queue:prune-failed --hours=168')
-        ->not->toContain('app:monitor-failed-jobs');
+        ->not
+        ->toContain('app:monitor-failed-jobs');
 });
 
 it('samples runtime heartbeat traces at ten percent', function () {
-    $heartbeat = collect(app(Schedule::class)->events())
+    $schedule = app(Schedule::class);
+    $events = $schedule->events();
+
+    $heartbeat = collect($events)
         ->filter(fn (Event $event): bool => str_starts_with($event->description ?? '', 'runtime-health:heartbeat:'))
         ->sole();
 
-    $sampleRates = new ReflectionProperty(Core::class, 'scheduledTasksSampleRates')
-        ->getValue(app(Core::class));
+    $scheduledTasksSampleRates = new ReflectionProperty(Core::class, 'scheduledTasksSampleRates');
+    $sampleRates = $scheduledTasksSampleRates->getValue(app(Core::class));
 
     /** @var WeakMap<Event, float> $sampleRates */
     expect($sampleRates[$heartbeat])->toBe(0.1);
