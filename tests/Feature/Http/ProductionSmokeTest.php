@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\PendingRequest;
+use Tests\Support\DeploymentSmokeClient;
 
 pest()->group('production');
 
@@ -9,6 +10,11 @@ function productionSmokeBaseUrl(): ?string
     $baseUrl = getenv('PRODUCTION_BASE_URL');
 
     return is_string($baseUrl) && $baseUrl !== '' ? rtrim($baseUrl, '/') : null;
+}
+
+function productionSmokeRequest(string $baseUrl): PendingRequest
+{
+    return DeploymentSmokeClient::request($baseUrl, getenv('CF_ACCESS_CLIENT_ID'), getenv('CF_ACCESS_CLIENT_SECRET'));
 }
 
 beforeEach(function (): void {
@@ -40,7 +46,8 @@ it('serves the critical public routes', function (): void {
     ];
 
     foreach ($routes as $route) {
-        $response = Http::timeout(15)->get($baseUrl.$route);
+        $request = productionSmokeRequest($baseUrl);
+        $response = $request->get($route);
 
         $expectation = expect($response->successful());
         $expectation->toBeTrue($route);
@@ -50,9 +57,8 @@ it('serves the critical public routes', function (): void {
 it('redirects the admin entry point to authentication', function (): void {
     $baseUrl = productionSmokeBaseUrl();
     assert($baseUrl !== null);
-    $request = Http::withoutRedirecting();
-    $request->timeout(15);
-    $response = $request->get($baseUrl.'/admin');
+    $request = productionSmokeRequest($baseUrl);
+    $response = $request->get('/admin');
 
     $expectation = expect($response->status());
     $expectation->toBe(302);
@@ -66,8 +72,8 @@ it('returns the required security headers on public routes', function (): void {
     $routes = ['/', '/about', '/archive', '/blog', '/contact', '/projects'];
 
     foreach ($routes as $route) {
-        $request = Http::timeout(15);
-        $response = $request->get($baseUrl.$route);
+        $request = productionSmokeRequest($baseUrl);
+        $response = $request->get($route);
         /** @var array<string, list<string>> $headers */
         $headers = $response->headers();
         $frameOptionHeader = $headers['x-frame-options'][0] ?? '';

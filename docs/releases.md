@@ -1,130 +1,95 @@
 # Release process
 
-The project uses simplified gitflow and calendar versions. Feature, fix,
-refactor, documentation, and maintenance pull requests are squash-merged into
-`develop`. A release promotes the already-reviewed `develop` commit to `main`
-without changing it.
-
-## Version and branch names
-
-Release versions use `vYYYY.MM.N`, where `N` starts at `0` each month and
-increments for every production release in that month. The release branch uses
-the complete version:
+Use short-lived working branches and one permanent integration branch, `main`.
+Squash-merge reviewed pull requests after required CI passes. `main` means
+releasable code; the production deployment record identifies what is actually
+live. Do not create permanent environment branches or routine release branches.
 
 ```text
-release/v2026.09.0
+working branch → reviewed PR → main → successful CI → staging
+                                                      ↓
+                                   smoke checks + operator review
+                                                      ↓
+                           manual promotion + production approval
+                                                      ↓
+                                   same revision on production
 ```
 
-Do not reuse a version or move an existing release tag.
+## One-time transition
 
-## Prepare a release
+The existing `develop` branch contains unreleased work. The workflow migration
+branch starts from that baseline intentionally. Review its migration changes
+separately, then promote the complete reviewed ancestry through a one-time PR
+into `main` using a regular merge, with a Conventional Commit subject. This is
+the only transition exception to squash merging. Do not squash away the existing
+`develop` ancestry, force-push either branch, or deploy production during setup.
 
-1. Confirm every intended change has been merged into `develop` and its
-   required `Laravel` check passed.
-2. Confirm the production backup and rollback prerequisites in
-   [`operations.md`](operations.md) are available.
-3. Update local `develop` without rewriting history:
+Before that merge, disable Forge push-to-deploy for production. Complete the
+Forge scripts, GitHub environments, scoped secrets, staging runtime and
+Cloudflare setup in `operations.md`. Leave the repository variable
+`STAGED_RELEASES_ENABLED` unset until these prerequisites are verified. Deployment
+jobs remain disabled when it is unset. Existing CI continues to
+check PRs into `develop` during the transition.
 
-   ```bash
-   git fetch --prune origin
-   git switch develop
-   git pull --ff-only origin develop
-   ```
+Once the transition is verified, direct all new work to `main`. Keep `develop`
+read-only until its remaining PRs and worktrees are accounted for; deleting it
+is a separate, explicitly approved cleanup. Do not synchronize it after releases.
 
-4. Create `release/vYYYY.MM.N` from that exact `develop` commit and push it.
-5. Open a pull request from the release branch into `main` titled
-   `release: vYYYY.MM.N`. Its description should identify the commit being
-   promoted, summarize user-visible and operational changes, call out
-   migrations or one-time commands, and state the rollback plan.
-6. Verify the pull request base is `main`, its head is the expected release
-   branch, the diff contains only the intended unreleased changes, and all
-   required checks pass.
+## Validate staging
 
-A release branch is a promotion boundary, not a second development branch. Do
-not make release-only code changes on it. If verification finds a defect, fix it
-through a focused pull request into `develop`, then recreate or advance the
-unmerged release branch from the newly verified `develop` commit.
+The `Deploy staging` workflow runs after successful **push CI on main**, not PR
+CI. It checks out the tested full commit SHA and rejects an obsolete candidate
+if `main` advanced while CI was running. Deployment and promotion share a
+concurrency lock, so staging cannot be replaced while promotion is checking it.
+Running deployments are never auto-cancelled.
 
-Dependency updates are performed intentionally in their own pull requests.
-Preparing a release does not update Composer or npm dependencies implicitly.
+Forge checks out the requested revision before installing dependencies. Only
+after activation and the deployment verifier succeed does it publish
+`/deployment.json`, containing the full revision and Forge deployment ID. This
+file must not be cached by Cloudflare or Nginx. The workflow requires this marker
+and `/up`, runs the HTTP smoke suite against the deployed revision, then checks
+the marker again. A redirect to Cloudflare login is a failure, not a successful
+application response.
 
-## Merge and tag
+Review the public pages, affected behavior and authenticated admin boundary on
+that staging revision. A newer staging deployment invalidates a pending manual
+review; select and review the new revision before promotion.
 
-Merge the release pull request with a regular merge commit so the release
-boundary remains visible:
+## Promote production
 
-```bash
-gh pr merge PR_NUMBER --merge --delete-branch
-```
+1. Choose a successful `Deploy staging` run for the full revision reviewed.
+2. Confirm rollback artifacts, migration safety, media requirements and any
+   one-time commands from `operations.md`. Code rollback does not undo database
+   migrations. Prefer forward-compatible migrations and forward fixes.
+3. Dispatch `Promote production` **from main**, providing the staging run ID and
+   the full revision. This request is not a substitute for environment approval.
+4. Review the waiting `production` environment job and approve the exact revision.
+   The workflow validates the staging run's workflow, source repository, event,
+   branch, conclusion and SHA, and verifies staging still serves it before
+   triggering production. Old approvals cannot authorize a different SHA.
+5. Require production deployment verification and the HTTP smoke suite to pass.
+   A timed-out trigger is an uncertain deployment: inspect Forge before retrying.
+6. Record the successful production deployment with the next annotated calendar
+   tag, `vYYYY.MM.N` (`N` starts at zero each month), on the full deployed SHA.
+   Verify no existing tag uses that version, push the tag without force, and
+   record the Forge deployment and workflow run. Never move or reuse a tag.
 
-Never squash or rebase a release pull request. After the merge, update local
-`main`, verify its merge commit is the commit accepted by the pull request, and
-create an annotated tag on that commit:
+Several safe changes may be integrated before a production release. Do not
+merge unfinished behavior merely to batch releases. Dependency updates remain
+separate, intentional PRs; deployments install lockfiles without updating them.
 
-```bash
-git fetch --prune origin
-git switch main
-git pull --ff-only origin main
-git tag -a vYYYY.MM.N -m "Release vYYYY.MM.N"
-git push origin vYYYY.MM.N
-```
+## Hotfixes and rollback
 
-Confirm the tag resolves to the release merge commit before deployment. Tags
-are permanent production identifiers; never force-push or replace one.
+If `main` matches the deployed revision, a focused fix follows the normal PR,
+staging and approval path. If it contains unreleased work, start
+`hotfix/<description>` from the verified production tag/SHA, not the moving tip
+of `main`. Agree an exceptional staging/promotion procedure first: the normal
+pipeline deliberately accepts only successful main-branch candidates. Review
+and test that isolated fix, obtain explicit production approval, then promptly
+forward-port it to `main`. Never include unrelated unreleased work accidentally.
 
-## Deploy and verify
-
-Merging into `main` supplies the commit to the configured Forge deployment.
-Confirm the exact Forge organization, `cold-moon` server, site, and release
-commit before manually triggering or changing any production operation.
-
-Follow the ordered deployment and post-deployment checks in
-[`operations.md`](operations.md). At minimum:
-
-1. Validate the rollback artifacts before migrations.
-2. Run the production configuration verifier before applying migrations.
-3. Confirm the deployed commit equals the tagged release commit.
-4. Run the deployment verifier with that immutable commit SHA.
-5. Dispatch the `Production smoke` workflow and require it to pass.
-6. Record the version, commit, deployment result, and any one-time commands
-   without recording secrets or private data.
-
-## Synchronize develop after release
-
-After production verification passes, synchronize the release ancestry back to
-`develop`. Never open a downstream pull request from `main` into `develop`.
-
-First verify that the current remote `develop` commit is an ancestor of the
-released `main` commit, then fast-forward `develop` directly:
-
-```bash
-git fetch --prune origin
-git merge-base --is-ancestor origin/develop origin/main
-git switch develop
-git merge --ff-only origin/main
-git push origin develop
-```
-
-Do not create a merge commit, squash, rebase, or force-push during this
-synchronization. If branch protection rejects the direct push, temporarily
-disable only the rule requiring changes to arrive through a pull request. Keep
-required status checks, administrator enforcement, deletion protection, and
-force-push protection enabled. Push the verified fast-forward, immediately
-restore the pull-request requirement with its previous settings, and confirm
-the protection is active again.
-
-Finish by confirming local and remote `main` and `develop` all resolve to the
-same release merge commit. This synchronization keeps the next release branch
-from appearing behind `main` without creating a downstream pull request.
-
-## Hotfixes
-
-Use `hotfix/<short-description>` from `main` only for an urgent production
-correction that cannot wait for the next release. Open the hotfix pull request
-into `main`, require CI, and squash-merge it. Then immediately reproduce or
-cherry-pick that single squash commit onto a focused branch from `develop` and
-open a pull request into `develop`, preventing the fix from disappearing from a
-later release.
-
-Tag the corrected production commit with the next `vYYYY.MM.N` version and run
-the same deployment and verification checklist. Do not move the previous tag.
+Rollback is also an explicit operational decision, not automatic branch
+rewriting. Verify the previous release remains compatible with the current
+database and stored media before reactivation. Restore data only through a
+separately approved recovery procedure. Record failed releases and recovery;
+do not move tags to conceal them.
