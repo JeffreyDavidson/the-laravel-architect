@@ -61,7 +61,18 @@ jobs:
         run: composer audit --locked
 
       - name: Audit production JavaScript dependencies
-        run: npx --yes npm@11 audit --omit=dev
+        run: |
+          for attempt in 1 2 3; do
+            if npx --yes npm@11 audit --omit=dev; then
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep 15
+            fi
+          done
+
+          exit 1
 
       - name: Prepare application
         run: |
