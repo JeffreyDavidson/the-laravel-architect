@@ -20,7 +20,7 @@ it('schedules operational monitoring and maintenance', function () {
 
 it('samples runtime heartbeat traces at ten percent', function () {
     $heartbeat = collect(app(Schedule::class)->events())
-        ->filter(fn (Event $event): bool => $event->description === 'runtime-health:heartbeat')
+        ->filter(fn (Event $event): bool => str_starts_with($event->description, 'runtime-health:heartbeat:'))
         ->sole();
 
     $sampleRates = new ReflectionProperty(Core::class, 'scheduledTasksSampleRates')
