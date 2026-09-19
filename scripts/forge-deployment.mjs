@@ -230,13 +230,25 @@ export async function deployRelease(environment, revision, options = {}) {
     if (!response.ok) {
         throw new Error(`Forge rejected the deployment trigger (HTTP ${response.status}).`);
     }
+    return waitForRelease(environment, revision, {
+        ...options,
+        previousDeploymentId: previous?.deployment_id,
+    });
+}
+
+export async function waitForRelease(environment, revision, options = {}) {
+    validateRevision(revision);
     // Never retry the mutation. A retry could create an overlapping deployment.
     const now = options.now ?? Date.now;
     const deadline = now() + 11 * 60 * 1000;
     while (now() < deadline) {
         await (options.delay ?? delay)(10000);
         const marker = await readMarker(environment, options, true);
-        if (marker?.revision === revision && String(marker.deployment_id) !== String(previous?.deployment_id)) {
+        if (
+            marker?.revision === revision &&
+            (options.previousDeploymentId === undefined ||
+                String(marker.deployment_id) !== String(options.previousDeploymentId))
+        ) {
             return await verifyRelease(environment, revision, options);
         }
     }
@@ -252,10 +264,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             clientSecret: process.env.CF_ACCESS_CLIENT_SECRET,
             triggerTransport: 'curl',
         };
-        if (!['deploy', 'verify'].includes(operation)) {
-            throw new Error('Use deploy or verify with an environment and full commit SHA.');
+        if (!['deploy', 'verify', 'wait'].includes(operation)) {
+            throw new Error('Use deploy, verify, or wait with an environment and full commit SHA.');
         }
-        const result = await (operation === 'deploy' ? deployRelease : verifyRelease)(environment, revision, options);
+        const operationHandler =
+            operation === 'deploy' ? deployRelease : operation === 'wait' ? waitForRelease : verifyRelease;
+        const result = await operationHandler(environment, revision, options);
         console.log(`Verified ${environment}: ${result.revision}, Forge deployment ${result.deployment_id}.`);
     } catch (error) {
         console.error(error.message);
