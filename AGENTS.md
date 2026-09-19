@@ -142,8 +142,28 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Deployment
 
-- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
-- Activate the `deploying-to-cloud` skill whenever deploying to Laravel Cloud, configuring Cloud environments or resources, using the Cloud CLI, or troubleshooting Cloud deployments.
+- Production deployment uses Laravel Forge.
+- Read `docs/operations.md` before production work.
+- Follow the confirmation requirements for production mutations.
+- Use the deployment verifier before and after releases.
+
+=== documentation rules ===
+
+# Documentation
+
+- Keep `README.md` concise and repository-oriented.
+- Put architecture details in `docs/architecture.md`.
+- Put testing guidance in `docs/testing.md`.
+- Put deployment and operational procedures in `docs/operations.md`.
+- Update the relevant documentation when behavior or operational workflows change.
+
+=== local development rules ===
+
+# Local development
+
+- Use Laravel Herd for HTTP serving.
+- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
+- Use the project Composer scripts for queues, logs, tests, and asset development.
 
 === herd rules ===
 
