@@ -24,7 +24,12 @@ it('samples runtime heartbeat traces at ten percent', function () {
     $events = $schedule->events();
 
     $heartbeat = collect($events)
-        ->filter(fn (Event $event): bool => str_starts_with($event->description ?? '', 'runtime-health:heartbeat:'))
+        ->filter(function (Event $event): bool {
+            $description = $event->description;
+
+            return is_string($description)
+                && str_starts_with($description, 'runtime-health:heartbeat:');
+        })
         ->sole();
 
     $scheduledTasksSampleRates = new ReflectionProperty(Core::class, 'scheduledTasksSampleRates');
