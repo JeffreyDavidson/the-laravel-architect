@@ -121,7 +121,7 @@ async function requestWithCurl(url, init, options) {
 
     try {
         const { stdout } = await (options.curl ?? execFileAsync)('curl', args, { timeout: 15000 });
-        const status = Number(stdout.trim());
+        const status = Number(String(stdout ?? '').trim());
 
         if (!Number.isInteger(status) || status < 100) {
             throw new Error('Forge returned no valid HTTP status.');
