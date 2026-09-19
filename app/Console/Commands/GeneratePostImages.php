@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Post;
@@ -21,26 +23,35 @@ class GeneratePostImages extends Command
             $query->whereNull('featured_image_path');
         }
 
-        $posts = $query->get();
+        $processed = 0;
+        $failed = false;
 
-        if ($posts->isEmpty()) {
+        $query->eachById(function (Post $post) use ($generator, $images, &$processed, &$failed): ?bool {
+            $processed++;
+            $filename = $generator->generate($post);
+            $post->update(['featured_image_path' => $filename]);
+            if (! $post->wasChanged('featured_image_path') && ! $images->generate($filename)) {
+                $this->error('Responsive post image regeneration failed.');
+                $failed = true;
+
+                return false;
+            }
+            $this->info("Generated: {$filename}");
+
+            return null;
+        });
+
+        if ($failed) {
+            return self::FAILURE;
+        }
+
+        if ($processed === 0) {
             $this->info('No posts need images generated.');
 
             return 0;
         }
 
-        foreach ($posts as $post) {
-            $filename = $generator->generate($post);
-            $post->update(['featured_image_path' => $filename]);
-            if (! $post->wasChanged('featured_image_path') && ! $images->generate($filename)) {
-                $this->error('Responsive post image regeneration failed.');
-
-                return self::FAILURE;
-            }
-            $this->info("Generated: {$filename}");
-        }
-
-        $this->info("Done! Generated images for {$posts->count()} posts.");
+        $this->info("Done! Generated images for {$processed} posts.");
 
         return 0;
     }

@@ -78,8 +78,8 @@ class ProjectsTable
                         'needs_case_study' => 'Needs case study',
                         'needs_details' => 'Needs project details',
                     ])
-                    ->query(function (Builder $query, array $data): void {
-                        app(ProjectReadinessQuery::class)->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
+                    ->query(function (Builder $query, array $data, ProjectReadinessQuery $readinessQuery): void {
+                        $readinessQuery->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
                     }),
             ])
             ->recordActions([

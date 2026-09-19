@@ -43,6 +43,7 @@ class SearchQuery
                         });
                 })
                 ->latest('published_at')
+                ->latest('id')
                 ->limit(12)
                 ->get()
                 ->map(fn (Post $post): array => $this->postResult($post))
@@ -58,6 +59,7 @@ class SearchQuery
                 })
                 ->orderBy('sort_order')
                 ->latest('updated_at')
+                ->latest('id')
                 ->limit(12)
                 ->get()
                 ->map(fn (Project $project): array => $this->projectResult($project))
@@ -72,6 +74,7 @@ class SearchQuery
                         ->orWhereRaw("long_description LIKE ? ESCAPE '\\'", [$like]);
                 })
                 ->orderBy('sort_order')
+                ->orderBy('id')
                 ->limit(12)
                 ->get()
                 ->map(fn (Podcast $podcast): array => $this->podcastResult($podcast))
@@ -86,6 +89,7 @@ class SearchQuery
                         ->orWhereRaw("content LIKE ? ESCAPE '\\'", [$like]);
                 })
                 ->latest('published_at')
+                ->latest('id')
                 ->limit(12)
                 ->get()
                 ->map(fn (NewsletterIssue $issue): array => $this->newsletterResult($issue))
@@ -106,6 +110,7 @@ class SearchQuery
                         ->orWhereRaw("guest_name LIKE ? ESCAPE '\\'", [$like]);
                 })
                 ->latest('published_at')
+                ->latest('id')
                 ->limit(12)
                 ->get()
                 ->filter(fn (Episode $episode): bool => $episode->podcast !== null)
@@ -121,6 +126,7 @@ class SearchQuery
                         ->orWhereRaw("description LIKE ? ESCAPE '\\'", [$like]);
                 })
                 ->latest('published_at')
+                ->latest('id')
                 ->limit(12)
                 ->get()
                 ->map(fn (Video $video): array => $this->videoResult($video))

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Notification;
 
 #[Signature('app:test-backup-notification')]
 #[Description('Send a test message through the configured backup notification mail channel')]
-class SendBackupNotificationTest extends Command
+class SendBackupNotification extends Command
 {
     public function handle(): int
     {
