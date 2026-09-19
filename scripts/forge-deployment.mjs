@@ -38,7 +38,9 @@ async function request(url, init, options) {
     try {
         return await (options.fetch ?? fetch)(url, {
             ...init,
-            redirect: 'error',
+            // Keep deployment-trigger redirects observable without following them.
+            // Following a redirect could turn a failed hook into an unrelated request.
+            redirect: init.method === 'POST' ? 'manual' : 'error',
             signal: AbortSignal.timeout(15000),
         });
     } catch {

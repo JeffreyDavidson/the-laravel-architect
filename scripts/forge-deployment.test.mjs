@@ -60,6 +60,24 @@ test('rejects redirects and hides transport errors that could contain credential
     );
 });
 
+test('reports a Forge hook redirect without following it', async () => {
+    await assert.rejects(
+        deployRelease('staging', revision, {
+            ...access,
+            hook,
+            fetch: async (url, init) => {
+                if (init.method === 'POST') {
+                    assert.equal(init.redirect, 'manual');
+                    return new Response('', { status: 302 });
+                }
+
+                return marker();
+            },
+        }),
+        /Forge rejected the deployment trigger \(HTTP 302\)/,
+    );
+});
+
 test('rejects missing, malformed and authentication-page release markers', async () => {
     for (const response of [
         new Response('', { status: 302 }),
