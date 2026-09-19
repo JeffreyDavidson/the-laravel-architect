@@ -5,6 +5,7 @@ import {
     deploymentHook,
     readMarker,
     requestHeaders,
+    transportFailureReason,
     validateRevision,
     verifyRelease,
 } from './forge-deployment.mjs';
@@ -58,6 +59,14 @@ test('rejects redirects and hides transport errors that could contain credential
         }),
         error => !error.message.includes('test-secret'),
     );
+});
+
+test('classifies transport failures without exposing error details', () => {
+    assert.equal(transportFailureReason({ cause: { code: 'ENOTFOUND' } }), 'DNS resolution');
+    assert.equal(transportFailureReason({ cause: { code: 'CERT_HAS_EXPIRED' } }), 'TLS negotiation');
+    assert.equal(transportFailureReason({ name: 'TimeoutError' }), 'timeout');
+    assert.equal(transportFailureReason({ cause: { code: 'ECONNRESET' } }), 'connection failure');
+    assert.equal(transportFailureReason(new Error('test-secret')), 'network failure');
 });
 
 test('reports a Forge hook redirect without following it', async () => {

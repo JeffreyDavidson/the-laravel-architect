@@ -21,6 +21,28 @@ function siteFor(environment) {
     return sites[environment];
 }
 
+export function transportFailureReason(error) {
+    const code = error?.cause?.code ?? error?.code;
+
+    if (['ENOTFOUND', 'EAI_AGAIN'].includes(code)) {
+        return 'DNS resolution';
+    }
+
+    if (['CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'].includes(code)) {
+        return 'TLS negotiation';
+    }
+
+    if (error?.name === 'AbortError' || error?.name === 'TimeoutError' || code === 'UND_ERR_CONNECT_TIMEOUT') {
+        return 'timeout';
+    }
+
+    if (['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT'].includes(code)) {
+        return 'connection failure';
+    }
+
+    return 'network failure';
+}
+
 export function requestHeaders(environment, options) {
     siteFor(environment);
     const headers = { Accept: 'application/json', 'Cache-Control': 'no-cache, no-store' };
@@ -43,9 +65,11 @@ async function request(url, init, options) {
             redirect: init.method === 'POST' ? 'manual' : 'error',
             signal: AbortSignal.timeout(15000),
         });
-    } catch {
+    } catch (error) {
         // URLs can contain the Forge hook token; never report the underlying error.
-        throw new Error('Deployment request failed; inspect Forge before retrying a trigger.');
+        throw new Error(
+            `Deployment request failed before an HTTP response (${transportFailureReason(error)}); inspect Forge before retrying a trigger.`,
+        );
     }
 }
 
