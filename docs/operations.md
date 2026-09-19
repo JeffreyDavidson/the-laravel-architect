@@ -13,9 +13,8 @@ environments were created with main-only branch policies; production requires
 Jeffrey's review and permits self-review. Both environments disallow administrator
 bypass. The staged-release workflow is merged into `develop` but remains
 inactive until the release reaches `main` and `STAGED_RELEASES_ENABLED=true` is
-set. Production's pinned Forge deployment script is saved, and the uncached
-deployment-marker Nginx location is installed on both sites. The staging Forge
-deployment script still must be installed before activating the workflow.
+set. Both sites now have the shared pinned Forge deployment script saved, and
+the uncached deployment-marker Nginx location is installed on both sites.
 
 Complete these steps before setting the GitHub repository variable
 `STAGED_RELEASES_ENABLED=true`:
@@ -76,10 +75,10 @@ Complete these steps before setting the GitHub repository variable
 On 2026-09-19, the staging queue/cache/media-path environment entries were
 activated and cached configuration was refreshed. Forge now reports one running
 database queue worker and an installed per-minute scheduler; runtime health is
-enabled. The staging and production Nginx configurations contain the exact
-uncached `/deployment.json` location. Do not enable the staged-release workflow
-until the staging Forge deployment script is installed and a pinned staging
-deployment has been verified.
+enabled. Both Forge deployment scripts are installed and pinned, and the
+staging and production Nginx configurations contain the exact uncached
+`/deployment.json` location. Do not enable the staged-release workflow until a
+pinned staging deployment has been verified.
 
 ## Before deploying
 
