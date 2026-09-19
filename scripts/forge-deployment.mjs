@@ -2,9 +2,6 @@ import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
-import { promisify } from 'node:util';
-
-const execFileAsync = promisify(execFile);
 
 const sites = {
     staging: { id: '3366565', origin: 'https://staging.thelaravelarchitect.com' },
@@ -120,7 +117,7 @@ async function requestWithCurl(url, init, options) {
     ];
 
     try {
-        const { stdout } = await (options.curl ?? execFileAsync)('curl', args, { timeout: 15000 });
+        const { stdout } = await (options.curl ?? runCurl)('curl', args, { timeout: 15000 });
         const status = Number(String(stdout ?? '').trim());
 
         if (!Number.isInteger(status) || status < 100) {
@@ -134,6 +131,19 @@ async function requestWithCurl(url, init, options) {
             `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
         );
     }
+}
+
+function runCurl(command, args, options) {
+    return new Promise((resolve, reject) => {
+        execFile(command, args, options, (error, stdout) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve({ stdout });
+        });
+    });
 }
 
 export async function readMarker(environment, options = {}, allowMissing = false) {
