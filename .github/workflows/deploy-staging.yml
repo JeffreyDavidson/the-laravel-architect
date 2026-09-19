@@ -48,6 +48,15 @@ jobs:
                   --output /dev/null
                   --write-out 'Forge reachability: HTTP %{http_code}; remote_ip=%{remote_ip}; ssl_verify=%{ssl_verify_result}\n'
                   https://forge.laravel.com
+            - name: Check Forge hook endpoint
+              env:
+                  FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
+              run: >-
+                  curl --silent --show-error --request OPTIONS
+                  --connect-timeout 10 --max-time 15
+                  --output /dev/null
+                  --write-out 'Forge hook reachability: HTTP %{http_code}; remote_ip=%{remote_ip}; ssl_verify=%{ssl_verify_result}\n'
+                  "$FORGE_DEPLOY_HOOK"
             - name: Deploy and verify the tested revision
               env:
                   FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
