@@ -128,7 +128,7 @@ After enabling runtime monitoring or clearing the application cache, run `php ar
 
 When a release introduces responsive uploaded images, run `php artisan media:repair-responsive-images` once after the persistent public-media directory is mounted. The command repairs projects, posts, and podcasts in one bounded, isolated run while preserving original uploads, creating WebP derivatives beside them, skipping derivatives that already pass verification, and returning a failure if any source file is missing, unsupported, or still unhealthy after the aggregate verification pass. Concurrent repair or resource-specific generation runs are rejected so they cannot race over the same derivatives. Use `--force` only when a release intentionally requires every valid derivative to be re-encoded. The resource-specific generation commands remain available for targeted recovery. Use `php artisan media:verify-responsive-images` separately for read-only checks; it reports aggregate results without exposing stored paths and does not modify media. Do not remove the original images.
 
-Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and run `php artisan media:repair-responsive-images` or restore the affected media before the next release.
+Production also runs `media:verify-responsive-images` daily at 05:00 and emails its aggregate output only when verification fails. Treat that notification as media-integrity degradation and arrange an approved repair or restore. Existing media damage is not automatically a release failure; releases that change media behavior still require targeted media verification.
 
 Failed derivative generation during an admin upload leaves the original upload and any previously valid derivatives available, and writes a path-free warning identifying the appropriate retry command. Do not add stored media paths to that log context.
 
@@ -136,13 +136,31 @@ Do not run a standalone production migration unless the deployment itself cannot
 
 ## After deploying
 
-Run the deployment verifier with the immutable commit expected for the release:
+Run the deployment verifier from the active site's `current` directory with the immutable commit expected for the release, not from an inactive release directory:
 
 ```bash
 php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 ```
 
-The command fails when the checked-out commit differs, migrations are pending, the Nightwatch agent is unavailable, queue or scheduler heartbeats are stale, any configured backup disk lacks a fresh backup, or stored media lacks a required responsive variant. Then verify all of the following against the deployed commit:
+The command fails when the checked-out commit differs, migrations are pending, the Nightwatch deployment identifier differs, the Nightwatch agent is unavailable, or queue or scheduler heartbeats are stale. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
+
+### Ownership of operational checks
+
+| Responsibility | Owner |
+| --- | --- |
+| Release preparation, activation, queue supervision, scheduler cron | Forge |
+| Public application readiness after deployment | Forge deployment health check calling `/up` |
+| Application configuration and telemetry privacy safeguards | `app:verify-production` before migrations |
+| Active checkout, migrations, runtime heartbeats, Nightwatch | `app:verify-deployment` after activation |
+| Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email |
+| Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email |
+| Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
+
+The production site's Forge deployment health check was enabled on 2026-09-19 with `https://thelaravelarchitect.com/up` as its URL. Keep it enabled and require HTTP 200 from this endpoint. Reconfirm the setting in Forge when changing deployment configuration. Forge owns the external request, while the application owns its database and heartbeat checks. A running Supervisor process is not proof that queue jobs are executing, so retain the queued heartbeat. Allow heartbeat initialization after clearing cache before expecting readiness. See [Forge deployment health checks](https://laravel.com/forge/docs/sites/deployments#deployment-health-checks).
+
+Backup monitoring uses the same configured disks as backup creation, with a maximum age of one day and a 5,000 MB storage limit in `config/backup.php`. It runs daily at 04:00 and emails failures. This is periodic detection, not continuous monitoring. The obsolete `BACKUP_MAX_AGE_HOURS` setting is no longer read; remove it during an approved environment maintenance change if present. Validated pre-migration backups and restore drills remain required independently of the release verifier.
+
+Then verify all of the following against the deployed commit:
 
 - Production `HEAD` matches the expected commit.
 - `php artisan migrate:status` has no pending migrations.
@@ -164,18 +182,12 @@ For content or authorization changes, also verify the affected public route and 
 
 ### Off-server destinations
 
-The production server and Synology NAS must both be connected to the private Tailscale network. Backblaze B2 provides an independent encrypted cloud copy through its S3-compatible API. Configure these values through the production secret manager, never in the repository:
+Production uses `b2-backups` as its sole scheduled backup destination, confirmed and retained by operator decision on 2026-09-19. Backup creation and monitoring must cover that same destination. Local and NAS copies are not required by the current policy; adding another destination requires a separate operational decision. This leaves B2 as the only off-server backup destination, so preserve archive encryption, failure notifications, and regular restore validation.
+
+Backblaze B2 provides an encrypted off-server copy through its S3-compatible API. Configure these values through the production secret manager, never in the repository:
 
 ```dotenv
-BACKUP_DISKS=local,nas-backups,b2-backups
-BACKUP_SFTP_HOST=<NAS Tailscale address>
-BACKUP_SFTP_PORT=22
-BACKUP_SFTP_USERNAME=<dedicated backup user>
-BACKUP_SFTP_PASSWORD=<dedicated backup password>
-BACKUP_SFTP_ROOT=/laravel-backups
-BACKUP_SFTP_HOST_FINGERPRINT=<verified Flysystem-compatible fingerprint>
-BACKUP_SFTP_TIMEOUT=30
-BACKUP_SFTP_MAX_TRIES=3
+BACKUP_DISKS=b2-backups
 BACKUP_B2_KEY_ID=<bucket-scoped key ID>
 BACKUP_B2_APPLICATION_KEY=<bucket-scoped application key>
 BACKUP_B2_REGION=us-east-005
@@ -184,11 +196,9 @@ BACKUP_B2_ENDPOINT=https://s3.us-east-005.backblazeb2.com
 BACKUP_ARCHIVE_PASSWORD=<independent archive password>
 ```
 
-Obtain the SSH host key through a separately trusted channel before configuring `BACKUP_SFTP_HOST_FINGERPRINT`. First verify its standard OpenSSH SHA-256 fingerprint. Then convert that same verified key to the format expected by the installed `league/flysystem-sftp-v3` adapter. For an ED25519 key, the adapter expects the lowercase SHA-512 digest of the decoded public-key blob with colon-separated byte pairs, not the `SHA256:...` value displayed by OpenSSH. Recheck this behavior when upgrading the adapter, and never accept an unexpected replacement key during a deployment.
-
 Restrict the B2 application key to the TLA backup bucket with read and write access. Keep the bucket private, retain client-side archive encryption, and do not reuse the Mouse28 key or bucket. The configured endpoint must use HTTPS on Backblaze's `backblazeb2.com` domain.
 
-After changing these values, refresh the configuration and prove all destinations work:
+After an approved change to these values, refresh the configuration and prove the B2 destination works:
 
 ```bash
 php artisan config:clear
@@ -197,7 +207,7 @@ php artisan backup:run
 php artisan backup:monitor
 ```
 
-Confirm a new encrypted archive exists on the `local`, `nas-backups`, and `b2-backups` disks, then complete the restore drill below using a copy downloaded from B2. A successful connection to either off-server destination does not prove that an application backup can be restored.
+Confirm a new encrypted archive exists on the `b2-backups` disk, then complete the restore drill below using a copy downloaded from B2. A successful connection does not prove that an application backup can be restored.
 
 An exit-zero backup command is not enough. Independently verify:
 

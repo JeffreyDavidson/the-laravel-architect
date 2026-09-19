@@ -10,12 +10,13 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
-#[Description('Verify the deployed commit, migrations, monitoring, runtime heartbeats, and backup freshness')]
+#[Description('Verify the deployed commit, migrations, monitoring, and runtime heartbeats')]
 class VerifyDeployment extends Command
 {
     public function handle(DeploymentVerifier $verifier): int
     {
-        $failures = $verifier->failures(trim((string) $this->argument('commit')));
+        $commit = trim((string) $this->argument('commit'));
+        $failures = $verifier->failures($commit);
 
         if ($failures !== []) {
             $this->error('Deployment verification failed:');
