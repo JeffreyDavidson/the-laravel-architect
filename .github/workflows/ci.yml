@@ -61,7 +61,7 @@ jobs:
         run: composer audit --locked
 
       - name: Audit production JavaScript dependencies
-        run: npm audit --omit=dev
+        run: npx --yes npm@11 audit --omit=dev
 
       - name: Prepare application
         run: |
