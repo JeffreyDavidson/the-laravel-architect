@@ -165,6 +165,26 @@ test('waits for a new deployment ID and triggers Forge only once', async () => {
     assert.equal(requests.find(request => request.init.method === 'POST').init.headers, undefined);
 });
 
+test('waits through transient release marker responses', async () => {
+    const responses = [
+        new Response('', { status: 400 }),
+        new Response('accepted'),
+        new Response('', { status: 400 }),
+        marker(2),
+        marker(2),
+        new Response('healthy'),
+    ];
+
+    const result = await deployRelease('staging', revision, {
+        ...access,
+        hook,
+        delay: async () => {},
+        fetch: async () => responses.shift(),
+    });
+
+    assert.equal(result.deployment_id, 2);
+});
+
 test('uses curl for Forge triggers when configured', async () => {
     const responses = [marker(1), marker(2), marker(2), new Response('healthy')];
     let curlCalls = 0;
