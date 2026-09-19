@@ -188,7 +188,7 @@ export async function readMarker(environment, options = {}, allowMissing = false
         { headers: requestHeaders(environment, options) },
         options,
     );
-    if (allowMissing && response.status === 404) {
+    if (allowMissing && [400, 404].includes(response.status)) {
         return null;
     }
     if (response.status !== 200) {
