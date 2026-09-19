@@ -196,7 +196,7 @@ test('uses curl for release verification when configured', async () => {
         curl: async (command, args) => {
             assert.equal(command, 'curl');
             assert.equal(args.includes('--dump-header'), true);
-            assert.equal(args.at(-1).startsWith('https://staging.thelaravelarchitect.com/deployment.json?'), true);
+            assert.equal(args.at(-1), 'https://staging.thelaravelarchitect.com/deployment.json');
 
             return {
                 stdout: `HTTP/2 200\r\ncache-control: no-store\r\nage: 0\r\ncf-cache-status: MISS\r\n\r\n${body}\n__DEPLOYMENT_STATUS__:200\n`,
