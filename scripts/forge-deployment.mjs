@@ -43,6 +43,27 @@ export function transportFailureReason(error) {
     return 'network failure';
 }
 
+export function transportFailureMetadata(error) {
+    const metadata = [];
+    const name = typeof error?.name === 'string' ? error.name : null;
+    const code = error?.code ?? null;
+    const causeCode = error?.cause?.code ?? null;
+
+    if (name && /^[A-Za-z][A-Za-z0-9]*$/.test(name)) {
+        metadata.push(`error=${name}`);
+    }
+
+    if (typeof code === 'string' && /^[A-Z0-9_]+$/.test(code)) {
+        metadata.push(`code=${code}`);
+    }
+
+    if (typeof causeCode === 'string' && /^[A-Z0-9_]+$/.test(causeCode)) {
+        metadata.push(`cause=${causeCode}`);
+    }
+
+    return metadata.length > 0 ? `; ${metadata.join(', ')}` : '';
+}
+
 export function requestHeaders(environment, options) {
     siteFor(environment);
     const headers = { Accept: 'application/json', 'Cache-Control': 'no-cache, no-store' };
@@ -68,7 +89,7 @@ async function request(url, init, options) {
     } catch (error) {
         // URLs can contain the Forge hook token; never report the underlying error.
         throw new Error(
-            `Deployment request failed before an HTTP response (${transportFailureReason(error)}); inspect Forge before retrying a trigger.`,
+            `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
         );
     }
 }
