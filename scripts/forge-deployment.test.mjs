@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
     accessCredentialDiagnostics,
+    diagnosticFailureReason,
     deployRelease,
     deploymentHook,
     readMarker,
@@ -56,6 +57,30 @@ test('reports safe Access credential diagnostics without exposing values', () =>
             hasHeaderPrefix: false,
         },
     });
+});
+
+test('fails the Access diagnostic for unavailable or rejected staging credentials', () => {
+    assert.equal(
+        diagnosticFailureReason('staging', {
+            credentials: accessCredentialDiagnostics(),
+            error: 'Staging requires both Cloudflare Access credentials.',
+        }),
+        'Staging requires both Cloudflare Access credentials.',
+    );
+    assert.equal(
+        diagnosticFailureReason('staging', {
+            credentials: accessCredentialDiagnostics(access),
+            response: { status: 403 },
+        }),
+        'Cloudflare Access diagnostic returned HTTP 403.',
+    );
+    assert.equal(
+        diagnosticFailureReason('production', {
+            credentials: accessCredentialDiagnostics(),
+            error: 'ignored for production',
+        }),
+        null,
+    );
 });
 
 test('constrains hook credentials to the exact Forge target and supplies a separate checkout revision', () => {

@@ -99,6 +99,38 @@ export function accessCredentialDiagnostics(options = {}) {
     };
 }
 
+export function diagnosticFailureReason(environment, diagnostics) {
+    if (environment !== 'staging') {
+        return null;
+    }
+
+    if (diagnostics.error) {
+        return diagnostics.error;
+    }
+
+    const status = diagnostics.response?.status;
+    if (Number.isInteger(status) && status >= 400) {
+        return `Cloudflare Access diagnostic returned HTTP ${status}.`;
+    }
+
+    const credentials = diagnostics.credentials ?? {};
+    if (!credentials.clientId?.present || !credentials.clientSecret?.present) {
+        return 'Staging requires both Cloudflare Access credentials.';
+    }
+
+    if (
+        credentials.clientId.hasWhitespace ||
+        credentials.clientSecret.hasWhitespace ||
+        credentials.clientId.hasHeaderPrefix ||
+        credentials.clientSecret.hasHeaderPrefix ||
+        !credentials.clientId.formatLooksValid
+    ) {
+        return 'Staging Cloudflare Access credentials have an invalid format.';
+    }
+
+    return null;
+}
+
 async function request(url, init, options) {
     if (
         (init.method === 'POST' && options.triggerTransport === 'curl') ||
@@ -363,6 +395,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         const result = await operationHandler(environment, revision, options);
         if (operation === 'diagnose') {
             console.log(JSON.stringify(result));
+            const failure = diagnosticFailureReason(environment, result);
+            if (failure) {
+                console.error(failure);
+                process.exitCode = 1;
+            }
         } else {
             console.log(`Verified ${environment}: ${result.revision}, Forge deployment ${result.deployment_id}.`);
         }
