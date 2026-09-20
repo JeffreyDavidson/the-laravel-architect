@@ -69,6 +69,11 @@ jobs:
                       2??) ;;
                       *) echo "Forge rejected the deployment trigger (HTTP $status)."; exit 1 ;;
                   esac
+            - name: Diagnose staging Access credentials
+              env:
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: node scripts/forge-deployment.mjs diagnose staging "$EXPECTED_REVISION"
             - name: Wait for and verify the tested revision
               env:
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
