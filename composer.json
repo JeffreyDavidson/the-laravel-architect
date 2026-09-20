@@ -45,6 +45,7 @@
         "laraveldaily/filacheck-pro": "^1.1",
         "mockery/mockery": "^1.6",
         "mrpunyapal/laravel-auditor": "^0.1.6",
+        "newdebugbar/newdebugbar": "dev-main",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^5.0",
         "pestphp/pest-plugin-agent": "^5.0",
