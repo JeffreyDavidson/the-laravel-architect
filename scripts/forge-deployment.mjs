@@ -77,6 +77,28 @@ export function requestHeaders(environment, options) {
     return headers;
 }
 
+export function accessCredentialDiagnostics(options = {}) {
+    const inspect = value => {
+        const text = typeof value === 'string' ? value : '';
+
+        return {
+            present: text.length > 0,
+            length: text.length,
+            hasWhitespace: /\s/.test(text),
+            hasLeadingOrTrailingWhitespace: text !== text.trim(),
+            hasHeaderPrefix: /^CF-Access-Client-(?:Id|Secret):/i.test(text),
+        };
+    };
+
+    return {
+        clientId: {
+            ...inspect(options.clientId),
+            formatLooksValid: /^[A-Za-z0-9._-]+$/.test(options.clientId ?? ''),
+        },
+        clientSecret: inspect(options.clientSecret),
+    };
+}
+
 async function request(url, init, options) {
     if (
         (init.method === 'POST' && options.triggerTransport === 'curl') ||
@@ -214,6 +236,31 @@ export async function readMarker(environment, options = {}, allowMissing = false
     return marker;
 }
 
+export async function diagnoseAccess(environment, options = {}) {
+    const diagnostics = { credentials: accessCredentialDiagnostics(options) };
+
+    try {
+        const response = await request(
+            `${siteFor(environment).origin}/deployment.json`,
+            { headers: requestHeaders(environment, options) },
+            options,
+        );
+
+        diagnostics.response = {
+            status: response.status,
+            headers: Object.fromEntries(
+                ['cache-control', 'cf-cache-status', 'cf-ray', 'content-type', 'server', 'www-authenticate']
+                    .map(name => [name, response.headers.get(name)])
+                    .filter(([, value]) => value !== null),
+            ),
+        };
+    } catch (error) {
+        diagnostics.error = error.message;
+    }
+
+    return diagnostics;
+}
+
 export async function verifyRelease(environment, revision, options = {}) {
     validateRevision(revision);
     const marker = await readMarker(environment, options);
@@ -304,13 +351,21 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             triggerTransport: 'curl',
             readTransport: 'curl',
         };
-        if (!['deploy', 'verify', 'wait'].includes(operation)) {
-            throw new Error('Use deploy, verify, or wait with an environment and full commit SHA.');
+        if (!['deploy', 'diagnose', 'verify', 'wait'].includes(operation)) {
+            throw new Error('Use deploy, diagnose, verify, or wait with an environment and full commit SHA.');
         }
-        const operationHandler =
-            operation === 'deploy' ? deployRelease : operation === 'wait' ? waitForRelease : verifyRelease;
+        const operationHandler = {
+            deploy: deployRelease,
+            diagnose: diagnoseAccess,
+            verify: verifyRelease,
+            wait: waitForRelease,
+        }[operation];
         const result = await operationHandler(environment, revision, options);
-        console.log(`Verified ${environment}: ${result.revision}, Forge deployment ${result.deployment_id}.`);
+        if (operation === 'diagnose') {
+            console.log(JSON.stringify(result));
+        } else {
+            console.log(`Verified ${environment}: ${result.revision}, Forge deployment ${result.deployment_id}.`);
+        }
     } catch (error) {
         console.error(error.message);
         process.exitCode = 1;

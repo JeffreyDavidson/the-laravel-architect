@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+    accessCredentialDiagnostics,
     deployRelease,
     deploymentHook,
     readMarker,
@@ -30,6 +31,31 @@ test('requires staging credentials and never includes them in production request
     assert.throws(() => requestHeaders('unknown', access));
     assert.equal(requestHeaders('staging', access)['CF-Access-Client-Secret'], 'test-secret');
     assert.equal(requestHeaders('production', access)['CF-Access-Client-Secret'], undefined);
+});
+
+test('reports safe Access credential diagnostics without exposing values', () => {
+    const diagnostics = accessCredentialDiagnostics({
+        clientId: 'client-id.access',
+        clientSecret: 'secret-value',
+    });
+
+    assert.deepEqual(diagnostics, {
+        clientId: {
+            present: true,
+            length: 16,
+            hasWhitespace: false,
+            hasLeadingOrTrailingWhitespace: false,
+            hasHeaderPrefix: false,
+            formatLooksValid: true,
+        },
+        clientSecret: {
+            present: true,
+            length: 12,
+            hasWhitespace: false,
+            hasLeadingOrTrailingWhitespace: false,
+            hasHeaderPrefix: false,
+        },
+    });
 });
 
 test('constrains hook credentials to the exact Forge target and supplies a separate checkout revision', () => {
