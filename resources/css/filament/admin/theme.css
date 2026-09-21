@@ -1427,6 +1427,11 @@
     display: none !important;
 }
 
+/* Keep teleported menus above the dashboard content while below modals. */
+.fi .fi-dropdown-panel {
+    z-index: 40;
+}
+
 .dark .fi-sidebar-item > a {
     min-height: 1.9rem;
     border-radius: 0.48rem;
