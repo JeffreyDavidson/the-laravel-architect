@@ -11,8 +11,10 @@ site 3366565 and production site 3044519. Direct push-to-deploy was disabled for
 both sites on 2026-09-19; production's `/up` health check remains enabled. GitHub
 environments were created with main-only branch policies; production requires
 Jeffrey's review and permits self-review. Both environments disallow administrator
-bypass. The workflow and script below are the target configuration, not evidence
-of live activation.
+bypass. The staged-release workflow is merged into `develop` but remains
+inactive until the release reaches `main` and `STAGED_RELEASES_ENABLED=true` is
+set. Both sites now have the shared pinned Forge deployment script saved, and
+the uncached deployment-marker Nginx location is installed on both sites.
 
 Complete these steps before setting the GitHub repository variable
 `STAGED_RELEASES_ENABLED=true`:
@@ -70,10 +72,13 @@ Complete these steps before setting the GitHub repository variable
    Verify Access, the noncached revision marker, runtime checks and HTTP smoke
    suite before using production promotion. Record the successful staging run.
 
-On 2026-09-19, the staging queue/cache/media-path environment entries were saved
-but had not yet been activated: cached configuration still used `sync` and
-`file`, and runtime health was disabled. Do not confuse saved environment values
-with verified running workers or scheduler configuration.
+On 2026-09-19, the staging queue/cache/media-path environment entries were
+activated and cached configuration was refreshed. Forge now reports one running
+database queue worker and an installed per-minute scheduler; runtime health is
+enabled. Both Forge deployment scripts are installed and pinned, and the
+staging and production Nginx configurations contain the exact uncached
+`/deployment.json` location. Do not enable the staged-release workflow until a
+pinned staging deployment has been verified.
 
 ## Before deploying
 
@@ -176,7 +181,7 @@ mv public/deployment.json.tmp public/deployment.json
 
 ### Observability environments
 
-Create separate `production` and `staging` environments in Nightwatch. Connect each Forge site to its matching Nightwatch environment so it receives an environment-specific token and agent process. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
+Production uses Nightwatch for server-side telemetry and deployment tracking. Staging uses Laravel Telescope for development-focused inspection instead of a Nightwatch agent. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
 
 Sentry is limited to exception reporting until a separate performance and privacy review approves broader collection:
 
@@ -195,7 +200,7 @@ The application fixes `sentry.max_request_body_size` to `never`, and production 
 
 ### Nightwatch
 
-Nightwatch is opt-in. In the Nightwatch dashboard, create the application environments, then use Forge's built-in Nightwatch integration from each site's Overview tab. Supply the matching environment-specific token through Forge, enable monitoring, and set these values:
+Nightwatch is required only in production. In the Nightwatch dashboard, create the production application environment, then use Forge's built-in Nightwatch integration from the production site's Overview tab. Supply the production token through Forge, enable monitoring, and set these values:
 
 ```dotenv
 NIGHTWATCH_ENABLED=true
@@ -254,7 +259,7 @@ Run the deployment verifier from the active site's `current` directory with the 
 php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 ```
 
-The command fails when the checked-out commit differs, migrations are pending, the Nightwatch deployment identifier differs, the Nightwatch agent is unavailable, or queue or scheduler heartbeats are stale. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
+The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, or (in production) the Nightwatch deployment identifier differs or the Nightwatch agent is unavailable. Staging does not require Nightwatch because it uses Telescope for application inspection. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
 
 ### Ownership of operational checks
 
@@ -263,7 +268,7 @@ The command fails when the checked-out commit differs, migrations are pending, t
 | Release preparation, activation, queue supervision, scheduler cron | Forge |
 | Public application readiness after deployment | Forge deployment health check calling `/up` |
 | Application configuration and telemetry privacy safeguards | `app:verify-production` before migrations |
-| Active checkout, migrations, runtime heartbeats, Nightwatch | `app:verify-deployment` after activation |
+| Active checkout, migrations, runtime heartbeats, and production Nightwatch | `app:verify-deployment` after activation |
 | Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email |
 | Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email |
 | Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
@@ -282,8 +287,8 @@ Then verify all of the following against the deployed commit:
 - `/up` returns HTTP 200, confirming the application can read its migrated database and both the scheduler and queue worker have fresh heartbeats.
 - Public media URLs return successful responses.
 - The queue worker and scheduler are active.
-- `php artisan nightwatch:status` confirms the Nightwatch agent is accepting connections.
-- The Nightwatch dashboard contains the deployment marker matching the expected commit.
+- Production `php artisan nightwatch:status` confirms the Nightwatch agent is accepting connections.
+- The production Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
 - The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.

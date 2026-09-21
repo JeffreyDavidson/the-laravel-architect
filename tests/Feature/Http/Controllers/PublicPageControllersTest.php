@@ -251,6 +251,9 @@ it('renders canonical structured data for the site and blog posts', function () 
         ->getContent();
 
     $structuredData = decodeStructuredData($content);
+
+    expect($structuredData['@context'] ?? null)->toBe('https://schema.org');
+
     $graph = structuredDataGraph($structuredData['@graph'] ?? null);
     $website = structuredDataObject(collect($graph)->firstWhere('@type', 'WebSite'));
     $article = structuredDataObject(collect($graph)->firstWhere('@type', 'Article'));
