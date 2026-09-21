@@ -25,7 +25,10 @@ class VideoResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'YouTube';
+    protected static string|UnitEnum|null $navigationGroup = 'Library';
+
+    #[\Override]
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {

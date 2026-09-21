@@ -2,8 +2,8 @@
     <section class="tla-dashboard-panel">
         <div class="tla-dashboard-panel__header">
             <div>
-                <span>Shortcuts</span>
-                <h3>Start the next thing</h3>
+                <h3>Create content</h3>
+                <p>Start with the right editor.</p>
             </div>
         </div>
 
@@ -14,7 +14,20 @@
                 </span>
                 <span>
                     <strong>Write post</strong>
-                    <small>Draft new Laravel article</small>
+                    <small>Draft a new Laravel article</small>
+                </span>
+            </a>
+
+            <a
+                href="{{ \App\Filament\Resources\Episodes\EpisodeResource::getUrl('create') }}"
+                class="tla-dashboard-action"
+            >
+                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--green">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-12 0v1.5a6 6 0 0 0 6 6Zm0 0v3m-3 0h6M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" /></svg>
+                </span>
+                <span>
+                    <strong>Add episode</strong>
+                    <small>Prepare audio and show notes</small>
                 </span>
             </a>
 
@@ -27,30 +40,20 @@
                 </span>
                 <span>
                     <strong>Add project</strong>
-                    <small>Showcase client or product work</small>
+                    <small>Document a case study</small>
                 </span>
             </a>
 
             <a
-                href="{{ \App\Filament\Resources\Podcasts\PodcastResource::getUrl('create') }}"
+                href="{{ \App\Filament\Resources\NewsletterIssues\NewsletterIssueResource::getUrl('create') }}"
                 class="tla-dashboard-action"
             >
-                <span class="tla-dashboard-action__icon tla-dashboard-action__icon--green">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-12 0v1.5a6 6 0 0 0 6 6Zm0 0v3m-3 0h6M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" /></svg>
-                </span>
-                <span>
-                    <strong>New podcast</strong>
-                    <small>Plan a show or episode track</small>
-                </span>
-            </a>
-
-            <a href="/" target="_blank" rel="noreferrer" class="tla-dashboard-action">
                 <span class="tla-dashboard-action__icon tla-dashboard-action__icon--amber">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5M15 3h6m0 0v6m0-6L10.5 13.5" /></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21.75 6.75v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0-8.69 5.52a2 2 0 0 1-2.12 0L2.25 6.75" /></svg>
                 </span>
                 <span>
-                    <strong>View site</strong>
-                    <small>Open the public homepage</small>
+                    <strong>Write newsletter</strong>
+                    <small>Prepare the next issue</small>
                 </span>
             </a>
         </div>

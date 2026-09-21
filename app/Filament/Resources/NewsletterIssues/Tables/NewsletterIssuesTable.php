@@ -38,7 +38,8 @@ class NewsletterIssuesTable
                     ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
                     ->label('Published')
-                    ->dateTime()
+                    ->dateTime('M j, Y')
+                    ->placeholder('Not published')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Created')
@@ -64,6 +65,10 @@ class NewsletterIssuesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'desc')
+            ->emptyStateIcon(Heroicon::OutlinedNewspaper)
+            ->emptyStateHeading('No newsletter issues yet')
+            ->emptyStateDescription('Draft the first issue when there is an update worth sending.');
     }
 }

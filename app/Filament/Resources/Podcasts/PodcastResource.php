@@ -26,7 +26,7 @@ class PodcastResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMicrophone;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Podcasting';
+    protected static string|UnitEnum|null $navigationGroup = 'Publish';
 
     #[\Override]
     protected static ?int $navigationSort = 3;

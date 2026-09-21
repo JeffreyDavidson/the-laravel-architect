@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\Insights;
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
@@ -11,11 +13,17 @@ use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\ContentPerformanceOverview;
-use App\Filament\Widgets\FathomTrafficOverview;
+use App\Filament\Widgets\ContentReadinessWidget;
+use App\Filament\Widgets\EditorialOperationsOverview;
 use App\Filament\Widgets\PublishingTrendsChart;
+use App\Filament\Widgets\QuickLinksWidget;
+use App\Filament\Widgets\RecentActivityWidget;
+use App\Filament\Widgets\WelcomeWidget;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Vite;
 
@@ -57,7 +65,7 @@ it('registers visible navigation items for every admin section', function () {
     }
 
     expect(collect($navigation)->map(fn (NavigationGroup $group): ?string => $group->getLabel())->all())
-        ->toContain('Content', 'Podcasting', 'Showcase', 'Taxonomy', 'Newsletter', 'YouTube', 'Operations');
+        ->toContain('Publish', 'Library', 'Audience', 'Operations');
 });
 
 it('renders the publishing dashboard for an authorized user', function () {
@@ -68,9 +76,35 @@ it('renders the publishing dashboard for an authorized user', function () {
         ->assertDontSeeHtml('const expandSidebarGroups');
 });
 
-it('registers the private analytics widgets on the publishing dashboard', function () {
+it('keeps the dashboard focused on daily publishing work', function () {
+    expect(app(Dashboard::class)->getWidgets())->toBe([
+        WelcomeWidget::class,
+        QuickLinksWidget::class,
+        RecentActivityWidget::class,
+        ContentReadinessWidget::class,
+    ]);
+});
+
+it('moves reporting widgets to a dedicated insights page', function () {
+    $this->get(Insights::getUrl())
+        ->assertOk()
+        ->assertSee('Insights')
+        ->assertSee('without crowding the daily workspace');
+});
+
+it('protects long editing sessions and keeps the sidebar collapsible', function () {
+    $panel = Filament::getPanel('admin');
+
+    expect($panel->hasUnsavedChangesAlerts())->toBeTrue()
+        ->and($panel->isSidebarCollapsibleOnDesktop())->toBeTrue()
+        ->and($panel->hasCollapsibleNavigationGroups())->toBeTrue()
+        ->and(CreateRecord::$formActionsAreSticky)->toBeTrue()
+        ->and(EditRecord::$formActionsAreSticky)->toBeTrue();
+});
+
+it('registers the private analytics widgets for the insights page', function () {
     expect(Filament::getWidgets())
         ->toContain(ContentPerformanceOverview::class)
-        ->toContain(FathomTrafficOverview::class)
+        ->toContain(EditorialOperationsOverview::class)
         ->toContain(PublishingTrendsChart::class);
 });

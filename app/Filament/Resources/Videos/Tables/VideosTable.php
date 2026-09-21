@@ -10,6 +10,7 @@ use App\Support\Content\ContentReadiness;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -43,11 +44,13 @@ class VideosTable
                 TextColumn::make('like_count')
                     ->label('Likes')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('comment_count')
                     ->label('Comments')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean(),
@@ -73,6 +76,9 @@ class VideosTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateIcon(Heroicon::OutlinedVideoCamera)
+            ->emptyStateHeading('No videos yet')
+            ->emptyStateDescription('Synced YouTube videos will appear here for editorial review.');
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditorialCalendar;
+use App\Filament\Pages\Insights;
 use App\Filament\Pages\MediaHealth;
 use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
@@ -24,11 +26,11 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
-// AccountWidget replaced by WelcomeWidget
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -44,6 +46,9 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        CreateRecord::stickyFormActions();
+        EditRecord::stickyFormActions();
+
         return $panel
             ->default()
             ->id('admin')
@@ -62,6 +67,9 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
             ])
             ->darkMode()
+            ->themeSwitcher()
+            ->sidebarCollapsibleOnDesktop()
+            ->unsavedChangesAlerts()
             ->brandName('The Laravel Architect')
             ->brandLogo('/images/elephant-companion-128.webp')
             ->brandLogoHeight('2.5rem')
@@ -74,44 +82,29 @@ class AdminPanelProvider extends PanelProvider
                     ...Dashboard::getNavigationItems(),
                 ])
                 ->groups([
-                    NavigationGroup::make('Content')
-                        ->collapsible(false)
+                    NavigationGroup::make('Publish')
                         ->items([
                             ...EditorialCalendar::getNavigationItems(),
                             ...PostResource::getNavigationItems(),
-                            ...CategoryResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::make('Podcasting')
-                        ->collapsible(false)
-                        ->items([
                             ...PodcastResource::getNavigationItems(),
                             ...EpisodeResource::getNavigationItems(),
+                            ...NewsletterIssueResource::getNavigationItems(),
                         ]),
-                    NavigationGroup::make('Showcase')
-                        ->collapsible(false)
+                    NavigationGroup::make('Library')
                         ->items([
                             ...ProjectResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::make('Taxonomy')
-                        ->collapsible(false)
-                        ->items([
+                            ...CategoryResource::getNavigationItems(),
                             ...TagResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::make('Newsletter')
-                        ->collapsible(false)
-                        ->items([
-                            ...NewsletterIssueResource::getNavigationItems(),
-                            ...SubscriberResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::make('YouTube')
-                        ->collapsible(false)
-                        ->items([
                             ...VideoResource::getNavigationItems(),
                         ]),
-                    NavigationGroup::make('Operations')
-                        ->collapsible(false)
+                    NavigationGroup::make('Audience')
                         ->items([
+                            ...SubscriberResource::getNavigationItems(),
                             ...ContactInquiryResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Operations')
+                        ->items([
+                            ...Insights::getNavigationItems(),
                             ...MediaHealth::getNavigationItems(),
                         ]),
                 ]))
@@ -140,6 +133,10 @@ class AdminPanelProvider extends PanelProvider
                         Private studio access
                     </div>
                 '),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): HtmlString => new HtmlString(view('filament.auth.theme-switcher')->render()),
             )
             ->renderHook(
                 PanelsRenderHook::SCRIPTS_AFTER,

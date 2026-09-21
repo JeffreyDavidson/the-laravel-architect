@@ -64,14 +64,19 @@ it('shows the content areas that still need public details', function () {
         ->assertSee('Project stories')
         ->assertSee('Podcast links')
         ->assertSee('Episode details')
-        ->assertSee('Post content')
-        ->assertSee('Newsletter issues')
-        ->assertSee('Video metadata')
-        ->assertSee('Review content')
+        ->assertDontSee('Post content')
+        ->assertDontSee('Newsletter issues')
+        ->assertDontSee('Video metadata')
         ->assertSeeHtml('href="'.ProjectResource::getUrl('index').'"')
         ->assertSeeHtml('href="'.PodcastResource::getUrl('index').'"')
         ->assertSeeHtml('href="'.EpisodeResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.PostResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.NewsletterIssueResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.VideoResource::getUrl('index').'"');
+        ->assertDontSeeHtml('href="'.PostResource::getUrl('index').'"')
+        ->assertDontSeeHtml('href="'.NewsletterIssueResource::getUrl('index').'"')
+        ->assertDontSeeHtml('href="'.VideoResource::getUrl('index').'"');
+});
+
+it('renders a clear completed state when no content needs attention', function () {
+    livewire(ContentReadinessWidget::class)
+        ->assertSee('Everything is ready')
+        ->assertSee('The public-facing content checks are complete.');
 });

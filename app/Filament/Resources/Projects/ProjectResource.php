@@ -26,7 +26,7 @@ class ProjectResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCodeBracket;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Showcase';
+    protected static string|UnitEnum|null $navigationGroup = 'Library';
 
     #[\Override]
     protected static ?int $navigationSort = 5;

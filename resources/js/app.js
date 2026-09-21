@@ -1,4 +1,3 @@
-import './public-shell';
 import { registerSiteHeader } from './site-header';
 import { registerCopyButton } from './copy-button';
 

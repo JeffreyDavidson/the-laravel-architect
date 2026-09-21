@@ -26,7 +26,10 @@ class CategoryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
+    protected static string|UnitEnum|null $navigationGroup = 'Library';
+
+    #[\Override]
+    protected static ?string $recordTitleAttribute = 'name';
 
     #[\Override]
     protected static ?int $navigationSort = 2;

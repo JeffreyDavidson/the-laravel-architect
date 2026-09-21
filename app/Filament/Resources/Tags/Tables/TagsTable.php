@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Tags\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,9 +18,11 @@ class TagsTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('type')
                     ->searchable(),
                 TextColumn::make('order_column')
@@ -46,6 +49,10 @@ class TagsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name')
+            ->emptyStateIcon(Heroicon::OutlinedTag)
+            ->emptyStateHeading('No tags yet')
+            ->emptyStateDescription('Create tags when a reusable topic begins to emerge.');
     }
 }

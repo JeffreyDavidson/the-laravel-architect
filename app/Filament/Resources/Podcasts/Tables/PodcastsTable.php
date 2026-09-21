@@ -7,6 +7,7 @@ use App\Support\Content\ContentReadiness;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -35,7 +36,7 @@ class PodcastsTable
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('description')
                     ->limit(50)
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('episodes_count')
                     ->counts('episodes')
                     ->label('Episodes')
@@ -58,6 +59,9 @@ class PodcastsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateIcon(Heroicon::OutlinedMicrophone)
+            ->emptyStateHeading('No podcasts yet')
+            ->emptyStateDescription('Create a show before adding its first episode.');
     }
 }

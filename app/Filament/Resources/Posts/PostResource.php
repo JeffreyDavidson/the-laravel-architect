@@ -26,7 +26,7 @@ class PostResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
+    protected static string|UnitEnum|null $navigationGroup = 'Publish';
 
     #[\Override]
     protected static ?int $navigationSort = 1;
