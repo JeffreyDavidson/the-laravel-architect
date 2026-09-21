@@ -15,4 +15,10 @@ When a test mixes boundaries, keep the test at the highest boundary that is actu
 
 Browser page objects own page URLs and page-level navigation; components own reusable UI interactions; test files own the scenario and its observable assertions. Prefer accessible names, roles, labels, and stable `data-*` hooks over selectors tied to CSS structure.
 
-The PHP suites are registered in `phpunit.xml`. Pest Browser uses the repository's Playwright package and Chromium installation, but all project tests are executed through Pest.
+The PHP suites are registered in `phpunit.xml` and executed through Pest. Pest Browser uses the repository's Playwright package and Chromium installation.
+
+## Deployment safeguards
+
+Run `npm run test:deployment` with Node 22 to test the deployment helpers and the actual command entry point. CI and the pre-push hook run the same command. The CLI tests launch a separate Node process with synthetic credentials and replace the HTTP transport; they do not contact Forge or Cloudflare or require secrets.
+
+Keep command-level coverage for credential forwarding, GET requests, missing credentials, login redirects, HTTP errors, curl failures, exit codes, and secret-safe output. Helper-only tests cannot catch argument mismatches in the command dispatcher. A successful preflight requires HTTP 200; it does not replace the deployed-revision verification or live staging smoke checks.

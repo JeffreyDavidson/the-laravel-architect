@@ -83,6 +83,25 @@ test('fails the Access diagnostic for unavailable or rejected staging credential
     );
 });
 
+test('requires an HTTP 200 response before the staging diagnostic can succeed', () => {
+    for (const status of [undefined, null, 0, 99, 600, '200', 204, 302, 403, 500]) {
+        const failure = diagnosticFailureReason('staging', {
+            credentials: accessCredentialDiagnostics(access),
+            response: { status },
+        });
+
+        assert.equal(typeof failure, 'string', `Unexpected success for status ${status}`);
+    }
+
+    assert.equal(
+        diagnosticFailureReason('staging', {
+            credentials: accessCredentialDiagnostics(access),
+            response: { status: 200 },
+        }),
+        null,
+    );
+});
+
 test('constrains hook credentials to the exact Forge target and supplies a separate checkout revision', () => {
     for (const invalid of [
         hook.replace('https:', 'http:'),
@@ -249,7 +268,10 @@ test('uses curl for Forge triggers when configured', async () => {
             curlCalls++;
             assert.equal(command, 'curl');
             assert.deepEqual(args.slice(0, 2), ['--silent', '--show-error']);
-            assert.equal(args.at(-1).startsWith('https://forge.laravel.com/servers/753072/sites/3366565/deploy/http?'), true);
+            assert.equal(
+                args.at(-1).startsWith('https://forge.laravel.com/servers/753072/sites/3366565/deploy/http?'),
+                true,
+            );
             return { stdout: '202' };
         },
         fetch: async () => responses.shift(),

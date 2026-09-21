@@ -108,11 +108,6 @@ export function diagnosticFailureReason(environment, diagnostics) {
         return diagnostics.error;
     }
 
-    const status = diagnostics.response?.status;
-    if (Number.isInteger(status) && status >= 400) {
-        return `Cloudflare Access diagnostic returned HTTP ${status}.`;
-    }
-
     const credentials = diagnostics.credentials ?? {};
     if (!credentials.clientId?.present || !credentials.clientSecret?.present) {
         return 'Staging requires both Cloudflare Access credentials.';
@@ -126,6 +121,17 @@ export function diagnosticFailureReason(environment, diagnostics) {
         !credentials.clientId.formatLooksValid
     ) {
         return 'Staging Cloudflare Access credentials have an invalid format.';
+    }
+
+    const status = diagnostics.response?.status;
+    if (!Number.isInteger(status) || status < 100 || status > 599) {
+        return 'Cloudflare Access diagnostic did not receive a valid HTTP status.';
+    }
+    if (status >= 300 && status < 400) {
+        return `Cloudflare Access diagnostic returned HTTP ${status} (redirect); service-token authentication was not confirmed.`;
+    }
+    if (status !== 200) {
+        return `Cloudflare Access diagnostic returned HTTP ${status}.`;
     }
 
     return null;
@@ -161,7 +167,7 @@ async function requestWithCurl(url, init, options) {
         '--show-error',
         '--http1.1',
         '--request',
-        init.method,
+        init.method ?? 'GET',
         '--connect-timeout',
         '10',
         '--max-time',
@@ -175,14 +181,7 @@ async function requestWithCurl(url, init, options) {
     if (init.method === 'POST') {
         args.push('--output', '/dev/null', '--write-out', '%{http_code}');
     } else {
-        args.push(
-            '--dump-header',
-            '-',
-            '--output',
-            '-',
-            '--write-out',
-            '\n__DEPLOYMENT_STATUS__:%{http_code}\n',
-        );
+        args.push('--dump-header', '-', '--output', '-', '--write-out', '\n__DEPLOYMENT_STATUS__:%{http_code}\n');
     }
 
     args.push(String(url));
@@ -221,7 +220,7 @@ async function requestWithCurl(url, init, options) {
     } catch (error) {
         // The hook URL contains a credential; never report curl's command or output.
         throw new Error(
-            `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
+            `Deployment request failed (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
         );
     }
 }
@@ -231,6 +230,11 @@ function runCurl(command, args, options) {
 
     if (result.error) {
         throw result.error;
+    }
+    if (result.status !== 0) {
+        const error = new Error('curl exited unsuccessfully.');
+        error.code = Number.isInteger(result.status) ? `CURL_EXIT_${result.status}` : 'CURL_FAILED';
+        throw error;
     }
 
     return { stdout: result.stdout };
@@ -386,14 +390,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         if (!['deploy', 'diagnose', 'verify', 'wait'].includes(operation)) {
             throw new Error('Use deploy, diagnose, verify, or wait with an environment and full commit SHA.');
         }
-        const operationHandler = {
-            deploy: deployRelease,
-            diagnose: diagnoseAccess,
-            verify: verifyRelease,
-            wait: waitForRelease,
-        }[operation];
-        const result = await operationHandler(environment, revision, options);
         if (operation === 'diagnose') {
+            const result = await diagnoseAccess(environment, options);
             console.log(JSON.stringify(result));
             const failure = diagnosticFailureReason(environment, result);
             if (failure) {
@@ -401,6 +399,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
                 process.exitCode = 1;
             }
         } else {
+            const operationHandler = {
+                deploy: deployRelease,
+                verify: verifyRelease,
+                wait: waitForRelease,
+            }[operation];
+            const result = await operationHandler(environment, revision, options);
             console.log(`Verified ${environment}: ${result.revision}, Forge deployment ${result.deployment_id}.`);
         }
     } catch (error) {

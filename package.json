@@ -8,6 +8,7 @@
         "dev": "vite",
         "format": "prettier --write \"resources/js/**/*.js\"",
         "format:check": "prettier --check \"resources/js/**/*.js\"",
+        "test:deployment": "node --test scripts/forge-deployment*.test.mjs",
         "test:assets": "node scripts/check-asset-budgets.mjs"
     },
     "devDependencies": {
