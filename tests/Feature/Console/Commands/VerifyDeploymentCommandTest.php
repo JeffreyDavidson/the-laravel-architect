@@ -23,6 +23,7 @@ beforeEach(function () {
             'root' => storage_path('framework/testing/disks/deployment-backups'),
         ],
         'health.runtime.max_age_seconds' => 300,
+        'app.deployment_environment' => 'production',
         'nightwatch.deployment' => 'expected-commit',
     ]);
 
@@ -112,6 +113,18 @@ it('reports mismatched Nightwatch deployment metadata without exposing either id
         ->doesntExpectOutput('previous-commit')
         ->doesntExpectOutput('expected-commit')
         ->assertFailed();
+});
+
+it('does not require Nightwatch for staging deployments', function () {
+    Process::fake(fn () => Process::result("expected-commit\n"));
+    config()->set('app.deployment_environment', 'staging');
+    $nightwatch = Double::for(NightwatchHealthMonitor::class);
+    $nightwatch->expects('ensureHealthy')->never();
+    app()->instance(NightwatchHealthMonitor::class, $nightwatch);
+
+    $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
+        ->expectsOutput('Deployment verification passed.')
+        ->assertSuccessful();
 });
 
 it('does not use existing incomplete responsive media as a release gate', function () {
