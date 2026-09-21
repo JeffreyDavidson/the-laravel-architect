@@ -1300,16 +1300,53 @@
     transition: filter 160ms ease, transform 160ms ease;
 }
 
-.tla-sidebar-primary span:first-child {
+.tla-sidebar-primary__icon {
+    flex: 0 0 1.25rem;
+    padding: 0;
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 999px;
-    display: inline-flex;
-    font-size: 1.05rem;
+    display: grid;
+    font-size: 0;
+    place-items: center;
+    position: relative;
     height: 1.25rem;
     justify-content: center;
-    line-height: 1;
+    line-height: 0;
     width: 1.25rem;
+}
+
+.tla-sidebar-primary__icon::before,
+.tla-sidebar-primary__icon::after {
+    position: absolute;
+    content: "";
+    border-radius: 999px;
+    background: currentColor;
+}
+
+.tla-sidebar-primary__icon::before {
+    width: 0.95rem;
+    height: 0.18rem;
+}
+
+.tla-sidebar-primary__icon::after {
+    width: 0.18rem;
+    height: 0.95rem;
+}
+
+.fi-body-has-sidebar-collapsible-on-desktop .fi-sidebar:not(.fi-sidebar-open) .tla-sidebar-primary {
+    align-self: center;
+    flex: 0 0 2.5rem;
+    inline-size: 2.5rem;
+    max-inline-size: 2.5rem;
+    min-block-size: 2.5rem;
+    margin-inline-start: -0.5rem;
+    margin-inline-end: auto;
+    padding-inline: 0;
+}
+
+.fi-body-has-sidebar-collapsible-on-desktop .fi-sidebar:not(.fi-sidebar-open) .tla-sidebar-primary__label {
+    display: none;
 }
 
 .tla-sidebar-primary:hover,
@@ -1388,6 +1425,11 @@
  * the layout while Alpine is hydrating the page. */
 .fi .fi-dropdown-panel:not([style*='display: block']) {
     display: none !important;
+}
+
+/* Keep teleported menus above the dashboard content while below modals. */
+.fi .fi-dropdown-panel {
+    z-index: 40;
 }
 
 .dark .fi-sidebar-item > a {
