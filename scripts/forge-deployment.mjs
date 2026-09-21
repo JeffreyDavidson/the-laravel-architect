@@ -277,7 +277,7 @@ export async function diagnoseAccess(environment, options = {}) {
 
     try {
         const response = await request(
-            `${siteFor(environment).origin}/deployment.json`,
+            `${siteFor(environment).origin}/up`,
             { headers: requestHeaders(environment, options) },
             options,
         );
