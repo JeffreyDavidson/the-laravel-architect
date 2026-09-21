@@ -19,6 +19,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 done
 
 echo "Running project pre-push checks..."
+npm run test:deployment
 composer test:parallel
 composer test:types
 composer test:rector

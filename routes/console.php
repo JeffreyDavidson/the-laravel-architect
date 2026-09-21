@@ -10,7 +10,7 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
 })
-    ->name('runtime-health:heartbeat')
+    ->name('runtime-health:heartbeat:'.app()->environment())
     ->everyMinute()
     ->tap(Sample::rate(0.1))
     ->withoutOverlapping(5)

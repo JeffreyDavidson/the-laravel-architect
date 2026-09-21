@@ -55,13 +55,24 @@ jobs:
         run: npm ci
 
       - name: Test deployment safeguards
-        run: node --test scripts/forge-deployment.test.mjs
+        run: npm run test:deployment
 
       - name: Audit PHP dependencies
         run: composer audit --locked
 
       - name: Audit production JavaScript dependencies
-        run: npm audit --omit=dev
+        run: |
+          for attempt in 1 2 3; do
+            if npx --yes npm@11 audit --omit=dev; then
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep 15
+            fi
+          done
+
+          exit 1
 
       - name: Prepare application
         run: |
