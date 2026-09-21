@@ -964,11 +964,11 @@
     padding-inline: clamp(1rem, 3vw, 3rem) !important;
 }
 
+/* A backdrop filter contains fixed dropdowns inside the clipped topbar. */
 :root:not(.dark) .fi-topbar {
     background: var(--tla-topbar);
     border-color: var(--tla-line);
     box-shadow: 0 1px 0 rgba(31, 35, 40, 0.04);
-    backdrop-filter: blur(18px);
 }
 
 :root:not(.dark) .fi-sidebar,
@@ -1232,7 +1232,6 @@
     background: var(--tla-topbar);
     border-color: var(--tla-line);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(18px);
 }
 
 .dark .fi-sidebar,
@@ -1425,11 +1424,6 @@
  * the layout while Alpine is hydrating the page. */
 .fi .fi-dropdown-panel:not([style*='display: block']) {
     display: none !important;
-}
-
-/* Keep teleported menus above the dashboard content while below modals. */
-.fi .fi-dropdown-panel {
-    z-index: 40;
 }
 
 .dark .fi-sidebar-item > a {
