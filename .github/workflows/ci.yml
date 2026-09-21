@@ -55,7 +55,7 @@ jobs:
         run: npm ci
 
       - name: Test deployment safeguards
-        run: node --test scripts/forge-deployment.test.mjs
+        run: npm run test:deployment
 
       - name: Audit PHP dependencies
         run: composer audit --locked
