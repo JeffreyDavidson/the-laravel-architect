@@ -121,7 +121,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 fn (): HtmlString => new HtmlString(sprintf(
-                    '<a class="tla-sidebar-primary" href="%s"><span aria-hidden="true">+</span><span>New post</span></a>',
+                    '<a class="tla-sidebar-primary" href="%s" aria-label="New post" title="New post"><span class="tla-sidebar-primary__icon" aria-hidden="true">+</span><span class="tla-sidebar-primary__label">New post</span></a>',
                     e(PostResource::getUrl('create')),
                 )),
             )
