@@ -90,8 +90,7 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
 
     $this->post($url)
         ->assertRedirect(route('home'))
-        ->assertSessionHas('newsletter_success')
-        ->assertSessionHas('fathom_event', 'newsletter signup');
+        ->assertSessionHas('newsletter_success');
 
     expect($subscriber->refresh()->verified_at)->not->toBeNull()
         ->and($subscriber->verification_token_hash)->toBeNull();

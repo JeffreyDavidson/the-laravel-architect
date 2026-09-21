@@ -22,7 +22,10 @@ class SubscriberResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Newsletter';
+    protected static string|UnitEnum|null $navigationGroup = 'Audience';
+
+    #[\Override]
+    protected static ?string $recordTitleAttribute = 'email';
 
     #[\Override]
     protected static ?int $navigationSort = 7;

@@ -56,13 +56,10 @@ final class AddSecurityHeaders
             ...$scriptNonce === null
                 ? ["'unsafe-inline'", "'unsafe-eval'"]
                 : ["'nonce-{$scriptNonce}'"],
-            'https://cdn.usefathom.com',
             'https://challenges.cloudflare.com',
         ];
         $connectSources = [
             "'self'",
-            'https://api.usefathom.com',
-            'https://cdn.usefathom.com',
             'https://challenges.cloudflare.com',
         ];
 

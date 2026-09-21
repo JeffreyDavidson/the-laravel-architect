@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Subscribers\Tables;
 use App\Models\Subscriber;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -49,6 +50,9 @@ class SubscribersTable
                     DeleteBulkAction::make()
                         ->authorize('deleteAny'),
                 ]),
-            ]);
+            ])
+            ->emptyStateIcon(Heroicon::OutlinedEnvelope)
+            ->emptyStateHeading('No subscribers yet')
+            ->emptyStateDescription('Confirmed newsletter subscribers will appear here.');
     }
 }

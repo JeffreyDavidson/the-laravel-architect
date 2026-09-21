@@ -35,7 +35,7 @@ class EditorialCalendar extends Page
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
+    protected static string|UnitEnum|null $navigationGroup = 'Publish';
 
     #[\Override]
     protected static ?int $navigationSort = 0;

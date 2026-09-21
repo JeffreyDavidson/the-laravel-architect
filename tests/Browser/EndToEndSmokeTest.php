@@ -296,7 +296,7 @@ it('builds styled article navigation from the Blade template', function (): void
         ->assertNoJavaScriptErrors();
 });
 
-it('allows an administrator to reach the dashboard', function (): void {
+it('allows an administrator to reach the dashboard', function (string $theme, string $device): void {
     $this->withVite();
 
     User::factory()->create([
@@ -306,7 +306,7 @@ it('allows an administrator to reach the dashboard', function (): void {
         'is_admin' => true,
     ]);
 
-    $page = $this->browserPageWithTheme('/admin/login', 'desktop', 'dark');
+    $page = $this->browserPageWithTheme('/admin/login', $device, $theme);
 
     $page->page()
         ->locator('input[type="email"]')
@@ -322,10 +322,14 @@ it('allows an administrator to reach the dashboard', function (): void {
         ->assertPathIs('/admin')
         ->assertSee('Dashboard')
         ->assertPresent('nav a[href*="posts"]')
+        ->assertScript('document.querySelector(".tla-dashboard-hero").scrollWidth <= document.querySelector(".tla-dashboard-hero").clientWidth')
+        ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1);
 
-    $page->click('New post')
+    $page->click('Write post')
         ->assertPathIs('/admin/posts/create')
         ->assertPresent('.CodeMirror')
+        ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
+        ->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
-});
+})->with(['light', 'dark'])->with(['desktop', 'mobile']);

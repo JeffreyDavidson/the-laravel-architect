@@ -24,7 +24,7 @@ class ContactInquiryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+    protected static string|UnitEnum|null $navigationGroup = 'Audience';
 
     #[\Override]
     protected static ?int $navigationSort = 1;

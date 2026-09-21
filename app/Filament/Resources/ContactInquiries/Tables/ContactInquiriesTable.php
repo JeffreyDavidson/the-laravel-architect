@@ -7,6 +7,7 @@ use App\Enums\ContactType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -19,8 +20,10 @@ class ContactInquiriesTable
             ->columns([
                 TextColumn::make('name')
                     ->label('From')
+                    ->searchable()
                     ->limit(32),
                 TextColumn::make('email')
+                    ->searchable()
                     ->limit(36)
                     ->copyable(),
                 TextColumn::make('type')
@@ -46,6 +49,9 @@ class ContactInquiriesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->authorize('deleteAny'),
                 ]),
-            ]);
+            ])
+            ->emptyStateIcon(Heroicon::OutlinedInbox)
+            ->emptyStateHeading('No contact inquiries')
+            ->emptyStateDescription('New messages from the public contact form will appear here.');
     }
 }

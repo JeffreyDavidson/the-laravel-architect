@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Projects\Tables;
 
+use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Queries\ProjectReadinessQuery;
 use App\Support\Content\ContentReadiness;
@@ -28,7 +29,8 @@ class ProjectsTable
                 ->withCount('tags'))
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('readiness')
                     ->label('Readiness')
                     ->state(fn (Project $record): string => new ContentReadiness($record)->label())
@@ -40,16 +42,19 @@ class ProjectsTable
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 ImageColumn::make('featured_image_path')
                     ->label('Image')
                     ->disk('public'),
                 TextColumn::make('url')
                     ->label('Live URL')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('github_url')
                     ->label('GitHub URL')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean(),
@@ -58,7 +63,8 @@ class ProjectsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->searchable(),
+                    ->badge()
+                    ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -94,6 +100,10 @@ class ProjectsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('sort_order')
+            ->emptyStateIcon(Heroicon::OutlinedCodeBracket)
+            ->emptyStateHeading('No projects yet')
+            ->emptyStateDescription('Add a project when it is ready to become part of the public portfolio.');
     }
 }

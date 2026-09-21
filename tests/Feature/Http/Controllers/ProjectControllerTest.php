@@ -151,7 +151,7 @@ it('keeps repository URLs out of public project markup and structured data', fun
         ->assertSee('Discuss a similar project');
 
     if ($website !== null) {
-        $response->assertSeeHtml($website)->assertSeeHtml('data-fathom-event="project live link click"');
+        $response->assertSeeHtml($website);
     }
 
     expect($project->refresh()->github_url)->toBe('https://github.com/example/confidential-repository');

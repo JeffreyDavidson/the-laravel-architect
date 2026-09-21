@@ -94,9 +94,9 @@
                             that security check under its own privacy practices.
                         </p>
                         <p>
-                            When configured, the site loads Fathom Analytics to understand aggregate site traffic and
-                            conversions such as newsletter signups, contact submissions, and outbound project links.
-                            Podcast pages may include a YouTube player; loading or using that player can send
+                            The application may use server-side observability to understand request performance, errors,
+                            and operational health. It does not use third-party visitor analytics or behavioral
+                            tracking. Podcast pages may include a YouTube player; loading or using that player can send
                             information to YouTube under its own privacy practices.
                         </p>
                     </div>
