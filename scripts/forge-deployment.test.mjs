@@ -271,6 +271,28 @@ test('waits through transient release marker responses', async () => {
     assert.equal(result.deployment_id, 2);
 });
 
+test('waits through transient health responses after a new release marker', async () => {
+    const responses = [
+        marker(1),
+        new Response('accepted'),
+        marker(2),
+        marker(2),
+        new Response('', { status: 502 }),
+        marker(2),
+        marker(2),
+        new Response('healthy'),
+    ];
+
+    const result = await deployRelease('staging', revision, {
+        ...access,
+        hook,
+        delay: async () => {},
+        fetch: async () => responses.shift(),
+    });
+
+    assert.equal(result.deployment_id, 2);
+});
+
 test('uses curl for Forge triggers when configured', async () => {
     const responses = [marker(1), marker(2), marker(2), new Response('healthy')];
     let curlCalls = 0;

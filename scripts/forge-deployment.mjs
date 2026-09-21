@@ -7,6 +7,8 @@ const sites = {
     production: { id: '3044519', origin: 'https://thelaravelarchitect.com' },
 };
 
+const retryableHealthStatuses = new Set([500, 502, 503, 504]);
+
 export function validateRevision(revision) {
     if (!/^[a-f0-9]{40}$/.test(revision ?? '')) {
         throw new Error('A full lowercase commit SHA is required.');
@@ -363,6 +365,7 @@ export async function waitForRelease(environment, revision, options = {}) {
     // Never retry the mutation. A retry could create an overlapping deployment.
     const now = options.now ?? Date.now;
     const deadline = now() + 11 * 60 * 1000;
+    let lastRetryableHealthError;
     while (now() < deadline) {
         await (options.delay ?? delay)(10000);
         const marker = await readMarker(environment, options, true);
@@ -371,8 +374,21 @@ export async function waitForRelease(environment, revision, options = {}) {
             (options.previousDeploymentId === undefined ||
                 String(marker.deployment_id) !== String(options.previousDeploymentId))
         ) {
-            return await verifyRelease(environment, revision, options);
+            try {
+                return await verifyRelease(environment, revision, options);
+            } catch (error) {
+                const status = Number(error.message.match(/HTTP (\d+)\.$/)?.[1]);
+                if (!retryableHealthStatuses.has(status)) {
+                    throw error;
+                }
+                lastRetryableHealthError = error;
+            }
         }
+    }
+    if (lastRetryableHealthError) {
+        throw new Error(
+            `Deployment completion was not verified within 11 minutes; ${lastRetryableHealthError.message}`,
+        );
     }
     throw new Error('Deployment completion was not verified within 11 minutes; inspect Forge before retrying.');
 }
