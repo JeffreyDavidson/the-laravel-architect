@@ -41,7 +41,8 @@ class PostsTable
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
                 TextColumn::make('author.name')
                     ->label('Author')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('category.name')
                     ->badge()
                     ->sortable(),
@@ -50,7 +51,8 @@ class PostsTable
                     ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
                     ->label('Published')
-                    ->dateTime()
+                    ->dateTime('M j, Y')
+                    ->placeholder('Not published')
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Created')
@@ -64,7 +66,7 @@ class PostsTable
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 Action::make('view_on_site')
                     ->label('View on site')
@@ -74,6 +76,9 @@ class PostsTable
                         : $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateIcon(Heroicon::OutlinedDocumentText)
+            ->emptyStateHeading('No posts yet')
+            ->emptyStateDescription('Start a draft when the next Laravel idea is ready to develop.');
     }
 }

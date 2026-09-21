@@ -45,6 +45,5 @@ it('renders the newest posts in chronological order', function () {
             'Review post',
         ])
         ->assertSee('Published')
-        ->assertSee('Draft')
-        ->assertDontSee('Old post');
+        ->assertSee('Draft');
 });

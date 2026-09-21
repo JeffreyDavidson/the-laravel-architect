@@ -26,7 +26,10 @@ class TagResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Taxonomy';
+    protected static string|UnitEnum|null $navigationGroup = 'Library';
+
+    #[\Override]
+    protected static ?string $recordTitleAttribute = 'name';
 
     #[\Override]
     protected static ?int $navigationSort = 6;

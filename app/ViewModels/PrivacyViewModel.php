@@ -14,7 +14,7 @@ class PrivacyViewModel
         return [
             'seoSource' => new SEOData(
                 title: 'Privacy',
-                description: 'How The Laravel Architect handles contact messages, newsletter subscriptions, analytics, and essential site data.',
+                description: 'How The Laravel Architect handles contact messages, newsletter subscriptions, observability, and essential site data.',
             ),
         ];
     }

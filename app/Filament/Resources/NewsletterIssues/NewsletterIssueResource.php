@@ -26,7 +26,7 @@ class NewsletterIssueResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Newsletter';
+    protected static string|UnitEnum|null $navigationGroup = 'Publish';
 
     #[\Override]
     protected static ?int $navigationSort = 1;

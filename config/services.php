@@ -40,11 +40,6 @@ return [
         'channel_id' => env('YOUTUBE_CHANNEL_ID', 'UC42H30o7l5QvvCzC86dSu_A'),
     ],
 
-    'fathom' => [
-        'site_id' => env('FATHOM_SITE_ID'),
-        'api_token' => env('FATHOM_API_TOKEN'),
-    ],
-
     'turnstile' => [
         'site_key' => env('TURNSTILE_SITE_KEY'),
         'secret_key' => env('TURNSTILE_SECRET_KEY'),

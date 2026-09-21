@@ -9,7 +9,6 @@
         href="{{ $item['url'] }}"
         target="_blank"
         rel="noopener noreferrer"
-        @if (($item['name'] ?? null) === 'GitHub') data-fathom-event="github profile click" @endif
         class="{{ $classes }} underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
     >
         <x-uses.item-content :item="$item" linked />

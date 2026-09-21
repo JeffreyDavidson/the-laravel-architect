@@ -44,16 +44,19 @@ class EpisodesTable
                     ->sortable(),
                 TextColumn::make('guest_name')
                     ->label('Guest')
-                    ->placeholder('Solo'),
+                    ->placeholder('Solo')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('duration_minutes')
                     ->label('Duration')
-                    ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration()),
+                    ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
                 TextColumn::make('published_at')
                     ->label('Published')
-                    ->dateTime()
+                    ->dateTime('M j, Y')
+                    ->placeholder('Not published')
                     ->sortable(),
             ])
             ->filters([
@@ -74,6 +77,9 @@ class EpisodesTable
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
-            ->defaultSort('episode_number', 'desc');
+            ->defaultSort('episode_number', 'desc')
+            ->emptyStateIcon(Heroicon::OutlinedMusicalNote)
+            ->emptyStateHeading('No episodes yet')
+            ->emptyStateDescription('Create an episode when audio, show notes, or a recording plan is ready.');
     }
 }

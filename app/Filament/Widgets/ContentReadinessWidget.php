@@ -29,7 +29,7 @@ class ContentReadinessWidget extends Widget
     protected static ?int $sort = -2;
 
     /**
-     * @return array{items: list<array{label: string, description: string, count: int, url: string}>}
+     * @return array{items: list<array{label: string, description: string, count: int, url: string}>, outstandingCount: int}
      */
     protected function getViewData(): array
     {
@@ -54,51 +54,60 @@ class ContentReadinessWidget extends Widget
             ->lazyById(100);
         $videos = Video::query()->lazyById(100);
 
-        return [
-            'items' => [
-                [
-                    'label' => 'Project previews',
-                    'description' => 'Add an optimized featured image to each project.',
-                    'count' => $this->missingCount($projects, 'featured_image'),
-                    'url' => ProjectResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Project stories',
-                    'description' => 'Finish the case study for each project.',
-                    'count' => $this->missingCount($projects, 'case_study'),
-                    'url' => ProjectResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Podcast links',
-                    'description' => 'Add at least one place listeners can subscribe.',
-                    'count' => $this->missingCount($podcasts, 'subscribe_link'),
-                    'url' => PodcastResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Episode details',
-                    'description' => 'Add a playable episode source and show notes.',
-                    'count' => $this->missingAnyCount($episodes, ['episode_media', 'show_notes']),
-                    'url' => EpisodeResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Post content',
-                    'description' => 'Add an excerpt, image, and SEO description to each post.',
-                    'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image', 'seo_description']),
-                    'url' => PostResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Newsletter issues',
-                    'description' => 'Add an excerpt and SEO description before sending an issue.',
-                    'count' => $this->missingAnyCount($newsletterIssues, ['excerpt', 'seo_description']),
-                    'url' => NewsletterIssueResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Video metadata',
-                    'description' => 'Complete the description, thumbnail, duration, and sync data.',
-                    'count' => $this->missingAnyCount($videos, ['description', 'thumbnail', 'duration', 'synced']),
-                    'url' => VideoResource::getUrl('index'),
-                ],
+        $items = array_values(array_filter([
+            [
+                'label' => 'Project previews',
+                'description' => 'Add an optimized featured image to each project.',
+                'count' => $this->missingCount($projects, 'featured_image'),
+                'url' => ProjectResource::getUrl('index'),
             ],
+            [
+                'label' => 'Project stories',
+                'description' => 'Finish the case study for each project.',
+                'count' => $this->missingCount($projects, 'case_study'),
+                'url' => ProjectResource::getUrl('index'),
+            ],
+            [
+                'label' => 'Podcast links',
+                'description' => 'Add at least one place listeners can subscribe.',
+                'count' => $this->missingCount($podcasts, 'subscribe_link'),
+                'url' => PodcastResource::getUrl('index'),
+            ],
+            [
+                'label' => 'Episode details',
+                'description' => 'Add a playable episode source and show notes.',
+                'count' => $this->missingAnyCount($episodes, ['episode_media', 'show_notes']),
+                'url' => EpisodeResource::getUrl('index'),
+            ],
+            [
+                'label' => 'Post content',
+                'description' => 'Add an excerpt, image, and SEO description to each post.',
+                'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image', 'seo_description']),
+                'url' => PostResource::getUrl('index'),
+            ],
+            [
+                'label' => 'Newsletter issues',
+                'description' => 'Add an excerpt and SEO description before sending an issue.',
+                'count' => $this->missingAnyCount($newsletterIssues, ['excerpt', 'seo_description']),
+                'url' => NewsletterIssueResource::getUrl('index'),
+            ],
+            [
+                'label' => 'Video metadata',
+                'description' => 'Complete the description, thumbnail, duration, and sync data.',
+                'count' => $this->missingAnyCount($videos, ['description', 'thumbnail', 'duration', 'synced']),
+                'url' => VideoResource::getUrl('index'),
+            ],
+        ], fn (array $item): bool => $item['count'] > 0));
+
+        $outstandingCount = 0;
+
+        foreach ($items as $item) {
+            $outstandingCount += $item['count'];
+        }
+
+        return [
+            'items' => array_slice($items, 0, 4),
+            'outstandingCount' => $outstandingCount,
         ];
     }
 

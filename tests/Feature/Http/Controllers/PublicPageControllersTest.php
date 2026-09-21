@@ -744,14 +744,6 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->and(implode("\n", array_column($manifest, 'file')))->not->toContain('Empera-Vintage')->not->toContain('Empera-Regular.ttf');
 });
 
-it('passes successful conversion events to the public shell', function () {
-    $this->get(route('home'))->assertDontSeeHtml('data-fathom-event-on-load');
-
-    $this->withSession(['fathom_event' => 'contact form submission'])
-        ->get(route('home'))
-        ->assertSeeHtml('data-fathom-event-on-load="contact form submission"');
-});
-
 it('renders one concise client-focused services section', function () {
     $content = responseContent($this->get(route('home'))
         ->assertOk()
@@ -879,7 +871,13 @@ it('keeps the admin panel behind authentication', function () {
     $manifest = assetManifest();
 
     $this->get('/admin')->assertRedirect('/admin/login');
-    $this->get('/admin/login')->assertOk()->assertSeeHtml($manifest['resources/css/filament/admin/theme.css']['file']);
+    $this->get('/admin/login')
+        ->assertOk()
+        ->assertSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
+        ->assertSee('Appearance')
+        ->assertSee('Enable light theme')
+        ->assertSee('Enable dark theme')
+        ->assertSee('Enable system theme');
 });
 
 it('uses published work as homepage proof', function () {
