@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
     accessCredentialDiagnostics,
+    diagnoseAccess,
     diagnosticFailureReason,
     deployRelease,
     deploymentHook,
@@ -57,6 +58,21 @@ test('reports safe Access credential diagnostics without exposing values', () =>
             hasHeaderPrefix: false,
         },
     });
+});
+
+test('uses the stable health endpoint for Access diagnostics', async () => {
+    let requestedUrl;
+
+    await diagnoseAccess('staging', {
+        ...access,
+        fetch: async url => {
+            requestedUrl = url;
+
+            return new Response('', { status: 200 });
+        },
+    });
+
+    assert.equal(requestedUrl, 'https://staging.thelaravelarchitect.com/up');
 });
 
 test('fails the Access diagnostic for unavailable or rejected staging credentials', () => {

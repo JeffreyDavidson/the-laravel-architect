@@ -18,7 +18,7 @@ const transportStub = `data:text/javascript,${encodeURIComponent(String.raw`
         requests++;
         assert.equal(command, 'curl');
         assert.equal(args[args.indexOf('--request') + 1], 'GET');
-        assert.equal(args.at(-1), 'https://staging.thelaravelarchitect.com/deployment.json');
+        assert.equal(args.at(-1), 'https://staging.thelaravelarchitect.com/up');
         assert.equal(args.includes('--location'), false);
         assert.equal(args.includes('-L'), false);
         assert.equal(args.includes('CF-Access-Client-Id: test-client.access'), true);
