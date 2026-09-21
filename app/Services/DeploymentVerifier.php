@@ -20,13 +20,18 @@ final readonly class DeploymentVerifier
      */
     public function failures(string $expectedCommit): array
     {
-        return array_values(array_filter([
+        $failures = [
             $this->commitFailure($expectedCommit),
             $this->migrationFailure(),
             $this->runtimeFailure(),
-            $this->nightwatchDeploymentFailure($expectedCommit),
-            $this->nightwatchFailure(),
-        ]));
+        ];
+
+        if ($this->usesProductionMonitoring()) {
+            $failures[] = $this->nightwatchDeploymentFailure($expectedCommit);
+            $failures[] = $this->nightwatchFailure();
+        }
+
+        return array_values(array_filter($failures));
     }
 
     private function commitFailure(string $expectedCommit): ?string
@@ -85,5 +90,10 @@ final readonly class DeploymentVerifier
         return is_string($nightwatchDeployment) && hash_equals($expectedCommit, $nightwatchDeployment)
             ? null
             : 'Nightwatch is not configured with the expected deployment identifier.';
+    }
+
+    private function usesProductionMonitoring(): bool
+    {
+        return config('app.deployment_environment') === 'production';
     }
 }
