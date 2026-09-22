@@ -8,6 +8,7 @@ use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
 
 class QuickLinksWidget extends Widget
@@ -31,28 +32,28 @@ class QuickLinksWidget extends Widget
                     'label' => 'Write post',
                     'description' => 'Draft a new Laravel article',
                     'color' => 'blue',
-                    'icon' => 'heroicon-o-pencil-square',
+                    'icon' => Heroicon::OutlinedPencilSquare,
                 ],
                 [
                     'url' => EpisodeResource::getUrl('create'),
                     'label' => 'Add episode',
                     'description' => 'Prepare audio and show notes',
                     'color' => 'green',
-                    'icon' => 'heroicon-o-microphone',
+                    'icon' => Heroicon::OutlinedMicrophone,
                 ],
                 [
                     'url' => ProjectResource::getUrl('create'),
                     'label' => 'Add project',
                     'description' => 'Document a case study',
                     'color' => 'pink',
-                    'icon' => 'heroicon-o-code-bracket',
+                    'icon' => Heroicon::OutlinedCodeBracket,
                 ],
                 [
                     'url' => NewsletterIssueResource::getUrl('create'),
                     'label' => 'Write newsletter',
                     'description' => 'Prepare the next issue',
                     'color' => 'amber',
-                    'icon' => 'heroicon-o-envelope',
+                    'icon' => Heroicon::OutlinedEnvelope,
                 ],
             ],
         ];
