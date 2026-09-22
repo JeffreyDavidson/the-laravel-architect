@@ -7,6 +7,7 @@ on:
       - main
   push:
     branches:
+      - develop
       - main
 
 concurrency:
@@ -82,6 +83,7 @@ jobs:
           touch database/database.sqlite
           php artisan migrate --force --seed
           php artisan content:import-public tests/Browser/fixtures/public-content.json
+          php artisan storage:link --relative --force
 
       - name: Check code style
         run: composer lint:check
