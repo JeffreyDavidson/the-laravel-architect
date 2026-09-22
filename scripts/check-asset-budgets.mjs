@@ -251,7 +251,7 @@ const budgets = [
     {
         entry: 'resources/css/filament/admin/theme.css',
         label: 'Filament admin theme',
-        maxGzipBytes: 68 * 1024,
+        maxGzipBytes: 76 * 1024,
     },
     {
         entry: 'resources/js/filament/admin.js',
@@ -280,6 +280,10 @@ for (const budget of budgets) {
     const measurement = budget.maxBytes ? 'file' : 'gzip';
 
     console.log(`${budget.label}: ${measuredKilobytes} KiB ${measurement} (limit ${limitKilobytes} KiB)`);
+
+    if (measuredBytes >= maxBytes * 0.9 && measuredBytes <= maxBytes) {
+        console.warn(`Asset budget warning: ${budget.label} is using at least 90% of its limit.`);
+    }
 
     if (measuredBytes > maxBytes) {
         failed = true;

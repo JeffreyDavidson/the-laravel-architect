@@ -88,8 +88,9 @@ The admin panel carries the same identity into a compact editorial studio.
 
 This document captures the implemented system and the refinements already
 accepted for this project. It is a reference for extending existing screens.
-The token names above describe observed roles; they do not create new runtime
-CSS variables. Reuse the source tokens and components below when implementing.
+The token names above describe observed roles. The public stylesheet and admin theme
+expose semantic CSS variables for the shared roles below; use those tokens before
+adding a new literal value.
 
 Implementation references:
 
