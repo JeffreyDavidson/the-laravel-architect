@@ -40,33 +40,33 @@
 
 /* ── Input focus glow ── */
 .fi-input-wrp:focus-within {
-    border-color: #4A7FBF;
+    border-color: var(--tla-accent);
     box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.15);
 }
 
 .fi-textarea-wrp:focus-within {
-    border-color: #4A7FBF;
+    border-color: var(--tla-accent);
     box-shadow: 0 0 0 2px rgba(74, 127, 191, 0.15);
 }
 
 /* ── Breadcrumb hover ── */
 .dark .fi-breadcrumbs a:hover {
-    color: #4A7FBF;
+    color: var(--tla-accent);
 }
 
 /* ── Pagination active ── */
 .dark .fi-pagination-item-active {
-    background-color: #4A7FBF;
+    background-color: var(--tla-accent);
 }
 
 /* ── Tabs active ── */
 .dark .fi-tabs-tab-active {
-    border-color: #4A7FBF;
+    border-color: var(--tla-accent);
 }
 
 /* ── Toggle switch ── */
 .fi-toggle-on {
-    background-color: #4A7FBF;
+    background-color: var(--tla-accent);
 }
 
 /* ── Custom scrollbar ── */
@@ -124,11 +124,11 @@
 .dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-label,
 .dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description,
 .dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color {
-    color: #d2deee;
+    color: var(--tla-muted-strong);
 }
 
 .dark .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color .fi-icon {
-    color: #9fc0e5;
+    color: var(--tla-accent-bright);
 }
 
 /* ── Auth / simple pages ── */
@@ -932,12 +932,14 @@
 .dark {
     --tla-ink: #eef4fa;
     --tla-muted: #c9d1d9;
+    --tla-muted-strong: #d2deee;
     --tla-subtle: #a8b3c2;
     --tla-line: #263241;
     --tla-line-strong: #42556d;
     --tla-surface: #111820;
     --tla-surface-raised: #161b22;
     --tla-accent: #7eb0dc;
+    --tla-accent-bright: #9fc0e5;
     --tla-rose: #e47a9d;
     --tla-success: #4ade80;
     --tla-warning: #fbbf24;
