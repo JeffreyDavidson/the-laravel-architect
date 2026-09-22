@@ -16,9 +16,12 @@ use App\Models\Project;
 use App\Models\Video;
 use App\Support\Content\ContentReadiness;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Cache;
 
 class ContentReadinessWidget extends Widget
 {
+    private const int CACHE_SECONDS = 60;
+
     #[\Override]
     protected string $view = 'filament.widgets.content-readiness-widget';
 
@@ -33,24 +36,31 @@ class ContentReadinessWidget extends Widget
      */
     protected function getViewData(): array
     {
+        /** @var array{items: list<array{label: string, description: string, count: int, url: string}>, outstandingCount: int} $cached */
+        $cached = Cache::remember(
+            'filament.dashboard.content-readiness',
+            now()->addSeconds(self::CACHE_SECONDS),
+            fn (): array => $this->buildViewData(),
+        );
+
+        return $cached;
+    }
+
+    /**
+     * @return array{items: list<array{label: string, description: string, count: int, url: string}>, outstandingCount: int}
+     */
+    private function buildViewData(): array
+    {
         $posts = Post::query()
-            ->with('seo')
-            ->withCount('tags')
             ->lazyById(100);
         $projects = Project::query()
-            ->with('seo')
-            ->withCount('tags')
             ->lazyById(100);
         $podcasts = Podcast::query()
             ->active()
-            ->with('seo')
             ->lazyById(100);
         $episodes = Episode::query()
-            ->with(['seo', 'podcast'])
-            ->withCount('tags')
             ->lazyById(100);
         $newsletterIssues = NewsletterIssue::query()
-            ->with('seo')
             ->lazyById(100);
         $videos = Video::query()->lazyById(100);
 
@@ -82,13 +92,13 @@ class ContentReadinessWidget extends Widget
             [
                 'label' => 'Post content',
                 'description' => 'Add an excerpt, image, and SEO description to each post.',
-                'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image', 'seo_description']),
+                'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image']),
                 'url' => PostResource::getUrl('index'),
             ],
             [
                 'label' => 'Newsletter issues',
                 'description' => 'Add an excerpt and SEO description before sending an issue.',
-                'count' => $this->missingAnyCount($newsletterIssues, ['excerpt', 'seo_description']),
+                'count' => $this->missingAnyCount($newsletterIssues, ['excerpt']),
                 'url' => NewsletterIssueResource::getUrl('index'),
             ],
             [

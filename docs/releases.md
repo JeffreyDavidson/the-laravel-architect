@@ -35,6 +35,11 @@ Once the transition is verified, direct all new work to `main`. Keep `develop`
 read-only until its remaining PRs and worktrees are accounted for; deleting it
 is a separate, explicitly approved cleanup. Do not synchronize it after releases.
 
+If `develop` is temporarily writable for local integration work, direct pushes
+to it run CI for validation but do not deploy staging or production. Staging
+and production remain main-only so every deployed revision has a reviewed PR,
+staging evidence, and an explicit production promotion.
+
 ## Validate staging
 
 The `Deploy staging` workflow runs after successful **push CI on main**, not PR
@@ -77,6 +82,10 @@ review; select and review the new revision before promotion.
 Several safe changes may be integrated before a production release. Do not
 merge unfinished behavior merely to batch releases. Dependency updates remain
 separate, intentional PRs; deployments install lockfiles without updating them.
+
+NewDebugBar is development-only and currently has no stable Packagist release.
+Keep its exact resolved commit in `composer.lock`; review that commit intentionally
+before updating it rather than running an unattended dependency refresh.
 
 ## Hotfixes and rollback
 
