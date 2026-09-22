@@ -56,6 +56,7 @@ npm run test:assets
 
 ## Documentation
 
+- [Design system](DESIGN.md)
 - [Architecture](docs/architecture.md)
 - [Testing](docs/testing.md)
 - [Operations and deployment](docs/operations.md)
