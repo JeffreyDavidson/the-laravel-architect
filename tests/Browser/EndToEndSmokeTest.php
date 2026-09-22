@@ -345,7 +345,20 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
     $page->click(".fi-dropdown-panel button[aria-label='Enable dark theme']")
         ->assertScript("document.documentElement.classList.contains('dark')");
     $page->click('.fi-user-menu-trigger')
-        ->click(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']");
+        ->click(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']")
+        ->click('.fi-user-menu-trigger')
+        ->click('.fi-dropdown-panel a[href$="/admin/profile"]')
+        ->assertPathIs('/admin/profile')
+        ->assertPresent('.fi-sidebar')
+        ->assertPresent('.fi-user-menu-trigger');
+
+    if ($device === 'desktop') {
+        $page->click('.fi-sidebar-item-btn[href$="/admin"]');
+    } else {
+        $page->page()->goto(str_replace('/admin/profile', '/admin', $page->url()));
+    }
+
+    $page->assertPathIs('/admin');
 
     if ($device === 'desktop') {
         $page->click('.fi-topbar-close-collapse-sidebar-btn')
