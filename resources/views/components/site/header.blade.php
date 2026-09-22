@@ -8,6 +8,7 @@
         ['label' => 'Search', 'route' => 'search', 'active' => 'search'],
         ['label' => 'Archive', 'route' => 'archive.index', 'active' => 'archive.*'],
     ];
+    $mobileLinks = [...$links, ['label' => 'Uses', 'route' => 'uses', 'active' => 'uses']];
 @endphp
 
 <nav
@@ -51,16 +52,7 @@
             </button>
 
             <div class="hidden items-center gap-8 lg:flex">
-                @foreach ($links as $link)
-                    <a
-                        href="{{ route($link['route']) }}"
-                        @if (request()->routeIs($link['active'])) aria-current="page" @endif
-                        @class([
-                            'nav-link text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors',
-                            'is-active text-gray-900 dark:text-white' => request()->routeIs($link['active']),
-                        ])
-                    >{{ $link['label'] }}</a>
-                @endforeach
+                <x-site.nav-links :links="$links" />
                 <x-site.theme-toggle />
                 <x-button
                     href="{{ route('contact') }}"
@@ -78,16 +70,7 @@
             class="dark:border-brand-800/50 border-t border-gray-200 py-4 lg:hidden"
         >
             <div class="flex flex-col gap-3">
-                @foreach ([...$links, ['label' => 'Uses', 'route' => 'uses', 'active' => 'uses']] as $link)
-                    <a
-                        href="{{ route($link['route']) }}"
-                        @if (request()->routeIs($link['active'])) aria-current="page" @endif
-                        @class([
-                            'nav-link px-2 py-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors',
-                            'is-active text-gray-900 dark:text-white' => request()->routeIs($link['active']),
-                        ])
-                    >{{ $link['label'] }}</a>
-                @endforeach
+                <x-site.nav-links :links="$mobileLinks" mobile />
                 <x-site.theme-toggle mobile />
                 <x-button
                     href="{{ route('contact') }}"
