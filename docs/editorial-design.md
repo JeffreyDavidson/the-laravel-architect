@@ -152,6 +152,31 @@ When creating a new reusable identity asset, document its intended placement,
 minimum useful size, crop behavior, and light/dark theme treatment here before
 adding another one-off template fallback.
 
+## Accessibility, provenance, and delivery
+
+Describe meaningful inline images with specific alt text that communicates the
+image's purpose, not its file name. Use empty alt text only for decorative
+images whose surrounding content already provides the meaning. Put important
+diagram labels and explanations in the article text as well as in the image;
+featured artwork and thumbnails must never be the only place essential copy
+appears. Captions should add context rather than repeat the alt text.
+
+Record the source and usage rights for commissioned, generated, stock, and
+third-party artwork in the content notes or asset record. Remove private data
+from screenshots before upload, and retain the original reference or prompt
+when it is needed to reproduce a generated identity asset. Do not treat an
+external thumbnail as a permanent local brand asset without an approved source
+and replacement plan.
+
+Prefer the existing responsive WebP pipeline over manually adding multiple
+copies of an upload. Keep the source under 10 MB and within the 1600px optimizer
+limit; the application generates eligible 640px and 1280px variants without
+upscaling smaller sources. Use lazy loading for below-the-fold content, retain
+the browser's intrinsic aspect ratio to avoid layout shift, and reserve eager
+loading for the image that establishes the first viewport. Check the network
+request and rendered size when an image is changed rather than assuming the
+largest source is always used.
+
 ## Reusable brief
 
 Copy this into the task or content notes when commissioning a post and artwork:
@@ -187,6 +212,8 @@ Suggested artwork prompt structure:
 - Check both artwork crops, mobile layout, both themes, and thumbnail legibility.
 - Verify heading links, code copy controls, long code lines, tags, and related cards.
 - Confirm screenshots and examples contain no private information.
+- Review alt text, captions, licensing/source notes, and the absence of baked-in
+  essential copy.
 - Verify the image and its responsive variants load in the intended environment.
 - Check the actual social preview separately from the article artwork.
 
