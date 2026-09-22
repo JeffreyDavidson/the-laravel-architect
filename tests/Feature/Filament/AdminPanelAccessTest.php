@@ -38,5 +38,7 @@ it('allows an administrator to manage their profile', function () {
 
     $this->actingAs($administrator)
         ->get($profileUrl)
-        ->assertOk();
+        ->assertOk()
+        ->assertSee('Dashboard')
+        ->assertSee('Sign out');
 });

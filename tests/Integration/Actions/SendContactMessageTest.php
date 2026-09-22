@@ -9,9 +9,46 @@ use App\Mail\ContactMessageConfirmation;
 use App\Mail\ContactMessageReceived;
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 pest()->use(RefreshDatabase::class);
+
+it('rolls back the inquiry and both notifications when either enqueue fails and allows a clean retry', function (int $failedInsert) {
+    config()->set('queue.default', 'database');
+    $inserts = 0;
+    DB::connection()->beforeExecuting(function (string $query) use (&$inserts, $failedInsert): void {
+        if (str_starts_with($query, 'insert into "jobs"') && ++$inserts === $failedInsert) {
+            throw new RuntimeException('Synthetic queue failure.');
+        }
+    });
+    $data = new ContactMessageData('Jane Doe', 'jane@example.com', ContactType::Consulting, null, 'Audit request.');
+
+    expect(fn () => app(SendContactMessage::class)->handle($data))
+        ->toThrow(RuntimeException::class, 'Synthetic queue failure.');
+
+    $this->assertDatabaseCount('contact_inquiries', 0);
+    $this->assertDatabaseCount('jobs', 0);
+
+    app(SendContactMessage::class)
+        ->handle($data);
+
+    $this->assertDatabaseCount('contact_inquiries', 1);
+    $this->assertDatabaseCount('jobs', 2);
+})->with(['owner notification' => 1, 'sender confirmation' => 2]);
+
+it('rejects a separate queue database before saving a contact inquiry', function () {
+    config()->set([
+        'queue.connections.database.connection' => 'separate',
+        'database.connections.separate' => ['driver' => 'sqlite', 'database' => ':memory:', 'prefix' => ''],
+    ]);
+    $data = new ContactMessageData('Jane Doe', 'jane@example.com', ContactType::Consulting, null, 'Audit request.');
+
+    expect(fn () => app(SendContactMessage::class)->handle($data))
+        ->toThrow(LogicException::class, 'Contact notifications must share the application database.');
+
+    $this->assertDatabaseCount('contact_inquiries', 0);
+});
 
 it('queues the contact message for the site owner and a confirmation for the sender', function () {
     Mail::fake();

@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->profile()
+            ->profile(isSimple: false)
             ->spa(hasPrefetching: true)
             ->userMenu(position: UserMenuPosition::Topbar)
             ->multiFactorAuthentication(

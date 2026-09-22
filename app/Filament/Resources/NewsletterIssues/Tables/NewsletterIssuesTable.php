@@ -12,6 +12,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,6 +49,9 @@ class NewsletterIssuesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Filter::make('unpublished')
+                    ->label('Not yet published')
+                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels()),
             ])
@@ -70,5 +74,14 @@ class NewsletterIssuesTable
             ->emptyStateIcon(Heroicon::OutlinedNewspaper)
             ->emptyStateHeading('No newsletter issues yet')
             ->emptyStateDescription('Draft the first issue when there is an update worth sending.');
+    }
+
+    /**
+     * @param  Builder<NewsletterIssue>  $query
+     * @return Builder<NewsletterIssue>
+     */
+    private static function filterUnpublished(Builder $query): Builder
+    {
+        return $query->unpublished();
     }
 }

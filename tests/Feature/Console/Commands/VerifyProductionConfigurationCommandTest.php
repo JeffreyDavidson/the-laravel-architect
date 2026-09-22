@@ -1,6 +1,8 @@
 <?php
 
 beforeEach(function () {
+    $database = tempnam(sys_get_temp_dir(), 'tla-config-db-');
+    $this->beforeApplicationDestroyed(fn () => unlink($database));
     config()->set([
         'app.env' => 'production',
         'app.deployment_environment' => 'production',
@@ -17,7 +19,7 @@ beforeEach(function () {
         'services.turnstile.contact_action' => 'contact-form',
         'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
         'database.default' => 'sqlite',
-        'database.connections.sqlite.database' => '/var/www/the-laravel-architect/database/database.sqlite',
+        'database.connections.sqlite.database' => $database,
         'backup.backup.source.files.include' => ['/var/www/the-laravel-architect/shared/storage/app/public'],
         'backup.backup.source.files.exclude' => [base_path('.env')],
         'backup.backup.destination.disks' => ['local', 's3'],
@@ -51,11 +53,61 @@ beforeEach(function () {
     ]);
 });
 
+it('rejects a release-local database even when its path is absolute', function () {
+    config()->set('database.connections.sqlite.database', base_path('database/database.sqlite'));
+
+    $this->artisanCommand('app:verify-production')
+        ->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+        ->assertFailed();
+});
+
+it('resolves database symlinks before checking release persistence', function (bool $persistent) {
+    $link = tempnam(sys_get_temp_dir(), 'tla-config-link-');
+    unlink($link);
+    symlink($persistent ? config()->string('database.connections.sqlite.database') : base_path('composer.json'), $link);
+    $this->beforeApplicationDestroyed(fn () => unlink($link));
+    config()->set('database.connections.sqlite.database', $link);
+
+    $command = $this->artisanCommand('app:verify-production');
+
+    if ($persistent) {
+        $command->assertSuccessful();
+    } else {
+        $command->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+            ->assertFailed();
+    }
+})->with(['persistent target' => true, 'release-local target' => false]);
+
+it('rejects missing or nonpersistent database paths', function (string $path) {
+    config()->set('database.connections.sqlite.database', $path);
+
+    $this->artisanCommand('app:verify-production')
+        ->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+        ->assertFailed();
+})->with(['memory' => ':memory:', 'relative' => 'database/database.sqlite', 'missing' => '/missing-tla-audit/database.sqlite']);
+
 it('accepts a safe production configuration', function () {
     $this->artisanCommand('app:verify-production')
         ->expectsOutput('Production configuration is ready.')
         ->assertSuccessful();
 });
+
+it('validates the effective database URL rather than the overridden database path', function (bool $persistent) {
+    $path = $persistent ? config()->string('database.connections.sqlite.database') : base_path('composer.json');
+    config()->set([
+        'database.connections.sqlite.url' => 'sqlite:///'.$path,
+        'database.connections.sqlite.database' => $persistent ? base_path('composer.json') : config()->string('database.connections.sqlite.database'),
+    ]);
+
+    $command = $this->artisanCommand('app:verify-production');
+
+    if ($persistent) {
+        $command->assertSuccessful();
+    } else {
+        $command->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+            ->assertFailed();
+    }
+})->with(['persistent URL' => true, 'release-local URL' => false]);
 
 it('does not mistake a differently named local disk for an off-server backup', function () {
     config()->set('backup.backup.destination.disks', ['local', 'public']);
@@ -274,7 +326,7 @@ it('reports every unsafe production setting without exposing its value', functio
         ->expectsOutputToContain('TURNSTILE_SECRET_KEY must be configured.')
         ->expectsOutputToContain('TURNSTILE_CONTACT_ACTION must be configured.')
         ->expectsOutputToContain('TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.')
-        ->expectsOutputToContain('DB_DATABASE must be an absolute path.')
+        ->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
         ->expectsOutputToContain('BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.')
         ->expectsOutputToContain('BACKUP_DISKS must include an off-server disk.')
         ->expectsOutputToContain('BACKUP_ARCHIVE_PASSWORD must be configured.')

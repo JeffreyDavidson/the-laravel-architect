@@ -12,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,6 +61,9 @@ class EpisodesTable
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('unpublished')
+                    ->label('Not yet published')
+                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
             ])
@@ -81,5 +85,14 @@ class EpisodesTable
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)
             ->emptyStateHeading('No episodes yet')
             ->emptyStateDescription('Create an episode when audio, show notes, or a recording plan is ready.');
+    }
+
+    /**
+     * @param  Builder<Episode>  $query
+     * @return Builder<Episode>
+     */
+    private static function filterUnpublished(Builder $query): Builder
+    {
+        return $query->unpublished();
     }
 }

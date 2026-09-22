@@ -55,6 +55,11 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
             'content' => 'Content',
             'user_id' => $user->id,
             'status' => $postStatus,
+            'published_at' => match ($postStatus) {
+                PublishStatus::Published => now()->subDay(),
+                PublishStatus::Scheduled => now()->addDay(),
+                default => null,
+            },
         ]);
     }
 
@@ -82,3 +87,35 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
     'published' => [PublishStatus::Published, '.tla-dashboard-pipeline__step--published'],
     'attention queue' => [PublishStatus::InReview, '.tla-dashboard-attention__item--review'],
 ]);
+
+it('keeps live and scheduled pipeline counts and destinations consistent across publication dates', function () {
+    $this->freezeSecond();
+    $user = User::factory()->create(['is_admin' => true]);
+    actingAs($user);
+    foreach ([
+        ['Already live scheduled', PublishStatus::Scheduled, now()->subMinute()],
+        ['Future published', PublishStatus::Published, now()->addDay()],
+        ['No publication date', PublishStatus::Published, null],
+    ] as [$title, $status, $date]) {
+        Post::query()->create(['title' => $title, 'content' => 'Content', 'user_id' => $user->id, 'status' => $status, 'published_at' => $date]);
+    }
+
+    $widget = livewire(WelcomeWidget::class);
+
+    $widget->assertViewHas('publishedPosts', 1)
+        ->assertViewHas('scheduledPosts', 1);
+    $document = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>');
+    foreach (['published' => 'Already live scheduled', 'scheduled' => 'Future published'] as $queue => $title) {
+        $url = $document->querySelector(".tla-dashboard-pipeline__step--{$queue}")?->getAttribute('href');
+
+        if ($url === null || $url === '') {
+            throw new RuntimeException("The {$queue} pipeline link is missing.");
+        }
+
+        $response = get($url);
+
+        $response->assertSee($title)
+            ->assertDontSee('No publication date')
+            ->assertDontSee($queue === 'published' ? 'Future published' : 'Already live scheduled');
+    }
+});

@@ -308,6 +308,12 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
 
     $page = $this->browserPageWithTheme('/admin/login', $device, $theme);
 
+    foreach (['dark', 'light', 'system'] as $appearance) {
+        $page->click(".tla-auth-theme-switcher button[aria-label='Enable {$appearance} theme']")
+            ->assertScript("localStorage.getItem('theme') === '{$appearance}'")
+            ->assertScript("document.documentElement.classList.contains('dark') === ('{$appearance}' === 'dark' || ('{$appearance}' === 'system' && matchMedia('(prefers-color-scheme: dark)').matches))");
+    }
+
     $page->page()
         ->locator('input[type="email"]')
         ->fill('e2e-admin@example.test');
@@ -326,7 +332,52 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1);
 
-    $page->click('Write post')
+    $page->click('.fi-user-menu-trigger')
+        ->assertSee('Sign out')
+        ->assertScript(<<<'JS'
+            (() => {
+                const menu = [...document.querySelectorAll('.fi-dropdown-panel')].find(element => element.textContent.includes('Sign out') && element.getBoundingClientRect().height > 0);
+                if (!menu) return false;
+                const box = menu.getBoundingClientRect();
+                return [0.25, 0.5, 0.75].every(fraction => menu.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height * fraction)));
+            })()
+            JS);
+    $page->click(".fi-dropdown-panel button[aria-label='Enable dark theme']")
+        ->assertScript("document.documentElement.classList.contains('dark')");
+    $page->click('.fi-user-menu-trigger')
+        ->click(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']")
+        ->click('.fi-user-menu-trigger')
+        ->click('.fi-dropdown-panel a[href$="/admin/profile"]')
+        ->assertPathIs('/admin/profile')
+        ->assertPresent('.fi-sidebar')
+        ->assertPresent('.fi-user-menu-trigger');
+
+    if ($device === 'desktop') {
+        $page->click('.fi-sidebar-item-btn[href$="/admin"]');
+    } else {
+        $page->page()->goto(str_replace('/admin/profile', '/admin', $page->url()));
+    }
+
+    $page->assertPathIs('/admin');
+
+    if ($device === 'desktop') {
+        $page->click('.fi-topbar-close-collapse-sidebar-btn')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const button = document.querySelector('.tla-sidebar-primary');
+                    const icon = button.querySelector('.tla-sidebar-primary__icon');
+                    const buttonBox = button.getBoundingClientRect();
+                    const iconBox = icon.getBoundingClientRect();
+                    const centered = Math.abs(buttonBox.x + buttonBox.width / 2 - iconBox.x - iconBox.width / 2) < 1 && Math.abs(buttonBox.y + buttonBox.height / 2 - iconBox.y - iconBox.height / 2) < 1;
+                    return !document.querySelector('.fi-sidebar').classList.contains('fi-sidebar-open') && centered && buttonBox.width < 60 && getComputedStyle(button.querySelector('.tla-sidebar-primary__label')).display === 'none';
+                })()
+                JS);
+        $page->click('.tla-sidebar-primary');
+    } else {
+        $page->click('Write post');
+    }
+
+    $page
         ->assertPathIs('/admin/posts/create')
         ->assertPresent('.CodeMirror')
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')

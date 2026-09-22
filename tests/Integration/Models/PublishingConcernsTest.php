@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 pest()->use(RefreshDatabase::class);
 
-it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible) {
+it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible, bool $scheduled) {
     $this->freezeSecond();
     $publishedAt = $seconds === null ? null : now()->addSeconds($seconds);
     $post = Post::query()->create([
@@ -37,16 +37,20 @@ it('keeps date-based visibility consistent between model checks and database sco
     expect($post->isPublished())->toBe($visible)
         ->and(Post::published()->whereKey($post->getKey())->exists())->toBe($visible)
         ->and($episode->isPublished())->toBe($visible)
-        ->and(Episode::published()->whereKey($episode->getKey())->exists())->toBe($visible);
+        ->and(Episode::published()->whereKey($episode->getKey())->exists())->toBe($visible)
+        ->and(Post::query()->unpublished()->whereKey($post->getKey())->exists())->toBe(! $visible)
+        ->and(Episode::query()->unpublished()->whereKey($episode->getKey())->exists())->toBe(! $visible)
+        ->and(Post::query()->scheduled()->whereKey($post->getKey())->exists())->toBe($scheduled)
+        ->and(Episode::query()->scheduled()->whereKey($episode->getKey())->exists())->toBe($scheduled);
 })->with([
-    'overdue scheduled' => [PublishStatus::Scheduled, -1, true],
-    'exactly due scheduled' => [PublishStatus::Scheduled, 0, true],
-    'future scheduled' => [PublishStatus::Scheduled, 1, false],
-    'scheduled without a date' => [PublishStatus::Scheduled, null, false],
-    'past published' => [PublishStatus::Published, -1, true],
-    'future published' => [PublishStatus::Published, 1, false],
-    'published without a date' => [PublishStatus::Published, null, false],
-    'past draft' => [PublishStatus::Draft, -1, false],
+    'overdue scheduled' => [PublishStatus::Scheduled, -1, true, false],
+    'exactly due scheduled' => [PublishStatus::Scheduled, 0, true, false],
+    'future scheduled' => [PublishStatus::Scheduled, 1, false, true],
+    'scheduled without a date' => [PublishStatus::Scheduled, null, false, false],
+    'past published' => [PublishStatus::Published, -1, true, false],
+    'future published' => [PublishStatus::Published, 1, false, true],
+    'published without a date' => [PublishStatus::Published, null, false, false],
+    'past draft' => [PublishStatus::Draft, -1, false, false],
 ]);
 
 it('does not make a project public merely because it has a scheduled status', function () {

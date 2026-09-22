@@ -38,6 +38,32 @@ trait HasPublishingStatus
             && $this->publicationDateHasArrived();
     }
 
+    /** @param Builder<static> $query */
+    #[Scope]
+    protected function scheduled(Builder $query): void
+    {
+        $configuration = static::publishingStatusConfiguration();
+
+        if ($configuration->publishedAt === null) {
+            $query->whereRaw('1 = 0');
+
+            return;
+        }
+
+        if ($configuration->status !== null) {
+            $query->whereIn($configuration->status, static::publishingStatuses());
+        }
+
+        $query->where($configuration->publishedAt, '>', now());
+    }
+
+    /** @param Builder<static> $query */
+    #[Scope]
+    protected function unpublished(Builder $query): void
+    {
+        $query->whereNot(fn (Builder $query): Builder => $query->published());
+    }
+
     public function publishStatus(): PublishStatus
     {
         $configuration = $this->publishingStatusConfiguration();

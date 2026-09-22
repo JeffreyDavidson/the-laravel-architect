@@ -46,21 +46,21 @@ class EditorialOperationsOverview extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedEye)
                 ->color('warning')
                 ->url(PostResource::getUrl('index')),
-            Stat::make('Scheduled posts', Post::query()->where('status', PublishStatus::Scheduled)->count())
+            Stat::make('Scheduled posts', Post::query()->scheduled()->count())
                 ->description('Ready to publish')
                 ->descriptionIcon(Heroicon::OutlinedCalendar)
                 ->color('success')
-                ->url(PostResource::getUrl('index')),
-            Stat::make('Episode queue', Episode::query()->where('status', '!=', PublishStatus::Published->value)->count())
+                ->url(PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublishStatus::Scheduled->value]]])),
+            Stat::make('Episode queue', Episode::query()->unpublished()->count())
                 ->description('Unpublished episodes')
                 ->descriptionIcon(Heroicon::OutlinedMusicalNote)
                 ->color('primary')
-                ->url(EpisodeResource::getUrl('index')),
-            Stat::make('Newsletter queue', NewsletterIssue::query()->where('status', '!=', PublishStatus::Published->value)->count())
+                ->url(EpisodeResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
+            Stat::make('Newsletter queue', NewsletterIssue::query()->unpublished()->count())
                 ->description('Unpublished issues')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
-                ->url(NewsletterIssueResource::getUrl('index')),
+                ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
             Stat::make('Active subscribers', Subscriber::query()->active()->count())
                 ->description('Confirmed audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
