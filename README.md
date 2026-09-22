@@ -57,6 +57,8 @@ npm run test:assets
 ## Documentation
 
 - [Design system](DESIGN.md)
+- [Editorial design](docs/editorial-design.md)
+- [Project art direction](docs/project-art-direction.md)
 - [Architecture](docs/architecture.md)
 - [Testing](docs/testing.md)
 - [Operations and deployment](docs/operations.md)

@@ -98,6 +98,8 @@ Implementation references:
 - [Panel configuration and navigation](app/Providers/Filament/AdminPanelProvider.php)
 - [Public layout](resources/views/components/layouts/site.blade.php)
 - [Brand assets and logo provenance](docs/brand-assets.md)
+- [Editorial layouts and artwork briefs](docs/editorial-design.md)
+- [Project screenshot and artwork guidance](docs/project-art-direction.md)
 - [Frontend build entries](vite.config.js)
 
 Earlier local admin critiques are historical reviews, excluded from Git.
