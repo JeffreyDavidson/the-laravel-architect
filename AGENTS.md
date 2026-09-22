@@ -15,11 +15,11 @@
 - Use `main` as the single permanent integration branch. It contains reviewed, releasable code, not necessarily the revision currently deployed to production.
 - Create focused working branches from an up-to-date `main`; do not commit feature work directly to `main`.
 - Squash merge working branches into `main` through pull requests with required CI. Do not rebase-merge pull requests.
-- During the one-time transition described in `docs/releases.md`, preserve the unreleased `develop` ancestry with a regular merge into `main`. Do not delete `develop` or discard its work before that transition is verified.
+- The one-time `develop` to `main` transition described in `docs/releases.md` is complete. Do not repeat it; keep `develop` read-only and do not delete it without separate approval.
 - Before merging, verify the pull request's head branch, base branch, and merge method.
 - Before creating or recommending a pull request, inspect the current branch, merge base, recent completed PRs, and `docs/releases.md`. Do not infer that a `release/*` branch is a release branch from its name alone.
 - Use `release/*` only for a deliberate release boundary promoted into `main`. Routine feature, fix, performance, refactor, documentation, and test work must use its normal branch type and documented integration path.
-- Confirm that an equivalent release transition or PR has not already been completed before creating another branch or PR. If the proposed head, base, or merge method is wrong, correct the plan before creating the PR.
+- Before creating a pull request, confirm its head, base, and merge method follow the current workflow. If any are wrong, correct the plan before opening it.
 - Every new commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type: description`, with an optional scope (`type(scope): description`) and optional breaking-change marker (`type(scope)!: description`).
 - Use lowercase types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Use `feat` for new features and `fix` for bug fixes; branch prefixes such as `feature/`, `hotfix/`, and `release/` are not commit types.
 - Write a concise, imperative description. Mark breaking changes with `!` before the colon or a `BREAKING CHANGE: description` footer.

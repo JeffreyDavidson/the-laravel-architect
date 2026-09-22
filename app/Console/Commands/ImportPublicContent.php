@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveImporter;
 use App\Support\Content\Archives\PublicContentImportGuard;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -16,7 +16,7 @@ use Throwable;
 #[Description('Import a public-content archive into staging or another non-production environment')]
 class ImportPublicContent extends Command
 {
-    public function handle(PublicContentArchive $archive, PublicContentImportGuard $guard): int
+    public function handle(PublicContentArchiveImporter $archive, PublicContentImportGuard $guard): int
     {
         if (! $guard->allows((bool) $this->option('staging'))) {
             $this->error('Public content cannot be imported into production.');

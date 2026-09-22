@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Support\Content\Archives\ProductionContentSource;
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveImporter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -11,7 +11,7 @@ use RuntimeException;
 final readonly class ProductionContentSynchronizer
 {
     public function __construct(
-        private PublicContentArchive $archive,
+        private PublicContentArchiveImporter $archive,
         private ProductionContentSource $source,
         private ResponsiveImageVariants $images,
     ) {}

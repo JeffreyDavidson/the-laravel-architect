@@ -15,30 +15,15 @@ working branch → reviewed PR → main → successful CI → staging
                                    same revision on production
 ```
 
-## One-time transition
+## Completed branch transition
 
-The existing `develop` branch contains unreleased work. The workflow migration
-branch starts from that baseline intentionally. Review its migration changes
-separately, then promote the complete reviewed ancestry through a one-time PR
-into `main` using a regular merge, with a Conventional Commit subject. This is
-the only transition exception to squash merging. Do not squash away the existing
-`develop` ancestry, force-push either branch, or deploy production during setup.
-
-Before that merge, disable Forge push-to-deploy for production. Complete the
-Forge scripts, GitHub environments, scoped secrets, staging runtime and
-Cloudflare setup in `operations.md`. Leave the repository variable
-`STAGED_RELEASES_ENABLED` unset until these prerequisites are verified. Deployment
-jobs remain disabled when it is unset. Existing CI continues to
-check PRs into `develop` during the transition.
-
-Once the transition is verified, direct all new work to `main`. Keep `develop`
-read-only until its remaining PRs and worktrees are accounted for; deleting it
-is a separate, explicitly approved cleanup. Do not synchronize it after releases.
-
-If `develop` is temporarily writable for local integration work, direct pushes
-to it run CI for validation but do not deploy staging or production. Staging
-and production remain main-only so every deployed revision has a reviewed PR,
-staging evidence, and an explicit production promotion.
+The one-time transition from `develop` to `main` was completed through PR #511
+using a regular merge to preserve the existing ancestry. The transition is
+historical, not a step to repeat. `main` is the sole integration branch; new
+work goes through reviewed pull requests into `main`, and CI, staging, and
+production deployment candidates are main-only. The retained `develop` branch
+is read-only and is not synchronized after releases. Do not delete it without
+separate approval, and do not create transition or routine release branches.
 
 ## Validate staging
 
