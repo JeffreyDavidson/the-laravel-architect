@@ -15,7 +15,9 @@ beforeEach(function () {
         'database.default' => 'unavailable',
     ]);
     Http::preventStrayRequests();
-    Vite::swap((new ViteAssets)->useHotFile('/nonexistent/error-page.hot')->useBuildDirectory('missing-error-page-assets'));
+    Vite::swap((new ViteAssets)
+        ->useHotFile('/nonexistent/error-page.hot')
+        ->useBuildDirectory('missing-error-page-assets'));
 });
 
 it('renders a safe branded page without database access or compiled assets', function (Throwable $exception, int $status, string $heading) {
@@ -36,7 +38,9 @@ it('renders a safe branded page without database access or compiled assets', fun
         ->assertDontSee('/build/');
 
     if ($status === 503) {
-        expect($response->headers->get('Retry-After'))->toBe('120');
+        expect($response->headers
+            ->get('Retry-After'))
+            ->toBe('120');
     }
 })->with([
     'database failure' => [
@@ -56,5 +60,6 @@ it('renders the maintenance template without an exception or request-specific da
 
     expect($html)
         ->toContain('Taking a short break.', 'href=""', 'href="/"')
-        ->not->toContain('<script', '/build/');
+        ->not
+        ->toContain('<script', '/build/');
 });
