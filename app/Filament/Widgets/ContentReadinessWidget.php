@@ -14,8 +14,8 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Support\Content\ContentReadiness;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class ContentReadinessWidget extends Widget
@@ -51,60 +51,56 @@ class ContentReadinessWidget extends Widget
      */
     private function buildViewData(): array
     {
-        $posts = Post::query()
-            ->lazyById(100);
-        $projects = Project::query()
-            ->lazyById(100);
-        $podcasts = Podcast::query()
-            ->active()
-            ->lazyById(100);
-        $episodes = Episode::query()
-            ->lazyById(100);
-        $newsletterIssues = NewsletterIssue::query()
-            ->lazyById(100);
-        $videos = Video::query()->lazyById(100);
-
         $items = array_values(array_filter([
             [
                 'label' => 'Project previews',
                 'description' => 'Add an optimized featured image to each project.',
-                'count' => $this->missingCount($projects, 'featured_image'),
+                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('featured_image_path')->orWhere('featured_image_path', ''))->count(),
                 'url' => ProjectResource::getUrl('index'),
             ],
             [
                 'label' => 'Project stories',
                 'description' => 'Finish the case study for each project.',
-                'count' => $this->missingCount($projects, 'case_study'),
+                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('content')->orWhere('content', ''))->count(),
                 'url' => ProjectResource::getUrl('index'),
             ],
             [
                 'label' => 'Podcast links',
                 'description' => 'Add at least one place listeners can subscribe.',
-                'count' => $this->missingCount($podcasts, 'subscribe_link'),
+                'count' => Podcast::query()
+                    ->active()
+                    ->where(function (Builder $query): void {
+                        foreach (['apple_url', 'spotify_url', 'rss_url', 'youtube_url'] as $column) {
+                            $query->where(function (Builder $query) use ($column): void {
+                                $query->whereNull($column)->orWhere($column, '');
+                            });
+                        }
+                    })
+                    ->count(),
                 'url' => PodcastResource::getUrl('index'),
             ],
             [
                 'label' => 'Episode details',
                 'description' => 'Add a playable episode source and show notes.',
-                'count' => $this->missingAnyCount($episodes, ['episode_media', 'show_notes']),
+                'count' => $this->missingEpisodeDetailsCount(),
                 'url' => EpisodeResource::getUrl('index'),
             ],
             [
                 'label' => 'Post content',
                 'description' => 'Add an excerpt, image, and SEO description to each post.',
-                'count' => $this->missingAnyCount($posts, ['excerpt', 'featured_image']),
+                'count' => Post::query()->where(fn (Builder $query) => $query->whereNull('excerpt')->orWhere('excerpt', '')->orWhereNull('featured_image_path')->orWhere('featured_image_path', ''))->count(),
                 'url' => PostResource::getUrl('index'),
             ],
             [
                 'label' => 'Newsletter issues',
                 'description' => 'Add an excerpt and SEO description before sending an issue.',
-                'count' => $this->missingAnyCount($newsletterIssues, ['excerpt']),
+                'count' => NewsletterIssue::query()->where(fn (Builder $query) => $query->whereNull('excerpt')->orWhere('excerpt', ''))->count(),
                 'url' => NewsletterIssueResource::getUrl('index'),
             ],
             [
                 'label' => 'Video metadata',
                 'description' => 'Complete the description, thumbnail, duration, and sync data.',
-                'count' => $this->missingAnyCount($videos, ['description', 'thumbnail', 'duration', 'synced']),
+                'count' => Video::query()->where(fn (Builder $query) => $query->whereNull('description')->orWhere('description', '')->orWhereNull('thumbnail_url')->orWhere('thumbnail_url', '')->orWhereNull('duration')->orWhere('duration', '')->orWhereNull('synced_at'))->count(),
                 'url' => VideoResource::getUrl('index'),
             ],
         ], fn (array $item): bool => $item['count'] > 0));
@@ -121,26 +117,17 @@ class ContentReadinessWidget extends Widget
         ];
     }
 
-    /**
-     * @param  iterable<Post|Project|Podcast|Episode|NewsletterIssue|Video>  $records
-     */
-    private function missingCount(iterable $records, string $check): int
-    {
-        return $this->missingAnyCount($records, [$check]);
-    }
-
-    /**
-     * @param  iterable<Post|Project|Podcast|Episode|NewsletterIssue|Video>  $records
-     * @param  list<string>  $checks
-     */
-    private function missingAnyCount(iterable $records, array $checks): int
+    private function missingEpisodeDetailsCount(): int
     {
         $missing = 0;
 
-        foreach ($records as $record) {
-            $readinessChecks = new ContentReadiness($record)->checks();
+        foreach (Episode::query()->get(['audio_url', 'audio_path', 'embed_url', 'youtube_url', 'show_notes']) as $episode) {
+            $hasMedia = filled($episode->audio_url)
+                || filled($episode->audio_path)
+                || $episode->publicEmbedUrl() !== null
+                || filled($episode->youtube_url);
 
-            if (array_any($checks, fn (string $check): bool => ! ($readinessChecks[$check]['complete'] ?? false))) {
+            if (! $hasMedia || blank($episode->show_notes)) {
                 $missing++;
             }
         }
