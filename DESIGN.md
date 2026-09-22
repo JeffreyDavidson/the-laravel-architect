@@ -123,6 +123,12 @@ indicates scheduled content, and neutral text represents drafts. Pair status
 color with readable labels. Filament also supplies its configured semantic
 palettes; preserve those native states.
 
+The studio also uses translucent semantic surfaces derived from those roles:
+amber for review alerts, blue for inquiry and scheduled actions, green for
+healthy or published states, and rose for secondary action icons. These are
+intentional admin-only utility treatments and should remain behind the
+`--tla-*` semantic tokens rather than becoming new public-site colors.
+
 ### Neutral
 
 Use semantic roles for pages, surfaces, inset controls, text, and borders.
@@ -171,6 +177,12 @@ The studio uses compact headings, short labels, and clear supporting text.
 The dashboard welcome heading's final rules are semibold, balanced, and use
 normal line height. Check later overrides in the admin stylesheet before
 reusing values from an earlier block.
+
+Admin utility text uses the compact scale already present in the theme: labels
+around `0.7rem`–`0.8rem`, supporting copy around `0.78rem`–`0.95rem`, and
+dashboard headings from `1.08rem` up to `3rem` responsively. These values are
+for dense studio UI only; public content should use the surrounding page
+scale.
 
 ## Layout
 
@@ -227,6 +239,10 @@ The auth appearance selector is one segmented control. Its outer border is
 rounded and clips the segments; each inner button has zero radius. The active
 segment fills its cell in blue with a white icon. Do not reintroduce the rounded,
 floating active tile that conflicted with the enclosing outline.
+
+Admin controls use tighter radii than public cards: roughly `0.62rem`–`0.9rem`
+for dashboard controls and panels, `0.65rem` for the appearance selector, and
+fully circular marks only for status dots, avatars, and timeline markers.
 
 ## Components
 
