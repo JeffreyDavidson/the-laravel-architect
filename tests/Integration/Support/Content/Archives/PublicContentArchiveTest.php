@@ -8,7 +8,8 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Subscriber;
 use App\Models\User;
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveExporter;
+use App\Support\Content\Archives\PublicContentArchiveImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +21,7 @@ test('public archives exclude private project repository URLs', function () {
         'status' => PublishStatus::Published, 'github_url' => 'https://github.com/example/confidential-project',
     ]);
 
-    $archive = app(PublicContentArchive::class)->export();
+    $archive = app(PublicContentArchiveExporter::class)->export();
 
     expect(json_encode($archive, JSON_THROW_ON_ERROR))->not->toContain('confidential-project');
 });
@@ -216,7 +217,7 @@ test('exports every public record exactly once when lazy chunk sort values tie',
     DB::table('episodes')->insert($episodes);
     DB::table('videos')->insert($videos);
 
-    $archive = app(PublicContentArchive::class)->export();
+    $archive = app(PublicContentArchiveExporter::class)->export();
 
     foreach ([
         'categories' => 'tied-category',
@@ -247,7 +248,7 @@ test('export query count stays bounded as tagged content grows', function (): vo
     $project->syncTags(['Laravel']);
 
     DB::enableQueryLog();
-    app(PublicContentArchive::class)->export();
+    app(PublicContentArchiveExporter::class)->export();
     $initialQueryCount = count(DB::getQueryLog());
     DB::disableQueryLog();
 
@@ -262,7 +263,7 @@ test('export query count stays bounded as tagged content grows', function (): vo
 
     DB::flushQueryLog();
     DB::enableQueryLog();
-    $archive = app(PublicContentArchive::class)->export();
+    $archive = app(PublicContentArchiveExporter::class)->export();
     $expandedQueryCount = count(DB::getQueryLog());
     DB::disableQueryLog();
 
@@ -280,7 +281,7 @@ it('exports and synchronizes published newsletter issues', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $archive = app(PublicContentArchive::class)->export();
+    $archive = app(PublicContentArchiveExporter::class)->export();
     $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
 
     expect($issues)->toHaveCount(1)
@@ -289,7 +290,7 @@ it('exports and synchronizes published newsletter issues', function () {
 
     NewsletterIssue::query()->delete();
 
-    $counts = app(PublicContentArchive::class)->sync($archive);
+    $counts = app(PublicContentArchiveImporter::class)->sync($archive);
 
     expect($counts['newsletter_issues'])->toBe(1)
         ->and(NewsletterIssue::query()->sole()->title)->toBe('Production newsletter issue');
@@ -344,7 +345,7 @@ test('only public content and its presentation data are exported', function (): 
         'status' => PublishStatus::Draft,
     ]);
 
-    $archive = app(PublicContentArchive::class)->export();
+    $archive = app(PublicContentArchiveExporter::class)->export();
     $encoded = json_encode($archive, JSON_THROW_ON_ERROR);
 
     $post = publicArchivePost(publicArchiveRecords($archive['posts'] ?? null)[0] ?? null);
@@ -385,7 +386,7 @@ test('public content is synchronized without importing production identities', f
         'published_at' => now()->subDay(),
     ]);
 
-    $counts = app(PublicContentArchive::class)->sync(publicContentArchiveFixture());
+    $counts = app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
 
     $post = Post::query()->where('slug', 'production-post')->sole();
     $project = Project::query()->where('slug', 'production-project')->firstOrFail();
@@ -413,7 +414,7 @@ test('unsafe referenced media paths are rejected', function (): void {
     $posts[0]['featured_image_path'] = '../private/file.webp';
     $archive['posts'] = $posts;
 
-    expect(fn () => app(PublicContentArchive::class)->mediaPaths($archive))
+    expect(fn () => app(PublicContentArchiveImporter::class)->mediaPaths($archive))
         ->toThrow(InvalidArgumentException::class, 'unsafe media path');
 });
 

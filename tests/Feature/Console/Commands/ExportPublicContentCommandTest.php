@@ -1,16 +1,16 @@
 <?php
 
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveExporter;
 use Illuminate\Support\Facades\File;
 use JMac\Testing\Double;
 
 it('exports the public archive to the requested absolute path', function () {
-    $archive = Double::for(PublicContentArchive::class);
+    $archive = Double::for(PublicContentArchiveExporter::class);
     $archive->expects('export')->resolves(fn (): array => [
         'version' => 1,
         'posts' => [['slug' => 'published-post']],
     ]);
-    app()->instance(PublicContentArchive::class, $archive);
+    app()->instance(PublicContentArchiveExporter::class, $archive);
 
     $directory = sys_get_temp_dir().'/the-laravel-architect-tests';
     $path = $directory.'/exports/public-content.json';

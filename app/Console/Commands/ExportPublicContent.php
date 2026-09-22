@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveExporter;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -15,7 +15,7 @@ use Throwable;
 #[Description('Export only currently public The Laravel Architect content')]
 class ExportPublicContent extends Command
 {
-    public function handle(PublicContentArchive $archive): int
+    public function handle(PublicContentArchiveExporter $archive): int
     {
         $path = $this->argument('path');
 

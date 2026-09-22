@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\Content\Archives\PublicContentArchive;
+use App\Support\Content\Archives\PublicContentArchiveImporter;
 use Illuminate\Support\Facades\File;
 use JMac\Testing\Double;
 
@@ -14,7 +14,7 @@ it('imports the archive and reports synchronized record counts', function () {
         'episodes' => [],
         'videos' => [],
     ];
-    $archive = Double::for(PublicContentArchive::class);
+    $archive = Double::for(PublicContentArchiveImporter::class);
     $archive->expects('decode')->with('{}')->resolves(fn (): array => $decoded);
     $archive->expects('sync')->with($decoded)->resolves(fn (): array => [
         'categories' => 2,
@@ -24,7 +24,7 @@ it('imports the archive and reports synchronized record counts', function () {
         'episodes' => 0,
         'videos' => 3,
     ]);
-    app()->instance(PublicContentArchive::class, $archive);
+    app()->instance(PublicContentArchiveImporter::class, $archive);
 
     $path = tempnam(sys_get_temp_dir(), 'public-content-');
     if ($path === false) {
