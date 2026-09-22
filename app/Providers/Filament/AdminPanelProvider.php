@@ -57,7 +57,10 @@ class AdminPanelProvider extends PanelProvider
             ->profile(isSimple: false)
             ->spa(hasPrefetching: true)
             ->userMenu(position: UserMenuPosition::Topbar)
-            ->multiFactorAuthentication(AppAuthentication::make(), isRequired: fn (): bool => app()->isProduction())
+            ->multiFactorAuthentication(
+                AppAuthentication::make(),
+                isRequired: fn (): bool => app()->isProduction(),
+            )
             ->colors([
                 'primary' => Color::hex('#4a7fbf'),
                 'gray' => Color::hex('#1a1d21'),
