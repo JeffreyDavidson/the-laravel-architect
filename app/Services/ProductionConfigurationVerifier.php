@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\ConfigurationUrlParser;
 use Monolog\Handler\NullHandler;
 
 final class ProductionConfigurationVerifier
@@ -22,7 +23,13 @@ final class ProductionConfigurationVerifier
         $databaseConfig = is_string($databaseConnection)
             ? config("database.connections.{$databaseConnection}")
             : null;
-        $databasePath = is_array($databaseConfig) ? ($databaseConfig['database'] ?? null) : null;
+        $databaseConfig = is_array($databaseConfig)
+            ? new ConfigurationUrlParser()->parseConfiguration([
+                'driver' => $databaseConfig['driver'] ?? null,
+                'database' => $databaseConfig['database'] ?? null,
+                'url' => $databaseConfig['url'] ?? null,
+            ])
+            : [];
         $backupDisks = config('backup.backup.destination.disks');
 
         $checks = [
@@ -40,7 +47,7 @@ final class ProductionConfigurationVerifier
             [$this->isConfigured(config('services.turnstile.secret_key')), 'TURNSTILE_SECRET_KEY must be configured.'],
             [$this->isConfigured(config('services.turnstile.contact_action')), 'TURNSTILE_CONTACT_ACTION must be configured.'],
             [$this->includesAppHostname(config('services.turnstile.allowed_hostnames'), config('app.url')), 'TURNSTILE_ALLOWED_HOSTNAMES must include the APP_URL hostname.'],
-            [is_string($databasePath) && str_starts_with($databasePath, DIRECTORY_SEPARATOR), 'DB_DATABASE must be an absolute path.'],
+            [$this->hasPersistentDatabase($databaseConfig), 'DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.'],
             [$this->hasSafeBackupFileSources(config('backup.backup.source.files.include'), config('backup.backup.source.files.exclude')), 'BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
@@ -86,6 +93,29 @@ final class ProductionConfigurationVerifier
     private function usesHttps(mixed $url): bool
     {
         return is_string($url) && str_starts_with($url, 'https://') && is_string(parse_url($url, PHP_URL_HOST));
+    }
+
+    /** @param array<string, mixed> $configuration */
+    private function hasPersistentDatabase(array $configuration): bool
+    {
+        $path = $configuration['database'] ?? null;
+
+        if (($configuration['driver'] ?? null) !== 'sqlite'
+            || ! is_string($path)
+            || ! str_starts_with($path, DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        $database = realpath($path);
+        $release = realpath(base_path());
+
+        if ($database === false || $release === false || ! is_file($database)) {
+            return false;
+        }
+
+        $releases = basename(dirname($release)) === 'releases' ? dirname($release) : $release;
+
+        return ! str_starts_with($database, $releases.DIRECTORY_SEPARATOR);
     }
 
     private function isConfigured(mixed $value): bool

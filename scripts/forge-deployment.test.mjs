@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import {
     accessCredentialDiagnostics,
     diagnoseAccess,
@@ -19,6 +20,52 @@ const access = { clientId: 'test-client', clientSecret: 'test-secret' };
 const hook = 'https://forge.laravel.com/servers/753072/sites/3366565/deploy/http?token=test-token';
 const marker = (id = 1, sha = revision) =>
     Response.json({ revision: sha, deployment_id: id }, { headers: { 'Cache-Control': 'no-store' } });
+
+test('staging workflow uses the guarded deployment operation instead of a separate mutation and wait', () => {
+    const workflow = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
+    assert.match(workflow, /node scripts\/forge-deployment\.mjs deploy staging "\$EXPECTED_REVISION"/);
+    assert.doesNotMatch(workflow, /--request (?:POST|OPTIONS)|forge-deployment\.mjs wait staging/);
+});
+
+test('rejects a production hook before any staging deployment network request', async () => {
+    let requests = 0;
+    await assert.rejects(
+        deployRelease('staging', revision, {
+            ...access,
+            hook: hook.replace('3366565', '3044519'),
+            fetch: async () => {
+                requests++;
+                return marker();
+            },
+        }),
+        /intended server and site/,
+    );
+    assert.equal(requests, 0);
+});
+
+test('times out a same-revision redeployment when the deployment ID never changes', async () => {
+    let time = 0;
+    let triggers = 0;
+    await assert.rejects(
+        deployRelease('staging', revision, {
+            ...access,
+            hook,
+            now: () => time,
+            delay: async () => {
+                time += 60_000;
+            },
+            fetch: async (url, init) => {
+                if (init.method === 'POST') {
+                    triggers++;
+                    return new Response('accepted');
+                }
+                return marker(1);
+            },
+        }),
+        /completion was not verified/,
+    );
+    assert.equal(triggers, 1);
+});
 
 test('requires full immutable revisions', () => {
     for (const invalid of ['main', 'abc123', '', undefined, 'A'.repeat(40), `a;${revision}`]) {
