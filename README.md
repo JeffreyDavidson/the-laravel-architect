@@ -24,6 +24,12 @@ composer dev
 
 The setup command installs dependencies, creates the local environment file,
 generates an application key, runs migrations, and builds frontend assets.
+Use it only for a fresh environment, not to restart an existing installation.
+
+Laravel Herd serves the site. Secure the site in Herd and keep `APP_URL` set to
+its HTTPS address. `composer dev` starts the database queue listener, logs, and
+Vite only; it does not start a second HTTP server. Leave that command running
+while developing and stop it with Ctrl+C when finished.
 
 To create a local administrator on a fresh environment:
 

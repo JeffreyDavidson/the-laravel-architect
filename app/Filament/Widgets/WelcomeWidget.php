@@ -36,7 +36,7 @@ class WelcomeWidget extends Widget
             'publishedPosts' => Post::query()->published()->count(),
             'draftPosts' => Post::query()->where('status', PublishStatus::Draft)->count(),
             'inReviewPosts' => Post::query()->where('status', PublishStatus::InReview)->count(),
-            'scheduledPosts' => Post::query()->where('status', PublishStatus::Scheduled)->count(),
+            'scheduledPosts' => Post::query()->scheduled()->count(),
             'newInquiries' => ContactInquiry::query()->where('status', ContactInquiryStatus::New)->count(),
         ];
     }

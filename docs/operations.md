@@ -11,9 +11,10 @@ site 3366565 and production site 3044519. Direct push-to-deploy was disabled for
 both sites on 2026-09-19; production's `/up` health check remains enabled. GitHub
 environments were created with main-only branch policies; production requires
 Jeffrey's review and permits self-review. Both environments disallow administrator
-bypass. The staged-release workflow is merged into `develop` but remains
-inactive until the release reaches `main` and `STAGED_RELEASES_ENABLED=true` is
-set. Both sites now have the shared pinned Forge deployment script saved, and
+bypass. The staged-release workflow is present on `main` and runs only when
+`STAGED_RELEASES_ENABLED=true`. Treat the dated setup records and checklist below
+as cutover history and prerequisites, not proof of current deployment status.
+Both sites have the shared pinned Forge deployment script saved, and
 the uncached deployment-marker Nginx location is installed on both sites.
 
 Complete these steps before setting the GitHub repository variable
@@ -83,12 +84,14 @@ pinned staging deployment has been verified.
 ## Before deploying
 
 1. Confirm the target commit and review its migration and storage changes.
-2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes.
+2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes. `app:verify-production` resolves symlinks and rejects missing files and files inside the release directory (or Forge's `releases` directory). Run verification after persistent storage is mounted.
 3. Confirm `BACKUP_MEDIA_PATH` points to the persistent `storage/app/public` directory outside the release directory. Application archives contain only the SQLite database dump and this uploaded-media directory; source code is recovered from GitHub, and `.env` must remain excluded.
 4. Create and independently validate a SQLite snapshot and public-media archive.
 5. Keep both artifacts until the deployment and post-deployment checks are complete.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
+
+Keep a worker consuming the `database` queue connection. Contact notifications are transactionally inserted there alongside the inquiry, even if the default queue connection changes. Leave `DB_QUEUE_CONNECTION` unset or set it to the application's default database connection; a separate queue database is rejected before an inquiry is saved. The existing Forge database worker consumes these jobs without an additional queue or service.
 
 ## Synchronizing public production content to staging
 
@@ -181,7 +184,7 @@ mv public/deployment.json.tmp public/deployment.json
 
 ### Observability environments
 
-Production uses Nightwatch for server-side telemetry and deployment tracking. Staging uses Laravel Telescope for development-focused inspection instead of a Nightwatch agent. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
+Production uses Nightwatch for server-side telemetry and deployment tracking. Staging verification does not require a Nightwatch agent. Telescope is intended for staging inspection but is not installed or configured by this repository; do not assume a Telescope dashboard is available. Until that separate installation and access-control work is completed, use configured Sentry exception reporting and Forge/application logs for staging diagnosis. Use one Sentry project for The Laravel Architect and label events with `SENTRY_ENVIRONMENT=production` or `SENTRY_ENVIRONMENT=staging`. Set `TLA_DEPLOYMENT_ENVIRONMENT` to the same value. Do not reuse Mouse28 tokens, DSNs, or projects.
 
 Sentry is limited to exception reporting until a separate performance and privacy review approves broader collection:
 
@@ -259,7 +262,7 @@ Run the deployment verifier from the active site's `current` directory with the 
 php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 ```
 
-The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, or (in production) the Nightwatch deployment identifier differs or the Nightwatch agent is unavailable. Staging does not require Nightwatch because it uses Telescope for application inspection. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
+The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, or (in production) the Nightwatch deployment identifier differs or the Nightwatch agent is unavailable. Staging does not require Nightwatch; Telescope availability is not checked or implied. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
 
 ### Ownership of operational checks
 

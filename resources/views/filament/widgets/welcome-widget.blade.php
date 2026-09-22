@@ -45,7 +45,7 @@
                     </a>
 
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \App\Enums\PublishStatus::Scheduled->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \App\Enums\PublishStatus::Scheduled->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--scheduled"
                     >
                         <span>Scheduled</span>
@@ -54,7 +54,7 @@
                     </a>
 
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \App\Enums\PublishStatus::Published->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \App\Enums\PublishStatus::Published->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--published"
                     >
                         <span>Published</span>

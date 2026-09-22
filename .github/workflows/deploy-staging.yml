@@ -48,37 +48,17 @@ jobs:
                   --output /dev/null
                   --write-out 'Forge reachability: HTTP %{http_code}; remote_ip=%{remote_ip}; ssl_verify=%{ssl_verify_result}\n'
                   https://forge.laravel.com
-            - name: Check Forge hook endpoint
-              env:
-                  FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
-              run: >-
-                  curl --silent --show-error --request OPTIONS
-                  --connect-timeout 10 --max-time 15
-                  --output /dev/null
-                  --write-out 'Forge hook reachability: HTTP %{http_code}; remote_ip=%{remote_ip}; ssl_verify=%{ssl_verify_result}\n'
-                  "$FORGE_DEPLOY_HOOK"
             - name: Diagnose staging Access credentials
               env:
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
               run: node scripts/forge-deployment.mjs diagnose staging "$EXPECTED_REVISION"
-            - name: Trigger Forge deployment for the tested revision
+            - name: Deploy and verify the tested revision
               env:
                   FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
-              run: |
-                  status="$(curl --silent --show-error --request POST \
-                      --connect-timeout 10 --max-time 15 \
-                      --output /dev/null --write-out '%{http_code}' \
-                      "${FORGE_DEPLOY_HOOK}&forge_deploy_branch=main&forge_deploy_commit=${EXPECTED_REVISION}&revision=${EXPECTED_REVISION}")"
-                  case "$status" in
-                      2??) ;;
-                      *) echo "Forge rejected the deployment trigger (HTTP $status)."; exit 1 ;;
-                  esac
-            - name: Wait for and verify the tested revision
-              env:
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-              run: node scripts/forge-deployment.mjs wait staging "$EXPECTED_REVISION"
+              run: node scripts/forge-deployment.mjs deploy staging "$EXPECTED_REVISION"
             - name: Run application smoke checks
               env:
                   PRODUCTION_BASE_URL: https://staging.thelaravelarchitect.com
