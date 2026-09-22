@@ -116,6 +116,42 @@ and avoid presenting an editorial summary as a verbatim transcript. Keep player
 controls usable with the keyboard and preserve readable contrast for each
 podcast's accent in both themes.
 
+## Site identity and supporting artwork
+
+The homepage hero is a responsive identity image rather than an article image.
+Prepare separate desktop and mobile compositions, with the focal subject kept
+inside the shared safe area so the responsive crops remain intentional. Keep
+headlines and calls to action in HTML; the hero image should provide atmosphere
+and a clear visual anchor without competing with the copy. Check the image with
+the site's dark and light theme treatments, including the decorative blueprint
+and steam layers that are rendered separately from the source artwork.
+
+The about page portrait is a personal identity asset. Use a clean, recognizable
+portrait with a simple background and enough breathing room for the responsive
+square crop. Preserve the subject's face and shoulders in the center-safe area;
+the page uses 320 and 640px variants, so inspect both the page-sized image and
+its smaller rendering.
+
+Podcast covers are square identity assets reused on the podcast index, show
+page, episode page, and compact player treatments. Keep the title or mark bold
+enough to survive those smaller contexts, avoid fine print, and confirm that
+the cover remains legible alongside the show's accent color in both themes. Do
+not use a wide blog hero as a podcast cover without preparing a dedicated square
+composition.
+
+YouTube thumbnails are external artwork shown in compact cards on the
+homepage. Favor one obvious subject, strong contrast, and a composition that
+still reads when the card is narrow. Treat the thumbnail as supporting content:
+the card's HTML title remains the authoritative text, so do not rely on tiny
+thumbnail copy to communicate the video.
+
+The site also uses a small set of bundled identity assets, including the
+elephant companion mark and error-page artwork. Keep these assets consistent
+with the shared brand palette and do not substitute editorial artwork for them.
+When creating a new reusable identity asset, document its intended placement,
+minimum useful size, crop behavior, and light/dark theme treatment here before
+adding another one-off template fallback.
+
 ## Reusable brief
 
 Copy this into the task or content notes when commissioning a post and artwork:
