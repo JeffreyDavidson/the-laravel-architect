@@ -364,6 +364,14 @@ Perform this drill in an isolated temporary directory, never over the live datab
 8. Record the archive timestamp, checks performed, and result without recording credentials or private content.
 9. After review, verify the temporary path again and remove only that isolated restore directory.
 
+Latest completed drill (2026-09-23): archive `2026-09-23-02-00-11.zip`
+(02:00:17 UTC). All 25 ZIP entries decrypted and read. The live and restored
+SQLite databases passed `PRAGMA quick_check`; all 36 migrations and row counts
+for 20 persistent tables matched. `cache_locks` and `sessions` counts changed
+between the backup and live database, as expected for transient tables. All 24
+public-media paths and the total file count matched, and five sampled SHA-256
+hashes matched. The isolated temporary copy was removed.
+
 Run `php artisan app:test-backup-notification` after configuring or changing the production mail transport. The command sends an identifiable test message to `BACKUP_NOTIFICATION_EMAIL` and does not create a backup.
 
 Nightwatch reports new failed jobs. Failures are retained for `QUEUE_FAILED_JOB_RETENTION_HOURS` and then pruned by Laravel's native `queue:prune-failed` command; do not add a scheduled command that fails merely because retained records exist, because Laravel will surface every nonzero scheduled run as a new exception.
