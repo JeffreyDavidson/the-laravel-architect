@@ -37,7 +37,7 @@ jobs:
             - name: Reject obsolete candidates
               run: |
                   test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
-                  git fetch origin "$SOURCE_BRANCH"
+                  git fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
                   test "$(git rev-parse "origin/$SOURCE_BRANCH")" = "$EXPECTED_REVISION"
             - uses: ./.github/actions/deployment-runtime
               with:

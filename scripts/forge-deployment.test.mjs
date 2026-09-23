@@ -56,14 +56,21 @@ test('release safeguards keep feature integration, pre-merge staging, and produc
     assert.match(staging, /branches: \[main, 'release\/\*\*'\]/);
     assert.match(staging, /startsWith\(github\.event\.workflow_run\.head_branch, 'release\/'\)/);
     assert.match(staging, /SOURCE_BRANCH: \$\{\{ github\.event\.workflow_run\.head_branch \}\}/);
-    assert.match(staging, /git fetch origin "\$SOURCE_BRANCH"[\s\S]*?origin\/\$SOURCE_BRANCH/);
+    assert.match(
+        staging,
+        /git fetch --no-tags origin "\$SOURCE_BRANCH:refs\/remotes\/origin\/\$SOURCE_BRANCH"[\s\S]*?origin\/\$SOURCE_BRANCH/,
+    );
     assert.match(deploymentClient, /sourceBranch: process\.env\.SOURCE_BRANCH \?\? 'main'/);
     assert.match(production, /github\.ref == 'refs\/heads\/main'/);
     assert.match(production, /\.head_branch == "main"/);
     assert.match(releases, /git merge-base --is-ancestor origin\/develop origin\/main/);
     assert.match(releases, /git merge --ff-only origin\/main/);
     assert.doesNotMatch(releases, /git push --force/);
-    assert.ok(operations.includes('git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH"'));
+    assert.ok(
+        operations.includes(
+            'git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH:refs/remotes/origin/$FORGE_VAR_SOURCE_BRANCH"',
+        ),
+    );
     assert.ok(operations.includes('test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"'));
     assert.ok(
         operations.includes(

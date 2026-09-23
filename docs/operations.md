@@ -145,7 +145,7 @@ cd $FORGE_RELEASE_DIRECTORY
 if test "$(git rev-parse --is-shallow-repository)" = true; then
     git fetch --unshallow origin
 fi
-git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH"
+git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH:refs/remotes/origin/$FORGE_VAR_SOURCE_BRANCH"
 test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"
 git checkout --detach "$FORGE_VAR_REVISION"
 test "$(git rev-parse HEAD)" = "$FORGE_VAR_REVISION"
