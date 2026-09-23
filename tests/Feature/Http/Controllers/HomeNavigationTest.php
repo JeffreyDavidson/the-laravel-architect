@@ -10,11 +10,15 @@ it('prioritizes main destinations and keeps secondary links discoverable', funct
 
     $content = $response->getContent();
 
-    expect($content)->toBeString();
+    if (! is_string($content)) {
+        throw new RuntimeException('The home page response did not contain HTML.');
+    }
 
     $mainPosition = strpos($content, '<main');
 
-    expect($mainPosition)->toBeInt();
+    if (! is_int($mainPosition)) {
+        throw new RuntimeException('The home page response did not contain a main landmark.');
+    }
 
     $header = substr($content, 0, $mainPosition);
 
@@ -27,7 +31,15 @@ it('prioritizes main destinations and keeps secondary links discoverable', funct
         expect(str_contains($content, ">{$label}<"))->toBeTrue();
     }
 
-    expect(strpos($header, '>About<'))->toBeLessThan(strpos($header, '>Search<'));
-    expect(strpos($header, '>Search<'))->toBeLessThan(strpos($header, '>Archive<'));
+    $aboutPosition = strpos($header, '>About<');
+    $searchPosition = strpos($header, '>Search<');
+    $archivePosition = strpos($header, '>Archive<');
+
+    if (! is_int($aboutPosition) || ! is_int($searchPosition) || ! is_int($archivePosition)) {
+        throw new RuntimeException('The home page header did not contain its primary and utility links.');
+    }
+
+    expect($aboutPosition)->toBeLessThan($searchPosition);
+    expect($searchPosition)->toBeLessThan($archivePosition);
     expect(str_contains($content, 'Discuss a Project'))->toBeTrue();
 });

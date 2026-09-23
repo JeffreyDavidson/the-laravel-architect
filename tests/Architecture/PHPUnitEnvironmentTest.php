@@ -3,7 +3,9 @@
 it('forces PHPUnit to use an isolated testing database', function (): void {
     $configuration = file_get_contents(base_path('phpunit.xml'));
 
-    expect($configuration)->toBeString();
+    if (! is_string($configuration)) {
+        throw new RuntimeException('Unable to read phpunit.xml.');
+    }
 
     foreach ([
         'APP_ENV' => 'testing',
