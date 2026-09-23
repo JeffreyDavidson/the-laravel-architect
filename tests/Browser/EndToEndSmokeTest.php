@@ -72,8 +72,10 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
     $this->withVite();
 
     $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
-    $hero = $page->page()->locator('[data-home-hero]');
-    $overlayOpacity = $page->page()->evaluate('() => {
+    $hero = $page->page()
+        ->locator('[data-home-hero]');
+    $overlayOpacity = $page->page()
+        ->evaluate('() => {
         const hero = document.querySelector("[data-home-hero]");
         const overlayColor = getComputedStyle(hero, "::after").backgroundColor;
         const canvas = document.createElement("canvas");
@@ -84,11 +86,15 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
 
         return context.getImageData(0, 0, 1, 1).data[3] / 255;
     }');
+    $heading = $hero->getByRole('heading', ['level' => 1]);
+    $copy = $hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.');
+    $headingIsVisible = $heading->isVisible();
+    $copyIsVisible = $copy->isVisible();
 
-    expect($hero->getByRole('heading', ['level' => 1])->isVisible())->toBeTrue()
-        ->and($hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.')->isVisible())->toBeTrue()
-        ->and($overlayOpacity)->toBeGreaterThanOrEqual(0.41)
-        ->and($overlayOpacity)->toBeLessThan(0.43);
+    expect($headingIsVisible)->toBeTrue();
+    expect($copyIsVisible)->toBeTrue();
+    expect($overlayOpacity)->toBeGreaterThanOrEqual(0.41);
+    expect($overlayOpacity)->toBeLessThan(0.43);
 
     $page->assertNoJavaScriptErrors();
 });
@@ -380,7 +386,9 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
     if ($device === 'desktop') {
         $page->click('.fi-sidebar-item-btn[href$="/admin"]');
     } else {
-        $page->page()->goto(str_replace('/admin/profile', '/admin', $page->url()));
+        $adminUrl = str_replace('/admin/profile', '/admin', $page->url());
+        $page->page()
+            ->goto($adminUrl);
     }
 
     $page->assertPathIs('/admin');
@@ -408,4 +416,5 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
-})->with(['light', 'dark'])->with(['desktop', 'mobile']);
+})->with(['light', 'dark'])
+    ->with(['desktop', 'mobile']);
