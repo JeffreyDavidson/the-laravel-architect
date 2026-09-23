@@ -2,7 +2,7 @@
     {{-- ===== HERO ===== --}}
     <section
         data-home-hero
-        class="border-surface-border-strong bg-surface-control after:bg-surface-hero/42 md:after:bg-surface-hero/12 relative isolate overflow-hidden border-b text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10"
+        class="border-surface-border-strong bg-surface-control after:bg-surface-hero/60 md:after:bg-surface-hero/12 relative isolate overflow-hidden border-b text-white after:pointer-events-none after:absolute after:inset-0 after:-z-10"
     >
         <div class="absolute inset-x-0 top-16 bottom-0 -z-20 overflow-hidden md:inset-0">
             <picture

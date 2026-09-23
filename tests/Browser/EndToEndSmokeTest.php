@@ -74,30 +74,143 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
     $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
     $hero = $page->page()
         ->locator('[data-home-hero]');
-    $overlayOpacity = $page->page()
-        ->evaluate('() => {
-        const hero = document.querySelector("[data-home-hero]");
-        const overlayColor = getComputedStyle(hero, "::after").backgroundColor;
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
+    $contrast = $page->page()
+        ->evaluate(<<<'JS'
+            async () => {
+                const hero = document.querySelector("[data-home-hero]");
+                const image = hero.querySelector("picture img");
+                const copy = Array.from(hero.querySelectorAll("p")).find((paragraph) =>
+                    paragraph.textContent.includes("Architecture, modernization, and hands-on development")
+                );
 
-        context.fillStyle = overlayColor;
-        context.fillRect(0, 0, 1, 1);
+                await Promise.all([image.decode(), document.fonts.ready]);
 
-        return context.getImageData(0, 0, 1, 1).data[3] / 255;
-    }');
+                const imageCanvas = document.createElement("canvas");
+                imageCanvas.width = image.naturalWidth;
+                imageCanvas.height = image.naturalHeight;
+                const imageContext = imageCanvas.getContext("2d", { willReadFrequently: true });
+                imageContext.drawImage(image, 0, 0);
+                const imagePixels = imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+
+                const overlayCanvas = document.createElement("canvas");
+                const overlayContext = overlayCanvas.getContext("2d");
+                overlayContext.fillStyle = getComputedStyle(hero, "::after").backgroundColor;
+                overlayContext.fillRect(0, 0, 1, 1);
+                const overlay = overlayContext.getImageData(0, 0, 1, 1).data;
+                const overlayAlpha = overlay[3] / 255;
+
+                const foregroundCanvas = document.createElement("canvas");
+                const foregroundContext = foregroundCanvas.getContext("2d");
+                foregroundContext.fillStyle = getComputedStyle(copy).color;
+                foregroundContext.fillRect(0, 0, 1, 1);
+                const foreground = foregroundContext.getImageData(0, 0, 1, 1).data;
+
+                const imageRect = image.getBoundingClientRect();
+                const imageStyle = getComputedStyle(image);
+                const scale = Math.max(
+                    imageRect.width / image.naturalWidth,
+                    imageRect.height / image.naturalHeight
+                );
+                const renderedWidth = image.naturalWidth * scale;
+                const renderedHeight = image.naturalHeight * scale;
+                const position = imageStyle.objectPosition.split(/\s+/);
+                const positionFactor = (value, start, end) => {
+                    if (value.endsWith("%")) {
+                        return Number.parseFloat(value) / 100;
+                    }
+
+                    if (value === start) {
+                        return 0;
+                    }
+
+                    if (value === end) {
+                        return 1;
+                    }
+
+                    return 0.5;
+                };
+                const imageLeft = imageRect.left
+                    + (imageRect.width - renderedWidth) * positionFactor(position[0], "left", "right");
+                const imageTop = imageRect.top
+                    + (imageRect.height - renderedHeight) * positionFactor(position[1] ?? position[0], "top", "bottom");
+                const textNode = copy.firstChild;
+                const range = document.createRange();
+                const luminance = (channel) => {
+                    const normalized = channel / 255;
+                    return normalized <= 0.04045
+                        ? normalized / 12.92
+                        : ((normalized + 0.055) / 1.055) ** 2.4;
+                };
+                let minimumContrastRatio = Number.POSITIVE_INFINITY;
+                let sampleCount = 0;
+
+                for (let offset = 0; offset < textNode.length; offset += 1) {
+                    if (/\s/.test(textNode.textContent[offset])) {
+                        continue;
+                    }
+
+                    range.setStart(textNode, offset);
+                    range.setEnd(textNode, offset + 1);
+                    const character = range.getBoundingClientRect();
+
+                    if (character.width === 0 || character.height === 0) {
+                        continue;
+                    }
+
+                    const x = Math.floor((character.left + character.width / 2 - imageLeft) / scale);
+                    const y = Math.floor((character.top + character.height / 2 - imageTop) / scale);
+
+                    if (x < 0 || y < 0 || x >= image.naturalWidth || y >= image.naturalHeight) {
+                        continue;
+                    }
+
+                    const imageOffset = (y * image.naturalWidth + x) * 4;
+                    const background = [0, 1, 2].map((channel) =>
+                        overlay[channel] * overlayAlpha + imagePixels.data[imageOffset + channel] * (1 - overlayAlpha)
+                    );
+                    const foregroundLuminance = 0.2126 * luminance(foreground[0])
+                        + 0.7152 * luminance(foreground[1])
+                        + 0.0722 * luminance(foreground[2]);
+                    const backgroundLuminance = 0.2126 * luminance(background[0])
+                        + 0.7152 * luminance(background[1])
+                        + 0.0722 * luminance(background[2]);
+                    const brighter = Math.max(foregroundLuminance, backgroundLuminance);
+                    const darker = Math.min(foregroundLuminance, backgroundLuminance);
+
+                    minimumContrastRatio = Math.min(minimumContrastRatio, (brighter + 0.05) / (darker + 0.05));
+                    sampleCount += 1;
+                }
+
+                return {
+                    minimumContrastRatio,
+                    sampleCount,
+                    mobileImage: image.currentSrc.includes("home-hero-mobile-"),
+                };
+            }
+        JS);
     $heading = $hero->locator('h1');
     $copy = $hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.');
     $headingIsVisible = $heading->isVisible();
     $copyIsVisible = $copy->isVisible();
 
+    if (! is_array($contrast)
+        || ! isset($contrast['minimumContrastRatio'], $contrast['sampleCount'], $contrast['mobileImage'])
+        || ! is_float($contrast['minimumContrastRatio'])
+        || ! is_int($contrast['sampleCount'])
+        || ! is_bool($contrast['mobileImage'])) {
+        throw new RuntimeException('The mobile hero contrast measurements were not returned.');
+    }
+
     expect($headingIsVisible)
         ->toBeTrue()
         ->and($copyIsVisible)
         ->toBeTrue()
-        ->and($overlayOpacity)
-        ->toBeGreaterThanOrEqual(0.41)
-        ->toBeLessThan(0.43);
+        ->and($contrast['mobileImage'])
+        ->toBeTrue()
+        ->and($contrast['sampleCount'])
+        ->toBeGreaterThan(0)
+        ->and($contrast['minimumContrastRatio'])
+        ->toBeGreaterThanOrEqual(4.5);
 
     $page->assertNoJavaScriptErrors();
 });
