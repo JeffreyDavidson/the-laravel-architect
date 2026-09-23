@@ -68,6 +68,40 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
     }
 });
 
+it('keeps homepage hero copy readable over the artwork on mobile', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
+    $hero = $page->page()
+        ->locator('[data-home-hero]');
+    $overlayOpacity = $page->page()
+        ->evaluate('() => {
+        const hero = document.querySelector("[data-home-hero]");
+        const overlayColor = getComputedStyle(hero, "::after").backgroundColor;
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        context.fillStyle = overlayColor;
+        context.fillRect(0, 0, 1, 1);
+
+        return context.getImageData(0, 0, 1, 1).data[3] / 255;
+    }');
+    $heading = $hero->locator('h1');
+    $copy = $hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.');
+    $headingIsVisible = $heading->isVisible();
+    $copyIsVisible = $copy->isVisible();
+
+    expect($headingIsVisible)
+        ->toBeTrue()
+        ->and($copyIsVisible)
+        ->toBeTrue()
+        ->and($overlayOpacity)
+        ->toBeGreaterThanOrEqual(0.41)
+        ->toBeLessThan(0.43);
+
+    $page->assertNoJavaScriptErrors();
+});
+
 it('initializes homepage reveal animations', function (): void {
     $this->withVite();
 
@@ -355,7 +389,9 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
     if ($device === 'desktop') {
         $page->click('.fi-sidebar-item-btn[href$="/admin"]');
     } else {
-        $page->page()->goto(str_replace('/admin/profile', '/admin', $page->url()));
+        $adminUrl = str_replace('/admin/profile', '/admin', $page->url());
+        $page->page()
+            ->goto($adminUrl);
     }
 
     $page->assertPathIs('/admin');
@@ -383,4 +419,5 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
-})->with(['light', 'dark'])->with(['desktop', 'mobile']);
+})->with(['light', 'dark'])
+    ->with(['desktop', 'mobile']);
