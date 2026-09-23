@@ -113,17 +113,27 @@ For production, run `php artisan app:verify-production` after loading the releas
 
 Install this script only after the revision-marker setup above is complete.
 Forge's `forge_deploy_commit` parameter is metadata, not checkout pinning. The
-separate `revision` hook parameter becomes `FORGE_VAR_REVISION`; validate and
-check out that exact main-branch commit before executing any application code.
-Direct Deploy-button requests without a revision intentionally fail closed.
+separate `revision` and `source_branch` hook parameters become
+`FORGE_VAR_REVISION` and `FORGE_VAR_SOURCE_BRANCH`; validate both before
+executing application code. Staging accepts `main` or a numbered
+`release/YYYY.MM.N` source branch. Production accepts only `main`. Require the
+source branch to still point at the exact tested revision before checkout.
+Direct Deploy-button requests without both parameters intentionally fail
+closed.
 
 ```bash
 set -e
 
 test "$FORGE_SITE_BRANCH" = main
 case "$FORGE_SITE_ID" in
-    3366565) test "$FORGE_SITE_ROOT" = /home/forge/staging.thelaravelarchitect.com ;;
-    3044519) test "$FORGE_SITE_ROOT" = /home/forge/thelaravelarchitect.com ;;
+    3366565)
+        test "$FORGE_SITE_ROOT" = /home/forge/staging.thelaravelarchitect.com
+        [[ "${FORGE_VAR_SOURCE_BRANCH:-}" = main || "${FORGE_VAR_SOURCE_BRANCH:-}" =~ ^release/[0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+$ ]]
+        ;;
+    3044519)
+        test "$FORGE_SITE_ROOT" = /home/forge/thelaravelarchitect.com
+        test "${FORGE_VAR_SOURCE_BRANCH:-}" = main
+        ;;
     *) exit 1 ;;
 esac
 [[ "${FORGE_VAR_REVISION:-}" =~ ^[a-f0-9]{40}$ ]]
@@ -135,8 +145,8 @@ cd $FORGE_RELEASE_DIRECTORY
 if test "$(git rev-parse --is-shallow-repository)" = true; then
     git fetch --unshallow origin
 fi
-git fetch --no-tags origin main
-git merge-base --is-ancestor "$FORGE_VAR_REVISION" origin/main
+git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH"
+test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"
 git checkout --detach "$FORGE_VAR_REVISION"
 test "$(git rev-parse HEAD)" = "$FORGE_VAR_REVISION"
 test ! -e public/deployment.json
