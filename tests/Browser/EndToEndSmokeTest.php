@@ -86,7 +86,7 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
 
         return context.getImageData(0, 0, 1, 1).data[3] / 255;
     }');
-    $heading = $hero->getByRole('heading', ['level' => 1]);
+    $heading = $hero->locator('h1');
     $copy = $hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.');
     $headingIsVisible = $heading->isVisible();
     $copyIsVisible = $copy->isVisible();
