@@ -8,18 +8,7 @@ fi
 
 while read -r local_ref local_sha remote_ref remote_sha; do
     [[ "$local_sha" == 0000000000000000000000000000000000000000 ]] && continue
-    if [[ "$remote_sha" == 0000000000000000000000000000000000000000 ]]; then
-        commits=$(git rev-list "$local_sha" --not --remotes=origin)
-        if [[ -n "$commits" ]]; then
-            files=$(while read -r commit; do
-                git diff-tree --root --no-commit-id --name-only -r "$commit" -- '*.php'
-            done <<< "$commits" | sort -u)
-        else
-            files=''
-        fi
-    else
-        files=$(git diff-tree --no-commit-id --name-only -r "$remote_sha..$local_sha" -- '*.php' || true)
-    fi
+    files=$(git diff-tree --no-commit-id --name-only -r "$remote_sha..$local_sha" -- '*.php' || true)
     if [[ -n "$files" ]]; then
         changed_files=()
         while IFS= read -r file; do

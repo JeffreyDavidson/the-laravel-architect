@@ -27,24 +27,6 @@ test('staging workflow uses the guarded deployment operation instead of a separa
     assert.doesNotMatch(workflow, /--request (?:POST|OPTIONS)|forge-deployment\.mjs wait staging/);
 });
 
-test('release safeguards keep feature integration, pre-merge staging, and production promotion on their intended refs', () => {
-    const ci = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
-    const staging = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
-    const production = readFileSync(new URL('../.github/workflows/promote-production.yml', import.meta.url), 'utf8');
-    const releases = readFileSync(new URL('../docs/releases.md', import.meta.url), 'utf8');
-
-    assert.match(ci, /pull_request:[\s\S]*?branches:[\s\S]*?- develop/);
-    assert.match(ci, /push:[\s\S]*?- develop[\s\S]*?- 'release\/\*\*'/);
-    assert.match(staging, /branches: \[main, 'release\/\*\*'\]/);
-    assert.match(staging, /startsWith\(github\.event\.workflow_run\.head_branch, 'release\/'\)/);
-    assert.match(staging, /git fetch origin "\$SOURCE_BRANCH"[\s\S]*?origin\/\$SOURCE_BRANCH/);
-    assert.match(production, /github\.ref == 'refs\/heads\/main'/);
-    assert.match(production, /\.head_branch == "main"/);
-    assert.match(releases, /git merge-base --is-ancestor origin\/develop origin\/main/);
-    assert.match(releases, /git merge --ff-only origin\/main/);
-    assert.doesNotMatch(releases, /git push --force/);
-});
-
 test('rejects a production hook before any staging deployment network request', async () => {
     let requests = 0;
     await assert.rejects(

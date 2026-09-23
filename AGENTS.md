@@ -12,12 +12,13 @@
 
 ## Git and pull requests
 
-- Use `develop` as the integration branch for routine work. Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.
-- Squash merge reviewed working branches into `develop` through pull requests with required CI. Do not rebase-merge pull requests.
-- Cut `release/YYYY.MM.N` from `develop` only for a deliberate release. Pause merges into `develop` while that release is validated. Merge an approved release PR into `main` with a regular merge commit to preserve ancestry.
+- Use `main` as the single permanent integration branch. It contains reviewed, releasable code, not necessarily the revision currently deployed to production.
+- Create focused working branches from an up-to-date `main`; do not commit feature work directly to `main`.
+- Squash merge working branches into `main` through pull requests with required CI. Do not rebase-merge pull requests.
+- The one-time `develop` to `main` transition described in `docs/releases.md` is complete. Do not repeat it; keep `develop` read-only and do not delete it without separate approval.
 - Before merging, verify the pull request's head branch, base branch, and merge method.
 - Before creating or recommending a pull request, inspect the current branch, merge base, recent completed PRs, and `docs/releases.md`. Do not infer that a `release/*` branch is a release branch from its name alone.
-- Use `release/*` only for a deliberate release boundary promoted into `main`. Routine feature, fix, performance, refactor, documentation, and test work must use its normal branch type and documented integration path into `develop`.
+- Use `release/*` only for a deliberate release boundary promoted into `main`. Routine feature, fix, performance, refactor, documentation, and test work must use its normal branch type and documented integration path.
 - Before creating a pull request, confirm its head, base, and merge method follow the current workflow. If any are wrong, correct the plan before opening it.
 - Every new commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type: description`, with an optional scope (`type(scope): description`) and optional breaking-change marker (`type(scope)!: description`).
 - Use lowercase types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Use `feat` for new features and `fix` for bug fixes; branch prefixes such as `feature/`, `hotfix/`, and `release/` are not commit types.
@@ -28,11 +29,11 @@
 
 ## Releases
 
-- Successful CI on a release branch deploys that exact revision to staging for pre-merge validation. After a release merges, successful CI on `main` must deploy and verify the resulting exact revision on staging. Production requires a separate manual promotion and explicit approval of that successful `main` staging revision.
+- Successful CI on `main` may deploy that exact revision to staging. Production requires a separate manual promotion and explicit approval of the tested revision.
 - Follow `docs/releases.md`; do not use a moving branch tip or Forge's commit label as proof of the deployed checkout.
 - Keep calendar release tags immutable. Record the deployed revision and verification result independently of the tag.
-- After a release, verify `develop` is an ancestor of `origin/main`, then fast-forward `develop` to `main`. Do not create a sync merge commit or force-push; stop if fast-forward is not possible. Never relax branch protection to perform release bookkeeping.
-- Base emergency fixes on the verified deployed revision when `main` has unreleased work; agree the exceptional release path before deploying, and integrate the fix through the `develop` and release workflow.
+- Do not create routine release branches, synchronize `develop` after releases, or relax branch protection to perform release bookkeeping.
+- Base emergency fixes on the verified deployed revision when `main` has unreleased work; agree the exceptional release path before deploying, and forward-port the fix to `main`.
 
 ## Post-merge synchronization and cleanup
 
