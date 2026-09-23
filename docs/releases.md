@@ -22,6 +22,12 @@ fast-forward develop to main
    routine feature, fix, performance, documentation, or dependency work.
 2. Pause merges into `develop` while the release is under validation. Keep the
    branch frozen until its release PR is merged or the release is cancelled.
+   If validation finds a release-specific defect, prepare a focused fix branch
+   from the release branch and merge it back through a reviewed PR. CI runs for
+   release-branch PRs. Every release branch update creates a new candidate SHA
+   and requires fresh staging verification; do not merge the fix into `develop`
+   during the freeze. The post-release fast-forward carries the fix back into
+   `develop`.
 3. Push the release branch. CI runs on that exact branch and, after successful
    push CI, `Deploy staging` deploys the tested full SHA. The staging workflow
    rejects a stale candidate if its source branch has advanced. Review public

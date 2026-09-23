@@ -48,17 +48,36 @@ test('release safeguards keep feature integration, pre-merge staging, and produc
     const staging = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
     const production = readFileSync(new URL('../.github/workflows/promote-production.yml', import.meta.url), 'utf8');
     const releases = readFileSync(new URL('../docs/releases.md', import.meta.url), 'utf8');
+    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
+    const deploymentClient = readFileSync(new URL('./forge-deployment.mjs', import.meta.url), 'utf8');
 
-    assert.match(ci, /pull_request:[\s\S]*?branches:[\s\S]*?- develop/);
+    assert.match(ci, /pull_request:[\s\S]*?branches:[\s\S]*?- develop[\s\S]*?- 'release\/\*\*'/);
     assert.match(ci, /push:[\s\S]*?- develop[\s\S]*?- 'release\/\*\*'/);
     assert.match(staging, /branches: \[main, 'release\/\*\*'\]/);
     assert.match(staging, /startsWith\(github\.event\.workflow_run\.head_branch, 'release\/'\)/);
-    assert.match(staging, /git fetch origin "\$SOURCE_BRANCH"[\s\S]*?origin\/\$SOURCE_BRANCH/);
+    assert.match(staging, /SOURCE_BRANCH: \$\{\{ github\.event\.workflow_run\.head_branch \}\}/);
+    assert.match(
+        staging,
+        /git fetch --no-tags origin "\$SOURCE_BRANCH:refs\/remotes\/origin\/\$SOURCE_BRANCH"[\s\S]*?origin\/\$SOURCE_BRANCH/,
+    );
+    assert.match(deploymentClient, /sourceBranch: process\.env\.SOURCE_BRANCH \?\? 'main'/);
     assert.match(production, /github\.ref == 'refs\/heads\/main'/);
     assert.match(production, /\.head_branch == "main"/);
     assert.match(releases, /git merge-base --is-ancestor origin\/develop origin\/main/);
     assert.match(releases, /git merge --ff-only origin\/main/);
     assert.doesNotMatch(releases, /git push --force/);
+    assert.ok(
+        operations.includes(
+            'git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH:refs/remotes/origin/$FORGE_VAR_SOURCE_BRANCH"',
+        ),
+    );
+    assert.ok(operations.includes('test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"'));
+    assert.ok(
+        operations.includes(
+            '[[ "${FORGE_VAR_SOURCE_BRANCH:-}" = main || "${FORGE_VAR_SOURCE_BRANCH:-}" =~ ^release/[0-9]{4}\\.(0[1-9]|1[0-2])\\.[0-9]+$ ]]',
+        ),
+    );
+    assert.ok(operations.includes('test "${FORGE_VAR_SOURCE_BRANCH:-}" = main'));
 });
 
 test('rejects a production hook before any staging deployment network request', async () => {
@@ -213,6 +232,24 @@ test('constrains hook credentials to the exact Forge target and supplies a separ
     assert.equal(url.searchParams.get('revision'), revision);
     assert.equal(url.searchParams.get('forge_deploy_commit'), revision);
     assert.equal(url.searchParams.get('forge_deploy_branch'), 'main');
+    assert.equal(url.searchParams.get('source_branch'), 'main');
+});
+
+test('staging accepts only exact main or calendar release source branches while production remains main-only', () => {
+    const releaseBranch = 'release/2026.09.34';
+    const stagingUrl = deploymentHook('staging', revision, hook, releaseBranch);
+    const productionHook = hook.replace('3366565', '3044519');
+
+    assert.equal(stagingUrl.searchParams.get('source_branch'), releaseBranch);
+    assert.equal(stagingUrl.searchParams.get('forge_deploy_branch'), 'main');
+    assert.throws(
+        () => deploymentHook('production', revision, productionHook, releaseBranch),
+        /Source branch is not allowed/,
+    );
+
+    for (const invalidBranch of [null, 'feature/unsafe', 'release/2026.13.1', 'release/2026.09.34;touch']) {
+        assert.throws(() => deploymentHook('staging', revision, hook, invalidBranch), /Source branch is not allowed/);
+    }
 });
 
 test('rejects redirects and hides transport errors that could contain credentials', async () => {
@@ -315,12 +352,13 @@ test('requires successful health as well as a matching revision', async () => {
     );
 });
 
-test('waits for a new deployment ID and triggers Forge only once', async () => {
+test('deploys a release branch SHA and triggers Forge only once', async () => {
     const responses = [marker(1), new Response('accepted'), marker(1), marker(2), marker(2), new Response('healthy')];
     const requests = [];
     const result = await deployRelease('staging', revision, {
         ...access,
         hook,
+        sourceBranch: 'release/2026.09.34',
         delay: async () => {},
         fetch: async (url, init) => {
             requests.push({ url, init });
@@ -329,7 +367,10 @@ test('waits for a new deployment ID and triggers Forge only once', async () => {
     });
     assert.equal(result.deployment_id, 2);
     assert.equal(requests.filter(request => request.init.method === 'POST').length, 1);
-    assert.equal(requests.find(request => request.init.method === 'POST').init.headers, undefined);
+    const trigger = requests.find(request => request.init.method === 'POST');
+    assert.equal(trigger.init.headers, undefined);
+    assert.equal(new URL(trigger.url).searchParams.get('source_branch'), 'release/2026.09.34');
+    assert.equal(new URL(trigger.url).searchParams.get('forge_deploy_branch'), 'main');
 });
 
 test('waits through transient release marker responses', async () => {

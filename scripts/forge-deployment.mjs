@@ -23,6 +23,17 @@ function siteFor(environment) {
     return sites[environment];
 }
 
+function sourceBranchFor(environment, sourceBranch) {
+    if (typeof sourceBranch !== 'string') {
+        throw new Error('Source branch is not allowed for this deployment environment.');
+    }
+    const validReleaseBranch = /^release\/\d{4}\.(?:0[1-9]|1[0-2])\.\d+$/.test(sourceBranch ?? '');
+    if (environment === 'production' ? sourceBranch !== 'main' : sourceBranch !== 'main' && !validReleaseBranch) {
+        throw new Error('Source branch is not allowed for this deployment environment.');
+    }
+    return sourceBranch;
+}
+
 export function transportFailureReason(error) {
     const code = error?.cause?.code ?? error?.code;
 
@@ -316,9 +327,10 @@ export async function verifyRelease(environment, revision, options = {}) {
     return marker;
 }
 
-export function deploymentHook(environment, revision, hook) {
+export function deploymentHook(environment, revision, hook, sourceBranch = 'main') {
     validateRevision(revision);
     const site = siteFor(environment);
+    const validatedSourceBranch = sourceBranchFor(environment, sourceBranch);
     let url;
     try {
         url = new URL(hook);
@@ -339,11 +351,12 @@ export function deploymentHook(environment, revision, hook) {
     url.searchParams.set('forge_deploy_commit', revision);
     // Unlike the metadata label above, the Forge script uses this to pin checkout.
     url.searchParams.set('revision', revision);
+    url.searchParams.set('source_branch', validatedSourceBranch);
     return url;
 }
 
 export async function deployRelease(environment, revision, options = {}) {
-    const hook = deploymentHook(environment, revision, options.hook);
+    const hook = deploymentHook(environment, revision, options.hook, options.sourceBranch ?? 'main');
     // Fail before triggering anything when Access credentials are absent.
     requestHeaders(environment, options);
     if (environment === 'production') {
@@ -398,6 +411,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         const [operation, environment, revision] = process.argv.slice(2);
         const options = {
             hook: process.env.FORGE_DEPLOY_HOOK,
+            sourceBranch: process.env.SOURCE_BRANCH ?? 'main',
             clientId: process.env.CF_ACCESS_CLIENT_ID,
             clientSecret: process.env.CF_ACCESS_CLIENT_SECRET,
             triggerTransport: 'curl',
