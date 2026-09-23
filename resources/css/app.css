@@ -42,6 +42,7 @@
 /* Shared public theme tokens. Page-specific styles consume these values so
    changing the visual system never requires editing templates or components. */
 :root {
+    color-scheme: light;
     --bg-primary: #ffffff;
     --bg-secondary: #f6f8fa;
     --bg-card: #ffffff;
@@ -112,6 +113,7 @@
 }
 
 .dark {
+    color-scheme: dark;
     --bg-primary: #0d1117;
     --bg-secondary: #161b22;
     --bg-card: rgb(26 29 33 / 0.6);

@@ -134,7 +134,7 @@
                             name="message"
                             rows="6"
                             required
-                            placeholder="Tell me about your project, timeline, and any specific requirements..."
+                            placeholder="Tell me about your project, timeline, and any specific requirements…"
                             :autofocus="$firstErrorField === 'message'"
                         />
                     </div>
