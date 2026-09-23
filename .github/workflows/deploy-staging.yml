@@ -4,7 +4,7 @@ on:
     workflow_run:
         workflows: [CI]
         types: [completed]
-        branches: [main]
+        branches: [main, 'release/**']
 
 concurrency:
     group: release-promotion
@@ -20,7 +20,7 @@ jobs:
             vars.STAGED_RELEASES_ENABLED == 'true' &&
             github.event.workflow_run.conclusion == 'success' &&
             github.event.workflow_run.event == 'push' &&
-            github.event.workflow_run.head_branch == 'main' &&
+            (github.event.workflow_run.head_branch == 'main' || startsWith(github.event.workflow_run.head_branch, 'release/')) &&
             github.event.workflow_run.head_repository.full_name == github.repository
         name: Stage ${{ github.event.workflow_run.head_sha }}
         runs-on: ubuntu-latest
@@ -28,6 +28,7 @@ jobs:
         environment: staging
         env:
             EXPECTED_REVISION: ${{ github.event.workflow_run.head_sha }}
+            SOURCE_BRANCH: ${{ github.event.workflow_run.head_branch }}
         steps:
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
@@ -36,8 +37,8 @@ jobs:
             - name: Reject obsolete candidates
               run: |
                   test "$(git rev-parse HEAD)" = "$EXPECTED_REVISION"
-                  git fetch origin main
-                  test "$(git rev-parse origin/main)" = "$EXPECTED_REVISION"
+                  git fetch origin "$SOURCE_BRANCH"
+                  test "$(git rev-parse "origin/$SOURCE_BRANCH")" = "$EXPECTED_REVISION"
             - uses: ./.github/actions/deployment-runtime
               with:
                   composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
