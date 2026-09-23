@@ -32,9 +32,37 @@ colors:
   studio-success-dark: "#4ade80"
   studio-warning-light: "#855400"
   studio-warning-dark: "#fbbf24"
+  studio-subheading-muted: "rgba(226, 232, 240, 0.64)"
+  studio-success-halo: "rgba(52, 211, 153, 0.12)"
+  studio-neutral-hover: "rgba(148, 163, 184, 0.2)"
+  studio-success-halo-strong: "rgba(16, 185, 129, 0.13)"
+  studio-warning-border: "rgba(245, 158, 11, 0.25)"
+  studio-warning-muted: "rgba(245, 158, 11, 0.08)"
+  studio-warning-soft: "rgba(245, 158, 11, 0.16)"
+  studio-warning-strong: "rgba(245, 158, 11, 0.22)"
+  studio-success-strong: "rgba(16, 185, 129, 0.12)"
+  studio-rose-soft: "rgba(199, 75, 122, 0.1)"
+  studio-success-soft: "rgba(16, 185, 129, 0.1)"
+  studio-warning-glow: "rgba(245, 158, 11, 0.1)"
+  studio-success-surface: "rgba(16, 185, 129, 0.14)"
+  studio-warning-surface: "rgba(245, 158, 11, 0.14)"
+  studio-nav-active: "#2b5f97"
+  home-copy-shadow: "rgba(0, 0, 0, 0.28)"
+  studio-blue-mist: "rgba(122, 169, 224, 0.38)"
+  studio-neutral-soft: "rgba(148, 163, 184, 0.26)"
+  studio-neutral-strong: "rgba(148, 163, 184, 0.48)"
+  studio-blue-lift: "rgba(122, 169, 224, 0.72)"
+  studio-accent-soft: "rgba(91, 145, 206, 0.14)"
+  studio-accent-strong: "rgba(91, 145, 206, 0.2)"
+  studio-focus-wash: "#d9ebff"
+  studio-row-hover: "rgba(91, 145, 206, 0.055)"
+  studio-row-selected: "rgba(91, 145, 206, 0.1)"
+  auth-field-border: "#8c959f"
+  auth-field-hover-border: "#697586"
 typography:
   body:
     fontFamily: "IBM Plex Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1rem"
   code:
     fontFamily: "IBM Plex Mono, ui-monospace, monospace"
   wordmark:
@@ -50,12 +78,63 @@ typography:
   meta-sm:
     fontSize: "0.75rem"
     lineHeight: 1.4
+  proof-value:
+    fontSize: "2rem"
+  studio-field-note:
+    fontSize: "0.8125rem"
+  action-label:
+    fontSize: "0.875rem"
+  error-display-min:
+    fontSize: "2.5rem"
+  studio-subtitle:
+    fontSize: "1.125rem"
+  home-display:
+    fontSize: "4.5rem"
+  home-cta:
+    fontSize: "0.9375rem"
+  studio-kicker:
+    fontSize: "0.68rem"
+  error-display-fluid:
+    fontSize: "1.85rem"
+  studio-body:
+    fontSize: "0.95rem"
+  studio-description:
+    fontSize: "0.8rem"
+  studio-support:
+    fontSize: "0.9rem"
+  error-section:
+    fontSize: "1.75rem"
+  studio-caption:
+    fontSize: "0.7rem"
+  studio-compact:
+    fontSize: "0.88rem"
+  studio-heading:
+    fontSize: "1.35rem"
+  studio-dashboard-max:
+    fontSize: "3rem"
+  studio-hero-max:
+    fontSize: "2.55rem"
+  studio-widget-title:
+    fontSize: "1.08rem"
+  studio-metadata:
+    fontSize: "0.92rem"
+  studio-label:
+    fontSize: "0.82rem"
 rounded:
   code: "0.5rem"
   public-button: "0.75rem"
   public-card: "1rem"
   auth-card: "1rem"
   theme-switcher: "0.65rem"
+  compact: "0.375rem"
+  code-inline: "4px"
+  micro-control: "3px"
+  status-pill: "999px"
+  status-mark: "9999px"
+  studio-panel: "0.8rem"
+  studio-card: "0.85rem"
+  studio-widget: "0.9rem"
+  studio-dot: "0.45rem"
 spacing:
   button-md-x: "1.5rem"
   button-md-y: "0.75rem"
