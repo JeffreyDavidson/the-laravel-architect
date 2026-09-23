@@ -1,18 +1,37 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-22T17:35:00Z",
+  "generatedAt": "2026-09-23T03:09:58Z",
   "title": "Design System: The Laravel Architect",
   "extensions": {
     "shadows": [
-      { "name": "light-auth-card", "value": "0 18px 45px rgba(31, 35, 40, 0.08)", "purpose": "Light-mode login card." },
-      { "name": "light-floating-panel", "value": "0 18px 40px rgba(31, 35, 40, 0.12)", "purpose": "Light-mode modal, dropdown, and popover." }
+      {
+        "name": "light-auth-card",
+        "value": "0 18px 45px rgba(31, 35, 40, 0.08)",
+        "purpose": "Light-mode login card."
+      },
+      {
+        "name": "light-floating-panel",
+        "value": "0 18px 40px rgba(31, 35, 40, 0.12)",
+        "purpose": "Light-mode modal, dropdown, and popover."
+      }
     ],
     "motion": [
-      { "name": "studio-state", "value": "160ms ease", "purpose": "Studio control state transitions." },
-      { "name": "public-nav", "value": "180ms ease", "purpose": "Public navigation underline opacity and scale." }
+      {
+        "name": "studio-state",
+        "value": "160ms ease",
+        "purpose": "Studio control state transitions."
+      },
+      {
+        "name": "public-nav",
+        "value": "180ms ease",
+        "purpose": "Public navigation underline opacity and scale."
+      }
     ],
     "breakpoints": [
-      { "name": "studio-mobile-max", "value": "767px" }
+      {
+        "name": "studio-mobile-max",
+        "value": "767px"
+      }
     ]
   },
   "components": [
@@ -22,14 +41,14 @@
       "refersTo": "button-primary",
       "description": "Medium primary action; CSS translation of the shared Blade button.",
       "html": "<button class=\"ds-primary\">Discuss a Project</button>",
-      "css": ".ds-primary{display:inline-flex;align-items:center;gap:.5rem;border:0;background:var(--color-brand-action,#3f6fa8);color:#fff;border-radius:.75rem;padding:.75rem 1.5rem;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:700;cursor:pointer}.ds-primary:hover{background:var(--color-brand-action-hover,#345f91)}.ds-primary:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}"
+      "css": ".ds-primary{display:inline-flex;align-items:center;gap:.5rem;border:0;background:var(--color-brand-action,#3f6fa8);color:#fff;border-radius:.75rem;padding:.75rem 1.5rem;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:700;cursor:pointer;transition:background-color 150ms ease}.ds-primary:hover{background:var(--color-brand-action-hover,#345f91)}.ds-primary:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}"
     },
     {
       "name": "Public outline button",
       "kind": "button",
       "description": "Light-mode medium outline action from the shared Blade button.",
       "html": "<button class=\"ds-outline\">View Projects</button>",
-      "css": ".ds-outline{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #e5e7eb;background:#fff;color:#374151;border-radius:.75rem;padding:.75rem 1.5rem;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:700;cursor:pointer}.ds-outline:hover{border-color:#9ca3af}.ds-outline:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}"
+      "css": ".ds-outline{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #e5e7eb;background:#fff;color:#374151;border-radius:.75rem;padding:.75rem 1.5rem;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:700;cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease}.ds-outline:hover{border-color:#9ca3af}.ds-outline:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}.dark .ds-outline{border-color:var(--color-surface-border,#263241);background:var(--color-surface-control,#111820);color:var(--color-gray-300,#d1d5db)}.dark .ds-outline:hover{border-color:var(--color-gray-600,#4b5563)}"
     },
     {
       "name": "Auth input",
@@ -43,21 +62,21 @@
       "kind": "nav",
       "description": "Light-mode header link with the implemented blue underline interaction.",
       "html": "<a class=\"ds-nav\" href=\"#writing\">Writing</a>",
-      "css": ".ds-nav{position:relative;color:#4b5563;text-decoration:none;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;font-weight:500}.ds-nav::after{position:absolute;right:0;bottom:-.45rem;left:0;height:2px;border-radius:9999px;background:var(--color-brand-500,#5088c5);content:'';opacity:0;transform:scaleX(.35);transition:opacity 180ms ease,transform 180ms ease}.ds-nav:hover,.ds-nav:focus-visible{color:#111827}.ds-nav:hover::after,.ds-nav:focus-visible::after{opacity:1;transform:scaleX(1)}@media(prefers-reduced-motion:reduce){.ds-nav::after{transition:none}}"
+      "css": ".ds-nav{position:relative;color:#4b5563;text-decoration:none;font-family:'IBM Plex Sans',sans-serif;font-size:.875rem;font-weight:500}.ds-nav::after{position:absolute;right:0;bottom:-.45rem;left:0;height:2px;border-radius:9999px;background:var(--color-brand-500,#5088c5);content:'';opacity:0;transform:scaleX(.35);transition:opacity 180ms ease,transform 180ms ease}.ds-nav:hover,.ds-nav:focus-visible,.ds-nav.is-active{color:#111827}.ds-nav:hover::after,.ds-nav:focus-visible::after,.ds-nav.is-active::after{opacity:1;transform:scaleX(1)}.dark .ds-nav{color:var(--text-dark-secondary,#c5d0de)}.dark .ds-nav:hover,.dark .ds-nav:focus-visible,.dark .ds-nav.is-active{color:#fff}@media(prefers-reduced-motion:reduce){.ds-nav::after{transition:none}}"
     },
     {
       "name": "Public tag pill",
       "kind": "chip",
       "description": "Light-mode tag link from the shared tag-pill Blade component.",
       "html": "<a class=\"ds-tag\" href=\"#laravel\">Laravel</a>",
-      "css": ".ds-tag{display:inline-block;border:1px solid #e5e7eb;border-radius:9999px;background:#f9fafb;color:#6b7280;padding:.25rem .625rem;font-family:'IBM Plex Sans',sans-serif;font-size:.75rem;line-height:1rem;text-decoration:none}.ds-tag:hover{border-color:rgb(74 127 191 / .5);color:var(--color-archive-link,#245b91)}.ds-tag:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}"
+      "css": ".ds-tag{display:inline-block;border:1px solid #e5e7eb;border-radius:9999px;background:#f9fafb;color:#6b7280;padding:.25rem .625rem;font-family:'IBM Plex Sans',sans-serif;font-size:.75rem;line-height:1rem;text-decoration:none;transition:color 150ms ease,border-color 150ms ease}.ds-tag:hover{border-color:rgb(74 127 191 / .5);color:var(--color-archive-link,#245b91)}.ds-tag:focus-visible{outline:2px solid var(--color-brand-400,#6fa3d6);outline-offset:2px}.dark .ds-tag{border-color:var(--color-brand-700,#30363d);background:var(--color-brand-900,#1a1d21);color:var(--text-dark-muted,#a8b3c2)}.dark .ds-tag:hover{border-color:var(--color-brand-600,#4a7fbf);color:var(--color-brand-300,#7eb0dc)}"
     },
     {
       "name": "Public card",
       "kind": "card",
       "description": "Light-mode shared card surface; inner spacing belongs to its content.",
       "html": "<div class=\"ds-card\"><p class=\"ds-card-content\">Project content</p></div>",
-      "css": ".ds-card{border:1px solid #e5e7eb;border-radius:1rem;background:#fff;color:#1f2328;font-family:'IBM Plex Sans',sans-serif}.ds-card-content{margin:0;padding:1.5rem}"
+      "css": ".ds-card{border:1px solid #e5e7eb;border-radius:1rem;background:#fff;color:#1f2328;font-family:'IBM Plex Sans',sans-serif}.ds-card-content{margin:0;padding:1.5rem}.dark .ds-card{border-color:var(--color-surface-border,#263241);background:var(--color-surface-control,#111820);color:var(--color-gray-100,#f3f4f6)}"
     }
   ]
 }
