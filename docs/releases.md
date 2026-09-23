@@ -42,6 +42,14 @@ branch still points to it before deployment. Deployment and production
 promotion share a concurrency lock, so staging cannot be replaced while
 promotion is checking it. Running deployments are never auto-cancelled.
 
+If Forge accepts a staging trigger but the deploy verifier reaches its deadline,
+the workflow does not trigger another deployment. It checks the currently
+served full SHA and health endpoint, runs the smoke suite, and checks the SHA
+again. The staging run succeeds only when all these read-only recovery checks
+pass. Otherwise, inspect Forge before retrying because the original trigger may
+have completed late. This recovery path does not bypass the successful `main`
+staging-run requirement for production promotion.
+
 Forge checks out the requested revision before installing dependencies. Only
 after activation and the deployment verifier succeed does it publish
 `/deployment.json`, containing the full revision and Forge deployment ID. This
