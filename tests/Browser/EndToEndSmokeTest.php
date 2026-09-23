@@ -91,10 +91,13 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
     $headingIsVisible = $heading->isVisible();
     $copyIsVisible = $copy->isVisible();
 
-    expect($headingIsVisible)->toBeTrue();
-    expect($copyIsVisible)->toBeTrue();
-    expect($overlayOpacity)->toBeGreaterThanOrEqual(0.41);
-    expect($overlayOpacity)->toBeLessThan(0.43);
+    expect($headingIsVisible)
+        ->toBeTrue()
+        ->and($copyIsVisible)
+        ->toBeTrue()
+        ->and($overlayOpacity)
+        ->toBeGreaterThanOrEqual(0.41)
+        ->toBeLessThan(0.43);
 
     $page->assertNoJavaScriptErrors();
 });
