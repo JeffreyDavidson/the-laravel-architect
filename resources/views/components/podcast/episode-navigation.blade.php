@@ -5,7 +5,7 @@
         @if ($previous)
             <a
                 href="{{ route('podcast.episode', [$podcast, $previous]) }}"
-                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
+                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 flex-shrink-0 text-gray-600 transition-transform [--arrow-dir:-4px] group-hover:translate-x-[var(--arrow-dir,4px)] motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
@@ -28,7 +28,7 @@
         @if ($next)
             <a
                 href="{{ route('podcast.episode', [$podcast, $next]) }}"
-                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-all duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
+                class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center justify-end gap-3">
                     <div class="min-w-0">

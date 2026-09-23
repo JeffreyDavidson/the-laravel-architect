@@ -10,8 +10,8 @@
 @php($hasError = $errors->has($name))
 @php($selectedValue = old($name, $value))
 @php($selectClasses = $variant === 'compact'
-    ? 'h-11 w-full appearance-none rounded-lg border bg-white px-3 pr-10 text-sm text-gray-900 outline-none transition-all focus:ring-1 dark:bg-surface-control dark:text-gray-200'
-    : 'w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-base text-gray-900 outline-none transition-all focus:ring-2 dark:bg-surface-control dark:text-gray-200 sm:text-sm')
+    ? 'h-11 w-full appearance-none rounded-lg border bg-white px-3 pr-10 text-sm text-gray-900 outline-none transition-[border-color,box-shadow] focus:ring-1 dark:bg-surface-control dark:text-gray-200'
+    : 'w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-base text-gray-900 outline-none transition-[border-color,box-shadow] focus:ring-2 dark:bg-surface-control dark:text-gray-200 sm:text-sm')
 
 <div class="relative">
     <select

@@ -25,7 +25,7 @@
                 href="{{ $link['url'] }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-all dark:border-surface-border dark:text-gray-400 {{ $link['hover'] }}"
+                class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-[border-color,color,background-color] dark:border-surface-border dark:text-gray-400 {{ $link['hover'] }}"
                 title="{{ $link['label'] }}"
                 aria-label="{{ $link['label'] }}"
             >
