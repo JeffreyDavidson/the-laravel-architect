@@ -68,6 +68,31 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
     }
 });
 
+it('keeps homepage hero copy readable over the artwork on mobile', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
+    $hero = $page->page()->locator('[data-home-hero]');
+    $overlayOpacity = $page->page()->evaluate('() => {
+        const hero = document.querySelector("[data-home-hero]");
+        const overlayColor = getComputedStyle(hero, "::after").backgroundColor;
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        context.fillStyle = overlayColor;
+        context.fillRect(0, 0, 1, 1);
+
+        return context.getImageData(0, 0, 1, 1).data[3] / 255;
+    }');
+
+    expect($hero->getByRole('heading', ['level' => 1])->isVisible())->toBeTrue()
+        ->and($hero->getByText('Architecture, modernization, and hands-on development for teams carrying real production complexity.')->isVisible())->toBeTrue()
+        ->and($overlayOpacity)->toBeGreaterThanOrEqual(0.41)
+        ->and($overlayOpacity)->toBeLessThan(0.43);
+
+    $page->assertNoJavaScriptErrors();
+});
+
 it('initializes homepage reveal animations', function (): void {
     $this->withVite();
 
