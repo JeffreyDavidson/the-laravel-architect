@@ -27,8 +27,10 @@ it('prioritizes main destinations and keeps secondary links discoverable', funct
     }
 
     foreach (['Podcast', 'Uses'] as $label) {
-        expect(str_contains($header, ">{$label}<"))->toBeFalse();
-        expect(str_contains($content, ">{$label}<"))->toBeTrue();
+        expect(str_contains($header, ">{$label}<"))
+            ->toBeFalse()
+            ->and(str_contains($content, ">{$label}<"))
+            ->toBeTrue();
     }
 
     $aboutPosition = strpos($header, '>About<');
@@ -39,7 +41,10 @@ it('prioritizes main destinations and keeps secondary links discoverable', funct
         throw new RuntimeException('The home page header did not contain its primary and utility links.');
     }
 
-    expect($aboutPosition)->toBeLessThan($searchPosition);
-    expect($searchPosition)->toBeLessThan($archivePosition);
-    expect(str_contains($content, 'Discuss a Project'))->toBeTrue();
+    expect($aboutPosition)
+        ->toBeLessThan($searchPosition)
+        ->and($searchPosition)
+        ->toBeLessThan($archivePosition)
+        ->and(str_contains($content, 'Discuss a Project'))
+        ->toBeTrue();
 });

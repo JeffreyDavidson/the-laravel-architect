@@ -19,6 +19,6 @@ it('forces PHPUnit to use an isolated testing database', function (): void {
             preg_quote($value, '/'),
         );
 
-        expect(preg_match($pattern, $configuration))->toBe(1);
+        expect($configuration)->toMatch($pattern);
     }
 });
