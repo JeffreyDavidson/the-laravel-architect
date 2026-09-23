@@ -55,11 +55,21 @@ jobs:
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
               run: node scripts/forge-deployment.mjs diagnose staging "$EXPECTED_REVISION"
             - name: Deploy and verify the tested revision
+              id: deployment
+              # Forge can finish after the verification window. If verification times
+              # out, let the read-only recovery check determine the actual state.
+              continue-on-error: true
               env:
                   FORGE_DEPLOY_HOOK: ${{ secrets.FORGE_DEPLOY_HOOK }}
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
               run: node scripts/forge-deployment.mjs deploy staging "$EXPECTED_REVISION"
+            - name: Recover by verifying the currently served revision
+              if: steps.deployment.outcome == 'failure'
+              env:
+                  CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+                  CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+              run: node scripts/forge-deployment.mjs verify staging "$EXPECTED_REVISION"
             - name: Run application smoke checks
               env:
                   PRODUCTION_BASE_URL: https://staging.thelaravelarchitect.com
@@ -70,6 +80,11 @@ jobs:
               env:
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+                  DEPLOYMENT_OUTCOME: ${{ steps.deployment.outcome }}
               run: |
                   node scripts/forge-deployment.mjs verify staging "$EXPECTED_REVISION"
-                  printf 'Staging verified: `%s`. Review this revision before manual production promotion.\n' "$EXPECTED_REVISION" >> "$GITHUB_STEP_SUMMARY"
+                  if [[ "$DEPLOYMENT_OUTCOME" == "failure" ]]; then
+                    printf 'Forge deployment was not verified before the 11-minute deadline; read-only verification, smoke checks, and the final revision check passed for `%s`. Review this revision before manual production promotion.\n' "$EXPECTED_REVISION" >> "$GITHUB_STEP_SUMMARY"
+                  else
+                    printf 'Staging verified: `%s`. Review this revision before manual production promotion.\n' "$EXPECTED_REVISION" >> "$GITHUB_STEP_SUMMARY"
+                  fi

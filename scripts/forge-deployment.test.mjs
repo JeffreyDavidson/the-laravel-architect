@@ -27,6 +27,22 @@ test('staging workflow uses the guarded deployment operation instead of a separa
     assert.doesNotMatch(workflow, /--request (?:POST|OPTIONS)|forge-deployment\.mjs wait staging/);
 });
 
+test('staging recovers from an unverified Forge trigger with read-only checks', () => {
+    const workflow = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
+    const deployStep = workflow.match(/- name: Deploy and verify the tested revision[\s\S]*?(?=\n            - name:)/)?.[0];
+    const recoveryStep = workflow.match(/- name: Recover by verifying the currently served revision[\s\S]*?(?=\n            - name:)/)?.[0];
+    const promotion = readFileSync(new URL('../.github/workflows/promote-production.yml', import.meta.url), 'utf8');
+
+    assert.ok(deployStep);
+    assert.match(deployStep, /continue-on-error: true/);
+    assert.ok(recoveryStep);
+    assert.match(recoveryStep, /if: steps\.deployment\.outcome == 'failure'/);
+    assert.match(recoveryStep, /forge-deployment\.mjs verify staging "\$EXPECTED_REVISION"/);
+    assert.doesNotMatch(recoveryStep, /FORGE_DEPLOY_HOOK|forge-deployment\.mjs deploy/);
+    assert.match(workflow, /Run application smoke checks[\s\S]*?Recheck the serving revision after smoke tests/);
+    assert.match(promotion, /\.event == "workflow_run"/);
+});
+
 test('release safeguards keep feature integration, pre-merge staging, and production promotion on their intended refs', () => {
     const ci = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
     const staging = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
