@@ -1,14 +1,14 @@
 @php
-    $links = [
+    $primaryLinks = [
         ['label' => 'Services', 'route' => 'services', 'active' => 'services'],
         ['label' => 'Projects', 'route' => 'projects.index', 'active' => 'projects.*'],
         ['label' => 'Writing', 'route' => 'blog.index', 'active' => 'blog.*'],
-        ['label' => 'Podcast', 'route' => 'podcast.index', 'active' => 'podcast.*'],
         ['label' => 'About', 'route' => 'about', 'active' => 'about'],
+    ];
+    $utilityLinks = [
         ['label' => 'Search', 'route' => 'search', 'active' => 'search'],
         ['label' => 'Archive', 'route' => 'archive.index', 'active' => 'archive.*'],
     ];
-    $mobileLinks = [...$links, ['label' => 'Uses', 'route' => 'uses', 'active' => 'uses']];
 @endphp
 
 <nav
@@ -51,8 +51,11 @@
                 </svg>
             </button>
 
-            <div class="hidden items-center gap-8 lg:flex">
-                <x-site.nav-links :links="$links" />
+            <div class="hidden items-center gap-6 lg:flex">
+                <x-site.nav-links :links="$primaryLinks" />
+                <div class="dark:border-brand-800 flex items-center gap-4 border-l border-gray-200 pl-5">
+                    <x-site.nav-links :links="$utilityLinks" secondary />
+                </div>
                 <x-site.theme-toggle />
                 <x-button
                     href="{{ route('contact') }}"
@@ -70,7 +73,10 @@
             class="dark:border-brand-800/50 border-t border-gray-200 py-4 lg:hidden"
         >
             <div class="flex flex-col gap-3">
-                <x-site.nav-links :links="$mobileLinks" mobile />
+                <x-site.nav-links :links="$primaryLinks" mobile />
+                <div class="dark:border-brand-800 flex flex-col gap-3 border-t border-gray-200 pt-3">
+                    <x-site.nav-links :links="$utilityLinks" mobile secondary />
+                </div>
                 <x-site.theme-toggle mobile />
                 <x-button
                     href="{{ route('contact') }}"
