@@ -74,20 +74,32 @@ it('returns the required security headers on public routes', function (): void {
     foreach ($routes as $route) {
         $request = productionSmokeRequest($baseUrl);
         $response = $request->get($route);
+
+        expect($response->successful())
+            ->toBeTrue(
+                "Expected {$route} to return a successful response; received HTTP {$response->status()}."
+            );
+
         /** @var array<string, list<string>> $headers */
         $headers = $response->headers();
         $frameOptionHeader = $headers['x-frame-options'][0] ?? '';
         $frameOptions = array_map(trim(...), explode(',', $frameOptionHeader));
         $contentSecurityPolicy = $headers['content-security-policy'][0] ?? '';
 
-        $frameExpectation = expect($frameOptions);
-        $notExpectation = $frameExpectation->not;
-        $notExpectation->toBe(['']);
+        expect($frameOptions)
+            ->not
+            ->toBe(
+                [''],
+                "Expected {$route} to include a non-empty X-Frame-Options header; received HTTP {$response->status()}."
+            );
         $frameExpectation = expect($frameOptions);
         $eachExpectation = $frameExpectation->each;
         $eachExpectation->toBeIn(['SAMEORIGIN', 'DENY']);
-        expect($contentSecurityPolicy)->toMatch("/frame-ancestors ('self'|'none')/")
-            ->and($headers['strict-transport-security'][0] ?? '')->toContain('max-age=31536000')
-            ->and($headers['referrer-policy'][0] ?? '')->toBe('strict-origin-when-cross-origin');
+        expect($contentSecurityPolicy)
+            ->toMatch("/frame-ancestors ('self'|'none')/")
+            ->and($headers['strict-transport-security'][0] ?? '')
+            ->toContain('max-age=31536000')
+            ->and($headers['referrer-policy'][0] ?? '')
+            ->toBe('strict-origin-when-cross-origin');
     }
 });

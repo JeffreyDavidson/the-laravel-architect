@@ -13,6 +13,7 @@ use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Resources\SocialProfiles\SocialProfileResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
@@ -102,6 +103,7 @@ class AdminPanelProvider extends PanelProvider
                         ]),
                     NavigationGroup::make('Audience')
                         ->items([
+                            ...SocialProfileResource::getNavigationItems(),
                             ...SubscriberResource::getNavigationItems(),
                             ...ContactInquiryResource::getNavigationItems(),
                         ]),
