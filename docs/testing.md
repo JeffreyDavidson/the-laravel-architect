@@ -37,9 +37,11 @@ checks, run `php artisan content:scale-test seed`, then remove its prefixed
 records with `php artisan content:scale-test clear`. This creates one podcast,
 300 episodes, 100 posts, and 50 projects without audio or uploaded files.
 
-Compare the same `/blog`, `/podcast`, and `/projects` requests before and after
-seeding. Record response timings, query count and duration, and memory use;
-repeat requests to distinguish first-request cost from steady-state behavior.
+Compare the same `/blog`, `/podcasts/scale-test-podcast`, and `/projects`
+requests before and after seeding. The podcast show route exercises its episode
+listing; `/podcasts` is the podcast index. Record response timings, query count
+and duration, and memory use; repeat requests to distinguish first-request cost
+from steady-state behavior.
 Use staging only for an approved measurement window, with
 `content:scale-test seed --staging` and `content:scale-test clear --staging`:
 its public pages will show the synthetic published records until cleanup runs.
