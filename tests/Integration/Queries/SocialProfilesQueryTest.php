@@ -10,9 +10,9 @@ pest()->use(RefreshDatabase::class);
 it('preserves the current social links and placements after migration', function () {
     $query = app(SocialProfilesQuery::class);
 
-    expect($query->forFooter()->pluck('platform')->map(fn (SocialPlatform $platform): string => $platform->value)->all())
+    expect($query->forFooter()->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)->all())
         ->toBe(['github', 'x', 'youtube', 'bluesky', 'instagram', 'facebook'])
-        ->and($query->forContactPage()->pluck('platform')->map(fn (SocialPlatform $platform): string => $platform->value)->all())
+        ->and($query->forContactPage()->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)->all())
         ->toBe(['github', 'x', 'youtube', 'bluesky']);
 });
 
@@ -62,4 +62,15 @@ function createSocialProfilesQueryRecord(
         'show_on_contact' => $showOnContact,
         'sort_order' => $sortOrder,
     ]);
+}
+
+function socialProfilePlatform(SocialProfile $profile): SocialPlatform
+{
+    $platform = $profile->getAttribute('platform');
+
+    if (! $platform instanceof SocialPlatform) {
+        throw new LogicException('The social profile platform must be cast to its enum.');
+    }
+
+    return $platform;
 }
