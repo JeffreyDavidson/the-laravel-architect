@@ -57,7 +57,7 @@ it('escapes a profile display label on the contact page', function () {
 
     $this->get(route('contact'))
         ->assertSee('<img src=x onerror=alert(1)>')
-        ->assertDontSee('<img src=x onerror=alert(1)>', false);
+        ->assertDontSeeHtml('<img src=x onerror=alert(1)>');
 });
 
 function createSocialLinksProfile(
