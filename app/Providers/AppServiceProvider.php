@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Tag;
+use App\Services\PublicPageBenchmark;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
@@ -40,10 +41,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->afterResolving(ClientBuilder::class, function (ClientBuilder $clientBuilder): void {
-            $clientBuilder->getOptions()
-                ->setBeforeSendCallback($this->app->make(RedactSentryEvent::class))
-                ->setBeforeBreadcrumbCallback($this->app->make(RedactSentryBreadcrumb::class));
+        $application = $this->app;
+        $application->singleton(PublicPageBenchmark::class);
+
+        $application->afterResolving(ClientBuilder::class, function (ClientBuilder $clientBuilder) use ($application): void {
+            $options = $clientBuilder->getOptions();
+            $beforeSend = $application->make(RedactSentryEvent::class);
+            $beforeBreadcrumb = $application->make(RedactSentryBreadcrumb::class);
+            $options->setBeforeSendCallback($beforeSend);
+            $options->setBeforeBreadcrumbCallback($beforeBreadcrumb);
         });
     }
 
@@ -73,15 +79,27 @@ class AppServiceProvider extends ServiceProvider
         Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
 
         Event::listen(DiagnosingHealth::class, function (): void {
-            DB::table('migrations')->limit(1)->exists();
+            $migrations = DB::table('migrations');
+            $migrations->limit(1);
+            $migrations->exists();
 
             if (config('health.runtime.enabled') === true) {
                 app(RuntimeHealthMonitor::class)->ensureHealthy();
             }
         });
 
-        RateLimiter::for('newsletter', fn (Request $request) => Limit::perHour(5)->by($request->ip()));
-        RateLimiter::for('newsletter-confirm', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+        RateLimiter::for('newsletter', function (Request $request): Limit {
+            $ipAddress = $request->ip();
+            $limit = Limit::perHour(5);
+
+            return $limit->by($ipAddress);
+        });
+        RateLimiter::for('newsletter-confirm', function (Request $request): Limit {
+            $ipAddress = $request->ip();
+            $limit = Limit::perMinute(10);
+
+            return $limit->by($ipAddress);
+        });
 
         $appUrl = config('app.url');
 
