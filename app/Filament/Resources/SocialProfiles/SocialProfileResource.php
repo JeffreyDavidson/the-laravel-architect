@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialProfiles;
 
+use App\Enums\SocialPlatform;
 use App\Filament\Resources\SocialProfiles\Pages\CreateSocialProfile;
 use App\Filament\Resources\SocialProfiles\Pages\EditSocialProfile;
 use App\Filament\Resources\SocialProfiles\Pages\ListSocialProfiles;
@@ -52,7 +53,15 @@ class SocialProfileResource extends Resource
             return static::getModelLabel();
         }
 
-        return $record->platform->getLabel().(filled($record->label) ? ' — '.$record->label : '');
+        $platformValue = $record->getAttribute('platform');
+        $platform = match (true) {
+            $platformValue instanceof SocialPlatform => $platformValue,
+            is_string($platformValue) => SocialPlatform::tryFrom($platformValue),
+            default => null,
+        };
+        $platformLabel = $platform?->getLabel() ?? static::getModelLabel();
+
+        return $platformLabel.(filled($record->label) ? ' — '.$record->label : '');
     }
 
     public static function getPages(): array

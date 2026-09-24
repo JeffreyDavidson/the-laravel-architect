@@ -13,7 +13,7 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class HomeViewModel
 {
-    public function __construct(private SocialProfilesQuery $socialProfilesQuery) {}
+    public function __construct(private readonly SocialProfilesQuery $socialProfilesQuery) {}
 
     /**
      * @return array{

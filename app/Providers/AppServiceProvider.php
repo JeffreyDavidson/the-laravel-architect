@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::component(SocialLinks::class, 'social-links');
+        Blade::components([SocialLinks::class]);
 
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
             ->where('slug->'.App::getLocale(), $value)
