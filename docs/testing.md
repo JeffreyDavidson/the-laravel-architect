@@ -26,3 +26,22 @@ Staging must use the combined `deploy` operation: it validates the exact Forge t
 Contact integration tests use the real test database queue and inject failure at each notification insert. They verify that no inquiry or job remains after failure and that a retry creates exactly one inquiry and two jobs. Publication tests cover past, current, future, and missing dates, including dashboard counts and linked results. Admin browser tests exercise appearance controls, hit-test the open account menu against underlying content, and check the collapsed create action's alignment and navigation.
 
 Keep command-level coverage for credential forwarding, GET requests, missing credentials, login redirects, HTTP errors, curl failures, exit codes, and secret-safe output. Helper-only tests cannot catch argument mismatches in the command dispatcher. A successful preflight requires HTTP 200; it does not replace the deployed-revision verification or live staging smoke checks.
+
+## Local content and scale checks
+
+The default `db:seed` creates the local administrator only. For representative
+public editorial content, use a reviewed public-content archive; the archive
+contains text and metadata but not uploaded media, and importing it replaces
+the target's current public content. For repeatable listing and pagination
+checks, run `php artisan content:scale-test seed`, then remove its prefixed
+records with `php artisan content:scale-test clear`. This creates one podcast,
+300 episodes, 100 posts, and 50 projects without audio or uploaded files.
+
+Compare the same `/blog`, `/podcast`, and `/projects` requests before and after
+seeding. Record response timings, query count and duration, and memory use;
+repeat requests to distinguish first-request cost from steady-state behavior.
+Use staging only for an approved measurement window, with
+`content:scale-test seed --staging` and `content:scale-test clear --staging`:
+its public pages will show the synthetic published records until cleanup runs.
+Do not add public-page caching until measurements show a material benefit and
+its invalidation behavior has been designed and verified.
