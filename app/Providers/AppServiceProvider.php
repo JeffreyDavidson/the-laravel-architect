@@ -14,11 +14,13 @@ use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
 use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use App\Support\Seo\StructuredDataBuilder;
+use App\View\Components\SocialLinks;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
@@ -50,6 +52,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Blade::components([SocialLinks::class]);
+
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
             ->where('slug->'.App::getLocale(), $value)
             ->firstOrFail());

@@ -1,50 +1,35 @@
-@props(['variant' => 'buttons'])
-
-@php
-    $buttonLinks = [
-        ['name' => 'github', 'url' => 'https://github.com/JeffreyDavidson', 'label' => 'GitHub', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-brand-600/50 hover:bg-brand-600/5'],
-        ['name' => 'x-twitter', 'url' => 'https://x.com/thelaravelarch', 'label' => 'X / Twitter', 'hover' => 'hover:text-gray-900 dark:hover:text-white hover:border-brand-600/50 hover:bg-brand-600/5'],
-        ['name' => 'youtube', 'url' => config('public-site.youtube.url'), 'label' => 'YouTube', 'hover' => 'hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/5'],
-        ['name' => 'bluesky', 'url' => 'https://bsky.app/profile/thelaravelarch', 'label' => 'Bluesky', 'hover' => 'hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/5'],
-        ['name' => 'instagram', 'url' => 'https://instagram.com/thelaravelarch', 'label' => 'Instagram', 'hover' => 'hover:text-pink-400 hover:border-pink-400/50 hover:bg-pink-400/5'],
-        ['name' => 'facebook', 'url' => 'https://facebook.com/thelaravelarch', 'label' => 'Facebook', 'hover' => 'hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-500/5'],
-    ];
-
-    $listLinks = [
-        ['name' => 'github', 'url' => 'https://github.com/JeffreyDavidson', 'label' => 'GitHub'],
-        ['name' => 'x-twitter', 'url' => 'https://x.com/thelaravelarch', 'label' => '@thelaravelarch'],
-        ['name' => 'bluesky', 'url' => 'https://bsky.app/profile/thelaravelarch', 'label' => 'Bluesky'],
-        ['name' => 'youtube', 'url' => config('public-site.youtube.url'), 'label' => 'YouTube'],
-    ];
-@endphp
-
 @if ($variant === 'buttons')
-    <div class="flex flex-wrap items-center gap-3">
-        @foreach ($buttonLinks as $link)
-            <a
-                href="{{ $link['url'] }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-[border-color,color,background-color] dark:border-surface-border dark:text-gray-400 {{ $link['hover'] }}"
-                title="{{ $link['label'] }}"
-                aria-label="{{ $link['label'] }}"
-            >
-                <x-svg-icon :name="$link['name']" class="h-4 w-4" />
-            </a>
-        @endforeach
-    </div>
+    @if ($profiles->isNotEmpty())
+        <div class="flex flex-wrap items-center gap-3">
+            @foreach ($profiles as $profile)
+                @php($platformLabel = $profile->platform->getLabel())
+                <a
+                    href="{{ $profile->url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="relative flex size-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-[border-color,color,background-color] dark:border-surface-border dark:text-gray-400 {{ $profile->platform->hoverClasses() }}"
+                    title="{{ $platformLabel }}"
+                    aria-label="{{ filled($profile->label) ? $platformLabel.': '.$profile->label : $platformLabel }}"
+                >
+                    <x-svg-icon :name="$profile->platform->icon()" class="h-4 w-4" />
+                </a>
+            @endforeach
+        </div>
+    @endif
 @elseif ($variant === 'list')
-    <div class="space-y-3">
-        @foreach ($listLinks as $link)
-            <a
-                href="{{ $link['url'] }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-3 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-                <x-svg-icon :name="$link['name']" class="h-5 w-5 flex-shrink-0" />
-                {{ $link['label'] }}
-            </a>
-        @endforeach
-    </div>
+    @if ($profiles->isNotEmpty())
+        <div class="space-y-3">
+            @foreach ($profiles as $profile)
+                <a
+                    href="{{ $profile->url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-3 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                >
+                    <x-svg-icon :name="$profile->platform->icon()" class="h-5 w-5 flex-shrink-0" />
+                    {{ $profile->label ?: $profile->platform->getLabel() }}
+                </a>
+            @endforeach
+        </div>
+    @endif
 @endif

@@ -7,8 +7,4 @@ return [
         'filament' => 5,
     ],
 
-    'youtube' => [
-        'url' => 'https://youtube.com/@thelaravelarchitect',
-        'status' => 'active',
-    ],
 ];
