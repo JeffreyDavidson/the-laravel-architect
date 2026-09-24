@@ -8,6 +8,8 @@ use App\Enums\SocialPlatform;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class SocialProfilesTable
@@ -17,13 +19,16 @@ class SocialProfilesTable
         return $table
             ->columns([
                 TextColumn::make('platform')
-                    ->formatStateUsing(fn (SocialPlatform $state): string => $state->getLabel())
+                    ->searchable()
+                    ->formatStateUsing(fn (SocialPlatform $state): string => self::platformLabel($state))
                     ->badge(),
                 TextColumn::make('label')
                     ->label('Display label')
+                    ->searchable()
                     ->placeholder('Platform name'),
                 TextColumn::make('url')
                     ->label('Profile URL')
+                    ->searchable()
                     ->url(fn (string $state): string => $state, shouldOpenInNewTab: true)
                     ->limit(48),
                 ToggleColumn::make('is_enabled')
@@ -36,10 +41,21 @@ class SocialProfilesTable
                     ->label('Order')
                     ->sortable(),
             ])
+            ->filters([
+                SelectFilter::make('platform')
+                    ->options(SocialPlatform::class),
+                TernaryFilter::make('is_enabled')
+                    ->label('Enabled'),
+            ])
             ->recordActions([
                 EditAction::make(),
             ])
             ->reorderable('sort_order')
             ->defaultSort('sort_order');
+    }
+
+    private static function platformLabel(SocialPlatform $platform): string
+    {
+        return $platform->getLabel();
     }
 }
