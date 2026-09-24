@@ -2,15 +2,19 @@
 
 namespace App\ViewModels;
 
+use App\Enums\SocialPlatform;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Queries\SocialProfilesQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class HomeViewModel
 {
+    public function __construct(private SocialProfilesQuery $socialProfilesQuery) {}
+
     /**
      * @return array{
      *     latestPosts: Collection<int, Post>,
@@ -18,6 +22,7 @@ class HomeViewModel
      *     featuredProjects: Collection<int, Project>,
      *     podcast: Podcast|null,
      *     latestYouTubeVideos: Collection<int, Video>,
+     *     youtubeProfileUrl: string|null,
      *     publishedPostCount: int,
      *     publishedProjectCount: int,
      *     seoSource: SEOData,
@@ -46,6 +51,7 @@ class HomeViewModel
                 ->latest('published_at')
                 ->take(3)
                 ->get(),
+            'youtubeProfileUrl' => $this->socialProfilesQuery->enabledUrlFor(SocialPlatform::YouTube),
             'publishedPostCount' => Post::published()->count(),
             'publishedProjectCount' => Project::published()->count(),
             'seoSource' => new SEOData(

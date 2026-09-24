@@ -697,7 +697,7 @@ it('keeps public technology and channel details consistent', function () {
         ->assertSee('Laravel '.configuredString(config('public-site.technology.laravel')))
         ->assertSee('Filament '.configuredString(config('public-site.technology.filament')));
 
-    $this->get(route('home'))->assertOk()->assertSeeHtml(configuredString(config('public-site.youtube.url')))
+    $this->get(route('home'))->assertOk()->assertSeeHtml('https://youtube.com/@thelaravelarchitect')
         ->assertSee('Away from the editor');
 });
 

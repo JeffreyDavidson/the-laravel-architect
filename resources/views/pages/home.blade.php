@@ -310,9 +310,9 @@
                             <x-home.youtube-thumbnail-card :video="$video" />
                         @endforeach
                     </div>
-                @else
+                @elseif ($youtubeProfileUrl)
                     <a
-                        href="{{ config('public-site.youtube.url') }}"
+                        href="{{ $youtubeProfileUrl }}"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="group focus-visible:outline-brand-500 dark:border-brand-700 [&_svg]:mb-5 [&_svg]:text-brand-700 dark:[&_svg]:text-brand-200 [&_h3]:text-xl [&_h3]:leading-tight [&_h3]:text-gray-900 dark:[&_h3]:text-white lg:[&_h3]:text-2xl [&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-gray-600 dark:[&_p]:text-gray-300 block border-t border-gray-200 py-6 focus-visible:outline-2 focus-visible:outline-offset-4 md:border-0 md:p-6"
