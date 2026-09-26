@@ -16,13 +16,17 @@ pest()->use(RefreshDatabase::class);
 it('does not query unrelated content types for a filtered search', function () {
     DB::enableQueryLog();
 
-    $this->get(route('search', ['q' => 'Architecture', 'type' => 'projects']))->assertOk();
+    $this->get(route('search', ['q' => 'Architecture', 'type' => 'projects']))
+        ->assertOk();
 
-    $queries = collect(DB::getQueryLog())->pluck('query')->implode("\n");
+    $queries = collect(DB::getQueryLog())
+        ->pluck('query')
+        ->implode("\n");
     DB::disableQueryLog();
 
     expect($queries)->toContain('from "projects"')
-        ->not->toContain('from "posts"', 'from "podcasts"', 'from "episodes"', 'from "newsletter_issues"', 'from "videos"');
+        ->not
+        ->toContain('from "posts"', 'from "podcasts"', 'from "episodes"', 'from "newsletter_issues"', 'from "videos"');
 });
 
 it('searches published content across every public content type', function () {
@@ -75,7 +79,9 @@ it('searches published content across every public content type', function () {
         ->assertOk()
         ->assertSee('5 results for')
         ->assertSeeHtml('>Laravel</mark> Search Patterns')
-        ->assertSee($project->title)
+        ->assertSee(
+            $project->title,
+        )
         ->assertSeeHtml('>Laravel</mark> Conversations')
         ->assertSeeHtml('Searching with <mark')
         ->assertSeeHtml('>Laravel</mark> Search on YouTube')
@@ -83,7 +89,9 @@ it('searches published content across every public content type', function () {
         ->assertSeeHtml(route('projects.show', $project))
         ->assertSeeHtml(route('podcast.show', $podcast))
         ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]))
-        ->assertSeeHtml($video->youtube_url)
+        ->assertSeeHtml(
+            $video->youtube_url,
+        )
         ->assertDontSee('Private Laravel Search Notes')
         ->assertSeeHtml('<meta name="robots" content="noindex, follow">');
 });
@@ -115,13 +123,34 @@ it('filters search results by content type and highlights matching text', functi
 });
 
 it('rejects an unknown search content type', function () {
-    $this->get(route('search', ['q' => 'Laravel', 'type' => 'unknown']))->assertNotFound();
+    $this->get(route('search', ['q' => 'Laravel', 'type' => 'unknown']))
+        ->assertNotFound();
+});
+
+it('rate limits repeated searches from the same visitor', function () {
+    foreach (range(1, 30) as $attempt) {
+        $this->get(route('search', ['q' => "Laravel {$attempt}"]))
+            ->assertOk();
+    }
+
+    $this->get(route('search', ['q' => 'Laravel']))
+        ->assertTooManyRequests();
+});
+
+it('does not rate limit the empty search page', function () {
+    foreach (range(1, 31) as $attempt) {
+        $this->get(route('search'))
+            ->assertOk();
+    }
 });
 
 it('renders the empty search state and rejects oversized queries', function () {
-    $this->get(route('search'))->assertOk()->assertSee('Search across the public archive');
+    $this->get(route('search'))
+        ->assertOk()
+        ->assertSee('Search across the public archive');
 
-    $this->get(route('search', ['q' => str_repeat('x', 121)]))->assertNotFound();
+    $this->get(route('search', ['q' => str_repeat('x', 121)]))
+        ->assertNotFound();
 });
 
 it('finds published newsletter issues', function () {
@@ -136,7 +165,9 @@ it('finds published newsletter issues', function () {
 
     $this->get(route('search', ['q' => 'dispatching']))
         ->assertOk()
-        ->assertSee($issue->title)
+        ->assertSee(
+            $issue->title,
+        )
         ->assertSeeHtml(route('newsletter.issue', $issue));
 });
 
@@ -159,6 +190,8 @@ it('finds episodes by transcript content', function () {
 
     $this->get(route('search', ['q' => 'event-driven']))
         ->assertOk()
-        ->assertSee($episode->title)
+        ->assertSee(
+            $episode->title,
+        )
         ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
 });

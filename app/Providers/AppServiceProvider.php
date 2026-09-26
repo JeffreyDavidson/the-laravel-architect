@@ -94,6 +94,16 @@ class AppServiceProvider extends ServiceProvider
 
             return $limit->by($ipAddress);
         });
+        RateLimiter::for('search', function (Request $request): Limit {
+            if (blank($request->query('q'))) {
+                return Limit::none();
+            }
+
+            $ipAddress = $request->ip();
+            $limit = Limit::perMinute(30);
+
+            return $limit->by($ipAddress);
+        });
         RateLimiter::for('newsletter-confirm', function (Request $request): Limit {
             $ipAddress = $request->ip();
             $limit = Limit::perMinute(10);
