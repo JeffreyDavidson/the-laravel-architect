@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
+use Spatie\Activitylog\Support\LogOptions;
 
 /** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
@@ -32,6 +33,27 @@ class Video extends Model
             'like_count' => 'integer',
             'comment_count' => 'integer',
         ];
+    }
+
+    /**
+     * Synchronized YouTube statistics and descriptions change outside the
+     * editor, so only editorial attributes are recorded.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('application')
+            ->logOnly([
+                'youtube_id',
+                'title',
+                'slug',
+                'thumbnail_url',
+                'duration',
+                'is_featured',
+                'published_at',
+            ])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 
     /** @return Attribute<string, never> */

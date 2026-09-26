@@ -2,6 +2,7 @@
 
 use App\Jobs\RecordQueueHeartbeat;
 use App\Models\ContactInquiry;
+use App\Models\Subscriber;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 use Laravel\Nightwatch\Console\Sample;
@@ -10,7 +11,9 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
 })
-    ->name('runtime-health:heartbeat:'.app()->environment())
+    ->name(
+        'runtime-health:heartbeat:'.app()->environment(),
+    )
     ->everyMinute()
     ->tap(Sample::rate(0.1))
     ->withoutOverlapping(5)
@@ -46,9 +49,19 @@ Schedule::command('queue:prune-failed', [
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
-Schedule::command('model:prune', ['--model' => ContactInquiry::class])
+Schedule::command('model:prune', ['--model' => [ContactInquiry::class, Subscriber::class]])
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
-Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
-Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();
+Schedule::command('activitylog:clean')
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
+Schedule::command('youtube:stats')
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
+Schedule::command('youtube:sync')
+    ->weekly()
+    ->withoutOverlapping()
+    ->onOneServer();

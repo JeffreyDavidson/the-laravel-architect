@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Tags\HasTags;
 
@@ -41,7 +40,6 @@ class Post extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use HasTags;
-    use LogsActivity;
     use ManagesStoredMedia;
     use TracksActivity;
 
@@ -85,6 +83,7 @@ class Post extends Model implements Publishable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->useLogName('application')
             ->logOnly([
                 'title',
                 'slug',

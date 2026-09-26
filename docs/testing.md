@@ -42,6 +42,12 @@ requests before and after seeding. The podcast show route exercises its episode
 listing; `/podcasts` is the podcast index. Record response timings, query count
 and duration, and memory use; repeat requests to distinguish first-request cost
 from steady-state behavior.
+For a repeatable local application-level sample, seed the scale-test content and
+run `php artisan content:benchmark --iterations=5`. The command measures those
+three routes through Laravel's HTTP kernel, reports first-request metrics and
+the average of subsequent requests, and makes no content changes. It is limited
+to `APP_ENV=local`; it does not measure the Herd/PHP-FPM/network overhead or
+production cache behavior.
 Use staging only for an approved measurement window, with
 `content:scale-test seed --staging` and `content:scale-test clear --staging`:
 its public pages will show the synthetic published records until cleanup runs.

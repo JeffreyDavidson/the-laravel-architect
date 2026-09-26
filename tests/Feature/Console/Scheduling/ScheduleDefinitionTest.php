@@ -15,6 +15,8 @@ it('schedules operational monitoring and maintenance', function () {
         ->toContain('media:verify-responsive-images')
         ->toContain('media:find-orphans')
         ->toContain('queue:prune-failed --hours=168')
+        ->toContain('activitylog:clean')
+        ->toContain("--model='App\Models\Subscriber'")
         ->not
         ->toContain('app:monitor-failed-jobs');
 });
