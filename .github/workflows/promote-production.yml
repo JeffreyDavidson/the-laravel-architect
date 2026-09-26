@@ -71,7 +71,7 @@ jobs:
             - name: Run production smoke checks
               env:
                   PRODUCTION_BASE_URL: https://thelaravelarchitect.com
-              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
+              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact --display-warnings --display-deprecations
             - name: Recheck the serving production revision
               run: |
                   node scripts/forge-deployment.mjs verify production "$EXPECTED_REVISION"

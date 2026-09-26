@@ -75,7 +75,7 @@ jobs:
                   PRODUCTION_BASE_URL: https://staging.thelaravelarchitect.com
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
                   CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
+              run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact --display-warnings --display-deprecations
             - name: Recheck the serving revision after smoke tests
               env:
                   CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}

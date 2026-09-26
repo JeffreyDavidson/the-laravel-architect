@@ -53,4 +53,4 @@ jobs:
       - name: Run bounded production smoke tests
         env:
           PRODUCTION_BASE_URL: https://thelaravelarchitect.com
-        run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact
+        run: vendor/bin/pest tests/Feature/Http/ProductionSmokeTest.php --group=production --compact --display-warnings --display-deprecations
