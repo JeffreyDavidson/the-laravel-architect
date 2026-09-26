@@ -17,6 +17,7 @@ use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use App\Support\Seo\StructuredDataBuilder;
 use App\View\Components\SocialLinks;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
@@ -58,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::preventLazyLoading(! app()->isProduction());
+        DB::prohibitDestructiveCommands(app()->isProduction());
+
         Blade::components([SocialLinks::class]);
 
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
