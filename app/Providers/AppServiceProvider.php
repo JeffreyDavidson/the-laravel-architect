@@ -98,6 +98,8 @@ class AppServiceProvider extends ServiceProvider
 
             return $limit->by($ipAddress);
         });
+        // Half of Resend's default team limit, leaving room for contact mail.
+        RateLimiter::for('newsletter-delivery', fn (): Limit => Limit::perSecond(5));
         RateLimiter::for('search', function (Request $request): Limit {
             if (blank($request->query('q'))) {
                 return Limit::none();

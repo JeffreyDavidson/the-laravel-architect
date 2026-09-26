@@ -65,10 +65,11 @@
                         <div>
                             <h3 class="mb-1 font-semibold text-gray-900 dark:text-white">Newsletter subscriptions</h3>
                             <p class="leading-relaxed">
-                                The newsletter stores your email address and subscription, confirmation, and unsubscribe
-                                timestamps. A temporary, hashed verification token supports the confirmation process.
-                                Subscription requires email confirmation, and every subscriber can unsubscribe using the
-                                link provided in newsletter messages.
+                                The newsletter stores your email address; subscription, confirmation, and unsubscribe
+                                timestamps; and a record of which issues were sent to you. A temporary, hashed
+                                verification token supports the confirmation process. Subscription requires email
+                                confirmation, and every subscriber can unsubscribe using the link provided in newsletter
+                                messages.
                             </p>
                         </div>
                     </div>

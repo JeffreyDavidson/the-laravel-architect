@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(AddSecurityHeaders::class);
+        // One-click unsubscribe posts come from mail providers without a
+        // forgery token; the signed URL authorizes them instead.
+        $middleware->preventRequestForgery(except: ['newsletter/unsubscribe/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         Integration::handles($exceptions);
