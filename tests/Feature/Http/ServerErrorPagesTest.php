@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Vite as ViteAssets;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Vite;
@@ -34,6 +35,7 @@ it('renders a safe branded page without database access or compiled assets', fun
         ->assertSeeHtml('name="robots" content="noindex, nofollow"')
         ->assertDontSee('private-database-detail')
         ->assertDontSee('private-maintenance-detail')
+        ->assertDontSee('private-throttle-detail')
         ->assertDontSee('SQLSTATE')
         ->assertDontSee('/build/');
 
@@ -47,6 +49,11 @@ it('renders a safe branded page without database access or compiled assets', fun
         fn (): QueryException => new QueryException('unavailable', 'select private-database-detail', [], new PDOException('SQLSTATE connection failed')),
         500,
         'Something went wrong.',
+    ],
+    'too many requests' => [
+        fn (): ThrottleRequestsException => new ThrottleRequestsException('private-throttle-detail'),
+        429,
+        'Give it a minute.',
     ],
     'temporary unavailability' => [
         fn (): ServiceUnavailableHttpException => new ServiceUnavailableHttpException(120, 'private-maintenance-detail'),
