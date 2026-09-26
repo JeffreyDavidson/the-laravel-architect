@@ -2,6 +2,7 @@
 
 use App\Jobs\RecordQueueHeartbeat;
 use App\Models\ContactInquiry;
+use App\Models\Subscriber;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 use Laravel\Nightwatch\Console\Sample;
@@ -48,7 +49,7 @@ Schedule::command('queue:prune-failed', [
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
-Schedule::command('model:prune', ['--model' => ContactInquiry::class])
+Schedule::command('model:prune', ['--model' => [ContactInquiry::class, Subscriber::class]])
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();

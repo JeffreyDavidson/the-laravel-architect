@@ -127,10 +127,12 @@
                     </h2>
                     <p class="mb-4 leading-relaxed">
                         Information is kept only as long as reasonably needed for the purpose described above, site
-                        security, or legitimate recordkeeping. Newsletter records remain until they are no longer needed
-                        or a deletion request is completed. Legacy records retained in the application database follow
-                        the same retention and deletion practices. Operational logs and email records follow the
-                        retention settings of the services that store them.
+                        security, or legitimate recordkeeping. Newsletter sign-ups that are never confirmed are deleted
+                        after 7 days, and unsubscribed addresses are deleted 30 days after unsubscribing. Confirmed
+                        subscriptions remain until you unsubscribe or a deletion request is completed. Legacy records
+                        retained in the application database follow the same retention and deletion practices.
+                        Operational logs and email records follow the retention settings of the services that store
+                        them.
                     </p>
                     <p class="leading-relaxed">
                         You may ask to access, correct, or delete personal information associated with you. Newsletter
