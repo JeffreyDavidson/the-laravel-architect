@@ -86,7 +86,7 @@ pinned staging deployment has been verified.
 1. Confirm the target commit and review its migration and storage changes.
 2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes. `app:verify-production` resolves symlinks and rejects missing files and files inside the release directory (or Forge's `releases` directory). Run verification after persistent storage is mounted.
 3. Confirm `BACKUP_MEDIA_PATH` points to the persistent `storage/app/public` directory outside the release directory. Application archives contain only the SQLite database dump and this uploaded-media directory; source code is recovered from GitHub, and `.env` must remain excluded.
-4. Create and independently validate a SQLite snapshot and public-media archive.
+4. Create and independently validate a SQLite snapshot and public-media archive: run `php artisan backup:run`, then `php artisan app:verify-backup` immediately afterwards, and require it to exit successfully. See "Automated archive verification" below.
 5. Keep both artifacts until the deployment and post-deployment checks are complete.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
@@ -345,9 +345,16 @@ php artisan config:clear
 php artisan app:verify-production
 php artisan backup:run
 php artisan backup:monitor
+php artisan app:verify-backup
 ```
 
-Confirm a new encrypted archive exists on the `b2-backups` disk, then complete the restore drill below using a copy downloaded from B2. A successful connection does not prove that an application backup can be restored.
+Confirm a new encrypted archive exists on the `b2-backups` disk and that `app:verify-backup` passes against the copy it downloads from B2. A successful connection does not prove that an application backup can be restored.
+
+### Automated archive verification
+
+`php artisan app:verify-backup` performs the independent checks below against the newest archive on every configured destination. It downloads the archive into a new `0700` directory under the system temp directory and requires every file entry to be encrypted, decrypt, and read in full at its recorded size. Every path must be a database dump or sit under `BACKUP_MEDIA_PATH`. The command restores the dump with the same `sqlite3` CLI that creates it, runs `PRAGMA quick_check` on the restored and live databases, compares the migration list and every persistent table's row count, and compares the media file count and five sampled SHA-256 hashes with the live media directory. `cache`, `cache_locks`, `sessions`, `jobs`, and `job_batches` are excluded as transient. The temporary directory is always removed, and the output contains only counts, table names, and pass or fail reasons, never the archive password or backed-up content.
+
+Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
 
 An exit-zero backup command is not enough. Independently verify:
 
