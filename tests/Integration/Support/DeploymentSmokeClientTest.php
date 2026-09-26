@@ -30,7 +30,8 @@ it('sends staging credentials without following redirects', function (): void {
     $response = $request->get('/up');
 
     expect($request->getOptions()['allow_redirects'])->toBeFalse()
-        ->and($response->status())->toBe(302);
+        ->and($response->status())
+        ->toBe(302);
     Http::assertSent(fn (Request $sent): bool => $sent->hasHeader('CF-Access-Client-Id', 'client')
         && $sent->hasHeader('CF-Access-Client-Secret', 'secret'));
 });

@@ -16,7 +16,9 @@ class GenerateNewsletterRssFeed
 
         $siteUrl = url('/newsletter');
         $feedUrl = route('newsletter.rss');
-        $lastBuild = $issues->first()?->publishedAt()?->toRssString() ?? now()->toRssString();
+        $lastBuild = $issues->first()
+            ?->publishedAt()
+            ?->toRssString() ?? now()->toRssString();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
@@ -36,7 +38,8 @@ class GenerateNewsletterRssFeed
             $xml .= '<link>'.$this->escape($link)."</link>\n";
             $xml .= '<guid isPermaLink="true">'.$this->escape($link)."</guid>\n";
             $xml .= '<description>'.$this->escape($issue->excerpt ?? '')."</description>\n";
-            $xml .= '<pubDate>'.($issue->publishedAt()?->toRssString() ?? now()->toRssString())."</pubDate>\n";
+            $xml .= '<pubDate>'.($issue->publishedAt()
+                ?->toRssString() ?? now()->toRssString())."</pubDate>\n";
             $xml .= "</item>\n";
         }
 

@@ -10,9 +10,13 @@ pest()->use(RefreshDatabase::class);
 it('preserves the current social links and placements after migration', function () {
     $query = app(SocialProfilesQuery::class);
 
-    expect($query->forFooter()->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)->all())
+    expect($query->forFooter()
+        ->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)
+        ->all())
         ->toBe(['github', 'x', 'youtube', 'bluesky', 'instagram', 'facebook'])
-        ->and($query->forContactPage()->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)->all())
+        ->and($query->forContactPage()
+            ->map(fn (SocialProfile $profile): string => socialProfilePlatform($profile)->value)
+            ->all())
         ->toBe(['github', 'x', 'youtube', 'bluesky']);
 });
 
@@ -25,8 +29,11 @@ it('returns enabled profiles for each placement in configured order', function (
 
     $query = app(SocialProfilesQuery::class);
 
-    expect($query->forFooter()->modelKeys())->toBe([$footerProfile->getKey()])
-        ->and($query->forContactPage()->modelKeys())->toBe([$contactProfile->getKey()]);
+    expect($query->forFooter()
+        ->modelKeys())->toBe([$footerProfile->getKey()])
+        ->and($query->forContactPage()
+            ->modelKeys())
+        ->toBe([$contactProfile->getKey()]);
 });
 
 it('returns the first enabled URL for a platform and ignores disabled profiles', function () {

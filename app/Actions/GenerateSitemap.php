@@ -31,7 +31,8 @@ final class GenerateSitemap
             ->with('publishedEpisodes:id,podcast_id,slug,updated_at')
             ->get();
         $projects = Project::published()->get(['id', 'slug', 'updated_at']);
-        $issues = NewsletterIssue::query()->published()->get(['id', 'slug', 'updated_at']);
+        $issues = NewsletterIssue::query()->published()
+            ->get(['id', 'slug', 'updated_at']);
         $podcastModels = [];
 
         foreach ($podcasts as $podcast) {

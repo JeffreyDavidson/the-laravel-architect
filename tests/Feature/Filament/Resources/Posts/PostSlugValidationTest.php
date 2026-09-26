@@ -50,7 +50,8 @@ it('accepts a normalized post slug when creating a post', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Post::query()->sole()->slug)->toBe('post-title-2');
+    expect(Post::query()->sole()
+        ->slug)->toBe('post-title-2');
 });
 
 it('rejects a non-normalized post slug when editing a post', function () {
@@ -67,7 +68,8 @@ it('rejects a non-normalized post slug when editing a post', function () {
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);
 
-    expect($post->refresh()->slug)->toBe('post-title');
+    expect($post->refresh()
+        ->slug)->toBe('post-title');
 });
 
 it('preserves an existing post slug when the title changes', function () {
@@ -84,7 +86,8 @@ it('preserves an existing post slug when the title changes', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($post->refresh()->slug)->toBe('curated-post-slug');
+    expect($post->refresh()
+        ->slug)->toBe('curated-post-slug');
 });
 
 it('rejects a non-normalized slug when creating a category inline', function () {

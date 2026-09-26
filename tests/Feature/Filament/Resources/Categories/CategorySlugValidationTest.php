@@ -45,7 +45,8 @@ it('accepts a normalized category slug when creating a category', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Category::query()->sole()->slug)->toBe('category-name-2');
+    expect(Category::query()->sole()
+        ->slug)->toBe('category-name-2');
 });
 
 it('rejects duplicate category slugs when creating a category', function () {
@@ -80,7 +81,8 @@ it('rejects a duplicate category slug when editing a category', function () {
         ->call('save')
         ->assertHasFormErrors(['slug' => 'unique']);
 
-    expect($category->refresh()->slug)->toBe('category-name');
+    expect($category->refresh()
+        ->slug)->toBe('category-name');
 });
 
 it('allows a category to retain its slug when editing', function () {

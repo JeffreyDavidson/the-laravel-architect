@@ -119,7 +119,8 @@ it('does not require Nightwatch for staging deployments', function () {
     Process::fake(fn () => Process::result("expected-commit\n"));
     config()->set('app.deployment_environment', 'staging');
     $nightwatch = Double::for(NightwatchHealthMonitor::class);
-    $nightwatch->expects('ensureHealthy')->never();
+    $nightwatch->expects('ensureHealthy')
+        ->never();
     app()->instance(NightwatchHealthMonitor::class, $nightwatch);
 
     $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])

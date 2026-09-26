@@ -21,7 +21,8 @@ it('uses record IDs to navigate episodes with the same publication timestamp', f
     $navigation = app(EpisodeNavigationQuery::class)->get($podcast, $current);
 
     expect($navigation['previous']?->id)->toBe($previous->id)
-        ->and($navigation['next']?->id)->toBe($next->id);
+        ->and($navigation['next']?->id)
+        ->toBe($next->id);
 });
 
 it('finds the closest published episodes before and after the current episode', function () {
@@ -52,7 +53,8 @@ it('finds the closest published episodes before and after the current episode', 
         ->get($podcast, $currentEpisode);
 
     expect($navigation['previous']?->is($previousEpisode))->toBeTrue()
-        ->and($navigation['next']?->is($nextEpisode))->toBeTrue();
+        ->and($navigation['next']?->is($nextEpisode))
+        ->toBeTrue();
 });
 
 it('returns null at both ends when there are no adjacent published episodes', function () {

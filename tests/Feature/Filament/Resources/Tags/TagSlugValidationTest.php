@@ -25,7 +25,8 @@ it('creates a tag with the normalized slug generated from its name', function ()
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Tag::query()->sole()->slug)->toBe('tag-name');
+    expect(Tag::query()->sole()
+        ->slug)->toBe('tag-name');
 });
 
 it('rejects a slug that is empty or cannot be normalized', function (string $name, string $slug) {
@@ -79,7 +80,8 @@ it('rejects a duplicate localized tag slug when editing a tag', function () {
         ->call('save')
         ->assertHasFormErrors(['slug']);
 
-    expect($tag->refresh()->slug)->toBe('tag-name');
+    expect($tag->refresh()
+        ->slug)->toBe('tag-name');
 });
 
 it('allows a tag to retain its localized slug when editing', function () {

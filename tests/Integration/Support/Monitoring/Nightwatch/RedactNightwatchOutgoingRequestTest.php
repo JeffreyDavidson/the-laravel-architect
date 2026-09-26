@@ -16,7 +16,8 @@ it('retains only the scheme and host in outgoing request telemetry', function ()
     $redacted = app(RedactNightwatchOutgoingRequest::class)($request);
 
     expect($redacted)->toBeTrue()
-        ->and($request->url)->toBe('https://api.example.test')
+        ->and($request->url)
+        ->toBe('https://api.example.test')
         ->not->toContain(
             'private-user',
             'private-password',

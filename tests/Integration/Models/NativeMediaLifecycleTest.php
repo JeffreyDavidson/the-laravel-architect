@@ -23,30 +23,47 @@ beforeEach(function () {
 
 it('deletes owned episode metadata and tag links with its podcast', function () {
     $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
-    $episode = $podcast->episodes()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $episode = $podcast->episodes()
+        ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
     $episode->attachTag('Architecture');
-    $seoIds = [$podcast->seo()->sole()->getKey(), $episode->seo()->sole()->getKey()];
+    $seoIds = [$podcast->seo()
+        ->sole()
+        ->getKey(), $episode->seo()
+        ->sole()
+        ->getKey()];
 
     $podcast->delete();
 
     $this->assertModelMissing($episode);
-    expect(DB::table('taggables')->where('taggable_type', $episode->getMorphClass())->where('taggable_id', $episode->id)->exists())->toBeFalse()
-        ->and(SEO::query()->whereKey($seoIds)->exists())->toBeFalse();
+    expect(DB::table('taggables')->where('taggable_type', $episode->getMorphClass())
+        ->where('taggable_id', $episode->id)
+        ->exists())->toBeFalse()
+        ->and(SEO::query()->whereKey($seoIds)
+            ->exists())
+        ->toBeFalse();
 });
 
 it('preserves owned content when podcast deletion rolls back', function () {
     $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
-    $episode = $podcast->episodes()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $episode = $podcast->episodes()
+        ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
     $episode->attachTag('Architecture');
-    $seoIds = [$podcast->seo()->sole()->getKey(), $episode->seo()->sole()->getKey()];
+    $seoIds = [$podcast->seo()
+        ->sole()
+        ->getKey(), $episode->seo()
+        ->sole()
+        ->getKey()];
 
     DB::beginTransaction();
     $podcast->delete();
     DB::rollBack();
 
     $this->assertModelExists($episode);
-    expect($episode->tags()->count())->toBe(1)
-        ->and(SEO::query()->whereKey($seoIds)->count())->toBe(2);
+    expect($episode->tags()
+        ->count())->toBe(1)
+        ->and(SEO::query()->whereKey($seoIds)
+            ->count())
+        ->toBe(2);
 });
 
 it('deletes the previous file when native media is replaced', function () {
@@ -104,7 +121,8 @@ it('keeps replaced native media when the transaction rolls back', function () {
 });
 
 it('preserves original images and responsive variants when replacement rolls back', function () {
-    $image = UploadedFile::fake()->image('project.png', 1280, 8)->getContent();
+    $image = UploadedFile::fake()->image('project.png', 1280, 8)
+        ->getContent();
     Storage::disk('public')->put('projects/original.png', $image);
     Storage::disk('public')->put('projects/replacement.png', $image);
     $project = Project::query()->create([
@@ -118,7 +136,8 @@ it('preserves original images and responsive variants when replacement rolls bac
     $project->update(['featured_image_path' => 'projects/replacement.png']);
     DB::rollBack();
 
-    expect($project->refresh()->featured_image_path)->toBe('projects/original.png');
+    expect($project->refresh()
+        ->featured_image_path)->toBe('projects/original.png');
     Storage::disk('public')->assertExists([
         'projects/original.png',
         'projects/responsive/original-640.webp',
@@ -131,7 +150,8 @@ it('preserves cached OG images when post deletion rolls back', function () {
     $post = Post::query()->create([
         'title' => 'OG rollback',
         'content' => 'Preserve the committed post.',
-        'user_id' => User::factory()->create()->getKey(),
+        'user_id' => User::factory()->create()
+            ->getKey(),
         'status' => PublishStatus::Draft,
     ]);
     $path = "og-images/{$post->id}/cached.png";
@@ -141,7 +161,8 @@ it('preserves cached OG images when post deletion rolls back', function () {
     $post->delete();
     DB::rollBack();
 
-    expect(Post::query()->whereKey($post->getKey())->exists())->toBeTrue();
+    expect(Post::query()->whereKey($post->getKey())
+        ->exists())->toBeTrue();
     Storage::disk('local')->assertExists($path);
 });
 
@@ -182,7 +203,8 @@ it('deletes native media with its record', function () {
 });
 
 it('keeps responsive project image variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('project.png', 1280, 8)->getContent();
+    $image = UploadedFile::fake()->image('project.png', 1280, 8)
+        ->getContent();
     Storage::disk('public')->put('projects/old.png', $image);
     Storage::disk('public')->put('projects/new.png', $image);
 
@@ -219,7 +241,8 @@ it('keeps responsive project image variants in sync with the original image', fu
 });
 
 it('keeps responsive post image variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('post.png', 1280, 8)->getContent();
+    $image = UploadedFile::fake()->image('post.png', 1280, 8)
+        ->getContent();
     Storage::disk('public')->put('posts/old.png', $image);
     Storage::disk('public')->put('posts/new.png', $image);
     $author = User::factory()->create();
@@ -258,7 +281,8 @@ it('keeps responsive post image variants in sync with the original image', funct
 });
 
 it('keeps responsive podcast cover variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('podcast.png', 1280, 8)->getContent();
+    $image = UploadedFile::fake()->image('podcast.png', 1280, 8)
+        ->getContent();
     Storage::disk('public')->put('podcasts/old.png', $image);
     Storage::disk('public')->put('podcasts/new.png', $image);
 
@@ -407,7 +431,11 @@ it('keeps podcast and episode files when deletion is cancelled without an applic
     $deleted = $podcast->delete();
 
     expect($deleted)->toBeFalse()
-        ->and(Podcast::query()->whereKey($podcast->getKey())->exists())->toBeTrue()
-        ->and(Episode::query()->whereKey($episode->getKey())->exists())->toBeTrue();
+        ->and(Podcast::query()->whereKey($podcast->getKey())
+            ->exists())
+        ->toBeTrue()
+        ->and(Episode::query()->whereKey($episode->getKey())
+            ->exists())
+        ->toBeTrue();
     Storage::disk('public')->assertExists(['podcasts/kept.png', 'episodes/audio/kept.mp3']);
 });

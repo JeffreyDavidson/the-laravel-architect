@@ -13,11 +13,16 @@ it('allows administrators to manage subscriber records without allowing creation
     $gate = Gate::forUser($administrator);
 
     expect($gate->allows('viewAny', Subscriber::class))->toBeTrue()
-        ->and($gate->allows('view', $subscriber))->toBeTrue()
-        ->and($gate->allows('delete', $subscriber))->toBeTrue()
-        ->and($gate->allows('deleteAny', Subscriber::class))->toBeTrue()
-        ->and($gate->allows('create', Subscriber::class))->toBeFalse()
-        ->and($gate->allows('update', $subscriber))->toBeFalse();
+        ->and($gate->allows('view', $subscriber))
+        ->toBeTrue()
+        ->and($gate->allows('delete', $subscriber))
+        ->toBeTrue()
+        ->and($gate->allows('deleteAny', Subscriber::class))
+        ->toBeTrue()
+        ->and($gate->allows('create', Subscriber::class))
+        ->toBeFalse()
+        ->and($gate->allows('update', $subscriber))
+        ->toBeFalse();
 });
 
 it('denies subscriber access to non-administrators', function () {
@@ -26,7 +31,10 @@ it('denies subscriber access to non-administrators', function () {
     $gate = Gate::forUser($user);
 
     expect($gate->allows('viewAny', Subscriber::class))->toBeFalse()
-        ->and($gate->allows('view', $subscriber))->toBeFalse()
-        ->and($gate->allows('delete', $subscriber))->toBeFalse()
-        ->and($gate->allows('deleteAny', Subscriber::class))->toBeFalse();
+        ->and($gate->allows('view', $subscriber))
+        ->toBeFalse()
+        ->and($gate->allows('delete', $subscriber))
+        ->toBeFalse()
+        ->and($gate->allows('deleteAny', Subscriber::class))
+        ->toBeFalse();
 });

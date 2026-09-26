@@ -44,8 +44,12 @@ it('builds the public podcast index payload', function () {
         ->data();
 
     expect($data)->toHaveKeys(['podcast', 'seoSource'])
-        ->and($data['podcast'])->toBeInstanceOf(Podcast::class)
-        ->and($data['podcast']?->is($podcast))->toBeTrue()
-        ->and($data['podcast']?->published_episodes_count)->toBe(1)
-        ->and($data['seoSource']->title)->toBe('Podcast');
+        ->and($data['podcast'])
+        ->toBeInstanceOf(Podcast::class)
+        ->and($data['podcast']?->is($podcast))
+        ->toBeTrue()
+        ->and($data['podcast']?->published_episodes_count)
+        ->toBe(1)
+        ->and($data['seoSource']->title)
+        ->toBe('Podcast');
 });

@@ -23,7 +23,9 @@ it('deletes selected categories through the table bulk action', function () {
 
     livewire(ListCategories::class)
         ->selectTableRecords($categories)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Category::query()->whereKey($categories->pluck('id'))->count())->toBe(0);
+    expect(Category::query()->whereKey($categories->pluck('id'))
+        ->count())->toBe(0);
 });

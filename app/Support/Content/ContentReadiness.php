@@ -273,7 +273,8 @@ final readonly class ContentReadiness
             return is_numeric($tagsCount) && (int) $tagsCount > 0;
         }
 
-        return $content->tags()->exists();
+        return $content->tags()
+            ->exists();
     }
 
     private function hasSeoDescription(Post|Project|Podcast|Episode|NewsletterIssue $content): bool

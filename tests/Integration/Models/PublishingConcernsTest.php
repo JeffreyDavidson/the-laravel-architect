@@ -18,7 +18,8 @@ it('keeps date-based visibility consistent between model checks and database sco
     $post = Post::query()->create([
         'title' => 'Publication matrix post',
         'content' => 'Publication boundary coverage.',
-        'user_id' => User::factory()->create()->getKey(),
+        'user_id' => User::factory()->create()
+            ->getKey(),
         'status' => $status,
         'published_at' => $publishedAt,
     ]);
@@ -35,13 +36,30 @@ it('keeps date-based visibility consistent between model checks and database sco
     ]);
 
     expect($post->isPublished())->toBe($visible)
-        ->and(Post::published()->whereKey($post->getKey())->exists())->toBe($visible)
-        ->and($episode->isPublished())->toBe($visible)
-        ->and(Episode::published()->whereKey($episode->getKey())->exists())->toBe($visible)
-        ->and(Post::query()->unpublished()->whereKey($post->getKey())->exists())->toBe(! $visible)
-        ->and(Episode::query()->unpublished()->whereKey($episode->getKey())->exists())->toBe(! $visible)
-        ->and(Post::query()->scheduled()->whereKey($post->getKey())->exists())->toBe($scheduled)
-        ->and(Episode::query()->scheduled()->whereKey($episode->getKey())->exists())->toBe($scheduled);
+        ->and(Post::published()->whereKey($post->getKey())
+            ->exists())
+        ->toBe($visible)
+        ->and($episode->isPublished())
+        ->toBe($visible)
+        ->and(Episode::published()->whereKey($episode->getKey())
+            ->exists())
+        ->toBe($visible)
+        ->and(Post::query()->unpublished()
+            ->whereKey($post->getKey())
+            ->exists())
+        ->toBe(! $visible)
+        ->and(Episode::query()->unpublished()
+            ->whereKey($episode->getKey())
+            ->exists())
+        ->toBe(! $visible)
+        ->and(Post::query()->scheduled()
+            ->whereKey($post->getKey())
+            ->exists())
+        ->toBe($scheduled)
+        ->and(Episode::query()->scheduled()
+            ->whereKey($episode->getKey())
+            ->exists())
+        ->toBe($scheduled);
 })->with([
     'overdue scheduled' => [PublishStatus::Scheduled, -1, true, false],
     'exactly due scheduled' => [PublishStatus::Scheduled, 0, true, false],
@@ -66,7 +84,9 @@ it('shares publishing behavior with projects despite their project status enum',
     ]);
 
     expect($project->isPublished())->toBeTrue()
-        ->and(Project::published()->pluck('id')->all())->toBe([$project->id]);
+        ->and(Project::published()->pluck('id')
+            ->all())
+        ->toBe([$project->id]);
 });
 
 it('shares featured behavior across projects and videos', function () {
@@ -84,9 +104,14 @@ it('shares featured behavior across projects and videos', function () {
     ]);
 
     expect($project->isFeatured())->toBeTrue()
-        ->and($video->isFeatured())->toBeTrue()
-        ->and(Project::featured()->pluck('id')->all())->toBe([$project->id])
-        ->and(Video::featured()->pluck('id')->all())->toBe([$video->id]);
+        ->and($video->isFeatured())
+        ->toBeTrue()
+        ->and(Project::featured()->pluck('id')
+            ->all())
+        ->toBe([$project->id])
+        ->and(Video::featured()->pluck('id')
+            ->all())
+        ->toBe([$video->id]);
 });
 
 it('shares featured image URL behavior across models', function () {
@@ -97,8 +122,10 @@ it('shares featured image URL behavior across models', function () {
     $episode = new Episode(['featured_image_path' => 'episodes/image.png']);
 
     expect($post->featured_image_url)->toBe(Storage::disk('public')->url('posts/image.png'))
-        ->and($project->featured_image_url)->toBe(Storage::disk('public')->url('projects/image.png'))
-        ->and($episode->featured_image_url)->toBe(Storage::disk('public')->url('episodes/image.png'));
+        ->and($project->featured_image_url)
+        ->toBe(Storage::disk('public')->url('projects/image.png'))
+        ->and($episode->featured_image_url)
+        ->toBe(Storage::disk('public')->url('episodes/image.png'));
 });
 
 it('preserves publishing behavior for posts', function () {
@@ -113,7 +140,9 @@ it('preserves publishing behavior for posts', function () {
     ]);
 
     expect($post->isPublished())->toBeTrue()
-        ->and(Post::published()->pluck('id')->all())->toBe([$post->id]);
+        ->and(Post::published()->pluck('id')
+            ->all())
+        ->toBe([$post->id]);
 });
 
 it('shares date-only publishing behavior with videos', function () {
@@ -124,5 +153,7 @@ it('shares date-only publishing behavior with videos', function () {
     ]);
 
     expect($video->isPublished())->toBeTrue()
-        ->and(Video::published()->pluck('id')->all())->toBe([$video->id]);
+        ->and(Video::published()->pluck('id')
+            ->all())
+        ->toBe([$video->id]);
 });

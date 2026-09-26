@@ -47,11 +47,13 @@ it('regenerates an OG image when rendered post data changes', function () {
         ->returns('first-png', 'updated-png');
     $this->app->instance(OgImageGenerator::class, $generator);
 
-    $this->get(route('og-image', $post))->assertContent('first-png');
+    $this->get(route('og-image', $post))
+        ->assertContent('first-png');
 
     $post->update(['title' => 'Updated title']);
 
-    $this->get(route('og-image', $post))->assertContent('updated-png');
+    $this->get(route('og-image', $post))
+        ->assertContent('updated-png');
 });
 
 it('regenerates an OG image when its category name changes', function () {
@@ -62,11 +64,15 @@ it('regenerates an OG image when its category name changes', function () {
         ->returns('first-png', 'updated-png');
     $this->app->instance(OgImageGenerator::class, $generator);
 
-    $this->get(route('og-image', $post))->assertContent('first-png');
+    $this->get(route('og-image', $post))
+        ->assertContent('first-png');
 
-    $post->category()->firstOrFail()->update(['name' => 'Updated category']);
+    $post->category()
+        ->firstOrFail()
+        ->update(['name' => 'Updated category']);
 
-    $this->get(route('og-image', $post))->assertContent('updated-png');
+    $this->get(route('og-image', $post))
+        ->assertContent('updated-png');
 });
 
 it('deletes the cached OG image with its post', function () {
@@ -96,7 +102,8 @@ function createPublishedPost(): Post
         'slug' => 'cached-og-image',
         'content' => 'Content',
         'category_id' => $category->id,
-        'user_id' => User::factory()->create()->id,
+        'user_id' => User::factory()->create()
+            ->id,
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);

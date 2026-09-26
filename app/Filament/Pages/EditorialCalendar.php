@@ -52,12 +52,16 @@ class EditorialCalendar extends Page
 
     public function previousMonth(): void
     {
-        $this->month = $this->selectedMonth()->subMonth()->format('Y-m');
+        $this->month = $this->selectedMonth()
+            ->subMonth()
+            ->format('Y-m');
     }
 
     public function nextMonth(): void
     {
-        $this->month = $this->selectedMonth()->addMonth()->format('Y-m');
+        $this->month = $this->selectedMonth()
+            ->addMonth()
+            ->format('Y-m');
     }
 
     public function currentMonth(): void
@@ -96,8 +100,12 @@ class EditorialCalendar extends Page
     protected function getViewData(): array
     {
         $month = $this->selectedMonth();
-        $gridStart = $month->copy()->startOfMonth()->startOfWeek(Carbon::SUNDAY);
-        $gridEnd = $month->copy()->endOfMonth()->endOfWeek(Carbon::SATURDAY);
+        $gridStart = $month->copy()
+            ->startOfMonth()
+            ->startOfWeek(Carbon::SUNDAY);
+        $gridEnd = $month->copy()
+            ->endOfMonth()
+            ->endOfWeek(Carbon::SATURDAY);
         $entries = $this->entries($gridStart, $gridEnd);
         /** @var Collection<int, CalendarDay> $days */
         $days = collect();
@@ -116,8 +124,10 @@ class EditorialCalendar extends Page
 
         return [
             'calendarMonth' => $month,
-            'weeks' => $days->chunk(7)->values(),
-            'unscheduled' => $entries->filter(fn (array $entry): bool => $entry['date'] === null)->values(),
+            'weeks' => $days->chunk(7)
+                ->values(),
+            'unscheduled' => $entries->filter(fn (array $entry): bool => $entry['date'] === null)
+                ->values(),
             'statuses' => $entries
                 ->countBy('statusLabel')
                 ->mapWithKeys(fn (int $count, string|int $status): array => [(string) $status => $count])
@@ -161,7 +171,9 @@ class EditorialCalendar extends Page
      */
     private function entries(Carbon $gridStart, Carbon $gridEnd): Collection
     {
-        $range = [$gridStart->copy()->startOfDay(), $gridEnd->copy()->endOfDay()];
+        $range = [$gridStart->copy()
+            ->startOfDay(), $gridEnd->copy()
+            ->endOfDay()];
 
         $posts = Post::query()
             ->select(['id', 'title', 'status', 'published_at'])

@@ -25,7 +25,8 @@ it('persists a category description when creating a category', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Category::query()->sole()->description)
+    expect(Category::query()->sole()
+        ->description)
         ->toBe('Articles about application architecture.');
 });
 
@@ -41,7 +42,8 @@ it('persists a category description when editing a category', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($category->refresh()->description)->toBe('Updated description.');
+    expect($category->refresh()
+        ->description)->toBe('Updated description.');
 });
 
 it('renders the persisted description on the public category page', function () {

@@ -22,7 +22,8 @@ class ContactInquiryFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->safeEmail(),
-            'type' => fake()->randomElement(ContactType::cases())->value,
+            'type' => fake()->randomElement(ContactType::cases())
+                ->value,
             'budget' => null,
             'message' => fake()->sentence(),
             'project_title' => null,

@@ -32,8 +32,10 @@ class PublishingTrendsChart extends ChartWidget
     protected function getData(): array
     {
         $months = collect(range(5, 0))
-            ->map(fn (int $monthsAgo): Carbon => now()->startOfMonth()->subMonths($monthsAgo));
-        $monthKeys = $months->map(fn (Carbon $month): string => $month->format('Y-m'))->all();
+            ->map(fn (int $monthsAgo): Carbon => now()->startOfMonth()
+                ->subMonths($monthsAgo));
+        $monthKeys = $months->map(fn (Carbon $month): string => $month->format('Y-m'))
+            ->all();
         $start = $months->first();
 
         $counts = [
@@ -42,7 +44,9 @@ class PublishingTrendsChart extends ChartWidget
             'Newsletter issues' => array_fill_keys($monthKeys, 0),
         ];
 
-        foreach (Post::query()->published()->where('published_at', '>=', $start)->pluck('published_at') as $publishedAt) {
+        foreach (Post::query()->published()
+            ->where('published_at', '>=', $start)
+            ->pluck('published_at') as $publishedAt) {
             if (! is_string($publishedAt) && ! $publishedAt instanceof DateTimeInterface) {
                 continue;
             }
@@ -54,7 +58,9 @@ class PublishingTrendsChart extends ChartWidget
             }
         }
 
-        foreach (Episode::query()->published()->where('published_at', '>=', $start)->pluck('published_at') as $publishedAt) {
+        foreach (Episode::query()->published()
+            ->where('published_at', '>=', $start)
+            ->pluck('published_at') as $publishedAt) {
             if (! is_string($publishedAt) && ! $publishedAt instanceof DateTimeInterface) {
                 continue;
             }
@@ -66,7 +72,9 @@ class PublishingTrendsChart extends ChartWidget
             }
         }
 
-        foreach (NewsletterIssue::query()->published()->where('published_at', '>=', $start)->pluck('published_at') as $publishedAt) {
+        foreach (NewsletterIssue::query()->published()
+            ->where('published_at', '>=', $start)
+            ->pluck('published_at') as $publishedAt) {
             if (! is_string($publishedAt) && ! $publishedAt instanceof DateTimeInterface) {
                 continue;
             }
@@ -86,7 +94,8 @@ class PublishingTrendsChart extends ChartWidget
                 ])
                 ->values()
                 ->all(),
-            'labels' => $months->map(fn (Carbon $month): string => $month->format('M Y'))->all(),
+            'labels' => $months->map(fn (Carbon $month): string => $month->format('M Y'))
+                ->all(),
         ];
     }
 

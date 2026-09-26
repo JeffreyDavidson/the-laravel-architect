@@ -51,7 +51,9 @@ class ImageUploadOptimizer
                 $image = $image->scale(width: self::MAX_DIMENSION, height: self::MAX_DIMENSION);
             }
 
-            $optimized = $image->toWebp()->quality(self::QUALITY)->toBytes();
+            $optimized = $image->toWebp()
+                ->quality(self::QUALITY)
+                ->toBytes();
         } catch (ImageException) {
             return null;
         }

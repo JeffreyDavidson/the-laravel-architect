@@ -25,5 +25,6 @@ it('prunes inquiries older than the configured retention period', function () {
         ->assertSuccessful();
 
     expect(ContactInquiry::query()->find($oldInquiry->id))->toBeNull()
-        ->and(ContactInquiry::query()->find($recentInquiry->id))->not->toBeNull();
+        ->and(ContactInquiry::query()->find($recentInquiry->id))
+        ->not->toBeNull();
 });

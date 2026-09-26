@@ -34,12 +34,18 @@ it('creates new videos and forwards the requested limit', function () {
     $video = Video::query()->sole();
 
     expect($video->youtube_id)->toBe('new-video')
-        ->and($video->title)->toBe('A New Video')
-        ->and($video->slug)->toBe('a-new-video')
-        ->and($video->description)->toBe('New description')
-        ->and($video->view_count)->toBe(120)
-        ->and(Date::parse($video->published_at)->toIso8601String())->toBe('2026-08-18T12:00:00+00:00')
-        ->and($video->synced_at)->not->toBeNull();
+        ->and($video->title)
+        ->toBe('A New Video')
+        ->and($video->slug)
+        ->toBe('a-new-video')
+        ->and($video->description)
+        ->toBe('New description')
+        ->and($video->view_count)
+        ->toBe(120)
+        ->and(Date::parse($video->published_at)->toIso8601String())
+        ->toBe('2026-08-18T12:00:00+00:00')
+        ->and($video->synced_at)
+        ->not->toBeNull();
 });
 
 it('updates an existing video without replacing its publishing fields', function () {
@@ -78,12 +84,18 @@ it('updates an existing video without replacing its publishing fields', function
     $video->refresh();
 
     expect($video->title)->toBe('Updated Title')
-        ->and($video->description)->toBe('Updated description')
-        ->and($video->view_count)->toBe(250)
-        ->and($video->slug)->toBe('curated-slug')
-        ->and($video->is_featured)->toBeTrue()
-        ->and(Date::parse($video->published_at)->toDateTimeString())->toBe('2026-08-01 09:00:00')
-        ->and(Date::parse($video->synced_at)->toDateTimeString())->toBe('2026-08-19 10:30:00');
+        ->and($video->description)
+        ->toBe('Updated description')
+        ->and($video->view_count)
+        ->toBe(250)
+        ->and($video->slug)
+        ->toBe('curated-slug')
+        ->and($video->is_featured)
+        ->toBeTrue()
+        ->and(Date::parse($video->published_at)->toDateTimeString())
+        ->toBe('2026-08-01 09:00:00')
+        ->and(Date::parse($video->synced_at)->toDateTimeString())
+        ->toBe('2026-08-19 10:30:00');
 });
 
 it('creates stable unique slugs for colliding and empty titles', function () {
@@ -134,18 +146,29 @@ it('creates stable unique slugs for colliding and empty titles', function () {
         ->expectsOutput('Done! 3 new, 0 updated.')
         ->assertSuccessful();
 
-    expect(Video::query()->where('youtube_id', 'first-video')->value('slug'))->toBe('same-title')
-        ->and(Video::query()->where('youtube_id', 'second-video')->value('slug'))->toBe('same-title-second-video')
-        ->and(Video::query()->where('youtube_id', 'empty-title-video')->value('slug'))->toBe('video-empty-title-video');
+    expect(Video::query()->where('youtube_id', 'first-video')
+        ->value('slug'))->toBe('same-title')
+        ->and(Video::query()->where('youtube_id', 'second-video')
+            ->value('slug'))
+        ->toBe('same-title-second-video')
+        ->and(Video::query()->where('youtube_id', 'empty-title-video')
+            ->value('slug'))
+        ->toBe('video-empty-title-video');
 
     $this->artisanCommand('youtube:sync')
         ->expectsOutput('Done! 0 new, 3 updated.')
         ->assertSuccessful();
 
     expect(Video::query()->count())->toBe(3)
-        ->and(Video::query()->where('youtube_id', 'first-video')->value('slug'))->toBe('same-title')
-        ->and(Video::query()->where('youtube_id', 'second-video')->value('slug'))->toBe('same-title-second-video')
-        ->and(Video::query()->where('youtube_id', 'empty-title-video')->value('slug'))->toBe('video-empty-title-video');
+        ->and(Video::query()->where('youtube_id', 'first-video')
+            ->value('slug'))
+        ->toBe('same-title')
+        ->and(Video::query()->where('youtube_id', 'second-video')
+            ->value('slug'))
+        ->toBe('same-title-second-video')
+        ->and(Video::query()->where('youtube_id', 'empty-title-video')
+            ->value('slug'))
+        ->toBe('video-empty-title-video');
 });
 
 it('fails without changing videos when YouTube is unavailable', function () {
@@ -165,6 +188,8 @@ it('fails without changing videos when YouTube is unavailable', function () {
         ->expectsOutput('YouTube is unavailable.')
         ->assertFailed();
 
-    expect($video->refresh()->title)->toBe('Existing Title')
-        ->and(Video::query()->count())->toBe(1);
+    expect($video->refresh()
+        ->title)->toBe('Existing Title')
+        ->and(Video::query()->count())
+        ->toBe(1);
 });

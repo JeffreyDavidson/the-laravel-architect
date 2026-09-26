@@ -55,16 +55,26 @@ class PodcastForm
 
                 Section::make('Subscribe Links')
                     ->schema([
-                        TextInput::make('apple_url')->label('Apple Podcasts URL')->url()->maxLength(255),
-                        TextInput::make('spotify_url')->label('Spotify URL')->url()->maxLength(255),
-                        TextInput::make('rss_url')->label('RSS Feed URL')->url()->maxLength(255),
-                        TextInput::make('youtube_url')->label('YouTube URL')->url()->maxLength(255),
+                        TextInput::make('apple_url')->label('Apple Podcasts URL')
+                            ->url()
+                            ->maxLength(255),
+                        TextInput::make('spotify_url')->label('Spotify URL')
+                            ->url()
+                            ->maxLength(255),
+                        TextInput::make('rss_url')->label('RSS Feed URL')
+                            ->url()
+                            ->maxLength(255),
+                        TextInput::make('youtube_url')->label('YouTube URL')
+                            ->url()
+                            ->maxLength(255),
                     ])->columns(2),
 
                 Section::make('Settings')
                     ->schema([
-                        Toggle::make('is_active')->label('Active')->default(true),
-                        TextInput::make('sort_order')->numeric()->default(0),
+                        Toggle::make('is_active')->label('Active')
+                            ->default(true),
+                        TextInput::make('sort_order')->numeric()
+                            ->default(0),
                     ])->columns(2),
 
                 Section::make('SEO')

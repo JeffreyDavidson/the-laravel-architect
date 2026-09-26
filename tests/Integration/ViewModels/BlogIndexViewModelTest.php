@@ -44,7 +44,9 @@ it('builds the public blog index payload', function () {
     $data = blogIndexViewModelData();
 
     expect($data)->toHaveKeys(['posts', 'categories', 'seoSource'])
-        ->and($data['posts']->getCollection()->modelKeys())->toBe([
+        ->and($data['posts']->getCollection()
+            ->modelKeys())
+        ->toBe([
             $newerPost->getKey(),
             $olderPost->getKey(),
         ])
@@ -52,9 +54,13 @@ it('builds the public blog index payload', function () {
             fn (Post $post): bool => $post->relationLoaded('category')
                 && $post->relationLoaded('tags'),
         ))->toBeTrue()
-        ->and($data['categories']->sole()->posts_count)->toBe(2)
-        ->and($data['posts']->total())->toBe(2)
-        ->and($data['seoSource']->title)->toBe('Blog');
+        ->and($data['categories']->sole()
+            ->posts_count)
+        ->toBe(2)
+        ->and($data['posts']->total())
+        ->toBe(2)
+        ->and($data['seoSource']->title)
+        ->toBe('Blog');
 });
 
 it('filters the paginated archive by title excerpt and translated tag name', function () {
@@ -92,11 +98,18 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
     $data = blogIndexViewModelData(['q' => 'boundaries']);
 
     expect($data['posts']->total())->toBe(1)
-        ->and($data['posts']->sole()->title)->toBe('Another Article')
-        ->and($data['posts']->sole()->content)->toContain('word')
-        ->and(PostPresenter::from($data['posts']->sole())->readingTime())->toBe(2)
-        ->and($data['seoSource']->robots)->toBe('noindex, follow')
-        ->and($data['seoSource']->canonical_url)->toBe(route('blog.index'));
+        ->and($data['posts']->sole()
+            ->title)
+        ->toBe('Another Article')
+        ->and($data['posts']->sole()
+            ->content)
+        ->toContain('word')
+        ->and(PostPresenter::from($data['posts']->sole())->readingTime())
+        ->toBe(2)
+        ->and($data['seoSource']->robots)
+        ->toBe('noindex, follow')
+        ->and($data['seoSource']->canonical_url)
+        ->toBe(route('blog.index'));
 
     foreach ([
         'title match' => 'Title Match',
@@ -104,7 +117,8 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
     ] as $term => $expectedTitle) {
         $filtered = blogIndexViewModelData(['q' => $term]);
 
-        expect($filtered['posts']->sole()->title)->toBe($expectedTitle);
+        expect($filtered['posts']->sole()
+            ->title)->toBe($expectedTitle);
     }
 
     $literal = Post::query()->create([
@@ -117,8 +131,11 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         'published_at' => now(),
     ]);
 
-    expect(blogIndexViewModelData(['q' => '%'])['posts']->sole()->is($literal))->toBeTrue()
-        ->and(blogIndexViewModelData(['q' => '_'])['posts']->sole()->is($literal))->toBeTrue();
+    expect(blogIndexViewModelData(['q' => '%'])['posts']->sole()
+        ->is($literal))->toBeTrue()
+        ->and(blogIndexViewModelData(['q' => '_'])['posts']->sole()
+            ->is($literal))
+        ->toBeTrue();
 });
 
 /**

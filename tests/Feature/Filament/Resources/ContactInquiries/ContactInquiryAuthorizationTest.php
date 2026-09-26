@@ -12,11 +12,18 @@ it('only allows administrators to access inquiry records', function () {
     $user = User::factory()->create(['is_admin' => false]);
 
     expect($administrator->can('viewAny', ContactInquiry::class))->toBeTrue()
-        ->and($administrator->can('view', $inquiry))->toBeTrue()
-        ->and($administrator->can('update', $inquiry))->toBeTrue()
-        ->and($administrator->can('delete', $inquiry))->toBeTrue()
-        ->and($user->can('viewAny', ContactInquiry::class))->toBeFalse()
-        ->and($user->can('view', $inquiry))->toBeFalse()
-        ->and($user->can('update', $inquiry))->toBeFalse()
-        ->and($user->can('delete', $inquiry))->toBeFalse();
+        ->and($administrator->can('view', $inquiry))
+        ->toBeTrue()
+        ->and($administrator->can('update', $inquiry))
+        ->toBeTrue()
+        ->and($administrator->can('delete', $inquiry))
+        ->toBeTrue()
+        ->and($user->can('viewAny', ContactInquiry::class))
+        ->toBeFalse()
+        ->and($user->can('view', $inquiry))
+        ->toBeFalse()
+        ->and($user->can('update', $inquiry))
+        ->toBeFalse()
+        ->and($user->can('delete', $inquiry))
+        ->toBeFalse();
 });

@@ -35,7 +35,8 @@ it('renders the newest posts in chronological order', function () {
             'status' => $status,
         ]);
 
-        $post->forceFill(['updated_at' => Date::parse($updatedAt)])->saveQuietly();
+        $post->forceFill(['updated_at' => Date::parse($updatedAt)])
+            ->saveQuietly();
     }
 
     livewire(RecentActivityWidget::class)

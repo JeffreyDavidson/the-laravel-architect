@@ -15,7 +15,8 @@ it('accepts every contact type and optional budget', function (ContactType $type
     ], (new StoreContactRequest)->rules());
 
     expect($validator->passes())->toBeTrue();
-})->with(ContactType::cases())->with([null, ...ContactBudget::cases()]);
+})->with(ContactType::cases())
+    ->with([null, ...ContactBudget::cases()]);
 
 it('rejects invalid contact selections', function (string $field, mixed $value) {
     $validator = Validator::make(array_replace([
@@ -27,7 +28,9 @@ it('rejects invalid contact selections', function (string $field, mixed $value) 
     ], [$field => $value]), (new StoreContactRequest)->rules());
 
     expect($validator->fails())->toBeTrue()
-        ->and($validator->errors()->has($field))->toBeTrue();
+        ->and($validator->errors()
+            ->has($field))
+        ->toBeTrue();
 })->with([
     ['type', 'invalid'],
     ['type', null],
@@ -51,10 +54,17 @@ it('maps only validated fields into typed contact data', function (ContactType $
         ->toData();
 
     expect($data->name)->toBe('Jane Doe')
-        ->and($data->email)->toBe('jane@example.com')
-        ->and($data->type)->toBe($type)
-        ->and($data->budget)->toBe($budget)
-        ->and($data->message)->toBe('A project inquiry.')
-        ->and($data->projectTitle)->toBeNull()
-        ->and(get_object_vars($data))->toHaveCount(6);
-})->with(ContactType::cases())->with([null, ...ContactBudget::cases()]);
+        ->and($data->email)
+        ->toBe('jane@example.com')
+        ->and($data->type)
+        ->toBe($type)
+        ->and($data->budget)
+        ->toBe($budget)
+        ->and($data->message)
+        ->toBe('A project inquiry.')
+        ->and($data->projectTitle)
+        ->toBeNull()
+        ->and(get_object_vars($data))
+        ->toHaveCount(6);
+})->with(ContactType::cases())
+    ->with([null, ...ContactBudget::cases()]);
