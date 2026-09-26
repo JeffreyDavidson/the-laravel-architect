@@ -45,7 +45,7 @@
                                         <div class="dark:bg-brand-900 relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_20px_var(--shadow-black-08)] transition-shadow duration-400 ease-[ease] transform-3d motion-reduce:transition-none dark:shadow-2xl">
                                             <div class="flex items-center justify-between px-5 pt-3 pb-2">
                                                 <span class="font-mono text-xs tracking-wider text-gray-500 uppercase dark:text-gray-500">Developer Card</span>
-                                                <span class="border-accent-400/20 bg-accent-400/5 text-accent-400 text-meta rounded-full border px-1.5 py-0.5 font-bold tracking-wider whitespace-nowrap uppercase">Legendary</span>
+                                                <span class="border-accent-700/20 bg-accent-700/5 text-accent-700 dark:border-accent-400/20 dark:bg-accent-400/5 dark:text-accent-400 text-meta rounded-full border px-1.5 py-0.5 font-bold tracking-wider whitespace-nowrap uppercase">Legendary</span>
                                             </div>
                                             <div class="dark:border-brand-700 relative mx-4 flex-1 overflow-hidden rounded-xl border-4 border-gray-300">
                                                 <img

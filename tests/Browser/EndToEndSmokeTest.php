@@ -46,6 +46,9 @@ it('loads public routes without high impact accessibility issues in both themes'
     'projects' => '/projects',
     'project' => '/projects/e2e-project',
     'uses' => '/uses',
+    'archive' => '/archive',
+    'newsletter' => '/newsletter',
+    'search results' => '/search?q=laravel',
 ])->with(['light', 'dark']);
 
 it('keeps the homepage hero actions visible at a laptop viewport height', function (): void {

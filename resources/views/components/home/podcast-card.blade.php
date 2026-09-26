@@ -27,12 +27,12 @@
             @for ($i = 0; $i < 5; $i++)
                 <span
                     @class([
-                        'inline-block w-[3px] rounded-[2px] align-bottom bg-brand-400 motion-reduce:animate-none',
-                        'h-2 animate-[eq-1_1.2s_ease-in-out_infinite]' => $i === 0,
+                        'inline-block w-[3px] origin-bottom rounded-[2px] align-bottom bg-brand-400 motion-reduce:animate-none',
+                        'h-6 [transform:scaleY(0.3333)] animate-[eq-1_1.2s_ease-in-out_infinite]' => $i === 0,
                         'h-4 animate-[eq-2_1s_ease-in-out_infinite_0.1s]' => $i === 1,
-                        'h-3 animate-[eq-3_1.4s_ease-in-out_infinite_0.2s]' => $i === 2,
+                        'h-7 [transform:scaleY(0.4286)] animate-[eq-3_1.4s_ease-in-out_infinite_0.2s]' => $i === 2,
                         'h-5 animate-[eq-4_0.9s_ease-in-out_infinite_0.3s]' => $i === 3,
-                        'h-1.5 animate-[eq-5_1.1s_ease-in-out_infinite_0.15s]' => $i === 4,
+                        'h-[22px] [transform:scaleY(0.2727)] animate-[eq-5_1.1s_ease-in-out_infinite_0.15s]' => $i === 4,
                     ])
                 ></span>
             @endfor
