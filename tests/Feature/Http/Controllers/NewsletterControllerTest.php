@@ -20,9 +20,15 @@ it('creates an unverified subscriber and sends a confirmation message', function
 
     $subscriber = Subscriber::query()->sole();
 
-    expect($subscriber->email)->toBe('reader@example.com')
-        ->and($subscriber->verified_at)->toBeNull()
-        ->and($subscriber->verification_token_hash)->not->toBeNull();
+    $verifiedAt = $subscriber->verified_at;
+    $tokenHash = $subscriber->verification_token_hash;
+    expect($subscriber->email)
+        ->toBe('reader@example.com')
+        ->and($verifiedAt)
+        ->toBeNull()
+        ->and($tokenHash)
+        ->not
+        ->toBeNull();
 
     Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
 });
@@ -46,7 +52,8 @@ it('silently accepts newsletter honeypot submissions without subscribing', funct
         'website' => 'filled-by-bot',
     ])->assertSessionHas('newsletter_success');
 
-    expect(Subscriber::query()->count())->toBe(0);
+    expect(Subscriber::query()->count())
+        ->toBe(0);
     Mail::assertNothingQueued();
 });
 
@@ -65,12 +72,21 @@ it('shows an explicit confirmation step without changing subscriber state', func
         ['subscriber' => $subscriber, 'token' => $token],
     );
 
+    $email = $subscriber->email;
+
     $this->get($url)
         ->assertOk()
-        ->assertSee('Confirm your subscription')->assertSee($subscriber->email)->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
+        ->assertSee('Confirm your subscription')
+        ->assertSee($email)
+        ->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
 
-    expect($subscriber->refresh()->verified_at)->toBeNull()
-        ->and($subscriber->verification_token_hash)->not->toBeNull();
+    $subscriber->refresh();
+    $tokenHash = $subscriber->verification_token_hash;
+    expect($subscriber->verified_at)
+        ->toBeNull()
+        ->and($tokenHash)
+        ->not
+        ->toBeNull();
 });
 
 it('confirms a subscriber with an explicit post to a valid signed link', function () {
@@ -92,8 +108,13 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
         ->assertRedirect(route('home'))
         ->assertSessionHas('newsletter_success');
 
-    expect($subscriber->refresh()->verified_at)->not->toBeNull()
-        ->and($subscriber->verification_token_hash)->toBeNull();
+    $subscriber->refresh();
+    $tokenHash = $subscriber->verification_token_hash;
+    expect($subscriber->verified_at)
+        ->not
+        ->toBeNull()
+        ->and($tokenHash)
+        ->toBeNull();
 });
 
 it('rejects unsigned newsletter state changes', function () {
@@ -107,7 +128,9 @@ it('rejects unsigned newsletter state changes', function () {
     $this->post(route('newsletter.confirm.store', [$subscriber, 'token']))
         ->assertForbidden();
 
-    expect($subscriber->refresh()->verified_at)->toBeNull();
+    $subscriber->refresh();
+    expect($subscriber->verified_at)
+        ->toBeNull();
 });
 
 it('rejects signed confirmation links with an invalid token', function () {
@@ -131,8 +154,13 @@ it('rejects signed confirmation links with an invalid token', function () {
         )->assertForbidden();
     }
 
-    expect($subscriber->refresh()->verified_at)->toBeNull()
-        ->and($subscriber->verification_token_hash)->not->toBeNull();
+    $subscriber->refresh();
+    $tokenHash = $subscriber->verification_token_hash;
+    expect($subscriber->verified_at)
+        ->toBeNull()
+        ->and($tokenHash)
+        ->not
+        ->toBeNull();
 });
 
 it('shows an unsubscribe step without changing subscriber state', function () {
@@ -142,18 +170,39 @@ it('shows an unsubscribe step without changing subscriber state', function () {
         'verified_at' => now(),
     ]);
 
-    $this->get(app(UnsubscribeUrlGenerator::class)->for($subscriber))
-        ->assertOk()->assertSee('Unsubscribe from the newsletter')->assertSeeHtml('name="_method" value="DELETE"')->assertSee($subscriber->email)->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for($subscriber);
+    $email = $subscriber->email;
 
-    expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
+    $this->get($url)
+        ->assertOk()
+        ->assertSee('Unsubscribe from the newsletter')
+        ->assertSeeHtml('name="_method" value="DELETE"')
+        ->assertSee($email)
+        ->assertSeeHtml('<meta name="robots" content="noindex, nofollow">');
+
+    $subscriber->refresh();
+    expect($subscriber->unsubscribed_at)
+        ->toBeNull();
 });
 
-it('generates expiring unsubscribe links', function () {
+it('generates unsubscribe links that keep working after the newsletter is sent', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verified_at' => now(),
     ]);
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for($subscriber);
 
-    expect(app(UnsubscribeUrlGenerator::class)->for($subscriber))->toContain('expires=');
+    $this->travel(1)
+        ->year();
+
+    $this->get($url)
+        ->assertOk();
+    expect($url)
+        ->not
+        ->toContain('expires=');
 });
 
 it('unsubscribes with an explicit delete to a valid signed link', function () {
@@ -163,11 +212,17 @@ it('unsubscribes with an explicit delete to a valid signed link', function () {
         'verified_at' => now(),
     ]);
 
-    $this->delete(app(UnsubscribeUrlGenerator::class)->for($subscriber))
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for($subscriber);
+
+    $this->delete($url)
         ->assertRedirect(route('home'))
         ->assertSessionHas('newsletter_success', 'You have been unsubscribed.');
 
-    expect($subscriber->refresh()->unsubscribed_at)->not->toBeNull();
+    $subscriber->refresh();
+    expect($subscriber->unsubscribed_at)
+        ->not
+        ->toBeNull();
 });
 
 it('rejects unsigned unsubscribe requests', function () {
@@ -178,7 +233,9 @@ it('rejects unsigned unsubscribe requests', function () {
     $this->delete(route('newsletter.unsubscribe.store', $subscriber))
         ->assertForbidden();
 
-    expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
+    $subscriber->refresh();
+    expect($subscriber->unsubscribed_at)
+        ->toBeNull();
 });
 
 it('rejects expired unsubscribe links', function () {
@@ -194,7 +251,9 @@ it('rejects expired unsubscribe links', function () {
     $this->delete($url)
         ->assertForbidden();
 
-    expect($subscriber->refresh()->unsubscribed_at)->toBeNull();
+    $subscriber->refresh();
+    expect($subscriber->unsubscribed_at)
+        ->toBeNull();
 });
 
 it('does not disclose whether an email is already subscribed', function () {

@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterConfirmationController;
 use App\Http\Controllers\NewsletterIssueController;
+use App\Http\Controllers\NewsletterOneClickUnsubscriptionController;
 use App\Http\Controllers\NewsletterRssFeedController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\NewsletterUnsubscriptionController;
@@ -51,6 +52,9 @@ Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionCont
 Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])
     ->middleware(['signed', 'throttle:newsletter-confirm'])
     ->name('newsletter.unsubscribe.store');
+Route::post('/newsletter/unsubscribe/{subscriber}', NewsletterOneClickUnsubscriptionController::class)
+    ->middleware(['signed', 'throttle:newsletter-confirm'])
+    ->name('newsletter.unsubscribe.oneClick');
 Route::get('/newsletter', [NewsletterIssueController::class, 'index'])->name('newsletter.index');
 Route::get('/newsletter/rss', NewsletterRssFeedController::class)->name('newsletter.rss');
 Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
