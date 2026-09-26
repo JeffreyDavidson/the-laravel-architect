@@ -44,7 +44,11 @@ class Podcast extends Model
 
     protected function performDeleteOnModel(): void
     {
-        foreach ($this->episodes()->lazyById() as $episode) {
+        $episodes = $this
+            ->episodes()
+            ->lazyById();
+
+        foreach ($episodes as $episode) {
             if ($episode->delete() !== true) {
                 throw new \RuntimeException('Podcast deletion was cancelled because an episode could not be deleted.');
             }
@@ -62,12 +66,17 @@ class Podcast extends Model
     /** @return HasMany<Episode, $this> */
     public function publishedEpisodes(): HasMany
     {
-        return $this->episodes()->published();
+        return $this
+            ->episodes()
+            ->published();
     }
 
     public function latestEpisode(): ?Episode
     {
-        return $this->publishedEpisodes()->latest('published_at')->first();
+        return $this
+            ->publishedEpisodes()
+            ->latest('published_at')
+            ->first();
     }
 
     /** @param Builder<Podcast> $query */
@@ -82,7 +91,10 @@ class Podcast extends Model
     {
         return Attribute::get(function (): ?string {
             if ($this->cover_image_path) {
-                return Storage::disk('public')->url($this->cover_image_path);
+                return Storage::disk('public')
+                    ->url(
+                        $this->cover_image_path,
+                    );
             }
 
             $resources = $this->fallbackCoverImageResources();

@@ -10,7 +10,9 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
 })
-    ->name('runtime-health:heartbeat:'.app()->environment())
+    ->name(
+        'runtime-health:heartbeat:'.app()->environment(),
+    )
     ->everyMinute()
     ->tap(Sample::rate(0.1))
     ->withoutOverlapping(5)
@@ -54,5 +56,11 @@ Schedule::command('activitylog:clean')
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
-Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
-Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();
+Schedule::command('youtube:stats')
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
+Schedule::command('youtube:sync')
+    ->weekly()
+    ->withoutOverlapping()
+    ->onOneServer();
