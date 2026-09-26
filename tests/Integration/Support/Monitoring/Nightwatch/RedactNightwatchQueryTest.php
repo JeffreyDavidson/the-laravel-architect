@@ -17,7 +17,8 @@ it('removes literal values and comments from query telemetry', function () {
     $redacted = app(RedactNightwatchQuery::class)($query);
 
     expect($redacted)->toBeTrue()
-        ->and($query->sql)->toContain(
+        ->and($query->sql)
+        ->toContain(
             '`email` = ?',
             '`attempts` > ?',
             '/* redacted */',

@@ -44,7 +44,8 @@ it('deletes a podcast and its episodes through the authenticated resource', func
         ->callAction(DeleteAction::class);
 
     expect(Podcast::query()->find($podcast->id))->toBeNull()
-        ->and(Episode::query()->find($episode->id))->toBeNull();
+        ->and(Episode::query()->find($episode->id))
+        ->toBeNull();
 
     Storage::disk('public')->assertMissing('podcasts/delete-cover.jpg');
     Storage::disk('public')->assertMissing('episodes/delete-image.jpg');

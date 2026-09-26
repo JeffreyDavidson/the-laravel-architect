@@ -23,7 +23,8 @@ final class BlogIndexQuery
     public function results(string $search, ?string $categorySlug): array
     {
         $selectedCategory = $categorySlug !== null && $categorySlug !== ''
-            ? Category::query()->where('slug', $categorySlug)->firstOrFail()
+            ? Category::query()->where('slug', $categorySlug)
+                ->firstOrFail()
             : null;
 
         $postsQuery = Post::query()

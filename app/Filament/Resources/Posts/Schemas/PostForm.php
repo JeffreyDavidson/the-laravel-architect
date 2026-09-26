@@ -64,7 +64,8 @@ class PostForm
                             ->preload()
                             ->createOptionAction(fn (Action $action): Action => $action->authorize('create', Category::class))
                             ->createOptionForm([
-                                TextInput::make('name')->required()->maxLength(255),
+                                TextInput::make('name')->required()
+                                    ->maxLength(255),
                                 TextInput::make('slug')
                                     ->required()
                                     ->maxLength(255)

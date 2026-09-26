@@ -36,10 +36,12 @@ it('deletes multiple podcasts and their stored cover images through the table bu
 
     livewire(ListPodcasts::class)
         ->selectTableRecords([$firstPodcast, $secondPodcast])
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
     expect(Podcast::query()->find($firstPodcast->id))->toBeNull()
-        ->and(Podcast::query()->find($secondPodcast->id))->toBeNull();
+        ->and(Podcast::query()->find($secondPodcast->id))
+        ->toBeNull();
 
     Storage::disk('public')->assertMissing('podcasts/bulk-delete-one.jpg');
     Storage::disk('public')->assertMissing('podcasts/bulk-delete-two.jpg');

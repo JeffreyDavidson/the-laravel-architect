@@ -17,9 +17,12 @@ it('reports the missing public project details', function () {
     $readiness = new ProjectReadiness($project);
 
     expect($readiness->isReady())->toBeFalse()
-        ->and($readiness->label())->toBe('Needs attention')
-        ->and($readiness->progress())->toBe('1/6 complete')
-        ->and($readiness->missingSummary())->toBe('Missing: Case study, Featured image, Project link, Tech stack, Tags');
+        ->and($readiness->label())
+        ->toBe('Needs attention')
+        ->and($readiness->progress())
+        ->toBe('1/6 complete')
+        ->and($readiness->missingSummary())
+        ->toBe('Missing: Case study, Featured image, Project link, Tech stack, Tags');
 });
 
 it('reports a project as ready when all public details are present', function () {
@@ -41,7 +44,10 @@ it('reports a project as ready when all public details are present', function ()
     $readiness = new ProjectReadiness($project);
 
     expect($readiness->isReady())->toBeTrue()
-        ->and($readiness->label())->toBe('Ready')
-        ->and($readiness->progress())->toBe('6/6 complete')
-        ->and($readiness->missingSummary())->toBe('All public details are complete.');
+        ->and($readiness->label())
+        ->toBe('Ready')
+        ->and($readiness->progress())
+        ->toBe('6/6 complete')
+        ->and($readiness->missingSummary())
+        ->toBe('All public details are complete.');
 });

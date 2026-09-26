@@ -13,7 +13,8 @@ pest()->use(RefreshDatabase::class);
 it('renders responsive project images without overflow', function (string $route, string $device) {
     $this->withVite();
     Storage::fake('public', ['url' => '/test-project-images?path=']);
-    Storage::disk('public')->put('showcase.png', UploadedFile::fake()->image('showcase.png', 1280, 720)->getContent());
+    Storage::disk('public')->put('showcase.png', UploadedFile::fake()->image('showcase.png', 1280, 720)
+        ->getContent());
 
     // Serve only these isolated fixtures through the browser test application.
     Route::get('/test-project-images', function (Request $request) {
@@ -47,7 +48,8 @@ it('renders responsive project images without overflow', function (string $route
         ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
         ->assertScript('Math.abs(document.querySelector("main picture img").getBoundingClientRect().width / document.querySelector("main picture img").getBoundingClientRect().height - 16 / 9) < 0.02')
         ->assertNoJavaScriptErrors();
-})->with(['projects.index', 'projects.show'])->with(['mobile', 'desktop']);
+})->with(['projects.index', 'projects.show'])
+    ->with(['mobile', 'desktop']);
 
 it('keeps image-free projects navigable', function (string $device) {
     $this->withVite();

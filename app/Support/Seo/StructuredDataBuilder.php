@@ -28,7 +28,8 @@ final readonly class StructuredDataBuilder
      */
     public function build(array $pageData, ?string $routeName = null): array
     {
-        $routeName ??= $this->request->route()?->getName() ?? '';
+        $routeName ??= $this->request->route()
+            ?->getName() ?? '';
         $siteUrl = route('home');
         $authorUrl = route('about');
         $schemas = [[

@@ -42,11 +42,14 @@ it('presents featured projects without duplicated summaries or invented artwork'
     }
 
     expect(substr_count($content, 'data-project-entry'))->toBe($count)
-        ->and(substr_count($content, 'A distinct project summary 1.'))->toBe(1);
+        ->and(substr_count($content, 'A distinct project summary 1.'))
+        ->toBe(1);
 })->with([1, 2, 4]);
 
 it('omits selected work when no projects are featured', function () {
-    $this->get(route('home'))->assertOk()->assertDontSeeHtml('data-home-work');
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertDontSeeHtml('data-home-work');
 });
 
 it('uses the active podcast artwork on the homepage', function () {
@@ -59,7 +62,9 @@ it('uses the active podcast artwork on the homepage', function () {
         'sort_order' => 1,
     ]);
 
-    $this->get(route('home'))->assertOk()->assertSeeHtml('/storage/podcasts/current-cover.webp');
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('/storage/podcasts/current-cover.webp');
 });
 
 it('flashes invalid newsletter input for recovery', function () {

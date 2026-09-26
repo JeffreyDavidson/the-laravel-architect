@@ -27,10 +27,13 @@ it('publishes a project through Filament and exposes it publicly', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->status)->toBe(PublishStatus::Published);
+    expect($project->refresh()
+        ->status)->toBe(PublishStatus::Published);
 
-    $this->get(route('projects.show', $project))->assertOk();
-    $this->get('/sitemap.xml')->assertSeeHtml(route('projects.show', $project));
+    $this->get(route('projects.show', $project))
+        ->assertOk();
+    $this->get('/sitemap.xml')
+        ->assertSeeHtml(route('projects.show', $project));
 });
 
 it('hides a project again when Filament changes it back to draft', function () {
@@ -46,8 +49,11 @@ it('hides a project again when Filament changes it back to draft', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->status)->toBe(PublishStatus::Draft);
+    expect($project->refresh()
+        ->status)->toBe(PublishStatus::Draft);
 
-    $this->get(route('projects.show', $project))->assertNotFound();
-    $this->get('/sitemap.xml')->assertDontSeeHtml(route('projects.show', $project));
+    $this->get(route('projects.show', $project))
+        ->assertNotFound();
+    $this->get('/sitemap.xml')
+        ->assertDontSeeHtml(route('projects.show', $project));
 });

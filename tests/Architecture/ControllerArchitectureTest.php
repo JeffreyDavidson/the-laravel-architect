@@ -36,7 +36,8 @@ it('prohibits private methods in controllers', function () use ($controllerClass
 
         $reflection = new ReflectionClass($controller);
         $privateMethods = collect($reflection->getMethods(ReflectionMethod::IS_PRIVATE))
-            ->filter(fn (ReflectionMethod $method): bool => $method->getDeclaringClass()->getName() === $controller)
+            ->filter(fn (ReflectionMethod $method): bool => $method->getDeclaringClass()
+                ->getName() === $controller)
             ->map(fn (ReflectionMethod $method): string => $method->getName())
             ->values()
             ->all();
@@ -55,7 +56,8 @@ it('keeps controllers invokable or resourceful', function () use ($controllerCla
 
         $reflection = new ReflectionClass($controller);
         $publicMethods = collect($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->filter(fn (ReflectionMethod $method): bool => $method->getDeclaringClass()->getName() === $controller)
+            ->filter(fn (ReflectionMethod $method): bool => $method->getDeclaringClass()
+                ->getName() === $controller)
             ->reject(fn (ReflectionMethod $method): bool => $method->isConstructor())
             ->map(fn (ReflectionMethod $method): string => $method->getName())
             ->sort()

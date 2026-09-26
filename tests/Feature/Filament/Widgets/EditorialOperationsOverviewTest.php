@@ -60,11 +60,16 @@ it('summarizes first-party editorial work and links', function () {
     $stats = $widget->stats();
 
     expect($stats[0]->getValue())->toBe(1)
-        ->and($stats[1]->getValue())->toBe(1)
-        ->and($stats[2]->getValue())->toBe(1)
-        ->and($stats[3]->getValue())->toBe(0)
-        ->and($stats[4]->getValue())->toBe(1)
-        ->and($stats[5]->getValue())->toBe(1);
+        ->and($stats[1]->getValue())
+        ->toBe(1)
+        ->and($stats[2]->getValue())
+        ->toBe(1)
+        ->and($stats[3]->getValue())
+        ->toBe(0)
+        ->and($stats[4]->getValue())
+        ->toBe(1)
+        ->and($stats[5]->getValue())
+        ->toBe(1);
 });
 
 it('excludes already live scheduled content from unpublished operational queues', function () {
@@ -87,7 +92,8 @@ it('excludes already live scheduled content from unpublished operational queues'
     $stats = $widget->stats();
 
     expect($stats[3]->getValue())->toBe(2)
-        ->and($stats[4]->getValue())->toBe(2);
+        ->and($stats[4]->getValue())
+        ->toBe(2);
 
     foreach ([3 => 'episode', 4 => 'issue'] as $index => $type) {
         $url = $stats[$index]->getUrl();

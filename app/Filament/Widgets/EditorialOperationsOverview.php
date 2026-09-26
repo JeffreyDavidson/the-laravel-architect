@@ -36,32 +36,38 @@ class EditorialOperationsOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('New inquiries', ContactInquiry::query()->where('status', ContactInquiryStatus::New)->count())
+            Stat::make('New inquiries', ContactInquiry::query()->where('status', ContactInquiryStatus::New)
+                ->count())
                 ->description('Private inbox')
                 ->descriptionIcon(Heroicon::OutlinedChatBubbleLeftRight)
                 ->color('info')
                 ->url(ContactInquiryResource::getUrl('index')),
-            Stat::make('Posts in review', Post::query()->where('status', PublishStatus::InReview)->count())
+            Stat::make('Posts in review', Post::query()->where('status', PublishStatus::InReview)
+                ->count())
                 ->description('Awaiting approval')
                 ->descriptionIcon(Heroicon::OutlinedEye)
                 ->color('warning')
                 ->url(PostResource::getUrl('index')),
-            Stat::make('Scheduled posts', Post::query()->scheduled()->count())
+            Stat::make('Scheduled posts', Post::query()->scheduled()
+                ->count())
                 ->description('Ready to publish')
                 ->descriptionIcon(Heroicon::OutlinedCalendar)
                 ->color('success')
                 ->url(PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublishStatus::Scheduled->value]]])),
-            Stat::make('Episode queue', Episode::query()->unpublished()->count())
+            Stat::make('Episode queue', Episode::query()->unpublished()
+                ->count())
                 ->description('Unpublished episodes')
                 ->descriptionIcon(Heroicon::OutlinedMusicalNote)
                 ->color('primary')
                 ->url(EpisodeResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
-            Stat::make('Newsletter queue', NewsletterIssue::query()->unpublished()->count())
+            Stat::make('Newsletter queue', NewsletterIssue::query()->unpublished()
+                ->count())
                 ->description('Unpublished issues')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
                 ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
-            Stat::make('Active subscribers', Subscriber::query()->active()->count())
+            Stat::make('Active subscribers', Subscriber::query()->active()
+                ->count())
                 ->description('Confirmed audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
                 ->color('success')

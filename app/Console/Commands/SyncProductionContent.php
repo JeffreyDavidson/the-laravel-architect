@@ -26,7 +26,8 @@ class SyncProductionContent extends Command
         try {
             ['counts' => $counts, 'mediaCount' => $mediaCount] = $synchronizer->synchronize();
 
-            $this->info(collect($counts)->map(fn (int $count, string $type): string => "{$count} {$type}")->join(', ').' synchronized.');
+            $this->info(collect($counts)->map(fn (int $count, string $type): string => "{$count} {$type}")
+                ->join(', ').' synchronized.');
             $this->info("{$mediaCount} referenced public media files synchronized.");
 
             return self::SUCCESS;

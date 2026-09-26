@@ -147,7 +147,8 @@ class SearchQuery
             'title' => $post->title,
             'description' => $post->excerpt,
             'url' => route('blog.show', $post),
-            'meta' => $post->publishedAt()?->format('M j, Y') ?? 'Article',
+            'meta' => $post->publishedAt()
+                ?->format('M j, Y') ?? 'Article',
             'external' => false,
         ];
     }
@@ -189,7 +190,8 @@ class SearchQuery
             'title' => $episode->title,
             'description' => $episode->description,
             'url' => route('podcast.episode', [$podcast, $episode]),
-            'meta' => $episode->publishedAt()?->format('M j, Y') ?? 'Episode',
+            'meta' => $episode->publishedAt()
+                ?->format('M j, Y') ?? 'Episode',
             'external' => false,
         ];
     }
@@ -201,7 +203,8 @@ class SearchQuery
             'title' => $issue->title,
             'description' => $issue->excerpt,
             'url' => route('newsletter.issue', $issue),
-            'meta' => $issue->publishedAt()?->format('M j, Y') ?? 'Newsletter',
+            'meta' => $issue->publishedAt()
+                ?->format('M j, Y') ?? 'Newsletter',
             'external' => false,
         ];
     }

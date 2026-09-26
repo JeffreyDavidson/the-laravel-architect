@@ -23,13 +23,15 @@ class EpisodeNavigationQuery
         return [
             'previous' => $podcast->publishedEpisodes()
                 ->where(fn (Builder $query) => $query->where('published_at', '<', $episode->published_at)
-                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)->where('id', '<', $episode->id)))
+                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)
+                        ->where('id', '<', $episode->id)))
                 ->latest('published_at')
                 ->latest('id')
                 ->first(),
             'next' => $podcast->publishedEpisodes()
                 ->where(fn (Builder $query) => $query->where('published_at', '>', $episode->published_at)
-                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)->where('id', '>', $episode->id)))
+                    ->orWhere(fn (Builder $query) => $query->where('published_at', $episode->published_at)
+                        ->where('id', '>', $episode->id)))
                 ->oldest('published_at')
                 ->oldest('id')
                 ->first(),

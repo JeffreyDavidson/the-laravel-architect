@@ -72,15 +72,18 @@ it('plots published content by month and excludes drafts and older records', fun
     $data = $widget->data();
 
     expect($data['labels'])->toBe(['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'])
-        ->and($data['datasets'][0])->toMatchArray([
+        ->and($data['datasets'][0])
+        ->toMatchArray([
             'label' => 'Posts',
             'data' => [0, 0, 0, 0, 0, 1],
         ])
-        ->and($data['datasets'][1])->toMatchArray([
+        ->and($data['datasets'][1])
+        ->toMatchArray([
             'label' => 'Episodes',
             'data' => [0, 0, 0, 0, 1, 0],
         ])
-        ->and($data['datasets'][2])->toMatchArray([
+        ->and($data['datasets'][2])
+        ->toMatchArray([
             'label' => 'Newsletter issues',
             'data' => [1, 0, 0, 0, 0, 0],
         ]);

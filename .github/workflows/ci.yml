@@ -93,6 +93,9 @@ jobs:
       - name: Check code style
         run: composer lint:check
 
+      - name: Check method chains
+        run: php scripts/check-method-chaining.php
+
       - name: Run static analysis
         run: composer test:types
 

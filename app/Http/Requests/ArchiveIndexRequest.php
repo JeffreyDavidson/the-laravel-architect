@@ -40,7 +40,8 @@ class ArchiveIndexRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        if ($validator->errors()->isNotEmpty()) {
+        if ($validator->errors()
+            ->isNotEmpty()) {
             abort(404);
         }
 

@@ -21,10 +21,14 @@ it('replaces sensitive request metadata with the route template', function () {
     $redacted = app(RedactNightwatchRequest::class)($request);
 
     expect($redacted)->toBeTrue()
-        ->and($request->url)->toBe('/newsletter/confirm/{subscriber}/{token}')
-        ->and($nightwatch->executionState->executionPreview)->toBe('GET /newsletter/confirm/{subscriber}/{token}')
-        ->and($request->ip)->toBeEmpty()
-        ->and($request->headers->all())->toBeEmpty();
+        ->and($request->url)
+        ->toBe('/newsletter/confirm/{subscriber}/{token}')
+        ->and($nightwatch->executionState->executionPreview)
+        ->toBe('GET /newsletter/confirm/{subscriber}/{token}')
+        ->and($request->ip)
+        ->toBeEmpty()
+        ->and($request->headers->all())
+        ->toBeEmpty();
 });
 
 it('does not retain arbitrary paths for unmatched routes', function () {
@@ -39,8 +43,10 @@ it('does not retain arbitrary paths for unmatched routes', function () {
     app(RedactNightwatchRequest::class)($request);
 
     expect($request->url)->toBe('[unmatched route]')
-        ->and($nightwatch->executionState->executionPreview)->toBe('GET [unmatched route]')
-        ->and($request->ip)->toBeEmpty();
+        ->and($nightwatch->executionState->executionPreview)
+        ->toBe('GET [unmatched route]')
+        ->and($request->ip)
+        ->toBeEmpty();
 });
 
 function nightwatchRequest(string $url, string $routePath, string $ip): Request

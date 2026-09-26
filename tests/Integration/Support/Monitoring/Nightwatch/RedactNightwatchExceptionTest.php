@@ -19,8 +19,10 @@ it('removes sensitive details from exception records and previews', function () 
     $redacted = app(RedactNightwatchException::class)($exception);
 
     expect($redacted)->toBeTrue()
-        ->and($exception->message)->toBe('Exception message redacted.')
-        ->and($nightwatch->executionState->exceptionPreview)->toBe('Exception message redacted.')
+        ->and($exception->message)
+        ->toBe('Exception message redacted.')
+        ->and($nightwatch->executionState->exceptionPreview)
+        ->toBe('Exception message redacted.')
         ->not->toContain('private@example.test', 'private-token');
 });
 
@@ -39,5 +41,6 @@ it('does not replace an existing preview for a handled exception', function () {
     app(RedactNightwatchException::class)($exception);
 
     expect($exception->message)->toBe('Exception message redacted.')
-        ->and($nightwatch->executionState->exceptionPreview)->toBe('Earlier unhandled exception.');
+        ->and($nightwatch->executionState->exceptionPreview)
+        ->toBe('Earlier unhandled exception.');
 });

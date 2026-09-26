@@ -18,7 +18,8 @@ it('replaces the authenticated user identifier with an application-keyed digest'
     expect($details)->toBe([
         'id' => hash_hmac('sha256', '42', 'private-application-key'),
     ])->not->toBe(['id' => '42'])
-        ->and(serialize($details))->not->toContain('Private Administrator', 'private@example.test');
+        ->and(serialize($details))
+        ->not->toContain('Private Administrator', 'private@example.test');
 });
 
 it('fully redacts the identifier when the application key is unavailable', function () {

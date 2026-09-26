@@ -53,7 +53,8 @@ it('reports a stale scheduler heartbeat as unhealthy', function () {
         'app.debug' => false,
         'health.runtime.enabled' => true,
     ]);
-    Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->subMinutes(6)->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->subMinutes(6)
+        ->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
     $this->getJson('/up')
@@ -67,7 +68,8 @@ it('reports a stale queue worker heartbeat as unhealthy', function () {
         'health.runtime.enabled' => true,
     ]);
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
-    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(6)->getTimestamp());
+    Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(6)
+        ->getTimestamp());
 
     $this->getJson('/up')
         ->assertStatus(500)

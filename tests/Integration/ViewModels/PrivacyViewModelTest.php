@@ -7,5 +7,6 @@ it('provides the existing page SEO metadata', function () {
         ->data();
 
     expect($data['seoSource']->title)->toBe('Privacy')
-        ->and($data['seoSource']->description)->toBe('How The Laravel Architect handles contact messages, newsletter subscriptions, observability, and essential site data.');
+        ->and($data['seoSource']->description)
+        ->toBe('How The Laravel Architect handles contact messages, newsletter subscriptions, observability, and essential site data.');
 });

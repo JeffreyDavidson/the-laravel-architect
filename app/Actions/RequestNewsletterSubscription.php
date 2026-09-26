@@ -22,7 +22,9 @@ final readonly class RequestNewsletterSubscription
 
     public function handle(string $email): void
     {
-        $email = Str::of($email)->trim()->lower()->toString();
+        $email = Str::of($email)->trim()
+            ->lower()
+            ->toString();
         $emailHash = hash('sha256', $email);
         $cooldownKey = "newsletter.confirmation.cooldown.{$emailHash}";
         $lockKey = "newsletter.confirmation.lock.{$emailHash}";
@@ -58,7 +60,8 @@ final readonly class RequestNewsletterSubscription
             );
 
             try {
-                $this->mailer->to($subscriber->email)->queue(new ConfirmNewsletterSubscription($confirmationUrl));
+                $this->mailer->to($subscriber->email)
+                    ->queue(new ConfirmNewsletterSubscription($confirmationUrl));
             } catch (Throwable $exception) {
                 Cache::forget($cooldownKey);
 

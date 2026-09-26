@@ -57,7 +57,8 @@ it('accepts a normalized episode slug when creating an episode', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Episode::query()->sole()->slug)->toBe('episode-title-2');
+    expect(Episode::query()->sole()
+        ->slug)->toBe('episode-title-2');
 });
 
 it('rejects a non-normalized episode slug when editing an episode', function () {
@@ -74,7 +75,8 @@ it('rejects a non-normalized episode slug when editing an episode', function () 
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);
 
-    expect($episode->refresh()->slug)->toBe('episode-title');
+    expect($episode->refresh()
+        ->slug)->toBe('episode-title');
 });
 
 it('preserves an existing episode slug when the title changes', function () {
@@ -91,5 +93,6 @@ it('preserves an existing episode slug when the title changes', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($episode->refresh()->slug)->toBe('curated-episode-slug');
+    expect($episode->refresh()
+        ->slug)->toBe('curated-episode-slug');
 });

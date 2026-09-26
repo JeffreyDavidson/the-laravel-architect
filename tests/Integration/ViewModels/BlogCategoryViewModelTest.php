@@ -45,15 +45,26 @@ it('builds a paginated category archive payload', function () {
     $canonicalUrl = route('blog.category', ['category' => $category, 'page' => 2]);
 
     expect($data)->toHaveKeys(['category', 'posts', 'seoSource'])
-        ->and($data['category']->is($category))->toBeTrue()
-        ->and($data['posts']->currentPage())->toBe(2)
-        ->and($data['posts']->total())->toBe(11)
-        ->and($data['posts']->sole()->relationLoaded('tags'))->toBeTrue()
-        ->and($data['posts']->sole()->relationLoaded('author'))->toBeTrue()
-        ->and($data['seoSource']->title)->toBe('Architecture Articles — Page 2')
-        ->and($data['seoSource']->description)->toBe(
+        ->and($data['category']->is($category))
+        ->toBeTrue()
+        ->and($data['posts']->currentPage())
+        ->toBe(2)
+        ->and($data['posts']->total())
+        ->toBe(11)
+        ->and($data['posts']->sole()
+            ->relationLoaded('tags'))
+        ->toBeTrue()
+        ->and($data['posts']->sole()
+            ->relationLoaded('author'))
+        ->toBeTrue()
+        ->and($data['seoSource']->title)
+        ->toBe('Architecture Articles — Page 2')
+        ->and($data['seoSource']->description)
+        ->toBe(
             'Articles about Architecture — Laravel development insights from Jeffrey Davidson. Page 2 of 2.',
         )
-        ->and($data['seoSource']->url)->toBe($canonicalUrl)
-        ->and($data['seoSource']->canonical_url)->toBe($canonicalUrl);
+        ->and($data['seoSource']->url)
+        ->toBe($canonicalUrl)
+        ->and($data['seoSource']->canonical_url)
+        ->toBe($canonicalUrl);
 });

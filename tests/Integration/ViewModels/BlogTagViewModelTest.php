@@ -53,15 +53,26 @@ it('builds a paginated tag archive payload', function () {
     $canonicalUrl = route('blog.tag', ['tag' => $tag, 'page' => 2]);
 
     expect($data)->toHaveKeys(['tag', 'posts', 'seoSource'])
-        ->and($data['tag']->is($tag))->toBeTrue()
-        ->and($data['posts']->currentPage())->toBe(2)
-        ->and($data['posts']->total())->toBe(11)
-        ->and($data['posts']->sole()->relationLoaded('category'))->toBeTrue()
-        ->and($data['posts']->sole()->relationLoaded('author'))->toBeTrue()
-        ->and($data['seoSource']->title)->toBe('Boundaries Articles — Page 2')
-        ->and($data['seoSource']->description)->toBe(
+        ->and($data['tag']->is($tag))
+        ->toBeTrue()
+        ->and($data['posts']->currentPage())
+        ->toBe(2)
+        ->and($data['posts']->total())
+        ->toBe(11)
+        ->and($data['posts']->sole()
+            ->relationLoaded('category'))
+        ->toBeTrue()
+        ->and($data['posts']->sole()
+            ->relationLoaded('author'))
+        ->toBeTrue()
+        ->and($data['seoSource']->title)
+        ->toBe('Boundaries Articles — Page 2')
+        ->and($data['seoSource']->description)
+        ->toBe(
             'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',
         )
-        ->and($data['seoSource']->url)->toBe($canonicalUrl)
-        ->and($data['seoSource']->canonical_url)->toBe($canonicalUrl);
+        ->and($data['seoSource']->url)
+        ->toBe($canonicalUrl)
+        ->and($data['seoSource']->canonical_url)
+        ->toBe($canonicalUrl);
 });

@@ -77,7 +77,8 @@ it('rejects social profile URLs that are not HTTPS', function () {
         ->call('create')
         ->assertHasFormErrors(['url']);
 
-    expect(SocialProfile::query()->where('url', 'http://instagram.com/thelaravelarch')->exists())
+    expect(SocialProfile::query()->where('url', 'http://instagram.com/thelaravelarch')
+        ->exists())
         ->toBeFalse();
 });
 

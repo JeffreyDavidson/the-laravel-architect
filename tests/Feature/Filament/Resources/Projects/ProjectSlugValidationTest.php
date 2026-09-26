@@ -48,7 +48,8 @@ it('accepts a normalized project slug when creating a project', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Project::query()->sole()->slug)->toBe('project-title-2');
+    expect(Project::query()->sole()
+        ->slug)->toBe('project-title-2');
 });
 
 it('rejects a non-normalized project slug when editing a project', function () {
@@ -64,7 +65,8 @@ it('rejects a non-normalized project slug when editing a project', function () {
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);
 
-    expect($project->refresh()->slug)->toBe('project-title');
+    expect($project->refresh()
+        ->slug)->toBe('project-title');
 });
 
 it('preserves an existing project slug when the title changes', function () {
@@ -80,5 +82,6 @@ it('preserves an existing project slug when the title changes', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->slug)->toBe('curated-project-slug');
+    expect($project->refresh()
+        ->slug)->toBe('curated-project-slug');
 });

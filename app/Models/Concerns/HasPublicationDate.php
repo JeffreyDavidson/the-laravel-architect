@@ -20,7 +20,8 @@ trait HasPublicationDate
             return;
         }
 
-        $query->whereNotNull($column)->where($column, '<=', now());
+        $query->whereNotNull($column)
+            ->where($column, '<=', now());
     }
 
     public function isPublished(): bool

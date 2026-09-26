@@ -40,7 +40,8 @@ class ImportPublicContent extends Command
             return self::FAILURE;
         }
 
-        $this->info(collect($counts)->map(fn (int $count, string $type): string => "{$count} {$type}")->join(', ').' synchronized.');
+        $this->info(collect($counts)->map(fn (int $count, string $type): string => "{$count} {$type}")
+            ->join(', ').' synchronized.');
 
         return self::SUCCESS;
     }

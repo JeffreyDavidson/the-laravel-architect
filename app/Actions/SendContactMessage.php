@@ -42,14 +42,16 @@ final class SendContactMessage
                 budget: $data->budget?->value,
                 contactMessage: $data->message,
                 projectTitle: $data->projectTitle,
-            )->onConnection('database')->beforeCommit());
+            )->onConnection('database')
+                ->beforeCommit());
             Mail::to(new Address($data->email, $data->name))->queue(new ContactMessageConfirmation(
                 senderName: $data->name,
                 contactType: $data->type->value,
                 budget: $data->budget?->value,
                 contactMessage: $data->message,
                 projectTitle: $data->projectTitle,
-            )->onConnection('database')->beforeCommit());
+            )->onConnection('database')
+                ->beforeCommit());
         });
     }
 }

@@ -158,7 +158,9 @@ beforeEach(function () {
 });
 
 it('renders the core public pages', function (string $uri, string $copy) {
-    $this->get($uri)->assertOk()->assertSeeHtml($copy);
+    $this->get($uri)
+        ->assertOk()
+        ->assertSeeHtml($copy);
 })->with([
     ['/', 'The Laravel Architect'],
     ['/about', 'About'],
@@ -172,7 +174,10 @@ it('renders the core public pages', function (string $uri, string $copy) {
 ]);
 
 it('renders page-specific SEO metadata', function () {
-    $this->get(route('about'))->assertOk()->assertSeeHtml('<title>About — Jeffrey Davidson</title>')->assertSeeHtml('<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">');
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSeeHtml('<title>About — Jeffrey Davidson</title>')
+        ->assertSeeHtml('<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">');
 });
 
 it('renders model-specific SEO metadata', function () {
@@ -187,7 +192,10 @@ it('renders model-specific SEO metadata', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $this->get(route('blog.show', $post))->assertOk()->assertSeeHtml('<title>Designing Clear Laravel Boundaries — Jeffrey Davidson</title>')->assertSeeHtml('<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">');
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSeeHtml('<title>Designing Clear Laravel Boundaries — Jeffrey Davidson</title>')
+        ->assertSeeHtml('<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">');
 });
 
 it('renders bundled editorial artwork and article navigation for seeded posts', function () {
@@ -517,7 +525,12 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
         ],
     ] as $metadata) {
         $url = $metadata['url'];
-        $content = $this->get($url)->assertOk()->assertSeeHtml('<title>'.$metadata['title'].'</title>')->assertSeeHtml('<meta name="description" content="'.$metadata['description'].'">')->assertSeeHtml('<link rel="canonical" href="'.$url.'">')->assertSeeHtml('<meta property="og:url" content="'.$url.'">')
+        $content = $this->get($url)
+            ->assertOk()
+            ->assertSeeHtml('<title>'.$metadata['title'].'</title>')
+            ->assertSeeHtml('<meta name="description" content="'.$metadata['description'].'">')
+            ->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
+            ->assertSeeHtml('<meta property="og:url" content="'.$url.'">')
             ->getContent();
 
         $structuredData = decodeStructuredData($content);
@@ -599,7 +612,12 @@ it('uses page-specific metadata for paginated podcast archives', function () {
     }
 
     $url = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
-    $content = $this->get($url)->assertOk()->assertSeeHtml('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>')->assertSeeHtml('<meta name="description" content="Conversations about maintainable Laravel applications. Page 2 of 2.">')->assertSeeHtml('<link rel="canonical" href="'.$url.'">')->assertSeeHtml('<meta property="og:url" content="'.$url.'">')
+    $content = $this->get($url)
+        ->assertOk()
+        ->assertSeeHtml('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>')
+        ->assertSeeHtml('<meta name="description" content="Conversations about maintainable Laravel applications. Page 2 of 2.">')
+        ->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
+        ->assertSeeHtml('<meta property="og:url" content="'.$url.'">')
         ->assertDontSee('Latest Episode')
         ->getContent();
 
@@ -661,7 +679,8 @@ it('keeps one main landmark on public index pages', function (string $routeName)
         ->getContent());
 
     expect(substr_count($content, '<main'))->toBe(1)
-        ->and(substr_count($content, '</main>'))->toBe(1);
+        ->and(substr_count($content, '</main>'))
+        ->toBe(1);
 })->with([
     'projects' => 'projects.index',
     'podcasts' => 'podcast.index',
@@ -670,12 +689,16 @@ it('keeps one main landmark on public index pages', function (string $routeName)
 it('uses a concise primary navigation and a project-focused call to action', function () {
     $content = responseContent($this->get(route('home'))
         ->assertOk()
-        ->assertSee('Writing')->assertSee('Discuss a Project')->assertSeeHtml('/images/elephant-companion-128.webp')->assertDontSeeHtml('/images/logo-color.svg')
+        ->assertSee('Writing')
+        ->assertSee('Discuss a Project')
+        ->assertSeeHtml('/images/elephant-companion-128.webp')
+        ->assertDontSeeHtml('/images/logo-color.svg')
         ->getContent());
 
     expect($content)
         ->not->toContain('>Contact Me<')
-        ->and(substr_count($content, '/images/elephant-companion-128.webp'))->toBe(2);
+        ->and(substr_count($content, '/images/elephant-companion-128.webp'))
+        ->toBe(2);
 });
 
 it('provides a valid legacy favicon fallback', function () {
@@ -684,11 +707,16 @@ it('provides a valid legacy favicon fallback', function () {
     $favicon = responseContent($favicon);
 
     expect(strlen($favicon))->toBeGreaterThan(0)
-        ->and(substr($favicon, 0, 4))->toBe("\x00\x00\x01\x00");
+        ->and(substr($favicon, 0, 4))
+        ->toBe("\x00\x00\x01\x00");
 });
 
 it('keeps public technology and channel details consistent', function () {
-    $this->get(route('about'))->assertOk()->assertSeeHtml('aria-label="Flip Jeffrey Davidson developer card"')->assertSeeHtml('aria-pressed="false"')->assertSeeHtml('x-data="siteHeader"')
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSeeHtml('aria-label="Flip Jeffrey Davidson developer card"')
+        ->assertSeeHtml('aria-pressed="false"')
+        ->assertSeeHtml('x-data="siteHeader"')
         ->assertSee(configuredString(config('public-site.technology.laravel')))
         ->assertSee('I share practical Laravel videos');
 
@@ -697,12 +725,16 @@ it('keeps public technology and channel details consistent', function () {
         ->assertSee('Laravel '.configuredString(config('public-site.technology.laravel')))
         ->assertSee('Filament '.configuredString(config('public-site.technology.filament')));
 
-    $this->get(route('home'))->assertOk()->assertSeeHtml('https://youtube.com/@thelaravelarchitect')
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('https://youtube.com/@thelaravelarchitect')
         ->assertSee('Away from the editor');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
-    $content = responseContent($this->get(route('uses'))->assertOk()->assertSeeHtml('aria-label="Jump to uses section"')
+    $content = responseContent($this->get(route('uses'))
+        ->assertOk()
+        ->assertSeeHtml('aria-label="Jump to uses section"')
         ->getContent());
 
     expect(stringPosition($content, 'aria-label="Jump to uses section"'))
@@ -712,7 +744,9 @@ it('places the mobile uses jump navigation before the equipment list', function 
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('contact'))->assertOk()->assertSeeHtml($privacyUrl)
+    $this->get(route('contact'))
+        ->assertOk()
+        ->assertSeeHtml($privacyUrl)
         ->assertSee('Your details are used to reply to this inquiry.');
 });
 
@@ -721,15 +755,40 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     $manifest = assetManifest();
 
-    $this->get(route('home'))->assertOk()->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')->assertDontSeeHtml('fonts.bunny.net')->assertDontSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-desktop-1536.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-640.webp']['file'])->assertSeeHtml($manifest['resources/images/home-hero-mobile-1024.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-320.webp']['file'])->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-512.webp']['file'])->assertSeeHtml($manifest['resources/js/app.js']['file']);
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')
+        ->assertDontSeeHtml('fonts.bunny.net')
+        ->assertDontSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
+        ->assertSeeHtml($manifest['resources/css/app.css']['file'])
+        ->assertSeeHtml($manifest['resources/images/home-hero-desktop-1024.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/home-hero-desktop-1536.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/home-hero-mobile-640.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/home-hero-mobile-1024.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-320.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-512.webp']['file'])
+        ->assertSeeHtml($manifest['resources/js/app.js']['file']);
 
-    $this->get(route('about'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file'])->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"');
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSeeHtml($manifest['resources/css/app.css']['file'])
+        ->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])
+        ->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])
+        ->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"');
 
-    $this->get(route('blog.index'))->assertOk()->assertSeeHtml('x-data="siteHeader"')->assertSeeHtml($manifest['resources/css/app.css']['file']);
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('x-data="siteHeader"')
+        ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('projects.index'))->assertOk()->assertSeeHtml('x-data="siteHeader"')->assertSeeHtml($manifest['resources/css/app.css']['file']);
+    $this->get(route('projects.index'))
+        ->assertOk()
+        ->assertSeeHtml('x-data="siteHeader"')
+        ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('podcast.index'))->assertOk()->assertSeeHtml($manifest['resources/css/app.css']['file']);
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
     expect($manifest)
         ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
@@ -741,7 +800,9 @@ it('loads public interactivity and typography from the local Vite bundle', funct
             'resources/css/pages/podcast-entry.css',
         ])
         ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf')
-        ->and(implode("\n", array_column($manifest, 'file')))->not->toContain('Empera-Vintage')->not->toContain('Empera-Regular.ttf');
+        ->and(implode("\n", array_column($manifest, 'file')))
+        ->not->toContain('Empera-Vintage')
+        ->not->toContain('Empera-Regular.ttf');
 });
 
 it('renders one concise client-focused services section', function () {
@@ -750,7 +811,9 @@ it('renders one concise client-focused services section', function () {
         ->assertSee('Where I can help')
         ->assertSee('Improve an existing codebase')
         ->assertSee('Build your application')
-        ->assertSee('Ship with confidence')->assertSee(route('services'))->assertDontSeeHtml('data-architecture-scene')
+        ->assertSee('Ship with confidence')
+        ->assertSee(route('services'))
+        ->assertDontSeeHtml('data-architecture-scene')
         ->assertDontSee('How I can help')
         ->getContent());
 
@@ -758,7 +821,14 @@ it('renders one concise client-focused services section', function () {
 });
 
 it('prioritizes the art-directed homepage hero', function () {
-    $this->get(route('home'))->assertOk()->assertSeeHtml('media="(max-width: 767px)"')->assertSeeHtml('sizes="100vw"')->assertSeeHtml('fetchpriority="high"')->assertSeeHtml('decoding="async"')->assertSeeHtml('Laravel systems,')->assertSeeHtml('easier to change.');
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('media="(max-width: 767px)"')
+        ->assertSeeHtml('sizes="100vw"')
+        ->assertSeeHtml('fetchpriority="high"')
+        ->assertSeeHtml('decoding="async"')
+        ->assertSeeHtml('Laravel systems,')
+        ->assertSeeHtml('easier to change.');
 });
 
 it('gives every homepage article a responsive image', function () {
@@ -820,9 +890,28 @@ it('renders accessible podcast episode embeds and external links', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('Play Designing Laravel Applications on YouTube')->assertSeeHtml('title="Designing Laravel Applications on YouTube"')->assertSeeHtml('www.youtube-nocookie.com/embed/dQw4w9WgXcQ')->assertSeeHtml('data-youtube-facade')->assertSeeHtml('data-youtube-player')->assertSeeHtml('data-youtube-play')->assertSeeHtml('x-data="siteHeader"')->assertDontSeeHtml('src="https://www.youtube.com/embed/')->assertSeeHtml('rel="noopener noreferrer"')->assertSeeHtml('data-podcast-copy-url=')->assertSeeHtml('style="--podcast-color: #2563eb;"')->assertDontSeeHtml('<style>')->assertDontSeeHtml('onclick=');
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSeeHtml('Play Designing Laravel Applications on YouTube')
+        ->assertSeeHtml('title="Designing Laravel Applications on YouTube"')
+        ->assertSeeHtml('www.youtube-nocookie.com/embed/dQw4w9WgXcQ')
+        ->assertSeeHtml('data-youtube-facade')
+        ->assertSeeHtml('data-youtube-player')
+        ->assertSeeHtml('data-youtube-play')
+        ->assertSeeHtml('x-data="siteHeader"')
+        ->assertDontSeeHtml('src="https://www.youtube.com/embed/')
+        ->assertSeeHtml('rel="noopener noreferrer"')
+        ->assertSeeHtml('data-podcast-copy-url=')
+        ->assertSeeHtml('style="--podcast-color: #2563eb;"')
+        ->assertDontSeeHtml('<style>')
+        ->assertDontSeeHtml('onclick=');
 
-    $this->get(route('podcast.show', $podcast))->assertOk()->assertSeeHtml('style="--podcast-color: #2563eb;"')->assertSeeHtml('[--dur:0.7s]')->assertDontSeeHtml('style="--dur:')->assertDontSeeHtml('<style>');
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml('style="--podcast-color: #2563eb;"')
+        ->assertSeeHtml('[--dur:0.7s]')
+        ->assertDontSeeHtml('style="--dur:')
+        ->assertDontSeeHtml('<style>');
 });
 
 it('renders keyboard accessible podcast audio controls', function () {
@@ -850,7 +939,21 @@ it('renders keyboard accessible podcast audio controls', function () {
         'published_at' => now()->subDays(2),
     ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))->assertOk()->assertSeeHtml('data-audio-player')->assertSeeHtml('data-audio-play')->assertSeeHtml('data-audio-speed')->assertSeeHtml('aria-label="Seek episode"')->assertSeeHtml('aria-label="Skip back 15 seconds"')->assertSeeHtml('aria-label="Skip forward 30 seconds"')->assertSeeHtml('aria-label="Play episode"')->assertSeeHtml('data-audio-progress')->assertSeeHtml('[--arrow-dir:-4px]')->assertDontSeeHtml('style="width: 0;"')->assertDontSeeHtml('style="--arrow-dir:')->assertSeeHtml('x-data="siteHeader"')->assertDontSeeHtml('@click=');
+    $this->get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSeeHtml('data-audio-player')
+        ->assertSeeHtml('data-audio-play')
+        ->assertSeeHtml('data-audio-speed')
+        ->assertSeeHtml('aria-label="Seek episode"')
+        ->assertSeeHtml('aria-label="Skip back 15 seconds"')
+        ->assertSeeHtml('aria-label="Skip forward 30 seconds"')
+        ->assertSeeHtml('aria-label="Play episode"')
+        ->assertSeeHtml('data-audio-progress')
+        ->assertSeeHtml('[--arrow-dir:-4px]')
+        ->assertDontSeeHtml('style="width: 0;"')
+        ->assertDontSeeHtml('style="--arrow-dir:')
+        ->assertSeeHtml('x-data="siteHeader"')
+        ->assertDontSeeHtml('@click=');
 });
 
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {
@@ -862,7 +965,10 @@ it('falls back to a safe podcast color when stored presentation data is invalid'
         'is_active' => true,
     ]);
 
-    $this->get(route('podcast.show', $podcast))->assertOk()->assertSeeHtml('style="--podcast-color: #6366f1;"')->assertDontSeeHtml('url(https://example.com/image.png)');
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml('style="--podcast-color: #6366f1;"')
+        ->assertDontSeeHtml('url(https://example.com/image.png)');
 });
 
 it('keeps the admin panel behind authentication', function () {
@@ -870,7 +976,8 @@ it('keeps the admin panel behind authentication', function () {
 
     $manifest = assetManifest();
 
-    $this->get('/admin')->assertRedirect('/admin/login');
+    $this->get('/admin')
+        ->assertRedirect('/admin/login');
     $this->get('/admin/login')
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
@@ -977,9 +1084,19 @@ it('serves responsive project images while retaining the original fallback', fun
         'featured_image_path' => 'projects/architecture.png',
     ]);
 
-    $this->get(route('home'))->assertOk()->assertSeeHtml('type="image/webp"')->assertSeeHtml('architecture-640.webp')->assertSeeHtml('architecture-1280.webp')->assertSeeHtml(configuredString($project->featured_image_url));
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('type="image/webp"')
+        ->assertSeeHtml('architecture-640.webp')
+        ->assertSeeHtml('architecture-1280.webp')
+        ->assertSeeHtml(configuredString($project->featured_image_url));
 
-    $this->get(route('projects.show', $project))->assertOk()->assertSeeHtml('type="image/webp"')->assertSeeHtml('aspect-video')->assertSeeHtml('fetchpriority="high"')->assertSeeHtml(configuredString($project->featured_image_url));
+    $this->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSeeHtml('type="image/webp"')
+        ->assertSeeHtml('aspect-video')
+        ->assertSeeHtml('fetchpriority="high"')
+        ->assertSeeHtml(configuredString($project->featured_image_url));
 });
 
 it('serves responsive post images while retaining the original fallback', function () {
@@ -998,7 +1115,15 @@ it('serves responsive post images while retaining the original fallback', functi
         'featured_image_path' => 'posts/article.png',
     ]);
 
-    $this->get(route('blog.show', $post))->assertOk()->assertSeeHtml('type="image/webp"')->assertSeeHtml('article-640.webp')->assertSeeHtml('article-1280.webp')->assertSeeHtml('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"')->assertSeeHtml('aspect-[3/2]')->assertSeeHtml('fetchpriority="high"')->assertSeeHtml(configuredString($post->featured_image_url));
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSeeHtml('type="image/webp"')
+        ->assertSeeHtml('article-640.webp')
+        ->assertSeeHtml('article-1280.webp')
+        ->assertSeeHtml('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"')
+        ->assertSeeHtml('aspect-[3/2]')
+        ->assertSeeHtml('fetchpriority="high"')
+        ->assertSeeHtml(configuredString($post->featured_image_url));
 });
 
 it('serves responsive podcast cover images while retaining the original fallback', function () {
@@ -1014,9 +1139,19 @@ it('serves responsive podcast cover images while retaining the original fallback
         'is_active' => true,
     ]);
 
-    $this->get(route('podcast.index'))->assertOk()->assertSeeHtml('type="image/webp"')->assertSeeHtml('podcast-640.webp')->assertSeeHtml('podcast-1280.webp')->assertSeeHtml('sizes="288px"')->assertSeeHtml('fetchpriority="high"')->assertSeeHtml(configuredString($podcast->cover_image_url));
+    $this->get(route('podcast.index'))
+        ->assertOk()
+        ->assertSeeHtml('type="image/webp"')
+        ->assertSeeHtml('podcast-640.webp')
+        ->assertSeeHtml('podcast-1280.webp')
+        ->assertSeeHtml('sizes="288px"')
+        ->assertSeeHtml('fetchpriority="high"')
+        ->assertSeeHtml(configuredString($podcast->cover_image_url));
 
-    $this->get(route('podcast.show', $podcast))->assertOk()->assertSeeHtml('sizes="224px"')->assertSeeHtml(configuredString($podcast->cover_image_url));
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml('sizes="224px"')
+        ->assertSeeHtml(configuredString($podcast->cover_image_url));
 });
 
 it('serves responsive optimized fallback artwork for known podcasts', function () {
@@ -1029,7 +1164,11 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
         'is_active' => true,
     ]);
 
-    $this->get(route('podcast.show', $podcast))->assertOk()->assertSeeHtml('srcset="'.$podcast->fallback_cover_image_srcset.'"')->assertSeeHtml('sizes="224px"')->assertSeeHtml(configuredString($podcast->cover_image_url));
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml('srcset="'.$podcast->fallback_cover_image_srcset.'"')
+        ->assertSeeHtml('sizes="224px"')
+        ->assertSeeHtml(configuredString($podcast->cover_image_url));
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {
@@ -1089,8 +1228,12 @@ it('hides inactive podcasts from public podcast surfaces', function () {
         ->assertDontSee('Real Talk on Hard Days');
 
     $this->get('/')
-        ->assertOk()->assertDontSee($inactivePodcast->name)->assertDontSeeHtml('toHaveCount</span>(<span class="syn-variable">2</span>');
+        ->assertOk()
+        ->assertDontSee($inactivePodcast->name)
+        ->assertDontSeeHtml('toHaveCount</span>(<span class="syn-variable">2</span>');
 
-    $this->get(route('podcast.show', $inactivePodcast))->assertNotFound();
-    $this->get(route('podcast.episode', [$inactivePodcast, $episode]))->assertNotFound();
+    $this->get(route('podcast.show', $inactivePodcast))
+        ->assertNotFound();
+    $this->get(route('podcast.episode', [$inactivePodcast, $episode]))
+        ->assertNotFound();
 });

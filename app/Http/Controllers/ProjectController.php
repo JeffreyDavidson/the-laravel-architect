@@ -13,8 +13,12 @@ class ProjectController
     public function index(Request $request, ProjectIndexViewModel $projectIndexViewModel): View
     {
         return view('pages.projects.index', $projectIndexViewModel->data([
-            'technology' => $request->string('technology')->trim()->toString(),
-            'tag' => $request->string('tag')->trim()->toString(),
+            'technology' => $request->string('technology')
+                ->trim()
+                ->toString(),
+            'tag' => $request->string('tag')
+                ->trim()
+                ->toString(),
         ]));
     }
 

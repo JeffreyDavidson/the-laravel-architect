@@ -18,7 +18,10 @@ it('includes the newsletter archive and only public newsletter issues', function
     $published = NewsletterIssue::query()->create(['title' => 'Public issue', 'slug' => 'public-issue', 'content' => 'Content', 'status' => PublishStatus::Published, 'published_at' => now()->subDay()]);
     $draft = NewsletterIssue::query()->create(['title' => 'Draft issue', 'slug' => 'draft-issue', 'content' => 'Content']);
 
-    $this->get(route('sitemap'))->assertSeeHtml(route('newsletter.index'))->assertSeeHtml(route('newsletter.issue', $published))->assertDontSeeHtml(route('newsletter.issue', $draft));
+    $this->get(route('sitemap'))
+        ->assertSeeHtml(route('newsletter.index'))
+        ->assertSeeHtml(route('newsletter.issue', $published))
+        ->assertDontSeeHtml(route('newsletter.issue', $draft));
 });
 
 it('only includes public content in the sitemap', function () {
@@ -93,12 +96,27 @@ it('only includes public content in the sitemap', function () {
     $publishedPost->attachTag($publishedTag);
     $scheduledPost->attachTag($scheduledOnlyTag);
 
-    DB::table('posts')->where('id', $publishedPost->id)->update(['updated_at' => null]);
-    DB::table('projects')->where('id', $publishedProject->id)->update(['updated_at' => null]);
-    DB::table('podcasts')->where('id', $podcast->id)->update(['updated_at' => null]);
-    DB::table('episodes')->where('id', $publishedEpisode->id)->update(['updated_at' => null]);
+    DB::table('posts')->where('id', $publishedPost->id)
+        ->update(['updated_at' => null]);
+    DB::table('projects')->where('id', $publishedProject->id)
+        ->update(['updated_at' => null]);
+    DB::table('podcasts')->where('id', $podcast->id)
+        ->update(['updated_at' => null]);
+    DB::table('episodes')->where('id', $publishedEpisode->id)
+        ->update(['updated_at' => null]);
 
-    $this->get('/sitemap.xml')->assertOk()->assertSeeHtml(route('blog.show', $publishedPost))->assertDontSeeHtml(route('blog.show', $scheduledPost))->assertSeeHtml(route('projects.show', $publishedProject))->assertDontSeeHtml(route('projects.show', $draftProject))->assertDontSeeHtml(route('blog.category', $draftOnlyCategory))->assertSeeHtml(route('blog.tag', $publishedTag))->assertDontSeeHtml(route('blog.tag', $scheduledOnlyTag))->assertSeeHtml(route('podcast.episode', [$podcast, $publishedEpisode]))->assertDontSeeHtml(route('podcast.episode', [$podcast, $draftEpisode]))->assertDontSeeHtml('<lastmod>');
+    $this->get('/sitemap.xml')
+        ->assertOk()
+        ->assertSeeHtml(route('blog.show', $publishedPost))
+        ->assertDontSeeHtml(route('blog.show', $scheduledPost))
+        ->assertSeeHtml(route('projects.show', $publishedProject))
+        ->assertDontSeeHtml(route('projects.show', $draftProject))
+        ->assertDontSeeHtml(route('blog.category', $draftOnlyCategory))
+        ->assertSeeHtml(route('blog.tag', $publishedTag))
+        ->assertDontSeeHtml(route('blog.tag', $scheduledOnlyTag))
+        ->assertSeeHtml(route('podcast.episode', [$podcast, $publishedEpisode]))
+        ->assertDontSeeHtml(route('podcast.episode', [$podcast, $draftEpisode]))
+        ->assertDontSeeHtml('<lastmod>');
 });
 
 it('reports the latest published content change for sitemap archives', function () {
@@ -147,15 +165,23 @@ it('reports the latest published content change for sitemap archives', function 
         'published_at' => now()->subDay(),
     ]);
 
-    $postUpdatedAt = now()->subDays(4)->startOfSecond();
-    $projectUpdatedAt = now()->subDays(3)->startOfSecond();
-    $podcastUpdatedAt = now()->subDays(2)->startOfSecond();
-    $episodeUpdatedAt = now()->subDay()->startOfSecond();
+    $postUpdatedAt = now()->subDays(4)
+        ->startOfSecond();
+    $projectUpdatedAt = now()->subDays(3)
+        ->startOfSecond();
+    $podcastUpdatedAt = now()->subDays(2)
+        ->startOfSecond();
+    $episodeUpdatedAt = now()->subDay()
+        ->startOfSecond();
 
-    DB::table('posts')->where('id', $post->id)->update(['updated_at' => $postUpdatedAt]);
-    DB::table('projects')->where('id', $project->id)->update(['updated_at' => $projectUpdatedAt]);
-    DB::table('podcasts')->where('id', $podcast->id)->update(['updated_at' => $podcastUpdatedAt]);
-    DB::table('episodes')->where('id', $episode->id)->update(['updated_at' => $episodeUpdatedAt]);
+    DB::table('posts')->where('id', $post->id)
+        ->update(['updated_at' => $postUpdatedAt]);
+    DB::table('projects')->where('id', $project->id)
+        ->update(['updated_at' => $projectUpdatedAt]);
+    DB::table('podcasts')->where('id', $podcast->id)
+        ->update(['updated_at' => $podcastUpdatedAt]);
+    DB::table('episodes')->where('id', $episode->id)
+        ->update(['updated_at' => $episodeUpdatedAt]);
 
     $response = $this->get(route('sitemap'))
         ->assertOk();

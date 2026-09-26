@@ -20,11 +20,13 @@ it('requires actions to expose handle instead of invoke', function () {
         $reflection = new ReflectionClass($class);
 
         expect($reflection->hasMethod('__invoke'))->toBeFalse("{$class} must not be invokable.")
-            ->and($reflection->hasMethod('handle'))->toBeTrue("{$class} must define handle().");
+            ->and($reflection->hasMethod('handle'))
+            ->toBeTrue("{$class} must define handle().");
 
         $handle = $reflection->getMethod('handle');
 
         expect($handle->isPublic())->toBeTrue("{$class}::handle must be public.")
-            ->and($handle->isStatic())->toBeFalse("{$class}::handle must be an instance method.");
+            ->and($handle->isStatic())
+            ->toBeFalse("{$class}::handle must be an instance method.");
     }
 });

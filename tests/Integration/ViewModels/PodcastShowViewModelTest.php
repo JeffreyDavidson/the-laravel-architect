@@ -45,22 +45,34 @@ it('builds a page-aware podcast payload', function () {
     $canonicalUrl = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
 
     expect($data)->toHaveKeys(['podcast', 'episodes', 'latestEpisode', 'seoSource'])
-        ->and($data['podcast']->is($podcast))->toBeTrue()
-        ->and($data['episodes']->currentPage())->toBe(2)
-        ->and($data['episodes']->total())->toBe(21)
-        ->and($data['episodes']->getCollection()->map(fn (Episode $episode) => $episode->getKey())->all())->toBe([
-            Episode::query()->where('slug', 'architecture-session-21')->value('id'),
+        ->and($data['podcast']->is($podcast))
+        ->toBeTrue()
+        ->and($data['episodes']->currentPage())
+        ->toBe(2)
+        ->and($data['episodes']->total())
+        ->toBe(21)
+        ->and($data['episodes']->getCollection()
+            ->map(fn (Episode $episode) => $episode->getKey())
+            ->all())
+        ->toBe([
+            Episode::query()->where('slug', 'architecture-session-21')
+                ->value('id'),
         ])
         ->and($data['episodes']->every(
             fn (Episode $episode): bool => $episode->relationLoaded('tags'),
         ))->toBeTrue()
-        ->and($data['latestEpisode'])->toBeNull()
-        ->and($data['seoSource']->title)->toBe('Architecture Sessions — Page 2')
-        ->and($data['seoSource']->description)->toBe(
+        ->and($data['latestEpisode'])
+        ->toBeNull()
+        ->and($data['seoSource']->title)
+        ->toBe('Architecture Sessions — Page 2')
+        ->and($data['seoSource']->description)
+        ->toBe(
             'Conversations about maintainable Laravel applications. Page 2 of 2.',
         )
-        ->and($data['seoSource']->url)->toBe($canonicalUrl)
-        ->and($data['seoSource']->canonical_url)->toBe($canonicalUrl);
+        ->and($data['seoSource']->url)
+        ->toBe($canonicalUrl)
+        ->and($data['seoSource']->canonical_url)
+        ->toBe($canonicalUrl);
 });
 
 it('rejects an out-of-range podcast page', function () {

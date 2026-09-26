@@ -40,10 +40,16 @@ it('builds the post detail payload', function () {
         ->data($post);
 
     expect($data)->toHaveKeys(['post', 'relatedPosts', 'seoSource'])
-        ->and($data['post']->is($post))->toBeTrue()
-        ->and($data['post']->relationLoaded('category'))->toBeTrue()
-        ->and($data['post']->relationLoaded('tags'))->toBeTrue()
-        ->and($data['post']->relationLoaded('author'))->toBeTrue()
-        ->and($data['relatedPosts']->modelKeys())->toBe([$relatedPost->getKey()])
-        ->and($data['seoSource']->is($post))->toBeTrue();
+        ->and($data['post']->is($post))
+        ->toBeTrue()
+        ->and($data['post']->relationLoaded('category'))
+        ->toBeTrue()
+        ->and($data['post']->relationLoaded('tags'))
+        ->toBeTrue()
+        ->and($data['post']->relationLoaded('author'))
+        ->toBeTrue()
+        ->and($data['relatedPosts']->modelKeys())
+        ->toBe([$relatedPost->getKey()])
+        ->and($data['seoSource']->is($post))
+        ->toBeTrue();
 });

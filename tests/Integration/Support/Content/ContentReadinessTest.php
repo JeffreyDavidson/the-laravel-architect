@@ -65,9 +65,12 @@ it('reports actionable missing details for every supported content type', functi
         $readiness = new ContentReadiness($record);
 
         expect($readiness->isReady())->toBeFalse()
-            ->and($readiness->label())->toBe('Needs attention')
-            ->and($readiness->progress())->toContain(' complete')
-            ->and($readiness->missingSummary())->toStartWith('Missing: ');
+            ->and($readiness->label())
+            ->toBe('Needs attention')
+            ->and($readiness->progress())
+            ->toContain(' complete')
+            ->and($readiness->missingSummary())
+            ->toStartWith('Missing: ');
     }
 });
 

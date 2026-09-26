@@ -102,6 +102,8 @@ final class BlogIndex extends Component
 
     private function normalizedSearch(): string
     {
-        return str($this->search)->trim()->limit(120, '')->toString();
+        return str($this->search)->trim()
+            ->limit(120, '')
+            ->toString();
     }
 }

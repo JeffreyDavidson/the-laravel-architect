@@ -15,15 +15,19 @@ it('imports the archive and reports synchronized record counts', function () {
         'videos' => [],
     ];
     $archive = Double::for(PublicContentArchiveImporter::class);
-    $archive->expects('decode')->with('{}')->resolves(fn (): array => $decoded);
-    $archive->expects('sync')->with($decoded)->resolves(fn (): array => [
-        'categories' => 2,
-        'posts' => 1,
-        'projects' => 0,
-        'podcasts' => 0,
-        'episodes' => 0,
-        'videos' => 3,
-    ]);
+    $archive->expects('decode')
+        ->with('{}')
+        ->resolves(fn (): array => $decoded);
+    $archive->expects('sync')
+        ->with($decoded)
+        ->resolves(fn (): array => [
+            'categories' => 2,
+            'posts' => 1,
+            'projects' => 0,
+            'podcasts' => 0,
+            'episodes' => 0,
+            'videos' => 3,
+        ]);
     app()->instance(PublicContentArchiveImporter::class, $archive);
 
     $path = tempnam(sys_get_temp_dir(), 'public-content-');
