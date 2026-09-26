@@ -50,5 +50,9 @@ Schedule::command('model:prune', ['--model' => ContactInquiry::class])
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
+Schedule::command('activitylog:clean')
+    ->daily()
+    ->withoutOverlapping()
+    ->onOneServer();
 Schedule::command('youtube:stats')->daily()->withoutOverlapping()->onOneServer();
 Schedule::command('youtube:sync')->weekly()->withoutOverlapping()->onOneServer();

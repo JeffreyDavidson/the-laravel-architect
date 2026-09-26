@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'status', 'published_at')]
 #[Sluggable(from: 'title')]
@@ -43,5 +44,19 @@ class NewsletterIssue extends Model implements Publishable
             title: $this->title,
             description: $this->excerpt,
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('application')
+            ->logOnly([
+                'title',
+                'slug',
+                'status',
+                'published_at',
+            ])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 }

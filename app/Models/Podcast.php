@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Vite;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'is_active', 'sort_order')]
@@ -28,14 +27,12 @@ use Spatie\Activitylog\Support\LogOptions;
 /** @property-read Collection<int, Episode> $publishedEpisodes */
 class Podcast extends Model
 {
+    use DeletesOwnedContent;
+    use HasSEO;
+    use ManagesStoredMedia;
     use TracksActivity;
 
     private const string DEFAULT_COLOR = '#6366f1';
-
-    use DeletesOwnedContent;
-    use HasSEO;
-    use LogsActivity;
-    use ManagesStoredMedia;
 
     protected function casts(): array
     {
@@ -138,6 +135,7 @@ class Podcast extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->useLogName('application')
             ->logOnly([
                 'name',
                 'slug',
