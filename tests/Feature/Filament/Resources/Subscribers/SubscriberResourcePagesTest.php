@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Subscribers\Pages\ListSubscribers;
+use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,4 +25,14 @@ it('renders the subscriber list for an authorized user', function () {
     livewire(ListSubscribers::class)
         ->assertOk()
         ->assertSee($subscriber->email);
+});
+
+it('does not allow subscribers to be created or edited in the panel', function () {
+    $canCreate = SubscriberResource::canCreate();
+    $pages = array_keys(SubscriberResource::getPages());
+
+    expect($canCreate)
+        ->toBeFalse()
+        ->and($pages)
+        ->toBe(['index']);
 });

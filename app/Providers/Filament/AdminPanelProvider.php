@@ -17,6 +17,7 @@ use App\Filament\Resources\SocialProfiles\SocialProfileResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
+use App\Models\User;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
@@ -40,11 +41,25 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Vite;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    /**
+     * The panel has a single administrator role, so one app-wide gate replaces
+     * per-model policies: administrators may perform every ability and everyone
+     * else is denied. Global before-callbacks run for every ability whether or
+     * not a policy method exists, and Filament honors them. Capability limits,
+     * such as subscribers never being created in the panel, live on the
+     * resources, because this gate cannot restrict an administrator.
+     */
+    public function boot(): void
+    {
+        Gate::before(fn (User $user): bool => $user->is_admin);
+    }
+
     public function panel(Panel $panel): Panel
     {
         CreateRecord::stickyFormActions();

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ContactInquiryStatus;
+use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
 use App\Filament\Resources\ContactInquiries\Pages\ListContactInquiries;
 use App\Models\ContactInquiry;
@@ -58,4 +59,15 @@ it('updates only inquiry status and private notes', function () {
         ->message->toBe('Please review my application.')
         ->status->toBe(ContactInquiryStatus::InProgress)
         ->notes->toBe('Replied on 2026-09-15.');
+});
+
+it('does not allow inquiries to be created in the panel', function () {
+    $canCreate = ContactInquiryResource::canCreate();
+    $pages = array_keys(ContactInquiryResource::getPages());
+
+    expect($canCreate)
+        ->toBeFalse()
+        ->and($pages)
+        ->not
+        ->toContain('create');
 });
