@@ -38,6 +38,8 @@
 @source '../**/*.blade.php';
 @source not '../views/filament/**/*';
 @source '../**/*.js';
+/* Search highlighting builds its <mark> classes in PHP. */
+@source '../../app/ViewModels/SearchViewModel.php';
 
 /* Shared public theme tokens. Page-specific styles consume these values so
    changing the visual system never requires editing templates or components. */
@@ -412,15 +414,17 @@
 }
 
 /* Custom motion primitives; component styles live in Blade utilities. */
-@keyframes eq-1 { 0%, 100% { height: 8px; } 50% { height: 24px; } }
+/* Equalizer bars are sized at their tallest and scaled from the bottom, so the
+   animation stays on the compositor instead of animating layout. */
+@keyframes eq-1 { 0%, 100% { transform: scaleY(0.3333); } 50% { transform: scaleY(1); } }
 
-@keyframes eq-2 { 0%, 100% { height: 16px; } 50% { height: 8px; } }
+@keyframes eq-2 { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.5); } }
 
-@keyframes eq-3 { 0%, 100% { height: 12px; } 50% { height: 28px; } }
+@keyframes eq-3 { 0%, 100% { transform: scaleY(0.4286); } 50% { transform: scaleY(1); } }
 
-@keyframes eq-4 { 0%, 100% { height: 20px; } 50% { height: 10px; } }
+@keyframes eq-4 { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.5); } }
 
-@keyframes eq-5 { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+@keyframes eq-5 { 0%, 100% { transform: scaleY(0.2727); } 50% { transform: scaleY(1); } }
 
 @keyframes podcast-equalize {
     0% {

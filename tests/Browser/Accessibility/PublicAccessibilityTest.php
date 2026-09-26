@@ -128,3 +128,67 @@ it('publishes machine-readable dates for articles', function () {
     $page->assertAttribute('time[datetime="2026-08-19"]', 'datetime', '2026-08-19')
         ->assertNoJavaScriptErrors();
 });
+
+/**
+ * JavaScript that resolves to true when the element found by the given
+ * expression has at least WCAG AA contrast against its effective background.
+ */
+function meetsTextContrast(string $findElement): string
+{
+    return <<<JS
+        (() => {
+            const element = {$findElement};
+            if (!element) { return false; }
+            const canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+            const rgba = (color) => { canvas.clearRect(0, 0, 1, 1); canvas.fillStyle = '#000'; canvas.fillStyle = color; canvas.fillRect(0, 0, 1, 1); const d = canvas.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+            const luminance = ([r, g, b]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+            let node = element, background = null;
+            while (node && !background) { const color = rgba(getComputedStyle(node).backgroundColor); if (color[3] > 0.9) { background = color; } node = node.parentElement; }
+            const text = luminance(rgba(getComputedStyle(element).color));
+            const surface = luminance(background ?? rgba(getComputedStyle(document.documentElement).backgroundColor));
+            return (Math.max(text, surface) + 0.05) / (Math.min(text, surface) + 0.05) >= 4.5;
+        })()
+        JS;
+}
+
+it('keeps search highlights readable in dark mode', function () {
+    $this->withVite();
+    Post::query()->create([
+        'title' => 'Laravel Boundaries',
+        'content' => 'Clear boundaries.',
+        'user_id' => User::factory()
+            ->create()
+            ->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $page = $this->browserPageWithTheme('/search?q=Laravel', 'desktop', 'dark');
+
+    $page->assertScript(meetsTextContrast('document.querySelector("main mark")'));
+});
+
+it('keeps the developer card badge readable in light mode', function () {
+    $this->withVite();
+
+    $page = $this->browserPageWithTheme('/about', 'desktop', 'light');
+
+    $page->assertScript(meetsTextContrast('[...document.querySelectorAll("span")].find((span) => span.textContent.trim() === "Legendary")'));
+});
+
+it('wraps the site navigation in a banner landmark', function () {
+    $this->withVite();
+
+    $page = $this->browserPageWithTheme('/', 'desktop', 'light');
+
+    $page->assertScript('document.querySelector("body > header nav") !== null')
+        ->assertScript('getComputedStyle(document.querySelector("body > header")).position === "sticky"');
+});
+
+it('gives footer links comfortable touch targets on phones', function () {
+    $this->withVite();
+
+    $page = $this->browserPageWithTheme('/', 'mobile', 'light');
+
+    $page->assertScript('[...document.querySelectorAll("footer ul a")].every((link) => link.getBoundingClientRect().height >= 44)');
+});
