@@ -36,6 +36,10 @@ These names are shared with the mouse28 repository; keep them identical when cha
 
 The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` together with the deployment-helper tests.
 
+## Isolated test environment
+
+`phpunit.xml` pins every driver and external credential with both `<server>` and `<env force="true">`, because Laravel also reads inherited server variables and an unforced `<env>` can be overridden by `.env` or the shell. Tests always use an in-memory SQLite database, the array mailer, array cache and sessions, and the sync queue. Credentials for Resend, Turnstile, YouTube, Sentry, Nightwatch, the backup destinations, and S3 are blank, and Nightwatch is disabled. `TestCase` calls `Http::preventStrayRequests()`, so every outgoing request must be faked. `tests/Integration/TestHarnessTest.php` guards these guarantees; the same pattern is used in the mouse28 repository. When adding an external service, pin its credentials in `phpunit.xml` and add them to that test.
+
 ## Deployment safeguards
 
 `php scripts/check-method-chaining.php` requires each chained method call on its own line: a line fails when an `->` continues a method call made earlier on the same line, such as `$query->where()->first()`. Separate accesses such as `$this->save($model->id)`, enum `->value`, property chains, and `->not` are allowed, and merged migrations are not checked. CI runs it across the repository; the pre-push hook runs it on changed PHP files. `tests/Unit/Scripts/CheckMethodChainingTest.php` covers what it flags and allows.
