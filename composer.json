@@ -87,21 +87,41 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#c4b5fd,#fb7185,#fdba74\" \"php artisan queue:listen database --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=queue,logs,vite --kill-others"
         ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "vendor/bin/pest"
-        ],
         "lint": "vendor/bin/pint --blade",
-        "lint:check": "vendor/bin/pint --blade --test",
-        "test:parallel": [
-            "vendor/bin/pest --parallel --exclude-testsuite Browser",
-            "vendor/bin/pest --testsuite Browser"
-        ],
-        "test:filament": "vendor/bin/filacheck --detailed",
+        "test:lint": "vendor/bin/pint --blade --test",
+        "rector": "PAO_DISABLE=1 vendor/bin/rector process --no-progress-bar",
+        "rector:pest": "PAO_DISABLE=1 vendor/bin/rector process --config=rector-pest.php --no-progress-bar",
         "test:rector": "PAO_DISABLE=1 vendor/bin/rector process --dry-run --no-progress-bar",
         "test:rector:pest": "PAO_DISABLE=1 vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar",
         "test:types": "PAO_DISABLE=1 vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table",
         "test:types:pest": "PAO_DISABLE=1 APP_ENV=testing vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --memory-limit=1G --no-progress --error-format=table",
+        "test:filament": "FILACHECK_DISABLE_AGENT_MODE=1 vendor/bin/filacheck --detailed",
+        "test": [
+            "@php artisan config:clear --ansi",
+            "vendor/bin/pest --parallel --exclude-testsuite=Browser --fail-on-risky"
+        ],
+        "test:browser": "vendor/bin/pest --testsuite=Browser --fail-on-risky",
+        "test:architecture": "vendor/bin/pest --testsuite=Architecture --fail-on-risky",
+        "test:type-coverage": "PAO_DISABLE=1 php -d memory_limit=2G vendor/bin/pest --type-coverage --min=100 --compact",
+        "check": [
+            "@composer validate --strict --no-check-publish",
+            "@composer audit --locked",
+            "npx --yes npm@11 audit --include=dev",
+            "npm run test:deployment",
+            "@test:lint",
+            "php scripts/check-method-chaining.php",
+            "npm run format:check",
+            "@test:filament",
+            "@test:types",
+            "@test:types:pest",
+            "@test:rector",
+            "@test:rector:pest",
+            "@test",
+            "@test:type-coverage",
+            "npm run build",
+            "npm run test:assets",
+            "@test:browser"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Fast local guard only. Full static analysis, Rector, Pest, and browser tests
-# belong in CI or explicit verification commands such as composer test:parallel.
+# belong in CI or explicit verification commands such as composer check.
 
 staged_php_files=()
 while IFS= read -r -d '' file; do

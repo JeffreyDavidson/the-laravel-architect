@@ -31,6 +31,7 @@ done
 
 echo "Running project pre-push checks..."
 npm run test:deployment
-composer test:parallel
+composer test
+composer test:browser
 composer test:types
 composer test:rector

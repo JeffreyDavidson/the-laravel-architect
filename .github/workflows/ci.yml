@@ -91,7 +91,7 @@ jobs:
           php artisan storage:link --relative --force
 
       - name: Check code style
-        run: composer lint:check
+        run: composer test:lint
 
       - name: Check method chains
         run: php scripts/check-method-chaining.php
@@ -121,7 +121,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run non-browser tests in parallel
-        run: vendor/bin/pest --parallel --exclude-testsuite Browser
+        run: composer test
 
       - name: Run browser tests serially
-        run: vendor/bin/pest --testsuite Browser
+        run: composer test:browser

@@ -17,6 +17,25 @@ Browser page objects own page URLs and page-level navigation; components own reu
 
 The PHP suites are registered in `phpunit.xml` and executed through Pest. Pest Browser uses the repository's Playwright package and Chromium installation.
 
+## Composer scripts
+
+These names are shared with the mouse28 repository; keep them identical when changing either.
+
+| Script | Runs |
+| --- | --- |
+| `composer check` | Every gate in CI order: Composer validate and audit, npm audit, deployment-helper tests, `test:lint`, method-chain check, frontend formatting, `test:filament`, `test:types`, `test:types:pest`, `test:rector`, `test:rector:pest`, `test`, `test:type-coverage`, asset build, asset budgets, then `test:browser` |
+| `composer lint` / `composer test:lint` | Pint (Blade included): fix / check only |
+| `composer rector` / `composer rector:pest` | Rector fixes for the application / Pest configuration |
+| `composer test:rector` / `composer test:rector:pest` | Rector dry runs |
+| `composer test:types` / `composer test:types:pest` | PHPStan for the application / tests (`phpstan-pest.neon`, `APP_ENV=testing`) |
+| `composer test:filament` | Filacheck |
+| `composer test` | Pest in parallel, excluding the Browser suite, failing on risky tests |
+| `composer test:browser` | The Browser suite |
+| `composer test:architecture` | The Architecture suite |
+| `composer test:type-coverage` | Pest type coverage at a 100% minimum |
+
+The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` together with the deployment-helper tests.
+
 ## Deployment safeguards
 
 `php scripts/check-method-chaining.php` requires each chained method call on its own line: a line fails when an `->` continues a method call made earlier on the same line, such as `$query->where()->first()`. Separate accesses such as `$this->save($model->id)`, enum `->value`, property chains, and `->not` are allowed, and merged migrations are not checked. CI runs it across the repository; the pre-push hook runs it on changed PHP files. `tests/Unit/Scripts/CheckMethodChainingTest.php` covers what it flags and allows.

@@ -57,13 +57,10 @@ decisions tied to measured query and response timings.
 ## Quality checks
 
 ```bash
-composer test
-composer test:types
-composer test:filament
-composer lint:check
-npm run build
-npm run test:assets
+composer check
 ```
+
+`composer check` runs every gate in CI order. The individual scripts are listed in [docs/testing.md](docs/testing.md#composer-scripts).
 
 ## Documentation
 
