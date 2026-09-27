@@ -1,7 +1,15 @@
 <?php
 
+use App\Enums\PublishStatus;
+use App\Models\NewsletterIssue;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+use function Pest\Laravel\get;
 
 pest()->use(RefreshDatabase::class);
 
@@ -99,4 +107,72 @@ it('allows the local Vite development server without weakening other environment
     $response
         ->assertOk()
         ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy($nonce, withVite: true));
+});
+
+function draftPreviewIssue(): NewsletterIssue
+{
+    return NewsletterIssue::query()->create([
+        'title' => 'Private Draft',
+        'slug' => 'private-draft',
+        'content' => 'Not public.',
+        'status' => PublishStatus::Draft,
+    ]);
+}
+
+/**
+ * Send the request for one private or error response case.
+ *
+ * @return TestResponse<Response>
+ */
+function privateResponse(string $case): TestResponse
+{
+    return match ($case) {
+        'admin login' => get(Filament::getPanel('admin')->getLoginUrl() ?? ''),
+        'signed preview' => get(URL::signedRoute('preview.newsletter-issue', draftPreviewIssue())),
+        'unsigned preview' => get(route('preview.newsletter-issue', draftPreviewIssue())),
+        'missing page' => get('/this-page-does-not-exist'),
+        'server error' => (function (): TestResponse {
+            Route::get('/security-headers-server-error', fn () => throw new RuntimeException('Boom.'));
+
+            return get('/security-headers-server-error');
+        })(),
+        'maintenance mode' => (function (): TestResponse {
+            config([
+                'app.maintenance.driver' => 'cache',
+                'app.maintenance.store' => 'array',
+            ]);
+            app()
+                ->maintenanceMode()
+                ->activate([]);
+
+            return get(route('home'));
+        })(),
+        default => throw new InvalidArgumentException("Unknown response case [{$case}]."),
+    };
+}
+
+it('keeps private and error responses out of caches and search indexes', function (string $case, int $status) {
+    $response = privateResponse($case);
+
+    $response
+        ->assertStatus($status)
+        ->assertHeader('Cache-Control', 'no-store, private')
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+        ->assertHeader('Content-Security-Policy')
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+})->with([
+    ['admin login', 200],
+    ['signed preview', 200],
+    ['unsigned preview', 403],
+    ['missing page', 404],
+    ['server error', 500],
+    ['maintenance mode', 503],
+]);
+
+it('leaves public pages cacheable and indexable', function () {
+    get(route('home'))
+        ->assertOk()
+        ->assertHeaderMissing('X-Robots-Tag')
+        ->assertHeader('Cache-Control', 'no-cache, private');
 });
