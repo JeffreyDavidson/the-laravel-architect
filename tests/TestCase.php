@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\PendingCommand;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Pest\Browser\Api\AwaitableWebpage;
@@ -14,6 +15,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Http::preventStrayRequests();
 
         $this->withoutVite();
     }
