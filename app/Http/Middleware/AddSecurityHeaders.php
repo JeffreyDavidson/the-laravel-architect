@@ -22,18 +22,33 @@ final class AddSecurityHeaders
 
     public function handle(Request $request, Closure $next): Response
     {
-        $adminPath = trim(Filament::getPanel('admin')->getPath(), '/');
-        $scriptNonce = $request->is($adminPath, "{$adminPath}/*")
-            ? null
-            : Vite::useCspNonce();
+        if (! self::isAdminRequest($request)) {
+            Vite::useCspNonce();
+        }
+
         $response = $next($request);
 
         if (! $response instanceof Response) {
             throw new UnexpectedValueException('The HTTP middleware pipeline did not return a response.');
         }
 
+        return self::apply($response, $request);
+    }
+
+    /**
+     * Add the security headers to a response, including exception responses
+     * rendered before this middleware runs.
+     */
+    public static function apply(Response $response, Request $request): Response
+    {
+        $isAdminRequest = self::isAdminRequest($request);
+
         if (! $response->headers->has('Content-Security-Policy')) {
-            $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($scriptNonce));
+            $scriptNonce = $isAdminRequest
+                ? null
+                : Vite::cspNonce() ?? Vite::useCspNonce();
+
+            $response->headers->set('Content-Security-Policy', self::contentSecurityPolicy($scriptNonce));
         }
 
         foreach (self::HEADERS as $name => $value) {
@@ -46,10 +61,22 @@ final class AddSecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
+        if ($isAdminRequest || $request->is('preview', 'preview/*') || $response->getStatusCode() >= 400) {
+            $response->headers->set('Cache-Control', 'no-store, private');
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+
         return $response;
     }
 
-    private function contentSecurityPolicy(?string $scriptNonce): string
+    private static function isAdminRequest(Request $request): bool
+    {
+        $adminPath = trim(Filament::getPanel('admin')->getPath(), '/');
+
+        return $request->is($adminPath, "{$adminPath}/*");
+    }
+
+    private static function contentSecurityPolicy(?string $scriptNonce): string
     {
         $scriptSources = [
             "'self'",
