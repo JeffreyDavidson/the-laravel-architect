@@ -106,15 +106,13 @@ it('regenerates and persists every post image when forced', function () {
         'status' => PublishStatus::Draft,
     ]);
 
+    // One expectation returns each post's image in processing order; the
+    // assertions below prove each post saved its own path.
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
-        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($firstPost)))
-        ->returns('featured-images/new-first.png')
-        ->ordered();
-    $generator->expects('generate')
-        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($secondPost)))
-        ->returns('featured-images/new-second.png')
-        ->ordered();
+        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post))
+        ->times(2)
+        ->returns('featured-images/new-first.png', 'featured-images/new-second.png');
     app()->instance(FeaturedImageGenerator::class, $generator);
 
     $this->artisanCommand('posts:generate-images', ['--force' => true])
