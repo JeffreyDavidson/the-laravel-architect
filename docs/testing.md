@@ -32,7 +32,7 @@ These names are shared with the mouse28 repository; keep them identical when cha
 | `composer test` | Pest in parallel, excluding the Browser suite, failing on risky tests |
 | `composer test:browser` | The Browser suite |
 | `composer test:architecture` | The Architecture suite |
-| `composer test:type-coverage` | Pest type coverage at a 100% minimum |
+| `composer test:type-coverage` | Pest type coverage at a 100% minimum; CI enforces it after the non-browser tests |
 
 The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` together with the deployment-helper tests.
 
