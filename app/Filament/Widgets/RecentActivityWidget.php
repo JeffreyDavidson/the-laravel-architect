@@ -31,42 +31,56 @@ class RecentActivityWidget extends Widget
      */
     protected function getViewData(): array
     {
-        $activities = Post::query()->latest('updated_at')->take(5)->get()->map(
-            fn (Post $post): array => $this->activity(
-                kind: 'Post',
-                label: $post->title,
-                status: $post->publishStatus(),
-                updatedAt: $post->updated_at,
-                url: PostResource::getUrl('edit', ['record' => $post]),
-            ),
-        )->concat(Episode::query()->latest('updated_at')->take(5)->get()->map(
-            fn (Episode $episode): array => $this->activity(
-                kind: 'Episode',
-                label: $episode->title,
-                status: $episode->publishStatus(),
-                updatedAt: $episode->updated_at,
-                url: EpisodeResource::getUrl('edit', ['record' => $episode]),
-            ),
-        ))->concat(NewsletterIssue::query()->latest('updated_at')->take(5)->get()->map(
-            fn (NewsletterIssue $issue): array => $this->activity(
-                kind: 'Newsletter',
-                label: $issue->title,
-                status: $issue->publishStatus(),
-                updatedAt: $issue->updated_at,
-                url: NewsletterIssueResource::getUrl('edit', ['record' => $issue]),
-            ),
-        ))->concat(Project::query()->latest('updated_at')->take(5)->get()->map(
-            fn (Project $project): array => $this->activity(
-                kind: 'Project',
-                label: $project->title,
-                status: $project->publishStatus(),
-                updatedAt: $project->updated_at,
-                url: ProjectResource::getUrl('edit', ['record' => $project]),
-            ),
-        ));
+        $activities = Post::query()->latest('updated_at')
+            ->take(5)
+            ->get()
+            ->map(
+                fn (Post $post): array => $this->activity(
+                    kind: 'Post',
+                    label: $post->title,
+                    status: $post->publishStatus(),
+                    updatedAt: $post->updated_at,
+                    url: PostResource::getUrl('edit', ['record' => $post]),
+                ),
+            )->concat(Episode::query()->latest('updated_at')
+            ->take(5)
+            ->get()
+            ->map(
+                fn (Episode $episode): array => $this->activity(
+                    kind: 'Episode',
+                    label: $episode->title,
+                    status: $episode->publishStatus(),
+                    updatedAt: $episode->updated_at,
+                    url: EpisodeResource::getUrl('edit', ['record' => $episode]),
+                ),
+            ))->concat(NewsletterIssue::query()->latest('updated_at')
+            ->take(5)
+            ->get()
+            ->map(
+                fn (NewsletterIssue $issue): array => $this->activity(
+                    kind: 'Newsletter',
+                    label: $issue->title,
+                    status: $issue->publishStatus(),
+                    updatedAt: $issue->updated_at,
+                    url: NewsletterIssueResource::getUrl('edit', ['record' => $issue]),
+                ),
+            ))->concat(Project::query()->latest('updated_at')
+            ->take(5)
+            ->get()
+            ->map(
+                fn (Project $project): array => $this->activity(
+                    kind: 'Project',
+                    label: $project->title,
+                    status: $project->publishStatus(),
+                    updatedAt: $project->updated_at,
+                    url: ProjectResource::getUrl('edit', ['record' => $project]),
+                ),
+            ));
 
         return [
-            'activities' => $activities->sortByDesc('timestamp')->take(5)->values(),
+            'activities' => $activities->sortByDesc('timestamp')
+                ->take(5)
+                ->values(),
         ];
     }
 

@@ -125,7 +125,8 @@ test('exports every public record exactly once when lazy chunk sort values tie',
     $this->travelTo('2026-09-01 12:00:00');
 
     $recordCount = 101;
-    $timestamp = now()->subDay()->toDateTimeString();
+    $timestamp = now()->subDay()
+        ->toDateTimeString();
     $author = User::factory()->create();
 
     $categories = [];
@@ -141,7 +142,9 @@ test('exports every public record exactly once when lazy chunk sort values tie',
     }
 
     DB::table('categories')->insert($categories);
-    $categoryIds = Category::query()->orderBy('id')->pluck('id')->all();
+    $categoryIds = Category::query()->orderBy('id')
+        ->pluck('id')
+        ->all();
 
     $posts = [];
     $projects = [];
@@ -187,7 +190,8 @@ test('exports every public record exactly once when lazy chunk sort values tie',
     }
 
     DB::table('podcasts')->insert($podcasts);
-    $podcastId = Podcast::query()->orderBy('id')->value('id');
+    $podcastId = Podcast::query()->orderBy('id')
+        ->value('id');
 
     $episodes = [];
     $videos = [];
@@ -235,7 +239,9 @@ test('exports every public record exactly once when lazy chunk sort values tie',
         );
         sort($expectedSlugs);
 
-        expect($slugs)->toHaveCount($recordCount)->and($slugs)->toBe($expectedSlugs);
+        expect($slugs)->toHaveCount($recordCount)
+            ->and($slugs)
+            ->toBe($expectedSlugs);
     }
 });
 
@@ -268,7 +274,8 @@ test('export query count stays bounded as tagged content grows', function (): vo
     DB::disableQueryLog();
 
     expect($archive['projects'])->toHaveCount(10)
-        ->and($expandedQueryCount)->toBe($initialQueryCount);
+        ->and($expandedQueryCount)
+        ->toBe($initialQueryCount);
 });
 
 it('exports and synchronizes published newsletter issues', function () {
@@ -285,15 +292,19 @@ it('exports and synchronizes published newsletter issues', function () {
     $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
 
     expect($issues)->toHaveCount(1)
-        ->and($issues[0]['slug'])->toBe($issue->slug)
-        ->and($issues[0]['content'])->toBe('Issue content.');
+        ->and($issues[0]['slug'])
+        ->toBe($issue->slug)
+        ->and($issues[0]['content'])
+        ->toBe('Issue content.');
 
     NewsletterIssue::query()->delete();
 
     $counts = app(PublicContentArchiveImporter::class)->sync($archive);
 
     expect($counts['newsletter_issues'])->toBe(1)
-        ->and(NewsletterIssue::query()->sole()->title)->toBe('Production newsletter issue');
+        ->and(NewsletterIssue::query()->sole()
+            ->title)
+        ->toBe('Production newsletter issue');
 });
 
 test('only public content and its presentation data are exported', function (): void {
@@ -322,7 +333,8 @@ test('only public content and its presentation data are exported', function (): 
         'reviewed_by' => $author->getKey(),
     ]);
     $post->syncTags(['Laravel']);
-    $post->seo()->update(['canonical_url' => 'https://thelaravelarchitect.com/blog/published-post']);
+    $post->seo()
+        ->update(['canonical_url' => 'https://thelaravelarchitect.com/blog/published-post']);
     Post::query()->create([
         'title' => 'Draft post',
         'slug' => 'draft-post',
@@ -352,18 +364,30 @@ test('only public content and its presentation data are exported', function (): 
     $project = publicArchiveProject(publicArchiveRecords($archive['projects'] ?? null)[0] ?? null);
 
     expect($archive['posts'])->toHaveCount(1)
-        ->and($post['slug'])->toBe('published-post')
-        ->and($post['category_slug'])->toBe('architecture')
-        ->and($post['tags'][0]['name'])->toBe('Laravel')
-        ->and($post['seo']['canonical_url'])->toBe('https://thelaravelarchitect.com/blog/published-post')
-        ->and($archive['projects'])->toHaveCount(1)
-        ->and($project['slug'])->toBe('published-project')
-        ->and($project['tech_stack'])->toBe(['Laravel', 'Pest'])
-        ->and($archive['categories'])->toHaveCount(1)
-        ->and($encoded)->not->toContain('private-author@example.test')
-        ->and($encoded)->not->toContain('private-subscriber@example.test')
-        ->and($encoded)->not->toContain('private-password')
-        ->and($encoded)->not->toContain('Private editorial note');
+        ->and($post['slug'])
+        ->toBe('published-post')
+        ->and($post['category_slug'])
+        ->toBe('architecture')
+        ->and($post['tags'][0]['name'])
+        ->toBe('Laravel')
+        ->and($post['seo']['canonical_url'])
+        ->toBe('https://thelaravelarchitect.com/blog/published-post')
+        ->and($archive['projects'])
+        ->toHaveCount(1)
+        ->and($project['slug'])
+        ->toBe('published-project')
+        ->and($project['tech_stack'])
+        ->toBe(['Laravel', 'Pest'])
+        ->and($archive['categories'])
+        ->toHaveCount(1)
+        ->and($encoded)
+        ->not->toContain('private-author@example.test')
+        ->and($encoded)
+        ->not->toContain('private-subscriber@example.test')
+        ->and($encoded)
+        ->not->toContain('private-password')
+        ->and($encoded)
+        ->not->toContain('Private editorial note');
 });
 
 test('public content is synchronized without importing production identities', function (): void {
@@ -388,24 +412,44 @@ test('public content is synchronized without importing production identities', f
 
     $counts = app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
 
-    $post = Post::query()->where('slug', 'production-post')->sole();
-    $project = Project::query()->where('slug', 'production-project')->firstOrFail();
-    $podcast = Podcast::query()->where('slug', 'production-podcast')->firstOrFail();
-    $stagingAuthor = User::query()->where('email', 'staging-content@example.test')->firstOrFail();
-    $seo = $post->seo()->firstOrFail();
+    $post = Post::query()->where('slug', 'production-post')
+        ->sole();
+    $project = Project::query()->where('slug', 'production-project')
+        ->firstOrFail();
+    $podcast = Podcast::query()->where('slug', 'production-podcast')
+        ->firstOrFail();
+    $stagingAuthor = User::query()->where('email', 'staging-content@example.test')
+        ->firstOrFail();
+    $seo = $post->seo()
+        ->firstOrFail();
 
     expect($counts['posts'])->toBe(1)
-        ->and($post->status)->toBe(PublishStatus::Published)
-        ->and($post->category?->slug)->toBe('architecture')
-        ->and($post->tags->pluck('name')->all())->toBe(['Laravel'])
-        ->and($seo->getAttribute('canonical_url'))->toBe('https://thelaravelarchitect.com/blog/production-post')
-        ->and($post->user_id)->toBe($stagingAuthor->getKey())
-        ->and($stagingAuthor->is_admin)->toBeFalse()
-        ->and($project->tech_stack)->toBe(['Laravel', 'Pest'])
-        ->and($podcast->is_active)->toBeTrue()
-        ->and($localDraft->fresh()?->status)->toBe(PublishStatus::Draft)
-        ->and($stale->fresh()?->status)->toBe(PublishStatus::Draft)
-        ->and($stale->fresh()?->published_at)->toBeNull();
+        ->and($post->status)
+        ->toBe(PublishStatus::Published)
+        ->and($post->category?->slug)
+        ->toBe('architecture')
+        ->and($post->tags->pluck('name')
+            ->all())
+        ->toBe(['Laravel'])
+        ->and($seo->getAttribute('canonical_url'))
+        ->toBe('https://thelaravelarchitect.com/blog/production-post')
+        ->and($post->user_id)
+        ->toBe($stagingAuthor->getKey())
+        ->and($stagingAuthor->is_admin)
+        ->toBeFalse()
+        ->and($project->tech_stack)
+        ->toBe(['Laravel', 'Pest'])
+        ->and($podcast->is_active)
+        ->toBeTrue()
+        ->and($localDraft->fresh()
+            ?->status)
+        ->toBe(PublishStatus::Draft)
+        ->and($stale->fresh()
+            ?->status)
+        ->toBe(PublishStatus::Draft)
+        ->and($stale->fresh()
+            ?->published_at)
+        ->toBeNull();
 });
 
 test('unsafe referenced media paths are rejected', function (): void {
@@ -435,7 +479,8 @@ function publicContentArchiveFixture(): array
             'excerpt' => 'Production excerpt',
             'content' => 'Production content',
             'featured_image_path' => 'posts/production.webp',
-            'published_at' => now()->subDay()->toAtomString(),
+            'published_at' => now()->subDay()
+                ->toAtomString(),
             'category_slug' => 'architecture',
             'tags' => [['name' => 'Laravel', 'type' => null]],
             'seo' => [

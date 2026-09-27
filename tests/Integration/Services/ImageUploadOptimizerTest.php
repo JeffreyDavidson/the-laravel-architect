@@ -33,5 +33,6 @@ it('does not store unsupported upload contents', function () {
     $path = app(ImageUploadOptimizer::class)->store($file, 'projects', 'public');
 
     expect($path)->toBeNull()
-        ->and(Storage::disk('public')->allFiles())->toBeEmpty();
+        ->and(Storage::disk('public')->allFiles())
+        ->toBeEmpty();
 });

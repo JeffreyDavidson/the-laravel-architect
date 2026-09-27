@@ -21,7 +21,8 @@ it('generates slugs from the configured source attributes', function () {
 
     expect(Category::query()->create(['name' => 'Laravel Architecture']))
         ->slug->toBe('laravel-architecture')
-        ->and($podcast->slug)->toBe('the-architecture-podcast')
+        ->and($podcast->slug)
+        ->toBe('the-architecture-podcast')
         ->and(Episode::query()->create([
             'podcast_id' => $podcast->id,
             'title' => 'Designing Clear Boundaries',

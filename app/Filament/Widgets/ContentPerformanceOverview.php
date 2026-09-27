@@ -38,27 +38,33 @@ class ContentPerformanceOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Published posts', Post::query()->published()->count())
+            Stat::make('Published posts', Post::query()->published()
+                ->count())
                 ->description('Live articles')
                 ->descriptionIcon(Heroicon::OutlinedDocumentText)
                 ->color('info')
                 ->url(PostResource::getUrl('index')),
-            Stat::make('Published episodes', Episode::query()->published()->whereHas('podcast', fn (Builder $query) => $query->where('is_active', true))->count())
+            Stat::make('Published episodes', Episode::query()->published()
+                ->whereHas('podcast', fn (Builder $query) => $query->where('is_active', true))
+                ->count())
                 ->description('Across active shows')
                 ->descriptionIcon(Heroicon::OutlinedMusicalNote)
                 ->color('success')
                 ->url(EpisodeResource::getUrl('index')),
-            Stat::make('Newsletter subscribers', Subscriber::query()->active()->count())
+            Stat::make('Newsletter subscribers', Subscriber::query()->active()
+                ->count())
                 ->description('Active audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
                 ->color('warning')
                 ->url(SubscriberResource::getUrl('index')),
-            Stat::make('Published issues', NewsletterIssue::query()->published()->count())
+            Stat::make('Published issues', NewsletterIssue::query()->published()
+                ->count())
                 ->description('Newsletter archive')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
                 ->url(NewsletterIssueResource::getUrl('index')),
-            Stat::make('Active podcasts', Podcast::query()->active()->count())
+            Stat::make('Active podcasts', Podcast::query()->active()
+                ->count())
                 ->description('Shows marked active')
                 ->descriptionIcon(Heroicon::OutlinedMicrophone)
                 ->color('primary')

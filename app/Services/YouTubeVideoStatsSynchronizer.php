@@ -21,7 +21,8 @@ final class YouTubeVideoStatsSynchronizer
 
         $updated = 0;
 
-        foreach (Video::query()->lazyById(50)->chunk(50) as $videos) {
+        foreach (Video::query()->lazyById(50)
+            ->chunk(50) as $videos) {
             $videoIds = [];
 
             foreach ($videos as $video) {

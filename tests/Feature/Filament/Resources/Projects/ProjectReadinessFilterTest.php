@@ -23,8 +23,10 @@ it('keeps readiness filters consistent with badges for blank project details', f
     ]);
     $project->attachTag('Laravel');
 
-    livewire(ListProjects::class)->filterTable('readiness', 'ready')->assertCanNotSeeTableRecords([$project]);
-    livewire(ListProjects::class)->filterTable('readiness', 'needs_details')->assertCanSeeTableRecords([$project]);
+    livewire(ListProjects::class)->filterTable('readiness', 'ready')
+        ->assertCanNotSeeTableRecords([$project]);
+    livewire(ListProjects::class)->filterTable('readiness', 'needs_details')
+        ->assertCanSeeTableRecords([$project]);
 
     expect(new ContentReadiness($project)->isReady())->toBeFalse();
 })->with([

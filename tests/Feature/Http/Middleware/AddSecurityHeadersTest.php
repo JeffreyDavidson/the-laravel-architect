@@ -37,8 +37,10 @@ it('adds security headers to public responses', function () {
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
     $nonce = $matches[1] ?? null;
 
-    expect($nonce)->toBeString()->not->toBeEmpty()
-        ->and($policy)->not->toContain("'unsafe-inline'", "'unsafe-eval'");
+    expect($nonce)->toBeString()
+        ->not->toBeEmpty()
+        ->and($policy)
+        ->not->toContain("'unsafe-inline'", "'unsafe-eval'");
 
     $response
         ->assertOk()
@@ -47,7 +49,10 @@ it('adds security headers to public responses', function () {
         ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-        ->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN')->assertSeeHtml('<script nonce="'.$nonce.'">')->assertSeeHtml('<script nonce="'.$nonce.'" type="application/ld+json">');
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+        ->assertSeeHtml('<script nonce="'.$nonce.'">')
+        ->assertSeeHtml('<script nonce="'.$nonce.'" type="application/ld+json">');
 });
 
 it('adds transport security only to secure responses', function () {
@@ -68,7 +73,9 @@ it('adds security headers to admin responses', function () {
     }
 
     $this->get($loginUrl)
-        ->assertOk()->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())->assertSeeHtml('livewire-standard.js')
+        ->assertOk()
+        ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
+        ->assertSeeHtml('livewire-standard.js')
         ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
         ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin')
         ->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()')
@@ -86,7 +93,8 @@ it('allows the local Vite development server without weakening other environment
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
     $nonce = $matches[1] ?? null;
 
-    expect($nonce)->toBeString()->not->toBeEmpty();
+    expect($nonce)->toBeString()
+        ->not->toBeEmpty();
 
     $response
         ->assertOk()

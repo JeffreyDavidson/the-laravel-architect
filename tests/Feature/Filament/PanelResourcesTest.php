@@ -41,7 +41,8 @@ it('renders each registered resource index for an authorized user', function (st
         throw new RuntimeException('The resource URL was not a string.');
     }
 
-    $this->get($url)->assertOk();
+    $this->get($url)
+        ->assertOk();
 })->with([
     CategoryResource::class,
     ContactInquiryResource::class,
@@ -64,7 +65,8 @@ it('registers visible navigation items for every admin section', function () {
         expect($group->getItems())->not->toBeEmpty();
     }
 
-    expect(collect($navigation)->map(fn (NavigationGroup $group): ?string => $group->getLabel())->all())
+    expect(collect($navigation)->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+        ->all())
         ->toContain('Publish', 'Library', 'Audience', 'Operations');
 });
 
@@ -96,10 +98,14 @@ it('protects long editing sessions and keeps the sidebar collapsible', function 
     $panel = Filament::getPanel('admin');
 
     expect($panel->hasUnsavedChangesAlerts())->toBeTrue()
-        ->and($panel->isSidebarCollapsibleOnDesktop())->toBeTrue()
-        ->and($panel->hasCollapsibleNavigationGroups())->toBeTrue()
-        ->and(CreateRecord::$formActionsAreSticky)->toBeTrue()
-        ->and(EditRecord::$formActionsAreSticky)->toBeTrue();
+        ->and($panel->isSidebarCollapsibleOnDesktop())
+        ->toBeTrue()
+        ->and($panel->hasCollapsibleNavigationGroups())
+        ->toBeTrue()
+        ->and(CreateRecord::$formActionsAreSticky)
+        ->toBeTrue()
+        ->and(EditRecord::$formActionsAreSticky)
+        ->toBeTrue();
 });
 
 it('registers the private analytics widgets for the insights page', function () {

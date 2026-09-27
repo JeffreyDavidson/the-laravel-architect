@@ -35,8 +35,9 @@ class PostObserver
             return;
         }
 
-        $post->getConnection()->afterCommit(function () use ($postKey): void {
-            $this->ogImageCache->forgetByKey($postKey);
-        });
+        $post->getConnection()
+            ->afterCommit(function () use ($postKey): void {
+                $this->ogImageCache->forgetByKey($postKey);
+            });
     }
 }

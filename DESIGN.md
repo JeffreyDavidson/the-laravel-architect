@@ -374,7 +374,11 @@ and [auth selector](resources/views/filament/auth/theme-switcher.blade.php).
 ### Navigation and icons
 
 Public navigation uses a small blue underline for hover, focus, and the current
-page. Preserve the mobile menu and skip-to-content link. Studio navigation uses
+page. Preserve the mobile menu and skip-to-content link. The site navigation sits
+inside a sticky `<header>` so every page exposes one banner landmark. Footer text
+links are at least 44px tall on phones and keep their compact spacing from the
+`sm` breakpoint. Decorative glyphs such as terminal cursors and section icons are
+hidden from assistive technology. Studio navigation uses
 a tinted active row and brand accent, with native group collapsing and global
 search shortcuts.
 

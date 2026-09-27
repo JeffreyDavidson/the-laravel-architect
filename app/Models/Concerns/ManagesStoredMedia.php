@@ -79,8 +79,9 @@ trait ManagesStoredMedia
 
         $path = (string) $path;
 
-        $this->getConnection()->afterCommit(function () use ($path): void {
-            Storage::disk('public')->delete($path);
-        });
+        $this->getConnection()
+            ->afterCommit(function () use ($path): void {
+                Storage::disk('public')->delete($path);
+            });
     }
 }

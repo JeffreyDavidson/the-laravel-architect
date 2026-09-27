@@ -6,9 +6,12 @@ it('uses safe backup configuration defaults', function () {
         ->not->toContain(null)
         ->and(config('backup.backup.source.files.exclude'))
         ->toContain(base_path('.env'))
-        ->and(config('backup.backup.destination.disks'))->toBe(['local'])
-        ->and(config('backup.monitor_backups.0.disks'))->toBe(['local'])
-        ->and(config('backup.notifications.mail.to'))->toBe(config('mail.contact_to'));
+        ->and(config('backup.backup.destination.disks'))
+        ->toBe(['local'])
+        ->and(config('backup.monitor_backups.0.disks'))
+        ->toBe(['local'])
+        ->and(config('backup.notifications.mail.to'))
+        ->toBe(config('mail.contact_to'));
 });
 
 it('configures a private SFTP disk for NAS backups', function () {

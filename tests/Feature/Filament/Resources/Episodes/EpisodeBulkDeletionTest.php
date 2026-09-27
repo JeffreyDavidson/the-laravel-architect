@@ -50,9 +50,11 @@ it('deletes selected episodes and their native media through the table bulk acti
 
     livewire(ListEpisodes::class)
         ->selectTableRecords($episodes)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Episode::query()->whereKey($episodes->pluck('id'))->count())->toBe(0);
+    expect(Episode::query()->whereKey($episodes->pluck('id'))
+        ->count())->toBe(0);
     Storage::disk('public')->assertMissing([
         'episodes/images/first-delete-test.png',
         'episodes/audio/first-delete-test.mp3',

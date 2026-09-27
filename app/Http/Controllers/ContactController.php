@@ -16,9 +16,13 @@ class ContactController
 {
     public function create(Request $request, ContactViewModel $viewModel): View
     {
-        $projectSlug = $request->string('project')->trim()->toString();
+        $projectSlug = $request->string('project')
+            ->trim()
+            ->toString();
         $project = filled($projectSlug)
-            ? Project::query()->published()->where('slug', $projectSlug)->first()
+            ? Project::query()->published()
+                ->where('slug', $projectSlug)
+                ->first()
             : null;
 
         return view('pages.contact', $viewModel->data($project));
@@ -53,12 +57,15 @@ class ContactController
 
         RateLimiter::hit($key, 3600);
 
-        $projectSlug = $request->string('project')->trim()->toString();
+        $projectSlug = $request->string('project')
+            ->trim()
+            ->toString();
         $projectTitle = filled($projectSlug)
             ? Project::query()
                 ->published()
                 ->where('slug', $projectSlug)
-                ->first()?->title
+                ->first()
+                ?->title
             : null;
 
         $sendContactMessage->handle($request->toData($projectTitle));

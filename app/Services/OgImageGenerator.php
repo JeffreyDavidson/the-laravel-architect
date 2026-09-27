@@ -35,7 +35,8 @@ class OgImageGenerator
         $width = 1200;
         $height = 630;
 
-        $image = $this->manager->createImage($width, $height)->fill('0D1117');
+        $image = $this->manager->createImage($width, $height)
+            ->fill('0D1117');
 
         // Geometric pattern overlay - subtle grid
         for ($x = 0; $x < $width; $x += 60) {
@@ -112,7 +113,8 @@ class OgImageGenerator
             $font->color('1a2332');
         });
 
-        return $image->encodeUsingFormat(Format::PNG)->toString();
+        return $image->encodeUsingFormat(Format::PNG)
+            ->toString();
     }
 
     /** @return list<string> */

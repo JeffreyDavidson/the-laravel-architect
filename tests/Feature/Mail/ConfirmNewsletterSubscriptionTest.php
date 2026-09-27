@@ -24,7 +24,8 @@ it('encrypts sensitive content in the queued mail payload', function () {
 
     Mail::to('recipient@example.test')->queue($mail->onConnection('database'));
 
-    $payload = DB::table('jobs')->sole()->payload;
+    $payload = DB::table('jobs')->sole()
+        ->payload;
     if (! is_string($payload)) {
         throw new RuntimeException('Expected a JSON queue payload.');
     }
@@ -34,5 +35,6 @@ it('encrypts sensitive content in the queued mail payload', function () {
     }
 
     expect($command)->not->toContain('private-token')
-        ->and(Crypt::decrypt($command))->toContain('private-token');
+        ->and(Crypt::decrypt($command))
+        ->toContain('private-token');
 });

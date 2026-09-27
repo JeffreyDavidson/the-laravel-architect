@@ -121,13 +121,16 @@ class StoredImageOptimizationWorkflow
                 }
 
                 try {
-                    $model->getConnection()->transaction(function () use ($model, $pathColumn, $newPath): void {
-                        $model->setAttribute($pathColumn, $newPath);
-                        $model->saveOrFail();
-                    });
+                    $model->getConnection()
+                        ->transaction(function () use ($model, $pathColumn, $newPath): void {
+                            $model->setAttribute($pathColumn, $newPath);
+                            $model->saveOrFail();
+                        });
                 } catch (Throwable) {
                     // After-commit callbacks can fail after the new path is already durable.
-                    if ($model->newQuery()->whereKey($model->getKey())->value($pathColumn) !== $newPath) {
+                    if ($model->newQuery()
+                        ->whereKey($model->getKey())
+                        ->value($pathColumn) !== $newPath) {
                         $disk->delete($newPath);
                     }
                     $this->fail($model, $label, $warning, $failed);

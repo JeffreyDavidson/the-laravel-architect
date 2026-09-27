@@ -55,13 +55,17 @@ class ContentReadinessWidget extends Widget
             [
                 'label' => 'Project previews',
                 'description' => 'Add an optimized featured image to each project.',
-                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('featured_image_path')->orWhere('featured_image_path', ''))->count(),
+                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('featured_image_path')
+                    ->orWhere('featured_image_path', ''))
+                    ->count(),
                 'url' => ProjectResource::getUrl('index'),
             ],
             [
                 'label' => 'Project stories',
                 'description' => 'Finish the case study for each project.',
-                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('content')->orWhere('content', ''))->count(),
+                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('content')
+                    ->orWhere('content', ''))
+                    ->count(),
                 'url' => ProjectResource::getUrl('index'),
             ],
             [
@@ -72,7 +76,8 @@ class ContentReadinessWidget extends Widget
                     ->where(function (Builder $query): void {
                         foreach (['apple_url', 'spotify_url', 'rss_url', 'youtube_url'] as $column) {
                             $query->where(function (Builder $query) use ($column): void {
-                                $query->whereNull($column)->orWhere($column, '');
+                                $query->whereNull($column)
+                                    ->orWhere($column, '');
                             });
                         }
                     })
@@ -88,19 +93,32 @@ class ContentReadinessWidget extends Widget
             [
                 'label' => 'Post content',
                 'description' => 'Add an excerpt, image, and SEO description to each post.',
-                'count' => Post::query()->where(fn (Builder $query) => $query->whereNull('excerpt')->orWhere('excerpt', '')->orWhereNull('featured_image_path')->orWhere('featured_image_path', ''))->count(),
+                'count' => Post::query()->where(fn (Builder $query) => $query->whereNull('excerpt')
+                    ->orWhere('excerpt', '')
+                    ->orWhereNull('featured_image_path')
+                    ->orWhere('featured_image_path', ''))
+                    ->count(),
                 'url' => PostResource::getUrl('index'),
             ],
             [
                 'label' => 'Newsletter issues',
                 'description' => 'Add an excerpt and SEO description before sending an issue.',
-                'count' => NewsletterIssue::query()->where(fn (Builder $query) => $query->whereNull('excerpt')->orWhere('excerpt', ''))->count(),
+                'count' => NewsletterIssue::query()->where(fn (Builder $query) => $query->whereNull('excerpt')
+                    ->orWhere('excerpt', ''))
+                    ->count(),
                 'url' => NewsletterIssueResource::getUrl('index'),
             ],
             [
                 'label' => 'Video metadata',
                 'description' => 'Complete the description, thumbnail, duration, and sync data.',
-                'count' => Video::query()->where(fn (Builder $query) => $query->whereNull('description')->orWhere('description', '')->orWhereNull('thumbnail_url')->orWhere('thumbnail_url', '')->orWhereNull('duration')->orWhere('duration', '')->orWhereNull('synced_at'))->count(),
+                'count' => Video::query()->where(fn (Builder $query) => $query->whereNull('description')
+                    ->orWhere('description', '')
+                    ->orWhereNull('thumbnail_url')
+                    ->orWhere('thumbnail_url', '')
+                    ->orWhereNull('duration')
+                    ->orWhere('duration', '')
+                    ->orWhereNull('synced_at'))
+                    ->count(),
                 'url' => VideoResource::getUrl('index'),
             ],
         ], fn (array $item): bool => $item['count'] > 0));

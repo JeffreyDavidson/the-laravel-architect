@@ -13,14 +13,17 @@ it('calculates reading time from post content', function () {
 });
 
 it('returns its cast publishing values', function () {
-    $publishedAt = now()->subMinute()->startOfSecond();
+    $publishedAt = now()->subMinute()
+        ->startOfSecond();
     $post = new Post([
         'status' => PublishStatus::Published,
         'published_at' => $publishedAt,
     ]);
 
     expect($post->publishStatus())->toBe(PublishStatus::Published)
-        ->and($post->publishedAt()?->equalTo($publishedAt))->toBeTrue();
+        ->and($post->publishedAt()
+            ?->equalTo($publishedAt))
+        ->toBeTrue();
 });
 
 it('knows whether it is publicly published', function (?PublishStatus $status, mixed $publishedAt, bool $expected) {

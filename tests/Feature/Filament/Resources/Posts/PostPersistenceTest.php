@@ -30,7 +30,9 @@ it('creates a post through the Filament form', function () {
 
     expect(Post::query()->sole())
         ->title->toBe('Architecture notes')
-        ->and(Post::query()->sole()->user_id)->toBe(auth()->id());
+        ->and(Post::query()->sole()
+            ->user_id)
+        ->toBe(auth()->id());
 });
 
 it('updates a post through the Filament form', function () {
@@ -53,6 +55,8 @@ it('updates a post through the Filament form', function () {
 
     expect($post->refresh())
         ->title->toBe('Updated title')
-        ->and($post->content)->toBe('Updated content.')
-        ->and($post->status)->toBe(PublishStatus::InReview);
+        ->and($post->content)
+        ->toBe('Updated content.')
+        ->and($post->status)
+        ->toBe(PublishStatus::InReview);
 });

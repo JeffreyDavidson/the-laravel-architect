@@ -13,5 +13,6 @@ it('generates a PNG image with the expected social dimensions', function () {
     $dimensions = getimagesizefromstring($contents);
 
     expect($contents)->toStartWith("\x89PNG\r\n\x1a\n")
-        ->and($dimensions)->toMatchArray([0 => 1200, 1 => 630, 'mime' => 'image/png']);
+        ->and($dimensions)
+        ->toMatchArray([0 => 1200, 1 => 630, 'mime' => 'image/png']);
 });

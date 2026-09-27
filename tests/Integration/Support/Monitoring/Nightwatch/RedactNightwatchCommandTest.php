@@ -15,6 +15,7 @@ it('removes arguments and options from command telemetry', function () {
     $redacted = app(RedactNightwatchCommand::class)($command);
 
     expect($redacted)->toBeTrue()
-        ->and($command->command)->toBe('app:example')
+        ->and($command->command)
+        ->toBe('app:example')
         ->not->toContain('private@example.test', 'private-token');
 });

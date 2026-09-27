@@ -45,7 +45,8 @@ it('accepts a normalized podcast slug when creating a podcast', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Podcast::query()->sole()->slug)->toBe('podcast-name-2');
+    expect(Podcast::query()->sole()
+        ->slug)->toBe('podcast-name-2');
 });
 
 it('rejects a non-normalized podcast slug when editing a podcast', function () {
@@ -60,7 +61,8 @@ it('rejects a non-normalized podcast slug when editing a podcast', function () {
         ->call('save')
         ->assertHasFormErrors(['slug' => 'regex']);
 
-    expect($podcast->refresh()->slug)->toBe('podcast-name');
+    expect($podcast->refresh()
+        ->slug)->toBe('podcast-name');
 });
 
 it('preserves an existing podcast slug when the name changes', function () {
@@ -75,5 +77,6 @@ it('preserves an existing podcast slug when the name changes', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($podcast->refresh()->slug)->toBe('curated-podcast-slug');
+    expect($podcast->refresh()
+        ->slug)->toBe('curated-podcast-slug');
 });

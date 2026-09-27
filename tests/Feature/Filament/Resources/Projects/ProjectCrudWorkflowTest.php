@@ -28,19 +28,20 @@ it('creates a project through the resource form', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Project::query()->sole()->only([
-        'title',
-        'slug',
-        'description',
-        'content',
-        'status',
-    ]))->toMatchArray([
-        'title' => 'New project',
-        'slug' => 'new-project',
-        'description' => 'A project description.',
-        'content' => 'The full project write-up.',
-        'status' => PublishStatus::Draft,
-    ]);
+    expect(Project::query()->sole()
+        ->only([
+            'title',
+            'slug',
+            'description',
+            'content',
+            'status',
+        ]))->toMatchArray([
+            'title' => 'New project',
+            'slug' => 'new-project',
+            'description' => 'A project description.',
+            'content' => 'The full project write-up.',
+            'status' => PublishStatus::Draft,
+        ]);
 });
 
 it('updates a project through the resource form', function () {
@@ -63,17 +64,18 @@ it('updates a project through the resource form', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($project->refresh()->only([
-        'title',
-        'slug',
-        'description',
-        'content',
-        'status',
-    ]))->toMatchArray([
-        'title' => 'Updated project',
-        'slug' => 'updated-project',
-        'description' => 'The updated description.',
-        'content' => 'The updated write-up.',
-        'status' => PublishStatus::Published,
-    ]);
+    expect($project->refresh()
+        ->only([
+            'title',
+            'slug',
+            'description',
+            'content',
+            'status',
+        ]))->toMatchArray([
+            'title' => 'Updated project',
+            'slug' => 'updated-project',
+            'description' => 'The updated description.',
+            'content' => 'The updated write-up.',
+            'status' => PublishStatus::Published,
+        ]);
 });

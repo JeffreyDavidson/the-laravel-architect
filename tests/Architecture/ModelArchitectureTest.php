@@ -29,7 +29,8 @@ it('keeps route binding concerns outside Eloquent models', function () {
         $reflection = new ReflectionClass($class);
         $routeBinding = $reflection->getMethod('resolveRouteBinding');
 
-        expect($routeBinding->getDeclaringClass()->getName())
+        expect($routeBinding->getDeclaringClass()
+            ->getName())
             ->not->toBe($class, "{$class} must not declare HTTP route binding logic.");
     }
 });

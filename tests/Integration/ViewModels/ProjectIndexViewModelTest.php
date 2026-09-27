@@ -40,14 +40,18 @@ it('builds the public project index payload', function () {
         ->data();
 
     expect($data)->toHaveKeys(['projects', 'technologyOptions', 'tagOptions', 'seoSource'])
-        ->and($data['projects']->modelKeys())->toBe([
+        ->and($data['projects']->modelKeys())
+        ->toBe([
             $earlierProject->getKey(),
             $laterProject->getKey(),
         ])
         ->and($data['projects']->every(
             fn (Project $project): bool => $project->relationLoaded('tags'),
         ))->toBeTrue()
-        ->and($data['technologyOptions'])->toBe(['Laravel' => 'Laravel'])
-        ->and($data['tagOptions'])->toBe(['laravel' => 'Laravel'])
-        ->and($data['seoSource']->title)->toBe('Projects');
+        ->and($data['technologyOptions'])
+        ->toBe(['Laravel' => 'Laravel'])
+        ->and($data['tagOptions'])
+        ->toBe(['laravel' => 'Laravel'])
+        ->and($data['seoSource']->title)
+        ->toBe('Projects');
 });

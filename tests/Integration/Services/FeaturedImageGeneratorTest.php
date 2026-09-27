@@ -23,7 +23,8 @@ it('generates default and category-specific featured images on the public disk',
     $laravelPath = $generator->generate($laravelPost);
 
     expect($defaultPath)->toBe('featured-images/default-featured-image.png')
-        ->and($laravelPath)->toBe('featured-images/laravel-featured-image.png');
+        ->and($laravelPath)
+        ->toBe('featured-images/laravel-featured-image.png');
 
     foreach ([$defaultPath, $laravelPath] as $path) {
         Storage::disk('public')->assertExists($path);
@@ -32,7 +33,8 @@ it('generates default and category-specific featured images on the public disk',
         $dimensions = getimagesize($absolutePath);
 
         expect(Storage::disk('public')->size($path))->toBeGreaterThan(0)
-            ->and($dimensions)->toMatchArray([0 => 1200, 1 => 630, 'mime' => 'image/png']);
+            ->and($dimensions)
+            ->toMatchArray([0 => 1200, 1 => 630, 'mime' => 'image/png']);
     }
 
     expect(hash_file('sha256', Storage::disk('public')->path($defaultPath)))

@@ -53,8 +53,9 @@ class ResponsiveImageLifecycle
 
     private function deleteAfterCommit(Model $model, string $path): void
     {
-        $model->getConnection()->afterCommit(function () use ($path): void {
-            $this->images->delete($path);
-        });
+        $model->getConnection()
+            ->afterCommit(function () use ($path): void {
+                $this->images->delete($path);
+            });
     }
 }

@@ -21,7 +21,8 @@ it('persists every supported post publish status', function () {
             'status' => $status,
         ]);
 
-        expect($post->refresh()->status)->toBe($status);
+        expect($post->refresh()
+            ->status)->toBe($status);
     }
 });
 

@@ -36,8 +36,11 @@ it('deletes the selected videos through the table bulk action', function () {
 
     livewire(ListVideos::class)
         ->selectTableRecords($selectedVideos)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Video::query()->whereKey($selectedVideos->pluck('id'))->count())->toBe(0)
-        ->and(Video::query()->find($remainingVideo->id))->not->toBeNull();
+    expect(Video::query()->whereKey($selectedVideos->pluck('id'))
+        ->count())->toBe(0)
+        ->and(Video::query()->find($remainingVideo->id))
+        ->not->toBeNull();
 });

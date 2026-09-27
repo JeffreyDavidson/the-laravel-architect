@@ -11,7 +11,8 @@ it('replaces cache keys with an application-keyed digest', function () {
     $redacted = app(RedactNightwatchCacheEvent::class)($event);
 
     expect($redacted)->toBeTrue()
-        ->and($event->key)->toBe(hash_hmac('sha256', 'newsletter:203.0.113.10', 'private-application-key'))
+        ->and($event->key)
+        ->toBe(hash_hmac('sha256', 'newsletter:203.0.113.10', 'private-application-key'))
         ->not->toContain('newsletter', '203.0.113.10');
 });
 

@@ -9,7 +9,8 @@ pest()->use(RefreshDatabase::class);
 
 it('succeeds without calling YouTube when there are no videos', function () {
     $youtube = Double::for(YouTubeService::class);
-    $youtube->allows('getStatsForVideos')->never();
+    $youtube->allows('getStatsForVideos')
+        ->never();
     app()->instance(YouTubeService::class, $youtube);
 
     $this->artisanCommand('youtube:stats')
@@ -61,20 +62,32 @@ it('updates video statistics in batches of fifty', function () {
         ->expectsOutput('Updated stats for 2 videos.')
         ->assertSuccessful();
 
-    $firstVideo = Video::query()->where('youtube_id', 'video-1')->sole();
-    $lastVideo = Video::query()->where('youtube_id', 'video-51')->sole();
-    $unchangedVideo = Video::query()->where('youtube_id', 'video-2')->sole();
+    $firstVideo = Video::query()->where('youtube_id', 'video-1')
+        ->sole();
+    $lastVideo = Video::query()->where('youtube_id', 'video-51')
+        ->sole();
+    $unchangedVideo = Video::query()->where('youtube_id', 'video-2')
+        ->sole();
 
     expect($firstVideo->view_count)->toBe(1_000)
-        ->and($firstVideo->like_count)->toBe(100)
-        ->and($firstVideo->comment_count)->toBe(10)
-        ->and($firstVideo->synced_at?->toDateTimeString())->toBe('2026-08-19 11:45:00')
-        ->and($lastVideo->view_count)->toBe(5_100)
-        ->and($lastVideo->like_count)->toBe(510)
-        ->and($lastVideo->comment_count)->toBe(51)
-        ->and($lastVideo->synced_at?->toDateTimeString())->toBe('2026-08-19 11:45:00')
-        ->and($unchangedVideo->view_count)->toBe(2)
-        ->and($unchangedVideo->synced_at)->toBeNull();
+        ->and($firstVideo->like_count)
+        ->toBe(100)
+        ->and($firstVideo->comment_count)
+        ->toBe(10)
+        ->and($firstVideo->synced_at?->toDateTimeString())
+        ->toBe('2026-08-19 11:45:00')
+        ->and($lastVideo->view_count)
+        ->toBe(5_100)
+        ->and($lastVideo->like_count)
+        ->toBe(510)
+        ->and($lastVideo->comment_count)
+        ->toBe(51)
+        ->and($lastVideo->synced_at?->toDateTimeString())
+        ->toBe('2026-08-19 11:45:00')
+        ->and($unchangedVideo->view_count)
+        ->toBe(2)
+        ->and($unchangedVideo->synced_at)
+        ->toBeNull();
 });
 
 it('fails without changing statistics when YouTube is unavailable', function () {
@@ -100,7 +113,10 @@ it('fails without changing statistics when YouTube is unavailable', function () 
     $video->refresh();
 
     expect($video->view_count)->toBe(25)
-        ->and($video->like_count)->toBe(5)
-        ->and($video->comment_count)->toBe(2)
-        ->and($video->synced_at)->toBeNull();
+        ->and($video->like_count)
+        ->toBe(5)
+        ->and($video->comment_count)
+        ->toBe(2)
+        ->and($video->synced_at)
+        ->toBeNull();
 });

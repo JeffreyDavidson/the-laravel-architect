@@ -18,8 +18,10 @@ it('does not create users with the former known seeder passwords', function () {
         ->where('email', 'admin@example.test')
         ->sole();
     expect(Hash::check('change-me-immediately', $admin->password))->toBeFalse()
-        ->and(User::query()->count())->toBe(1)
-        ->and($admin->is_admin)->toBeTrue();
+        ->and(User::query()->count())
+        ->toBe(1)
+        ->and($admin->is_admin)
+        ->toBeTrue();
 });
 
 it('preserves the existing admin password when the seeder runs', function () {
@@ -29,6 +31,8 @@ it('preserves the existing admin password when the seeder runs', function () {
     ]);
     $this->seed(DatabaseSeeder::class);
 
-    expect(Hash::check('chosen-admin-password', $admin->refresh()->password))->toBeTrue()
-        ->and($admin->is_admin)->toBeTrue();
+    expect(Hash::check('chosen-admin-password', $admin->refresh()
+        ->password))->toBeTrue()
+        ->and($admin->is_admin)
+        ->toBeTrue();
 });

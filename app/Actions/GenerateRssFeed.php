@@ -17,7 +17,9 @@ final class GenerateRssFeed
 
         $siteUrl = url('/');
         $feedUrl = route('rss');
-        $lastBuild = $posts->first()?->publishedAt()?->toRssString() ?? now()->toRssString();
+        $lastBuild = $posts->first()
+            ?->publishedAt()
+            ?->toRssString() ?? now()->toRssString();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
@@ -33,7 +35,8 @@ final class GenerateRssFeed
             $title = htmlspecialchars($post->title, ENT_XML1, 'UTF-8');
             $link = $this->escape(route('blog.show', $post));
             $description = htmlspecialchars($post->excerpt ?? '', ENT_XML1, 'UTF-8');
-            $pubDate = $post->publishedAt()?->toRssString() ?? now()->toRssString();
+            $pubDate = $post->publishedAt()
+                ?->toRssString() ?? now()->toRssString();
 
             $xml .= "<item>\n";
             $xml .= "<title>{$title}</title>\n";

@@ -23,7 +23,9 @@ it('deletes selected subscribers through the table bulk action', function () {
 
     livewire(ListSubscribers::class)
         ->selectTableRecords($subscribers)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Subscriber::query()->whereKey($subscribers->pluck('id'))->count())->toBe(0);
+    expect(Subscriber::query()->whereKey($subscribers->pluck('id'))
+        ->count())->toBe(0);
 });

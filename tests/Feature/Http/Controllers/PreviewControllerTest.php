@@ -63,10 +63,21 @@ it('renders signed previews for unpublished content', function () {
 
     $previewUrlGenerator = app(PreviewUrlGenerator::class);
 
-    $this->get($previewUrlGenerator->for($post))->assertOk()->assertSee($post->title)->assertSee('Preview mode')->assertSee('noindex, nofollow');
-    $this->get($previewUrlGenerator->for($project))->assertOk()->assertSee($project->title);
-    $this->get($previewUrlGenerator->for($episode))->assertOk()->assertSee($episode->title)->assertSee('Draft preview');
-    $this->get($previewUrlGenerator->for($issue))->assertOk()->assertSee($issue->title);
+    $this->get($previewUrlGenerator->for($post))
+        ->assertOk()
+        ->assertSee($post->title)
+        ->assertSee('Preview mode')
+        ->assertSee('noindex, nofollow');
+    $this->get($previewUrlGenerator->for($project))
+        ->assertOk()
+        ->assertSee($project->title);
+    $this->get($previewUrlGenerator->for($episode))
+        ->assertOk()
+        ->assertSee($episode->title)
+        ->assertSee('Draft preview');
+    $this->get($previewUrlGenerator->for($issue))
+        ->assertOk()
+        ->assertSee($issue->title);
 });
 
 it('rejects unsigned preview URLs', function () {
@@ -77,7 +88,8 @@ it('rejects unsigned preview URLs', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    $this->get(route('preview.newsletter-issue', $issue))->assertForbidden();
+    $this->get(route('preview.newsletter-issue', $issue))
+        ->assertForbidden();
 });
 
 it('rejects expired preview URLs', function () {
@@ -94,5 +106,6 @@ it('rejects expired preview URLs', function () {
         ['newsletterIssue' => $issue],
     );
 
-    $this->get($expiredUrl)->assertForbidden();
+    $this->get($expiredUrl)
+        ->assertForbidden();
 });

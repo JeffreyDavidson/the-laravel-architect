@@ -42,7 +42,8 @@ class SubscribersTable
             ->filters([
                 Filter::make('active')
                     ->label('Active only')
-                    ->query(fn (Builder $query) => $query->whereNotNull('verified_at')->whereNull('unsubscribed_at'))
+                    ->query(fn (Builder $query) => $query->whereNotNull('verified_at')
+                        ->whereNull('unsubscribed_at'))
                     ->default(),
             ])
             ->toolbarActions([

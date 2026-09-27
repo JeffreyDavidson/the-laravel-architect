@@ -14,7 +14,8 @@ function createBlogPost(array $overrides = []): Post
 {
     $user = User::query()->create([
         'name' => 'Jeffrey Davidson',
-        'email' => fake()->unique()->safeEmail(),
+        'email' => fake()->unique()
+            ->safeEmail(),
         'password' => bcrypt('password'),
     ]);
 
@@ -24,8 +25,10 @@ function createBlogPost(array $overrides = []): Post
     );
 
     return Post::query()->create(array_merge([
-        'title' => fake()->unique()->sentence(3),
-        'slug' => fake()->unique()->slug(),
+        'title' => fake()->unique()
+            ->sentence(3),
+        'slug' => fake()->unique()
+            ->slug(),
         'excerpt' => fake()->sentence(),
         'content' => fake()->paragraphs(3, true),
         'category_id' => $category->id,
@@ -52,9 +55,12 @@ it('only allows directly viewing posts that are published now', function () {
     $draft = createBlogPost(['status' => PublishStatus::Draft, 'published_at' => null]);
     $scheduled = createBlogPost(['published_at' => now()->addDay()]);
 
-    $this->get(route('blog.show', $published))->assertOk();
-    $this->get(route('blog.show', $draft))->assertNotFound();
-    $this->get(route('blog.show', $scheduled))->assertNotFound();
+    $this->get(route('blog.show', $published))
+        ->assertOk();
+    $this->get(route('blog.show', $draft))
+        ->assertNotFound();
+    $this->get(route('blog.show', $scheduled))
+        ->assertNotFound();
 });
 
 it('renders post content as markdown with anchored headings', function () {
@@ -72,7 +78,10 @@ MARKDOWN,
 
     $this->get(route('blog.show', $post))
         ->assertOk()
-        ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
+        ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')
+        ->assertSeeHtml('This is <strong>rendered</strong> content.')
+        ->assertDontSeeHtml("<script>alert('unsafe')</script>")
+        ->assertDontSeeHtml('javascript:');
 });
 
 it('counts only published posts in blog categories', function () {

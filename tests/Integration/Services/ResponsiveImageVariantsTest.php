@@ -33,7 +33,8 @@ it('generates responsive webp variants without replacing the original image', fu
     );
 
     expect($small)->toMatchArray([0 => 640, 1 => 36, 'mime' => 'image/webp'])
-        ->and($large)->toMatchArray([0 => 1280, 1 => 72, 'mime' => 'image/webp']);
+        ->and($large)
+        ->toMatchArray([0 => 1280, 1 => 72, 'mime' => 'image/webp']);
 });
 
 it('returns a srcset only for generated variants that exist', function () {
@@ -59,7 +60,8 @@ it('does not upscale images to create responsive variants', function () {
 });
 
 it('does not delete existing variants when a replacement write fails', function () {
-    $contents = UploadedFile::fake()->image('project.png', 1280, 72)->getContent();
+    $contents = UploadedFile::fake()->image('project.png', 1280, 72)
+        ->getContent();
     $disk = Double::for(FilesystemAdapter::class);
     $disk->expects('exists')
         ->with('projects/project.png')
@@ -69,7 +71,8 @@ it('does not delete existing variants when a replacement write fails', function 
         ->returns($contents);
     $disk->expects('put')
         ->returns(false);
-    $disk->allows('delete')->never();
+    $disk->allows('delete')
+        ->never();
     $filesystem = Double::for(Factory::class);
     $filesystem->expects('disk')
         ->with('public')
@@ -87,8 +90,10 @@ it('does not delete existing variants when the original cannot be read', functio
     $disk->expects('get')
         ->with('projects/project.png')
         ->returns(null);
-    $disk->allows('put')->never();
-    $disk->allows('delete')->never();
+    $disk->allows('put')
+        ->never();
+    $disk->allows('delete')
+        ->never();
     $filesystem = Double::for(Factory::class);
     $filesystem->expects('disk')
         ->with('public')
@@ -129,7 +134,8 @@ it('rejects missing and unsupported responsive image sources', function () {
     $images = app(ResponsiveImageVariants::class);
 
     expect($images->hasRequiredVariants('projects/missing.png'))->toBeFalse()
-        ->and($images->hasRequiredVariants('projects/invalid.txt'))->toBeFalse();
+        ->and($images->hasRequiredVariants('projects/invalid.txt'))
+        ->toBeFalse();
 });
 
 it('deletes generated variants without deleting the original image', function () {

@@ -34,7 +34,8 @@ it('stores a validated image through the Filament project form', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $path = Project::query()->sole()->featured_image_path;
+    $path = Project::query()->sole()
+        ->featured_image_path;
 
     if (! is_string($path)) {
         throw new RuntimeException('Expected a stored project image path.');
@@ -53,7 +54,8 @@ it('rejects an oversized image through the Filament project form', function () {
             'slug' => 'project',
             'description' => 'Description',
             'status' => PublishStatus::Draft,
-            'featured_image_path' => UploadedFile::fake()->image('project.jpg')->size(10241),
+            'featured_image_path' => UploadedFile::fake()->image('project.jpg')
+                ->size(10241),
         ])
         ->call('create')
         ->assertHasFormErrors(['featured_image_path']);
@@ -80,7 +82,8 @@ it('stores validated audio through the Filament episode form', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $path = Episode::query()->sole()->audio_path;
+    $path = Episode::query()->sole()
+        ->audio_path;
 
     if (! is_string($path)) {
         throw new RuntimeException('Expected a stored episode audio path.');

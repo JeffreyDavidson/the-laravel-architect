@@ -48,7 +48,8 @@ class ContactInquiryResource extends Resource
         $count = Cache::remember(
             'contact-inquiries-new-count',
             now()->addMinutes(5),
-            fn (): int => static::getModel()::query()->where('status', 'new')->count(),
+            fn (): int => static::getModel()::query()->where('status', 'new')
+                ->count(),
         );
 
         return $count > 0 ? (string) $count : null;

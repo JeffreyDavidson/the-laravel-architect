@@ -64,7 +64,8 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
     }
 
     $widget = livewire(WelcomeWidget::class);
-    $url = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>')->querySelector($selector)?->getAttribute('href');
+    $url = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>')->querySelector($selector)
+        ?->getAttribute('href');
 
     if ($url === null || $url === '') {
         throw new RuntimeException("The {$selector} queue link is missing.");
@@ -106,7 +107,8 @@ it('keeps live and scheduled pipeline counts and destinations consistent across 
         ->assertViewHas('scheduledPosts', 1);
     $document = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>');
     foreach (['published' => 'Already live scheduled', 'scheduled' => 'Future published'] as $queue => $title) {
-        $url = $document->querySelector(".tla-dashboard-pipeline__step--{$queue}")?->getAttribute('href');
+        $url = $document->querySelector(".tla-dashboard-pipeline__step--{$queue}")
+            ?->getAttribute('href');
 
         if ($url === null || $url === '') {
             throw new RuntimeException("The {$queue} pipeline link is missing.");

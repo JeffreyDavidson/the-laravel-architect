@@ -28,12 +28,14 @@ class PublicContentArchiveRelations
     public function syncSeo(Post|Project|Podcast|Episode|NewsletterIssue $model, ?array $attributes, array $fields): void
     {
         if ($attributes === null) {
-            $model->seo()->delete();
+            $model->seo()
+                ->delete();
 
             return;
         }
 
-        $model->seo()->updateOrCreate([], $this->only($attributes, $fields));
+        $model->seo()
+            ->updateOrCreate([], $this->only($attributes, $fields));
     }
 
     /** @return list<array{name: string, type?: string|null}> */

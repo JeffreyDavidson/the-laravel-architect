@@ -27,8 +27,12 @@ it('builds the project detail payload', function () {
         ->data($project);
 
     expect($data)->toHaveKeys(['project', 'otherProjects', 'seoSource'])
-        ->and($data['project']->is($project))->toBeTrue()
-        ->and($data['project']->relationLoaded('tags'))->toBeTrue()
-        ->and($data['otherProjects']->modelKeys())->toBe([$relatedProject->getKey()])
-        ->and($data['seoSource']->is($project))->toBeTrue();
+        ->and($data['project']->is($project))
+        ->toBeTrue()
+        ->and($data['project']->relationLoaded('tags'))
+        ->toBeTrue()
+        ->and($data['otherProjects']->modelKeys())
+        ->toBe([$relatedProject->getKey()])
+        ->and($data['seoSource']->is($project))
+        ->toBeTrue();
 });

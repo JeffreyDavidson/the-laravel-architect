@@ -23,5 +23,6 @@ it('generates a newest-first feed bounded to twenty published issues', function 
     expect($xml)
         ->toContain('<title>Newsletter issue 1</title>')
         ->not->toContain('<title>Newsletter issue 21</title>')
-        ->and(substr_count($xml, '<item>'))->toBe(20);
+        ->and(substr_count($xml, '<item>'))
+        ->toBe(20);
 });

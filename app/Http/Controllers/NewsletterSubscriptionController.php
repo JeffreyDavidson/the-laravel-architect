@@ -18,7 +18,10 @@ class NewsletterSubscriptionController
             return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
         }
 
-        $email = $request->safe()->string('email')->lower()->toString();
+        $email = $request->safe()
+            ->string('email')
+            ->lower()
+            ->toString();
 
         $requestNewsletterSubscription->handle($email);
 
@@ -31,6 +34,7 @@ class NewsletterSubscriptionController
     ): RedirectResponse {
         $unsubscribeFromNewsletter->handle($subscriber);
 
-        return redirect()->route('home')->with('newsletter_success', 'You have been unsubscribed.');
+        return redirect()->route('home')
+            ->with('newsletter_success', 'You have been unsubscribed.');
     }
 }

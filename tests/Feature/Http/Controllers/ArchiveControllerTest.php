@@ -94,7 +94,8 @@ it('browses published public content in one chronological archive', function () 
     }
 
     expect($episodePosition)->toBeLessThan($postPosition)
-        ->and($content)->toContain(route('podcast.episode', [$podcast, $episode]));
+        ->and($content)
+        ->toContain(route('podcast.episode', [$podcast, $episode]));
 });
 
 it('filters the archive by content type and year', function () {
@@ -122,7 +123,8 @@ it('filters the archive by content type and year', function () {
 });
 
 it('rejects invalid archive filters', function (array $filters) {
-    $this->get(route('archive.index', $filters))->assertNotFound();
+    $this->get(route('archive.index', $filters))
+        ->assertNotFound();
 })->with([
     'unknown type' => [['type' => 'unknown']],
     'invalid year' => [['year' => 1999]],

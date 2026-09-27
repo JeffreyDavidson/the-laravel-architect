@@ -22,6 +22,7 @@ class NewsletterConfirmationController
     ): RedirectResponse {
         $confirmNewsletterSubscription->handle($subscriber);
 
-        return redirect()->route('home')->with('newsletter_success', 'You\'re subscribed. Thanks for confirming!');
+        return redirect()->route('home')
+            ->with('newsletter_success', 'You\'re subscribed. Thanks for confirming!');
     }
 }

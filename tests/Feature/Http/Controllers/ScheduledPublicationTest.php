@@ -15,24 +15,37 @@ it('exposes scheduled posts across public surfaces exactly when due without chan
     $post = Post::query()->create([
         'title' => 'Scheduled publication boundary',
         'content' => 'Public once its publication time arrives.',
-        'user_id' => User::factory()->create()->getKey(),
+        'user_id' => User::factory()->create()
+            ->getKey(),
         'status' => PublishStatus::Scheduled,
         'published_at' => $due,
     ]);
 
-    $this->get(route('blog.show', $post))->assertNotFound();
-    $this->get(route('blog.index'))->assertDontSee($post->title);
-    $this->get(route('rss'))->assertDontSee($post->title);
-    $this->get(route('sitemap'))->assertDontSee(route('blog.show', $post));
+    $this->get(route('blog.show', $post))
+        ->assertNotFound();
+    $this->get(route('blog.index'))
+        ->assertDontSee($post->title);
+    $this->get(route('rss'))
+        ->assertDontSee($post->title);
+    $this->get(route('sitemap'))
+        ->assertDontSee(route('blog.show', $post));
 
     $this->travelTo($due);
 
-    $this->get(route('blog.show', $post))->assertOk();
-    $this->get(route('blog.index'))->assertOk()->assertSee($post->title);
-    $this->get(route('rss'))->assertOk()->assertSee($post->title);
-    $this->get(route('sitemap'))->assertOk()->assertSee(route('blog.show', $post));
+    $this->get(route('blog.show', $post))
+        ->assertOk();
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSee($post->title);
+    $this->get(route('rss'))
+        ->assertOk()
+        ->assertSee($post->title);
+    $this->get(route('sitemap'))
+        ->assertOk()
+        ->assertSee(route('blog.show', $post));
 
-    expect($post->refresh()->status)->toBe(PublishStatus::Scheduled);
+    expect($post->refresh()
+        ->status)->toBe(PublishStatus::Scheduled);
 });
 
 it('exposes due scheduled episodes only while their podcast is active', function () {
@@ -52,20 +65,31 @@ it('exposes due scheduled episodes only while their podcast is active', function
     ]);
     $url = route('podcast.episode', [$podcast, $episode]);
 
-    $this->get($url)->assertNotFound();
-    $this->get(route('podcast.show', $podcast))->assertDontSee($episode->title);
-    $this->get(route('sitemap'))->assertDontSee($url);
+    $this->get($url)
+        ->assertNotFound();
+    $this->get(route('podcast.show', $podcast))
+        ->assertDontSee($episode->title);
+    $this->get(route('sitemap'))
+        ->assertDontSee($url);
 
     $this->travelTo($due);
 
-    $this->get($url)->assertOk();
-    $this->get(route('podcast.show', $podcast))->assertOk()->assertSee($episode->title);
-    $this->get(route('sitemap'))->assertOk()->assertSee($url);
+    $this->get($url)
+        ->assertOk();
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSee($episode->title);
+    $this->get(route('sitemap'))
+        ->assertOk()
+        ->assertSee($url);
 
-    expect($episode->refresh()->status)->toBe(PublishStatus::Scheduled);
+    expect($episode->refresh()
+        ->status)->toBe(PublishStatus::Scheduled);
 
     $podcast->update(['is_active' => false]);
 
-    $this->get($url)->assertNotFound();
-    $this->get(route('sitemap'))->assertDontSee($url);
+    $this->get($url)
+        ->assertNotFound();
+    $this->get(route('sitemap'))
+        ->assertDontSee($url);
 });

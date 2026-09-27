@@ -89,9 +89,14 @@ it('selects published tagged posts and episodes with reachable podcasts', functi
     $related = app(RelatedProjectContentQuery::class)->get($project);
 
     expect($related['posts']->modelKeys())->toBe([$post->getKey()])
-        ->and($related['episodes']->modelKeys())->toBe([$episode->getKey()])
-        ->and($related['posts']->sole()->relationLoaded('category'))->toBeTrue()
-        ->and($related['episodes']->sole()->relationLoaded('podcast'))->toBeTrue();
+        ->and($related['episodes']->modelKeys())
+        ->toBe([$episode->getKey()])
+        ->and($related['posts']->sole()
+            ->relationLoaded('category'))
+        ->toBeTrue()
+        ->and($related['episodes']->sole()
+            ->relationLoaded('podcast'))
+        ->toBeTrue();
 });
 
 it('returns empty related content when the project has no tags or the limit is invalid', function () {
@@ -105,7 +110,10 @@ it('returns empty related content when the project has no tags or the limit is i
     $query = app(RelatedProjectContentQuery::class);
 
     expect($query->get($project)['posts'])->toBeEmpty()
-        ->and($query->get($project)['episodes'])->toBeEmpty()
-        ->and($query->get($project, 0)['posts'])->toBeEmpty()
-        ->and($query->get($project, 0)['episodes'])->toBeEmpty();
+        ->and($query->get($project)['episodes'])
+        ->toBeEmpty()
+        ->and($query->get($project, 0)['posts'])
+        ->toBeEmpty()
+        ->and($query->get($project, 0)['episodes'])
+        ->toBeEmpty();
 });

@@ -19,7 +19,8 @@ final readonly class YouTubeVideoSynchronizer
         $updated = 0;
 
         foreach ($videos as $videoData) {
-            $video = Video::query()->where('youtube_id', $videoData->youtubeId)->first();
+            $video = Video::query()->where('youtube_id', $videoData->youtubeId)
+                ->first();
 
             if ($video instanceof Video) {
                 $video->update([
@@ -68,7 +69,8 @@ final readonly class YouTubeVideoSynchronizer
 
         $baseSlug = rtrim(Str::substr($baseSlug, 0, 255), '-');
 
-        if (! Video::query()->where('slug', $baseSlug)->exists()) {
+        if (! Video::query()->where('slug', $baseSlug)
+            ->exists()) {
             return $baseSlug;
         }
 
@@ -76,7 +78,8 @@ final readonly class YouTubeVideoSynchronizer
         $slug = rtrim(Str::substr($baseSlug, 0, 255 - strlen($suffix)), '-').$suffix;
         $attempt = 2;
 
-        while (Video::query()->where('slug', $slug)->exists()) {
+        while (Video::query()->where('slug', $slug)
+            ->exists()) {
             $numberedSuffix = "{$suffix}-{$attempt}";
             $slug = rtrim(Str::substr($baseSlug, 0, 255 - strlen($numberedSuffix)), '-').$numberedSuffix;
             $attempt++;

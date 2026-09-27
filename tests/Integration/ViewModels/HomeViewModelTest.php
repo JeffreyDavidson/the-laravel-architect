@@ -40,13 +40,22 @@ it('builds the bounded public homepage payload', function () {
         'publishedProjectCount',
         'seoSource',
     ])
-        ->and($data['latestPosts'])->toBeEmpty()
-        ->and($data['podcast'])->toBeNull()
-        ->and($data['featuredProjects']->pluck('sort_order')->all())->toBe([1, 2, 3, 4])
-        ->and($data['latestYouTubeVideos']->pluck('youtube_id')->all())->toBe(['video-1', 'video-2', 'video-3'])
-        ->and($data['youtubeProfileUrl'])->toBe('https://youtube.com/@thelaravelarchitect')
-        ->and($data['publishedPostCount'])->toBe(0)
-        ->and($data['publishedProjectCount'])->toBe(5);
+        ->and($data['latestPosts'])
+        ->toBeEmpty()
+        ->and($data['podcast'])
+        ->toBeNull()
+        ->and($data['featuredProjects']->pluck('sort_order')
+            ->all())
+        ->toBe([1, 2, 3, 4])
+        ->and($data['latestYouTubeVideos']->pluck('youtube_id')
+            ->all())
+        ->toBe(['video-1', 'video-2', 'video-3'])
+        ->and($data['youtubeProfileUrl'])
+        ->toBe('https://youtube.com/@thelaravelarchitect')
+        ->and($data['publishedPostCount'])
+        ->toBe(0)
+        ->and($data['publishedProjectCount'])
+        ->toBe(5);
 });
 
 function createHomeViewModelProject(int $sortOrder): void

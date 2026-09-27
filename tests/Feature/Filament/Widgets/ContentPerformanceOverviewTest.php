@@ -92,12 +92,18 @@ it('summarizes published content and audience data for administrators', function
     $stats = $widget->stats();
 
     expect($stats)->toHaveCount(6)
-        ->and($stats[0]->getValue())->toBe(1)
-        ->and($stats[1]->getValue())->toBe(1)
-        ->and($stats[2]->getValue())->toBe(1)
-        ->and($stats[3]->getValue())->toBe(1)
-        ->and($stats[4]->getValue())->toBe(1)
-        ->and($stats[5]->getValue())->toBe('1,234');
+        ->and($stats[0]->getValue())
+        ->toBe(1)
+        ->and($stats[1]->getValue())
+        ->toBe(1)
+        ->and($stats[2]->getValue())
+        ->toBe(1)
+        ->and($stats[3]->getValue())
+        ->toBe(1)
+        ->and($stats[4]->getValue())
+        ->toBe(1)
+        ->and($stats[5]->getValue())
+        ->toBe('1,234');
 
     livewire(ContentPerformanceOverview::class)
         ->assertSee('Content performance')

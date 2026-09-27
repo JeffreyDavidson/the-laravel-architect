@@ -10,10 +10,15 @@ it('only counts verified subscriptions that have not unsubscribed as active', fu
     $pending = Subscriber::query()->create(['email' => 'pending@example.test']);
     $unsubscribed = Subscriber::query()->create(['email' => 'gone@example.test', 'verified_at' => now(), 'unsubscribed_at' => now()]);
 
-    expect(Subscriber::query()->active()->pluck('id')->all())->toBe([$active->id])
-        ->and($active->isActive())->toBeTrue()
-        ->and($pending->isActive())->toBeFalse()
-        ->and($unsubscribed->isActive())->toBeFalse();
+    expect(Subscriber::query()->active()
+        ->pluck('id')
+        ->all())->toBe([$active->id])
+        ->and($active->isActive())
+        ->toBeTrue()
+        ->and($pending->isActive())
+        ->toBeFalse()
+        ->and($unsubscribed->isActive())
+        ->toBeFalse();
 });
 
 it('does not mass assign its verification token hash', function () {
@@ -25,7 +30,8 @@ it('does not mass assign its verification token hash', function () {
     ]);
 
     expect($subscriber->email)->toBe('reader@example.com')
-        ->and($subscriber->getAttributes())->not->toHaveKey('verification_token_hash');
+        ->and($subscriber->getAttributes())
+        ->not->toHaveKey('verification_token_hash');
 });
 
 it('hides its verification token hash from serialization', function () {

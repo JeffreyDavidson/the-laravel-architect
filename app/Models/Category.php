@@ -23,6 +23,7 @@ class Category extends Model
     /** @return HasMany<Post, $this> */
     public function publishedPosts(): HasMany
     {
-        return $this->posts()->published();
+        return $this->posts()
+            ->published();
     }
 }

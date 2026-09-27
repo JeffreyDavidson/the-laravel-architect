@@ -44,11 +44,16 @@ it('redacts sensitive request and breadcrumb data while retaining exception diag
     expect($payload)
         ->not->toContain('confirmation-token', 'reader@example.com', 'youtube-secret-key', 'token=', 'Private project brief')
         ->toContain('RequestNewsletterSubscription.php', '"lineno":38')
-        ->and($event->getRequest()['url'])->toBe('https://thelaravelarchitect.com/newsletter/confirm/[Filtered]/[Filtered]')
-        ->and($event->getRequest()['query_string'])->toBe('[Filtered]')
-        ->and($event->getRequest()['data'])->toBe('[Filtered]')
-        ->and($event->getBreadcrumbs()[0]->getMessage())->toBe('Submitted email [Filtered]')
-        ->and($event->getExceptions()[0]->getValue())->toBe('Unable to subscribe [Filtered]');
+        ->and($event->getRequest()['url'])
+        ->toBe('https://thelaravelarchitect.com/newsletter/confirm/[Filtered]/[Filtered]')
+        ->and($event->getRequest()['query_string'])
+        ->toBe('[Filtered]')
+        ->and($event->getRequest()['data'])
+        ->toBe('[Filtered]')
+        ->and($event->getBreadcrumbs()[0]->getMessage())
+        ->toBe('Submitted email [Filtered]')
+        ->and($event->getExceptions()[0]->getValue())
+        ->toBe('Unable to subscribe [Filtered]');
 });
 
 it('sanitizes sensitive breadcrumb metadata and outgoing URLs', function () {

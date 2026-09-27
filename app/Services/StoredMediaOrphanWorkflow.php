@@ -86,7 +86,8 @@ class StoredMediaOrphanWorkflow
             foreach ($files as $index => $file) {
                 try {
                     if (! array_any(self::OWNED_DIRECTORIES, fn (string $directory): bool => str_starts_with($file['path'], $directory))
-                        || $disk->lastModified($file['path']) > now()->subDay()->getTimestamp()
+                        || $disk->lastModified($file['path']) > now()->subDay()
+                            ->getTimestamp()
                         || isset($this->references()['paths'][$file['path']])
                         || $this->isEmbedded($file['path'], $this->contentReferences())) {
                         $skipped++;
@@ -133,7 +134,8 @@ class StoredMediaOrphanWorkflow
         $content = [];
 
         foreach (self::CONTENT_ATTRIBUTES as [$modelClass, $column]) {
-            foreach ($modelClass::query()->whereNotNull($column)->pluck($column) as $value) {
+            foreach ($modelClass::query()->whereNotNull($column)
+                ->pluck($column) as $value) {
                 if (is_string($value)) {
                     $content[] = rawurldecode($value);
                 }

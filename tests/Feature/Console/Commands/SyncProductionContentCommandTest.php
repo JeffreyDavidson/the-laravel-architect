@@ -11,16 +11,19 @@ pest()->use(RefreshDatabase::class);
 
 test('production public content can be synchronized into staging', function (): void {
     Storage::fake('public');
-    Storage::disk('public')->put('posts/production.webp', UploadedFile::fake()->image('production.webp', 1280, 8)->getContent());
+    Storage::disk('public')->put('posts/production.webp', UploadedFile::fake()->image('production.webp', 1280, 8)
+        ->getContent());
     $source = Double::for(ProductionContentSource::class);
-    $source->expects('exportTo')->resolves(function (mixed $path = null): void {
-        if (! is_string($path)) {
-            throw new RuntimeException('Expected a string archive path.');
-        }
+    $source->expects('exportTo')
+        ->resolves(function (mixed $path = null): void {
+            if (! is_string($path)) {
+                throw new RuntimeException('Expected a string archive path.');
+            }
 
-        file_put_contents($path, json_encode(commandPublicContentArchiveFixture(), JSON_THROW_ON_ERROR));
-    });
-    $source->expects('copyMedia')->with(['posts/production.webp']);
+            file_put_contents($path, json_encode(commandPublicContentArchiveFixture(), JSON_THROW_ON_ERROR));
+        });
+    $source->expects('copyMedia')
+        ->with(['posts/production.webp']);
     app()->instance(ProductionContentSource::class, $source);
 
     $this->artisanCommand('content:sync-production')
@@ -28,15 +31,18 @@ test('production public content can be synchronized into staging', function (): 
         ->expectsOutput('1 referenced public media files synchronized.')
         ->assertSuccessful();
 
-    expect(Post::query()->where('slug', 'production-post')->exists())->toBeTrue();
+    expect(Post::query()->where('slug', 'production-post')
+        ->exists())->toBeTrue();
     Storage::disk('public')->assertExists(['posts/responsive/production-640.webp', 'posts/responsive/production-1280.webp']);
 });
 
 test('production public content sync refuses to run in production', function (): void {
     app()->detectEnvironment(fn (): string => 'production');
     $source = Double::for(ProductionContentSource::class);
-    $source->allows('exportTo')->never();
-    $source->allows('copyMedia')->never();
+    $source->allows('exportTo')
+        ->never();
+    $source->allows('copyMedia')
+        ->never();
     app()->instance(ProductionContentSource::class, $source);
 
     $this->artisanCommand('content:sync-production')
@@ -61,7 +67,8 @@ function commandPublicContentArchiveFixture(): array
             'excerpt' => 'Production excerpt',
             'content' => 'Production content',
             'featured_image_path' => 'posts/production.webp',
-            'published_at' => now()->subDay()->toAtomString(),
+            'published_at' => now()->subDay()
+                ->toAtomString(),
             'category_slug' => 'architecture',
             'tags' => [],
             'seo' => null,

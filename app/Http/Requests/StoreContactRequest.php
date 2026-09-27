@@ -17,11 +17,15 @@ class StoreContactRequest extends FormRequest
         $validated = $this->safe();
 
         return new ContactMessageData(
-            name: $validated->string('name')->toString(),
-            email: $validated->string('email')->toString(),
-            type: ContactType::from($validated->string('type')->toString()),
+            name: $validated->string('name')
+                ->toString(),
+            email: $validated->string('email')
+                ->toString(),
+            type: ContactType::from($validated->string('type')
+                ->toString()),
             budget: $validated->enum('budget', ContactBudget::class),
-            message: $validated->string('message')->toString(),
+            message: $validated->string('message')
+                ->toString(),
             projectTitle: $projectTitle,
         );
     }

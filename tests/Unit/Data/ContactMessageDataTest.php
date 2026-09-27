@@ -20,6 +20,8 @@ it('retains typed contact fields through serialization', function () {
     }
 
     expect($restored)->toEqual($data)
-        ->and($restored->type)->toBe(ContactType::Consulting)
-        ->and($restored->budget)->toBe(ContactBudget::Medium);
+        ->and($restored->type)
+        ->toBe(ContactType::Consulting)
+        ->and($restored->budget)
+        ->toBe(ContactBudget::Medium);
 });

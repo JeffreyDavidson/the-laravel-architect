@@ -22,6 +22,10 @@ class QuickLinksWidget extends Widget
     #[\Override]
     protected static ?int $sort = -6;
 
+    /** Static links need no deferred request; render them with the dashboard. */
+    #[\Override]
+    protected static bool $isLazy = false;
+
     /** @return array<string, mixed> */
     protected function getViewData(): array
     {

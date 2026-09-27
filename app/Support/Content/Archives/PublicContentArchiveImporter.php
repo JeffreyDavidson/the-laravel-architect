@@ -73,7 +73,8 @@ class PublicContentArchiveImporter
                 $post = Post::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
                 $post->fill([
                     ...$this->only($attributes, self::POST_FIELDS),
-                    'category_id' => Category::query()->where('slug', $this->nullableStringValue($attributes, 'category_slug'))->value('id'),
+                    'category_id' => Category::query()->where('slug', $this->nullableStringValue($attributes, 'category_slug'))
+                        ->value('id'),
                     'user_id' => $author->getKey(),
                     'status' => PublishStatus::Published,
                     'review_notes' => null,
@@ -97,7 +98,8 @@ class PublicContentArchiveImporter
                 $episode = Episode::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
                 $episode->fill([
                     ...$this->only($attributes, self::EPISODE_FIELDS),
-                    'podcast_id' => Podcast::query()->where('slug', $this->nullableStringValue($attributes, 'podcast_slug'))->value('id'),
+                    'podcast_id' => Podcast::query()->where('slug', $this->nullableStringValue($attributes, 'podcast_slug'))
+                        ->value('id'),
                     'status' => PublishStatus::Published,
                 ]);
                 $episode->save();
@@ -206,12 +208,18 @@ class PublicContentArchiveImporter
 
     private function unpublishExistingContent(): void
     {
-        Post::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
-        Project::query()->published()->update(['status' => PublishStatus::Draft->value]);
-        Podcast::query()->active()->update(['is_active' => false]);
-        Episode::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
-        NewsletterIssue::query()->published()->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
-        Video::query()->published()->update(['published_at' => null]);
+        Post::query()->published()
+            ->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
+        Project::query()->published()
+            ->update(['status' => PublishStatus::Draft->value]);
+        Podcast::query()->active()
+            ->update(['is_active' => false]);
+        Episode::query()->published()
+            ->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
+        NewsletterIssue::query()->published()
+            ->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
+        Video::query()->published()
+            ->update(['published_at' => null]);
     }
 
     /** @param array<string, mixed> $attributes

@@ -18,6 +18,8 @@ it('marks a subscriber as unsubscribed and clears pending confirmation state', f
     app(UnsubscribeFromNewsletter::class)
         ->handle($subscriber);
 
-    expect($subscriber->refresh()->unsubscribed_at)->not->toBeNull()
-        ->and($subscriber->verification_token_hash)->toBeNull();
+    expect($subscriber->refresh()
+        ->unsubscribed_at)->not->toBeNull()
+        ->and($subscriber->verification_token_hash)
+        ->toBeNull();
 });

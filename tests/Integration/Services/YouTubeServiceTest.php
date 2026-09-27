@@ -21,7 +21,8 @@ it('caches the subscriber count', function () {
     ]);
 
     expect(YouTubeService::subscriberCount())->toBe(4321)
-        ->and(YouTubeService::subscriberCount())->toBe(4321);
+        ->and(YouTubeService::subscriberCount())
+        ->toBe(4321);
 
     Http::assertSentCount(1);
 });
@@ -51,8 +52,10 @@ it('does not replace the last known count when YouTube returns malformed data', 
     ]);
 
     expect(YouTubeService::subscriberCount())->toBe(9876)
-        ->and(Cache::get('youtube.subscriber_count'))->toBeNull()
-        ->and(Cache::get('youtube.subscriber_count.last_known'))->toBe(9876);
+        ->and(Cache::get('youtube.subscriber_count'))
+        ->toBeNull()
+        ->and(Cache::get('youtube.subscriber_count.last_known'))
+        ->toBe(9876);
 
 });
 
@@ -102,7 +105,8 @@ it('accepts and caches a legitimate zero subscriber count', function () {
     ]);
 
     expect(YouTubeService::subscriberCount())->toBe(0)
-        ->and(Cache::get('youtube.subscriber_count'))->toBe(0);
+        ->and(Cache::get('youtube.subscriber_count'))
+        ->toBe(0);
 });
 
 it('does not call YouTube when no channel videos are requested', function () {
@@ -175,9 +179,12 @@ it('uses zero for malformed video statistics', function () {
     $videos = app(YouTubeService::class)->getVideoDetails(['video-1']);
 
     expect($videos)->toHaveCount(1)
-        ->and($videos[0]->viewCount)->toBe(0)
-        ->and($videos[0]->likeCount)->toBe(0)
-        ->and($videos[0]->commentCount)->toBe(0);
+        ->and($videos[0]->viewCount)
+        ->toBe(0)
+        ->and($videos[0]->likeCount)
+        ->toBe(0)
+        ->and($videos[0]->commentCount)
+        ->toBe(0);
 });
 
 it('maps valid video statistics and skips malformed items', function () {

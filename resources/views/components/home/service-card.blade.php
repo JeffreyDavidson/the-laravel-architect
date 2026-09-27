@@ -48,7 +48,7 @@
         <span class="text-[var(--text-tertiary)]">$</span>
         <span class="{{ $colors['text'] }}">php artisan</span>
         <span class="text-gray-900 dark:text-white">{{ $command }}</span
-        ><span class="relative -top-px {{ $colors['text'] }}">▊</span>
+        ><span class="relative -top-px {{ $colors['text'] }}" aria-hidden="true">▊</span>
     </div>
 
     <h3 class="relative z-10 mb-3 text-xl font-bold text-gray-900 dark:text-white">{{ $title }}</h3>

@@ -14,7 +14,8 @@ it('only admits administrators to the admin panel', function () {
 
     expect($user->canAccessPanel($panel))->toBeFalse();
 
-    $user->forceFill(['is_admin' => true])->save();
+    $user->forceFill(['is_admin' => true])
+        ->save();
 
     expect($user->canAccessPanel($panel))->toBeTrue();
 });

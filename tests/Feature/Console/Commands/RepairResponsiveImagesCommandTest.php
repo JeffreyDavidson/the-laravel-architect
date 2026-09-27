@@ -18,9 +18,12 @@ beforeEach(function () {
 });
 
 it('repairs unhealthy responsive variants across every supported media type', function () {
-    $projectImage = UploadedFile::fake()->image('project.png', 800, 45)->getContent();
-    $postImage = UploadedFile::fake()->image('post.png', 1280, 72)->getContent();
-    $podcastImage = UploadedFile::fake()->image('podcast.png', 1280, 72)->getContent();
+    $projectImage = UploadedFile::fake()->image('project.png', 800, 45)
+        ->getContent();
+    $postImage = UploadedFile::fake()->image('post.png', 1280, 72)
+        ->getContent();
+    $podcastImage = UploadedFile::fake()->image('podcast.png', 1280, 72)
+        ->getContent();
     Storage::disk('public')->put('projects/project.png', $projectImage);
     Storage::disk('public')->put('projects/responsive/project-1280.webp', 'obsolete');
     Storage::disk('public')->put('posts/post.png', $postImage);
@@ -37,7 +40,8 @@ it('repairs unhealthy responsive variants across every supported media type', fu
         'title' => 'Post',
         'slug' => 'post',
         'content' => 'Content',
-        'user_id' => User::factory()->create()->id,
+        'user_id' => User::factory()->create()
+            ->id,
         'status' => PublishStatus::Published,
         'published_at' => now(),
         'featured_image_path' => 'posts/post.png',
@@ -78,7 +82,8 @@ it('repairs unhealthy responsive variants across every supported media type', fu
 });
 
 it('repairs remaining media types before reporting a failure', function () {
-    $postImage = UploadedFile::fake()->image('post.png', 1280, 72)->getContent();
+    $postImage = UploadedFile::fake()->image('post.png', 1280, 72)
+        ->getContent();
     Storage::disk('public')->put('projects/project.png', 'unsupported');
     Storage::disk('public')->put('posts/post.png', $postImage);
 
@@ -93,7 +98,8 @@ it('repairs remaining media types before reporting a failure', function () {
         'title' => 'Post',
         'slug' => 'post',
         'content' => 'Content',
-        'user_id' => User::factory()->create()->id,
+        'user_id' => User::factory()->create()
+            ->id,
         'status' => PublishStatus::Published,
         'published_at' => now(),
         'featured_image_path' => 'posts/post.png',

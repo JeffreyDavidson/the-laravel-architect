@@ -49,8 +49,10 @@ abstract class TestCase extends BaseTestCase
         };
 
         return match ($theme) {
-            'dark' => $page->inDarkMode()->wait(0),
-            'light' => $page->inLightMode()->wait(0),
+            'dark' => $page->inDarkMode()
+                ->wait(0),
+            'light' => $page->inLightMode()
+                ->wait(0),
             default => throw new \InvalidArgumentException("Unsupported browser theme: {$theme}"),
         };
     }

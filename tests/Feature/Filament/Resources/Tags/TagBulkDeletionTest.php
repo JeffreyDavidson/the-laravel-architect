@@ -23,7 +23,9 @@ it('deletes selected tags through the table bulk action', function () {
 
     livewire(ListTags::class)
         ->selectTableRecords($tags)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Tag::query()->whereKey($tags->pluck('id'))->count())->toBe(0);
+    expect(Tag::query()->whereKey($tags->pluck('id'))
+        ->count())->toBe(0);
 });

@@ -33,31 +33,32 @@ it('creates a podcast through the Filament form', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Podcast::query()->sole()->only([
-        'name',
-        'slug',
-        'description',
-        'long_description',
-        'color',
-        'apple_url',
-        'spotify_url',
-        'rss_url',
-        'youtube_url',
-        'is_active',
-        'sort_order',
-    ]))->toEqual([
-        'name' => 'The Architecture Podcast',
-        'slug' => 'the-architecture-podcast',
-        'description' => 'Conversations about building maintainable software.',
-        'long_description' => 'A deeper look at the decisions behind modern Laravel applications.',
-        'color' => '#2563eb',
-        'apple_url' => 'https://podcasts.apple.com/example',
-        'spotify_url' => 'https://open.spotify.com/show/example',
-        'rss_url' => 'https://example.test/feed.xml',
-        'youtube_url' => 'https://youtube.com/@example',
-        'is_active' => 1,
-        'sort_order' => 2,
-    ]);
+    expect(Podcast::query()->sole()
+        ->only([
+            'name',
+            'slug',
+            'description',
+            'long_description',
+            'color',
+            'apple_url',
+            'spotify_url',
+            'rss_url',
+            'youtube_url',
+            'is_active',
+            'sort_order',
+        ]))->toEqual([
+            'name' => 'The Architecture Podcast',
+            'slug' => 'the-architecture-podcast',
+            'description' => 'Conversations about building maintainable software.',
+            'long_description' => 'A deeper look at the decisions behind modern Laravel applications.',
+            'color' => '#2563eb',
+            'apple_url' => 'https://podcasts.apple.com/example',
+            'spotify_url' => 'https://open.spotify.com/show/example',
+            'rss_url' => 'https://example.test/feed.xml',
+            'youtube_url' => 'https://youtube.com/@example',
+            'is_active' => 1,
+            'sort_order' => 2,
+        ]);
 });
 
 it('updates a podcast through the Filament form', function () {
@@ -80,7 +81,10 @@ it('updates a podcast through the Filament form', function () {
 
     expect($podcast->refresh())
         ->name->toBe('Updated podcast')
-        ->and($podcast->description)->toBe('Updated description.')
-        ->and($podcast->is_active)->toBeFalse()
-        ->and($podcast->sort_order)->toBe(4);
+        ->and($podcast->description)
+        ->toBe('Updated description.')
+        ->and($podcast->is_active)
+        ->toBeFalse()
+        ->and($podcast->sort_order)
+        ->toBe(4);
 });

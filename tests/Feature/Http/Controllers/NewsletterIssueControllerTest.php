@@ -15,7 +15,8 @@ it('gives each newsletter archive page its own canonical URL', function () {
     }
     $url = route('newsletter.index', ['page' => 2]);
 
-    $this->get($url)->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
+    $this->get($url)
+        ->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
         ->assertSeeHtml('<title>Newsletter Archive — Page 2 — Jeffrey Davidson</title>');
 });
 
@@ -77,5 +78,6 @@ it('does not expose draft newsletter issues', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    $this->get(route('newsletter.issue', $issue))->assertNotFound();
+    $this->get(route('newsletter.issue', $issue))
+        ->assertNotFound();
 });

@@ -49,7 +49,12 @@ it('shows published projects once in their featured groups without repository li
 it('offers a contact path when no published projects are available', function () {
     $response = $this->get(route('projects.index'));
 
-    $response->assertOk()->assertSee('Project details aren’t available here yet.')->assertSeeHtml(route('contact'))->assertDontSeeHtml('data-project-entry')->assertDontSeeHtml('featured-projects-heading')->assertDontSeeHtml('more-projects-heading');
+    $response->assertOk()
+        ->assertSee('Project details aren’t available here yet.')
+        ->assertSeeHtml(route('contact'))
+        ->assertDontSeeHtml('data-project-entry')
+        ->assertDontSeeHtml('featured-projects-heading')
+        ->assertDontSeeHtml('more-projects-heading');
 });
 
 it('filters published projects by technology and topic', function () {
@@ -132,7 +137,12 @@ it('uses responsive uploaded images in either project group', function (bool $fe
         throw new RuntimeException('Expected the uploaded project image URL.');
     }
 
-    $response->assertOk()->assertSeeHtml($imageUrl)->assertSeeHtml('showcase-640.webp')->assertSeeHtml('showcase-1280.webp')->assertSeeHtml('fetchpriority="high"')->assertSeeHtml('object-contain');
+    $response->assertOk()
+        ->assertSeeHtml($imageUrl)
+        ->assertSeeHtml('showcase-640.webp')
+        ->assertSeeHtml('showcase-1280.webp')
+        ->assertSeeHtml('fetchpriority="high"')
+        ->assertSeeHtml('object-contain');
 })->with([true, false]);
 
 it('keeps repository URLs out of public project markup and structured data', function (?string $website) {
@@ -146,7 +156,8 @@ it('keeps repository URLs out of public project markup and structured data', fun
 
     $response = $this->get(route('projects.show', $project));
 
-    $response->assertOk()->assertDontSeeHtml('confidential-repository')
+    $response->assertOk()
+        ->assertDontSeeHtml('confidential-repository')
         ->assertDontSee('Explore the code')
         ->assertSee('Discuss a similar project');
 
@@ -154,7 +165,8 @@ it('keeps repository URLs out of public project markup and structured data', fun
         $response->assertSeeHtml($website);
     }
 
-    expect($project->refresh()->github_url)->toBe('https://github.com/example/confidential-repository');
+    expect($project->refresh()
+        ->github_url)->toBe('https://github.com/example/confidential-repository');
 })->with([null, 'https://example.com/product']);
 
 it('renders project content as safe Markdown', function () {
@@ -175,7 +187,12 @@ MARKDOWN,
 
     $this->get(route('projects.show', $project))
         ->assertOk()
-        ->assertSeeHtml('id="project-story"')->assertSee('Project story')->assertSeeHtml('<h2>Project approach</h2>')->assertSeeHtml('This is <strong>rendered</strong> content.')->assertDontSeeHtml("<script>alert('unsafe')</script>")->assertDontSeeHtml('javascript:');
+        ->assertSeeHtml('id="project-story"')
+        ->assertSee('Project story')
+        ->assertSeeHtml('<h2>Project approach</h2>')
+        ->assertSeeHtml('This is <strong>rendered</strong> content.')
+        ->assertDontSeeHtml("<script>alert('unsafe')</script>")
+        ->assertDontSeeHtml('javascript:');
 });
 
 it('renders project metadata without filter links', function () {

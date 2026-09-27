@@ -21,26 +21,40 @@ it('allows an administrator to manage posts', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
 
     expect($administrator->can('viewAny', Post::class))->toBeTrue()
-        ->and($administrator->can('view', $this->post))->toBeTrue()
-        ->and($administrator->can('create', Post::class))->toBeTrue()
-        ->and($administrator->can('update', $this->post))->toBeTrue()
-        ->and($administrator->can('delete', $this->post))->toBeTrue()
-        ->and($administrator->can('deleteAny', Post::class))->toBeTrue()
-        ->and($administrator->can('restore', $this->post))->toBeTrue()
-        ->and($administrator->can('restoreAny', Post::class))->toBeTrue()
-        ->and($administrator->can('forceDelete', $this->post))->toBeTrue()
-        ->and($administrator->can('forceDeleteAny', Post::class))->toBeTrue()
-        ->and($administrator->can('replicate', $this->post))->toBeTrue()
-        ->and($administrator->can('reorder', Post::class))->toBeTrue();
+        ->and($administrator->can('view', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('create', Post::class))
+        ->toBeTrue()
+        ->and($administrator->can('update', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('delete', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('deleteAny', Post::class))
+        ->toBeTrue()
+        ->and($administrator->can('restore', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('restoreAny', Post::class))
+        ->toBeTrue()
+        ->and($administrator->can('forceDelete', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('forceDeleteAny', Post::class))
+        ->toBeTrue()
+        ->and($administrator->can('replicate', $this->post))
+        ->toBeTrue()
+        ->and($administrator->can('reorder', Post::class))
+        ->toBeTrue();
 });
 
 it('prevents a non-administrator from managing posts', function () {
     $panelUser = User::factory()->create();
 
     expect($panelUser->can('viewAny', Post::class))->toBeFalse()
-        ->and($panelUser->can('view', $this->post))->toBeFalse()
-        ->and($panelUser->can('create', Post::class))->toBeFalse()
-        ->and($panelUser->can('update', $this->post))->toBeFalse();
+        ->and($panelUser->can('view', $this->post))
+        ->toBeFalse()
+        ->and($panelUser->can('create', Post::class))
+        ->toBeFalse()
+        ->and($panelUser->can('update', $this->post))
+        ->toBeFalse();
 
     $this->actingAs($panelUser)
         ->get(PostResource::getUrl('index'))

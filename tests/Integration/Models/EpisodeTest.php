@@ -22,7 +22,8 @@ it('generates SEO data when its podcast is missing', function () {
     $seo = $episode->getDynamicSEOData();
 
     expect($seo->title)->toBe('Orphaned Episode — Podcast')
-        ->and($seo->description)->toBe('An episode without an available podcast.');
+        ->and($seo->description)
+        ->toBe('An episode without an available podcast.');
 });
 
 it('knows whether it is publicly published', function (?PublishStatus $status, mixed $publishedAt, bool $expected) {

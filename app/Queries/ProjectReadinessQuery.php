@@ -15,10 +15,14 @@ final class ProjectReadinessQuery
         $details = "({$filled('description')}) and ({$filled('url')} or {$filled('github_url')}) and ({$techStack})";
 
         match ($filter) {
-            'ready' => $query->whereRaw($filled('featured_image_path'))->whereRaw($filled('content'))->whereRaw($details)->whereHas('tags'),
+            'ready' => $query->whereRaw($filled('featured_image_path'))
+                ->whereRaw($filled('content'))
+                ->whereRaw($details)
+                ->whereHas('tags'),
             'needs_image' => $query->whereRaw('not ('.$filled('featured_image_path').')'),
             'needs_case_study' => $query->whereRaw('not ('.$filled('content').')'),
-            'needs_details' => $query->where(fn (Builder $query) => $query->whereRaw("not ({$details})")->orWhereDoesntHave('tags')),
+            'needs_details' => $query->where(fn (Builder $query) => $query->whereRaw("not ({$details})")
+                ->orWhereDoesntHave('tags')),
             default => null,
         };
     }

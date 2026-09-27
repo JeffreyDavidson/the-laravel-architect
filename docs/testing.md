@@ -19,6 +19,8 @@ The PHP suites are registered in `phpunit.xml` and executed through Pest. Pest B
 
 ## Deployment safeguards
 
+`php scripts/check-method-chaining.php` requires each chained method call on its own line: a line fails when an `->` continues a method call made earlier on the same line, such as `$query->where()->first()`. Separate accesses such as `$this->save($model->id)`, enum `->value`, property chains, and `->not` are allowed, and merged migrations are not checked. CI runs it across the repository; the pre-push hook runs it on changed PHP files. `tests/Unit/Scripts/CheckMethodChainingTest.php` covers what it flags and allows.
+
 Run `npm run test:deployment` with Node 22 to test the deployment helpers and the actual command entry point. CI and the pre-push hook run the same command. The CLI tests launch a separate Node process with synthetic credentials and replace the HTTP transport; they do not contact Forge or Cloudflare or require secrets.
 
 Staging must use the combined `deploy` operation: it validates the exact Forge target before making requests and requires a different deployment ID even when redeploying the same commit. Regression coverage includes wrong-site rejection, same-revision timeout, and the workflow's use of that guarded entry point.

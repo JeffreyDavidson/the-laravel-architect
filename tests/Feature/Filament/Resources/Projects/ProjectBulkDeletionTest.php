@@ -38,9 +38,11 @@ it('deletes selected projects and their featured images through the table bulk a
 
     livewire(ListProjects::class)
         ->selectTableRecords($projects)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+            ->bulk());
 
-    expect(Project::query()->whereKey($projects->pluck('id'))->count())->toBe(0);
+    expect(Project::query()->whereKey($projects->pluck('id'))
+        ->count())->toBe(0);
     Storage::disk('public')->assertMissing('projects/first.png');
     Storage::disk('public')->assertMissing('projects/second.png');
 });

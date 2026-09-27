@@ -52,8 +52,10 @@ it('publishes an episode through Filament and exposes it publicly', function () 
 
     expect($episode->status)->toBe(PublishStatus::Published);
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))->assertOk();
-    $this->get('/sitemap.xml')->assertSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+        ->assertOk();
+    $this->get('/sitemap.xml')
+        ->assertSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });
 
 it('hides an episode again when Filament changes it back to draft', function () {
@@ -71,8 +73,10 @@ it('hides an episode again when Filament changes it back to draft', function () 
 
     expect($episode->status)->toBe(PublishStatus::Draft);
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))->assertNotFound();
-    $this->get('/sitemap.xml')->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+        ->assertNotFound();
+    $this->get('/sitemap.xml')
+        ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });
 
 it('keeps an episode hidden while its published date is scheduled in the future', function () {
@@ -90,9 +94,13 @@ it('keeps an episode hidden while its published date is scheduled in the future'
     $episode->refresh();
 
     expect($episode->status)->toBe(PublishStatus::Published)
-        ->and($episode->published_at)->not->toBeNull()
-        ->and(Date::parse($episode->published_at)->isFuture())->toBeTrue();
+        ->and($episode->published_at)
+        ->not->toBeNull()
+        ->and(Date::parse($episode->published_at)->isFuture())
+        ->toBeTrue();
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))->assertNotFound();
-    $this->get('/sitemap.xml')->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+        ->assertNotFound();
+    $this->get('/sitemap.xml')
+        ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });

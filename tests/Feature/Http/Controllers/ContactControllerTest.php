@@ -30,7 +30,13 @@ beforeEach(function () {
 it('renders the Turnstile widget on the contact page', function () {
     $response = $this->get(route('contact'));
 
-    $response->assertOk()->assertSeeHtml('data-turnstile-widget')->assertSeeHtml('data-sitekey="test-site-key"')->assertSeeHtml('data-action="contact-form"')->assertSeeHtml('class="absolute -top-[9999px] -left-[9999px]"')->assertDontSeeHtml('position:absolute;left:-9999px;top:-9999px;')->assertSeeHtml('JavaScript is required to complete the verification.');
+    $response->assertOk()
+        ->assertSeeHtml('data-turnstile-widget')
+        ->assertSeeHtml('data-sitekey="test-site-key"')
+        ->assertSeeHtml('data-action="contact-form"')
+        ->assertSeeHtml('class="absolute -top-[9999px] -left-[9999px]"')
+        ->assertDontSeeHtml('position:absolute;left:-9999px;top:-9999px;')
+        ->assertSeeHtml('JavaScript is required to complete the verification.');
 
     $content = $response->getContent();
     if (! is_string($content)) {
@@ -157,7 +163,8 @@ it('rejects a contact submission when Turnstile verification fails', function ()
         ->assertSessionHasInput('name', 'Jane Doe');
 
     expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0)
-        ->and(session()->getOldInput('cf-turnstile-response'))->toBeNull();
+        ->and(session()->getOldInput('cf-turnstile-response'))
+        ->toBeNull();
     Mail::assertNothingQueued();
     expect(ContactInquiry::query()->count())->toBe(0);
 });
@@ -246,7 +253,8 @@ it('does not count invalid submissions against the rate limit', function () {
         'type' => 'consulting',
         'budget' => 'medium',
     ])
-        ->and(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
+        ->and(RateLimiter::attempts('contact-form:127.0.0.1'))
+        ->toBe(0);
     Mail::assertNothingQueued();
     Http::assertNothingSent();
 });
@@ -262,7 +270,14 @@ it('renders preserved values and accessible validation feedback', function () {
         ]);
 
     $this->get(route('contact'))
-        ->assertOk()->assertSee('Please review the highlighted fields.')->assertSeeHtml('value="Jane Doe"')->assertSeeHtmlInOrder(['value="modernization"', 'selected'])->assertSeeHtmlInOrder(['value="large"', 'selected'])->assertSeeHtml('aria-invalid="true" aria-describedby="email-error"')->assertSeeHtml('href="#email"')->assertSeeHtml('id="email-error"');
+        ->assertOk()
+        ->assertSee('Please review the highlighted fields.')
+        ->assertSeeHtml('value="Jane Doe"')
+        ->assertSeeHtmlInOrder(['value="modernization"', 'selected'])
+        ->assertSeeHtmlInOrder(['value="large"', 'selected'])
+        ->assertSeeHtml('aria-invalid="true" aria-describedby="email-error"')
+        ->assertSeeHtml('href="#email"')
+        ->assertSeeHtml('id="email-error"');
 });
 
 it('rate limits repeated contact submissions by ip address', function () {
@@ -284,7 +299,8 @@ it('rate limits repeated contact submissions by ip address', function () {
         'type' => 'consulting',
         'message' => 'Can you help with an audit?',
     ])
-        ->and(session()->getOldInput())->not->toHaveKey('website');
+        ->and(session()->getOldInput())
+        ->not->toHaveKey('website');
 
     Mail::assertNothingQueued();
     Http::assertNothingSent();

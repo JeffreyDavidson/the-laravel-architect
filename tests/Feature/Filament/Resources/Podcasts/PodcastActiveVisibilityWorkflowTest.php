@@ -30,8 +30,11 @@ it('controls public podcast visibility through the active toggle', function () {
     $this->get(route('podcast.index'))
         ->assertOk()
         ->assertDontSee($podcast->name);
-    $this->get(route('podcast.show', $podcast))->assertNotFound();
-    $this->get('/sitemap.xml')->assertOk()->assertDontSeeHtml(route('podcast.show', $podcast));
+    $this->get(route('podcast.show', $podcast))
+        ->assertNotFound();
+    $this->get('/sitemap.xml')
+        ->assertOk()
+        ->assertDontSeeHtml(route('podcast.show', $podcast));
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['is_active' => true])
@@ -44,5 +47,7 @@ it('controls public podcast visibility through the active toggle', function () {
     $this->get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSee($podcast->name);
-    $this->get('/sitemap.xml')->assertOk()->assertSeeHtml(route('podcast.show', $podcast));
+    $this->get('/sitemap.xml')
+        ->assertOk()
+        ->assertSeeHtml(route('podcast.show', $podcast));
 });
