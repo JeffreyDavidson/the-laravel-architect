@@ -40,6 +40,23 @@ The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` t
 
 `phpunit.xml` pins every driver and external credential with both `<server>` and `<env force="true">`, because Laravel also reads inherited server variables and an unforced `<env>` can be overridden by `.env` or the shell. Tests always use an in-memory SQLite database, the array mailer, array cache and sessions, and the sync queue. Credentials for Resend, Turnstile, YouTube, Sentry, Nightwatch, the backup destinations, and S3 are blank, and Nightwatch is disabled. `TestCase` calls `Http::preventStrayRequests()`, so every outgoing request must be faked. `tests/Integration/TestHarnessTest.php` guards these guarantees; the same pattern is used in the mouse28 repository. When adding an external service, pin its credentials in `phpunit.xml` and add them to that test.
 
+## Query budgets
+
+`tests/Feature/Http/Controllers/PublicPageQueryBudgetsTest.php` seeds the scale-test content (100 posts, 50 projects, 300 episodes) plus 30 tagged posts, 30 newsletter issues, and 30 videos, then asserts the exact SQL query count for each public page with `expectsDatabaseQueryCount()`. No page's count grows with its content, so a new N+1 or an added query fails the test. Lazy loading already throws outside production; the budgets also catch explicit extra queries. The same pattern is used in the mouse28 repository.
+
+| Page | Queries | Page | Queries |
+| --- | --- | --- | --- |
+| Home | 12 | Projects index | 4 |
+| Blog index | 7 | Project | 8 |
+| Post | 11 | Newsletter index | 4 |
+| Category | 7 | Newsletter issue | 5 |
+| Tag | 7 | Archive | 5 |
+| Podcast index | 3 | Search | 9 |
+| Podcast | 6 | About | 2 |
+| Episode | 11 | Contact | 4 |
+
+To change a budget intentionally, make the change, run the test, and confirm the new count in the failure message is constant for the page (it must not depend on the amount of content). Update the dataset value and this table in the same commit, and explain the new query in the PR. Never raise a budget to absorb an N+1: eager-load the relation instead.
+
 ## Deployment safeguards
 
 `php scripts/check-method-chaining.php` requires each chained method call on its own line: a line fails when an `->` continues a method call made earlier on the same line, such as `$query->where()->first()`. Separate accesses such as `$this->save($model->id)`, enum `->value`, property chains, and `->not` are allowed, and merged migrations are not checked. CI runs it across the repository; the pre-push hook runs it on changed PHP files. `tests/Unit/Scripts/CheckMethodChainingTest.php` covers what it flags and allows.
