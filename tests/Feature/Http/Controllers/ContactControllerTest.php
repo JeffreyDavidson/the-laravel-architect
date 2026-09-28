@@ -10,7 +10,10 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+use function Pest\Laravel\from;
 
 pest()->use(RefreshDatabase::class);
 
@@ -23,7 +26,6 @@ beforeEach(function () {
         'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
     ]);
 
-    RateLimiter::clear('contact-form:127.0.0.1');
     Mail::fake();
 });
 
@@ -138,7 +140,6 @@ it('queues both contact messages after a valid submission', function () {
             && $mail->projectTitle === 'Inquiry project'
             && str_contains($mail->render(), 'Here\'s a copy of your message.'),
     );
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(1);
     Http::assertSent(fn (Request $request): bool => $request->url() === 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
         && $request['secret'] === 'test-secret-key'
         && $request['response'] === 'valid-token'
@@ -162,8 +163,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
         ->assertSessionHasErrors('cf-turnstile-response')
         ->assertSessionHasInput('name', 'Jane Doe');
 
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0)
-        ->and(session()->getOldInput('cf-turnstile-response'))
+    expect(session()->getOldInput('cf-turnstile-response'))
         ->toBeNull();
     Mail::assertNothingQueued();
     expect(ContactInquiry::query()->count())->toBe(0);
@@ -182,7 +182,6 @@ it('rejects Turnstile responses with invalid request context', function (array $
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
     Mail::assertNothingQueued();
 })->with([
     'wrong hostname' => [[
@@ -231,7 +230,6 @@ it('fails closed when Turnstile cannot be reached', function () {
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    expect(RateLimiter::attempts('contact-form:127.0.0.1'))->toBe(0);
     Mail::assertNothingQueued();
 });
 
@@ -252,9 +250,7 @@ it('does not count invalid submissions against the rate limit', function () {
         'email' => 'not-an-email',
         'type' => 'consulting',
         'budget' => 'medium',
-    ])
-        ->and(RateLimiter::attempts('contact-form:127.0.0.1'))
-        ->toBe(0);
+    ]);
     Mail::assertNothingQueued();
     Http::assertNothingSent();
 });
@@ -280,28 +276,89 @@ it('renders preserved values and accessible validation feedback', function () {
         ->assertSeeHtml('id="email-error"');
 });
 
+/**
+ * Post a contact submission that passes validation, from the given IP address.
+ *
+ * @param  array<string, string>  $overrides
+ * @return TestResponse<Response>
+ */
+function submitContactForm(array $overrides = [], string $ipAddress = '127.0.0.1'): TestResponse
+{
+    return from(route('contact'))
+        ->withServerVariables(['REMOTE_ADDR' => $ipAddress])
+        ->post(route('contact.submit'), [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'type' => 'consulting',
+            'message' => 'Can you help with an audit?',
+            'website' => '',
+            'cf-turnstile-response' => 'valid-token',
+            ...$overrides,
+        ]);
+}
+
+/** Fake Turnstile verification results, one per request, in order. */
+function fakeTurnstileVerification(bool ...$results): void
+{
+    $sequence = Http::sequence();
+
+    foreach ($results as $passes) {
+        $sequence->push([
+            'success' => $passes,
+            'action' => 'contact-form',
+            'hostname' => 'thelaravelarchitect.com',
+        ]);
+    }
+
+    Http::fake(['https://challenges.cloudflare.com/turnstile/v0/siteverify' => $sequence]);
+}
+
 it('rate limits repeated contact submissions by ip address', function () {
-    RateLimiter::hit('contact-form:127.0.0.1', 3600);
-    RateLimiter::hit('contact-form:127.0.0.1', 3600);
-    RateLimiter::hit('contact-form:127.0.0.1', 3600);
+    fakeTurnstileVerification(true, true, true, true);
 
-    $this->post(route('contact.submit'), [
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-        'type' => 'consulting',
-        'message' => 'Can you help with an audit?',
-        'website' => '',
-    ])->assertSessionHasErrors('message');
+    foreach (range(1, 3) as $attempt) {
+        submitContactForm()
+            ->assertSessionHas('success');
+    }
 
-    expect(session()->getOldInput())->toMatchArray([
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-        'type' => 'consulting',
-        'message' => 'Can you help with an audit?',
-    ])
-        ->and(session()->getOldInput())
-        ->not->toHaveKey('website');
+    $response = submitContactForm();
 
-    Mail::assertNothingQueued();
-    Http::assertNothingSent();
+    $response
+        ->assertRedirect(route('contact'))
+        ->assertSessionHasErrors(['message' => 'Too many submissions. Please try again later.'])
+        ->assertSessionHasInput('name', 'Jane Doe');
+    expect(session()->getOldInput())
+        ->not->toHaveKeys(['website', 'cf-turnstile-response'])
+        ->and(ContactInquiry::query()->count())
+        ->toBe(3);
+});
+
+it('does not count rejected or honeypot submissions against the rate limit', function (string $field, string $value, bool $turnstilePasses) {
+    fakeTurnstileVerification(...[...array_fill(0, 4, $turnstilePasses), true]);
+
+    foreach (range(1, 4) as $attempt) {
+        submitContactForm([$field => $value]);
+    }
+
+    submitContactForm()
+        ->assertSessionHas('success')
+        ->assertSessionHasNoErrors();
+    expect(ContactInquiry::query()->count())
+        ->toBe(1);
+})->with([
+    'validation errors' => ['email', 'not-an-email', true],
+    'failed Turnstile' => ['email', 'jane@example.com', false],
+    'honeypot' => ['website', 'filled-by-bot', true],
+]);
+
+it('limits each ip address separately', function () {
+    fakeTurnstileVerification(true, true, true, true);
+
+    foreach (range(1, 3) as $attempt) {
+        submitContactForm();
+    }
+
+    submitContactForm(ipAddress: '203.0.113.10')
+        ->assertSessionHas('success')
+        ->assertSessionHasNoErrors();
 });

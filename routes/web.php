@@ -36,7 +36,9 @@ Route::get('/about', AboutController::class)->name('about');
 Route::get('/services', ServiceController::class)->name('services');
 Route::get('/contact', [ContactController::class, 'create'])->name('contact');
 Route::get('/privacy', PrivacyController::class)->name('privacy');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.submit');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:contact-form')
+    ->name('contact.submit');
 Route::post('/newsletter', [NewsletterSubscriptionController::class, 'store'])
     ->middleware('throttle:newsletter')
     ->name('newsletter.subscribe');
