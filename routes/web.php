@@ -22,6 +22,7 @@ use App\Http\Controllers\PreviewPostController;
 use App\Http\Controllers\PreviewProjectController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
@@ -78,6 +79,7 @@ Route::middleware('signed')
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
