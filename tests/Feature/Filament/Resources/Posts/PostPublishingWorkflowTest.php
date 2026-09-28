@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\EditPost;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,18 +19,19 @@ it('publishes a post through Filament and exposes it publicly', function () {
     $post = Post::query()->create([
         'title' => 'Publishing workflow',
         'slug' => 'publishing-workflow',
+        'excerpt' => 'A summary.',
         'content' => 'Published content.',
+        'category_id' => Category::query()
+            ->create(['name' => 'Laravel', 'slug' => 'laravel'])
+            ->id,
         'user_id' => auth()->id(),
         'status' => PublishStatus::Draft,
+        'published_at' => now()->subMinute(),
     ]);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->fillForm([
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subMinute(),
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('publish')
+        ->assertNotified('Post published');
 
     expect($post->refresh()
         ->status)->toBe(PublishStatus::Published);
@@ -40,7 +42,7 @@ it('publishes a post through Filament and exposes it publicly', function () {
         ->assertSeeHtml(route('blog.show', $post));
 });
 
-it('hides a post again when Filament changes it back to draft', function () {
+it('hides a post again when Filament unpublishes it', function () {
     $post = Post::query()->create([
         'title' => 'Draft workflow',
         'slug' => 'draft-workflow',
@@ -51,9 +53,8 @@ it('hides a post again when Filament changes it back to draft', function () {
     ]);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->fillForm(['status' => PublishStatus::Draft, 'published_at' => null])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('unpublish')
+        ->assertNotified('Post unpublished');
 
     expect($post->refresh()
         ->status)->toBe(PublishStatus::Draft);

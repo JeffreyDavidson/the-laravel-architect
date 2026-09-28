@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
-use App\Enums\PublishStatus;
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishStatusSelect;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Actions\Action;
@@ -77,10 +77,7 @@ class PostForm
 
                 Section::make('Publishing')
                     ->schema([
-                        Select::make('status')
-                            ->options(PublishStatus::labels())
-                            ->default(PublishStatus::Draft)
-                            ->required(),
+                        PublishStatusSelect::make('status'),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),
                         Hidden::make('user_id')

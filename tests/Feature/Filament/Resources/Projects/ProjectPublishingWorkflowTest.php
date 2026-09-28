@@ -19,13 +19,13 @@ it('publishes a project through Filament and exposes it publicly', function () {
         'title' => 'Publishing workflow project',
         'slug' => 'publishing-workflow-project',
         'description' => 'A project that is ready to publish.',
+        'content' => 'The case study.',
         'status' => PublishStatus::Draft,
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
-        ->fillForm(['status' => PublishStatus::Published])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('publish')
+        ->assertNotified('Project published');
 
     expect($project->refresh()
         ->status)->toBe(PublishStatus::Published);
@@ -36,7 +36,7 @@ it('publishes a project through Filament and exposes it publicly', function () {
         ->assertSeeHtml(route('projects.show', $project));
 });
 
-it('hides a project again when Filament changes it back to draft', function () {
+it('hides a project again when Filament unpublishes it', function () {
     $project = Project::query()->create([
         'title' => 'Draft workflow project',
         'slug' => 'draft-workflow-project',
@@ -45,9 +45,8 @@ it('hides a project again when Filament changes it back to draft', function () {
     ]);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
-        ->fillForm(['status' => PublishStatus::Draft])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('unpublish')
+        ->assertNotified('Project unpublished');
 
     expect($project->refresh()
         ->status)->toBe(PublishStatus::Draft);

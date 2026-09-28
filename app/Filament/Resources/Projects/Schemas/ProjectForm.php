@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
-use App\Enums\PublishStatus;
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishStatusSelect;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -77,13 +76,8 @@ class ProjectForm
                         TextInput::make('sort_order')
                             ->numeric()
                             ->default(0),
-                        Select::make('status')
-                            ->options([
-                                PublishStatus::Draft->value => PublishStatus::Draft->label(),
-                                PublishStatus::Published->value => PublishStatus::Published->label(),
-                            ])
-                            ->default(PublishStatus::Draft)
-                            ->required(),
+                        PublishStatusSelect::make('status')
+                            ->withoutReview(),
                     ])->columns(2),
 
                 Section::make('SEO')
