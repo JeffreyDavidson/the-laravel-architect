@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5518d4c308f39b177d58390677fb15ff",
+    "content-hash": "f3c01caaaab23170ba28dd516ee40b88",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -12702,20 +12702,20 @@
         },
         {
             "name": "jasonmccreary/double",
-            "version": "v0.7.0",
+            "version": "v0.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasonmccreary/double.git",
-                "reference": "417932fece6b6193212539b0f09af61a2e781416"
+                "reference": "cf403df8470d1165642084ea11ab5c719da2a491"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasonmccreary/double/zipball/417932fece6b6193212539b0f09af61a2e781416",
-                "reference": "417932fece6b6193212539b0f09af61a2e781416",
+                "url": "https://api.github.com/repos/jasonmccreary/double/zipball/cf403df8470d1165642084ea11ab5c719da2a491",
+                "reference": "cf403df8470d1165642084ea11ab5c719da2a491",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.3"
+                "php": "^8.2"
             },
             "require-dev": {
                 "laravel/pint": "^1.29",
@@ -12738,6 +12738,7 @@
                 }
             ],
             "description": "A modern PHP double library that puts developer experience first.",
+            "homepage": "https://testdoublephp.com",
             "keywords": [
                 "Double",
                 "mock",
@@ -12746,10 +12747,11 @@
                 "testing"
             ],
             "support": {
+                "docs": "https://testdoublephp.com",
                 "issues": "https://github.com/jasonmccreary/double/issues",
-                "source": "https://github.com/jasonmccreary/double/tree/v0.7.0"
+                "source": "https://github.com/jasonmccreary/double"
             },
-            "time": "2026-09-08T20:49:18+00:00"
+            "time": "2026-09-21T12:37:31+00:00"
         },
         {
             "name": "kelunik/certificate",

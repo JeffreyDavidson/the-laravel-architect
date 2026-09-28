@@ -19,6 +19,7 @@ use App\View\Components\SocialLinks;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\DiagnosingHealth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\App;
@@ -92,6 +93,16 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
+        // Only a sent message counts, so typos and failed checks never lock out a visitor.
+        RateLimiter::for('contact-form', function (Request $request): Limit {
+            $limit = Limit::perHour(3)
+                ->by($request->ip())
+                ->after(fn (): bool => blank($request->input('website')) && session()->has('success'));
+
+            return $limit->response(fn (): RedirectResponse => back()
+                ->withErrors(['message' => 'Too many submissions. Please try again later.'])
+                ->withInput($request->except(['website', 'cf-turnstile-response'])));
+        });
         RateLimiter::for('newsletter', function (Request $request): Limit {
             $ipAddress = $request->ip();
             $limit = Limit::perHour(5);
