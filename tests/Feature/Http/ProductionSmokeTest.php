@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Http;
 use Tests\Support\DeploymentSmokeClient;
 
 pest()->group('production');
@@ -18,9 +19,14 @@ function productionSmokeRequest(string $baseUrl): PendingRequest
 }
 
 beforeEach(function (): void {
-    if (productionSmokeBaseUrl() === null) {
+    $baseUrl = productionSmokeBaseUrl();
+
+    if ($baseUrl === null) {
         $this->markTestSkipped('Set PRODUCTION_BASE_URL to run production smoke tests.');
     }
+
+    // The suite checks the deployed site over real HTTP; every other host stays blocked.
+    Http::allowStrayRequests([$baseUrl, "{$baseUrl}/*"]);
 });
 
 it('serves the critical public routes', function (): void {
