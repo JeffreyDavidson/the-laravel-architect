@@ -6,6 +6,8 @@ namespace App\Filament\Resources\NewsletterIssues\Pages;
 
 use App\Actions\SendNewsletterIssue;
 use App\Actions\SendNewsletterIssueTestEmail;
+use App\Filament\Actions\PublishContentAction;
+use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
@@ -48,6 +50,8 @@ class EditNewsletterIssue extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PublishContentAction::make(),
+            UnpublishContentAction::make(),
             Action::make('sendTestEmail')
                 ->label('Send test email')
                 ->icon(Heroicon::OutlinedEnvelope)

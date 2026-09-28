@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Episodes\Schemas;
 
-use App\Enums\PublishStatus;
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishStatusSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
@@ -113,10 +113,8 @@ class EpisodeForm
                 Section::make('Publishing')
                     ->schema([
                         SpatieTagsInput::make('tags'),
-                        Select::make('status')
-                            ->options(PublishStatus::labels(includeInReview: false))
-                            ->default(PublishStatus::Draft)
-                            ->required(),
+                        PublishStatusSelect::make('status')
+                            ->withoutReview(),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),
                     ])->columns(3),
