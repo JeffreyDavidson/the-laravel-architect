@@ -78,6 +78,13 @@ class EpisodeForm
                             ->directory('episodes/audio')
                             ->acceptedFileTypes(['audio/mpeg', 'audio/wav', 'audio/x-wav'])
                             ->maxSize(256000),
+                        TextInput::make('transistor_url')
+                            ->label('Transistor episode URL')
+                            ->url()
+                            ->maxLength(255)
+                            ->rules(['regex:/\Ahttps:\/\/share\.transistor\.fm\/s\/[a-zA-Z0-9]+\/?\z/'])
+                            ->validationMessages(['regex' => 'Paste the episode share URL, such as https://share.transistor.fm/s/428dcd6b.'])
+                            ->helperText('When set, the public page shows the Transistor player instead of uploaded audio or other embeds.'),
                         TextInput::make('embed_url')
                             ->label('Embed URL')
                             ->url()

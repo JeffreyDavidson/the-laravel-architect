@@ -117,6 +117,7 @@ final class AddSecurityHeaders
                 'https://www.youtube-nocookie.com',
                 'https://open.spotify.com',
                 'https://embed.podcasts.apple.com',
+                'https://share.transistor.fm',
             ],
             'img-src' => ["'self'", 'data:', 'blob:', 'https:'],
             'media-src' => ["'self'", 'blob:', 'https:'],

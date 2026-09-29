@@ -103,6 +103,15 @@ Synchronization and archive import share a target guard that always rejects prod
 
 `php artisan media:find-orphans` only reports candidates. Its optional `--delete` mode is destructive and requires operator approval. It deletes only unreferenced files in managed media directories after a 24-hour grace period, rechecking record and embedded-content references before deletion. Attachments referenced by Markdown and SEO images are retained. Unknown directories and recent uploads are retained for review; they are not automatically safe to delete. A nonzero result can therefore mean retained candidates or missing referenced files, not just a failed storage operation. Take a recoverable backup before any approved cleanup.
 
+## Moving podcast episodes to Transistor
+
+TLA's shows are not on Transistor yet. When a show moves:
+
+1. For each episode, copy its share link from Transistor (`https://share.transistor.fm/s/{id}`) into **Transistor episode URL** on the episode's edit page. The form rejects any other URL.
+2. Use the episodes table's **Missing Transistor URL** filter as the checklist: it lists published episodes that still have no share link. The hidden **Transistor** column shows which episodes are done.
+3. Check a few public episode pages: once a share link is set, the Transistor player replaces the uploaded audio player and any Spotify or Apple embed.
+4. Keep uploaded audio and the Spotify/Apple fields until every published episode is confirmed; removing them is a separate, later change.
+
 ## Sending a newsletter issue
 
 1. Publish the issue, then use **Send test email** on its edit page. The copy goes to `MAIL_CONTACT_TO`, records no delivery, and omits unsubscribe headers.
