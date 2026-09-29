@@ -1,11 +1,22 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 pest()->use(RefreshDatabase::class);
+
+// The minutes column was dropped later; put it back so the historical backfill can still be tested.
+beforeEach(function (): void {
+    if (! Schema::hasColumn('episodes', 'duration_minutes')) {
+        Schema::table('episodes', function (Blueprint $table) {
+            $table->integer('duration_minutes')
+                ->nullable();
+        });
+    }
+});
 
 /** Load the duration migration and run its up() step, as a deploy would. */
 function runDurationMigration(): void
