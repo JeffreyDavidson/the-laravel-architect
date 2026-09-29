@@ -19,7 +19,6 @@ beforeEach(function () {
 
 it('permanently deletes a trashed episode and its native media through the edit page', function () {
     Storage::disk('public')->put('episodes/images/delete-test.png', 'image');
-    Storage::disk('public')->put('episodes/audio/delete-test.mp3', 'audio');
 
     $podcast = Podcast::query()->create([
         'name' => 'Episode delete coverage',
@@ -32,7 +31,6 @@ it('permanently deletes a trashed episode and its native media through the edit 
         'slug' => 'episode-delete-coverage',
         'description' => 'Episode description',
         'featured_image_path' => 'episodes/images/delete-test.png',
-        'audio_path' => 'episodes/audio/delete-test.mp3',
     ]);
 
     $episode->delete();
@@ -43,6 +41,5 @@ it('permanently deletes a trashed episode and its native media through the edit 
     expect(Episode::withTrashed()->find($episode->id))->toBeNull();
     Storage::disk('public')->assertMissing([
         'episodes/images/delete-test.png',
-        'episodes/audio/delete-test.mp3',
     ]);
 });

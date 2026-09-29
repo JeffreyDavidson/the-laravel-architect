@@ -358,7 +358,6 @@ it('logs responsive generation failures without exposing media paths', function 
 it('deletes episode media when its podcast is deleted', function () {
     Storage::disk('public')->put('podcasts/cover.png', 'cover');
     Storage::disk('public')->put('episodes/images/episode.png', 'image');
-    Storage::disk('public')->put('episodes/audio/episode.mp3', 'audio');
 
     $podcast = Podcast::query()->create([
         'name' => 'Podcast',
@@ -372,7 +371,6 @@ it('deletes episode media when its podcast is deleted', function () {
         'slug' => 'episode',
         'description' => 'Description',
         'featured_image_path' => 'episodes/images/episode.png',
-        'audio_path' => 'episodes/audio/episode.mp3',
     ]);
 
     $podcast->forceDelete();
@@ -380,13 +378,12 @@ it('deletes episode media when its podcast is deleted', function () {
     Storage::disk('public')->assertMissing([
         'podcasts/cover.png',
         'episodes/images/episode.png',
-        'episodes/audio/episode.mp3',
     ]);
 });
 
 it('keeps podcast and episode media when the podcast deletion rolls back', function () {
     Storage::disk('public')->put('podcasts/cover.png', 'cover');
-    Storage::disk('public')->put('episodes/audio/episode.mp3', 'audio');
+    Storage::disk('public')->put('episodes/images/episode.png', 'image');
 
     $podcast = Podcast::query()->create([
         'name' => 'Podcast',
@@ -399,7 +396,7 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
         'title' => 'Episode',
         'slug' => 'episode',
         'description' => 'Description',
-        'audio_path' => 'episodes/audio/episode.mp3',
+        'featured_image_path' => 'episodes/images/episode.png',
     ]);
 
     DB::beginTransaction();
@@ -408,13 +405,13 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
 
     Storage::disk('public')->assertExists([
         'podcasts/cover.png',
-        'episodes/audio/episode.mp3',
+        'episodes/images/episode.png',
     ]);
 });
 
 it('keeps podcast and episode files when deletion is cancelled without an application transaction', function () {
     Storage::disk('public')->put('podcasts/kept.png', 'cover');
-    Storage::disk('public')->put('episodes/audio/kept.mp3', 'audio');
+    Storage::disk('public')->put('episodes/images/kept.png', 'image');
     $podcast = Podcast::query()->create([
         'name' => 'Cancelled deletion',
         'description' => 'Preserve record-owned files on failure.',
@@ -424,7 +421,7 @@ it('keeps podcast and episode files when deletion is cancelled without an applic
         'podcast_id' => $podcast->getKey(),
         'title' => 'Episode that must remain',
         'description' => 'Preserve episode files on failure.',
-        'audio_path' => 'episodes/audio/kept.mp3',
+        'featured_image_path' => 'episodes/images/kept.png',
     ]);
     Podcast::deleting(fn (): bool => false);
 
@@ -437,5 +434,5 @@ it('keeps podcast and episode files when deletion is cancelled without an applic
         ->and(Episode::query()->whereKey($episode->getKey())
             ->exists())
         ->toBeTrue();
-    Storage::disk('public')->assertExists(['podcasts/kept.png', 'episodes/audio/kept.mp3']);
+    Storage::disk('public')->assertExists(['podcasts/kept.png', 'episodes/images/kept.png']);
 });

@@ -45,9 +45,8 @@ it('renders the Transistor player for a valid share URL', function () {
         ->assertSeeHtml('title="Episode media coverage podcast player"');
 });
 
-it('renders no audio player or Spotify and Apple embed even when an episode still stores them', function (array $legacy) {
-    /** @var array<string, mixed> $legacy */
-    [$podcast, $episode] = createPublicEpisode($legacy);
+it('renders no audio player or Spotify and Apple embed', function () {
+    [$podcast, $episode] = createPublicEpisode();
 
     get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
@@ -56,11 +55,7 @@ it('renders no audio player or Spotify and Apple embed even when an episode stil
         ->assertDontSeeHtml('<iframe')
         ->assertDontSeeHtml('open.spotify.com')
         ->assertDontSeeHtml('Podcast platform');
-})->with([
-    'uploaded audio' => [['audio_path' => 'episodes/audio/uploaded.mp3']],
-    'hosted audio' => [['audio_url' => 'https://cdn.example.com/hosted.mp3']],
-    'Spotify embed' => [['embed_url' => 'https://open.spotify.com/embed/episode/abc123']],
-]);
+});
 
 it('renders no player when the Transistor URL is not a share URL', function () {
     [$podcast, $episode] = createPublicEpisode([
