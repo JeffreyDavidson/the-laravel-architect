@@ -17,11 +17,10 @@ use Illuminate\Support\Str;
 
 class SearchQuery
 {
-    public const int PER_PAGE = 12;
-
     /**
      * Each group pages independently through its own query parameter (for example
-     * postsPage), keeping the search terms and returning to the group's heading.
+     * postsPage), keeping the search terms and returning to the group's heading. The page
+     * size comes from `search.per_page`.
      *
      * @return array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>
      */
@@ -165,7 +164,7 @@ class SearchQuery
         $slug = Str::slug($group);
 
         return $query
-            ->paginate(self::PER_PAGE, pageName: $pageName)
+            ->paginate(config()->integer('search.per_page'), pageName: $pageName)
             ->withQueryString()
             ->fragment("search-{$slug}")
             ->through($toResult);
