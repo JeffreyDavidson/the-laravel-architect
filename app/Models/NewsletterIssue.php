@@ -7,6 +7,7 @@ use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,7 @@ class NewsletterIssue extends Model implements Publishable
     use DeletesOwnedContent;
     use HasPublishingStatus;
     use HasSEO;
+    use LocksSlugAfterPublication;
     use SoftDeletes;
     use TracksActivity;
 
@@ -38,6 +40,7 @@ class NewsletterIssue extends Model implements Publishable
     {
         return [
             'status' => PublishStatus::class,
+            'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'sent_at' => 'datetime',
         ];

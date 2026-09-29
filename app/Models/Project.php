@@ -10,6 +10,7 @@ use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
+use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
@@ -38,6 +39,7 @@ class Project extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
+    use LocksSlugAfterPublication;
     use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
@@ -48,6 +50,7 @@ class Project extends Model implements Publishable
             'tech_stack' => 'array',
             'is_featured' => 'boolean',
             'status' => PublishStatus::class,
+            'slug_locked_at' => 'datetime',
         ];
     }
 
