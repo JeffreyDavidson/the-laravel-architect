@@ -54,11 +54,6 @@ class EpisodesTable
                     ->label('Duration')
                     ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
                     ->toggleable(),
-                TextColumn::make('legacy_media')
-                    ->label('Legacy media')
-                    ->state(fn (Episode $record): string => implode(', ', $record->legacyMedia()))
-                    ->placeholder('None')
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('transistor')
                     ->label('Transistor')
                     ->state(fn (Episode $record): string => $record->transistorEmbedUrl() === null ? 'Not added' : 'Available')
@@ -80,15 +75,6 @@ class EpisodesTable
                     ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
-                Filter::make('legacy_media')
-                    ->label('Has legacy media')
-                    ->query(fn (Builder $query): Builder => $query->where(function (Builder $query): void {
-                        foreach (['audio_path', 'audio_url', 'embed_url'] as $column) {
-                            $query->orWhere(fn (Builder $query): Builder => $query
-                                ->whereNotNull($column)
-                                ->where($column, '!=', ''));
-                        }
-                    })),
                 Filter::make('missing_transistor_url')
                     ->label('Missing Transistor URL')
                     ->query(fn (Builder $query): Builder => $query->whereIn('episodes.id', Episode::query()
@@ -117,7 +103,7 @@ class EpisodesTable
             ->defaultSort('episode_number', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)
             ->emptyStateHeading('No episodes yet')
-            ->emptyStateDescription('Create an episode when audio, show notes, or a recording plan is ready.');
+            ->emptyStateDescription('Create an episode when its Transistor link, show notes, or a recording plan is ready.');
     }
 
     /**

@@ -22,7 +22,6 @@ it('permanently deletes a trashed podcast and its episodes through the authentic
     Storage::fake('public');
     Storage::disk('public')->put('podcasts/delete-cover.jpg', 'cover');
     Storage::disk('public')->put('episodes/delete-image.jpg', 'image');
-    Storage::disk('public')->put('episodes/delete-audio.mp3', 'audio');
 
     $podcast = Podcast::query()->create([
         'name' => 'Podcast delete coverage',
@@ -36,7 +35,6 @@ it('permanently deletes a trashed podcast and its episodes through the authentic
         'slug' => 'episode-delete-coverage',
         'description' => 'Episode description.',
         'featured_image_path' => 'episodes/delete-image.jpg',
-        'audio_path' => 'episodes/delete-audio.mp3',
         'status' => PublishStatus::Draft,
     ]);
 
@@ -51,5 +49,4 @@ it('permanently deletes a trashed podcast and its episodes through the authentic
 
     Storage::disk('public')->assertMissing('podcasts/delete-cover.jpg');
     Storage::disk('public')->assertMissing('episodes/delete-image.jpg');
-    Storage::disk('public')->assertMissing('episodes/delete-audio.mp3');
 });

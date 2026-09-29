@@ -20,9 +20,7 @@ beforeEach(function () {
 
 it('permanently deletes trashed episodes and their native media through the table bulk action', function () {
     Storage::disk('public')->put('episodes/images/first-delete-test.png', 'image');
-    Storage::disk('public')->put('episodes/audio/first-delete-test.mp3', 'audio');
     Storage::disk('public')->put('episodes/images/second-delete-test.png', 'image');
-    Storage::disk('public')->put('episodes/audio/second-delete-test.mp3', 'audio');
 
     $podcast = Podcast::query()->create([
         'name' => 'Episode bulk delete coverage',
@@ -36,7 +34,6 @@ it('permanently deletes trashed episodes and their native media through the tabl
             'slug' => 'first-episode-bulk-delete-coverage',
             'description' => 'Episode description',
             'featured_image_path' => 'episodes/images/first-delete-test.png',
-            'audio_path' => 'episodes/audio/first-delete-test.mp3',
         ]),
         Episode::query()->create([
             'podcast_id' => $podcast->id,
@@ -44,7 +41,6 @@ it('permanently deletes trashed episodes and their native media through the tabl
             'slug' => 'second-episode-bulk-delete-coverage',
             'description' => 'Episode description',
             'featured_image_path' => 'episodes/images/second-delete-test.png',
-            'audio_path' => 'episodes/audio/second-delete-test.mp3',
         ]),
     ]);
 
@@ -60,8 +56,6 @@ it('permanently deletes trashed episodes and their native media through the tabl
         ->count())->toBe(0);
     Storage::disk('public')->assertMissing([
         'episodes/images/first-delete-test.png',
-        'episodes/audio/first-delete-test.mp3',
         'episodes/images/second-delete-test.png',
-        'episodes/audio/second-delete-test.mp3',
     ]);
 });

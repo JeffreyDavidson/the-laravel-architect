@@ -28,11 +28,10 @@ class StoredMediaOrphanWorkflow
     ];
 
     private const array MEDIA_ATTRIBUTES = [
-        [Project::class, 'featured_image_path', true],
-        [Post::class, 'featured_image_path', true],
-        [Podcast::class, 'cover_image_path', true],
-        [Episode::class, 'featured_image_path', true],
-        [Episode::class, 'audio_path', false],
+        [Project::class, 'featured_image_path'],
+        [Post::class, 'featured_image_path'],
+        [Podcast::class, 'cover_image_path'],
+        [Episode::class, 'featured_image_path'],
     ];
 
     public function __construct(private readonly ResponsiveImageVariants $images) {}
@@ -159,12 +158,12 @@ class StoredMediaOrphanWorkflow
         $paths = [];
         $sources = [];
 
-        foreach (self::MEDIA_ATTRIBUTES as [$modelClass, $column, $responsive]) {
+        foreach (self::MEDIA_ATTRIBUTES as [$modelClass, $column]) {
             $modelClass::query()
                 ->whereNotNull($column)
                 ->select([$column])
                 ->cursor()
-                ->each(function (Model $model) use (&$paths, &$sources, $column, $responsive): void {
+                ->each(function (Model $model) use (&$paths, &$sources, $column): void {
                     $value = $model->getAttribute($column);
 
                     if (! is_string($value) || blank($value)) {
@@ -174,10 +173,6 @@ class StoredMediaOrphanWorkflow
                     $source = $this->normalize($value);
                     $sources[$source] = true;
                     $paths[$source] = true;
-
-                    if (! $responsive) {
-                        return;
-                    }
 
                     foreach ($this->images->paths($source) as $variant) {
                         $paths[$variant] = true;
