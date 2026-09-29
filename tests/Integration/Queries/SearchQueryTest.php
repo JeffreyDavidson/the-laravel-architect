@@ -61,7 +61,7 @@ it('pages each result group with its own total', function () {
     $secondPage = searchWithParameters(['q' => 'paging', 'postsPage' => '2']);
 
     expect($firstPage['Writing']->count())
-        ->toBe(SearchQuery::PER_PAGE)
+        ->toBe(12)
         ->and($firstPage['Writing']->total())
         ->toBe(13)
         ->and($secondPage['Writing']->count())
@@ -107,4 +107,18 @@ it('uses a distinct page parameter for every group', function () {
             'Episodes' => 'episodesPage',
             'Videos' => 'videosPage',
         ]);
+});
+
+it('reads the page size for every group from configuration', function () {
+    config()->set('search.per_page', 5);
+    seedPagedSearchContent(posts: 7, issues: 0);
+
+    $results = searchWithParameters(['q' => 'paging']);
+
+    expect($results['Writing']->count())
+        ->toBe(5)
+        ->and($results['Writing']->perPage())
+        ->toBe(5)
+        ->and($results['Writing']->total())
+        ->toBe(7);
 });
