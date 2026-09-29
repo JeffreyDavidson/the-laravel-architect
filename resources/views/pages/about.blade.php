@@ -169,7 +169,11 @@
                     </p>
 
                     <div class="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
-                        <x-button href="{{ route('contact') }}" size="sm" class="rounded-lg px-5 py-2.5 font-semibold">
+                        <x-button
+                            href="{{ route('contact.create') }}"
+                            size="sm"
+                            class="rounded-lg px-5 py-2.5 font-semibold"
+                        >
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                             Get in Touch
                         </x-button>
@@ -342,7 +346,7 @@
                 I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's
                 talk about what you're building.
             </p>
-            <x-button href="{{ route('contact') }}" class="px-8 py-3.5 text-lg">
+            <x-button href="{{ route('contact.create') }}" class="px-8 py-3.5 text-lg">
                 Contact Me
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </x-button>

@@ -18,7 +18,7 @@ it('renders enabled profiles only in their configured public placements', functi
         ->assertDontSeeHtml($contactProfile->url)
         ->assertDontSeeHtml('https://bsky.app/profile/disabled');
 
-    $this->get(route('contact'))
+    $this->get(route('contact.create'))
         ->assertSeeHtml($contactProfile->url)
         ->assertSeeHtml($footerProfile->url)
         ->assertDontSeeHtml('https://bsky.app/profile/disabled');
@@ -55,7 +55,7 @@ it('escapes a profile display label on the contact page', function () {
         '<img src=x onerror=alert(1)>',
     );
 
-    $this->get(route('contact'))
+    $this->get(route('contact.create'))
         ->assertSee('<img src=x onerror=alert(1)>')
         ->assertDontSeeHtml('<img src=x onerror=alert(1)>');
 });

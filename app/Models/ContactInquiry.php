@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 
-#[Fillable('name', 'email', 'type', 'budget', 'message', 'project_title', 'status', 'notes')]
+#[Fillable('name', 'email', 'type', 'budget', 'message', 'project_title', 'status', 'notes', 'email_attempted_at', 'notification_sent_at', 'confirmation_sent_at')]
 class ContactInquiry extends Model
 {
     /** @use HasFactory<ContactInquiryFactory> */
@@ -33,7 +33,20 @@ class ContactInquiry extends Model
             'project_title' => 'encrypted',
             'notes' => 'encrypted',
             'status' => ContactInquiryStatus::class,
+            'email_attempted_at' => 'datetime',
+            'notification_sent_at' => 'datetime',
+            'confirmation_sent_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Whether the provider still honours the idempotency keys for this inquiry's emails.
+     * Resend keeps keys for 24 hours, so resending later could deliver duplicates.
+     */
+    public function canRetryEmails(): bool
+    {
+        return $this->created_at !== null
+            && $this->created_at->gte(now()->subHours(23));
     }
 
     /** @return Builder<ContactInquiry> */

@@ -1,29 +1,25 @@
 <?php
 
 use App\Mail\ContactMessageConfirmation;
+use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 pest()->use(RefreshDatabase::class);
 
-it('encrypts sensitive content in the queued mail payload', function () {
-    $mail = new ContactMessageConfirmation('Private Sender', 'consulting', null, 'Confidential message');
+it('renders the inquiry details', function () {
+    $inquiry = ContactInquiry::factory()->create([
+        'name' => 'Private Sender',
+        'email' => 'private@example.test',
+        'type' => 'consulting',
+        'message' => 'Confidential message',
+    ]);
 
-    Mail::to('recipient@example.test')->queue($mail->onConnection('database'));
+    $mail = new ContactMessageConfirmation($inquiry);
 
-    $payload = DB::table('jobs')->sole()
-        ->payload;
-    if (! is_string($payload)) {
-        throw new RuntimeException('Expected a JSON queue payload.');
-    }
-    $command = data_get(json_decode($payload, true, flags: JSON_THROW_ON_ERROR), 'data.command');
-    if (! is_string($command)) {
-        throw new RuntimeException('Expected a serialized queued command.');
-    }
+    $envelope = $mail->envelope();
 
-    expect($command)->not->toContain('Confidential message')
-        ->and(Crypt::decrypt($command))
+    expect($envelope->subject)
+        ->toBe('Got your message, thanks Private Sender!')
+        ->and($mail->render())
         ->toContain('Confidential message');
 });

@@ -59,7 +59,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
+                <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
                     @csrf
                     @if ($selectedProject)
                         <div class="border-brand-500/30 bg-brand-500/10 text-brand-800 dark:text-brand-200 rounded-xl border p-4 text-sm">

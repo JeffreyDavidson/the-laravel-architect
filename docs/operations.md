@@ -91,7 +91,7 @@ pinned staging deployment has been verified.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
 
-Keep a worker consuming the `database` queue connection. Contact notifications are transactionally inserted there alongside the inquiry, even if the default queue connection changes. Leave `DB_QUEUE_CONNECTION` unset or set it to the application's default database connection; a separate queue database is rejected before an inquiry is saved. The existing Forge database worker consumes these jobs without an additional queue or service.
+Keep a worker consuming the `database` queue connection. The contact email job is transactionally inserted there alongside the inquiry, even if the default queue connection changes. Leave `DB_QUEUE_CONNECTION` unset or set it to the application's default database connection; a separate queue database is rejected before an inquiry is saved. The existing Forge database worker consumes these jobs on the default queue without an additional queue or service. If an inquiry's admin page shows an email as not sent, use **Retry unsent emails** within 23 hours; after that, check the mail provider before contacting the sender manually.
 
 ## Synchronizing public production content to staging
 

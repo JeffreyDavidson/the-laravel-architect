@@ -317,7 +317,7 @@ it('renders canonical structured data for static public pages', function (string
 })->with([
     'home' => ['home', 'WebPage', 'The Laravel Architect'],
     'about' => ['about', 'ProfilePage', 'About'],
-    'contact' => ['contact', 'ContactPage', 'Contact'],
+    'contact' => ['contact.create', 'ContactPage', 'Contact'],
     'privacy' => ['privacy', 'WebPage', 'Privacy'],
     'uses' => ['uses', 'WebPage', 'Uses'],
 ]);
@@ -744,7 +744,7 @@ it('places the mobile uses jump navigation before the equipment list', function 
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('contact'))
+    $this->get(route('contact.create'))
         ->assertOk()
         ->assertSeeHtml($privacyUrl)
         ->assertSee('Your details are used to reply to this inquiry.');

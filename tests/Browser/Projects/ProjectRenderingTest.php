@@ -95,7 +95,7 @@ it('offers contact when there are no published projects', function (string $devi
     $page->assertSee('Project details aren’t available here yet.')
         ->assertDontSee('Unpublished client project')
         ->assertCount('[data-project-entry]', 0)
-        ->assertAttribute('section[aria-labelledby="projects-contact-heading"] a', 'href', route('contact'))
+        ->assertAttribute('section[aria-labelledby="projects-contact-heading"] a', 'href', route('contact.create'))
         ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
         ->assertNoJavaScriptErrors();
 })->with(['mobile', 'desktop']);
