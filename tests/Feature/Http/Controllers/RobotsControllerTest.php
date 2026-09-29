@@ -42,3 +42,21 @@ it('is not shadowed by a static robots file', function () {
     expect(public_path('robots.txt'))
         ->not->toBeFile();
 });
+
+it('serves robots.txt like a static file without cookies and publicly cacheable', function (string $environment) {
+    config()->set('app.deployment_environment', $environment);
+
+    $response = get(route('robots'));
+
+    $response
+        ->assertOk()
+        ->assertHeaderMissing('Set-Cookie')
+        ->assertHeader('Cache-Control', 'max-age=3600, public')
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Content-Security-Policy');
+    expect($response->headers->getCookies())
+        ->toBeEmpty();
+})->with([
+    'production',
+    'staging',
+]);

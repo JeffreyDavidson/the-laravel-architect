@@ -11,6 +11,7 @@ class RobotsController
     {
         return response($generateRobotsTxt->handle(), 200, [
             'Content-Type' => 'text/plain; charset=UTF-8',
+            'Cache-Control' => 'public, max-age=3600',
         ]);
     }
 }
