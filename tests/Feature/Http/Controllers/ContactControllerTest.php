@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Enums\SocialPlatform;
 use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use App\Models\Project;
+use App\Models\SocialProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Support\SocialProfileFixtures;
 
 use function Pest\Laravel\from;
 
@@ -362,3 +365,33 @@ it('names the contact routes by the shared contract without changing the URL', f
     'contact.create',
     'contact.store',
 ]);
+
+it('renders enabled contact and footer social profiles but not disabled ones', function () {
+    SocialProfile::query()->delete();
+
+    $footerProfile = SocialProfileFixtures::create(SocialPlatform::GitHub, 'https://github.com/footer-only', true, false);
+    $contactProfile = SocialProfileFixtures::create(SocialPlatform::LinkedIn, 'https://linkedin.com/in/contact-only', false, true);
+    SocialProfileFixtures::create(SocialPlatform::Bluesky, 'https://bsky.app/profile/disabled', true, true, false);
+
+    $this->get(route('contact.create'))
+        ->assertSeeHtml($contactProfile->url)
+        ->assertSeeHtml($footerProfile->url)
+        ->assertDontSeeHtml('https://bsky.app/profile/disabled');
+});
+
+it('escapes a social profile display label on the contact page', function () {
+    SocialProfile::query()->delete();
+
+    SocialProfileFixtures::create(
+        SocialPlatform::LinkedIn,
+        'https://linkedin.com/in/safe-profile',
+        false,
+        true,
+        true,
+        '<img src=x onerror=alert(1)>',
+    );
+
+    $this->get(route('contact.create'))
+        ->assertSee('<img src=x onerror=alert(1)>')
+        ->assertDontSeeHtml('<img src=x onerror=alert(1)>');
+});
