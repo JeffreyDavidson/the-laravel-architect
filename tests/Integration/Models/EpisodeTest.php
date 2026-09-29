@@ -55,3 +55,21 @@ it('turns only a Transistor share URL into its embed URL', function (?string $ur
     'extra path' => ['https://share.transistor.fm/s/428dcd6b/extra', null],
     'query string' => ['https://share.transistor.fm/s/428dcd6b?autoplay=1', null],
 ]);
+
+it('lists which legacy media an episode still carries', function (array $attributes, array $expected) {
+    /** @var array<string, mixed> $attributes */
+    $episode = new Episode($attributes);
+
+    expect($episode->legacyMedia())
+        ->toBe($expected);
+})->with([
+    'none' => [[], []],
+    'blank values' => [['audio_path' => '', 'audio_url' => '', 'embed_url' => ''], []],
+    'uploaded audio' => [['audio_path' => 'episodes/audio/a.mp3'], ['Uploaded audio']],
+    'hosted audio' => [['audio_url' => 'https://cdn.example.com/a.mp3'], ['Hosted audio']],
+    'embed' => [['embed_url' => 'https://open.spotify.com/embed/episode/1'], ['Spotify/Apple embed']],
+    'all three' => [
+        ['audio_path' => 'a.mp3', 'audio_url' => 'https://cdn.example.com/a.mp3', 'embed_url' => 'https://open.spotify.com/embed/episode/1'],
+        ['Uploaded audio', 'Hosted audio', 'Spotify/Apple embed'],
+    ],
+]);
