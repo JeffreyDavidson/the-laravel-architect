@@ -40,7 +40,7 @@ it('rejects a URL that is not a Transistor share URL', function (string $url) {
 ]);
 
 it('lists published episodes still missing a Transistor URL', function () {
-    $missing = PublishableFixtures::ready('episode');
+    $missing = PublishableFixtures::ready('episode', ['transistor_url' => null, 'youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk']);
     $missing->publish();
     $added = PublishableFixtures::ready('episode', [
         'title' => 'Added episode',

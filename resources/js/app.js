@@ -21,9 +21,7 @@ async function initializePublicUi() {
         initializeBlog();
     }
 
-    if (
-        document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-audio-player], [data-transcript]')
-    ) {
+    if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-transcript]')) {
         const { initializePodcast } = await import('./pages/podcast');
         initializePodcast(runtime.Alpine);
     }

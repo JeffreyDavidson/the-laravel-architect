@@ -101,172 +101,7 @@
                 <div class="flex flex-col gap-12 lg:flex-row">
                     {{-- Left Column --}}
                     <div class="min-w-0 flex-1">
-                        {{-- Custom Audio Player --}}
-                        @if ($audioUrl)
-                            <div
-                                class="group/player dark:border-surface-border dark:bg-surface-control mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white"
-                                data-audio-player
-                                x-data="audioPlayer"
-                                x-bind:data-playing="playingAttribute"
-                                data-playing="false"
-                            >
-                                <audio
-                                    controls
-                                    data-audio
-                                    preload="metadata"
-                                    x-ref="audio"
-                                    x-on:loadedmetadata="updateProgress"
-                                    x-on:durationchange="updateProgress"
-                                    x-on:timeupdate="updateProgress"
-                                    x-on:play="updatePlaybackState"
-                                    x-on:pause="updatePlaybackState"
-                                    x-on:ended="updatePlaybackState"
-                                >
-                                    <source src="{{ $audioUrl }}" type="audio/mpeg" />
-                                </audio>
-
-                                {{-- Waveform visualization --}}
-                                <div class="px-6 pt-6 pb-2">
-                                    <div
-                                        class="flex h-16 items-end justify-center gap-[2px] opacity-40"
-                                        aria-hidden="true"
-                                    >
-                                        @for ($i = 0; $i < 80; $i++)
-                                            <div
-                                                class="h-full w-[3px] origin-bottom animate-[podcast-player-waveform_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [animation-play-state:paused] group-data-[playing=true]/player:[animation-play-state:running] motion-reduce:animate-none"
-                                                style="--from: {{ (10 + (($i * 7) % 21)) / 100 }}; --to: {{ (40 + (($i * 13) % 61)) / 100 }}; --dur: {{ (4 + (($i * 5) % 9)) / 10 }}s; animation-delay: {{ $i * 0.04 }}s;"
-                                            ></div>
-                                        @endfor
-                                    </div>
-                                </div>
-
-                                {{-- Progress bar --}}
-                                <div class="px-6 py-2">
-                                    <div class="group relative h-5">
-                                        <div class="bg-surface-border pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full">
-                                            <div
-                                                class="absolute inset-y-0 left-0 w-0 rounded-full bg-[var(--podcast-color)]"
-                                                data-audio-progress
-                                                x-bind:style="progressStyle"
-                                            ></div>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            step="0.1"
-                                            value="0"
-                                            data-audio-seek
-                                            x-bind:value="percentage"
-                                            x-bind:aria-valuetext="seekLabel"
-                                            x-on:input="seek"
-                                            aria-label="Seek episode"
-                                            aria-valuetext="0:00 of 0:00"
-                                            class="absolute inset-0 h-5 w-full cursor-pointer opacity-0"
-                                        />
-                                    </div>
-                                    <div class="mt-2 flex justify-between font-mono text-xs text-gray-600">
-                                        <span data-audio-current-time x-text="elapsedLabel">0:00</span>
-                                        <span data-audio-duration x-text="durationLabel">0:00</span>
-                                    </div>
-                                </div>
-
-                                {{-- Controls --}}
-                                <div class="flex items-center justify-between px-6 pb-6">
-                                    <div class="flex items-center gap-3">
-                                        {{-- Podcast mini artwork --}}
-                                        @if ($podcast->cover_image_url)
-                                            <x-podcast-cover
-                                                :podcast="$podcast"
-                                                alt=""
-                                                sizes="40px"
-                                                width="40"
-                                                height="40"
-                                                class="h-10 w-10 rounded-lg object-cover"
-                                            />
-                                        @endif
-                                        <div class="min-w-0">
-                                            <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                                                {{ $episode->title }}
-                                            </p>
-                                            <p class="truncate text-xs text-gray-500">{{ $podcast->name }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center gap-4">
-                                        {{-- Skip back 15s --}}
-                                        <button
-                                            type="button"
-                                            data-audio-skip-back
-                                            x-on:click="skipBack"
-                                            aria-label="Skip back 15 seconds"
-                                            class="relative inline-flex size-11 shrink-0 touch-manipulation items-center justify-center text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" /></svg>
-                                            <span class="text-meta absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-gray-600">15</span>
-                                        </button>
-
-                                        {{-- Play/Pause --}}
-                                        <button
-                                            type="button"
-                                            data-audio-play
-                                            x-on:click="togglePlayback"
-                                            x-bind:aria-label="playLabel"
-                                            x-bind:aria-pressed="playing"
-                                            aria-label="Play episode"
-                                            aria-pressed="false"
-                                            class="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--podcast-color)] text-white transition-transform hover:scale-105"
-                                        >
-                                            <svg
-                                                data-audio-play-icon
-                                                x-bind:hidden="playing"
-                                                aria-hidden="true"
-                                                class="ml-0.5 h-5 w-5"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            ><path d="M8 5v14l11-7z" /></svg>
-                                            <svg
-                                                data-audio-pause-icon
-                                                x-bind:hidden="paused"
-                                                hidden
-                                                aria-hidden="true"
-                                                class="h-5 w-5"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            ><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
-                                        </button>
-
-                                        {{-- Skip forward 30s --}}
-                                        <button
-                                            type="button"
-                                            data-audio-skip-forward
-                                            x-on:click="skipForward"
-                                            aria-label="Skip forward 30 seconds"
-                                            class="relative inline-flex size-11 shrink-0 touch-manipulation items-center justify-center text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" /></svg>
-                                            <span class="text-meta absolute -bottom-3.5 left-1/2 -translate-x-1/2 font-mono text-gray-600">30</span>
-                                        </button>
-                                    </div>
-
-                                    {{-- Speed control --}}
-                                    <div>
-                                        <button
-                                            type="button"
-                                            data-audio-speed
-                                            x-on:click="cycleSpeed"
-                                            x-bind:aria-label="speedDescription"
-                                            aria-label="Playback speed 1 times. Activate to change."
-                                            class="dark:border-surface-border min-h-11 min-w-11 touch-manipulation rounded-lg border border-gray-200 px-2.5 py-1 font-mono text-xs text-gray-600 transition-colors hover:border-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                                        >
-                                            <span data-audio-speed-label x-text="speedLabel">1x</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Supported podcast embeds --}}
+                        {{-- Transistor player --}}
                         @if ($embedUrl)
                             <div class="dark:border-surface-border mb-10 overflow-hidden rounded-2xl border border-gray-200">
                                 <iframe
@@ -281,8 +116,8 @@
                             </div>
                         @endif
 
-                        {{-- Description Fallback (no audio, no show_notes, no transcript, no youtube, no embed) --}}
-                        @if (! $audioUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedUrl)
+                        {{-- Description Fallback (no player, no show_notes, no transcript, no youtube) --}}
+                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
                             <div class="dark:border-surface-border dark:bg-surface-control relative mb-10 rounded-2xl border border-gray-200 bg-white p-8">
                                 <div class="text-archive-link absolute top-6 left-6 text-6xl leading-none opacity-15 dark:text-[var(--podcast-color)]">
                                     "
@@ -354,7 +189,7 @@
                             </div>
                         @endif
 
-                        <x-podcast.platform-links :embed-link="$embedLink" :youtube-url="$episode->youtube_url" />
+                        <x-podcast.platform-links :youtube-url="$episode->youtube_url" />
                         <x-podcast.guest-card :episode="$episode" />
 
                         {{-- Show Notes --}}
@@ -382,7 +217,7 @@
                         @endif
 
                         {{-- Empty State Fallback --}}
-                        @if (! $audioUrl && ! $episode->show_notes && ! $episode->transcript && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')) && ! $embedLink)
+                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
                             <div class="dark:border-surface-border mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center">
                                 <svg class="mx-auto mb-4 h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <p class="text-lg font-semibold text-gray-600 dark:text-gray-400">

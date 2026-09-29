@@ -199,10 +199,7 @@ final readonly class ContentReadiness
             ],
             'episode_media' => [
                 'label' => 'Episode media',
-                'complete' => filled($episode->audio_url)
-                    || filled($episode->audio_path)
-                    || $episode->publicEmbedUrl() !== null
-                    || $episode->transistorEmbedUrl() !== null
+                'complete' => $episode->transistorEmbedUrl() !== null
                     || filled($episode->youtube_url),
             ],
             'show_notes' => [

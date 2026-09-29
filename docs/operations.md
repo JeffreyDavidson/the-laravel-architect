@@ -110,8 +110,8 @@ TLA's shows are not on Transistor yet. When a show moves:
 1. For each episode, copy its share link from Transistor (`https://share.transistor.fm/s/{id}`) into **Transistor episode URL** on the episode's edit page. The form rejects any other URL.
 2. Use the episodes table's **Missing Transistor URL** filter as the checklist: it lists published episodes that still have no share link. The hidden **Transistor** column shows which episodes are done.
 3. Check a few public episode pages: once a share link is set, the Transistor player replaces the uploaded audio player and any Spotify or Apple embed.
-4. Before the old players are retired, use the episodes table's **Has legacy media** filter (and the hidden **Legacy media** column) to list every episode, draft or published, that still carries uploaded audio, hosted audio or a Spotify/Apple embed. For each one, move it to Transistor or decide the old media can go. Nothing is removed until you confirm.
-5. Keep uploaded audio and the Spotify/Apple fields until then; removing them is a separate, later change that cannot be undone.
+4. The old audio players are retired: the public page no longer shows uploaded audio, hosted audio or a Spotify/Apple embed, and the episode form no longer offers those fields. The episodes table's **Has legacy media** filter and hidden **Legacy media** column list any episode that still stores such values, so they can be checked before the stored columns and files are removed.
+5. Removing `audio_url`, `audio_path`, `embed_url` and the audio files is a separate change that cannot be undone. Take and verify a backup first, and only remove data you have confirmed you no longer need.
 
 ## Sending a newsletter issue
 
