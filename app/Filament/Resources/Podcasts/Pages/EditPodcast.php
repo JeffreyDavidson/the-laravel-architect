@@ -6,6 +6,8 @@ namespace App\Filament\Resources\Podcasts\Pages;
 
 use App\Filament\Resources\Podcasts\PodcastResource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPodcast extends EditRecord
@@ -17,6 +19,8 @@ class EditPodcast extends EditRecord
     {
         return [
             DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 }

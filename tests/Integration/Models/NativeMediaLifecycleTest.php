@@ -32,7 +32,7 @@ it('deletes owned episode metadata and tag links with its podcast', function () 
         ->sole()
         ->getKey()];
 
-    $podcast->delete();
+    $podcast->forceDelete();
 
     $this->assertModelMissing($episode);
     expect(DB::table('taggables')->where('taggable_type', $episode->getMorphClass())
@@ -55,7 +55,7 @@ it('preserves owned content when podcast deletion rolls back', function () {
         ->getKey()];
 
     DB::beginTransaction();
-    $podcast->delete();
+    $podcast->forceDelete();
     DB::rollBack();
 
     $this->assertModelExists($episode);
@@ -158,7 +158,7 @@ it('preserves cached OG images when post deletion rolls back', function () {
     Storage::disk('local')->put($path, 'cached image');
 
     DB::beginTransaction();
-    $post->delete();
+    $post->forceDelete();
     DB::rollBack();
 
     expect(Post::query()->whereKey($post->getKey())
@@ -197,7 +197,7 @@ it('deletes native media with its record', function () {
         'featured_image_path' => 'projects/image.png',
     ]);
 
-    $project->delete();
+    $project->forceDelete();
 
     Storage::disk('public')->assertMissing('projects/image.png');
 });
@@ -232,7 +232,7 @@ it('keeps responsive project image variants in sync with the original image', fu
         'projects/responsive/new-1280.webp',
     ]);
 
-    $project->delete();
+    $project->forceDelete();
 
     Storage::disk('public')->assertMissing([
         'projects/responsive/new-640.webp',
@@ -272,7 +272,7 @@ it('keeps responsive post image variants in sync with the original image', funct
         'posts/responsive/new-1280.webp',
     ]);
 
-    $post->delete();
+    $post->forceDelete();
 
     Storage::disk('public')->assertMissing([
         'posts/responsive/new-640.webp',
@@ -309,7 +309,7 @@ it('keeps responsive podcast cover variants in sync with the original image', fu
         'podcasts/responsive/new-1280.webp',
     ]);
 
-    $podcast->delete();
+    $podcast->forceDelete();
 
     Storage::disk('public')->assertMissing([
         'podcasts/responsive/new-640.webp',
@@ -375,7 +375,7 @@ it('deletes episode media when its podcast is deleted', function () {
         'audio_path' => 'episodes/audio/episode.mp3',
     ]);
 
-    $podcast->delete();
+    $podcast->forceDelete();
 
     Storage::disk('public')->assertMissing([
         'podcasts/cover.png',
@@ -403,7 +403,7 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
     ]);
 
     DB::beginTransaction();
-    $podcast->delete();
+    $podcast->forceDelete();
     DB::rollBack();
 
     Storage::disk('public')->assertExists([

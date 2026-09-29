@@ -18,7 +18,7 @@ trait ManagesStoredMedia
             }
         });
 
-        static::deleted(function (self $model): void {
+        static::forceDeleted(function (self $model): void {
             $model->queueStoredMediaCleanup();
         });
     }

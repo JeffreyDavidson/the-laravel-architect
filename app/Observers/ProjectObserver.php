@@ -21,7 +21,7 @@ class ProjectObserver
         $this->lifecycle->updated($project, 'featured_image_path', 'project');
     }
 
-    public function deleted(Project $project): void
+    public function forceDeleted(Project $project): void
     {
         $this->lifecycle->deleted($project, 'featured_image_path');
     }

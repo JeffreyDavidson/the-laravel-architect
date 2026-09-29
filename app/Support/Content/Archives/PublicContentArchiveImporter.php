@@ -63,14 +63,16 @@ class PublicContentArchiveImporter
             }
 
             foreach ($records['podcasts'] as $attributes) {
-                $podcast = Podcast::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $podcast = Podcast::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $podcast->setAttribute('deleted_at', null);
                 $podcast->fill([...$this->only($attributes, self::PODCAST_FIELDS), 'is_active' => true]);
                 $podcast->save();
                 $this->relations->syncSeo($podcast, $this->nullableRecord($attributes['seo'] ?? null, 'podcast SEO'), self::SEO_FIELDS);
             }
 
             foreach ($records['posts'] as $attributes) {
-                $post = Post::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $post = Post::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $post->setAttribute('deleted_at', null);
                 $post->fill([
                     ...$this->only($attributes, self::POST_FIELDS),
                     'category_id' => Category::query()->where('slug', $this->nullableStringValue($attributes, 'category_slug'))
@@ -87,7 +89,8 @@ class PublicContentArchiveImporter
             }
 
             foreach ($records['projects'] as $attributes) {
-                $project = Project::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $project = Project::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $project->setAttribute('deleted_at', null);
                 $project->fill([...$this->only($attributes, self::PROJECT_FIELDS), 'status' => PublishStatus::Published]);
                 $project->save();
                 $this->relations->syncTags($project, $this->relations->tagRecords($attributes['tags'] ?? []));
@@ -95,7 +98,8 @@ class PublicContentArchiveImporter
             }
 
             foreach ($records['episodes'] as $attributes) {
-                $episode = Episode::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $episode = Episode::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $episode->setAttribute('deleted_at', null);
                 $episode->fill([
                     ...$this->only($attributes, self::EPISODE_FIELDS),
                     'podcast_id' => Podcast::query()->where('slug', $this->nullableStringValue($attributes, 'podcast_slug'))
@@ -108,7 +112,8 @@ class PublicContentArchiveImporter
             }
 
             foreach ($records['newsletter_issues'] as $attributes) {
-                $issue = NewsletterIssue::query()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $issue = NewsletterIssue::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+                $issue->setAttribute('deleted_at', null);
                 $issue->fill([
                     ...$this->only($attributes, self::NEWSLETTER_ISSUE_FIELDS),
                     'status' => PublishStatus::Published,

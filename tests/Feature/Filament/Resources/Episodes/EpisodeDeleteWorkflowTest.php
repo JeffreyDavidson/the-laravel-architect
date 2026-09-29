@@ -4,7 +4,7 @@ use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,7 +17,7 @@ beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
 });
 
-it('deletes an episode and its native media through the edit page', function () {
+it('permanently deletes a trashed episode and its native media through the edit page', function () {
     Storage::disk('public')->put('episodes/images/delete-test.png', 'image');
     Storage::disk('public')->put('episodes/audio/delete-test.mp3', 'audio');
 
@@ -35,10 +35,12 @@ it('deletes an episode and its native media through the edit page', function () 
         'audio_path' => 'episodes/audio/delete-test.mp3',
     ]);
 
-    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
-        ->callAction(DeleteAction::class);
+    $episode->delete();
 
-    expect(Episode::query()->find($episode->id))->toBeNull();
+    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
+        ->callAction(ForceDeleteAction::class);
+
+    expect(Episode::withTrashed()->find($episode->id))->toBeNull();
     Storage::disk('public')->assertMissing([
         'episodes/images/delete-test.png',
         'episodes/audio/delete-test.mp3',

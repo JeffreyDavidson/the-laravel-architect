@@ -8,18 +8,19 @@ use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
-use Spatie\Tags\HasTags;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
 #[Sluggable(from: 'title')]
@@ -37,8 +38,9 @@ class Episode extends Model implements Publishable
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
-    use HasTags;
+    use HasTagsUntilForceDeleted;
     use ManagesStoredMedia;
+    use SoftDeletes;
     use TracksActivity;
 
     protected function casts(): array

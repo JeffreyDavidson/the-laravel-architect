@@ -80,7 +80,7 @@ it('deletes the cached OG image with its post', function () {
     Storage::disk('local')->put("og-images/{$post->id}/image.png", 'png');
     Storage::disk('local')->put("og-images/{$post->id}/signature", 'signature');
 
-    $post->delete();
+    $post->forceDelete();
 
     Storage::disk('local')->assertMissing("og-images/{$post->id}");
 });
