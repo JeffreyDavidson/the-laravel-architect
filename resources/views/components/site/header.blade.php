@@ -59,10 +59,10 @@
                     </div>
                     <x-site.theme-toggle />
                     <x-button
-                        href="{{ route('contact') }}"
+                        href="{{ route('contact.create') }}"
                         size="sm"
                         class="w-fit"
-                        :aria-current="request()->routeIs('contact') ? 'page' : null"
+                        :aria-current="request()->routeIs('contact.create') ? 'page' : null"
                     >Discuss a Project</x-button>
                 </div>
             </div>
@@ -80,10 +80,10 @@
                     </div>
                     <x-site.theme-toggle mobile />
                     <x-button
-                        href="{{ route('contact') }}"
+                        href="{{ route('contact.create') }}"
                         size="sm"
                         class="w-fit"
-                        :aria-current="request()->routeIs('contact') ? 'page' : null"
+                        :aria-current="request()->routeIs('contact.create') ? 'page' : null"
                     >Discuss a Project</x-button>
                 </div>
             </div>

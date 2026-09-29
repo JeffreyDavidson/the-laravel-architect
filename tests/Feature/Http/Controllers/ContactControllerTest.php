@@ -1,13 +1,13 @@
 <?php
 
 use App\Enums\PublishStatus;
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
+use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
@@ -30,7 +30,7 @@ beforeEach(function () {
 });
 
 it('renders the Turnstile widget on the contact page', function () {
-    $response = $this->get(route('contact'));
+    $response = $this->get(route('contact.create'));
 
     $response->assertOk()
         ->assertSeeHtml('data-turnstile-widget')
@@ -57,7 +57,7 @@ it('keeps a published project selected on the contact page', function () {
         'status' => PublishStatus::Published,
     ]);
 
-    $this->get(route('contact', ['project' => $project->slug]))
+    $this->get(route('contact.create', ['project' => $project->slug]))
         ->assertOk()
         ->assertSee('Project inquiry')
         ->assertSee($project->title)
@@ -72,7 +72,7 @@ it('rejects a draft project context on contact submissions', function () {
         'status' => PublishStatus::Draft,
     ]);
 
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -80,11 +80,11 @@ it('rejects a draft project context on contact submissions', function () {
         'message' => 'Can you help with an audit?',
     ])->assertSessionHasErrors('project');
 
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
 });
 
 it('silently accepts honeypot submissions without sending mail', function () {
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Spam Bot',
         'email' => 'spam@example.com',
         'type' => 'freelance',
@@ -93,12 +93,12 @@ it('silently accepts honeypot submissions without sending mail', function () {
         'website' => 'filled-by-bot',
     ])->assertSessionHas('success');
 
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
     expect(ContactInquiry::query()->count())->toBe(0);
     Http::assertNothingSent();
 });
 
-it('queues both contact messages after a valid submission', function () {
+it('saves the inquiry and queues its emails after a valid submission', function () {
     $project = Project::query()->create([
         'title' => 'Inquiry project',
         'slug' => 'inquiry-project',
@@ -114,7 +114,7 @@ it('queues both contact messages after a valid submission', function () {
         ]),
     ]);
 
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -123,23 +123,15 @@ it('queues both contact messages after a valid submission', function () {
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHas('success');
 
-    Mail::assertQueued(
-        ContactMessageReceived::class,
-        fn (ContactMessageReceived $mail): bool => $mail->senderEmail === 'jane@example.com'
-            && $mail->projectTitle === 'Inquiry project'
-            && str_contains($mail->render(), 'Can you help with an audit?'),
-    );
-    expect(ContactInquiry::query()->sole())
+    $inquiry = ContactInquiry::query()->sole();
+    expect($inquiry)
         ->name->toBe('Jane Doe')
         ->email->toBe('jane@example.com')
         ->message->toBe('Can you help with an audit?')
         ->project_title->toBe('Inquiry project');
-    Mail::assertQueued(
-        ContactMessageConfirmation::class,
-        fn (ContactMessageConfirmation $mail): bool => $mail->senderName === 'Jane Doe'
-            && $mail->projectTitle === 'Inquiry project'
-            && str_contains($mail->render(), 'Here\'s a copy of your message.'),
-    );
+    $this->assertDatabaseCount('jobs', 1);
+    expect(DB::table('jobs')->value('payload'))
+        ->toContain(addslashes(SendContactInquiryEmails::class));
     Http::assertSent(fn (Request $request): bool => $request->url() === 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
         && $request['secret'] === 'test-secret-key'
         && $request['response'] === 'valid-token'
@@ -151,7 +143,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response(['success' => false]),
     ]);
 
-    $response = $this->post(route('contact.submit'), [
+    $response = $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -165,7 +157,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
 
     expect(session()->getOldInput('cf-turnstile-response'))
         ->toBeNull();
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
     expect(ContactInquiry::query()->count())->toBe(0);
 });
 
@@ -174,7 +166,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response($turnstileResponse),
     ]);
 
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -182,7 +174,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
 })->with([
     'wrong hostname' => [[
         'success' => true,
@@ -207,7 +199,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
 it('fails closed when the Turnstile secret is missing', function () {
     config()->set('services.turnstile.secret_key');
 
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -216,13 +208,13 @@ it('fails closed when the Turnstile secret is missing', function () {
     ])->assertSessionHasErrors('cf-turnstile-response');
 
     Http::assertNothingSent();
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
 });
 
 it('fails closed when Turnstile cannot be reached', function () {
     Http::fake(fn () => throw new ConnectionException('Turnstile unavailable.'));
 
-    $this->post(route('contact.submit'), [
+    $this->post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -230,19 +222,19 @@ it('fails closed when Turnstile cannot be reached', function () {
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
 });
 
 it('does not count invalid submissions against the rate limit', function () {
-    $this->from(route('contact'))
-        ->post(route('contact.submit'), [
+    $this->from(route('contact.create'))
+        ->post(route('contact.store'), [
             'name' => 'Jane Doe',
             'email' => 'not-an-email',
             'type' => 'consulting',
             'budget' => 'medium',
             'message' => '',
         ])
-        ->assertRedirect(route('contact'))
+        ->assertRedirect(route('contact.create'))
         ->assertSessionHasErrors(['email', 'message']);
 
     expect(session()->getOldInput())->toMatchArray([
@@ -251,13 +243,13 @@ it('does not count invalid submissions against the rate limit', function () {
         'type' => 'consulting',
         'budget' => 'medium',
     ]);
-    Mail::assertNothingQueued();
+    $this->assertDatabaseCount('jobs', 0);
     Http::assertNothingSent();
 });
 
 it('renders preserved values and accessible validation feedback', function () {
-    $this->from(route('contact'))
-        ->post(route('contact.submit'), [
+    $this->from(route('contact.create'))
+        ->post(route('contact.store'), [
             'name' => 'Jane Doe',
             'email' => 'not-an-email',
             'type' => 'modernization',
@@ -265,7 +257,7 @@ it('renders preserved values and accessible validation feedback', function () {
             'message' => '',
         ]);
 
-    $this->get(route('contact'))
+    $this->get(route('contact.create'))
         ->assertOk()
         ->assertSee('Please review the highlighted fields.')
         ->assertSeeHtml('value="Jane Doe"')
@@ -284,9 +276,9 @@ it('renders preserved values and accessible validation feedback', function () {
  */
 function submitContactForm(array $overrides = [], string $ipAddress = '127.0.0.1'): TestResponse
 {
-    return from(route('contact'))
+    return from(route('contact.create'))
         ->withServerVariables(['REMOTE_ADDR' => $ipAddress])
-        ->post(route('contact.submit'), [
+        ->post(route('contact.store'), [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'type' => 'consulting',
@@ -324,7 +316,7 @@ it('rate limits repeated contact submissions by ip address', function () {
     $response = submitContactForm();
 
     $response
-        ->assertRedirect(route('contact'))
+        ->assertRedirect(route('contact.create'))
         ->assertSessionHasErrors(['message' => 'Too many submissions. Please try again later.'])
         ->assertSessionHasInput('name', 'Jane Doe');
     expect(session()->getOldInput())
@@ -362,3 +354,11 @@ it('limits each ip address separately', function () {
         ->assertSessionHas('success')
         ->assertSessionHasNoErrors();
 });
+
+it('names the contact routes by the shared contract without changing the URL', function (string $name) {
+    expect(route($name, absolute: false))
+        ->toBe('/contact');
+})->with([
+    'contact.create',
+    'contact.store',
+]);

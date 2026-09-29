@@ -52,7 +52,7 @@ final class GenerateSitemap
             ['url' => route('home'), 'priority' => '1.0', 'freq' => 'weekly', 'lastmod' => null],
             ['url' => route('about'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('services'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
-            ['url' => route('contact'), 'priority' => '0.7', 'freq' => 'monthly', 'lastmod' => null],
+            ['url' => route('contact.create'), 'priority' => '0.7', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('privacy'), 'priority' => '0.3', 'freq' => 'yearly', 'lastmod' => null],
             ['url' => route('uses'), 'priority' => '0.6', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('blog.index'), 'priority' => '0.9', 'freq' => 'weekly', 'lastmod' => $this->latestUpdatedAt($posts)],

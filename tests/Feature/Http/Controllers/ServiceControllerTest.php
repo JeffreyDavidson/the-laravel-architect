@@ -10,6 +10,6 @@ it('presents services with page metadata and working next steps', function () {
         ->assertSee('Build your application')
         ->assertSee('Improve an existing codebase')
         ->assertSee('Ship with confidence')
-        ->assertSee(route('contact'))
+        ->assertSee(route('contact.create'))
         ->assertSee(route('projects.index'));
 });

@@ -4,6 +4,8 @@ namespace App\Filament\Resources\ContactInquiries\Schemas;
 
 use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
+use App\Models\ContactInquiry;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,6 +46,20 @@ class ContactInquiryForm
                             ->dehydrated(false)
                             ->rows(8)
                             ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                Section::make('Email delivery')
+                    ->schema([
+                        DateTimePicker::make('notification_sent_at')
+                            ->label('Owner notification sent')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->placeholder(fn (ContactInquiry $record): string => $record->email_attempted_at === null ? 'Queued' : 'Not sent'),
+                        DateTimePicker::make('confirmation_sent_at')
+                            ->label('Sender confirmation sent')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->placeholder(fn (ContactInquiry $record): string => $record->email_attempted_at === null ? 'Queued' : 'Not sent'),
                     ])
                     ->columns(2),
                 Section::make('Follow-up')

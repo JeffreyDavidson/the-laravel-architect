@@ -25,7 +25,7 @@
                         Read the Blog
                     </a>
                     <a
-                        href="{{ route('contact') }}"
+                        href="{{ route('contact.create') }}"
                         class="dark:border-surface-border inline-flex items-center gap-2 rounded-lg border border-gray-200 px-6 py-3 font-semibold text-gray-700 transition-colors hover:border-gray-400 dark:text-gray-300 dark:hover:border-gray-600"
                     >
                         Contact Me
