@@ -2,7 +2,6 @@
 
 namespace Tests\Support;
 
-use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
@@ -15,7 +14,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 
 class PublishableFixtures
@@ -25,7 +23,7 @@ class PublishableFixtures
      *
      * @param  array<string, mixed>  $attributes
      */
-    public static function ready(string $type, array $attributes = []): Model&Publishable
+    public static function ready(string $type, array $attributes = []): Post|Project|Episode|NewsletterIssue
     {
         return match ($type) {
             'post' => Post::query()->create([

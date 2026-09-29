@@ -8,6 +8,7 @@ use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
@@ -15,12 +16,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
-use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at')]
 #[ObservedBy(PostObserver::class)]
@@ -39,8 +40,9 @@ class Post extends Model implements Publishable
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
-    use HasTags;
+    use HasTagsUntilForceDeleted;
     use ManagesStoredMedia;
+    use SoftDeletes;
     use TracksActivity;
 
     protected function casts(): array

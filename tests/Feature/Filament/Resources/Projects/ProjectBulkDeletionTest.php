@@ -3,7 +3,7 @@
 use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Project;
 use App\Models\User;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +17,7 @@ beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
 });
 
-it('deletes selected projects and their featured images through the table bulk action', function () {
+it('permanently deletes trashed projects and their featured images through the table bulk action', function () {
     Storage::disk('public')->put('projects/first.png', 'image');
     Storage::disk('public')->put('projects/second.png', 'image');
 
@@ -36,12 +36,15 @@ it('deletes selected projects and their featured images through the table bulk a
         ]),
     ]);
 
+    $projects->each->delete();
+
     livewire(ListProjects::class)
+        ->filterTable('trashed', false)
         ->selectTableRecords($projects)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+        ->callAction(TestAction::make(ForceDeleteBulkAction::class)->table()
             ->bulk());
 
-    expect(Project::query()->whereKey($projects->pluck('id'))
+    expect(Project::withTrashed()->whereKey($projects->pluck('id'))
         ->count())->toBe(0);
     Storage::disk('public')->assertMissing('projects/first.png');
     Storage::disk('public')->assertMissing('projects/second.png');

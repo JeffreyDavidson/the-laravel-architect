@@ -3,7 +3,7 @@
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Project;
 use App\Models\User;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->actingAs($user);
 });
 
-it('deletes a project through the resource action and removes its featured image', function () {
+it('permanently deletes a trashed project through the resource action and removes its featured image', function () {
     Storage::disk('public')->put('projects/project.png', 'image');
 
     $project = Project::query()->create([
@@ -28,9 +28,11 @@ it('deletes a project through the resource action and removes its featured image
         'featured_image_path' => 'projects/project.png',
     ]);
 
-    livewire(EditProject::class, ['record' => $project->getRouteKey()])
-        ->callAction(DeleteAction::class);
+    $project->delete();
 
-    expect(Project::query()->find($project->id))->toBeNull();
+    livewire(EditProject::class, ['record' => $project->getRouteKey()])
+        ->callAction(ForceDeleteAction::class);
+
+    expect(Project::withTrashed()->find($project->id))->toBeNull();
     Storage::disk('public')->assertMissing('projects/project.png');
 });

@@ -4,7 +4,7 @@ use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->actingAs(User::factory()->create(['is_admin' => true]));
 });
 
-it('deletes selected episodes and their native media through the table bulk action', function () {
+it('permanently deletes trashed episodes and their native media through the table bulk action', function () {
     Storage::disk('public')->put('episodes/images/first-delete-test.png', 'image');
     Storage::disk('public')->put('episodes/audio/first-delete-test.mp3', 'audio');
     Storage::disk('public')->put('episodes/images/second-delete-test.png', 'image');
@@ -48,12 +48,15 @@ it('deletes selected episodes and their native media through the table bulk acti
         ]),
     ]);
 
+    $episodes->each->delete();
+
     livewire(ListEpisodes::class)
+        ->filterTable('trashed', false)
         ->selectTableRecords($episodes)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()
+        ->callAction(TestAction::make(ForceDeleteBulkAction::class)->table()
             ->bulk());
 
-    expect(Episode::query()->whereKey($episodes->pluck('id'))
+    expect(Episode::withTrashed()->whereKey($episodes->pluck('id'))
         ->count())->toBe(0);
     Storage::disk('public')->assertMissing([
         'episodes/images/first-delete-test.png',

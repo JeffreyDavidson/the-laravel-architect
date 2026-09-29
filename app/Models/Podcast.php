@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -30,6 +31,9 @@ class Podcast extends Model
     use DeletesOwnedContent;
     use HasSEO;
     use ManagesStoredMedia;
+    use SoftDeletes {
+        performDeleteOnModel as performSoftDeleteOnModel;
+    }
     use TracksActivity;
 
     private const string DEFAULT_COLOR = '#6366f1';
@@ -42,19 +46,28 @@ class Podcast extends Model
         ];
     }
 
+    /**
+     * Runs only after the delete is confirmed: trash the episodes with the podcast, or
+     * permanently delete all of them (with their own cleanup) before the podcast row goes.
+     */
     protected function performDeleteOnModel(): void
     {
-        $episodes = $this
-            ->episodes()
-            ->lazyById();
+        $episodes = $this->isForceDeleting()
+            ? $this->episodes()
+                ->withTrashed()
+            : $this->episodes();
 
-        foreach ($episodes as $episode) {
-            if ($episode->delete() !== true) {
+        foreach ($episodes->lazyById() as $episode) {
+            $deleted = $this->isForceDeleting()
+                ? $episode->forceDelete()
+                : $episode->delete();
+
+            if ($deleted !== true) {
                 throw new \RuntimeException('Podcast deletion was cancelled because an episode could not be deleted.');
             }
         }
 
-        parent::performDeleteOnModel();
+        $this->performSoftDeleteOnModel();
     }
 
     /** @return HasMany<Episode, $this> */

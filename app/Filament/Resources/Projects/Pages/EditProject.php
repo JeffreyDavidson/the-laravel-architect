@@ -8,6 +8,8 @@ use App\Filament\Actions\PublishContentAction;
 use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\Projects\ProjectResource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProject extends EditRecord
@@ -21,6 +23,8 @@ class EditProject extends EditRecord
             PublishContentAction::make(),
             UnpublishContentAction::make(),
             DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 }

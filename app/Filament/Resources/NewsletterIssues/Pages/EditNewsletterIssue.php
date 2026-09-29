@@ -14,6 +14,8 @@ use App\Models\Subscriber;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
@@ -91,6 +93,8 @@ class EditNewsletterIssue extends EditRecord
                         ->send();
                 }),
             DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 

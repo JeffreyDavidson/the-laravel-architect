@@ -5,7 +5,7 @@ use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->actingAs($user);
 });
 
-it('deletes a podcast and its episodes through the authenticated resource', function () {
+it('permanently deletes a trashed podcast and its episodes through the authenticated resource', function () {
     Storage::fake('public');
     Storage::disk('public')->put('podcasts/delete-cover.jpg', 'cover');
     Storage::disk('public')->put('episodes/delete-image.jpg', 'image');
@@ -40,11 +40,13 @@ it('deletes a podcast and its episodes through the authenticated resource', func
         'status' => PublishStatus::Draft,
     ]);
 
-    livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
-        ->callAction(DeleteAction::class);
+    $podcast->delete();
 
-    expect(Podcast::query()->find($podcast->id))->toBeNull()
-        ->and(Episode::query()->find($episode->id))
+    livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
+        ->callAction(ForceDeleteAction::class);
+
+    expect(Podcast::withTrashed()->find($podcast->id))->toBeNull()
+        ->and(Episode::withTrashed()->find($episode->id))
         ->toBeNull();
 
     Storage::disk('public')->assertMissing('podcasts/delete-cover.jpg');
