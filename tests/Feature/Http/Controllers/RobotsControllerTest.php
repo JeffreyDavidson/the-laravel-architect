@@ -2,7 +2,7 @@
 
 use function Pest\Laravel\get;
 
-it('allows crawlers in production and points them to the sitemap', function () {
+it('allows crawlers in production, keeps them out of the admin and signed previews, and points them to the sitemap', function () {
     config()->set('app.deployment_environment', 'production');
 
     $response = get('/robots.txt');
@@ -17,6 +17,7 @@ it('allows crawlers in production and points them to the sitemap', function () {
             '',
             'Disallow: /admin',
             'Disallow: /admin/*',
+            'Disallow: /preview/',
             '',
             'Sitemap: '.route('sitemap'),
             '',
@@ -60,3 +61,12 @@ it('serves robots.txt like a static file without cookies and publicly cacheable'
     'production',
     'staging',
 ]);
+
+it('keeps search results crawlable so their noindex tag can be read', function () {
+    config()->set('app.deployment_environment', 'production');
+
+    $content = get('/robots.txt')->getContent();
+
+    expect($content)
+        ->not->toContain('Disallow: /search');
+});
