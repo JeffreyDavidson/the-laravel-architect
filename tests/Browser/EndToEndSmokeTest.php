@@ -353,59 +353,6 @@ it('reports clipboard failure without claiming the code was copied', function ()
         ->assertNoJavaScriptErrors();
 });
 
-it('keeps audio controls synchronized with the media element', function (): void {
-    $this->withVite();
-    $podcast = Podcast::query()->where('slug', 'e2e-podcast')
-        ->sole();
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Audio controls',
-        'description' => 'A deterministic media control test.',
-        'audio_url' => 'https://example.test/audio.mp3',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-    $page = PodcastEpisodePage::visit($podcast, $episode);
-    $page->assertScript('document.querySelector("[data-audio]").controls === false')
-        ->assertNoJavaScriptErrors();
-    $page->script(<<<'JS'
-        const audio = document.querySelector('[data-audio]');
-        Object.defineProperties(audio, {
-            duration: { configurable: true, value: 120 },
-            currentTime: { configurable: true, writable: true, value: 30 },
-            paused: { configurable: true, writable: true, value: true },
-            ended: { configurable: true, writable: true, value: false },
-        });
-        audio.play = async () => { audio.paused = false; audio.dispatchEvent(new Event('play')); };
-        audio.pause = () => { audio.paused = true; audio.dispatchEvent(new Event('pause')); };
-        audio.dispatchEvent(new Event('loadedmetadata'));
-        JS);
-
-    $page->assertSeeIn('[data-audio-current-time]', '0:30')
-        ->assertSeeIn('[data-audio-duration]', '2:00')
-        ->click('[data-audio-play]')
-        ->assertAttribute('[data-audio-play]', 'aria-label', 'Pause episode')
-        ->assertAttribute('[data-audio-player]', 'data-playing', 'true')
-        ->click('[data-audio-play]')
-        ->assertAttribute('[data-audio-player]', 'data-playing', 'false')
-        ->click('[data-audio-skip-back]')
-        ->assertSeeIn('[data-audio-current-time]', '0:15')
-        ->click('[data-audio-skip-forward]')
-        ->assertSeeIn('[data-audio-current-time]', '0:45')
-        ->click('[data-audio-speed]')
-        ->assertSeeIn('[data-audio-speed-label]', '1.25x')
-        ->assertScript('document.querySelector("[data-audio]").playbackRate === 1.25');
-
-    $page->script('const seek = document.querySelector("[data-audio-seek]"); seek.value = 75; seek.dispatchEvent(new Event("input", { bubbles: true }));');
-    $page->assertAttribute('[data-audio-seek]', 'aria-valuetext', '1:30 of 2:00')
-        ->assertScript('document.querySelector("[data-audio-progress]").style.width === "75%"');
-    $page->script('const audio = document.querySelector("[data-audio]"); audio.ended = true; audio.dispatchEvent(new Event("ended")); audio.play = async () => { throw new Error("Playback denied"); }; void 0;');
-    $page->click('[data-audio-play]')
-        ->assertAttribute('[data-audio-play]', 'aria-label', 'Play episode')
-        ->assertAttribute('[data-audio-player]', 'data-playing', 'false')
-        ->assertNoJavaScriptErrors();
-});
-
 it('loads the podcast video only on activation and copies its share link', function (): void {
     $this->withVite();
     $podcast = Podcast::query()->where('slug', 'e2e-podcast')

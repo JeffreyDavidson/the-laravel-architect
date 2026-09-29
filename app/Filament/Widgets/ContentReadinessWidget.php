@@ -139,10 +139,8 @@ class ContentReadinessWidget extends Widget
     {
         $missing = 0;
 
-        foreach (Episode::query()->get(['audio_url', 'audio_path', 'embed_url', 'youtube_url', 'show_notes']) as $episode) {
-            $hasMedia = filled($episode->audio_url)
-                || filled($episode->audio_path)
-                || $episode->publicEmbedUrl() !== null
+        foreach (Episode::query()->get(['transistor_url', 'youtube_url', 'show_notes']) as $episode) {
+            $hasMedia = $episode->transistorEmbedUrl() !== null
                 || filled($episode->youtube_url);
 
             if (! $hasMedia || blank($episode->show_notes)) {

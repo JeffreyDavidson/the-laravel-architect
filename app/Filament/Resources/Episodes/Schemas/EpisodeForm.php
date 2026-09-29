@@ -6,7 +6,6 @@ use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Forms\Components\PublishStatusSelect;
 use App\Models\Episode;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -71,28 +70,13 @@ class EpisodeForm
 
                 Section::make('Media')
                     ->schema([
-                        TextInput::make('audio_url')
-                            ->label('Audio URL')
-                            ->url()
-                            ->maxLength(255)
-                            ->helperText('Link to hosted audio (Buzzsprout, Anchor, etc.)'),
-                        FileUpload::make('audio_path')
-                            ->disk('public')
-                            ->directory('episodes/audio')
-                            ->acceptedFileTypes(['audio/mpeg', 'audio/wav', 'audio/x-wav'])
-                            ->maxSize(256000),
                         TextInput::make('transistor_url')
                             ->label('Transistor episode URL')
                             ->url()
                             ->maxLength(255)
                             ->rules(['regex:/\Ahttps:\/\/share\.transistor\.fm\/s\/[a-zA-Z0-9]+\/?\z/'])
                             ->validationMessages(['regex' => 'Paste the episode share URL, such as https://share.transistor.fm/s/428dcd6b.'])
-                            ->helperText('When set, the public page shows the Transistor player instead of uploaded audio or other embeds.'),
-                        TextInput::make('embed_url')
-                            ->label('Embed URL')
-                            ->url()
-                            ->maxLength(255)
-                            ->helperText('Spotify/Apple embed URL'),
+                            ->helperText('The public page shows the Transistor player for this episode.'),
                         TextInput::make('youtube_url')
                             ->label('YouTube URL')
                             ->url()
