@@ -98,7 +98,6 @@ class PublicContentArchiveImporter
             }
 
             foreach ($records['episodes'] as $attributes) {
-                $attributes = $this->withDurationSeconds($attributes);
                 $episode = Episode::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
                 $episode->setAttribute('deleted_at', null);
                 $episode->fill([
@@ -226,24 +225,6 @@ class PublicContentArchiveImporter
             ->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()
             ->update(['published_at' => null]);
-    }
-
-    /**
-     * Archives exported before durations moved to seconds carry `duration_minutes`; convert
-     * them so the import keeps working. Remove once no such archives remain.
-     *
-     * @param  array<string, mixed>  $attributes
-     * @return array<string, mixed>
-     */
-    private function withDurationSeconds(array $attributes): array
-    {
-        $minutes = $attributes['duration_minutes'] ?? null;
-
-        if (! array_key_exists('duration_seconds', $attributes) && is_int($minutes)) {
-            $attributes['duration_seconds'] = $minutes * 60;
-        }
-
-        return $attributes;
     }
 
     /** @param array<string, mixed> $attributes
