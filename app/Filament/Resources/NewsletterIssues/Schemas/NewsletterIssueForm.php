@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\NewsletterIssues\Schemas;
 
 use App\Filament\Forms\Components\PublishStatusSelect;
+use App\Models\NewsletterIssue;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Textarea;
@@ -32,6 +33,8 @@ class NewsletterIssueForm
                                 }
                             }),
                         TextInput::make('slug')
+                            ->disabled(fn (?NewsletterIssue $record): bool => $record?->isSlugLocked() ?? false)
+                            ->helperText('URLs stay locked after first publication, even when unpublished.')
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')

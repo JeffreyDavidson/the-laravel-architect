@@ -40,6 +40,8 @@ class PostForm
                                 }
                             }),
                         TextInput::make('slug')
+                            ->disabled(fn (?Post $record): bool => $record?->isSlugLocked() ?? false)
+                            ->helperText('URLs stay locked after first publication, even when unpublished.')
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')

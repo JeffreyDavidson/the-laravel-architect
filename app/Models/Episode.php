@@ -9,6 +9,7 @@ use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
+use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -39,6 +40,7 @@ class Episode extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
+    use LocksSlugAfterPublication;
     use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
@@ -47,6 +49,7 @@ class Episode extends Model implements Publishable
     {
         return [
             'status' => PublishStatus::class,
+            'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
