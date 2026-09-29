@@ -7,7 +7,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Presenters\PostPresenter;
 use App\Queries\BlogIndexQuery;
-use App\ViewModels\BlogIndexViewModel;
+use App\ViewModels\PostIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -21,19 +21,19 @@ it('builds the public blog index payload', function () {
         'name' => 'Architecture',
         'slug' => 'architecture',
     ]);
-    $olderPost = createBlogIndexViewModelPost(
+    $olderPost = createPostIndexViewModelPost(
         author: $author,
         category: $category,
         title: 'Older Post',
         publishedAt: now()->subDays(2),
     );
-    $newerPost = createBlogIndexViewModelPost(
+    $newerPost = createPostIndexViewModelPost(
         author: $author,
         category: $category,
         title: 'Newer Post',
         publishedAt: now()->subDay(),
     );
-    createBlogIndexViewModelPost(
+    createPostIndexViewModelPost(
         author: $author,
         category: $category,
         title: 'Draft Post',
@@ -155,14 +155,14 @@ function blogIndexViewModelData(array $filters = []): array
     $query = trim($filters['q'] ?? '');
     $categorySlug = $filters['category'] ?? null;
 
-    return app(BlogIndexViewModel::class)->data(
+    return app(PostIndexViewModel::class)->data(
         app(BlogIndexQuery::class)->results($query, $categorySlug),
         $query,
         $categorySlug,
     );
 }
 
-function createBlogIndexViewModelPost(
+function createPostIndexViewModelPost(
     User $author,
     Category $category,
     string $title,
