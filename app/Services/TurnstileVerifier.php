@@ -13,8 +13,10 @@ class TurnstileVerifier
 {
     public function passes(Request $request, string $expectedAction): bool
     {
-        $token = $request->string('cf-turnstile-response')
-            ->toString();
+        $input = $request->input('cf-turnstile-response');
+        $token = is_string($input)
+            ? trim($input)
+            : '';
         $secret = config('services.turnstile.secret_key');
         $endpoint = config('services.turnstile.siteverify_url');
 
