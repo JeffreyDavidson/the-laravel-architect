@@ -79,7 +79,10 @@ Route::middleware('signed')
 
 // RSS & Sitemap
 Route::get('/rss', RssFeedController::class)->name('rss');
-Route::get('/robots.txt', RobotsController::class)->name('robots');
+// Served like a static file (no session cookies, publicly cacheable) so the CDN keeps it.
+Route::get('/robots.txt', RobotsController::class)
+    ->withoutMiddleware('web')
+    ->name('robots');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
