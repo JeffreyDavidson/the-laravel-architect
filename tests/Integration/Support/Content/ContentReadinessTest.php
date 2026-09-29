@@ -188,3 +188,10 @@ it('reports a project as ready when all public details are present', function ()
         ->and($readiness->missingSummary())
         ->toBe('All public details are complete.');
 });
+
+it('counts a Transistor episode URL as episode media', function () {
+    $episode = new Episode(['transistor_url' => 'https://share.transistor.fm/s/428dcd6b']);
+
+    expect(new ContentReadiness($episode)->checkComplete('episode_media'))
+        ->toBeTrue();
+});

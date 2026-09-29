@@ -22,7 +22,7 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at')]
+#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
 /**
@@ -91,6 +91,22 @@ class Episode extends Model implements Publishable
         return $url;
     }
 
+    /**
+     * The Transistor player URL for a valid episode share URL
+     * (https://share.transistor.fm/s/{id}), or null for anything else.
+     */
+    public function transistorEmbedUrl(): ?string
+    {
+        $url = $this->getAttribute('transistor_url');
+        $matches = [];
+
+        if (! is_string($url) || preg_match('/\Ahttps:\/\/share\.transistor\.fm\/s\/([a-zA-Z0-9]+)\/?\z/', $url, $matches) !== 1) {
+            return null;
+        }
+
+        return "https://share.transistor.fm/e/{$matches[1]}";
+    }
+
     public function publicEmbedLink(): ?string
     {
         $url = $this->getRawOriginal('embed_url');
@@ -145,6 +161,7 @@ class Episode extends Model implements Publishable
                 'audio_url',
                 'audio_path',
                 'embed_url',
+                'transistor_url',
                 'youtube_url',
                 'duration_minutes',
                 'status',

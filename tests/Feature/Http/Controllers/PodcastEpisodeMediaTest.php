@@ -6,6 +6,8 @@ use App\Models\Podcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 /**
@@ -78,4 +80,32 @@ it('does not render unsupported embed URLs', function () {
         ->assertOk()
         ->assertDontSeeHtml('malicious.example')
         ->assertDontSeeHtml('<iframe');
+});
+
+it('prefers the Transistor player over uploaded audio and other embeds', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('episodes/audio/uploaded.mp3', 'audio');
+    [$podcast, $episode] = createPublicEpisode([
+        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
+        'audio_path' => 'episodes/audio/uploaded.mp3',
+        'embed_url' => 'https://open.spotify.com/embed/episode/123',
+    ]);
+
+    get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSeeHtml('src="https://share.transistor.fm/e/428dcd6b"')
+        ->assertDontSeeHtml('data-audio-player')
+        ->assertDontSeeHtml('https://open.spotify.com/embed/episode/123');
+});
+
+it('keeps the current player when the Transistor URL is not a share URL', function () {
+    [$podcast, $episode] = createPublicEpisode([
+        'transistor_url' => 'https://example.com/s/428dcd6b',
+        'audio_url' => 'https://cdn.example.com/hosted.mp3',
+    ]);
+
+    get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSeeHtml('https://cdn.example.com/hosted.mp3')
+        ->assertDontSeeHtml('share.transistor.fm');
 });

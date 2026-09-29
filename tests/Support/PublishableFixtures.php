@@ -50,7 +50,7 @@ class PublishableFixtures
             ]),
             'episode' => Episode::query()->create([
                 'podcast_id' => Podcast::query()
-                    ->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.'])
+                    ->firstOrCreate(['slug' => 'show'], ['name' => 'Show', 'description' => 'A show.'])
                     ->id,
                 'title' => 'Ready episode',
                 'slug' => 'ready-episode',

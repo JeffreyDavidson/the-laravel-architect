@@ -39,3 +39,19 @@ it('knows whether it is publicly published', function (?PublishStatus $status, m
     [PublishStatus::Published, null, false],
     [PublishStatus::Draft, now()->subMinute(), false],
 ]);
+
+it('turns only a Transistor share URL into its embed URL', function (?string $url, ?string $embedUrl) {
+    $episode = new Episode(['transistor_url' => $url]);
+
+    expect($episode->transistorEmbedUrl())
+        ->toBe($embedUrl);
+})->with([
+    'share URL' => ['https://share.transistor.fm/s/428dcd6b', 'https://share.transistor.fm/e/428dcd6b'],
+    'share URL with trailing slash' => ['https://share.transistor.fm/s/428dcd6b/', 'https://share.transistor.fm/e/428dcd6b'],
+    'missing' => [null, null],
+    'insecure' => ['http://share.transistor.fm/s/428dcd6b', null],
+    'other host' => ['https://example.com/s/428dcd6b', null],
+    'already an embed' => ['https://share.transistor.fm/e/428dcd6b', null],
+    'extra path' => ['https://share.transistor.fm/s/428dcd6b/extra', null],
+    'query string' => ['https://share.transistor.fm/s/428dcd6b?autoplay=1', null],
+]);

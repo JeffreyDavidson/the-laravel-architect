@@ -202,6 +202,7 @@ final readonly class ContentReadiness
                 'complete' => filled($episode->audio_url)
                     || filled($episode->audio_path)
                     || $episode->publicEmbedUrl() !== null
+                    || $episode->transistorEmbedUrl() !== null
                     || filled($episode->youtube_url),
             ],
             'show_notes' => [

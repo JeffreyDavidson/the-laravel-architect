@@ -54,6 +54,12 @@ class EpisodesTable
                     ->label('Duration')
                     ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
                     ->toggleable(),
+                TextColumn::make('transistor')
+                    ->label('Transistor')
+                    ->state(fn (Episode $record): string => $record->transistorEmbedUrl() === null ? 'Not added' : 'Available')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Available' ? 'success' : 'gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
@@ -69,6 +75,13 @@ class EpisodesTable
                     ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
+                Filter::make('missing_transistor_url')
+                    ->label('Missing Transistor URL')
+                    ->query(fn (Builder $query): Builder => $query->whereIn('episodes.id', Episode::query()
+                        ->published()
+                        ->where(fn (Builder $query): Builder => $query->whereNull('transistor_url')
+                            ->orWhere('transistor_url', ''))
+                        ->select('id'))),
                 TrashedFilter::make(),
             ])
             ->recordActions([
