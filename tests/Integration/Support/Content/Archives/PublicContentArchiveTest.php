@@ -508,3 +508,61 @@ function publicContentArchiveFixture(): array
         'videos' => [],
     ];
 }
+
+/**
+ * Create a published episode with a duration, in a podcast, ready to export.
+ */
+function publishedEpisodeWithDuration(int $seconds): void
+{
+    $podcast = Podcast::query()->create([
+        'name' => 'Archive show',
+        'slug' => 'archive-show',
+        'description' => 'A show.',
+        'is_active' => true,
+    ]);
+
+    DB::table('episodes')->insert([
+        'podcast_id' => $podcast->id,
+        'title' => 'Archive episode',
+        'slug' => 'archive-episode',
+        'description' => 'An episode.',
+        'duration_seconds' => $seconds,
+        'status' => PublishStatus::Published->value,
+        'published_at' => now()->subDay(),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+}
+
+it('exports episode durations in seconds', function () {
+    publishedEpisodeWithDuration(1500);
+
+    $episodes = publicArchiveRecords(app(PublicContentArchiveExporter::class)->export()['episodes'] ?? null);
+
+    expect($episodes[0])
+        ->toHaveKey('duration_seconds', 1500)
+        ->not->toHaveKey('duration_minutes');
+});
+
+it('imports episode durations from seconds or from an older archive in minutes', function (array $durationFields, ?int $expectedSeconds) {
+    publishedEpisodeWithDuration(60);
+    $archive = app(PublicContentArchiveExporter::class)->export();
+    $episodes = publicArchiveRecords($archive['episodes'] ?? null);
+    unset($episodes[0]['duration_seconds']);
+    $archive['episodes'] = [[...$episodes[0], ...$durationFields]];
+    DB::table('episodes')->delete();
+
+    app(PublicContentArchiveImporter::class)->sync($archive);
+
+    $importedSeconds = DB::table('episodes')
+        ->where('slug', 'archive-episode')
+        ->value('duration_seconds');
+
+    expect($importedSeconds)
+        ->toBe($expectedSeconds);
+})->with([
+    'seconds' => [['duration_seconds' => 1500], 1500],
+    'older archive in minutes' => [['duration_minutes' => 25], 1500],
+    'seconds win when both are present' => [['duration_seconds' => 90, 'duration_minutes' => 25], 90],
+    'no duration' => [[], null],
+]);
