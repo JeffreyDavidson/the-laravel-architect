@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Queries\BlogIndexQuery;
 use App\Support\Seo\StructuredDataBuilder;
-use App\ViewModels\BlogIndexViewModel;
+use App\ViewModels\PostIndexViewModel;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -70,7 +70,7 @@ final class BlogIndex extends Component
         $this->resetPage();
     }
 
-    public function render(BlogIndexQuery $blogIndexQuery, BlogIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
+    public function render(BlogIndexQuery $blogIndexQuery, PostIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
     {
         if ($this->initialData !== null) {
             return view('livewire.blog-index', $this->initialData);

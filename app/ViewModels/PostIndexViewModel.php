@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class BlogIndexViewModel
+class PostIndexViewModel
 {
     /**
      * @param  array{
