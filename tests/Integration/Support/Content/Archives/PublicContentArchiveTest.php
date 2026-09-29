@@ -544,7 +544,7 @@ it('exports episode durations in seconds', function () {
         ->not->toHaveKey('duration_minutes');
 });
 
-it('imports episode durations from seconds or from an older archive in minutes', function (array $durationFields, ?int $expectedSeconds) {
+it('imports episode durations in seconds and ignores the retired minutes field', function (array $durationFields, ?int $expectedSeconds) {
     publishedEpisodeWithDuration(60);
     $archive = app(PublicContentArchiveExporter::class)->export();
     $episodes = publicArchiveRecords($archive['episodes'] ?? null);
@@ -562,7 +562,6 @@ it('imports episode durations from seconds or from an older archive in minutes',
         ->toBe($expectedSeconds);
 })->with([
     'seconds' => [['duration_seconds' => 1500], 1500],
-    'older archive in minutes' => [['duration_minutes' => 25], 1500],
-    'seconds win when both are present' => [['duration_seconds' => 90, 'duration_minutes' => 25], 90],
+    'an older archive that only has minutes' => [['duration_minutes' => 25], null],
     'no duration' => [[], null],
 ]);
