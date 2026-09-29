@@ -9,6 +9,7 @@ use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
+use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -22,7 +23,7 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
+#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
 /**
@@ -39,6 +40,7 @@ class Episode extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
+    use LocksSlugAfterPublication;
     use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
@@ -47,9 +49,35 @@ class Episode extends Model implements Publishable
     {
         return [
             'status' => PublishStatus::class,
+            'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The retired media this episode still carries (uploaded audio, hosted audio, or a
+     * Spotify/Apple embed), so editors can move it to Transistor before it is removed.
+     *
+     * @return list<string>
+     */
+    public function legacyMedia(): array
+    {
+        $media = [];
+
+        if (filled($this->getAttribute('audio_path'))) {
+            $media[] = 'Uploaded audio';
+        }
+
+        if (filled($this->getAttribute('audio_url'))) {
+            $media[] = 'Hosted audio';
+        }
+
+        if (filled($this->getAttribute('embed_url'))) {
+            $media[] = 'Spotify/Apple embed';
+        }
+
+        return $media;
     }
 
     public function publicAudioUrl(): ?string
@@ -163,7 +191,7 @@ class Episode extends Model implements Publishable
                 'embed_url',
                 'transistor_url',
                 'youtube_url',
-                'duration_minutes',
+                'duration_seconds',
                 'status',
                 'published_at',
             ])

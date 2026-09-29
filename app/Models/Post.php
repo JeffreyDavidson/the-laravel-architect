@@ -10,6 +10,7 @@ use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
+use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
@@ -45,6 +46,7 @@ class Post extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
+    use LocksSlugAfterPublication;
     use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
@@ -53,6 +55,7 @@ class Post extends Model implements Publishable
     {
         return [
             'status' => PublishStatus::class,
+            'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'reviewed_at' => 'datetime',
             'last_reviewed_at' => 'date',

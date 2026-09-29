@@ -21,12 +21,15 @@ final readonly class EpisodePresenter
 
     public function duration(): string
     {
-        if (! $this->episode->duration_minutes) {
+        $seconds = $this->episode->duration_seconds;
+
+        if (! $seconds) {
             return '';
         }
 
-        $hours = intdiv($this->episode->duration_minutes, 60);
-        $minutes = $this->episode->duration_minutes % 60;
+        $totalMinutes = max(1, (int) round($seconds / 60));
+        $hours = intdiv($totalMinutes, 60);
+        $minutes = $totalMinutes % 60;
 
         return $hours > 0 ? "{$hours}h {$minutes}m" : "{$minutes} min";
     }

@@ -74,8 +74,8 @@ final class PodcastSchemaBuilder
             $podcastEpisode['episodeNumber'] = $episode->episode_number;
         }
 
-        if ($episode->duration_minutes) {
-            $podcastEpisode['duration'] = 'PT'.$episode->duration_minutes.'M';
+        if ($episode->duration_seconds) {
+            $podcastEpisode['duration'] = $this->isoDuration($episode->duration_seconds);
         }
 
         if ($episode->publicAudioUrl()) {
@@ -86,6 +86,16 @@ final class PodcastSchemaBuilder
         }
 
         $schemas[] = $podcastEpisode;
+    }
+
+    /** Format seconds as an ISO 8601 duration, for example PT1H2M5S. */
+    private function isoDuration(int $seconds): string
+    {
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+        $remainingSeconds = $seconds % 60;
+
+        return "PT{$hours}H{$minutes}M{$remainingSeconds}S";
     }
 
     /**

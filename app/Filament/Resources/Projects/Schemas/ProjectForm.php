@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Forms\Components\PublishStatusSelect;
+use App\Models\Project;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TagsInput;
@@ -35,6 +36,8 @@ class ProjectForm
                                 }
                             }),
                         TextInput::make('slug')
+                            ->disabled(fn (?Project $record): bool => $record?->isSlugLocked() ?? false)
+                            ->helperText('URLs stay locked after first publication, even when unpublished.')
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')

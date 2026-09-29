@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Forms\Components\PublishStatusSelect;
+use App\Models\Episode;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
@@ -42,6 +43,8 @@ class EpisodeForm
                                 }
                             }),
                         TextInput::make('slug')
+                            ->disabled(fn (?Episode $record): bool => $record?->isSlugLocked() ?? false)
+                            ->helperText('URLs stay locked after first publication, even when unpublished.')
                             ->required()
                             ->maxLength(255)
                             ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
@@ -98,9 +101,13 @@ class EpisodeForm
                         OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('episodes/images'),
-                        TextInput::make('duration_minutes')
-                            ->numeric()
-                            ->label('Duration (minutes)'),
+                        TextInput::make('duration_seconds')
+                            ->integer()
+                            ->minValue(0)
+                            ->maxValue(2147483647)
+                            ->suffix('seconds')
+                            ->label('Duration')
+                            ->helperText('Total length in seconds (for example 1500 for 25 minutes).'),
                     ])->columns(2),
 
                 Section::make('Guest')

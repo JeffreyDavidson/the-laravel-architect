@@ -155,7 +155,7 @@ class ScaleTestContentWorkflow
                     'audio_path' => null,
                     'embed_url' => null,
                     'youtube_url' => null,
-                    'duration_minutes' => 25 + ($number % 20),
+                    'duration_seconds' => (25 + ($number % 20)) * 60,
                     'status' => 'published',
                     'published_at' => $this->publishedAt($now, self::EPISODE_COUNT - $number),
                     'created_at' => $now,
@@ -165,7 +165,7 @@ class ScaleTestContentWorkflow
 
             $this->upsertInChunks('episodes', $episodes, 'slug', [
                 'podcast_id', 'title', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript',
-                'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_minutes', 'status', 'published_at', 'updated_at',
+                'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_seconds', 'status', 'published_at', 'updated_at',
             ]);
 
             return [
