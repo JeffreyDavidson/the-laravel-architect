@@ -335,7 +335,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
         'slug' => 'designing-clear-boundaries',
         'episode_number' => 12,
         'description' => 'A practical discussion about application boundaries.',
-        'duration_minutes' => 42,
+        'duration_seconds' => 3725,
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);
@@ -365,7 +365,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
             'name' => $episode->title,
             'url' => route('podcast.episode', [$podcast, $episode]),
             'episodeNumber' => 12,
-            'duration' => 'PT42M',
+            'duration' => 'PT1H2M5S',
             'datePublished' => Date::parse($episode->published_at)->toIso8601String(),
             'partOfSeries' => [
                 '@type' => 'PodcastSeries',

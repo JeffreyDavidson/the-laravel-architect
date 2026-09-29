@@ -87,7 +87,7 @@ it('exposes podcast navigation, dates, and share actions to assistive technology
 
 Clear boundaries make this episode easier to follow.
 MARKDOWN,
-        'duration_minutes' => 42,
+        'duration_seconds' => 2520,
         'status' => PublishStatus::Published,
         'published_at' => '2026-08-20 12:00:00',
     ]);

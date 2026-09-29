@@ -98,9 +98,13 @@ class EpisodeForm
                         OptimizedImageUpload::make('featured_image_path')
                             ->disk('public')
                             ->directory('episodes/images'),
-                        TextInput::make('duration_minutes')
-                            ->numeric()
-                            ->label('Duration (minutes)'),
+                        TextInput::make('duration_seconds')
+                            ->integer()
+                            ->minValue(0)
+                            ->maxValue(2147483647)
+                            ->suffix('seconds')
+                            ->label('Duration')
+                            ->helperText('Total length in seconds (for example 1500 for 25 minutes).'),
                     ])->columns(2),
 
                 Section::make('Guest')

@@ -50,7 +50,7 @@ class EpisodesTable
                     ->label('Guest')
                     ->placeholder('Solo')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('duration_minutes')
+                TextColumn::make('duration_seconds')
                     ->label('Duration')
                     ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
                     ->toggleable(),
