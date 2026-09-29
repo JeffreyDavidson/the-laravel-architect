@@ -72,7 +72,7 @@
                 @else
                     <div class="mt-8 space-y-12">
                         @foreach ($results as $type => $items)
-                            @if (count($items))
+                            @if ($items->total() > 0)
                                 <section aria-labelledby="search-{{ \Illuminate\Support\Str::slug($type) }}">
                                     <div class="dark:border-surface-border mb-4 flex items-baseline justify-between border-b border-gray-200 pb-3">
                                         <h2
@@ -81,7 +81,7 @@
                                         >
                                             {{ $type }}
                                         </h2>
-                                        <span class="font-mono text-xs text-gray-500">{{ count($items) }}</span>
+                                        <span class="font-mono text-xs text-gray-500">{{ $items->total() }}</span>
                                     </div>
                                     <div class="dark:divide-brand-800 divide-y divide-gray-200">
                                         @foreach ($items as $item)
@@ -110,6 +110,9 @@
                                             </article>
                                         @endforeach
                                     </div>
+                                    @if ($items->hasPages())
+                                        <div class="pt-6">{{ $items->links() }}</div>
+                                    @endif
                                 </section>
                             @endif
                         @endforeach

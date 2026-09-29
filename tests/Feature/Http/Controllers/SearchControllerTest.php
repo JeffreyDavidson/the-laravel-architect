@@ -11,6 +11,8 @@ use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('does not query unrelated content types for a filtered search', function () {
@@ -194,4 +196,27 @@ it('finds episodes by transcript content', function () {
             $episode->title,
         )
         ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
+});
+
+it('shows each group total and a link to the next page of a long group', function () {
+    $author = User::factory()->create();
+    foreach (range(1, 13) as $number) {
+        Post::query()->create([
+            'title' => "Paging post {$number}",
+            'slug' => "paging-post-{$number}",
+            'content' => 'Content.',
+            'user_id' => $author->id,
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subMinutes($number),
+        ]);
+    }
+
+    $response = get(route('search', ['q' => 'paging']));
+
+    $response
+        ->assertOk()
+        ->assertSee('13 results for')
+        ->assertSeeHtml('postsPage=2')
+        ->assertSeeHtml(route('blog.show', 'paging-post-12').'"')
+        ->assertDontSeeHtml(route('blog.show', 'paging-post-13').'"');
 });
