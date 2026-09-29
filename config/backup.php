@@ -302,6 +302,7 @@ return [
 
     'schedule' => [
         'run_at' => env('BACKUP_RUN_AT', '02:00'),
+        'verify_at' => env('BACKUP_VERIFY_AT', '02:30'),
         'clean_at' => env('BACKUP_CLEAN_AT', '03:00'),
         'monitor_at' => env('BACKUP_MONITOR_AT', '04:00'),
     ],

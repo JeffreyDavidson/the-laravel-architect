@@ -23,6 +23,13 @@ Schedule::command('backup:run')
     ->dailyAt(config('backup.schedule.run_at'))
     ->withoutOverlapping()
     ->onOneServer();
+// Restores the newest archive in isolation, so a verified backup exists before any deploy.
+// A failure is reported through the scheduler's failed-task email, like the other checks.
+Schedule::command('app:verify-backup')
+    ->dailyAt(config('backup.schedule.verify_at'))
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('backup:clean')
     ->weeklyOn(1, config('backup.schedule.clean_at'))
     ->withoutOverlapping()
