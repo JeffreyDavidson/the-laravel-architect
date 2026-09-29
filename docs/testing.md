@@ -51,9 +51,11 @@ The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` t
 | Post | 11 | Newsletter index | 4 |
 | Category | 7 | Newsletter issue | 5 |
 | Tag | 7 | Archive | 5 |
-| Podcast index | 3 | Search | 9 |
+| Podcast index | 3 | Search | 13 |
 | Podcast | 6 | About | 2 |
 | Episode | 11 | Contact | 4 |
+
+Search runs one count query per result group for its per-group pagination, and skips the results query for groups with no matches.
 
 To change a budget intentionally, make the change, run the test, and confirm the new count in the failure message is constant for the page (it must not depend on the amount of content). Update the dataset value and this table in the same commit, and explain the new query in the PR. Never raise a budget to absorb an N+1: eager-load the relation instead.
 

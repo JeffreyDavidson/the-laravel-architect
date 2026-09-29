@@ -3,16 +3,17 @@
 namespace App\ViewModels;
 
 use App\Enums\SearchContentType;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class SearchViewModel
 {
     /**
-     * @param  array<string, array<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
+     * @param  array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
      * @return array{
      *     query: string,
-     *     results: array<string, array<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>,
+     *     results: array<string, LengthAwarePaginator<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>,
      *     resultCount: int,
      *     typeOptions: array<string, string>,
      *     selectedType: string|null,
@@ -27,7 +28,7 @@ class SearchViewModel
         return [
             'query' => $query,
             'results' => $results,
-            'resultCount' => array_sum(array_map(count(...), $results)),
+            'resultCount' => array_sum(array_map(fn (LengthAwarePaginator $group): int => $group->total(), $results)),
             'typeOptions' => SearchContentType::labels(),
             'selectedType' => $selectedType?->value,
             'seoSource' => new SEOData(
@@ -43,28 +44,29 @@ class SearchViewModel
     }
 
     /**
-     * @param  array<string, array<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
-     * @return array<string, array<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>
+     * @param  array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
+     * @return array<string, LengthAwarePaginator<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>
      */
     private function highlightResults(array $results, string $query): array
     {
-        $highlightedResults = [];
-
-        foreach ($results as $type => $items) {
-            $highlightedResults[$type] = array_map(function (array $item) use ($query): array {
+        return array_map(
+            fn (LengthAwarePaginator $group): LengthAwarePaginator => $group->through(function (array $item) use ($query): array {
                 $description = $item['description'] === null
                     ? null
                     : Str::limit(strip_tags($item['description']), 180);
 
                 return [
-                    ...$item,
+                    'title' => $item['title'],
+                    'description' => $item['description'],
                     'highlightedTitle' => $this->highlight($item['title'], $query),
                     'highlightedDescription' => $description === null ? null : $this->highlight($description, $query),
+                    'url' => $item['url'],
+                    'meta' => $item['meta'],
+                    'external' => $item['external'],
                 ];
-            }, $items);
-        }
-
-        return $highlightedResults;
+            }),
+            $results,
+        );
     }
 
     private function highlight(string $value, string $query): string
