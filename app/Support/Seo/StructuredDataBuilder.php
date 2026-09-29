@@ -63,7 +63,7 @@ final readonly class StructuredDataBuilder
         $staticPage = match (true) {
             $routeName === 'home' => ['type' => 'WebPage', 'name' => 'The Laravel Architect', 'url' => $siteUrl],
             $routeName === 'about' => ['type' => 'ProfilePage', 'name' => 'About', 'url' => route('about')],
-            $routeName === 'contact' => ['type' => 'ContactPage', 'name' => 'Contact', 'url' => route('contact')],
+            $routeName === 'contact.create' => ['type' => 'ContactPage', 'name' => 'Contact', 'url' => route('contact.create')],
             $routeName === 'privacy' => ['type' => 'WebPage', 'name' => 'Privacy', 'url' => route('privacy')],
             $routeName === 'uses' => ['type' => 'WebPage', 'name' => 'Uses', 'url' => route('uses')],
             default => null,
@@ -184,8 +184,8 @@ final readonly class StructuredDataBuilder
             $breadcrumbs[] = ['name' => $episode->title, 'url' => route('podcast.episode', [$podcast, $episode])];
         } elseif ($routeName === 'about') {
             $breadcrumbs[] = ['name' => 'About', 'url' => route('about')];
-        } elseif ($routeName === 'contact') {
-            $breadcrumbs[] = ['name' => 'Contact', 'url' => route('contact')];
+        } elseif ($routeName === 'contact.create') {
+            $breadcrumbs[] = ['name' => 'Contact', 'url' => route('contact.create')];
         } elseif ($routeName === 'privacy') {
             $breadcrumbs[] = ['name' => 'Privacy', 'url' => route('privacy')];
         } elseif ($routeName === 'uses') {

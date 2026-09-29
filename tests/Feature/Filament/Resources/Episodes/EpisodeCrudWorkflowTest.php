@@ -60,7 +60,6 @@ it('updates an episode through the authenticated resource form', function () {
             'slug' => 'updated-episode-title',
             'description' => 'Updated description',
             'transcript' => 'Updated transcript content.',
-            'status' => PublishStatus::Published,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -70,7 +69,7 @@ it('updates an episode through the authenticated resource form', function () {
         ->slug->toBe('updated-episode-title')
         ->description->toBe('Updated description')
         ->transcript->toBe('Updated transcript content.')
-        ->status->toBe(PublishStatus::Published);
+        ->status->toBe(PublishStatus::Draft);
 });
 
 it('preserves hosted audio when an uploaded source is present during an edit', function () {

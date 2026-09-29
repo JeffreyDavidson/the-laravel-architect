@@ -17,7 +17,7 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
-it('deletes a post and its featured image through the Filament action', function () {
+it('permanently deletes a trashed post and its featured image through the Filament action', function () {
     Storage::disk('public')->put('posts/featured.png', 'image');
 
     $post = Post::query()->create([
@@ -29,9 +29,11 @@ it('deletes a post and its featured image through the Filament action', function
         'featured_image_path' => 'posts/featured.png',
     ]);
 
-    livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->callAction('delete');
+    $post->delete();
 
-    expect(Post::query()->find($post->id))->toBeNull();
+    livewire(EditPost::class, ['record' => $post->getRouteKey()])
+        ->callAction('forceDelete');
+
+    expect(Post::withTrashed()->find($post->id))->toBeNull();
     Storage::disk('public')->assertMissing('posts/featured.png');
 });

@@ -3,13 +3,10 @@
 namespace App\Actions;
 
 use App\Data\ContactMessageData;
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
+use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\DatabaseQueue;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use LogicException;
 
@@ -23,10 +20,10 @@ final class SendContactMessage
             throw new LogicException('Contact notifications must share the application database.');
         }
 
-        // The inquiry and encrypted jobs share one transaction. Deferring these
-        // inserts until after commit would leave partial submissions on failure.
+        // The inquiry and its email job share one transaction. Deferring the job
+        // insert until after commit could leave an inquiry that is never emailed.
         DB::transaction(function () use ($data): void {
-            ContactInquiry::query()->create([
+            $inquiry = ContactInquiry::query()->create([
                 'name' => $data->name,
                 'email' => $data->email,
                 'type' => $data->type->value,
@@ -35,23 +32,8 @@ final class SendContactMessage
                 'project_title' => $data->projectTitle,
             ]);
 
-            Mail::to(config('mail.contact_to', config('mail.from.address')))->queue(new ContactMessageReceived(
-                senderName: $data->name,
-                senderEmail: $data->email,
-                contactType: $data->type->value,
-                budget: $data->budget?->value,
-                contactMessage: $data->message,
-                projectTitle: $data->projectTitle,
-            )->onConnection('database')
-                ->beforeCommit());
-            Mail::to(new Address($data->email, $data->name))->queue(new ContactMessageConfirmation(
-                senderName: $data->name,
-                contactType: $data->type->value,
-                budget: $data->budget?->value,
-                contactMessage: $data->message,
-                projectTitle: $data->projectTitle,
-            )->onConnection('database')
-                ->beforeCommit());
+            dispatch(new SendContactInquiryEmails($inquiry->id))
+                ->beforeCommit();
         });
     }
 }

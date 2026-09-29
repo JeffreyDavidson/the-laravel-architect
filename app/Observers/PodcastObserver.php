@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Models\Episode;
 use App\Models\Podcast;
 use App\Services\ResponsiveImageLifecycle;
 
@@ -21,7 +22,25 @@ class PodcastObserver
         $this->lifecycle->updated($podcast, 'cover_image_path', 'podcast');
     }
 
-    public function deleted(Podcast $podcast): void
+    /**
+     * Restore the episodes that were trashed together with the podcast, leaving episodes
+     * that were trashed separately before it in the trash.
+     */
+    public function restoring(Podcast $podcast): void
+    {
+        $deletedAt = $podcast->getAttribute('deleted_at');
+
+        if ($deletedAt === null) {
+            return;
+        }
+
+        $podcast->episodes()
+            ->onlyTrashed()
+            ->where('deleted_at', '>=', $deletedAt)
+            ->each(fn (Episode $episode): bool => $episode->restore());
+    }
+
+    public function forceDeleted(Podcast $podcast): void
     {
         $this->lifecycle->deleted($podcast, 'cover_image_path');
     }

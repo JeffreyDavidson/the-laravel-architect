@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Episodes\Schemas;
 
-use App\Enums\PublishStatus;
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishStatusSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
@@ -78,6 +78,13 @@ class EpisodeForm
                             ->directory('episodes/audio')
                             ->acceptedFileTypes(['audio/mpeg', 'audio/wav', 'audio/x-wav'])
                             ->maxSize(256000),
+                        TextInput::make('transistor_url')
+                            ->label('Transistor episode URL')
+                            ->url()
+                            ->maxLength(255)
+                            ->rules(['regex:/\Ahttps:\/\/share\.transistor\.fm\/s\/[a-zA-Z0-9]+\/?\z/'])
+                            ->validationMessages(['regex' => 'Paste the episode share URL, such as https://share.transistor.fm/s/428dcd6b.'])
+                            ->helperText('When set, the public page shows the Transistor player instead of uploaded audio or other embeds.'),
                         TextInput::make('embed_url')
                             ->label('Embed URL')
                             ->url()
@@ -113,10 +120,8 @@ class EpisodeForm
                 Section::make('Publishing')
                     ->schema([
                         SpatieTagsInput::make('tags'),
-                        Select::make('status')
-                            ->options(PublishStatus::labels(includeInReview: false))
-                            ->default(PublishStatus::Draft)
-                            ->required(),
+                        PublishStatusSelect::make('status')
+                            ->withoutReview(),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),
                     ])->columns(3),

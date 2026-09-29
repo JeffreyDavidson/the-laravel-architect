@@ -9,7 +9,7 @@
     ];
 
     $resourceLinks = [
-        ['label' => 'Contact', 'route' => 'contact'],
+        ['label' => 'Contact', 'route' => 'contact.create'],
         ['label' => 'Privacy', 'route' => 'privacy'],
         ['label' => 'RSS Feed', 'url' => '/rss'],
         ['label' => 'Newsletter archive', 'route' => 'newsletter.index'],

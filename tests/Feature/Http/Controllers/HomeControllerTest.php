@@ -1,11 +1,14 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Enums\SocialPlatform;
 use App\Models\Podcast;
 use App\Models\Project;
+use App\Models\SocialProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Tests\Support\SocialProfileFixtures;
 
 pest()->use(RefreshDatabase::class);
 
@@ -83,4 +86,36 @@ it('presents honest inquiry links and one media destination per channel', functi
         ->assertSee('Listen to the podcast')
         ->assertDontSee('Browse the podcast')
         ->assertDontSee('Field notes');
+});
+
+it('renders enabled footer social profiles and hides contact-only and disabled ones', function () {
+    SocialProfile::query()->delete();
+
+    $footerProfile = SocialProfileFixtures::create(SocialPlatform::GitHub, 'https://github.com/footer-only', true, false);
+    $contactProfile = SocialProfileFixtures::create(SocialPlatform::LinkedIn, 'https://linkedin.com/in/contact-only', false, true);
+    SocialProfileFixtures::create(SocialPlatform::Bluesky, 'https://bsky.app/profile/disabled', true, true, false);
+
+    $this->get(route('home'))
+        ->assertSeeHtml($footerProfile->url)
+        ->assertDontSeeHtml($contactProfile->url)
+        ->assertDontSeeHtml('https://bsky.app/profile/disabled');
+});
+
+it('uses the enabled YouTube profile for the homepage channel link', function () {
+    SocialProfile::query()->delete();
+
+    $youtubeProfile = SocialProfileFixtures::create(
+        SocialPlatform::YouTube,
+        'https://youtube.com/@managed-channel',
+        false,
+        false,
+    );
+
+    $this->get(route('home'))
+        ->assertSeeHtml($youtubeProfile->url);
+
+    $youtubeProfile->update(['is_enabled' => false]);
+
+    $this->get(route('home'))
+        ->assertDontSeeHtml($youtubeProfile->url);
 });

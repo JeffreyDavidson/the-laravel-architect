@@ -163,7 +163,7 @@
                 </p>
             </div>
             <a
-                href="{{ route('contact', ['project' => $project->slug]) }}"
+                href="{{ route('contact.create', ['project' => $project->slug]) }}"
                 class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 w-fit shrink-0 rounded-lg px-5 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
             >Discuss a similar project</a>
         </div>

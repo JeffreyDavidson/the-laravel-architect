@@ -5,20 +5,19 @@ use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
 use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
+use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 pest()->use(RefreshDatabase::class);
 
-it('rolls back the inquiry and both notifications when either enqueue fails and allows a clean retry', function (int $failedInsert) {
+it('rolls back the inquiry when its email job cannot be queued and allows a clean retry', function () {
     config()->set('queue.default', 'database');
     $inserts = 0;
-    DB::connection()->beforeExecuting(function (string $query) use (&$inserts, $failedInsert): void {
-        if (str_starts_with($query, 'insert into "jobs"') && ++$inserts === $failedInsert) {
+    DB::connection()->beforeExecuting(function (string $query) use (&$inserts): void {
+        if (str_starts_with($query, 'insert into "jobs"') && ++$inserts === 1) {
             throw new RuntimeException('Synthetic queue failure.');
         }
     });
@@ -34,8 +33,8 @@ it('rolls back the inquiry and both notifications when either enqueue fails and 
         ->handle($data);
 
     $this->assertDatabaseCount('contact_inquiries', 1);
-    $this->assertDatabaseCount('jobs', 2);
-})->with(['owner notification' => 1, 'sender confirmation' => 2]);
+    $this->assertDatabaseCount('jobs', 1);
+});
 
 it('rejects a separate queue database before saving a contact inquiry', function () {
     config()->set([
@@ -50,10 +49,7 @@ it('rejects a separate queue database before saving a contact inquiry', function
     $this->assertDatabaseCount('contact_inquiries', 0);
 });
 
-it('queues the contact message for the site owner and a confirmation for the sender', function () {
-    Mail::fake();
-    config()->set('mail.contact_to', 'owner@example.com');
-
+it('saves the inquiry and queues one email job that carries no contact details', function () {
     app(SendContactMessage::class)
         ->handle(new ContactMessageData(
             name: 'Jane Doe',
@@ -64,29 +60,30 @@ it('queues the contact message for the site owner and a confirmation for the sen
             projectTitle: 'The Laravel Architect',
         ));
 
-    expect(ContactInquiry::query()->sole())
+    $inquiry = ContactInquiry::query()->sole();
+    expect($inquiry)
         ->name->toBe('Jane Doe')
         ->email->toBe('jane@example.com')
+        ->type->toBe('consulting')
+        ->budget->toBe('medium')
         ->message->toBe('Can you help with an audit?')
+        ->project_title->toBe('The Laravel Architect')
         ->status->toBe(ContactInquiryStatus::New);
 
-    Mail::assertQueued(
-        ContactMessageReceived::class,
-        fn (ContactMessageReceived $mail): bool => $mail->hasTo('owner@example.com')
-            && $mail->senderName === 'Jane Doe'
-            && $mail->senderEmail === 'jane@example.com'
-            && $mail->contactType === 'consulting'
-            && $mail->budget === 'medium'
-            && $mail->projectTitle === 'The Laravel Architect'
-            && $mail->contactMessage === 'Can you help with an audit?',
-    );
-    Mail::assertQueued(
-        ContactMessageConfirmation::class,
-        fn (ContactMessageConfirmation $mail): bool => $mail->hasTo('jane@example.com', 'Jane Doe')
-            && $mail->senderName === 'Jane Doe'
-            && $mail->contactType === 'consulting'
-            && $mail->budget === 'medium'
-            && $mail->projectTitle === 'The Laravel Architect'
-            && $mail->contactMessage === 'Can you help with an audit?',
-    );
+    $payload = DB::table('jobs')
+        ->sole()
+        ->payload;
+    if (! is_string($payload)) {
+        throw new RuntimeException('Expected a JSON queue payload.');
+    }
+    $encryptedCommand = data_get(json_decode($payload, true, flags: JSON_THROW_ON_ERROR), 'data.command');
+    if (! is_string($encryptedCommand)) {
+        throw new RuntimeException('Expected an encrypted queued command.');
+    }
+    $command = Crypt::decrypt($encryptedCommand);
+
+    expect($command)
+        ->toBeString()
+        ->toContain(SendContactInquiryEmails::class)
+        ->not->toContain('Jane Doe', 'jane@example.com', 'Can you help with an audit?');
 });

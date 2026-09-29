@@ -25,7 +25,7 @@ class PostObserver
         $this->lifecycle->updated($post, 'featured_image_path', 'post');
     }
 
-    public function deleted(Post $post): void
+    public function forceDeleted(Post $post): void
     {
         $this->lifecycle->deleted($post, 'featured_image_path');
 

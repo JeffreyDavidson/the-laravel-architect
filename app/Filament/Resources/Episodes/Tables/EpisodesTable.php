@@ -10,10 +10,13 @@ use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -51,6 +54,12 @@ class EpisodesTable
                     ->label('Duration')
                     ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
                     ->toggleable(),
+                TextColumn::make('transistor')
+                    ->label('Transistor')
+                    ->state(fn (Episode $record): string => $record->transistorEmbedUrl() === null ? 'Not added' : 'Available')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'Available' ? 'success' : 'gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (PublishStatus $state): string => $state->color()),
@@ -66,6 +75,14 @@ class EpisodesTable
                     ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
                     ->options(PublishStatus::labels(includeInReview: false)),
+                Filter::make('missing_transistor_url')
+                    ->label('Missing Transistor URL')
+                    ->query(fn (Builder $query): Builder => $query->whereIn('episodes.id', Episode::query()
+                        ->published()
+                        ->where(fn (Builder $query): Builder => $query->whereNull('transistor_url')
+                            ->orWhere('transistor_url', ''))
+                        ->select('id'))),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 Action::make('edit')
@@ -80,6 +97,8 @@ class EpisodesTable
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
+                ForceDeleteBulkAction::make(),
+                RestoreBulkAction::make(),
             ])
             ->defaultSort('episode_number', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)

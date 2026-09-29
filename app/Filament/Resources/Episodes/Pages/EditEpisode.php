@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Episodes\Pages;
 
+use App\Filament\Actions\PublishContentAction;
+use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditEpisode extends EditRecord
@@ -16,7 +20,11 @@ class EditEpisode extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PublishContentAction::make(),
+            UnpublishContentAction::make(),
             DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 }

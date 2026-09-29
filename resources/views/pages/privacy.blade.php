@@ -140,7 +140,7 @@
                         subscribers can also use the unsubscribe link in any newsletter. Requests can be made through
                         the
                         <a
-                            href="{{ route('contact') }}"
+                            href="{{ route('contact.create') }}"
                             class="text-brand-600 decoration-brand-300 hover:text-brand-500 dark:text-brand-300 dark:decoration-brand-700 font-medium underline underline-offset-4 transition-colors"
                             >contact form</a
                         >.
@@ -170,7 +170,7 @@
                     <p class="mb-5 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                         Use the contact form for a privacy question or a request about information associated with you.
                     </p>
-                    <x-button :href="route('contact')" class="w-full justify-center">Contact me</x-button>
+                    <x-button :href="route('contact.create')" class="w-full justify-center">Contact me</x-button>
                 </x-card>
             </aside>
         </div>

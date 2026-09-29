@@ -59,7 +59,6 @@ it('updates a project through the resource form', function () {
             'slug' => 'updated-project',
             'description' => 'The updated description.',
             'content' => 'The updated write-up.',
-            'status' => PublishStatus::Published,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -76,6 +75,6 @@ it('updates a project through the resource form', function () {
             'slug' => 'updated-project',
             'description' => 'The updated description.',
             'content' => 'The updated write-up.',
-            'status' => PublishStatus::Published,
+            'status' => PublishStatus::Draft,
         ]);
 });

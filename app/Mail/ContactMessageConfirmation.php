@@ -4,33 +4,49 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\ContactInquiry;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Headers;
 
-class ContactMessageConfirmation extends Mailable implements ShouldBeEncrypted, ShouldQueue
+/**
+ * Confirms a contact inquiry to its sender. Sent by SendContactInquiryEmails, which
+ * records the send so retries never deliver it twice.
+ */
+class ContactMessageConfirmation extends Mailable
 {
-    use Queueable, SerializesModels;
-
-    public function __construct(
-        public readonly string $senderName,
-        public readonly string $contactType,
-        public readonly ?string $budget,
-        public readonly string $contactMessage,
-        public readonly ?string $projectTitle = null,
-    ) {}
+    public function __construct(public readonly ContactInquiry $inquiry) {}
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Got your message, thanks {$this->senderName}!");
+        return new Envelope(subject: "Got your message, thanks {$this->inquiry->name}!");
     }
 
     public function content(): Content
     {
-        return new Content(text: 'mail.contact-message-confirmation');
+        return new Content(
+            text: 'mail.contact-message-confirmation',
+            with: [
+                'senderName' => $this->inquiry->name,
+                'contactType' => $this->inquiry->type,
+                'budget' => $this->inquiry->budget,
+                'contactMessage' => $this->inquiry->message,
+                'projectTitle' => $this->inquiry->project_title,
+            ],
+        );
+    }
+
+    public function headers(): Headers
+    {
+        $fingerprint = hash('sha256', implode('|', [
+            config()->string('app.url'),
+            $this->inquiry->id,
+            $this->inquiry->created_at?->toISOString(),
+        ]));
+
+        return new Headers(text: [
+            'Resend-Idempotency-Key' => "tla-contact-{$fingerprint}-confirmation",
+        ]);
     }
 }

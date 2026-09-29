@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
-use App\Enums\PublishStatus;
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishStatusSelect;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
@@ -77,10 +78,7 @@ class PostForm
 
                 Section::make('Publishing')
                     ->schema([
-                        Select::make('status')
-                            ->options(PublishStatus::labels())
-                            ->default(PublishStatus::Draft)
-                            ->required(),
+                        PublishStatusSelect::make('status'),
                         DateTimePicker::make('published_at')
                             ->label('Publish Date'),
                         Hidden::make('user_id')
@@ -97,6 +95,24 @@ class PostForm
                     ])
                     ->collapsible()
                     ->collapsed(fn (?Post $record): bool => $record?->review_notes === null),
+
+                Section::make('Review & Source')
+                    ->description('Optional. Track the official source this post relies on so it is flagged for review as it ages.')
+                    ->schema([
+                        TextInput::make('source_url')
+                            ->label('Official source')
+                            ->url()
+                            ->maxLength(255)
+                            ->required(fn (Get $get): bool => filled($get('last_reviewed_at')))
+                            ->helperText('Link to the documentation or primary source this post relies on.'),
+                        DatePicker::make('last_reviewed_at')
+                            ->label('Last reviewed')
+                            ->required(fn (Get $get): bool => filled($get('source_url')))
+                            ->helperText(fn (): string => 'Sourced posts are flagged after '.config()->integer('content.post_review_interval_days').' days.'),
+                    ])
+                    ->columns(2)
+                    ->collapsible()
+                    ->collapsed(fn (?Post $record): bool => blank($record?->getAttribute('source_url'))),
 
                 Section::make('SEO')
                     ->schema([

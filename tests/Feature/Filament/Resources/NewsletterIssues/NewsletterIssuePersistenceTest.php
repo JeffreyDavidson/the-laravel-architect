@@ -46,7 +46,7 @@ it('updates a newsletter issue through the Filament form', function () {
             'title' => 'Updated issue',
             'slug' => 'updated-issue',
             'content' => 'Updated content.',
-            'status' => PublishStatus::Published,
+            'status' => PublishStatus::InReview,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -54,5 +54,5 @@ it('updates a newsletter issue through the Filament form', function () {
     expect($issue->refresh())
         ->title->toBe('Updated issue')
         ->content->toBe('Updated content.')
-        ->status->toBe(PublishStatus::Published);
+        ->status->toBe(PublishStatus::InReview);
 });

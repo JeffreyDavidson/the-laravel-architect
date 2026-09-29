@@ -57,6 +57,29 @@ final readonly class ContentReadiness
         return $missing === [] ? 'All public details are complete.' : 'Missing: '.implode(', ', $missing);
     }
 
+    /**
+     * Labels of the required-to-publish checks that are still incomplete. The
+     * rest of the checklist is advisory and never blocks publishing.
+     *
+     * @return list<string>
+     */
+    public function publishingIssues(): array
+    {
+        $checks = $this->checks();
+        $required = match (true) {
+            $this->content instanceof Post => ['content', 'excerpt', 'category'],
+            $this->content instanceof Project => ['description', 'case_study'],
+            $this->content instanceof Episode => ['podcast', 'description', 'episode_media'],
+            $this->content instanceof NewsletterIssue => ['content'],
+            default => [],
+        };
+
+        return array_values(array_map(
+            fn (string $key): string => $checks[$key]['label'],
+            array_filter($required, fn (string $key): bool => ! $checks[$key]['complete']),
+        ));
+    }
+
     public function checkComplete(string $key): bool
     {
         return $this->checks()[$key]['complete'] ?? false;
@@ -179,6 +202,7 @@ final readonly class ContentReadiness
                 'complete' => filled($episode->audio_url)
                     || filled($episode->audio_path)
                     || $episode->publicEmbedUrl() !== null
+                    || $episode->transistorEmbedUrl() !== null
                     || filled($episode->youtube_url),
             ],
             'show_notes' => [

@@ -7,7 +7,7 @@ use App\Models\Podcast;
 use App\Queries\EpisodeNavigationQuery;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PodcastEpisodeViewModel
+class EpisodeShowViewModel
 {
     public function __construct(private readonly EpisodeNavigationQuery $episodeNavigationQuery) {}
 
@@ -17,15 +17,18 @@ class PodcastEpisodeViewModel
         $episode->load(['podcast', 'tags']);
 
         $navigation = $this->episodeNavigationQuery->get($podcast, $episode);
+        $transistorEmbedUrl = $episode->transistorEmbedUrl();
 
         return [
             'podcast' => $podcast,
             'episode' => $episode,
             'nextEpisode' => $navigation['next'],
             'prevEpisode' => $navigation['previous'],
-            'audioUrl' => $episode->publicAudioUrl(),
-            'embedUrl' => $episode->publicEmbedUrl(),
-            'embedLink' => $episode->publicEmbedLink(),
+            // A Transistor player replaces the uploaded-audio player and the Spotify/Apple
+            // embed and link; those fields stay stored until the backfill is confirmed.
+            'audioUrl' => $transistorEmbedUrl === null ? $episode->publicAudioUrl() : null,
+            'embedUrl' => $transistorEmbedUrl ?? $episode->publicEmbedUrl(),
+            'embedLink' => $transistorEmbedUrl === null ? $episode->publicEmbedLink() : null,
             'seoSource' => $episode,
         ];
     }

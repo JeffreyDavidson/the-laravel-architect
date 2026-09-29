@@ -51,9 +51,11 @@ The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` t
 | Post | 11 | Newsletter index | 4 |
 | Category | 7 | Newsletter issue | 5 |
 | Tag | 7 | Archive | 5 |
-| Podcast index | 3 | Search | 9 |
+| Podcast index | 3 | Search | 13 |
 | Podcast | 6 | About | 2 |
 | Episode | 11 | Contact | 4 |
+
+Search runs one count query per result group for its per-group pagination, and skips the results query for groups with no matches.
 
 To change a budget intentionally, make the change, run the test, and confirm the new count in the failure message is constant for the page (it must not depend on the amount of content). Update the dataset value and this table in the same commit, and explain the new query in the PR. Never raise a budget to absorb an N+1: eager-load the relation instead.
 
@@ -65,7 +67,7 @@ Run `npm run test:deployment` with Node 22 to test the deployment helpers and th
 
 Staging must use the combined `deploy` operation: it validates the exact Forge target before making requests and requires a different deployment ID even when redeploying the same commit. Regression coverage includes wrong-site rejection, same-revision timeout, and the workflow's use of that guarded entry point.
 
-Contact integration tests use the real test database queue and inject failure at each notification insert. They verify that no inquiry or job remains after failure and that a retry creates exactly one inquiry and two jobs. Publication tests cover past, current, future, and missing dates, including dashboard counts and linked results. Admin browser tests exercise appearance controls, hit-test the open account menu against underlying content, and check the collapsed create action's alignment and navigation.
+Contact integration tests use the real test database queue and inject failure at the email job insert. They verify that no inquiry or job remains after failure and that a retry creates exactly one inquiry and one job. Job tests cover per-email stamps, retrying only the failed email, cancelled sends, the 23-hour manual-review cutoff and stable idempotency keys. Publication tests cover past, current, future, and missing dates, including dashboard counts and linked results. Admin browser tests exercise appearance controls, hit-test the open account menu against underlying content, and check the collapsed create action's alignment and navigation.
 
 Keep command-level coverage for credential forwarding, GET requests, missing credentials, login redirects, HTTP errors, curl failures, exit codes, and secret-safe output. Helper-only tests cannot catch argument mismatches in the command dispatcher. A successful preflight requires HTTP 200; it does not replace the deployed-revision verification or live staging smoke checks.
 

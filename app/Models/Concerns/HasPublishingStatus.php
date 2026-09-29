@@ -3,6 +3,7 @@
 namespace App\Models\Concerns;
 
 use App\Enums\PublishStatus;
+use App\Support\Content\ContentReadiness;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -36,6 +37,46 @@ trait HasPublishingStatus
 
         return in_array($status, static::publishingStatuses(), true)
             && $this->publicationDateHasArrived();
+    }
+
+    public function isScheduled(): bool
+    {
+        $publishedAt = $this->publishedAt();
+
+        return in_array($this->publishStatus(), static::publishingStatuses(), true)
+            && $publishedAt !== null
+            && $publishedAt->isFuture();
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function publishingIssues(): array
+    {
+        return new ContentReadiness($this)->publishingIssues();
+    }
+
+    public function publish(): void
+    {
+        $configuration = static::publishingStatusConfiguration();
+
+        if ($configuration->publishedAt !== null && $this->publishedAt() === null) {
+            $this->setAttribute($configuration->publishedAt, now());
+        }
+
+        $publishedAt = $this->publishedAt();
+        $status = $publishedAt?->isFuture() === true
+            ? PublishStatus::Scheduled
+            : PublishStatus::Published;
+
+        $this->setAttribute($this->publishStatusColumn(), $status);
+        $this->save();
+    }
+
+    public function unpublish(): void
+    {
+        $this->setAttribute($this->publishStatusColumn(), PublishStatus::Draft);
+        $this->save();
     }
 
     /** @param Builder<static> $query */
@@ -76,6 +117,12 @@ trait HasPublishingStatus
         }
 
         return $status;
+    }
+
+    private function publishStatusColumn(): string
+    {
+        return static::publishingStatusConfiguration()->status
+            ?? throw new \UnexpectedValueException(static::class.' has no publishing status column.');
     }
 
     /** @return list<PublishStatus> */

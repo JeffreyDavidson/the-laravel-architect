@@ -16,7 +16,7 @@
                 <p class="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
                     I help teams build Laravel applications, improve existing code, and release changes with confidence.
                 </p>
-                <x-button href="{{ route('contact') }}" class="mt-8 min-h-11 gap-3 px-6 py-3">
+                <x-button href="{{ route('contact.create') }}" class="mt-8 min-h-11 gap-3 px-6 py-3">
                     Discuss your project
                     <x-heroicon-o-arrow-long-right class="size-5" aria-hidden="true" />
                 </x-button>
@@ -147,7 +147,7 @@
             </h2>
             <p class="mt-3 text-lg text-gray-600 dark:text-gray-300">Let’s talk about where I can help.</p>
         </div>
-        <x-button href="{{ route('contact') }}" class="min-h-11 shrink-0 gap-3 px-6 py-3"
+        <x-button href="{{ route('contact.create') }}" class="min-h-11 shrink-0 gap-3 px-6 py-3"
             >Discuss your project <x-heroicon-o-arrow-long-right class="size-5" aria-hidden="true"
         /></x-button>
     </section>

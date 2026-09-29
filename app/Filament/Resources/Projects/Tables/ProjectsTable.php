@@ -11,11 +11,14 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -87,6 +90,7 @@ class ProjectsTable
                     ->query(function (Builder $query, array $data, ProjectReadinessQuery $readinessQuery): void {
                         $readinessQuery->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
                     }),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -99,6 +103,8 @@ class ProjectsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('sort_order')

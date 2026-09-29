@@ -143,3 +143,55 @@ it('reports complete public details for each content type that supports readines
         expect(new ContentReadiness($record)->isReady())->toBeTrue();
     }
 });
+
+it('reports the missing public project details', function () {
+    $project = Project::query()->create([
+        'title' => 'Incomplete project',
+        'slug' => 'incomplete-project',
+        'description' => 'A project description.',
+    ]);
+
+    $readiness = new ContentReadiness($project);
+
+    expect($readiness->isReady())->toBeFalse()
+        ->and($readiness->label())
+        ->toBe('Needs attention')
+        ->and($readiness->progress())
+        ->toBe('1/6 complete')
+        ->and($readiness->missingSummary())
+        ->toBe('Missing: Case study, Featured image, Project link, Tech stack, Tags');
+});
+
+it('reports a project as ready when all public details are present', function () {
+    $project = Project::query()->create([
+        'title' => 'Complete project',
+        'slug' => 'complete-project',
+        'description' => 'A project description.',
+        'content' => 'A complete case study.',
+        'featured_image_path' => 'projects/complete.webp',
+        'url' => 'https://example.com',
+        'tech_stack' => ['Laravel', 'Filament'],
+    ]);
+    $project->attachTag(Tag::query()->create([
+        'name' => ['en' => 'Laravel'],
+        'slug' => ['en' => 'laravel'],
+    ]));
+
+    $project->load('tags');
+    $readiness = new ContentReadiness($project);
+
+    expect($readiness->isReady())->toBeTrue()
+        ->and($readiness->label())
+        ->toBe('Ready')
+        ->and($readiness->progress())
+        ->toBe('6/6 complete')
+        ->and($readiness->missingSummary())
+        ->toBe('All public details are complete.');
+});
+
+it('counts a Transistor episode URL as episode media', function () {
+    $episode = new Episode(['transistor_url' => 'https://share.transistor.fm/s/428dcd6b']);
+
+    expect(new ContentReadiness($episode)->checkComplete('episode_media'))
+        ->toBeTrue();
+});

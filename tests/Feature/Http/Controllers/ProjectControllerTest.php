@@ -51,7 +51,7 @@ it('offers a contact path when no published projects are available', function ()
 
     $response->assertOk()
         ->assertSee('Project details aren’t available here yet.')
-        ->assertSeeHtml(route('contact'))
+        ->assertSeeHtml(route('contact.create'))
         ->assertDontSeeHtml('data-project-entry')
         ->assertDontSeeHtml('featured-projects-heading')
         ->assertDontSeeHtml('more-projects-heading');

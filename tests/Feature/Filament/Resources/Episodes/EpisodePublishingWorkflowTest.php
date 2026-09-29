@@ -32,6 +32,7 @@ function episodeForPublishingWorkflow(PublishStatus $status = PublishStatus::Dra
         'episode_number' => 1,
         'season_number' => 1,
         'description' => 'Episode description.',
+        'audio_url' => 'https://example.com/episode.mp3',
         'status' => $status,
         'published_at' => $publishedAt,
     ]);
@@ -41,12 +42,8 @@ it('publishes an episode through Filament and exposes it publicly', function () 
     $episode = episodeForPublishingWorkflow();
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
-        ->fillForm([
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subMinute(),
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('publish')
+        ->assertNotified('Episode published');
 
     $episode->refresh();
 
@@ -58,16 +55,12 @@ it('publishes an episode through Filament and exposes it publicly', function () 
         ->assertSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });
 
-it('hides an episode again when Filament changes it back to draft', function () {
+it('hides an episode again when Filament unpublishes it', function () {
     $episode = episodeForPublishingWorkflow(PublishStatus::Published, now()->subMinute());
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
-        ->fillForm([
-            'status' => PublishStatus::Draft,
-            'published_at' => null,
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('unpublish')
+        ->assertNotified('Episode unpublished');
 
     $episode->refresh();
 
@@ -80,20 +73,15 @@ it('hides an episode again when Filament changes it back to draft', function () 
 });
 
 it('keeps an episode hidden while its published date is scheduled in the future', function () {
-    $episode = episodeForPublishingWorkflow();
-    $publishedAt = now()->addDay();
+    $episode = episodeForPublishingWorkflow(publishedAt: now()->addDay());
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
-        ->fillForm([
-            'status' => PublishStatus::Published,
-            'published_at' => $publishedAt,
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->callAction('publish')
+        ->assertNotified('Episode published');
 
     $episode->refresh();
 
-    expect($episode->status)->toBe(PublishStatus::Published)
+    expect($episode->status)->toBe(PublishStatus::Scheduled)
         ->and($episode->published_at)
         ->not->toBeNull()
         ->and(Date::parse($episode->published_at)->isFuture())

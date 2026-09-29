@@ -80,7 +80,7 @@
 
                 <div class="mt-9 flex flex-wrap gap-3">
                     <x-button
-                        href="{{ route('contact') }}"
+                        href="{{ route('contact.create') }}"
                         class="focus-visible:outline-brand-200 min-h-11 rounded-lg border border-transparent px-[1.15rem] py-[0.7rem] text-[0.9375rem] font-semibold focus-visible:outline-offset-3"
                     >Discuss a Project</x-button>
                     <a
@@ -350,7 +350,7 @@
             </p>
 
             <div class="flex flex-wrap justify-center gap-4">
-                <x-button href="{{ route('contact') }}" size="lg" class="group font-semibold">
+                <x-button href="{{ route('contact.create') }}" size="lg" class="group font-semibold">
                     Discuss a Project
                     <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </x-button>

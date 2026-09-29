@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
+use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
+use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
-use App\Models\Contracts\Publishable;
 use App\Observers\ProjectObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
-use Spatie\Tags\HasTags;
 
 #[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
 #[ObservedBy(ProjectObserver::class)]
@@ -36,8 +37,9 @@ class Project extends Model implements Publishable
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
-    use HasTags;
+    use HasTagsUntilForceDeleted;
     use ManagesStoredMedia;
+    use SoftDeletes;
     use TracksActivity;
 
     protected function casts(): array

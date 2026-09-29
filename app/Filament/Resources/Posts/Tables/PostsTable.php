@@ -3,15 +3,22 @@
 namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
+use App\Enums\SourceReviewStatus;
 use App\Models\Post;
 use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -54,6 +61,17 @@ class PostsTable
                     ->dateTime('M j, Y')
                     ->placeholder('Not published')
                     ->sortable(),
+                TextColumn::make('source_review_status')
+                    ->label('Source review')
+                    ->state(fn (Post $record): SourceReviewStatus => $record->sourceReviewStatus())
+                    ->badge()
+                    ->toggleable(),
+                TextColumn::make('last_reviewed_at')
+                    ->label('Reviewed')
+                    ->date()
+                    ->sortable()
+                    ->placeholder('Not tracked')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -72,6 +90,12 @@ class PostsTable
                     ->query(self::filterPublication(...)),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
+                Filter::make('review_due')
+                    ->label('Source review due')
+                    ->query(fn (Builder $query): Builder => $query->whereIn('posts.id', Post::query()
+                        ->reviewDue()
+                        ->select('id'))),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -82,6 +106,13 @@ class PostsTable
                         ? route('blog.show', $record)
                         : $previewUrlGenerator->for($record))
                     ->openUrlInNewTab(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedDocumentText)

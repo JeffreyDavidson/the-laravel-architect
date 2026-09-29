@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\TracksActivity;
-use App\Models\Contracts\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -30,6 +31,7 @@ class NewsletterIssue extends Model implements Publishable
     use DeletesOwnedContent;
     use HasPublishingStatus;
     use HasSEO;
+    use SoftDeletes;
     use TracksActivity;
 
     protected function casts(): array

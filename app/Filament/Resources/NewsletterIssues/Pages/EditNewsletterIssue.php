@@ -6,12 +6,16 @@ namespace App\Filament\Resources\NewsletterIssues\Pages;
 
 use App\Actions\SendNewsletterIssue;
 use App\Actions\SendNewsletterIssueTestEmail;
+use App\Filament\Actions\PublishContentAction;
+use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
@@ -48,6 +52,8 @@ class EditNewsletterIssue extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PublishContentAction::make(),
+            UnpublishContentAction::make(),
             Action::make('sendTestEmail')
                 ->label('Send test email')
                 ->icon(Heroicon::OutlinedEnvelope)
@@ -87,6 +93,8 @@ class EditNewsletterIssue extends EditRecord
                         ->send();
                 }),
             DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
         ];
     }
 

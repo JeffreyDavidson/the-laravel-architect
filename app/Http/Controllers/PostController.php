@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BlogIndexRequest;
 use App\Models\Post;
 use App\Queries\BlogIndexQuery;
-use App\ViewModels\BlogIndexViewModel;
+use App\ViewModels\PostIndexViewModel;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Contracts\View\View;
 
@@ -14,7 +14,7 @@ class PostController
     public function index(
         BlogIndexRequest $request,
         BlogIndexQuery $blogIndexQuery,
-        BlogIndexViewModel $blogIndexViewModel,
+        PostIndexViewModel $blogIndexViewModel,
     ): View {
         $filters = $request->validated();
         $query = is_string($filters['q'] ?? null) ? $filters['q'] : '';
