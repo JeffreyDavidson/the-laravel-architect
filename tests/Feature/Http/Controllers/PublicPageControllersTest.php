@@ -336,6 +336,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
         'episode_number' => 12,
         'description' => 'A practical discussion about application boundaries.',
         'duration_seconds' => 3725,
+        'audio_url' => 'https://example.com/legacy-audio.mp3',
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);
@@ -371,7 +372,9 @@ it('renders canonical structured data for podcasts and episodes', function () {
                 '@type' => 'PodcastSeries',
                 '@id' => route('podcast.show', $podcast).'#podcast',
             ],
-        ]);
+        ])
+        ->and($podcastEpisode)
+        ->not->toHaveKey('associatedMedia');
 });
 
 it('renders canonical structured data for project case studies', function () {
@@ -912,48 +915,6 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertSeeHtml('[--dur:0.7s]')
         ->assertDontSeeHtml('style="--dur:')
         ->assertDontSeeHtml('<style>');
-});
-
-it('renders keyboard accessible podcast audio controls', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Accessible Audio',
-        'slug' => 'accessible-audio',
-        'description' => 'An episode with accessible playback controls.',
-        'audio_url' => 'https://example.com/accessible-audio.mp3',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-    Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Earlier Episode',
-        'slug' => 'earlier-episode',
-        'description' => 'An earlier published episode.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDays(2),
-    ]);
-
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertSeeHtml('data-audio-player')
-        ->assertSeeHtml('data-audio-play')
-        ->assertSeeHtml('data-audio-speed')
-        ->assertSeeHtml('aria-label="Seek episode"')
-        ->assertSeeHtml('aria-label="Skip back 15 seconds"')
-        ->assertSeeHtml('aria-label="Skip forward 30 seconds"')
-        ->assertSeeHtml('aria-label="Play episode"')
-        ->assertSeeHtml('data-audio-progress')
-        ->assertSeeHtml('[--arrow-dir:-4px]')
-        ->assertDontSeeHtml('style="width: 0;"')
-        ->assertDontSeeHtml('style="--arrow-dir:')
-        ->assertSeeHtml('x-data="siteHeader"')
-        ->assertDontSeeHtml('@click=');
 });
 
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {

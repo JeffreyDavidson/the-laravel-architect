@@ -32,7 +32,7 @@ function episodeForPublishingWorkflow(PublishStatus $status = PublishStatus::Dra
         'episode_number' => 1,
         'season_number' => 1,
         'description' => 'Episode description.',
-        'audio_url' => 'https://example.com/episode.mp3',
+        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
         'status' => $status,
         'published_at' => $publishedAt,
     ]);

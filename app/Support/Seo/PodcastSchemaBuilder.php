@@ -78,13 +78,6 @@ final class PodcastSchemaBuilder
             $podcastEpisode['duration'] = $this->isoDuration($episode->duration_seconds);
         }
 
-        if ($episode->publicAudioUrl()) {
-            $podcastEpisode['associatedMedia'] = [
-                '@type' => 'MediaObject',
-                'contentUrl' => $episode->publicAudioUrl(),
-            ];
-        }
-
         $schemas[] = $podcastEpisode;
     }
 

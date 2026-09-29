@@ -34,8 +34,6 @@ it('rejects episode text inputs longer than their database columns', function (s
     expect(Episode::query()->exists())->toBeFalse();
 })->with([
     'title',
-    'audio_url',
-    'embed_url',
     'youtube_url',
     'guest_name',
     'guest_title',

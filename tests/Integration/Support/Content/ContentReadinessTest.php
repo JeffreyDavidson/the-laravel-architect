@@ -15,14 +15,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
-it('does not consider unsupported embeds playable media', function (string $url, bool $complete) {
-    $episode = Episode::query()->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description', 'embed_url' => $url]);
+it('counts only a Transistor share link or a YouTube link as episode media', function (array $attributes, bool $complete) {
+    /** @var array<string, mixed> $attributes */
+    $episode = new Episode($attributes);
 
     expect(new ContentReadiness($episode)->checkComplete('episode_media'))->toBe($complete);
 })->with([
-    'unsupported host' => ['https://example.com/embed/episode', false],
-    'insecure embed' => ['http://open.spotify.com/embed/episode/123', false],
-    'supported embed' => ['https://open.spotify.com/embed/episode/123', true],
+    'Transistor share link' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], true],
+    'YouTube link' => [['youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk'], true],
+    'a Transistor URL that is not a share link' => [['transistor_url' => 'https://example.com/s/428dcd6b'], false],
+    'retired hosted audio' => [['audio_url' => 'https://example.com/audio.mp3'], false],
+    'retired uploaded audio' => [['audio_path' => 'episodes/audio/a.mp3'], false],
+    'retired Spotify embed' => [['embed_url' => 'https://open.spotify.com/embed/episode/123'], false],
+    'nothing' => [[], false],
 ]);
 
 it('reports actionable missing details for every supported content type', function () {
@@ -117,7 +122,7 @@ it('reports complete public details for each content type that supports readines
         'slug' => 'complete-episode',
         'description' => 'Description.',
         'show_notes' => 'Show notes.',
-        'audio_url' => 'https://example.com/audio.mp3',
+        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
         'featured_image_path' => 'episodes/complete.webp',
     ]);
     $episode->attachTag($tag);

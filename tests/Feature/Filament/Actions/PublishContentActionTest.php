@@ -47,7 +47,7 @@ it('refuses to publish content that is missing required details', function (stri
 })->with([
     'post without excerpt' => ['post', 'excerpt', 'Excerpt'],
     'project without case study' => ['project', 'content', 'Case study'],
-    'episode without media' => ['episode', 'audio_url', 'Episode media'],
+    'episode without media' => ['episode', 'transistor_url', 'Episode media'],
     'newsletter issue without content' => ['newsletter issue', 'content', 'Content'],
 ]);
 

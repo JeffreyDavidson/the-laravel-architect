@@ -21,7 +21,7 @@ pest()->use(RefreshDatabase::class);
 it('includes audio-only episodes in the queue until show notes are provided', function () {
     Episode::query()->create([
         'title' => 'Needs show notes', 'slug' => 'needs-show-notes', 'description' => 'Description',
-        'audio_url' => 'https://example.test/episode.mp3',
+        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
     ]);
 
     livewire(ContentReadinessWidget::class)->assertViewHas('items', function (array $items): bool {

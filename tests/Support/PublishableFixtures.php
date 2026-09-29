@@ -55,7 +55,7 @@ class PublishableFixtures
                 'title' => 'Ready episode',
                 'slug' => 'ready-episode',
                 'description' => 'Description.',
-                'audio_url' => 'https://example.com/audio.mp3',
+                'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
                 'status' => PublishStatus::Draft,
                 ...$attributes,
             ]),
@@ -112,7 +112,7 @@ class PublishableFixtures
         return match ($type) {
             'post' => ['content' => '', 'excerpt' => '', 'category_id' => null],
             'project' => ['description' => '', 'content' => ''],
-            'episode' => ['podcast_id' => null, 'description' => '', 'audio_url' => null],
+            'episode' => ['podcast_id' => null, 'description' => '', 'transistor_url' => null],
             'newsletter issue' => ['content' => ''],
             default => throw new InvalidArgumentException("Unknown publishable type [{$type}]."),
         };

@@ -4,7 +4,6 @@ use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\get;
 
@@ -35,77 +34,51 @@ function createPublicEpisode(array $attributes = []): array
     return [$podcast, $episode];
 }
 
-it('renders uploaded audio and gives it precedence over hosted audio', function () {
-    Storage::fake('public');
-    Storage::disk('public')->put('episodes/audio/uploaded.mp3', 'audio');
-    [$podcast, $episode] = createPublicEpisode([
-        'audio_path' => 'episodes/audio/uploaded.mp3',
-        'audio_url' => 'https://example.com/hosted.mp3',
-    ]);
-
-    $response = $this->get(route('podcast.episode', [$podcast, $episode]));
-
-    $response->assertOk()
-        ->assertSeeHtml(Storage::disk('public')->url('episodes/audio/uploaded.mp3'))
-        ->assertDontSeeHtml('https://example.com/hosted.mp3');
-});
-
-it('renders hosted audio when no upload exists', function () {
-    [$podcast, $episode] = createPublicEpisode([
-        'audio_url' => 'https://cdn.example.com/hosted.mp3',
-    ]);
-
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertSeeHtml('https://cdn.example.com/hosted.mp3');
-});
-
-it('renders only supported podcast embed URLs in an iframe', function () {
-    [$podcast, $episode] = createPublicEpisode([
-        'embed_url' => 'https://open.spotify.com/embed/episode/abc123',
-    ]);
-
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertSeeHtml('src="https://open.spotify.com/embed/episode/abc123"')
-        ->assertSeeHtml('title="Episode media coverage podcast player"');
-});
-
-it('does not render unsupported embed URLs', function () {
-    [$podcast, $episode] = createPublicEpisode([
-        'embed_url' => 'https://malicious.example/embed/episode/abc123',
-    ]);
-
-    $this->get(route('podcast.episode', [$podcast, $episode]))
-        ->assertOk()
-        ->assertDontSeeHtml('malicious.example')
-        ->assertDontSeeHtml('<iframe');
-});
-
-it('prefers the Transistor player over uploaded audio and other embeds', function () {
-    Storage::fake('public');
-    Storage::disk('public')->put('episodes/audio/uploaded.mp3', 'audio');
+it('renders the Transistor player for a valid share URL', function () {
     [$podcast, $episode] = createPublicEpisode([
         'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
-        'audio_path' => 'episodes/audio/uploaded.mp3',
-        'embed_url' => 'https://open.spotify.com/embed/episode/123',
     ]);
 
     get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSeeHtml('src="https://share.transistor.fm/e/428dcd6b"')
-        ->assertDontSeeHtml('data-audio-player')
-        ->assertDontSeeHtml('https://open.spotify.com/embed/episode/123');
+        ->assertSeeHtml('title="Episode media coverage podcast player"');
 });
 
-it('keeps the current player when the Transistor URL is not a share URL', function () {
+it('renders no audio player or Spotify and Apple embed even when an episode still stores them', function (array $legacy) {
+    /** @var array<string, mixed> $legacy */
+    [$podcast, $episode] = createPublicEpisode($legacy);
+
+    get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertDontSeeHtml('<audio')
+        ->assertDontSeeHtml('data-audio-player')
+        ->assertDontSeeHtml('<iframe')
+        ->assertDontSeeHtml('open.spotify.com')
+        ->assertDontSeeHtml('Podcast platform');
+})->with([
+    'uploaded audio' => [['audio_path' => 'episodes/audio/uploaded.mp3']],
+    'hosted audio' => [['audio_url' => 'https://cdn.example.com/hosted.mp3']],
+    'Spotify embed' => [['embed_url' => 'https://open.spotify.com/embed/episode/abc123']],
+]);
+
+it('renders no player when the Transistor URL is not a share URL', function () {
     [$podcast, $episode] = createPublicEpisode([
         'transistor_url' => 'https://example.com/s/428dcd6b',
-        'audio_url' => 'https://cdn.example.com/hosted.mp3',
     ]);
 
     get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
-        ->assertSeeHtml('https://cdn.example.com/hosted.mp3')
-        ->assertDontSeeHtml('share.transistor.fm');
+        ->assertDontSeeHtml('share.transistor.fm')
+        ->assertDontSeeHtml('<iframe');
+});
+
+it('keeps the YouTube link when an episode has one', function () {
+    [$podcast, $episode] = createPublicEpisode([
+        'youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk',
+    ]);
+
+    get(route('podcast.episode', [$podcast, $episode]))
+        ->assertOk()
+        ->assertSee('YouTube');
 });

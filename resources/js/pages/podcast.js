@@ -1,5 +1,4 @@
 import { copyText } from '../utils/clipboard';
-import { registerAudioPlayer } from './audio-player';
 
 function transcriptSlug(value) {
     return (
@@ -163,7 +162,6 @@ function initializeTranscript(details) {
 }
 
 export function initializePodcast(Alpine) {
-    registerAudioPlayer(Alpine);
     Alpine.data('youtubePlayer', () => ({
         loaded: false,
         load() {
