@@ -32,7 +32,7 @@ class PublishableFixtures
                 'excerpt' => 'Summary.',
                 'content' => 'Content.',
                 'category_id' => Category::query()
-                    ->create(['name' => 'Laravel', 'slug' => 'laravel'])
+                    ->firstOrCreate(['slug' => 'laravel'], ['name' => 'Laravel'])
                     ->id,
                 'user_id' => User::factory()
                     ->create()
@@ -68,6 +68,22 @@ class PublishableFixtures
             ]),
             default => throw new InvalidArgumentException("Unknown publishable type [{$type}]."),
         };
+    }
+
+    /**
+     * A ready-to-publish post draft.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    public static function readyPost(array $attributes = []): Post
+    {
+        $post = self::ready('post', $attributes);
+
+        if (! $post instanceof Post) {
+            throw new InvalidArgumentException('The post fixture did not create a post.');
+        }
+
+        return $post;
     }
 
     /**
