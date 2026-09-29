@@ -52,6 +52,31 @@ class Episode extends Model implements Publishable
         ];
     }
 
+    /**
+     * The retired media this episode still carries (uploaded audio, hosted audio, or a
+     * Spotify/Apple embed), so editors can move it to Transistor before it is removed.
+     *
+     * @return list<string>
+     */
+    public function legacyMedia(): array
+    {
+        $media = [];
+
+        if (filled($this->getAttribute('audio_path'))) {
+            $media[] = 'Uploaded audio';
+        }
+
+        if (filled($this->getAttribute('audio_url'))) {
+            $media[] = 'Hosted audio';
+        }
+
+        if (filled($this->getAttribute('embed_url'))) {
+            $media[] = 'Spotify/Apple embed';
+        }
+
+        return $media;
+    }
+
     public function publicAudioUrl(): ?string
     {
         $path = $this->getRawOriginal('audio_path');
