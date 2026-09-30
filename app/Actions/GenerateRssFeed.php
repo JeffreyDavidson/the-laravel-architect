@@ -24,9 +24,9 @@ final class GenerateRssFeed
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
         $xml .= "<channel>\n";
-        $xml .= "<title>The Laravel Architect</title>\n";
+        $xml .= '<title>'.$this->escape(config()->string('seo.site_name'))."</title>\n";
         $xml .= '<link>'.$this->escape($siteUrl)."</link>\n";
-        $xml .= "<description>Deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.</description>\n";
+        $xml .= '<description>'.$this->escape(config()->string('seo.feed_description'))."</description>\n";
         $xml .= "<language>en-us</language>\n";
         $xml .= "<lastBuildDate>{$lastBuild}</lastBuildDate>\n";
         $xml .= '<atom:link href="'.$this->escape($feedUrl).'" rel="self" type="application/rss+xml" />'."\n";
