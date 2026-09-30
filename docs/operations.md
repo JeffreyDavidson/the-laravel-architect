@@ -129,7 +129,9 @@ The Forge deployment should install locked Composer dependencies, build assets, 
 
 For production, run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting. Do not force production mail or backup credentials into staging to satisfy this production-specific verifier.
 
-### Shared staging and production Forge deploy script
+### Forge deploy script
+
+Staging and production are separate Forge sites, and each holds its own copy of this script. Keep the two copies identical: the site ID guard selects the per-site behavior. After changing the script, paste it into both sites.
 
 Install this script only after the revision-marker setup above is complete.
 Forge's `forge_deploy_commit` parameter is metadata, not checkout pinning. The
@@ -380,7 +382,7 @@ Confirm a new encrypted archive exists on the `b2-backups` disk and that `app:ve
 
 `php artisan app:verify-backup` performs the independent checks below against the newest archive on every configured destination. It downloads the archive into a new `0700` directory under the system temp directory and requires every file entry to be encrypted, decrypt, and read in full at its recorded size. Every path must be a database dump or sit under `BACKUP_MEDIA_PATH`. The command restores the dump with the same `sqlite3` CLI that creates it, runs `PRAGMA quick_check` on the restored and live databases, compares the migration list and every persistent table's row count, and compares the media file count and five sampled SHA-256 hashes with the live media directory. `cache`, `cache_locks`, `sessions`, `jobs`, and `job_batches` are excluded as transient. The temporary directory is always removed, and the output contains only counts, table names, and pass or fail reasons, never the archive password or backed-up content.
 
-Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. The scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Shared staging and production Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
+Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. The scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
 
 An exit-zero backup command is not enough. Independently verify:
 
