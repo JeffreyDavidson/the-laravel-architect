@@ -44,12 +44,18 @@ final class GenerateSitemap
         }
 
         $latestPodcastUpdatedAt = $this->latestUpdatedAt($podcastModels);
+        $latestContentUpdatedAt = $this->latestUpdatedAt([
+            ...$posts,
+            ...$projects,
+            ...$issues,
+            ...$podcastModels,
+        ]);
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         foreach ([
-            ['url' => route('home'), 'priority' => '1.0', 'freq' => 'weekly', 'lastmod' => null],
+            ['url' => route('home'), 'priority' => '1.0', 'freq' => 'weekly', 'lastmod' => $latestContentUpdatedAt],
             ['url' => route('about'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('services'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => null],
             ['url' => route('contact.create'), 'priority' => '0.7', 'freq' => 'monthly', 'lastmod' => null],
@@ -59,7 +65,7 @@ final class GenerateSitemap
             ['url' => route('podcast.index'), 'priority' => '0.8', 'freq' => 'weekly', 'lastmod' => $latestPodcastUpdatedAt],
             ['url' => route('projects.index'), 'priority' => '0.8', 'freq' => 'monthly', 'lastmod' => $this->latestUpdatedAt($projects)],
             ['url' => route('newsletter.index'), 'priority' => '0.8', 'freq' => 'weekly', 'lastmod' => $this->latestUpdatedAt($issues)],
-            ['url' => route('archive.index'), 'priority' => '0.7', 'freq' => 'weekly', 'lastmod' => null],
+            ['url' => route('archive.index'), 'priority' => '0.7', 'freq' => 'weekly', 'lastmod' => $latestContentUpdatedAt],
         ] as $page) {
             $xml .= '<url>';
             $xml .= '<loc>'.$page['url'].'</loc>';

@@ -193,6 +193,8 @@ it('reports the latest published content change for sitemap archives', function 
         [route('projects.index'), $projectUpdatedAt],
         [route('podcast.index'), $episodeUpdatedAt],
         [route('podcast.show', $podcast), $episodeUpdatedAt],
+        [route('home'), $episodeUpdatedAt],
+        [route('archive.index'), $episodeUpdatedAt],
     ] as [$url, $updatedAt]) {
         $response->assertSeeHtml('<loc>'.$url.'</loc><lastmod>'.$updatedAt->toW3cString().'</lastmod>');
     }
