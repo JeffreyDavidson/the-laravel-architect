@@ -531,9 +531,7 @@ test('times out without retrying an accepted deployment', async () => {
 
 test('the documented deploy script backs up and verifies before migrating, on production only', () => {
     const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
-    const script = operations.match(
-        /### Shared staging and production Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/,
-    )?.[1];
+    const script = operations.match(/### Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
 
     assert.ok(script);
 
