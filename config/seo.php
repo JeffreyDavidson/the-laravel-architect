@@ -7,6 +7,8 @@ return [
 
     'site_name' => 'The Laravel Architect',
 
+    'feed_description' => 'Deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.',
+
     'sitemap' => null,
 
     'canonical_link' => true,
