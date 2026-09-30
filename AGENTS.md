@@ -10,47 +10,36 @@
 
 - The local application directory is `/Users/jeffreydavidson/Herd/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
 
-## Writing public copy
+## Agent guidelines
 
-- Follow `docs/voice.md` when drafting or editing blog posts, excerpts, episode notes, newsletters, or site copy.
+- The `<laravel-boost-guidelines>
+=== .ai/deployment rules ===
 
-## Git and pull requests
+# Deployment
 
-- Use `develop` as the integration branch for routine work. Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.
-- Squash merge reviewed working branches into `develop` through pull requests with required CI. Do not rebase-merge pull requests.
-- Cut `release/YYYY.MM.N` from `develop` only for a deliberate release. Pause merges into `develop` while that release is validated. Merge an approved release PR into `main` with a regular merge commit to preserve ancestry.
-- Before merging, verify the pull request's head branch, base branch, and merge method.
-- Before creating or recommending a pull request, inspect the current branch, merge base, recent completed PRs, and `docs/releases.md`. Do not infer that a `release/*` branch is a release branch from its name alone.
-- Use `release/*` only for a deliberate release boundary promoted into `main`. Routine feature, fix, performance, refactor, documentation, and test work must use its normal branch type and documented integration path into `develop`.
-- Before creating a pull request, confirm its head, base, and merge method follow the current workflow. If any are wrong, correct the plan before opening it.
-- Every new commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type: description`, with an optional scope (`type(scope): description`) and optional breaking-change marker (`type(scope)!: description`).
-- Use lowercase types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Use `feat` for new features and `fix` for bug fixes; branch prefixes such as `feature/`, `hotfix/`, and `release/` are not commit types.
-- Write a concise, imperative description. Mark breaking changes with `!` before the colon or a `BREAKING CHANGE: description` footer.
-- Apply the same convention to pull request titles, squash commit subjects, and release or synchronization merge commit subjects; replace generated merge subjects when necessary (for example, `chore(release): release 2026.09.15`).
-- Check the message before every commit and verify the final commit subject before merging a pull request. Do not rely on squash merging to excuse nonconforming feature-branch commits.
-- Write pull request bodies as actual multiline Markdown. When using the GitHub CLI, prefer `--body-file` or a command input that preserves real newlines; never pass literal `\\n` sequences.
+- Production deployment uses Laravel Forge.
+- Read `docs/operations.md` before production work.
+- Follow the confirmation requirements for production mutations.
+- Use the deployment verifier before and after releases.
 
-## Releases
+=== .ai/documentation rules ===
 
-- Successful CI on a release branch deploys that exact revision to staging for pre-merge validation. After a release merges, successful CI on `main` must deploy and verify the resulting exact revision on staging. Production requires a separate manual promotion and explicit approval of that successful `main` staging revision.
-- Follow `docs/releases.md`; do not use a moving branch tip or Forge's commit label as proof of the deployed checkout.
-- Keep calendar release tags immutable. Record the deployed revision and verification result independently of the tag.
-- After a release, verify `develop` is an ancestor of `origin/main`, then fast-forward `develop` to `main`. Do not create a sync merge commit or force-push; stop if fast-forward is not possible. Never relax branch protection to perform release bookkeeping.
-- Base emergency fixes on the verified deployed revision when `main` has unreleased work; agree the exceptional release path before deploying, and integrate the fix through the `develop` and release workflow.
+# Documentation
 
-## Post-merge synchronization and cleanup
+- Keep `README.md` concise and repository-oriented.
+- Put architecture details in `docs/architecture.md`.
+- Put testing guidance in `docs/testing.md`.
+- Put deployment and operational procedures in `docs/operations.md`.
+- Update the relevant documentation when behavior or operational workflows change.
 
-- After a verified PR merge into `main`, include local synchronization and merged-branch cleanup in the workflow without waiting for a separate request.
-- Verify the PR is merged on GitHub; do not infer completion from a user message. With a clean working tree, switch to `main` and pull `origin main` with `--ff-only`. Stop if local changes, divergence, or another worktree prevent this safely.
-- Clean up the merged PR's local and remote head branches only after verifying each existing tip exactly matches the PR's merged head commit. For an explicit broader cleanup request, apply the same checks to every candidate. Squash merges require PR evidence, not just `git branch --merged`.
-- Never delete `main`, `develop`, branches with post-merge commits, or branches checked out in another worktree. Do not remove worktrees or discard uncommitted changes as part of cleanup.
-- Prefer normal local branch deletion; force-delete a local squash-merged branch only after the checks above prove its work is merged. Verify remote tips again before deletion and use an expected-tip guard where supported.
-- Treat a request to merge as authorization for this verified cleanup, subject to execution-policy restrictions. Never bypass a denied operation; report what remains blocked. This file does not override tool permissions or production-operation confirmation requirements.
-- Verify the synchronized branch matches its remote and report synchronization, deleted branches, and any skipped or blocked cleanup. A PR merge never authorizes a production deployment.
+=== .ai/local-development rules ===
 
-===
+# Local development
 
-<laravel-boost-guidelines>
+- Use Laravel Herd for HTTP serving.
+- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
+- Use the project Composer scripts for queues, logs, tests, and asset development.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -150,33 +139,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
 
-=== deployments rules ===
-
-# Deployment
-
-- Production deployment uses Laravel Forge.
-- Read `docs/operations.md` before production work.
-- Follow the confirmation requirements for production mutations.
-- Use the deployment verifier before and after releases.
-
-=== documentation rules ===
-
-# Documentation
-
-- Keep `README.md` concise and repository-oriented.
-- Put architecture details in `docs/architecture.md`.
-- Put testing guidance in `docs/testing.md`.
-- Put deployment and operational procedures in `docs/operations.md`.
-- Update the relevant documentation when behavior or operational workflows change.
-
-=== local development rules ===
-
-# Local development
-
-- Use Laravel Herd for HTTP serving.
-- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
-- Use the project Composer scripts for queues, logs, tests, and asset development.
-
 === herd rules ===
 
 # Laravel Herd
@@ -223,6 +185,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 ## Vite Error
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+=== livewire/core rules ===
+
+# Livewire
+
+- Livewire allows you to build dynamic, reactive interfaces in PHP without writing JavaScript.
+- You can use Alpine.js for client-side interactions instead of JavaScript frameworks.
+- Keep state server-side so the UI reflects it. Validate and authorize in actions as you would in HTTP requests.
 
 === pint/core rules ===
 
