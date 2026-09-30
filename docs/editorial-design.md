@@ -45,12 +45,22 @@ is needed. Put the explanation of a diagram in the article as well as the image.
 
 ## Blog artwork
 
-Choose an image that expresses the particular article: a relevant scene, a
-focused technical illustration, or a screenshot when the interface itself is the
-subject. Use the site's blue/graphite identity as a starting point for original
-illustrations, with restrained secondary colors. Real screenshots retain their
-product's colors. Avoid repeating one generic laptop or elephant composition for
-every topic. Keep the elephant as an intentional identity element when relevant.
+Blog artwork shares one house style: an overhead or three-quarter view of an
+architect's drafting desk on a dark navy surface, with a hand-drawn technical
+illustration in graphite pencil and blue-black ink on aged cream paper, red ink as
+the only strong accent, and real drafting tools and desk objects (brass compass,
+ruler, fountain pen, coffee mug, red notebook) around it. The drawing on the paper
+expresses the particular article, usually as an isometric diagram whose flow is
+traced in red. See the bundled references in `resources/images/`
+(`post-hello-world`, `post-kansas-florida`, and the three `home-writing-*`
+images) before creating new artwork.
+
+This artwork comes from an image-generation model. Do not substitute flat vector,
+SVG, or UI-style illustrations; they do not match. The `featured-image` agent skill
+(`.ai/skills/featured-image`) writes a prompt in this style for a given post, then
+checks the crop, attaches the result, and previews it. Real screenshots retain their
+product's colors when the interface itself is the subject. Vary the desk
+arrangement and diagram shape so posts don't repeat one composition.
 
 The title, category, and metadata already appear as HTML. For new commissioned or
 generated artwork, prefer a composition without baked-in headlines, badges, tiny
