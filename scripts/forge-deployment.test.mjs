@@ -29,8 +29,12 @@ test('staging workflow uses the guarded deployment operation instead of a separa
 
 test('staging recovers from an unverified Forge trigger with read-only checks', () => {
     const workflow = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
-    const deployStep = workflow.match(/- name: Deploy and verify the tested revision[\s\S]*?(?=\n            - name:)/)?.[0];
-    const recoveryStep = workflow.match(/- name: Recover by verifying the currently served revision[\s\S]*?(?=\n            - name:)/)?.[0];
+    const deployStep = workflow.match(
+        /- name: Deploy and verify the tested revision[\s\S]*?(?=\n            - name:)/,
+    )?.[0];
+    const recoveryStep = workflow.match(
+        /- name: Recover by verifying the currently served revision[\s\S]*?(?=\n            - name:)/,
+    )?.[0];
     const promotion = readFileSync(new URL('../.github/workflows/promote-production.yml', import.meta.url), 'utf8');
 
     assert.ok(deployStep);
@@ -523,4 +527,24 @@ test('times out without retrying an accepted deployment', async () => {
         /11 minutes/,
     );
     assert.equal(posts, 1);
+});
+
+test('the documented deploy script backs up and verifies before migrating, on production only', () => {
+    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
+    const script = operations.match(
+        /### Shared staging and production Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/,
+    )?.[1];
+
+    assert.ok(script);
+
+    const production = script.match(
+        /if test "\$FORGE_SITE_ID" = 3044519; then\n([\s\S]*?)\nfi\n\$FORGE_PHP artisan optimize/,
+    )?.[1];
+
+    assert.ok(production);
+    assert.match(production, /migrate:status --pending/);
+    assert.match(production, /backup:run[\s\S]*?app:verify-backup/);
+    assert.match(production, /test "\$tla_backup_verified" = true/);
+    assert.ok(script.indexOf('app:verify-backup') < script.indexOf('artisan migrate --force'));
+    assert.equal(script.split('backup:run').length - 1, 1);
 });
