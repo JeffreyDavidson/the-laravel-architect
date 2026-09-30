@@ -86,7 +86,7 @@ pinned staging deployment has been verified.
 1. Confirm the target commit and review its migration and storage changes.
 2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes. `app:verify-production` resolves symlinks and rejects missing files and files inside the release directory (or Forge's `releases` directory). Run verification after persistent storage is mounted.
 3. Confirm `BACKUP_MEDIA_PATH` points to the persistent `storage/app/public` directory outside the release directory. Application archives contain only the SQLite database dump and this uploaded-media directory; source code is recovered from GitHub, and `.env` must remain excluded.
-4. Create and independently validate a SQLite snapshot and public-media archive: run `php artisan backup:run`, then `php artisan app:verify-backup` immediately afterwards, and require it to exit successfully. See "Automated archive verification" below.
+4. Create and independently validate a SQLite snapshot and public-media archive: run `php artisan backup:run`, then `php artisan app:verify-backup` immediately afterwards, and require it to exit successfully. See "Automated archive verification" below. Once the backup gate is installed in the production deploy script, a release with pending migrations does this automatically before it migrates; run it by hand for any other production change.
 5. Keep both artifacts until the deployment and post-deployment checks are complete.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
@@ -175,6 +175,20 @@ $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autol
 
 if test "$FORGE_SITE_ID" = 3044519; then
     $FORGE_PHP artisan app:verify-production --no-ansi
+
+    # Releases with pending migrations need a fresh, verified backup first. Fail closed.
+    tla_pending="$($FORGE_PHP artisan migrate:status --pending --no-ansi)"
+    if [[ "$tla_pending" != *"No pending migrations"* ]]; then
+        tla_backup_verified=false
+        for tla_attempt in 1 2; do
+            $FORGE_PHP artisan backup:run --no-ansi
+            if $FORGE_PHP artisan app:verify-backup --no-ansi; then
+                tla_backup_verified=true
+                break
+            fi
+        done
+        test "$tla_backup_verified" = true
+    fi
 fi
 $FORGE_PHP artisan optimize
 $FORGE_PHP artisan migrate --force
@@ -209,6 +223,8 @@ printf '{"revision":"%s","deployment_id":"%s"}\n' \
     "$FORGE_VAR_REVISION" "$FORGE_DEPLOYMENT_ID" > public/deployment.json.tmp
 mv public/deployment.json.tmp public/deployment.json
 ```
+
+The backup gate runs only on production, and only when the release has pending migrations, so ordinary deploys are not slowed. Staging is skipped because it has no B2 destination. It takes a new backup and verifies it straight away; a write between the two commands can make the verification fail, so it repeats the pair once before stopping the deployment. If both attempts fail, the script exits before `migrate --force` and the previous release keeps serving traffic. Look at the failure output, fix the cause, and redeploy. A failed `migrate:status` also stops the deploy, because the assignment runs under `set -e`.
 
 `$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
 
@@ -364,7 +380,7 @@ Confirm a new encrypted archive exists on the `b2-backups` disk and that `app:ve
 
 `php artisan app:verify-backup` performs the independent checks below against the newest archive on every configured destination. It downloads the archive into a new `0700` directory under the system temp directory and requires every file entry to be encrypted, decrypt, and read in full at its recorded size. Every path must be a database dump or sit under `BACKUP_MEDIA_PATH`. The command restores the dump with the same `sqlite3` CLI that creates it, runs `PRAGMA quick_check` on the restored and live databases, compares the migration list and every persistent table's row count, and compares the media file count and five sampled SHA-256 hashes with the live media directory. `cache`, `cache_locks`, `sessions`, `jobs`, and `job_batches` are excluded as transient. The temporary directory is always removed, and the output contains only counts, table names, and pass or fail reasons, never the archive password or backed-up content.
 
-Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. The scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, but for a release that changes data or structure (for example a migration that drops a column) still take a fresh backup and verify it immediately before deploying. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
+Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. The scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Shared staging and production Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
 
 An exit-zero backup command is not enough. Independently verify:
 
