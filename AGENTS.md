@@ -10,6 +10,10 @@
 
 - The local application directory is `/Users/jeffreydavidson/Herd/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
 
+## Writing public copy
+
+- Follow `docs/voice.md` when drafting or editing blog posts, excerpts, episode notes, newsletters, or site copy.
+
 ## Git and pull requests
 
 - Use `develop` as the integration branch for routine work. Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.

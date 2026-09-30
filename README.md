@@ -66,6 +66,7 @@ composer check
 
 - [Design system](DESIGN.md)
 - [Editorial design](docs/editorial-design.md)
+- [Voice guide](docs/voice.md)
 - [Project art direction](docs/project-art-direction.md)
 - [Architecture](docs/architecture.md)
 - [Testing](docs/testing.md)
