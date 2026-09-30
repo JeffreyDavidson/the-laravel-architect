@@ -151,9 +151,6 @@ class ScaleTestContentWorkflow
                     'description' => 'A generated podcast episode for local archive and pagination performance checks.',
                     'show_notes' => 'Synthetic show notes. No audio or external service is associated with this record.',
                     'transcript' => $this->episodeTranscript($number),
-                    'audio_url' => null,
-                    'audio_path' => null,
-                    'embed_url' => null,
                     'youtube_url' => null,
                     'duration_seconds' => (25 + ($number % 20)) * 60,
                     'status' => 'published',
@@ -165,7 +162,7 @@ class ScaleTestContentWorkflow
 
             $this->upsertInChunks('episodes', $episodes, 'slug', [
                 'podcast_id', 'title', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript',
-                'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_seconds', 'status', 'published_at', 'updated_at',
+                'youtube_url', 'duration_seconds', 'status', 'published_at', 'updated_at',
             ]);
 
             return [

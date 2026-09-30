@@ -336,7 +336,6 @@ it('renders canonical structured data for podcasts and episodes', function () {
         'episode_number' => 12,
         'description' => 'A practical discussion about application boundaries.',
         'duration_seconds' => 3725,
-        'audio_url' => 'https://example.com/legacy-audio.mp3',
         'status' => PublishStatus::Published,
         'published_at' => now()->subDay(),
     ]);

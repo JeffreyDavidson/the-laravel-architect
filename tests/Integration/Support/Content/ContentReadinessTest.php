@@ -24,9 +24,6 @@ it('counts only a Transistor share link or a YouTube link as episode media', fun
     'Transistor share link' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], true],
     'YouTube link' => [['youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk'], true],
     'a Transistor URL that is not a share link' => [['transistor_url' => 'https://example.com/s/428dcd6b'], false],
-    'retired hosted audio' => [['audio_url' => 'https://example.com/audio.mp3'], false],
-    'retired uploaded audio' => [['audio_path' => 'episodes/audio/a.mp3'], false],
-    'retired Spotify embed' => [['embed_url' => 'https://open.spotify.com/embed/episode/123'], false],
     'nothing' => [[], false],
 ]);
 

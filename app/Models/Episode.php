@@ -22,7 +22,7 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'audio_url', 'audio_path', 'embed_url', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
+#[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
 /**
@@ -52,31 +52,6 @@ class Episode extends Model implements Publishable
             'published_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
-    }
-
-    /**
-     * The retired media this episode still carries (uploaded audio, hosted audio, or a
-     * Spotify/Apple embed), so editors can move it to Transistor before it is removed.
-     *
-     * @return list<string>
-     */
-    public function legacyMedia(): array
-    {
-        $media = [];
-
-        if (filled($this->getAttribute('audio_path'))) {
-            $media[] = 'Uploaded audio';
-        }
-
-        if (filled($this->getAttribute('audio_url'))) {
-            $media[] = 'Hosted audio';
-        }
-
-        if (filled($this->getAttribute('embed_url'))) {
-            $media[] = 'Spotify/Apple embed';
-        }
-
-        return $media;
     }
 
     /**
@@ -123,9 +98,6 @@ class Episode extends Model implements Publishable
                 'episode_number',
                 'season_number',
                 'featured_image_path',
-                'audio_url',
-                'audio_path',
-                'embed_url',
                 'transistor_url',
                 'youtube_url',
                 'duration_seconds',
@@ -138,6 +110,6 @@ class Episode extends Model implements Publishable
 
     protected function storedMediaAttributes(): array
     {
-        return ['featured_image_path', 'audio_path'];
+        return ['featured_image_path'];
     }
 }
