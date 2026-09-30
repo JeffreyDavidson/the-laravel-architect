@@ -55,6 +55,7 @@ How we write for this site: blog posts, excerpts, episode notes, newsletters, an
 ## Honesty rules
 
 - Never invent anecdotes, roles, clients, metrics, quotes, or production outcomes. If a story would help and none is on record, leave `[CONFIRM: ...]` for Jeffrey to fill in or cut.
+- Exception: a composite example is fine when it describes a recurring pattern rather than one event. Frame it as something that keeps happening ("It usually shows up on something small..."), keep it plausible for any working Laravel developer, and never attach a named project, client, date, or specific result. Rough estimates like "twenty minutes" are fine; measured metrics are not.
 - Label work in progress as in progress.
 - Recheck package versions, APIs, prices, and security claims against official sources right before publishing. For posts that depend on a source, fill in the post's source URL and review date in the admin.
 - Link to official docs instead of paraphrasing them at length.
@@ -87,7 +88,7 @@ How we write for this site: blog posts, excerpts, episode notes, newsletters, an
 - [ ] Each section leads with its point.
 - [ ] Includes tradeoffs or when not to do this.
 - [ ] No em dashes; no phrases from the never-use list; "genuinely" at most once.
-- [ ] Every anecdote, number, and quote is real. No `[CONFIRM]` left.
+- [ ] Every specific anecdote, number, and quote is real; composite examples read as a recurring pattern. No `[CONFIRM]` left.
 - [ ] Code runs on current versions and follows the repo conventions.
 - [ ] Time-sensitive claims rechecked; source URL and review date set when relevant.
 - [ ] Excerpt is one or two first-person sentences.
