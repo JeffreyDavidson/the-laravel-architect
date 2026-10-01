@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -119,6 +120,12 @@ class Post extends Model implements Publishable
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** @return BelongsToMany<Episode, $this> */
+    public function episodes(): BelongsToMany
+    {
+        return $this->belongsToMany(Episode::class);
     }
 
     public function getDynamicSEOData(): SEOData

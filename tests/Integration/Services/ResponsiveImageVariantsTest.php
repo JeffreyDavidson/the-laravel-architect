@@ -151,3 +151,27 @@ it('deletes generated variants without deleting the original image', function ()
     ]);
     Storage::disk('public')->assertExists('projects/project.png');
 });
+
+it('defaults to the 640 and 1280 pixel variants', function () {
+    expect(config('media.responsive_widths'))
+        ->toBe([640, 1280]);
+});
+
+it('builds variants for the widths configured for the site', function () {
+    config()->set('media.responsive_widths', [320, 768]);
+    $image = UploadedFile::fake()->image('project.png', 1280, 72);
+    Storage::disk('public')->put('projects/project.png', $image->getContent());
+
+    $generated = app(ResponsiveImageVariants::class)->generate('projects/project.png');
+
+    expect($generated)
+        ->toBeTrue();
+    Storage::disk('public')->assertExists([
+        'projects/responsive/project-320.webp',
+        'projects/responsive/project-768.webp',
+    ]);
+    Storage::disk('public')->assertMissing([
+        'projects/responsive/project-640.webp',
+        'projects/responsive/project-1280.webp',
+    ]);
+});
