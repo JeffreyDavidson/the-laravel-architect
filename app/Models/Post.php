@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -28,7 +29,7 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'episode_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
+#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
 #[ObservedBy(PostObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
@@ -121,10 +122,10 @@ class Post extends Model implements Publishable
         return $this->belongsTo(Category::class);
     }
 
-    /** @return BelongsTo<Episode, $this> */
-    public function episode(): BelongsTo
+    /** @return BelongsToMany<Episode, $this> */
+    public function episodes(): BelongsToMany
     {
-        return $this->belongsTo(Episode::class);
+        return $this->belongsToMany(Episode::class);
     }
 
     public function getDynamicSEOData(): SEOData
@@ -145,7 +146,6 @@ class Post extends Model implements Publishable
                 'slug',
                 'featured_image_path',
                 'category_id',
-                'episode_id',
                 'user_id',
                 'status',
                 'published_at',

@@ -75,12 +75,12 @@ class PostForm
                                     ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
                                     ->unique(Category::class),
                             ]),
-                        Select::make('episode_id')
-                            ->label('Related Episode')
-                            ->relationship('episode', 'title')
+                        Select::make('episodes')
+                            ->label('Related Episodes')
+                            ->relationship('episodes', 'title')
+                            ->multiple()
                             ->searchable()
-                            ->preload()
-                            ->placeholder('None'),
+                            ->preload(),
                         SpatieTagsInput::make('tags'),
                     ])->columns(2),
 

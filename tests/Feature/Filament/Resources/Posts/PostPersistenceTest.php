@@ -63,15 +63,16 @@ it('updates a post through the Filament form', function () {
         ->toBe(PublishStatus::InReview);
 });
 
-it('links and unlinks a related episode through the Filament form', function () {
-    $episode = Episode::query()->create([
-        'podcast_id' => Podcast::query()
-            ->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.'])
-            ->getKey(),
-        'title' => 'Related episode',
-        'slug' => 'related-episode',
+it('links and unlinks related episodes through the Filament form', function () {
+    $podcast = Podcast::query()->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.']);
+    $episodes = collect(['one', 'two'])->map(fn (string $slug): Episode => Episode::query()->create([
+        'podcast_id' => $podcast->getKey(),
+        'title' => "Episode {$slug}",
+        'slug' => $slug,
         'description' => 'Description.',
-    ]);
+    ]));
+    $episodeIds = $episodes->pluck('id')
+        ->all();
     $post = Post::query()->create([
         'title' => 'Linked post',
         'slug' => 'linked-post',
@@ -81,20 +82,22 @@ it('links and unlinks a related episode through the Filament form', function () 
     ]);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->fillForm(['episode_id' => $episode->getKey()])
+        ->fillForm(['episodes' => $episodeIds])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($post->refresh()
-        ->episode_id)
-        ->toBe($episode->getKey());
+    $post->refresh();
+
+    expect($post->episodes)
+        ->toHaveCount(2);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->fillForm(['episode_id' => null])
+        ->fillForm(['episodes' => []])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($post->refresh()
-        ->episode_id)
-        ->toBeNull();
+    $post->refresh();
+
+    expect($post->episodes)
+        ->toBeEmpty();
 });

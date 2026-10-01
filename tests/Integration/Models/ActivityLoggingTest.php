@@ -52,29 +52,6 @@ it('records operational post changes without recording long-form content', funct
         ->toHaveKeys(['content', 'excerpt', 'review_notes']);
 });
 
-it('records a change to the related episode of a post', function () {
-    $episode = Episode::query()->create([
-        'podcast_id' => Podcast::query()
-            ->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.'])
-            ->getKey(),
-        'title' => 'Related episode',
-        'slug' => 'related-episode',
-        'description' => 'Description.',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Activity logging',
-        'content' => 'Original content.',
-        'user_id' => User::factory()
-            ->create()
-            ->getKey(),
-    ]);
-
-    $post->update(['episode_id' => $episode->getKey()]);
-
-    expect(latestActivityFor($post)->attribute_changes?->get('attributes'))
-        ->toHaveKey('episode_id', $episode->getKey());
-});
-
 it('records operational newsletter issue changes without recording long-form content', function () {
     $issue = NewsletterIssue::query()->create([
         'title' => 'Activity logging',

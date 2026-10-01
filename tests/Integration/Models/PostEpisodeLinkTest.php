@@ -4,72 +4,117 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 pest()->use(RefreshDatabase::class);
 
-function linkedEpisode(): Episode
+function relatedEpisode(string $slug): Episode
 {
     return Episode::query()->create([
         'podcast_id' => Podcast::query()
-            ->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.'])
+            ->firstOrCreate(['slug' => 'show'], ['name' => 'Show', 'description' => 'A show.'])
             ->getKey(),
-        'title' => 'Linked episode',
-        'slug' => 'linked-episode',
+        'title' => "Episode {$slug}",
+        'slug' => $slug,
         'description' => 'Description.',
     ]);
 }
 
-function postLinkedTo(?Episode $episode): Post
+function relatingPost(): Post
 {
     return Post::query()->create([
-        'title' => 'Linking post',
-        'slug' => 'linking-post',
+        'title' => 'Relating post',
+        'slug' => 'relating-post',
         'content' => 'Content.',
         'user_id' => User::factory()
             ->create()
             ->getKey(),
-        'episode_id' => $episode?->getKey(),
     ]);
 }
 
-it('belongs to the related episode it links to', function () {
-    $episode = linkedEpisode();
+it('relates to every episode it is linked to', function () {
+    $post = relatingPost();
+    $first = relatedEpisode('first');
+    $second = relatedEpisode('second');
 
-    $post = postLinkedTo($episode);
+    $post->episodes()
+        ->attach([$first->getKey(), $second->getKey()]);
 
-    expect($post->episode?->is($episode))
-        ->toBeTrue();
+    $slugs = $post->episodes
+        ->pluck('slug')
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($slugs)
+        ->toBe(['first', 'second']);
 });
 
-it('has no related episode unless one is linked', function () {
-    $post = postLinkedTo(null);
+it('has no related episodes unless some are linked', function () {
+    $post = relatingPost();
 
-    expect($post->episode)
-        ->toBeNull();
+    expect($post->episodes)
+        ->toBeEmpty();
 });
 
-it('reports no related episode while the linked episode is soft deleted', function () {
-    $episode = linkedEpisode();
-    $post = postLinkedTo($episode);
+it('does not link the same episode to a post twice', function () {
+    $post = relatingPost();
+    $episode = relatedEpisode('first');
+    $post->episodes()
+        ->attach($episode->getKey());
+
+    $attachAgain = fn () => $post->episodes()
+        ->attach($episode->getKey());
+
+    expect($attachAgain)
+        ->toThrow(QueryException::class);
+});
+
+it('leaves out a related episode while it is soft deleted', function () {
+    $post = relatingPost();
+    $episode = relatedEpisode('first');
+    $post->episodes()
+        ->attach($episode->getKey());
 
     $episode->delete();
 
-    expect($post->refresh()
-        ->episode)
-        ->toBeNull();
+    $post->refresh();
+
+    expect($post->episodes)
+        ->toBeEmpty();
 });
 
-it('keeps the post and clears the link when the linked episode is permanently deleted', function () {
-    $episode = linkedEpisode();
-    $post = postLinkedTo($episode);
+it('keeps the post and drops the link when a related episode is permanently deleted', function () {
+    $post = relatingPost();
+    $episode = relatedEpisode('first');
+    $post->episodes()
+        ->attach($episode->getKey());
 
     $episode->forceDelete();
 
-    expect($post->refresh())
-        ->episode_id->toBeNull()
-        ->and(Post::query()
-            ->whereKey($post->getKey())
+    $post->refresh();
+
+    expect($post->episodes)
+        ->toBeEmpty()
+        ->and(Post::query()->whereKey($post->getKey())
             ->exists())
         ->toBeTrue();
+});
+
+it('drops its links when the post is permanently deleted', function () {
+    $post = relatingPost();
+    $episode = relatedEpisode('first');
+    $post->episodes()
+        ->attach($episode->getKey());
+
+    $post->forceDelete();
+
+    expect(Episode::query()->whereKey($episode->getKey())
+        ->exists())
+        ->toBeTrue()
+        ->and(DB::table('episode_post')
+            ->count())
+        ->toBe(0);
 });
