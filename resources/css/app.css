@@ -334,6 +334,7 @@
     color: var(--white-55);
     cursor: pointer;
     opacity: 0;
+    white-space: normal;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 

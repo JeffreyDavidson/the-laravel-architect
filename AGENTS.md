@@ -10,6 +10,14 @@
 
 - The local application directory is `/Users/jeffreydavidson/Herd/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
 
+## Agent guidelines
+
+- The generated Laravel Boost block at the end of this file is rewritten by `php artisan boost:install` on every install. Put project-specific guidelines in `.ai/guidelines/*.md` instead of editing that block, and never write the block's opening tag anywhere else in this file. Boost's built-in deployment guideline is excluded in `config/boost.php` because production deploys with Forge.
+
+## Writing public copy
+
+- Follow `docs/voice.md` when drafting or editing blog posts, excerpts, episode notes, newsletters, or site copy.
+
 ## Git and pull requests
 
 - Use `develop` as the integration branch for routine work. Create focused working branches from an up-to-date `develop`; do not commit feature work directly to `develop` or `main`.
@@ -47,6 +55,33 @@
 ===
 
 <laravel-boost-guidelines>
+=== .ai/deployment rules ===
+
+# Deployment
+
+- Production deployment uses Laravel Forge.
+- Read `docs/operations.md` before production work.
+- Follow the confirmation requirements for production mutations.
+- Use the deployment verifier before and after releases.
+
+=== .ai/documentation rules ===
+
+# Documentation
+
+- Keep `README.md` concise and repository-oriented.
+- Put architecture details in `docs/architecture.md`.
+- Put testing guidance in `docs/testing.md`.
+- Put deployment and operational procedures in `docs/operations.md`.
+- Update the relevant documentation when behavior or operational workflows change.
+
+=== .ai/local-development rules ===
+
+# Local development
+
+- Use Laravel Herd for HTTP serving.
+- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
+- Use the project Composer scripts for queues, logs, tests, and asset development.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -146,33 +181,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
 
-=== deployments rules ===
-
-# Deployment
-
-- Production deployment uses Laravel Forge.
-- Read `docs/operations.md` before production work.
-- Follow the confirmation requirements for production mutations.
-- Use the deployment verifier before and after releases.
-
-=== documentation rules ===
-
-# Documentation
-
-- Keep `README.md` concise and repository-oriented.
-- Put architecture details in `docs/architecture.md`.
-- Put testing guidance in `docs/testing.md`.
-- Put deployment and operational procedures in `docs/operations.md`.
-- Update the relevant documentation when behavior or operational workflows change.
-
-=== local development rules ===
-
-# Local development
-
-- Use Laravel Herd for HTTP serving.
-- Do not start a second HTTP server with `php artisan serve` when Herd is serving the application.
-- Use the project Composer scripts for queues, logs, tests, and asset development.
-
 === herd rules ===
 
 # Laravel Herd
@@ -219,6 +227,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 ## Vite Error
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+=== livewire/core rules ===
+
+# Livewire
+
+- Livewire allows you to build dynamic, reactive interfaces in PHP without writing JavaScript.
+- You can use Alpine.js for client-side interactions instead of JavaScript frameworks.
+- Keep state server-side so the UI reflects it. Validate and authorize in actions as you would in HTTP requests.
 
 === pint/core rules ===
 
