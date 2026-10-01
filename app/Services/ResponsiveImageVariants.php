@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ResponsiveImageVariants
 {
-    /** @var list<positive-int> */
-    private const array WIDTHS = [640, 1280];
-
     public function generate(string $originalPath): bool
     {
         $disk = Storage::disk('public');
@@ -143,7 +140,10 @@ class ResponsiveImageVariants
 
         $paths = [];
 
-        foreach (self::WIDTHS as $width) {
+        /** @var list<positive-int> $widths */
+        $widths = config()->array('media.responsive_widths');
+
+        foreach ($widths as $width) {
             $paths[$width] = "{$responsiveDirectory}/{$filename}-{$width}.webp";
         }
 
