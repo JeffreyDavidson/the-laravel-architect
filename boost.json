@@ -17,6 +17,7 @@
         "livewire-development",
         "tailwindcss-development",
         "featured-image",
-        "filament-development"
+        "filament-development",
+        "publish-blog-post"
     ]
 }
