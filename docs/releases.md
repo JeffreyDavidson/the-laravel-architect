@@ -1,5 +1,8 @@
 # Release process
 
+The `release` agent skill (`.ai/skills/release`) walks through these steps with the
+commands and gotchas; this document remains the policy.
+
 `develop` is the integration branch for routine work. Start feature branches
 from an up-to-date `develop` and squash-merge reviewed feature PRs into it after
 CI passes. `main` contains approved releases; it identifies releasable code, not
