@@ -3,6 +3,8 @@
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
+use App\Models\Episode;
+use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,4 +61,40 @@ it('updates a post through the Filament form', function () {
         ->toBe('Updated content.')
         ->and($post->status)
         ->toBe(PublishStatus::InReview);
+});
+
+it('links and unlinks a related episode through the Filament form', function () {
+    $episode = Episode::query()->create([
+        'podcast_id' => Podcast::query()
+            ->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.'])
+            ->getKey(),
+        'title' => 'Related episode',
+        'slug' => 'related-episode',
+        'description' => 'Description.',
+    ]);
+    $post = Post::query()->create([
+        'title' => 'Linked post',
+        'slug' => 'linked-post',
+        'content' => 'Content.',
+        'user_id' => auth()->id(),
+        'status' => PublishStatus::Draft,
+    ]);
+
+    livewire(EditPost::class, ['record' => $post->getRouteKey()])
+        ->fillForm(['episode_id' => $episode->getKey()])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($post->refresh()
+        ->episode_id)
+        ->toBe($episode->getKey());
+
+    livewire(EditPost::class, ['record' => $post->getRouteKey()])
+        ->fillForm(['episode_id' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($post->refresh()
+        ->episode_id)
+        ->toBeNull();
 });

@@ -28,7 +28,7 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
+#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'episode_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
 #[ObservedBy(PostObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
@@ -121,6 +121,12 @@ class Post extends Model implements Publishable
         return $this->belongsTo(Category::class);
     }
 
+    /** @return BelongsTo<Episode, $this> */
+    public function episode(): BelongsTo
+    {
+        return $this->belongsTo(Episode::class);
+    }
+
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
@@ -139,6 +145,7 @@ class Post extends Model implements Publishable
                 'slug',
                 'featured_image_path',
                 'category_id',
+                'episode_id',
                 'user_id',
                 'status',
                 'published_at',
