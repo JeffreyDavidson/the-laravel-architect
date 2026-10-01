@@ -343,6 +343,16 @@ it('exposes the code copy action and delayed syntax highlighting', function (): 
         ->assertPresent('.prose code .token');
 });
 
+it('keeps stray whitespace out of code blocks around the copy action', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
+
+    $page->assertPresent('.copy-btn')
+        ->assertScript('Array.from(document.querySelectorAll(".prose pre")).every((pre) => Array.from(pre.childNodes).every((node) => node.nodeType === Node.ELEMENT_NODE))')
+        ->assertScript('Array.from(document.querySelectorAll(".prose pre")).every((pre) => pre.getBoundingClientRect().height < pre.querySelector("code").getBoundingClientRect().height + 60)');
+});
+
 it('reports clipboard failure without claiming the code was copied', function (): void {
     $this->withVite();
     $page = $this->browserPage(route('blog.show', 'e2e-code-example'), 'desktop');
