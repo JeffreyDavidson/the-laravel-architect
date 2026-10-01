@@ -151,6 +151,8 @@ release_commit: false            # the release branch is exactly the tip of deve
 staging: workflow "Deploy staging" (workflow_run after push CI on main and release/**)
 promote: workflow promote-production.yml, inputs revision (40-char SHA) + staging_run_id, protected `production` environment
 verify: https://thelaravelarchitect.com/deployment.json (revision), https://thelaravelarchitect.com/up (200)
+smoke_pages: / /blog /podcasts /search /contact /admin/login /sitemap.xml /rss   # expect 200; the podcast index is /podcasts and the feed is /rss, so /podcast and /feed return 404
+deploy_script: Forge keeps a separate copy per site (staging 3366565, production 3044519); keep both identical to the script in docs/operations.md and paste any change into both
 sync_integration: fast-forward
-backup_gate: php artisan backup:run then php artisan app:verify-backup; automatic only for releases with migrations
+backup_gate: php artisan backup:run then php artisan app:verify-backup; run by the production deploy script only when the release has pending migrations. Until the gate has run once in production, watch such a deploy in Forge: a failed backup or verification stops the deploy before it migrates, and the previous release keeps serving
 ```
