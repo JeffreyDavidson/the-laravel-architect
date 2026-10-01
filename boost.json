@@ -16,6 +16,7 @@
         "configure-nightwatch",
         "livewire-development",
         "tailwindcss-development",
+        "featured-image",
         "filament-development"
     ]
 }
