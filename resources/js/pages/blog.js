@@ -31,7 +31,7 @@ function initializeCodeCopyButtons() {
 
     document.querySelectorAll('.prose pre').forEach(pre => {
         if (pre.querySelector('code') && !pre.querySelector('.copy-btn')) {
-            pre.appendChild(template.content.cloneNode(true));
+            pre.append(...Array.from(template.content.children, child => child.cloneNode(true)));
         }
     });
 }
