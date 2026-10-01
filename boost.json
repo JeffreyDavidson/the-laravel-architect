@@ -18,7 +18,6 @@
         "tailwindcss-development",
         "featured-image",
         "filament-development",
-        "publish-blog-post",
-        "release"
+        "publish-blog-post"
     ]
 }
