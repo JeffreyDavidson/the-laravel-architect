@@ -127,6 +127,12 @@ class AppServiceProvider extends ServiceProvider
 
             return $limit->by($ipAddress);
         });
+        RateLimiter::for('resend-webhook', function (Request $request): Limit {
+            $ipAddress = $request->ip();
+            $limit = Limit::perMinute(60);
+
+            return $limit->by($ipAddress);
+        });
 
         $appUrl = config('app.url');
 
