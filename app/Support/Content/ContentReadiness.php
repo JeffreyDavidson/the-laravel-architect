@@ -101,7 +101,7 @@ final readonly class ContentReadiness
             ],
             'featured_image' => [
                 'label' => 'Featured image',
-                'complete' => filled($post->featured_image_path),
+                'complete' => filled($post->featured_image_path) || app(BundledPostArtwork::class)->exists($post->slug),
             ],
             'category' => [
                 'label' => 'Category',

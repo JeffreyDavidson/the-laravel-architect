@@ -145,3 +145,22 @@ it('does not retain the cooldown when queueing the confirmation fails', function
 
     expect(Cache::has($cooldownKey))->toBeFalse();
 });
+
+it('leaves a suppressed address alone and sends it no email', function () {
+    $reader = Subscriber::factory()
+        ->suppressed()
+        ->create(['email' => 'reader@example.com']);
+
+    app(RequestNewsletterSubscription::class)
+        ->handle('Reader@Example.com');
+
+    $reader->refresh();
+
+    expect($reader->isSuppressed())
+        ->toBeTrue()
+        ->and($reader->unsubscribed_at)
+        ->not->toBeNull()
+        ->and($reader->verification_token_hash)
+        ->toBeNull();
+    Mail::assertNothingQueued();
+});

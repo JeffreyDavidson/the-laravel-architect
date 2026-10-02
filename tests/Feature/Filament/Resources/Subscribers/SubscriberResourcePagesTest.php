@@ -36,3 +36,18 @@ it('does not allow subscribers to be created or edited in the panel', function (
         ->and($pages)
         ->toBe(['index']);
 });
+
+it('shows each subscriber status and filters by it', function () {
+    $active = Subscriber::factory()->create();
+    $suppressed = Subscriber::factory()
+        ->suppressed()
+        ->create();
+
+    livewire(ListSubscribers::class)
+        ->assertCanSeeTableRecords([$active])
+        ->assertCanNotSeeTableRecords([$suppressed])
+        ->filterTable('status', 'suppressed')
+        ->assertCanSeeTableRecords([$suppressed])
+        ->assertCanNotSeeTableRecords([$active])
+        ->assertSee('Suppressed');
+});

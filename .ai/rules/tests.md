@@ -31,3 +31,9 @@ Name each test for the complete behavior it verifies, after the class that owns 
 
 ## Use the smallest effective fixture
 Create only the records and files needed to cross the behavior boundary under test; for pagination, create just enough to reach the next page. Set only factory attributes that affect the behavior or are asserted directly.
+
+## Put each call in a method chain on its own line
+composer check runs scripts/check-method-chaining.php, which fails a line when an arrow continues a chain whose previous link is a method call on the same line. In tests this catches `$post->refresh()->episode_id`, `expect($x)->and(Model::query()->whereKey($id)->exists())` and `$collection->pluck('a')->sort()->all()`. Put one call per line, or assign the intermediate result to a variable and then assert on it. Property chains and `->value` are allowed. Merged migrations are not checked.
+
+## Keep Pest tests free of mixed types for PHPStan
+phpstan-pest.neon fails on mixed values. Add an `@var array<string, mixed> $param` docblock for dataset parameters that need it, use `->pluck('id')->all()` instead of a closure that returns `$model->getKey()` for an int, and narrow with `instanceof` before using a value as a model or request. Fix the type, do not widen a parameter or return type just to silence the error.

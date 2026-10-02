@@ -113,6 +113,16 @@ TLA's shows are not on Transistor yet. When a show moves:
 4. The old audio players are retired, and their `audio_url`, `audio_path` and `embed_url` columns are dropped. The migration is irreversible and refuses to run while any episode, trashed or not, still holds a value in one of those columns; if it stops, move that episode to Transistor or clear the value, then run it again. Take and verify a backup first (see "Backup validation").
 5. Audio files uploaded before the retirement are no longer referenced by any record. Any left under `storage/app/public/episodes/audio/` appear as orphans in the media orphan report and can be reviewed and removed with it.
 
+## Resend bounce and complaint webhook
+
+Resend reports bounces and spam complaints to `POST https://thelaravelarchitect.com/webhooks/resend`; the application then suppresses those addresses so they are never mailed again (see `docs/architecture.md`). To set it up on production:
+
+1. In the Resend dashboard, open Webhooks, add `https://thelaravelarchitect.com/webhooks/resend` and select `email.bounced`, `email.complained` and `email.suppressed`. Resend webhooks are account-wide, so events for other projects' mail on the same account also arrive; they are ignored unless the address is one of this site's subscribers.
+2. Copy the signing secret (`whsec_...`) into the production environment as `RESEND_WEBHOOK_SECRET` in Forge, then deploy or refresh the config cache and restart the queue workers.
+3. Send a test event from the Resend dashboard and confirm a 2xx in its delivery log. A 503 means the secret is not loaded; a 403 means the secret does not match this webhook, or Cloudflare blocked the request. The site is behind Cloudflare: if the delivery log shows a 403 or a challenge page instead of a 2xx, add a Cloudflare WAF skip rule for `/webhooks/resend`.
+
+The endpoint skips the session and CSRF middleware because Resend posts server to server; the signature is the only credential, and it is limited to 60 requests per minute per IP. Event payloads and addresses are never logged. `app:verify-deployment` does not require the secret, so a release can ship before the webhook exists. Staging never sends email and needs no webhook.
+
 ## Sending a newsletter issue
 
 1. Publish the issue, then use **Send test email** on its edit page. The copy goes to `MAIL_CONTACT_TO`, records no delivery, and omits unsubscribe headers.

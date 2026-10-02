@@ -197,3 +197,19 @@ it('counts a Transistor episode URL as episode media', function () {
     expect(new ContentReadiness($episode)->checkComplete('episode_media'))
         ->toBeTrue();
 });
+
+it('counts bundled artwork as a post featured image', function (string $slug, bool $complete) {
+    $post = new Post([
+        'title' => 'Artwork check',
+        'slug' => $slug,
+        'content' => 'Content.',
+    ]);
+
+    $checks = new ContentReadiness($post)->checks();
+
+    expect($checks['featured_image']['complete'])
+        ->toBe($complete);
+})->with([
+    'a post with bundled artwork' => ['hello-world-why-im-starting-this-blog', true],
+    'a post without artwork' => ['a-brand-new-post', false],
+]);

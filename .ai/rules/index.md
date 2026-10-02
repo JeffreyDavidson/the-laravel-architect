@@ -5,12 +5,14 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | app/Actions/** | .ai/rules/actions.md |
+| app/** | .ai/rules/app.md |
 | app/Console/Commands/** | .ai/rules/commands.md |
 | app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Data/** | .ai/rules/data.md |
 | app/Filament/** | .ai/rules/filament.md |
 | ** | .ai/rules/general.md |
 | resources/js/** | .ai/rules/js.md |
+| database/migrations/** | .ai/rules/migrations.md |
 | app/Models/** | .ai/rules/models.md |
 | app/Observers/** | .ai/rules/observers.md |
 | app/Presenters/** | .ai/rules/presenters.md |

@@ -22,6 +22,7 @@ use App\Http\Controllers\PreviewPostController;
 use App\Http\Controllers\PreviewProjectController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ResendWebhookController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\SearchController;
@@ -83,6 +84,11 @@ Route::get('/rss', RssFeedController::class)->name('rss');
 Route::get('/robots.txt', RobotsController::class)
     ->withoutMiddleware('web')
     ->name('robots');
+// Server-to-server: no session, cookies or forgery token; the Resend signature is the credential.
+Route::post('/webhooks/resend', ResendWebhookController::class)
+    ->withoutMiddleware('web')
+    ->middleware('throttle:resend-webhook')
+    ->name('webhooks.resend');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
