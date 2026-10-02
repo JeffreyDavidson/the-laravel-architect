@@ -69,7 +69,8 @@
                                 timestamps; and a record of which issues were sent to you. A temporary, hashed
                                 verification token supports the confirmation process. Subscription requires email
                                 confirmation, and every subscriber can unsubscribe using the link provided in newsletter
-                                messages.
+                                messages. If an address bounces or is reported as spam, it is kept, with the reason, on
+                                a do-not-email list so it is never emailed again.
                             </p>
                         </div>
                     </div>
@@ -129,11 +130,12 @@
                     <p class="mb-4 leading-relaxed">
                         Information is kept only as long as reasonably needed for the purpose described above, site
                         security, or legitimate recordkeeping. Newsletter sign-ups that are never confirmed are deleted
-                        after 7 days, and unsubscribed addresses are deleted 30 days after unsubscribing. Confirmed
-                        subscriptions remain until you unsubscribe or a deletion request is completed. Legacy records
-                        retained in the application database follow the same retention and deletion practices.
-                        Operational logs and email records follow the retention settings of the services that store
-                        them.
+                        after 7 days, and unsubscribed addresses are deleted 30 days after unsubscribing. Addresses that
+                        bounce or are reported as spam stay on the do-not-email list so they are never emailed again,
+                        even after a deletion request. Confirmed subscriptions remain until you unsubscribe or a
+                        deletion request is completed. Legacy records retained in the application database follow the
+                        same retention and deletion practices. Operational logs and email records follow the retention
+                        settings of the services that store them.
                     </p>
                     <p class="leading-relaxed">
                         You may ask to access, correct, or delete personal information associated with you. Newsletter

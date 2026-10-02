@@ -32,6 +32,10 @@ final readonly class RequestNewsletterSubscription
         Cache::lock($lockKey, self::LOCK_SECONDS)->block(self::LOCK_WAIT_SECONDS, function () use ($email, $cooldownKey): void {
             $subscriber = Subscriber::query()->firstOrNew(['email' => $email]);
 
+            if ($subscriber->isSuppressed()) {
+                return;
+            }
+
             if ($subscriber->verified_at && ! $subscriber->unsubscribed_at) {
                 return;
             }
