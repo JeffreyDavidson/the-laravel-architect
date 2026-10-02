@@ -5,36 +5,10 @@
 ])
 
 @inject('responsiveImages', 'App\Services\ResponsiveImageVariants')
+@inject('bundledPostArtwork', 'App\Support\Content\BundledPostArtwork')
 
 @php
-    $bundledArtwork = match ($post->slug) {
-        'hello-world-why-im-starting-this-blog' => [
-            'small' => Vite::asset('resources/images/post-hello-world-384.webp'),
-            'medium' => Vite::asset('resources/images/post-hello-world-768.webp'),
-            'large' => Vite::asset('resources/images/post-hello-world-1280.webp'),
-        ],
-        'from-kansas-to-florida-a-developers-journey' => [
-            'small' => Vite::asset('resources/images/post-kansas-florida-384.webp'),
-            'medium' => Vite::asset('resources/images/post-kansas-florida-768.webp'),
-            'large' => Vite::asset('resources/images/post-kansas-florida-1280.webp'),
-        ],
-        'how-i-structure-every-laravel-project' => [
-            'small' => Vite::asset('resources/images/home-writing-fallback-384.webp'),
-            'medium' => Vite::asset('resources/images/home-writing-fallback-768.webp'),
-            'large' => Vite::asset('resources/images/home-writing-fallback-1280.webp'),
-        ],
-        'why-i-still-choose-laravel-in-2026' => [
-            'small' => Vite::asset('resources/images/home-writing-review-384.webp'),
-            'medium' => Vite::asset('resources/images/home-writing-review-768.webp'),
-            'large' => Vite::asset('resources/images/home-writing-review-1280.webp'),
-        ],
-        'what-15-years-of-web-development-taught-me' => [
-            'small' => Vite::asset('resources/images/home-writing-modules-384.webp'),
-            'medium' => Vite::asset('resources/images/home-writing-modules-768.webp'),
-            'large' => Vite::asset('resources/images/home-writing-modules-1280.webp'),
-        ],
-        default => null,
-    };
+    $bundledArtwork = $bundledPostArtwork->urls($post->slug);
 
     $uploadedSrcset = $post->featured_image_url
         ? $responsiveImages->srcset($post->featured_image_path)
