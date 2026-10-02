@@ -122,3 +122,20 @@ it('rejects a separate queue database before creating deliveries', function () {
 
     $this->assertDatabaseCount('newsletter_deliveries', 0);
 });
+
+it('does not queue a delivery for a suppressed address', function () {
+    $active = subscriberWithState('active@example.com', confirmed: true);
+    Subscriber::factory()->create(['email' => 'flagged@example.com', 'suppressed_at' => now()]);
+    $issue = newsletterIssueToSend();
+
+    $queued = app(SendNewsletterIssue::class)
+        ->handle($issue);
+
+    expect($queued)
+        ->toBe(1);
+    $this->assertDatabaseHas('newsletter_deliveries', [
+        'newsletter_issue_id' => $issue->getKey(),
+        'subscriber_id' => $active->getKey(),
+    ]);
+    $this->assertDatabaseCount('newsletter_deliveries', 1);
+});

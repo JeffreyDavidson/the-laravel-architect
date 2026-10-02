@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -42,4 +43,33 @@ it('hides its verification token hash from serialization', function () {
     expect($subscriber->toArray())
         ->toHaveKey('email', 'reader@example.com')
         ->not->toHaveKey('verification_token_hash');
+});
+
+it('never treats a suppressed reader as active or prunes it', function () {
+    $this->freezeTime();
+    $suppressed = Subscriber::factory()
+        ->suppressed(SuppressionReason::Complained)
+        ->create([
+            'subscribed_at' => now()->subYear(),
+            'unsubscribed_at' => now()->subYear(),
+            'suppressed_at' => now()->subYear(),
+        ]);
+    $flagged = Subscriber::factory()->create(['suppressed_at' => now()]);
+
+    $anyActive = Subscriber::query()
+        ->active()
+        ->exists();
+    $anyPrunable = new Subscriber()->prunable()
+        ->exists();
+
+    expect($anyActive)
+        ->toBeFalse()
+        ->and($suppressed->isSuppressed())
+        ->toBeTrue()
+        ->and($flagged->isActive())
+        ->toBeFalse()
+        ->and($suppressed->suppression_reason)
+        ->toBe(SuppressionReason::Complained)
+        ->and($anyPrunable)
+        ->toBeFalse();
 });

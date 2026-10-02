@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Subscribers\Tables;
 
+use App\Enums\SubscriberStatus;
 use App\Models\Subscriber;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -32,19 +32,25 @@ class SubscribersTable
                     ->dateTime('M j, Y')
                     ->sortable()
                     ->label('Unsubscribed')
-                    ->placeholder(fn (Subscriber $record): string => $record->isActive() ? 'Active' : 'Pending confirmation'),
-                IconColumn::make('is_active')
-                    ->label('Status')
-                    ->state(fn (Subscriber $record): bool => $record->isActive())
-                    ->boolean(),
+                    ->placeholder('—'),
+                TextColumn::make('status')
+                    ->state(fn (Subscriber $record): SubscriberStatus => SubscriberStatus::for($record))
+                    ->badge(),
             ])
             ->defaultSort('subscribed_at', 'desc')
             ->filters([
-                Filter::make('active')
-                    ->label('Active only')
-                    ->query(fn (Builder $query) => $query->whereNotNull('verified_at')
-                        ->whereNull('unsubscribed_at'))
-                    ->default(),
+                SelectFilter::make('status')
+                    ->options(SubscriberStatus::class)
+                    ->default(SubscriberStatus::Active->value)
+                    ->query(function (Builder $query, array $data): void {
+                        $status = $data['value'] ?? null;
+
+                        if (! is_string($status)) {
+                            return;
+                        }
+
+                        SubscriberStatus::tryFrom($status)?->scope($query);
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
