@@ -335,13 +335,13 @@ it('answers a bot that fills the honeypot like a real sign-up, without subscribi
     Mail::assertNothingQueued();
 });
 
-it('marks the signup form and its live region so the page script can find them', function (string $page) {
+it('renders the signup form as an Alpine component with its live region', function (string $page) {
     $this->get(route($page))
         ->assertOk()
+        ->assertSeeHtml('x-data="newsletterForm"')
         ->assertSeeHtml('data-newsletter-form')
         ->assertSeeHtml('data-newsletter-feedback')
-        ->assertSeeHtml('data-newsletter-success-template')
-        ->assertSeeHtml('data-newsletter-error-template');
+        ->assertSeeHtml('id="newsletter-email-error-live"');
 })->with([
     'home page' => ['home'],
     'newsletter page' => ['newsletter.index'],

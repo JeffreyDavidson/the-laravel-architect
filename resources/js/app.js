@@ -12,6 +12,11 @@ async function initializePublicUi() {
         registerAboutCard(runtime.Alpine);
     }
 
+    if (document.querySelector('[data-newsletter-form]')) {
+        const { registerNewsletterForm } = await import('./pages/newsletter');
+        registerNewsletterForm(runtime.Alpine);
+    }
+
     if (document.querySelector('[data-blog-filter]')) {
         await import('./pages/blog-index');
     }
@@ -33,10 +38,6 @@ initializePublicUi();
 
 if (document.querySelector('[data-turnstile-widget]')) {
     import('./pages/contact');
-}
-
-if (document.querySelector('[data-newsletter-form]')) {
-    import('./pages/newsletter');
 }
 
 if (document.querySelector('[data-home-hero]')) {
