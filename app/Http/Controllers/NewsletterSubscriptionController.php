@@ -6,6 +6,7 @@ use App\Actions\RequestNewsletterSubscription;
 use App\Actions\UnsubscribeFromNewsletter;
 use App\Http\Requests\SubscribeNewsletterRequest;
 use App\Models\Subscriber;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
 class NewsletterSubscriptionController
@@ -13,23 +14,25 @@ class NewsletterSubscriptionController
     public function store(
         SubscribeNewsletterRequest $request,
         RequestNewsletterSubscription $requestNewsletterSubscription,
-    ): RedirectResponse {
-        if ($request->filled('website')) {
-            return back()
-                ->withFragment('newsletter-form')
-                ->with('newsletter_success', 'Check your email to confirm your subscription.');
+    ): JsonResponse|RedirectResponse {
+        $message = 'Check your email to confirm your subscription.';
+
+        if (! $request->filled('website')) {
+            $requestNewsletterSubscription->handle(
+                $request->safe()
+                    ->string('email')
+                    ->lower()
+                    ->toString(),
+            );
         }
 
-        $email = $request->safe()
-            ->string('email')
-            ->lower()
-            ->toString();
-
-        $requestNewsletterSubscription->handle($email);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message]);
+        }
 
         return back()
             ->withFragment('newsletter-form')
-            ->with('newsletter_success', 'Check your email to confirm your subscription.');
+            ->with('newsletter_success', $message);
     }
 
     public function destroy(

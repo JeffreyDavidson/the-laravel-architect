@@ -10,26 +10,22 @@
         A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam,
         unsubscribe anytime.
     </p>
-    @if (session('newsletter_success'))
-        <div
-            class="mx-auto mb-4 max-w-md rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
-            role="status"
-            aria-live="polite"
-        >
-            {{ session('newsletter_success') }}
-        </div>
-    @endif
-    @error('email')
-        <div
-            id="newsletter-email-error"
-            class="mx-auto mb-4 max-w-md rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
-            role="alert"
-            aria-live="assertive"
-        >
-            {{ $message }}
-        </div>
-    @enderror
+    <div data-newsletter-feedback aria-live="polite">
+        @if (session('newsletter_success'))
+            <x-home.newsletter-banner>{{ session('newsletter_success') }}</x-home.newsletter-banner>
+        @endif
+        @error('email')
+            <x-home.newsletter-banner type="error">{{ $message }}</x-home.newsletter-banner>
+        @enderror
+    </div>
+    <template data-newsletter-success-template>
+        <x-home.newsletter-banner />
+    </template>
+    <template data-newsletter-error-template>
+        <x-home.newsletter-banner type="error" />
+    </template>
     <form
+        data-newsletter-form
         action="{{ route('newsletter.subscribe') }}"
         method="POST"
         class="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"

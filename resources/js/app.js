@@ -35,6 +35,10 @@ if (document.querySelector('[data-turnstile-widget]')) {
     import('./pages/contact');
 }
 
+if (document.querySelector('[data-newsletter-form]')) {
+    import('./pages/newsletter');
+}
+
 if (document.querySelector('[data-home-hero]')) {
     import('./pages/home');
 }

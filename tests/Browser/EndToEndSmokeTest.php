@@ -496,3 +496,45 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertNoJavaScriptErrors();
 })->with(['light', 'dark'])
     ->with(['desktop', 'mobile']);
+
+it('subscribes to the newsletter in place without reloading the page', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/', 'desktop');
+
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
+        ->script("window.newsletterMarker = 'kept'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('reader@example.com');
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->click();
+
+    $page->assertSee('Check your email to confirm your subscription.')
+        ->assertScript("window.newsletterMarker === 'kept'")
+        ->assertScript("document.querySelector('#newsletter-email').value === ''")
+        ->assertPathIs('/')
+        ->assertNoJavaScriptErrors();
+});
+
+it('shows the newsletter error in place and keeps what was typed', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/', 'desktop');
+
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
+        ->script("window.newsletterMarker = 'kept'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('bad..address@example.com');
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->click();
+
+    $page->assertSee('The email field must be a valid email address.')
+        ->assertScript("window.newsletterMarker === 'kept'")
+        ->assertScript("document.querySelector('#newsletter-email').value === 'bad..address@example.com'")
+        ->assertScript("document.querySelector('#newsletter-email').getAttribute('aria-invalid') === 'true'")
+        ->assertNoJavaScriptErrors();
+});
