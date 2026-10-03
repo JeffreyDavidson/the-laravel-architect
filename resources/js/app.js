@@ -33,8 +33,8 @@ async function initializePublicUi() {
     }
 
     if (document.querySelector('[data-article]')) {
-        const { initializeBlog } = await import('./pages/blog');
-        initializeBlog();
+        const { registerBlogArticle } = await import('./pages/blog');
+        registerBlogArticle(runtime.Alpine);
     }
 
     if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-transcript]')) {
