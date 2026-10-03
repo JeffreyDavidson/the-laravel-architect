@@ -9,7 +9,7 @@
         aria-hidden="true"
     ></div>
 
-    <article class="article-page" data-article>
+    <article class="article-page" data-article x-data="blogArticle">
         <header class="mx-auto max-w-6xl px-4 pt-12 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:px-8 lg:pt-20">
             @if ($post->category)
                 <a

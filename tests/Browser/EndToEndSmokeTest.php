@@ -433,6 +433,22 @@ it('builds styled article navigation from the Blade template', function (): void
         ->assertNoJavaScriptErrors();
 });
 
+it('marks the article section being read in the contents list', function (): void {
+    $this->withVite();
+    $filler = str_repeat("Some paragraph text that makes the section long enough to scroll through.\n\n", 18);
+    $post = Post::query()->where('slug', 'e2e-code-example')
+        ->sole();
+    $post->update(['content' => "## First section\n\n{$filler}## Second section\n\n{$filler}"]);
+
+    $page = $this->browserPage(route('blog.show', $post), 'desktop');
+
+    $page->assertCount('[data-article-toc-link]', 4)
+        ->script('const heading = document.getElementById("second-section"); window.scrollTo(0, heading.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.25);');
+
+    $page->assertScript('document.querySelector("[data-article-toc-link][aria-current=\"true\"]")?.dataset.articleTocLink === "second-section"')
+        ->assertNoJavaScriptErrors();
+});
+
 it('allows an administrator to reach the dashboard', function (string $theme, string $device): void {
     $this->withVite();
 
