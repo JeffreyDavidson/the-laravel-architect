@@ -25,6 +25,11 @@ it('loads public routes without high impact accessibility issues in both themes'
 
     $page = $this->browserPageWithTheme($route, 'desktop', $theme);
 
+    if ($route === '/') {
+        // The home component resets the reveal state when it starts; let it finish before settling the content.
+        $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    }
+
     // Audit settled content, independently of scroll-reveal animation timing.
     $page->script('document.querySelectorAll("[data-reveal]").forEach(element => { element.style.transition = "none"; element.dataset.reveal = "visible"; });');
 
@@ -224,6 +229,7 @@ it('initializes homepage reveal animations', function (): void {
     $this->withVite();
 
     $page = HomePage::visit();
+    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
 
     $page->page()
         ->locator('[data-reveal]')
@@ -231,6 +237,23 @@ it('initializes homepage reveal animations', function (): void {
         ->scrollIntoViewIfNeeded();
 
     $page->assertScript('document.querySelector("[data-reveal]").dataset.reveal === "visible"')
+        ->assertNoJavaScriptErrors();
+});
+
+it('counts the homepage proof figures up to their targets', function (): void {
+    $this->withVite();
+
+    $page = HomePage::visit();
+    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    $page->script('window.countUpChanges = 0; new MutationObserver(() => window.countUpChanges++).observe(document.querySelector("[data-count-up]"), { childList: true, characterData: true, subtree: true });');
+
+    $page->page()
+        ->locator('[data-count-up]')
+        ->first()
+        ->scrollIntoViewIfNeeded();
+
+    $page->assertScript('window.countUpChanges > 0')
+        ->assertScript('document.querySelector("[data-count-up]").textContent.trim() === document.querySelector("[data-count-up]").dataset.target')
         ->assertNoJavaScriptErrors();
 });
 
