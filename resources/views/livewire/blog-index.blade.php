@@ -1,4 +1,10 @@
-<div data-blog-filter wire:loading.attr="aria-busy" aria-busy="false">
+<div
+    data-blog-filter
+    x-data="blogMetadata"
+    x-on:blog-metadata-updated.window="update"
+    wire:loading.attr="aria-busy"
+    aria-busy="false"
+>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="blog-index__filters dark:border-surface-border dark:border-surface-border flex flex-col gap-5 border-b border-gray-200 py-6 lg:flex-row lg:items-center lg:justify-between">
             <form

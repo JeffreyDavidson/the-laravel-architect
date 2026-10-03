@@ -28,7 +28,8 @@ async function initializePublicUi() {
     }
 
     if (document.querySelector('[data-blog-filter]')) {
-        await import('./pages/blog-index');
+        const { registerBlogMetadata } = await import('./pages/blog-index');
+        registerBlogMetadata(runtime.Alpine);
     }
 
     if (document.querySelector('[data-article]')) {

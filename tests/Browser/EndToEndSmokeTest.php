@@ -306,6 +306,7 @@ it('supports blog search and reset with Livewire', function (): void {
 
     $page->assertScript("typeof window.Livewire === 'object' && typeof window.Alpine === 'object'")
         ->assertScript('window.Livewire.all().length > 0')
+        ->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'")
         ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/alpine-'))")
         ->click('#theme-toggle')
         ->assertNoJavaScriptErrors();
@@ -323,10 +324,12 @@ it('supports blog search and reset with Livewire', function (): void {
         ->assertSee('E2E Searchable Post')
         ->assertDontSee('E2E Welcome Post')
         ->assertTitle('Search results — Jeffrey Davidson')
+        ->assertScript("document.querySelector('meta[name=\"robots\"]')?.content === 'noindex, follow'")
         ->assertScript("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)['@graph'].find(item => item['@type'] === 'ItemList').numberOfItems === 1")
         ->click('[data-blog-clear]')
         ->assertSee('E2E Welcome Post')
         ->assertTitle('Blog — Jeffrey Davidson')
+        ->assertScript("document.querySelector('meta[name=\"robots\"]') === null")
         ->assertNoJavaScriptErrors();
 });
 
