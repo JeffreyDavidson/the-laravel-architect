@@ -563,3 +563,21 @@ it('keeps the footer at the bottom of a short page', function (string $device): 
         ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
         ->assertNoJavaScriptErrors();
 })->with(['desktop', 'mobile']);
+
+it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
+    config()->set('services.turnstile.site_key', 'test-site-key');
+    $this->withVite();
+
+    $page = $this->browserPage('/contact', 'desktop');
+
+    $page->assertScript("document.querySelectorAll('[data-turnstile-widget]').length === 1")
+        ->assertScript("document.querySelector('[data-contact-form]').dataset.ready === 'true'");
+    $page->page()
+        ->locator('input[name="name"]')
+        ->focus();
+    $page->page()
+        ->locator('input[name="email"]')
+        ->focus();
+
+    $page->assertScript("document.querySelectorAll('script[src*=\"challenges.cloudflare.com/turnstile\"]').length === 1");
+});
