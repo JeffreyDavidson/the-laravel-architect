@@ -1,5 +1,8 @@
 <div
     id="newsletter-form"
+    x-data="newsletterForm"
+    data-invalid="{{ $errors->has('email') ? 'true' : 'false' }}"
+    data-described-by="{{ $errors->has('email') ? 'newsletter-email-error newsletter-privacy' : 'newsletter-privacy' }}"
     {{ $attributes->merge(['class' => 'scroll-mt-24 relative overflow-hidden rounded-2xl border border-brand-200 bg-brand-50 p-6 shadow-sm dark:border-brand-800/50 dark:bg-brand-900/50 dark:shadow-none sm:p-10']) }}
 >
     <svg class="text-brand-400 mx-auto mb-4 h-10 w-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -10,26 +13,28 @@
         A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam,
         unsubscribe anytime.
     </p>
-    @if (session('newsletter_success'))
-        <div
-            class="mx-auto mb-4 max-w-md rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400"
-            role="status"
-            aria-live="polite"
-        >
-            {{ session('newsletter_success') }}
-        </div>
-    @endif
-    @error('email')
-        <div
-            id="newsletter-email-error"
-            class="mx-auto mb-4 max-w-md rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
-            role="alert"
-            aria-live="assertive"
-        >
-            {{ $message }}
-        </div>
-    @enderror
+    <div data-newsletter-feedback aria-live="polite">
+        @if (session('newsletter_success'))
+            <x-home.newsletter-banner x-bind:hidden="hasMessage">
+                {{ session('newsletter_success') }}
+            </x-home.newsletter-banner>
+        @endif
+        @error('email')
+            <x-home.newsletter-banner type="error" x-bind:hidden="hasMessage">{{ $message }}</x-home.newsletter-banner>
+        @enderror
+        <x-home.newsletter-banner hidden x-bind:hidden="notSuccess" x-text="message" />
+        <x-home.newsletter-banner
+            type="error"
+            id="newsletter-email-error-live"
+            hidden
+            x-bind:hidden="notError"
+            x-text="message"
+        />
+    </div>
     <form
+        data-newsletter-form
+        x-ref="form"
+        x-on:submit.prevent="send"
         action="{{ route('newsletter.subscribe') }}"
         method="POST"
         class="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
@@ -49,9 +54,13 @@
             value="{{ old('email') }}"
             aria-invalid="{{ $errors->has('email') ? 'true' : 'false' }}"
             aria-describedby="{{ $errors->has('email') ? 'newsletter-email-error newsletter-privacy' : 'newsletter-privacy' }}"
+            x-bind:aria-invalid="ariaInvalid"
+            x-bind:aria-describedby="describedBy"
             class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:shadow-[0_0_0_2px_var(--brand-alpha-40)] focus:outline-none sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
         />
-        <x-button type="submit" class="rounded-lg text-base font-semibold sm:text-sm">Subscribe</x-button>
+        <x-button type="submit" x-bind:disabled="busy" class="rounded-lg text-base font-semibold sm:text-sm">
+            Subscribe
+        </x-button>
     </form>
     <p id="newsletter-privacy" class="mx-auto mt-3 max-w-md text-xs text-gray-600 dark:text-gray-400">
         Confirmation is required. See the

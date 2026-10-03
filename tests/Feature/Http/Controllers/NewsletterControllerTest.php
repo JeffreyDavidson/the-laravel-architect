@@ -302,3 +302,47 @@ it('renders the signup form with the anchor the redirects point to', function (s
     'home page' => ['home'],
     'newsletter page' => ['newsletter.index'],
 ]);
+
+it('answers a script request with the confirmation message and keeps the session untouched', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'Reader@Example.com'])
+        ->assertOk()
+        ->assertExactJson(['message' => 'Check your email to confirm your subscription.'])
+        ->assertSessionMissing('newsletter_success');
+
+    $subscriber = Subscriber::query()->sole();
+
+    expect($subscriber->email)
+        ->toBe('reader@example.com');
+    Mail::assertQueued(ConfirmNewsletterSubscription::class);
+});
+
+it('answers a script request for a rejected address with the validation error', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'not-an-email'])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('email');
+
+    expect(Subscriber::query()->count())
+        ->toBe(0);
+});
+
+it('answers a bot that fills the honeypot like a real sign-up, without subscribing anyone', function () {
+    $this->postJson(route('newsletter.subscribe'), ['email' => 'bot@example.com', 'website' => 'https://spam.example'])
+        ->assertOk()
+        ->assertExactJson(['message' => 'Check your email to confirm your subscription.']);
+
+    expect(Subscriber::query()->count())
+        ->toBe(0);
+    Mail::assertNothingQueued();
+});
+
+it('renders the signup form as an Alpine component with its live region', function (string $page) {
+    $this->get(route($page))
+        ->assertOk()
+        ->assertSeeHtml('x-data="newsletterForm"')
+        ->assertSeeHtml('data-newsletter-form')
+        ->assertSeeHtml('data-newsletter-feedback')
+        ->assertSeeHtml('id="newsletter-email-error-live"');
+})->with([
+    'home page' => ['home'],
+    'newsletter page' => ['newsletter.index'],
+]);

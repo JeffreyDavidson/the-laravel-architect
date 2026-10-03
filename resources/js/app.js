@@ -12,6 +12,11 @@ async function initializePublicUi() {
         registerAboutCard(runtime.Alpine);
     }
 
+    if (document.querySelector('[data-newsletter-form]')) {
+        const { registerNewsletterForm } = await import('./pages/newsletter');
+        registerNewsletterForm(runtime.Alpine);
+    }
+
     if (document.querySelector('[data-blog-filter]')) {
         await import('./pages/blog-index');
     }
