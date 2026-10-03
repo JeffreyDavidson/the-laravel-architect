@@ -112,6 +112,62 @@ MARKDOWN,
         ->assertNoJavaScriptErrors();
 });
 
+/** @return array{0: Podcast, 1: Episode} */
+function transcriptEpisode(): array
+{
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Designing Clear Boundaries',
+        'slug' => 'designing-clear-boundaries',
+        'description' => 'A practical discussion about application boundaries.',
+        'transcript' => "## Opening thoughts\n\nBoundaries matter.\n\n## Boundaries in practice\n\nMore about boundaries here.",
+        'duration_seconds' => 2520,
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-08-20 12:00:00',
+    ]);
+
+    return [$podcast, $episode];
+}
+
+it('clears transcript search matches and copies a section link', function () {
+    [$podcast, $episode] = transcriptEpisode();
+    $this->withVite();
+    $page = PodcastEpisodePage::visit($podcast, $episode);
+
+    $page->assertPresent('[data-transcript-anchor]')
+        ->click('Read transcript')
+        ->fill('Search transcript', 'boundaries')
+        ->assertScript('document.querySelector("[data-transcript-status]").textContent === "3 matches found"')
+        ->assertScript('document.querySelectorAll("[data-transcript-match]").length === 3')
+        ->fill('Search transcript', '')
+        ->assertScript('document.querySelector("[data-transcript-status]").textContent === "Search the transcript"')
+        ->assertScript('document.querySelectorAll("[data-transcript-match]").length === 0');
+
+    $page->page()
+        ->locator('[data-transcript-anchor]')
+        ->first()
+        ->click();
+
+    $page->assertScript('document.querySelector("[data-transcript-anchor]").getAttribute("aria-label") === "Section link copied"')
+        ->assertNoJavaScriptErrors();
+});
+
+it('opens the transcript at a deep-linked section', function () {
+    [$podcast, $episode] = transcriptEpisode();
+    $this->withVite();
+
+    $page = $this->browserPage(route('podcast.episode', [$podcast, $episode]).'#transcript-boundaries-in-practice', 'desktop');
+
+    $page->assertScript('document.querySelector("[data-transcript]").open === true')
+        ->assertNoJavaScriptErrors();
+});
+
 it('publishes machine-readable dates for articles', function () {
     $author = User::factory()->create();
     $post = Post::query()->create([

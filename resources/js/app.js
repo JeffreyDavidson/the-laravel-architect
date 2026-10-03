@@ -38,8 +38,8 @@ async function initializePublicUi() {
     }
 
     if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-transcript]')) {
-        const { initializePodcast } = await import('./pages/podcast');
-        initializePodcast(runtime.Alpine);
+        const { registerPodcast } = await import('./pages/podcast');
+        registerPodcast(runtime.Alpine);
     }
 
     runtime.start();
