@@ -15,6 +15,7 @@ export function registerSiteHeader(Alpine) {
 
         init() {
             this.updateThemeColor();
+            this.$root.dataset.ready = 'true';
         },
         toggleMenu() {
             this.menuOpen = !this.menuOpen;

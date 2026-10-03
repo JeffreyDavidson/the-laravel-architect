@@ -4,8 +4,10 @@ use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
+use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use RuntimeException;
 use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
@@ -496,3 +498,68 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertNoJavaScriptErrors();
 })->with(['light', 'dark'])
     ->with(['desktop', 'mobile']);
+
+it('subscribes to the newsletter in place without reloading the page', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/', 'desktop');
+
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
+        ->script("window.newsletterMarker = 'kept'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('reader@example.com');
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->click();
+
+    $page->assertSee('Check your email to confirm your subscription.')
+        ->assertScript("window.newsletterMarker === 'kept'")
+        ->assertScript("document.querySelector('#newsletter-email').value === ''")
+        ->assertPathIs('/')
+        ->assertNoJavaScriptErrors();
+});
+
+it('shows the newsletter error in place and keeps what was typed', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/', 'desktop');
+
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
+        ->script("window.newsletterMarker = 'kept'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('bad..address@example.com');
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->click();
+
+    $page->assertSee('The email field must be a valid email address.')
+        ->assertScript("window.newsletterMarker === 'kept'")
+        ->assertScript("document.querySelector('#newsletter-email').value === 'bad..address@example.com'")
+        ->assertScript("document.querySelector('#newsletter-email').getAttribute('aria-invalid') === 'true'")
+        ->assertNoJavaScriptErrors();
+});
+
+it('keeps the footer at the bottom of a short page', function (string $device): void {
+    $this->withVite();
+
+    $token = 'footer-check-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'footer-check@example.test',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $page = $this->browserPage($url, $device);
+
+    $page->assertSee('Confirm your subscription')
+        ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
+        ->assertNoJavaScriptErrors();
+})->with(['desktop', 'mobile']);

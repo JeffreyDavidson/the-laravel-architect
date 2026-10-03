@@ -51,7 +51,7 @@ it('keeps public routes within the mobile viewport', function (string $route): v
 it('opens mobile navigation and navigates to the blog', function (): void {
     $this->withVite();
 
-    $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
+    $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'dark'));
     $menuButton = $page->page()
         ->getByRole('button', ['name' => 'Toggle menu']);
 
@@ -87,7 +87,7 @@ it('opens mobile navigation and navigates to the blog', function (): void {
 it('persists the mobile theme choice across navigation', function (): void {
     $this->withVite();
 
-    $page = $this->browserPageWithTheme('/', 'mobile', 'light');
+    $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'light'));
     $root = $page->page()
         ->locator('html');
     $themeToggle = $page->page()

@@ -17,16 +17,15 @@ const publicImageBudgets = [
     { file: 'public/images/logo-color-black-bg.png', label: 'Social sharing image', maxBytes: 400 * 1024 },
 ];
 
-const allowedPublicImages = new Set(
-    publicImageBudgets.map(({ file }) => file.replace('public/images/', '')),
-);
+const allowedPublicImages = new Set(publicImageBudgets.map(({ file }) => file.replace('public/images/', '')));
 
-const unexpectedPublicImages = readdirSync('public/images')
-    .filter((file) => ! allowedPublicImages.has(file));
+const unexpectedPublicImages = readdirSync('public/images').filter(file => !allowedPublicImages.has(file));
 
 if (unexpectedPublicImages.length > 0) {
     console.error(`Unexpected files in public/images: ${unexpectedPublicImages.join(', ')}`);
-    console.error('Use resources/images with Vite for build-managed images, or explicitly allow stable direct-URL assets.');
+    console.error(
+        'Use resources/images with Vite for build-managed images, or explicitly allow stable direct-URL assets.',
+    );
     process.exit(1);
 }
 
@@ -81,6 +80,11 @@ const budgets = [
     {
         entry: 'resources/js/pages/contact.js',
         label: 'Contact verification loader',
+        maxGzipBytes: 2 * 1024,
+    },
+    {
+        entry: 'resources/js/pages/newsletter.js',
+        label: 'Newsletter signup interaction',
         maxGzipBytes: 2 * 1024,
     },
     {
@@ -265,15 +269,13 @@ let failed = false;
 for (const budget of budgets) {
     const asset = budget.entry ? manifest[budget.entry] : null;
 
-    if (budget.entry && ! asset) {
+    if (budget.entry && !asset) {
         throw new Error(`Vite manifest entry not found: ${budget.entry}`);
     }
 
     const path = budget.file ?? `public/build/${asset.file}`;
     const contents = readFileSync(path);
-    const measuredBytes = budget.maxBytes === undefined
-        ? gzipSync(contents, { level: 9 }).length
-        : contents.length;
+    const measuredBytes = budget.maxBytes === undefined ? gzipSync(contents, { level: 9 }).length : contents.length;
     const maxBytes = budget.maxBytes ?? budget.maxGzipBytes;
     const measuredKilobytes = (measuredBytes / 1024).toFixed(1);
     const limitKilobytes = (maxBytes / 1024).toFixed(1);
