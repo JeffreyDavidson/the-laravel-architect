@@ -12,6 +12,11 @@ async function initializePublicUi() {
         registerAboutCard(runtime.Alpine);
     }
 
+    if (document.querySelector('[data-contact-form]')) {
+        const { registerTurnstileWidget } = await import('./pages/contact');
+        registerTurnstileWidget(runtime.Alpine);
+    }
+
     if (document.querySelector('[data-newsletter-form]')) {
         const { registerNewsletterForm } = await import('./pages/newsletter');
         registerNewsletterForm(runtime.Alpine);
@@ -35,10 +40,6 @@ async function initializePublicUi() {
 }
 
 initializePublicUi();
-
-if (document.querySelector('[data-turnstile-widget]')) {
-    import('./pages/contact');
-}
 
 if (document.querySelector('[data-home-hero]')) {
     import('./pages/home');
