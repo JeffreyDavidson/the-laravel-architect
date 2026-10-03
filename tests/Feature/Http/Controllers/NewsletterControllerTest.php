@@ -105,7 +105,7 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
     );
 
     $this->post($url)
-        ->assertRedirect(route('home'))
+        ->assertRedirect(route('home').'#newsletter-form')
         ->assertSessionHas('newsletter_success');
 
     $subscriber->refresh();
@@ -216,7 +216,7 @@ it('unsubscribes with an explicit delete to a valid signed link', function () {
         ->for($subscriber);
 
     $this->delete($url)
-        ->assertRedirect(route('home'))
+        ->assertRedirect(route('home').'#newsletter-form')
         ->assertSessionHas('newsletter_success', 'You have been unsubscribed.');
 
     $subscriber->refresh();
@@ -268,3 +268,37 @@ it('does not disclose whether an email is already subscribed', function () {
 
     Mail::assertNothingQueued();
 });
+
+it('sends a subscriber back to the signup form after subscribing', function (string $page) {
+    $this->from(route($page))
+        ->post(route('newsletter.subscribe'), ['email' => 'reader@example.com'])
+        ->assertRedirect(route($page).'#newsletter-form')
+        ->assertSessionHas('newsletter_success');
+})->with([
+    'home page' => ['home'],
+    'newsletter page' => ['newsletter.index'],
+]);
+
+it('sends a bot back to the signup form too, without revealing the honeypot', function () {
+    $this->from(route('home'))
+        ->post(route('newsletter.subscribe'), ['email' => 'bot@example.com', 'website' => 'https://spam.example'])
+        ->assertRedirect(route('home').'#newsletter-form')
+        ->assertSessionHas('newsletter_success');
+});
+
+it('sends a rejected sign-up back to the signup form with its error', function () {
+    $this->from(route('home'))
+        ->post(route('newsletter.subscribe'), ['email' => 'not-an-email'])
+        ->assertRedirect(route('home').'#newsletter-form')
+        ->assertSessionHasErrors('email')
+        ->assertSessionHasInput('email', 'not-an-email');
+});
+
+it('renders the signup form with the anchor the redirects point to', function (string $page) {
+    $this->get(route($page))
+        ->assertOk()
+        ->assertSeeHtml('id="newsletter-form"');
+})->with([
+    'home page' => ['home'],
+    'newsletter page' => ['newsletter.index'],
+]);

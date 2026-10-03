@@ -13,6 +13,12 @@ class SubscribeNewsletterRequest extends FormRequest
         return true;
     }
 
+    /** Send a rejected sign-up back to the signup form, not to the top of the page. */
+    protected function getRedirectUrl(): string
+    {
+        return parent::getRedirectUrl().'#newsletter-form';
+    }
+
     /** @return array<string, list<string>> */
     public function rules(): array
     {
