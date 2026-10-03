@@ -15,7 +15,9 @@ class NewsletterSubscriptionController
         RequestNewsletterSubscription $requestNewsletterSubscription,
     ): RedirectResponse {
         if ($request->filled('website')) {
-            return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
+            return back()
+                ->withFragment('newsletter-form')
+                ->with('newsletter_success', 'Check your email to confirm your subscription.');
         }
 
         $email = $request->safe()
@@ -25,7 +27,9 @@ class NewsletterSubscriptionController
 
         $requestNewsletterSubscription->handle($email);
 
-        return back()->with('newsletter_success', 'Check your email to confirm your subscription.');
+        return back()
+            ->withFragment('newsletter-form')
+            ->with('newsletter_success', 'Check your email to confirm your subscription.');
     }
 
     public function destroy(
@@ -35,6 +39,7 @@ class NewsletterSubscriptionController
         $unsubscribeFromNewsletter->handle($subscriber);
 
         return redirect()->route('home')
+            ->withFragment('newsletter-form')
             ->with('newsletter_success', 'You have been unsubscribed.');
     }
 }
