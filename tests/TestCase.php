@@ -42,6 +42,14 @@ abstract class TestCase extends BaseTestCase
         return $this->browserPageWithTheme($url, $device);
     }
 
+    /** Wait for the header's Alpine component, so a test never clicks the menu or theme toggle before it starts. */
+    protected function waitForSiteHeader(AwaitableWebpage $page): AwaitableWebpage
+    {
+        $page->assertScript("document.querySelector('[x-data=\"siteHeader\"]')?.dataset.ready === 'true'");
+
+        return $page;
+    }
+
     protected function browserPageWithTheme(string $url, string $device, string $theme = 'light'): AwaitableWebpage
     {
         $devices = \visit($url)->on();
