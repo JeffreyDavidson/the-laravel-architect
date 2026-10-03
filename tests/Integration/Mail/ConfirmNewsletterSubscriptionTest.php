@@ -19,6 +19,40 @@ it('preserves signed query parameters in its plain text confirmation link', func
     $mail->assertSeeInText($url);
 });
 
+it('renders a themed html confirmation with the link, a button and the expiry', function () {
+    $url = URL::temporarySignedRoute('newsletter.confirm', now()->addDay(), [
+        'subscriber' => 1,
+        'token' => 'confirmation-token',
+    ]);
+    $mail = new ConfirmNewsletterSubscription($url);
+
+    $mail->assertHasSubject('Confirm your subscription')
+        ->assertSeeInHtml('Confirm your subscription')
+        ->assertSeeInHtml('Confirm subscription')
+        ->assertSeeInHtml($url)
+        ->assertSeeInHtml('expires in 24 hours')
+        ->assertSeeInHtml('The Laravel Architect')
+        ->assertSeeInHtml(url('/images/elephant-companion-180.png'))
+        ->assertSeeInHtml(route('privacy'))
+        ->assertSeeInText('expires in 24 hours');
+});
+
+it('keeps the html confirmation free of scripts and external stylesheets', function () {
+    $mail = new ConfirmNewsletterSubscription('https://example.test/confirm?expires=1&signature=abc');
+
+    $mail->assertDontSeeInHtml('<script', false)
+        ->assertDontSeeInHtml('<link', false)
+        ->assertDontSeeInHtml('@import', false);
+});
+
+it('escapes the confirmation link in the html and leaves it intact in the text', function () {
+    $url = 'https://example.test/confirm?expires=1&signature=abc"onmouseover="x';
+    $mail = new ConfirmNewsletterSubscription($url);
+
+    $mail->assertDontSeeInHtml('signature=abc"onmouseover', false)
+        ->assertSeeInText($url);
+});
+
 it('encrypts sensitive content in the queued mail payload', function () {
     $mail = new ConfirmNewsletterSubscription('https://example.test/confirm?expires=123&signature=private-token');
 

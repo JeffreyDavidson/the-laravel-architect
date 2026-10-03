@@ -26,7 +26,8 @@ class ConfirmNewsletterSubscription extends Mailable implements ShouldBeEncrypte
     public function content(): Content
     {
         return new Content(
-            text: 'mail.newsletter-confirmation',
+            html: 'mail.newsletter-confirmation',
+            text: 'mail.newsletter-confirmation-text',
             with: ['confirmationUrl' => $this->confirmationUrl],
         );
     }
