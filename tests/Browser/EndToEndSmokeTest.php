@@ -4,8 +4,10 @@ use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
+use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use RuntimeException;
 use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
@@ -538,3 +540,26 @@ it('shows the newsletter error in place and keeps what was typed', function (): 
         ->assertScript("document.querySelector('#newsletter-email').getAttribute('aria-invalid') === 'true'")
         ->assertNoJavaScriptErrors();
 });
+
+it('keeps the footer at the bottom of a short page', function (string $device): void {
+    $this->withVite();
+
+    $token = 'footer-check-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'footer-check@example.test',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $page = $this->browserPage($url, $device);
+
+    $page->assertSee('Confirm your subscription')
+        ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
+        ->assertNoJavaScriptErrors();
+})->with(['desktop', 'mobile']);

@@ -35,7 +35,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {!! $head ?? '' !!}
 </head>
-<body class="dark:bg-brand-950 bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
+<body class="dark:bg-brand-950 flex min-h-dvh flex-col bg-white font-sans text-gray-800 antialiased dark:text-gray-100">
     <a
         href="#main-content"
         class="bg-brand-600 focus:outline-brand-300 z-overlay sr-only rounded-lg px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:outline-2 focus:outline-offset-2"
@@ -58,7 +58,7 @@
         id="main-content"
         tabindex="-1"
         @class([
-            'isolate',
+            'isolate flex-1',
             '[&_h1]:font-semibold [&_h1]:text-balance [&_h1]:tracking-[-0.025em] [&_h1]:leading-normal [&_h2]:font-semibold [&_h2]:text-balance [&_h2]:tracking-[-0.025em] [&_h3]:font-semibold [&_h3]:text-balance [&_p]:text-pretty' => request()->routeIs('home'),
         ])
     >
