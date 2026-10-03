@@ -24,25 +24,30 @@ function updateCanonicalUrl(url) {
     }
 }
 
-window.addEventListener(
-    'blog-metadata-updated',
-    ({ detail: { title, description, canonicalUrl, robots, structuredData } }) => {
-        if (title) {
-            document.title = title;
-        }
+export function registerBlogMetadata(Alpine) {
+    Alpine.data('blogMetadata', () => ({
+        init() {
+            this.$root.dataset.ready = 'true';
+        },
+        update({ detail: { title, description, canonicalUrl, robots, structuredData } }) {
+            if (title) {
+                document.title = title;
+            }
 
-        updateMetaContent('meta[name="description"]', description, 'name', 'description');
-        updateMetaContent('meta[name="robots"]', robots, 'name', 'robots');
-        updateMetaContent('meta[property="og:title"]', title, 'property', 'og:title');
-        updateMetaContent('meta[property="og:description"]', description, 'property', 'og:description');
-        updateMetaContent('meta[property="og:url"]', canonicalUrl, 'property', 'og:url');
-        updateMetaContent('meta[name="twitter:title"]', title, 'name', 'twitter:title');
-        updateMetaContent('meta[name="twitter:description"]', description, 'name', 'twitter:description');
-        updateCanonicalUrl(canonicalUrl);
-        const schema = document.querySelector('script[type="application/ld+json"]');
+            updateMetaContent('meta[name="description"]', description, 'name', 'description');
+            updateMetaContent('meta[name="robots"]', robots, 'name', 'robots');
+            updateMetaContent('meta[property="og:title"]', title, 'property', 'og:title');
+            updateMetaContent('meta[property="og:description"]', description, 'property', 'og:description');
+            updateMetaContent('meta[property="og:url"]', canonicalUrl, 'property', 'og:url');
+            updateMetaContent('meta[name="twitter:title"]', title, 'name', 'twitter:title');
+            updateMetaContent('meta[name="twitter:description"]', description, 'name', 'twitter:description');
+            updateCanonicalUrl(canonicalUrl);
 
-        if (schema && structuredData) {
-            schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': structuredData });
-        }
-    },
-);
+            const schema = document.querySelector('script[type="application/ld+json"]');
+
+            if (schema && structuredData) {
+                schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': structuredData });
+            }
+        },
+    }));
+}
