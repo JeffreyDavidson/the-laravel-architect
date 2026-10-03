@@ -280,6 +280,7 @@ it('supports blog search and reset with Livewire', function (): void {
     $page = $this->browserPage('/blog', 'desktop');
 
     $page->assertScript("typeof window.Livewire === 'object' && typeof window.Alpine === 'object'")
+        ->assertScript('window.Livewire.all().length > 0')
         ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/alpine-'))")
         ->click('#theme-toggle')
         ->assertNoJavaScriptErrors();
@@ -293,6 +294,7 @@ it('supports blog search and reset with Livewire', function (): void {
 
     $page
         ->assertPathIs('/blog')
+        ->assertVisible('[data-blog-clear]')
         ->assertSee('E2E Searchable Post')
         ->assertDontSee('E2E Welcome Post')
         ->assertTitle('Search results — Jeffrey Davidson')
