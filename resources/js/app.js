@@ -12,37 +12,40 @@ async function initializePublicUi() {
         registerAboutCard(runtime.Alpine);
     }
 
+    if (document.querySelector('[data-home-hero]')) {
+        const { registerHomeReveal } = await import('./pages/home');
+        registerHomeReveal(runtime.Alpine);
+    }
+
+    if (document.querySelector('[data-contact-form]')) {
+        const { registerTurnstileWidget } = await import('./pages/contact');
+        registerTurnstileWidget(runtime.Alpine);
+    }
+
     if (document.querySelector('[data-newsletter-form]')) {
         const { registerNewsletterForm } = await import('./pages/newsletter');
         registerNewsletterForm(runtime.Alpine);
     }
 
     if (document.querySelector('[data-blog-filter]')) {
-        await import('./pages/blog-index');
+        const { registerBlogMetadata } = await import('./pages/blog-index');
+        registerBlogMetadata(runtime.Alpine);
     }
 
     if (document.querySelector('[data-article]')) {
-        const { initializeBlog } = await import('./pages/blog');
-        initializeBlog();
+        const { registerBlogArticle } = await import('./pages/blog');
+        registerBlogArticle(runtime.Alpine);
     }
 
     if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-transcript]')) {
-        const { initializePodcast } = await import('./pages/podcast');
-        initializePodcast(runtime.Alpine);
+        const { registerPodcast } = await import('./pages/podcast');
+        registerPodcast(runtime.Alpine);
     }
 
     runtime.start();
 }
 
 initializePublicUi();
-
-if (document.querySelector('[data-turnstile-widget]')) {
-    import('./pages/contact');
-}
-
-if (document.querySelector('[data-home-hero]')) {
-    import('./pages/home');
-}
 
 import.meta.glob('../images/**', {
     eager: true,

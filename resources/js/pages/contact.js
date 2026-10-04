@@ -1,50 +1,58 @@
-const widget = document.querySelector('[data-turnstile-widget]');
+export function registerTurnstileWidget(Alpine) {
+    Alpine.data('turnstileWidget', () => ({
+        loading: false,
+        observer: null,
 
-if (widget) {
-    const form = widget.closest('form');
-    let isLoading = false;
+        init() {
+            if (!this.$refs.widget) {
+                return;
+            }
 
-    const renderWidget = () => {
-        window.turnstile.render(widget, {
-            sitekey: widget.dataset.sitekey,
-            action: widget.dataset.action,
-            size: 'flexible',
-        });
-    };
+            if (!('IntersectionObserver' in window)) {
+                this.load();
 
-    const loadWidget = () => {
-        if (isLoading) {
-            return;
-        }
+                return;
+            }
 
-        isLoading = true;
+            this.observer = new IntersectionObserver(
+                entries => {
+                    if (entries.some(entry => entry.isIntersecting)) {
+                        this.load();
+                    }
+                },
+                { rootMargin: '300px' },
+            );
+            this.observer.observe(this.$refs.widget);
+            this.$root.dataset.ready = 'true';
+        },
+        destroy() {
+            this.observer?.disconnect();
+        },
+        load() {
+            const widget = this.$refs.widget;
 
-        const script = document.createElement('script');
-        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-        script.async = true;
-        script.defer = true;
-        script.addEventListener('load', renderWidget, { once: true });
-        document.head.append(script);
-    };
+            if (this.loading || !widget) {
+                return;
+            }
 
-    form?.addEventListener('focusin', loadWidget, { once: true });
-    form?.addEventListener('pointerdown', loadWidget, { once: true });
+            this.loading = true;
+            this.observer?.disconnect();
 
-    if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(
-            entries => {
-                if (!entries.some(entry => entry.isIntersecting)) {
-                    return;
-                }
-
-                observer.disconnect();
-                loadWidget();
-            },
-            { rootMargin: '300px' },
-        );
-
-        observer.observe(widget);
-    } else {
-        loadWidget();
-    }
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+            script.async = true;
+            script.defer = true;
+            script.addEventListener(
+                'load',
+                () =>
+                    window.turnstile.render(widget, {
+                        sitekey: widget.dataset.sitekey,
+                        action: widget.dataset.action,
+                        size: 'flexible',
+                    }),
+                { once: true },
+            );
+            document.head.append(script);
+        },
+    }));
 }

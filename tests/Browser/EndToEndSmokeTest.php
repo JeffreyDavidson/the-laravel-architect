@@ -25,6 +25,11 @@ it('loads public routes without high impact accessibility issues in both themes'
 
     $page = $this->browserPageWithTheme($route, 'desktop', $theme);
 
+    if ($route === '/') {
+        // The home component resets the reveal state when it starts; let it finish before settling the content.
+        $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    }
+
     // Audit settled content, independently of scroll-reveal animation timing.
     $page->script('document.querySelectorAll("[data-reveal]").forEach(element => { element.style.transition = "none"; element.dataset.reveal = "visible"; });');
 
@@ -224,6 +229,7 @@ it('initializes homepage reveal animations', function (): void {
     $this->withVite();
 
     $page = HomePage::visit();
+    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
 
     $page->page()
         ->locator('[data-reveal]')
@@ -231,6 +237,23 @@ it('initializes homepage reveal animations', function (): void {
         ->scrollIntoViewIfNeeded();
 
     $page->assertScript('document.querySelector("[data-reveal]").dataset.reveal === "visible"')
+        ->assertNoJavaScriptErrors();
+});
+
+it('counts the homepage proof figures up to their targets', function (): void {
+    $this->withVite();
+
+    $page = HomePage::visit();
+    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    $page->script('window.countUpChanges = 0; new MutationObserver(() => window.countUpChanges++).observe(document.querySelector("[data-count-up]"), { childList: true, characterData: true, subtree: true });');
+
+    $page->page()
+        ->locator('[data-count-up]')
+        ->first()
+        ->scrollIntoViewIfNeeded();
+
+    $page->assertScript('window.countUpChanges > 0')
+        ->assertScript('document.querySelector("[data-count-up]").textContent.trim() === document.querySelector("[data-count-up]").dataset.target')
         ->assertNoJavaScriptErrors();
 });
 
@@ -283,6 +306,7 @@ it('supports blog search and reset with Livewire', function (): void {
 
     $page->assertScript("typeof window.Livewire === 'object' && typeof window.Alpine === 'object'")
         ->assertScript('window.Livewire.all().length > 0')
+        ->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'")
         ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/alpine-'))")
         ->click('#theme-toggle')
         ->assertNoJavaScriptErrors();
@@ -300,10 +324,12 @@ it('supports blog search and reset with Livewire', function (): void {
         ->assertSee('E2E Searchable Post')
         ->assertDontSee('E2E Welcome Post')
         ->assertTitle('Search results — Jeffrey Davidson')
+        ->assertScript("document.querySelector('meta[name=\"robots\"]')?.content === 'noindex, follow'")
         ->assertScript("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)['@graph'].find(item => item['@type'] === 'ItemList').numberOfItems === 1")
         ->click('[data-blog-clear]')
         ->assertSee('E2E Welcome Post')
         ->assertTitle('Blog — Jeffrey Davidson')
+        ->assertScript("document.querySelector('meta[name=\"robots\"]') === null")
         ->assertNoJavaScriptErrors();
 });
 
@@ -404,6 +430,22 @@ it('builds styled article navigation from the Blade template', function (): void
     $page->assertCount('[data-article-toc-link]', 4)
         ->assertAttribute('aside [data-article-toc-link="first-section"]', 'href', '#first-section')
         ->assertScript("getComputedStyle(document.querySelector('[data-article-toc-link]')).borderLeftWidth === '1px'")
+        ->assertNoJavaScriptErrors();
+});
+
+it('marks the article section being read in the contents list', function (): void {
+    $this->withVite();
+    $filler = str_repeat("Some paragraph text that makes the section long enough to scroll through.\n\n", 18);
+    $post = Post::query()->where('slug', 'e2e-code-example')
+        ->sole();
+    $post->update(['content' => "## First section\n\n{$filler}## Second section\n\n{$filler}"]);
+
+    $page = $this->browserPage(route('blog.show', $post), 'desktop');
+
+    $page->assertCount('[data-article-toc-link]', 4)
+        ->script('const heading = document.getElementById("second-section"); window.scrollTo(0, heading.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.25);');
+
+    $page->assertScript('document.querySelector("[data-article-toc-link][aria-current=\"true\"]")?.dataset.articleTocLink === "second-section"')
         ->assertNoJavaScriptErrors();
 });
 
@@ -563,3 +605,21 @@ it('keeps the footer at the bottom of a short page', function (string $device): 
         ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
         ->assertNoJavaScriptErrors();
 })->with(['desktop', 'mobile']);
+
+it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
+    config()->set('services.turnstile.site_key', 'test-site-key');
+    $this->withVite();
+
+    $page = $this->browserPage('/contact', 'desktop');
+
+    $page->assertScript("document.querySelectorAll('[data-turnstile-widget]').length === 1")
+        ->assertScript("document.querySelector('[data-contact-form]').dataset.ready === 'true'");
+    $page->page()
+        ->locator('input[name="name"]')
+        ->focus();
+    $page->page()
+        ->locator('input[name="email"]')
+        ->focus();
+
+    $page->assertScript("document.querySelectorAll('script[src*=\"challenges.cloudflare.com/turnstile\"]').length === 1");
+});

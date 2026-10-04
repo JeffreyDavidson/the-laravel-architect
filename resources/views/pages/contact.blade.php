@@ -59,7 +59,15 @@
                     </div>
                 @endif
 
-                <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
+                <form
+                    action="{{ route('contact.store') }}"
+                    method="POST"
+                    class="space-y-6"
+                    data-contact-form
+                    x-data="turnstileWidget"
+                    x-on:focusin="load"
+                    x-on:pointerdown="load"
+                >
                     @csrf
                     @if ($selectedProject)
                         <div class="border-brand-500/30 bg-brand-500/10 text-brand-800 dark:text-brand-200 rounded-xl border p-4 text-sm">
@@ -143,6 +151,7 @@
                         <div>
                             <div
                                 data-turnstile-widget
+                                x-ref="widget"
                                 data-sitekey="{{ config('services.turnstile.site_key') }}"
                                 data-action="{{ config('services.turnstile.contact_action') }}"
                             ></div>

@@ -71,102 +71,96 @@ function highlightTranscriptMatches(content, query) {
     return matches;
 }
 
-function initializeTranscript(details) {
-    const tools = details.querySelector('[data-transcript-tools]');
-    const search = details.querySelector('[data-transcript-search]');
-    const status = details.querySelector('[data-transcript-status]');
-    const content = details.querySelector('[data-transcript-content]');
-
-    if (
-        !(details instanceof HTMLDetailsElement) ||
-        !(tools instanceof HTMLElement) ||
-        !(search instanceof HTMLInputElement) ||
-        !(status instanceof HTMLElement) ||
-        !(content instanceof HTMLElement)
-    ) {
-        return;
-    }
-
-    tools.hidden = false;
-
-    const usedIds = new Set();
-
-    content.querySelectorAll('h2, h3, h4').forEach(heading => {
-        if (!(heading instanceof HTMLElement)) {
-            return;
-        }
-
-        const label = heading.textContent?.trim() ?? '';
-
-        if (!label) {
-            return;
-        }
-
-        let id = `transcript-${transcriptSlug(label)}`;
-        let suffix = 2;
-
-        while (usedIds.has(id) || document.getElementById(id)) {
-            id = `transcript-${transcriptSlug(label)}-${suffix}`;
-            suffix++;
-        }
-
-        usedIds.add(id);
-        heading.id = id;
-
-        const anchor = document.createElement('a');
-        anchor.href = `#${id}`;
-        anchor.dataset.transcriptAnchor = '';
-        anchor.className =
-            'inline-flex text-sm font-semibold text-gray-500 transition-colors hover:text-blue-500 dark:text-gray-400';
-        anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
-        anchor.textContent = ' #';
-
-        anchor.addEventListener('click', async () => {
-            const url = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
-
-            if (await copyText(url)) {
-                anchor.setAttribute('aria-label', 'Section link copied');
-
-                window.setTimeout(() => {
-                    anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
-                }, 2000);
-            }
-        });
-
-        heading.append(anchor);
-    });
-
-    const hashId = window.location.hash.slice(1);
-    const hashTarget = hashId ? document.getElementById(hashId) : null;
-
-    if (hashTarget && content.contains(hashTarget)) {
-        details.open = true;
-        window.setTimeout(() => hashTarget.scrollIntoView({ block: 'start' }), 0);
-    }
-
-    search.addEventListener('input', () => {
-        clearTranscriptMatches(content);
-
-        const query = search.value.trim();
-
-        if (!query) {
-            status.textContent = 'Search the transcript';
-
-            return;
-        }
-
-        details.open = true;
-        const matches = highlightTranscriptMatches(content, query);
-        status.textContent = matches === 0 ? 'No matches found' : `${matches} match${matches === 1 ? '' : 'es'} found`;
-    });
-}
-
-export function initializePodcast(Alpine) {
+export function registerPodcast(Alpine) {
     Alpine.data('youtubePlayer', () => ({
         loaded: false,
         load() {
             this.loaded = true;
         },
     }));
-    document.querySelectorAll('[data-transcript]').forEach(initializeTranscript);
+
+    Alpine.data('transcript', () => ({
+        ready: false,
+        status: 'Search the transcript',
+
+        get notReady() {
+            return !this.ready;
+        },
+        init() {
+            this.addSectionLinks();
+            this.openFromHash();
+            this.ready = true;
+            this.$root.dataset.ready = 'true';
+        },
+        addSectionLinks() {
+            const usedIds = new Set();
+
+            this.$refs.content.querySelectorAll('h2, h3, h4').forEach(heading => {
+                const label = heading.textContent?.trim() ?? '';
+
+                if (!label) {
+                    return;
+                }
+
+                let id = `transcript-${transcriptSlug(label)}`;
+                let suffix = 2;
+
+                while (usedIds.has(id) || document.getElementById(id)) {
+                    id = `transcript-${transcriptSlug(label)}-${suffix}`;
+                    suffix++;
+                }
+
+                usedIds.add(id);
+                heading.id = id;
+
+                const anchor = document.createElement('a');
+                anchor.href = `#${id}`;
+                anchor.dataset.transcriptAnchor = '';
+                anchor.className =
+                    'inline-flex text-sm font-semibold text-gray-500 transition-colors hover:text-blue-500 dark:text-gray-400';
+                anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
+                anchor.textContent = ' #';
+
+                anchor.addEventListener('click', async () => {
+                    const url = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
+
+                    if (await copyText(url)) {
+                        anchor.setAttribute('aria-label', 'Section link copied');
+
+                        window.setTimeout(() => {
+                            anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
+                        }, 2000);
+                    }
+                });
+
+                heading.append(anchor);
+            });
+        },
+        openFromHash() {
+            const hashId = window.location.hash.slice(1);
+            const hashTarget = hashId ? document.getElementById(hashId) : null;
+
+            if (hashTarget && this.$refs.content.contains(hashTarget)) {
+                this.$root.open = true;
+                window.setTimeout(() => hashTarget.scrollIntoView({ block: 'start' }), 0);
+            }
+        },
+        search() {
+            clearTranscriptMatches(this.$refs.content);
+
+            const query = this.$refs.search.value.trim();
+
+            if (!query) {
+                this.status = 'Search the transcript';
+
+                return;
+            }
+
+            this.$root.open = true;
+
+            const matches = highlightTranscriptMatches(this.$refs.content, query);
+
+            this.status = matches === 0 ? 'No matches found' : `${matches} match${matches === 1 ? '' : 'es'} found`;
+        },
+    }));
 }
