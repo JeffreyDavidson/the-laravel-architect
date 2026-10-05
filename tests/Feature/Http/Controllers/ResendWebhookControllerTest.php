@@ -8,6 +8,7 @@ use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\call;
+use function Pest\Laravel\post;
 
 covers(ResendWebhookController::class);
 
@@ -95,6 +96,7 @@ it('rejects a request with a bad signature and changes nothing', function (strin
         'old timestamp' => signedWebhookHeaders($body, time() - 3600),
         'wrong secret' => signedWebhookHeaders($body, null, 'whsec_'.base64_encode('another-secret')),
         'tampered body' => signedWebhookHeaders('{"type":"email.complained","data":{"to":["x@example.com"]}}'),
+        'signature without a value' => ['HTTP_SVIX_SIGNATURE' => 'v1'] + signedWebhookHeaders($body),
     ][$case];
 
     call('POST', route('webhooks.resend'), [], [], [], $server, $body)->assertForbidden();
@@ -103,7 +105,7 @@ it('rejects a request with a bad signature and changes nothing', function (strin
 
     expect($reader->isActive())
         ->toBeTrue();
-})->with(['missing headers', 'old timestamp', 'wrong secret', 'tampered body']);
+})->with(['missing headers', 'old timestamp', 'wrong secret', 'tampered body', 'signature without a value']);
 
 it('answers service unavailable until the secret is configured', function (?string $secret) {
     config()->set('services.resend.webhook_secret', $secret);
@@ -121,6 +123,13 @@ it('rejects a signed body that is not JSON', function () {
     $body = 'not json';
 
     call('POST', route('webhooks.resend'), [], [], [], signedWebhookHeaders($body), $body)->assertUnprocessable();
+});
+
+it('leaves the package\'s unsigned webhook route unregistered', function () {
+    expect(Route::has('resend.webhook'))
+        ->toBeFalse();
+
+    post('/resend/webhook')->assertNotFound();
 });
 
 it('uses no session or forgery middleware', function () {

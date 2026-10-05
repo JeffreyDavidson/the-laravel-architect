@@ -288,6 +288,29 @@ it('renders canonical structured data for the site and blog posts', function () 
         ]);
 });
 
+it('keeps a post title from closing the structured data script', function () {
+    $title = '</script><h1>x';
+    $author = User::factory()->create();
+    $post = Post::query()->create([
+        'title' => $title,
+        'slug' => 'script-breakout',
+        'content' => 'Body.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('blog.show', $post))
+        ->assertDontSeeHtml('</script><h1>')
+        ->getContent();
+
+    $graph = structuredDataGraph(decodeStructuredData($content)['@graph'] ?? null);
+    $article = structuredDataObject(collect($graph)->firstWhere('@type', 'Article'));
+
+    expect($article['headline'] ?? null)
+        ->toBe($title);
+});
+
 it('renders canonical structured data for static public pages', function (string $routeName, string $type, string $name) {
     $url = route($routeName);
     $content = $this->get($url)

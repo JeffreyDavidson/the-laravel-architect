@@ -134,9 +134,14 @@ class AppServiceProvider extends ServiceProvider
             return $limit->by($ipAddress);
         });
 
-        $appUrl = config('app.url');
+        $appUrl = config()->string('app.url');
 
-        if (is_string($appUrl) && str_starts_with($appUrl, 'https://')) {
+        // Absolute links, such as newsletter confirmations, must never follow a spoofed Host header.
+        if (app()->isProduction()) {
+            URL::forceRootUrl($appUrl);
+        }
+
+        if (str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
 
