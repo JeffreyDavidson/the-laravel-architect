@@ -4,6 +4,9 @@ use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('gives each newsletter archive page its own canonical URL', function () {
@@ -80,4 +83,26 @@ it('does not expose draft newsletter issues', function () {
 
     $this->get(route('newsletter.issue', $issue))
         ->assertNotFound();
+});
+
+it('shows a newsletter issue publish date in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $issue = NewsletterIssue::query()->create([
+        'title' => 'Evening Issue',
+        'slug' => 'evening-issue',
+        'content' => 'Published in the evening.',
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    get(route('newsletter.index'))
+        ->assertOk()
+        ->assertSeeHtml('datetime="2026-10-05"')
+        ->assertSee('October 5, 2026');
+
+    get(route('newsletter.issue', $issue))
+        ->assertOk()
+        ->assertSeeHtml('datetime="2026-10-05"')
+        ->assertSeeText('Published October 5, 2026');
 });

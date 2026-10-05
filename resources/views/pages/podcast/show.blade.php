@@ -157,10 +157,7 @@
                                 <span class="text-archive-link rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">Latest Episode</span>
                                 <span class="font-mono text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->code() }}</span>
                                 <span class="text-sm text-gray-600">·</span>
-                                <time
-                                    datetime="{{ $latestEpisode->published_at->toDateString() }}"
-                                    class="text-sm text-gray-500"
-                                >{{ $latestEpisode->published_at->format('M d, Y') }}</time>
+                                <x-display-date :date="$latestEpisode->published_at" class="text-sm text-gray-500" />
                                 @if (\App\Presenters\EpisodePresenter::from($latestEpisode)->duration())
                                     <span class="text-sm text-gray-600">·</span>
                                     <span class="text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->duration() }}</span>
@@ -238,7 +235,7 @@
                                         {{ $episode->title }}
                                     </h3>
                                     <div class="mt-1 flex items-center gap-3 text-xs text-gray-500">
-                                        <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                        <x-display-date :date="$episode->published_at" />
                                         @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
                                             <span class="text-gray-300 dark:text-gray-700">·</span>
                                             <span>{{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}</span>

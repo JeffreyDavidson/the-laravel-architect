@@ -40,6 +40,8 @@
 
     <div class="p-4">
         <p class="mb-1 line-clamp-2 text-sm font-bold text-gray-900 dark:text-white">{{ $video->title }}</p>
-        <p class="text-xs text-gray-500">The Laravel Architect · {{ $video->published_at->format('M j, Y') }}</p>
+        <p class="text-xs text-gray-500">
+            The Laravel Architect · <x-display-date :date="$video->published_at" format="M j, Y" />
+        </p>
     </div>
 </a>

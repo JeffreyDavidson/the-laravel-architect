@@ -6,13 +6,13 @@
             <span class="text-gray-300 dark:text-gray-700">·</span>
         @endunless
     @endif
-    <time
-        datetime="{{ $post->published_at->toDateString() }}"
+    <x-display-date
+        :date="$post->published_at"
         @class([
             'text-xs text-gray-500',
             'border-l border-gray-300 pl-3 dark:border-gray-700' => $editorial && $showCategory && $post->category,
         ])
-    >{{ $post->published_at->format('M d, Y') }}</time>
+    />
     @unless ($editorial)
         <span class="text-gray-300 dark:text-gray-700">·</span>
     @endunless

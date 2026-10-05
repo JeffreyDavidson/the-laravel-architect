@@ -9,6 +9,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Support\DisplayTimezone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -137,7 +138,7 @@ class ArchiveQuery
     private function record(object $item): array
     {
         $type = SearchContentType::from($item->type);
-        $date = Carbon::parse($item->sort_date);
+        $date = DisplayTimezone::convert(Carbon::parse($item->sort_date));
 
         $url = match ($type) {
             SearchContentType::Writing => route('blog.show', ['post' => $item->slug]),

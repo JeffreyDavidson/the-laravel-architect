@@ -46,10 +46,11 @@
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                             <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
                             @if ($episode->published_at)
-                                <time
-                                    datetime="{{ $episode->published_at->toDateString() }}"
+                                <x-display-date
+                                    :date="$episode->published_at"
+                                    format="F d, Y"
                                     class="text-sm text-gray-500"
-                                >{{ $episode->published_at->format('F d, Y') }}</time>
+                                />
                             @else
                                 <span class="text-sm text-gray-500">Draft preview</span>
                             @endif
@@ -282,7 +283,7 @@
                                         <dt class="text-gray-500">Published</dt>
                                         <dd class="text-gray-700 dark:text-gray-300">
                                             @if ($episode->published_at)
-                                                <time datetime="{{ $episode->published_at->toDateString() }}">{{ $episode->published_at->format('M d, Y') }}</time>
+                                                <x-display-date :date="$episode->published_at" />
                                             @else
                                                 Draft preview
                                             @endif

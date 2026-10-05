@@ -10,6 +10,9 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('browses published public content in one chronological archive', function () {
@@ -120,6 +123,26 @@ it('filters the archive by content type and year', function () {
         ->assertSee($post->title)
         ->assertDontSee('Current archive project')
         ->assertSee('Showing 1–1 of 1 items.');
+});
+
+it('dates archive entries in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $author = User::factory()->create();
+    Post::query()->create([
+        'title' => 'Evening archive article',
+        'slug' => 'evening-archive-article',
+        'content' => 'Published content.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    get(route('archive.index', ['type' => 'writing']))
+        ->assertOk()
+        ->assertSeeHtml('datetime="2026-10-05"')
+        ->assertSee('October 5, 2026')
+        ->assertDontSee('October 6, 2026');
 });
 
 it('leaves out an episode whose podcast is in the trash', function () {
