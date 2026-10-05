@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Videos\Tables;
 
+use App\Enums\ContentReadinessStatus;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Models\Video;
 use App\Support\Content\ContentReadiness;
@@ -33,10 +34,9 @@ class VideosTable
                     ->limit(50),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Video $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (Video $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(fn (Video $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('view_count')
                     ->label('Views')
                     ->numeric()

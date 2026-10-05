@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Podcasts\Tables;
 
+use App\Enums\ContentReadinessStatus;
 use App\Models\Podcast;
 use App\Support\Content\ContentReadiness;
 use Filament\Actions\BulkActionGroup;
@@ -33,10 +34,9 @@ class PodcastsTable
                     ->sortable(),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Podcast $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (Podcast $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(fn (Podcast $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('description')
                     ->limit(50)
                     ->toggleable(isToggledHiddenByDefault: true),

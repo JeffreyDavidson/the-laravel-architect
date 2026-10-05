@@ -2,6 +2,7 @@
 
 namespace App\Support\Content;
 
+use App\Enums\ContentReadinessStatus;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -34,9 +35,16 @@ final readonly class ContentReadiness
         return array_all($this->checks(), fn (array $check): bool => $check['complete']);
     }
 
+    public function status(): ContentReadinessStatus
+    {
+        return $this->isReady() ? ContentReadinessStatus::Ready : ContentReadinessStatus::NeedsAttention;
+    }
+
     public function label(): string
     {
-        return $this->isReady() ? 'Ready' : 'Needs attention';
+        $status = $this->status();
+
+        return $status->getLabel();
     }
 
     public function progress(): string

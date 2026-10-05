@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\MediaHealthStatus;
+use App\Enums\MediaHealthType;
+use App\Enums\MediaSourceStatus;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -17,9 +20,9 @@ class MediaHealthReport
 {
     /** @var array<string, array{model: class-string<Model>, title: string, path: string, label: string}> */
     private const array SOURCES = [
-        'project' => ['model' => Project::class, 'title' => 'title', 'path' => 'featured_image_path', 'label' => 'Project'],
-        'post' => ['model' => Post::class, 'title' => 'title', 'path' => 'featured_image_path', 'label' => 'Post'],
-        'podcast' => ['model' => Podcast::class, 'title' => 'name', 'path' => 'cover_image_path', 'label' => 'Podcast'],
+        MediaHealthType::Project->value => ['model' => Project::class, 'title' => 'title', 'path' => 'featured_image_path', 'label' => 'Project'],
+        MediaHealthType::Post->value => ['model' => Post::class, 'title' => 'title', 'path' => 'featured_image_path', 'label' => 'Post'],
+        MediaHealthType::Podcast->value => ['model' => Podcast::class, 'title' => 'name', 'path' => 'cover_image_path', 'label' => 'Podcast'],
     ];
 
     public function __construct(private readonly ResponsiveImageVariants $images) {}
@@ -87,10 +90,10 @@ class MediaHealthReport
             'filename' => '—',
             'dimensions' => '—',
             'file_size' => '—',
-            'source_status' => 'Missing',
+            'source_status' => MediaSourceStatus::Missing->value,
             'variants' => 'Unavailable',
-            'status' => 'Re-upload required',
-            'status_color' => 'danger',
+            'status' => MediaHealthStatus::ReuploadRequired->value,
+            'status_color' => MediaHealthStatus::ReuploadRequired->getColor(),
             'repairable' => false,
         ];
 
@@ -118,10 +121,10 @@ class MediaHealthReport
             $base['source_status'] = $metadata['mime'] === 'image/webp'
                 && $metadata['width'] <= ImageUploadOptimizer::MAX_DIMENSION
                 && $metadata['height'] <= ImageUploadOptimizer::MAX_DIMENSION
-                ? 'Optimized'
-                : 'Needs optimization';
+                ? MediaSourceStatus::Optimized->value
+                : MediaSourceStatus::NeedsOptimization->value;
         } catch (Throwable) {
-            $base['source_status'] = 'Unreadable';
+            $base['source_status'] = MediaSourceStatus::Unreadable->value;
 
             return $base;
         }
@@ -130,14 +133,14 @@ class MediaHealthReport
         $base['variants'] = $variantsReady ? 'Ready' : 'Missing';
         $base['repairable'] = ! $variantsReady;
 
-        if ($base['source_status'] === 'Optimized' && $variantsReady) {
-            $base['status'] = 'Healthy';
-            $base['status_color'] = 'success';
-        } elseif ($base['source_status'] === 'Needs optimization') {
-            $base['status'] = 'Re-upload required';
+        if ($base['source_status'] === MediaSourceStatus::Optimized->value && $variantsReady) {
+            $base['status'] = MediaHealthStatus::Healthy->value;
+            $base['status_color'] = MediaHealthStatus::Healthy->getColor();
+        } elseif ($base['source_status'] === MediaSourceStatus::NeedsOptimization->value) {
+            $base['status'] = MediaHealthStatus::ReuploadRequired->value;
         } else {
-            $base['status'] = 'Needs repair';
-            $base['status_color'] = 'warning';
+            $base['status'] = MediaHealthStatus::NeedsRepair->value;
+            $base['status_color'] = MediaHealthStatus::NeedsRepair->getColor();
         }
 
         return $base;
