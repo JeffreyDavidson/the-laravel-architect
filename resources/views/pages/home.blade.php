@@ -198,7 +198,7 @@
                                         {{ $featuredPost->excerpt }}
                                     </p>
                                     <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
-                                        <time datetime="{{ $featuredPost->published_at->toDateString() }}">{{ $featuredPost->published_at->format('M d, Y') }}</time>
+                                        <x-display-date :date="$featuredPost->published_at" />
                                         <span>·</span>
                                         <span
                                             >{{ \App\Presenters\PostPresenter::from($featuredPost)->readingTime() }} min
@@ -237,7 +237,7 @@
                                                 {{ $post->excerpt }}
                                             </p>
                                             <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
-                                                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('M d, Y') }}</time>
+                                                <x-display-date :date="$post->published_at" />
                                                 <span>·</span>
                                                 <span
                                                     >{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min

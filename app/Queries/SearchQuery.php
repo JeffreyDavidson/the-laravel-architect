@@ -9,6 +9,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Support\DisplayTimezone;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -177,7 +178,7 @@ class SearchQuery
             'title' => $post->title,
             'description' => $post->excerpt,
             'url' => route('blog.show', $post),
-            'meta' => $post->publishedAt()
+            'meta' => DisplayTimezone::convert($post->publishedAt())
                 ?->format('M j, Y') ?? 'Article',
             'external' => false,
         ];
@@ -220,7 +221,7 @@ class SearchQuery
             'title' => $episode->title,
             'description' => $episode->description,
             'url' => route('podcast.episode', [$podcast, $episode]),
-            'meta' => $episode->publishedAt()
+            'meta' => DisplayTimezone::convert($episode->publishedAt())
                 ?->format('M j, Y') ?? 'Episode',
             'external' => false,
         ];
@@ -233,7 +234,7 @@ class SearchQuery
             'title' => $issue->title,
             'description' => $issue->excerpt,
             'url' => route('newsletter.issue', $issue),
-            'meta' => $issue->publishedAt()
+            'meta' => DisplayTimezone::convert($issue->publishedAt())
                 ?->format('M j, Y') ?? 'Newsletter',
             'external' => false,
         ];

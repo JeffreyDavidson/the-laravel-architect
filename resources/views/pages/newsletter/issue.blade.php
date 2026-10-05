@@ -15,12 +15,11 @@
                     {{ $issue->excerpt }}
                 </p>
             @endif
-            <time
-                class="mt-7 block text-base text-gray-600 sm:text-sm dark:text-gray-400"
-                datetime="{{ $issue->published_at?->toDateString() }}"
-            >
-                Published {{ $issue->published_at?->format('F j, Y') }}
-            </time>
+            @if ($issue->published_at)
+                <p class="mt-7 text-base text-gray-600 sm:text-sm dark:text-gray-400">
+                    Published <x-display-date :date="$issue->published_at" format="F j, Y" />
+                </p>
+            @endif
         </header>
 
         <div class="mx-auto max-w-3xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8 lg:pb-20">

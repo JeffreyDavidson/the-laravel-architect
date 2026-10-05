@@ -40,7 +40,7 @@ it('renders validated search filters with pagination metadata and accessible res
         ->assertSeeHtml('value="Laravel"')
         ->assertSeeHtml('name="category"')
         ->assertSeeHtml('<meta name="robots" content="noindex, follow">')
-        ->assertSeeHtml('<link rel="canonical" href="'.route('blog.index', ['category' => 'laravel']).'">')
+        ->assertSeeHtml('<link rel="canonical" href="'.route('blog.category', $category).'">')
         ->assertSeeHtml('Read article:');
 
     $queries = collect(DB::getQueryLog());
@@ -118,6 +118,34 @@ it('uses stable item positions and page metadata for an unfiltered archive page'
 
     expect($itemList['itemListElement'][0]['position'] ?? null)->toBe(13);
 });
+
+it('points a category-filtered blog page at its category archive', function (array $filters) {
+    $category = Category::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+    $author = User::factory()->create();
+
+    foreach (range(1, 13) as $index) {
+        Post::query()->create([
+            'title' => "Laravel Article {$index}",
+            'slug' => "laravel-article-{$index}",
+            'content' => 'A maintainable application starts with clear boundaries.',
+            'category_id' => $category->getKey(),
+            'user_id' => $author->getKey(),
+            'status' => PublishStatus::Published,
+            'published_at' => now()->subDays($index),
+        ]);
+    }
+
+    $response = $this->get(route('blog.index', ['category' => 'laravel', ...$filters]));
+
+    $response->assertSeeHtml('<link rel="canonical" href="'.route('blog.category', $category).'">')
+        ->assertSeeHtml('<meta property="og:url" content="'.route('blog.category', $category).'">');
+})->with([
+    'first page' => [[]],
+    'later page' => [['page' => 2]],
+]);
 
 it('rejects invalid public blog filters', function () {
     $this->get(route('blog.index', ['category' => 'missing-category']))

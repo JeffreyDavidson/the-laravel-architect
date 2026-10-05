@@ -24,7 +24,7 @@ dataset('production-only tasks', [
     'youtube:sync' => ['youtube:sync', '0 0 * * 0'],
 ]);
 
-dataset('tasks for every deployment', ['queue:prune-failed', 'model:prune', 'activitylog:clean']);
+dataset('tasks for every deployment', ['queue:prune-failed', 'model:prune', 'activitylog:clean', 'cache:prune-expired']);
 
 it('skips production-only tasks on staging', function (string $command) {
     config(['app.deployment_environment' => 'staging']);
@@ -52,6 +52,17 @@ it('runs maintenance tasks on staging', function (string $command) {
 
     expect($event->filtersPass(app()))->toBeTrue();
 })->with('tasks for every deployment');
+
+it('prunes expired cache entries daily between the backup and monitoring runs', function () {
+    $event = scheduledCommandEvent('cache:prune-expired');
+
+    expect($event->expression)
+        ->toBe('30 3 * * *')
+        ->and($event->withoutOverlapping)
+        ->toBeTrue()
+        ->and($event->onOneServer)
+        ->toBeTrue();
+});
 
 it('schedules operational monitoring and maintenance', function () {
     Artisan::call('schedule:list');

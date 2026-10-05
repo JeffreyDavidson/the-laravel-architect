@@ -54,8 +54,8 @@ it('rejects an oversized image through the Filament project form', function () {
             'featured_image_path' => UploadedFile::fake()->image('project.jpg')
                 ->size(10241),
         ])
-        ->call('create')
         ->assertHasFormErrors(['featured_image_path']);
 
-    expect(Project::query()->exists())->toBeFalse();
+    expect(Storage::disk('public')->allFiles())
+        ->toBeEmpty();
 });

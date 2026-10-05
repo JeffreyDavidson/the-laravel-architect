@@ -14,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
 pest()->use(RefreshDatabase::class);
@@ -198,6 +199,70 @@ it('renders model-specific SEO metadata', function () {
         ->assertSeeHtml('<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">');
 });
 
+it('shares blog posts as articles with their publication times', function () {
+    $this->travelTo(Date::parse('2026-09-01 12:00:00'));
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'content' => 'Clear boundaries keep application behavior understandable.',
+        'user_id' => User::factory()
+            ->create()
+            ->id,
+        'status' => PublishStatus::Published,
+        'published_at' => Date::parse('2026-08-19 09:30:00'),
+    ]);
+
+    $response = $this->get(route('blog.show', $post));
+
+    $response->assertSeeHtml('<meta property="og:type" content="article">')
+        ->assertSeeHtml('<meta property="article:published_time" content="2026-08-19T09:30:00+00:00">')
+        ->assertSeeHtml('<meta property="article:modified_time" content="2026-09-01T12:00:00+00:00">');
+});
+
+it('shares one wide article image in social cards and structured data', function (string $slug, ?string $featuredImagePath, Closure $expectedImage) {
+    $this->withVite();
+    Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
+    $post = Post::query()->create([
+        'title' => 'Designing Clear Laravel Boundaries',
+        'slug' => $slug,
+        'content' => 'Clear boundaries keep application behavior understandable.',
+        'featured_image_path' => $featuredImagePath,
+        'user_id' => User::factory()
+            ->create()
+            ->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $image = configuredString($expectedImage($post));
+
+    $content = responseContent($this->get(route('blog.show', $post))
+        ->getContent());
+
+    $graph = structuredDataGraph(decodeStructuredData($content)['@graph'] ?? null);
+    $article = structuredDataObject(collect($graph)->firstWhere('@type', 'Article'));
+    expect($content)
+        ->toContain("<meta property=\"og:image\" content=\"{$image}\">")
+        ->toContain('<meta name="twitter:card" content="summary_large_image">')
+        ->not->toContain('logo-color-black-bg.png')
+        ->and($article['image'] ?? null)
+        ->toBe($image);
+})->with([
+    'uploaded featured image' => [
+        'uploaded-image-article',
+        'posts/article.png',
+        fn (Post $post): ?string => $post->featured_image_url,
+    ],
+    'bundled artwork' => [
+        'hello-world-why-im-starting-this-blog',
+        null,
+        fn (): string => Vite::asset('resources/images/post-hello-world-1280.webp'),
+    ],
+    'no artwork' => [
+        'article-without-artwork',
+        null,
+        fn (Post $post): string => route('og-image', $post),
+    ],
+]);
+
 it('renders bundled editorial artwork and article navigation for seeded posts', function () {
     $this->withVite();
 
@@ -286,6 +351,29 @@ it('renders canonical structured data for the site and blog posts', function () 
                 '@id' => route('about').'#person',
             ],
         ]);
+});
+
+it('keeps a post title from closing the structured data script', function () {
+    $title = '</script><h1>x';
+    $author = User::factory()->create();
+    $post = Post::query()->create([
+        'title' => $title,
+        'slug' => 'script-breakout',
+        'content' => 'Body.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+
+    $content = $this->get(route('blog.show', $post))
+        ->assertDontSeeHtml('</script><h1>')
+        ->getContent();
+
+    $graph = structuredDataGraph(decodeStructuredData($content)['@graph'] ?? null);
+    $article = structuredDataObject(collect($graph)->firstWhere('@type', 'Article'));
+
+    expect($article['headline'] ?? null)
+        ->toBe($title);
 });
 
 it('renders canonical structured data for static public pages', function (string $routeName, string $type, string $name) {
@@ -686,7 +774,16 @@ it('keeps one main landmark on public index pages', function (string $routeName)
 })->with([
     'projects' => 'projects.index',
     'podcasts' => 'podcast.index',
+    'newsletter' => 'newsletter.index',
+    'archive' => 'archive.index',
 ]);
+
+it('renders only the site icon links', function () {
+    $response = $this->get(route('home'));
+
+    $response->assertSeeHtml('<link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-companion-32.png" />')
+        ->assertDontSeeHtml('rel="shortcut icon"');
+});
 
 it('uses a concise primary navigation and a project-focused call to action', function () {
     $content = responseContent($this->get(route('home'))
@@ -720,6 +817,7 @@ it('keeps public technology and channel details consistent', function () {
         ->assertSeeHtml('aria-pressed="false"')
         ->assertSeeHtml('x-data="siteHeader"')
         ->assertSee(configuredString(config('public-site.technology.laravel')))
+        ->assertSeeHtml('>8.5</span>')
         ->assertSee('I share practical Laravel videos');
 
     $this->get(route('uses'))

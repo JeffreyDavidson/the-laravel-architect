@@ -85,6 +85,15 @@ it('sends a test email to the site owner', function () {
         ->toBeFalse();
 });
 
+it('hides the sending actions from a user who is not an administrator', function (string $action) {
+    $issue = editableNewsletterIssue();
+    $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
+
+    $this->actingAs(User::factory()->create(['is_admin' => false]));
+
+    $page->assertActionHidden($action);
+})->with(['sendTestEmail', 'sendToSubscribers']);
+
 it('shows delivery progress after sending', function () {
     $issue = editableNewsletterIssue(['sent_at' => now()]);
     $issueId = $issue->getKey();

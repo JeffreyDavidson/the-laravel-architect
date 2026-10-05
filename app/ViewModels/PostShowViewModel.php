@@ -4,30 +4,41 @@ namespace App\ViewModels;
 
 use App\Models\Post;
 use App\Queries\RelatedPostsQuery;
+use App\Support\Seo\PostShareImage;
 use Illuminate\Database\Eloquent\Collection;
+use RalphJSmit\Laravel\SEO\Models\SEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class PostShowViewModel
 {
     public function __construct(
         private readonly RelatedPostsQuery $relatedPostsQuery,
+        private readonly PostShareImage $postShareImage,
     ) {}
 
     /**
+     * Shares the post as an article with a wide image, keeping any SEO fields saved in the admin.
+     *
      * @return array{
      *     post: Post,
      *     relatedPosts: Collection<int, Post>,
-     *     seoSource: Post,
+     *     seoSource: SEOData,
      * }
      */
     public function data(Post $post): array
     {
         $post->load(['category', 'tags', 'author']);
 
+        $seo = $post->seo;
+        $seoSource = $seo instanceof SEO
+            ? $seo->prepareForUsage()
+            : $post->getDynamicSEOData();
+        $seoSource->image = $this->postShareImage->url($post);
+
         return [
             'post' => $post,
             'relatedPosts' => $this->relatedPostsQuery->get($post),
-            'seoSource' => $post,
+            'seoSource' => $seoSource,
         ];
     }
 

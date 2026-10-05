@@ -49,6 +49,8 @@ class Podcast extends Model
     /**
      * Runs only after the delete is confirmed: trash the episodes with the podcast, or
      * permanently delete all of them (with their own cleanup) before the podcast row goes.
+     * Trashed episodes are then stamped with the podcast's deleted_at, so a delete that
+     * spans several seconds still lets PodcastObserver::restoring() bring them all back.
      */
     protected function performDeleteOnModel(): void
     {
@@ -56,6 +58,7 @@ class Podcast extends Model
             ? $this->episodes()
                 ->withTrashed()
             : $this->episodes();
+        $deletedEpisodeIds = [];
 
         foreach ($episodes->lazyById() as $episode) {
             $deleted = $this->isForceDeleting()
@@ -65,9 +68,23 @@ class Podcast extends Model
             if ($deleted !== true) {
                 throw new \RuntimeException('Podcast deletion was cancelled because an episode could not be deleted.');
             }
+
+            $deletedEpisodeIds[] = $episode->getKey();
         }
 
         $this->performSoftDeleteOnModel();
+
+        if ($this->isForceDeleting() || $deletedEpisodeIds === []) {
+            return;
+        }
+
+        $this->episodes()
+            ->onlyTrashed()
+            ->whereKey($deletedEpisodeIds)
+            ->toBase()
+            ->update([
+                'deleted_at' => $this->fromDateTime($this->getAttribute($this->getDeletedAtColumn())),
+            ]);
     }
 
     /** @return HasMany<Episode, $this> */

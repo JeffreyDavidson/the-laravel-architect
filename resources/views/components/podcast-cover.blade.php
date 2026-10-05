@@ -11,21 +11,23 @@
 
 @php($srcset = $responsiveImages->srcset($podcast->cover_image_path) ?? $podcast->fallback_cover_image_srcset)
 
-<picture>
-    @if ($srcset)
-        <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}" />
-    @endif
-    <img
-        src="{{ $podcast->cover_image_url }}"
-        alt="{{ $alt ?? $podcast->name }}"
-        width="{{ $width }}"
-        height="{{ $height }}"
-        decoding="async"
-        @if ($priority)
-            fetchpriority="high"
-        @else
-            loading="lazy"
+@if ($podcast->cover_image_url)
+    <picture>
+        @if ($srcset)
+            <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}" />
         @endif
-        {{ $attributes }}
-    />
-</picture>
+        <img
+            src="{{ $podcast->cover_image_url }}"
+            alt="{{ $alt ?? $podcast->name }}"
+            width="{{ $width }}"
+            height="{{ $height }}"
+            decoding="async"
+            @if ($priority)
+                fetchpriority="high"
+            @else
+                loading="lazy"
+            @endif
+            {{ $attributes }}
+        />
+    </picture>
+@endif

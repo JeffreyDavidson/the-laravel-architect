@@ -33,7 +33,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Backups and the OG image cache live here; nothing needs signed HTTP URLs to them.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

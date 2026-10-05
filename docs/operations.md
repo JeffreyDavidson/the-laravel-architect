@@ -94,6 +94,8 @@ For a migration that changes media or database structure, do not proceed without
 
 Keep a worker consuming the `database` queue connection. The contact email job is transactionally inserted there alongside the inquiry, even if the default queue connection changes. Leave `DB_QUEUE_CONNECTION` unset or set it to the application's default database connection; a separate queue database is rejected before an inquiry is saved. The existing Forge database worker consumes these jobs on the default queue without an additional queue or service. If an inquiry's admin page shows an email as not sent, use **Retry unsent emails** within 23 hours; after that, check the mail provider before contacting the sender manually.
 
+With `APP_ENV=production`, every absolute URL, including newsletter confirmation links, is built from `APP_URL` instead of the request's Host header, so `APP_URL` must be each site's canonical HTTPS address (the staging address on staging).
+
 ## Synchronizing public production content to staging
 
 Run `php artisan content:sync-production --staging` from the staging release to replace staging's public content with the current production versions. The flag permits `APP_ENV=production` only on `staging.thelaravelarchitect.com`; local environments do not require it. The command transfers only published posts, projects and newsletter issues, referenced categories and tags, active podcasts and their published episodes, published videos, their SEO metadata, and referenced public media. Responsive image variants are regenerated after media transfer, including same-path replacements.
@@ -126,7 +128,7 @@ Resend reports bounces and spam complaints to `POST https://thelaravelarchitect.
 
 An empty-body 403 with a secret that looks correct almost always means the running app still holds the old secret (stale config cache): redeploy, then use **Replay** on the failed event, or let Resend's automatic retry succeed. To compare without revealing the secret, run `php artisan tinker --execute 'echo strlen((string) config("services.resend.webhook_secret"));'` in Forge and compare the length with the secret shown in Resend.
 
-The endpoint skips the session and CSRF middleware because Resend posts server to server; the signature is the only credential, and it is limited to 60 requests per minute per IP. Event payloads and addresses are never logged. `app:verify-deployment` does not require the secret, so a release can ship before the webhook exists. Staging never sends email and needs no webhook.
+The endpoint skips the session and CSRF middleware because Resend posts server to server; the signature is the only credential, and it is limited to 60 requests per minute per IP. Event payloads and addresses are never logged. A malformed signature header gets the same 403 as a wrong one, and the Resend package's own `/resend/webhook` route is disabled in `config/resend.php`. `app:verify-deployment` does not require the secret, so a release can ship before the webhook exists. Staging never sends email and needs no webhook.
 
 ## Sending a newsletter issue
 
@@ -357,7 +359,7 @@ Then verify all of the following against the deployed commit:
 - The production Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
-- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.
+- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence. The smoke client retries a request once, after two seconds, only when the connection fails; an HTTP error status is never retried.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
 
@@ -369,7 +371,7 @@ Staging and production share one small Forge server (1 GB, 1 vCPU), which overlo
 - `youtube:stats` (daily) and `youtube:sync` (weekly)
 - `media:verify-responsive-images` and `media:find-orphans`
 
-Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune` and `activitylog:clean` still run on both sites.
+Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune`, `activitylog:clean` and `cache:prune-expired` still run on both sites; `cache:prune-expired` (daily at 03:30) deletes expired `cache` table rows, such as per-IP rate limiter entries, which the database cache store otherwise never removes.
 
 Owner note: archives that staging's scheduled backups wrote before this change can be deleted. With staging's `BACKUP_DISKS` unset or `local`, they sit on the `local` disk under `storage/app/private/<APP_NAME>/` in the staging site's storage; check the path before deleting anything.
 

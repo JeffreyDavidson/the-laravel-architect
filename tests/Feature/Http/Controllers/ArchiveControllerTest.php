@@ -10,6 +10,9 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('browses published public content in one chronological archive', function () {
@@ -120,6 +123,49 @@ it('filters the archive by content type and year', function () {
         ->assertSee($post->title)
         ->assertDontSee('Current archive project')
         ->assertSee('Showing 1–1 of 1 items.');
+});
+
+it('dates archive entries in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $author = User::factory()->create();
+    Post::query()->create([
+        'title' => 'Evening archive article',
+        'slug' => 'evening-archive-article',
+        'content' => 'Published content.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    get(route('archive.index', ['type' => 'writing']))
+        ->assertOk()
+        ->assertSeeHtml('datetime="2026-10-05"')
+        ->assertSee('October 5, 2026')
+        ->assertDontSee('October 6, 2026');
+});
+
+it('leaves out an episode whose podcast is in the trash', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Trashed podcast',
+        'slug' => 'trashed-podcast',
+        'description' => 'A podcast in the trash.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Orphaned episode',
+        'slug' => 'orphaned-episode',
+        'description' => 'An episode restored on its own.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $podcast->delete();
+    $episode->restore();
+
+    $this->get(route('archive.index'))
+        ->assertOk()
+        ->assertDontSee('Orphaned episode');
 });
 
 it('rejects invalid archive filters', function (array $filters) {

@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\PublishDatePicker;
 use App\Filament\Forms\Components\PublishStatusSelect;
 use App\Models\Episode;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -113,8 +113,7 @@ class EpisodeForm
                         SpatieTagsInput::make('tags'),
                         PublishStatusSelect::make('status')
                             ->withoutReview(),
-                        DateTimePicker::make('published_at')
-                            ->label('Publish Date'),
+                        PublishDatePicker::make('published_at'),
                     ])->columns(3),
 
                 Section::make('SEO')

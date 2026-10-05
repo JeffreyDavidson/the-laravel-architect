@@ -328,3 +328,18 @@ it('gives footer links comfortable touch targets on phones', function () {
 
     $page->assertScript('[...document.querySelectorAll("footer ul a")].every((link) => link.getBoundingClientRect().height >= 44)');
 });
+
+it('keeps the podcast coming soon badge readable in dark mode', function () {
+    $this->withVite();
+    $podcast = Podcast::query()->create([
+        'name' => 'Architecture Sessions',
+        'slug' => 'architecture-sessions',
+        'description' => 'Conversations about maintainable Laravel applications.',
+        'is_active' => true,
+    ]);
+
+    $page = $this->browserPageWithTheme(route('podcast.show', $podcast, false), 'desktop', 'dark');
+
+    $page->assertScript(meetsTextContrast('[...document.querySelectorAll("span")].find((span) => span.textContent.trim() === "Coming Soon")'))
+        ->assertNoJavaScriptErrors();
+});

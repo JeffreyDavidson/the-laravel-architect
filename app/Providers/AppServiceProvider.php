@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Tag;
 use App\Services\PublicPageBenchmark;
+use App\Support\DisplayTimezone;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
@@ -16,6 +17,7 @@ use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
 use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use App\Support\Seo\StructuredDataBuilder;
 use App\View\Components\SocialLinks;
+use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\DiagnosingHealth;
@@ -64,6 +66,8 @@ class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(app()->isProduction());
 
         Blade::components([SocialLinks::class]);
+
+        FilamentTimezone::set(DisplayTimezone::name(...));
 
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
             ->where('slug->'.App::getLocale(), $value)
@@ -134,9 +138,14 @@ class AppServiceProvider extends ServiceProvider
             return $limit->by($ipAddress);
         });
 
-        $appUrl = config('app.url');
+        $appUrl = config()->string('app.url');
 
-        if (is_string($appUrl) && str_starts_with($appUrl, 'https://')) {
+        // Absolute links, such as newsletter confirmations, must never follow a spoofed Host header.
+        if (app()->isProduction()) {
+            URL::forceRootUrl($appUrl);
+        }
+
+        if (str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
 
