@@ -122,6 +122,29 @@ it('filters the archive by content type and year', function () {
         ->assertSee('Showing 1–1 of 1 items.');
 });
 
+it('leaves out an episode whose podcast is in the trash', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Trashed podcast',
+        'slug' => 'trashed-podcast',
+        'description' => 'A podcast in the trash.',
+        'is_active' => true,
+    ]);
+    $episode = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Orphaned episode',
+        'slug' => 'orphaned-episode',
+        'description' => 'An episode restored on its own.',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->subDay(),
+    ]);
+    $podcast->delete();
+    $episode->restore();
+
+    $this->get(route('archive.index'))
+        ->assertOk()
+        ->assertDontSee('Orphaned episode');
+});
+
 it('rejects invalid archive filters', function (array $filters) {
     $this->get(route('archive.index', $filters))
         ->assertNotFound();

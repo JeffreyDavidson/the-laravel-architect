@@ -15,6 +15,7 @@ use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\travel;
 use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
 
@@ -188,6 +189,51 @@ it('restores only the episodes that were trashed with their podcast', function (
         ->not->toBeNull()
         ->and(Episode::query()->find($trashedEarlier->getKey()))
         ->toBeNull();
+});
+
+it('restores every episode trashed with its podcast when the delete spans several seconds', function () {
+    travelTo('2026-10-01 12:00:00');
+    $podcast = Podcast::query()->create([
+        'name' => 'Slow delete podcast',
+        'slug' => 'slow-delete-podcast',
+        'description' => 'A show.',
+    ]);
+    $trashedEarlier = Episode::query()->create([
+        'podcast_id' => $podcast->id,
+        'title' => 'Trashed earlier',
+        'slug' => 'trashed-earlier',
+        'description' => 'Description.',
+        'status' => PublishStatus::Draft,
+    ]);
+    $trashedEarlier->delete();
+    travel(1)->seconds();
+    $episodeIds = [];
+
+    foreach (range(1, 3) as $number) {
+        $episodeIds[] = Episode::query()->create([
+            'podcast_id' => $podcast->id,
+            'title' => "Episode {$number}",
+            'slug' => "episode-{$number}",
+            'description' => 'Description.',
+            'status' => PublishStatus::Draft,
+        ])->id;
+    }
+
+    Episode::deleted(function (): void {
+        travel(1)->seconds();
+    });
+    $podcast->delete();
+
+    $podcast->restore();
+
+    expect(Episode::query()
+        ->whereKey($episodeIds)
+        ->count())
+        ->toBe(3)
+        ->and(Episode::onlyTrashed()
+            ->whereKey($trashedEarlier->id)
+            ->exists())
+        ->toBeTrue();
 });
 
 it('permanently deletes every episode when a podcast is force deleted', function () {
