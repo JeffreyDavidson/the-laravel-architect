@@ -41,15 +41,19 @@ class SubscribersTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(SubscriberStatus::class)
-                    ->default(SubscriberStatus::Active->value)
+                    ->default(SubscriberStatus::Active)
                     ->query(function (Builder $query, array $data): void {
                         $status = $data['value'] ?? null;
 
-                        if (! is_string($status)) {
+                        if (is_string($status)) {
+                            $status = SubscriberStatus::tryFrom($status);
+                        }
+
+                        if (! $status instanceof SubscriberStatus) {
                             return;
                         }
 
-                        SubscriberStatus::tryFrom($status)?->scope($query);
+                        $status->scope($query);
                     }),
             ])
             ->toolbarActions([

@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PublishStatus: string implements HasLabel
+enum PublishStatus: string implements HasColor, HasLabel
 {
     case Draft = 'draft';
     case InReview = 'in_review';
@@ -34,7 +35,7 @@ enum PublishStatus: string implements HasLabel
         return $labels;
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Published => 'success',

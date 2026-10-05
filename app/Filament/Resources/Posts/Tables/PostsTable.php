@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
+use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
 use App\Models\Post;
@@ -42,10 +43,9 @@ class PostsTable
                     ->limit(50),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Post $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (Post $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(fn (Post $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('author.name')
                     ->label('Author')
                     ->sortable()
@@ -54,8 +54,7 @@ class PostsTable
                     ->badge()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (PublishStatus $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime('M j, Y')

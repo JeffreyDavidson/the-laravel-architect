@@ -1,0 +1,97 @@
+<?php
+
+use App\Enums\ContactInquiryStatus;
+use App\Enums\ContentReadinessStatus;
+use App\Enums\MediaHealthStatus;
+use App\Enums\MediaHealthType;
+use App\Enums\MediaSourceStatus;
+use App\Enums\ProjectReadinessFilter;
+use App\Enums\PublishStatus;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+covers(
+    ContactInquiryStatus::class,
+    ContentReadinessStatus::class,
+    MediaHealthStatus::class,
+    MediaHealthType::class,
+    MediaSourceStatus::class,
+    ProjectReadinessFilter::class,
+    PublishStatus::class,
+);
+
+it('reports the badge color for each status', function (HasColor $status, string $color) {
+    $result = $status->getColor();
+
+    expect($result)
+        ->toBe($color);
+})->with([
+    'draft' => [PublishStatus::Draft, 'gray'],
+    'in review' => [PublishStatus::InReview, 'info'],
+    'published' => [PublishStatus::Published, 'success'],
+    'scheduled' => [PublishStatus::Scheduled, 'warning'],
+    'new inquiry' => [ContactInquiryStatus::New, 'info'],
+    'inquiry in progress' => [ContactInquiryStatus::InProgress, 'warning'],
+    'resolved inquiry' => [ContactInquiryStatus::Resolved, 'success'],
+    'healthy media' => [MediaHealthStatus::Healthy, 'success'],
+    'media needing repair' => [MediaHealthStatus::NeedsRepair, 'warning'],
+    'media needing re-upload' => [MediaHealthStatus::ReuploadRequired, 'danger'],
+    'optimized source' => [MediaSourceStatus::Optimized, 'success'],
+    'source needing optimization' => [MediaSourceStatus::NeedsOptimization, 'warning'],
+    'missing source' => [MediaSourceStatus::Missing, 'danger'],
+    'unreadable source' => [MediaSourceStatus::Unreadable, 'danger'],
+    'ready content' => [ContentReadinessStatus::Ready, 'success'],
+    'content needing attention' => [ContentReadinessStatus::NeedsAttention, 'warning'],
+]);
+
+it('labels each case as it was previously displayed', function (HasLabel $case, string $label) {
+    $result = $case->getLabel();
+
+    expect($result)
+        ->toBe($label);
+})->with([
+    'healthy media' => [MediaHealthStatus::Healthy, 'Healthy'],
+    'media needing repair' => [MediaHealthStatus::NeedsRepair, 'Needs repair'],
+    'media needing re-upload' => [MediaHealthStatus::ReuploadRequired, 'Re-upload required'],
+    'optimized source' => [MediaSourceStatus::Optimized, 'Optimized'],
+    'source needing optimization' => [MediaSourceStatus::NeedsOptimization, 'Needs optimization'],
+    'missing source' => [MediaSourceStatus::Missing, 'Missing'],
+    'unreadable source' => [MediaSourceStatus::Unreadable, 'Unreadable'],
+    'project type' => [MediaHealthType::Project, 'Project'],
+    'post type' => [MediaHealthType::Post, 'Post'],
+    'podcast type' => [MediaHealthType::Podcast, 'Podcast'],
+    'ready project' => [ProjectReadinessFilter::Ready, 'Ready'],
+    'project needing an image' => [ProjectReadinessFilter::NeedsImage, 'Needs image'],
+    'project needing a case study' => [ProjectReadinessFilter::NeedsCaseStudy, 'Needs case study'],
+    'project needing details' => [ProjectReadinessFilter::NeedsDetails, 'Needs project details'],
+    'ready content' => [ContentReadinessStatus::Ready, 'Ready'],
+    'content needing attention' => [ContentReadinessStatus::NeedsAttention, 'Needs attention'],
+]);
+
+it('keeps the stored media health type keys', function () {
+    $keys = array_column(MediaHealthType::cases(), 'value');
+
+    expect($keys)
+        ->toBe(['project', 'post', 'podcast']);
+});
+
+it('keeps the project readiness filter keys', function () {
+    $keys = array_column(ProjectReadinessFilter::cases(), 'value');
+
+    expect($keys)
+        ->toBe(['ready', 'needs_image', 'needs_case_study', 'needs_details']);
+});
+
+it('keeps the media health status strings', function () {
+    $values = array_column(MediaHealthStatus::cases(), 'value');
+
+    expect($values)
+        ->toBe(['Healthy', 'Needs repair', 'Re-upload required']);
+});
+
+it('keeps the media source status strings', function () {
+    $values = array_column(MediaSourceStatus::cases(), 'value');
+
+    expect($values)
+        ->toBe(['Optimized', 'Needs optimization', 'Missing', 'Unreadable']);
+});

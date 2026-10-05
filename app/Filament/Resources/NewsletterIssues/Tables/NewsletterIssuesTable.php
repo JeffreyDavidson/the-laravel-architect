@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\NewsletterIssues\Tables;
 
+use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
 use App\Support\Content\ContentReadiness;
@@ -33,13 +34,11 @@ class NewsletterIssuesTable
                     ->limit(60),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (NewsletterIssue $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (NewsletterIssue $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(fn (NewsletterIssue $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (PublishStatus $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime('M j, Y')

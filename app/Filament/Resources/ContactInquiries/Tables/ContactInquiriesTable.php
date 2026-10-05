@@ -30,8 +30,7 @@ class ContactInquiriesTable
                     ->searchable()
                     ->formatStateUsing(fn (string $state): string => ContactType::tryFrom($state)?->getLabel() ?? $state),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (ContactInquiryStatus $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Received')
                     ->dateTime()
