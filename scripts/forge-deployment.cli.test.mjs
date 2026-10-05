@@ -12,6 +12,7 @@ const transportStub = `data:text/javascript,${encodeURIComponent(String.raw`
     import assert from 'node:assert/strict';
     import childProcess from 'node:child_process';
     import { syncBuiltinESMExports } from 'node:module';
+    import timers from 'node:timers/promises';
 
     let requests = 0;
     childProcess.spawnSync = (command, args) => {
@@ -34,6 +35,7 @@ const transportStub = `data:text/javascript,${encodeURIComponent(String.raw`
             stderr: 'sensitive-curl-output',
         };
     };
+    timers.setTimeout = async () => {};
     syncBuiltinESMExports();
     globalThis.fetch = async () => { throw new Error('Unexpected network request.'); };
     process.on('exit', () => {
@@ -44,7 +46,13 @@ const transportStub = `data:text/javascript,${encodeURIComponent(String.raw`
     });
 `)}`;
 
-function diagnose({ status = 200, curlExit = 0, clientId = 'test-client.access', clientSecret = 'test-secret' } = {}) {
+function diagnose({
+    status = 200,
+    curlExit = 0,
+    clientId = 'test-client.access',
+    clientSecret = 'test-secret',
+    expectedRequests = clientId && clientSecret ? 1 : 0,
+} = {}) {
     const result = spawnSync(process.execPath, ['--import', transportStub, script, 'diagnose', 'staging', revision], {
         encoding: 'utf8',
         timeout: 5000,
@@ -54,7 +62,7 @@ function diagnose({ status = 200, curlExit = 0, clientId = 'test-client.access',
             CF_ACCESS_CLIENT_SECRET: clientSecret,
             TEST_HTTP_STATUS: String(status),
             TEST_CURL_EXIT: String(curlExit),
-            TEST_EXPECTED_REQUESTS: clientId && clientSecret ? '1' : '0',
+            TEST_EXPECTED_REQUESTS: String(expectedRequests),
         },
     });
 
@@ -110,17 +118,18 @@ for (const status of [204, 301, 302, 303, 307, 308, 401, 403, 404, 500]) {
     });
 }
 
-for (const [curlExit, code] of [
-    [28, 'CURL_EXIT_28'],
-    [null, 'CURL_FAILED'],
+for (const [curlExit, code, expectedRequests] of [
+    [28, 'CURL_EXIT_28', 3],
+    [null, 'CURL_FAILED', 1],
 ]) {
-    test(`CLI fails on ${code} even after receiving HTTP 200 headers`, () => {
-        const result = diagnose({ curlExit });
+    test(`CLI fails on ${code} after ${expectedRequests} attempt(s) even after receiving HTTP 200 headers`, () => {
+        const result = diagnose({ curlExit, expectedRequests });
 
         assert.equal(result.status, 1);
         assert.equal(result.diagnostics.credentials.clientId.present, true);
         assert.equal(result.diagnostics.credentials.clientSecret.present, true);
         assert.equal(result.diagnostics.response, undefined);
         assert.match(result.stderr, new RegExp(`Deployment request failed.*${code}`));
+        assert.doesNotMatch(result.stderr, /retrying a trigger/);
     });
 }

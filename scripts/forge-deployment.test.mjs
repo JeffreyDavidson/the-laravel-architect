@@ -13,6 +13,7 @@ import {
     transportFailureReason,
     validateRevision,
     verifyRelease,
+    waitForRelease,
 } from './forge-deployment.mjs';
 
 const revision = 'a'.repeat(40);
@@ -20,6 +21,7 @@ const access = { clientId: 'test-client', clientSecret: 'test-secret' };
 const hook = 'https://forge.laravel.com/servers/753072/sites/3366565/deploy/http?token=test-token';
 const marker = (id = 1, sha = revision) =>
     Response.json({ revision: sha, deployment_id: id }, { headers: { 'Cache-Control': 'no-store' } });
+const timedOut = () => Object.assign(new Error('connect ETIMEDOUT test-secret'), { code: 'ETIMEDOUT' });
 
 test('staging workflow uses the guarded deployment operation instead of a separate mutation and wait', () => {
     const workflow = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
@@ -349,11 +351,181 @@ test('rejects cached release evidence', async () => {
 });
 
 test('requires successful health as well as a matching revision', async () => {
-    const responses = [marker(), new Response('', { status: 503 })];
+    const responses = [marker(), ...[1, 2, 3].map(() => new Response('', { status: 503 }))];
     await assert.rejects(
-        verifyRelease('staging', revision, { ...access, fetch: async () => responses.shift() }),
+        verifyRelease('staging', revision, {
+            ...access,
+            delay: async () => {},
+            fetch: async () => responses.shift(),
+        }),
         /health/,
     );
+});
+
+test('retries a timed-out Access diagnostic read and then succeeds', async () => {
+    const delays = [];
+    let calls = 0;
+
+    const diagnostics = await diagnoseAccess('staging', {
+        ...access,
+        delay: async milliseconds => {
+            delays.push(milliseconds);
+        },
+        fetch: async () => {
+            calls++;
+            if (calls === 1) {
+                throw timedOut();
+            }
+
+            return new Response('', { status: 200 });
+        },
+    });
+
+    assert.equal(diagnostics.error, undefined);
+    assert.equal(diagnostics.response.status, 200);
+    assert.equal(calls, 2);
+    assert.deepEqual(delays, [5000]);
+});
+
+test('retries a release marker read that returns HTTP 503 and then succeeds', async () => {
+    const responses = [new Response('', { status: 503 }), marker(2)];
+    const delays = [];
+
+    const result = await readMarker('staging', {
+        ...access,
+        delay: async milliseconds => {
+            delays.push(milliseconds);
+        },
+        fetch: async () => responses.shift(),
+    });
+
+    assert.equal(result.deployment_id, 2);
+    assert.deepEqual(delays, [5000]);
+});
+
+test('fails a persistently failing read after three attempts without blaming a trigger', async () => {
+    for (const failure of [() => new Response('', { status: 503 }), () => Promise.reject(timedOut())]) {
+        const delays = [];
+        let calls = 0;
+
+        await assert.rejects(
+            readMarker('staging', {
+                ...access,
+                delay: async milliseconds => {
+                    delays.push(milliseconds);
+                },
+                fetch: async () => {
+                    calls++;
+
+                    return failure();
+                },
+            }),
+            error => !error.message.includes('retrying a trigger') && !error.message.includes('test-secret'),
+        );
+        assert.equal(calls, 3);
+        assert.deepEqual(delays, [5000, 15000]);
+    }
+});
+
+test('does not retry reads that fail for non-transient reasons', async () => {
+    let calls = 0;
+
+    await assert.rejects(
+        readMarker('staging', {
+            ...access,
+            delay: async () => {},
+            fetch: async () => {
+                calls++;
+
+                return new Response('', { status: 500 });
+            },
+        }),
+        /HTTP 500/,
+    );
+    assert.equal(calls, 1);
+});
+
+test('lets curl report its own timeout before Node stops the process', async () => {
+    let spawnTimeout;
+    let maxTime;
+
+    await readMarker('staging', {
+        ...access,
+        readTransport: 'curl',
+        curl: async (command, args, options) => {
+            spawnTimeout = options.timeout;
+            maxTime = Number(args[args.indexOf('--max-time') + 1]);
+
+            return {
+                stdout: `HTTP/1.1 200\r\ncache-control: no-store\r\n\r\n${JSON.stringify({ revision, deployment_id: 2 })}\n__DEPLOYMENT_STATUS__:200\n`,
+            };
+        },
+    });
+
+    assert.ok(spawnTimeout > maxTime * 1000);
+});
+
+test('keeps polling through read errors while waiting for a release', async () => {
+    const responses = [
+        () => Promise.reject(new Error('socket hang up')),
+        ...[1, 2, 3].map(() => () => new Response('', { status: 503 })),
+        () => marker(2),
+        () => marker(2),
+        () => new Response('healthy'),
+    ];
+
+    const result = await waitForRelease('staging', revision, {
+        ...access,
+        previousDeploymentId: 1,
+        delay: async () => {},
+        fetch: async () => responses.shift()(),
+    });
+
+    assert.equal(result.deployment_id, 2);
+    assert.equal(responses.length, 0);
+});
+
+test('stops polling at the deadline when reads keep failing', async () => {
+    let time = 0;
+
+    await assert.rejects(
+        waitForRelease('staging', revision, {
+            ...access,
+            previousDeploymentId: 1,
+            now: () => time,
+            delay: async () => {
+                time += 60_000;
+            },
+            fetch: async () => {
+                throw timedOut();
+            },
+        }),
+        /within 11 minutes; Deployment request failed/,
+    );
+});
+
+test('attempts a failing Forge trigger exactly once', async () => {
+    for (const failure of [() => Promise.reject(timedOut()), () => new Response('', { status: 503 })]) {
+        let posts = 0;
+
+        await assert.rejects(
+            deployRelease('staging', revision, {
+                ...access,
+                hook,
+                delay: async () => {},
+                fetch: async (url, init) => {
+                    if (init.method !== 'POST') {
+                        return marker();
+                    }
+                    posts++;
+
+                    return failure();
+                },
+            }),
+            /inspect Forge before retrying a trigger|Forge rejected the deployment trigger/,
+        );
+        assert.equal(posts, 1);
+    }
 });
 
 test('deploys a release branch SHA and triggers Forge only once', async () => {
@@ -403,7 +575,7 @@ test('waits through transient health responses after a new release marker', asyn
         new Response('accepted'),
         marker(2),
         marker(2),
-        new Response('', { status: 502 }),
+        ...[1, 2, 3].map(() => new Response('', { status: 502 })),
         marker(2),
         marker(2),
         new Response('healthy'),
