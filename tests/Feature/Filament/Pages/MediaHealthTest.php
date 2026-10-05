@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ImageUploadOptimizer;
 use App\Services\ResponsiveImageVariants;
 use Filament\Actions\Testing\TestAction;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -90,4 +91,37 @@ it('repairs missing responsive variants for a stored image', function () {
 
     Storage::disk('public')->assertExists('projects/responsive/'.pathinfo($path, PATHINFO_FILENAME).'-640.webp');
     Storage::disk('public')->assertExists('projects/responsive/'.pathinfo($path, PATHINFO_FILENAME).'-1280.webp');
+});
+
+it('withholds variant repair from a user who is not an administrator', function () {
+    $project = Project::withoutEvents(fn (): Project => Project::query()->create([
+        'title' => 'Repairable project',
+        'slug' => 'repairable-project',
+        'description' => 'Description',
+        'status' => PublishStatus::Draft,
+    ]));
+    $path = app(ImageUploadOptimizer::class)->store(
+        UploadedFile::fake()->image('repairable.jpg', 1600, 900),
+        'projects',
+        'public',
+    );
+
+    if (! is_string($path)) {
+        throw new RuntimeException('Expected an optimized image path.');
+    }
+
+    Project::withoutEvents(fn (): bool => $project->update(['featured_image_path' => $path]));
+    $repair = TestAction::make('repair')->table("project:{$project->id}");
+    $page = livewire(MediaHealth::class)
+        ->assertActionVisible($repair);
+
+    // The panel middleware already turns non-administrators away; skip it so the action's own authorization is what refuses the repair.
+    $this->withoutMiddleware(Authenticate::class)
+        ->actingAs(User::factory()->create(['is_admin' => false]));
+
+    $page->assertActionHidden($repair)
+        ->mountAction($repair)
+        ->call('callMountedAction');
+
+    Storage::disk('public')->assertMissing('projects/responsive/'.pathinfo($path, PATHINFO_FILENAME).'-640.webp');
 });

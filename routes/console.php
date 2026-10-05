@@ -75,6 +75,11 @@ Schedule::command('activitylog:clean')
     ->daily()
     ->withoutOverlapping()
     ->onOneServer();
+// Off-peak, clear of the 02:00/02:30 backup and 05:00/05:30 media runs.
+Schedule::command('cache:prune-expired')
+    ->dailyAt('03:30')
+    ->withoutOverlapping()
+    ->onOneServer();
 Schedule::command('youtube:stats')
     ->daily()
     ->when($isProductionDeployment)

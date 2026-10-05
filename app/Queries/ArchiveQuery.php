@@ -113,6 +113,7 @@ class ArchiveQuery
             SearchContentType::Episodes->value => Episode::query()
                 ->join('podcasts', 'podcasts.id', '=', 'episodes.podcast_id')
                 ->where('podcasts.is_active', true)
+                ->whereNull('podcasts.deleted_at')
                 ->select(['episodes.id', 'episodes.title', 'episodes.description as summary', 'episodes.slug'])
                 ->selectRaw("'episodes' as type, episodes.published_at as sort_date, podcasts.slug as podcast_slug, NULL as youtube_id")
                 ->published(),

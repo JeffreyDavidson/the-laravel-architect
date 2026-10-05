@@ -9,6 +9,7 @@ use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Resources\SocialProfiles\SocialProfileResource;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
@@ -51,6 +52,7 @@ it('renders each registered resource index for an authorized user', function (st
     PodcastResource::class,
     PostResource::class,
     ProjectResource::class,
+    SocialProfileResource::class,
     SubscriberResource::class,
     TagResource::class,
     VideoResource::class,

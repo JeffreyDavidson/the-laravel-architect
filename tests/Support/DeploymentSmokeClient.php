@@ -2,9 +2,11 @@
 
 namespace Tests\Support;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
+use Throwable;
 
 class DeploymentSmokeClient
 {
@@ -17,6 +19,10 @@ class DeploymentSmokeClient
         $request = Http::baseUrl($baseUrl)
             ->connectTimeout(5)
             ->timeout(15)
+            // One retry after a connection failure absorbs a briefly loaded shared server.
+            // HTTP error statuses are returned unchanged, so real failures still fail fast.
+            // A redirect reaches the callback with no exception, so it accepts null.
+            ->retry(2, 2000, fn (?Throwable $exception): bool => $exception instanceof ConnectionException, throw: false)
             ->withoutRedirecting();
 
         if ($baseUrl === 'https://staging.thelaravelarchitect.com') {

@@ -100,6 +100,7 @@ class MediaHealth extends Page implements HasTable
                     ->label('Repair variants')
                     ->icon(Heroicon::OutlinedWrenchScrewdriver)
                     ->color('warning')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->visible(fn (array $record): bool => $this->recordBool($record, 'repairable'))
                     ->action(function (array $record, MediaHealthReport $report): void {
