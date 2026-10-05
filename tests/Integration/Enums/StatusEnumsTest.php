@@ -5,6 +5,7 @@ use App\Enums\ContentReadinessStatus;
 use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
+use App\Enums\MediaVariantStatus;
 use App\Enums\ProjectReadinessFilter;
 use App\Enums\PublishStatus;
 use Filament\Support\Contracts\HasColor;
@@ -16,6 +17,7 @@ covers(
     MediaHealthStatus::class,
     MediaHealthType::class,
     MediaSourceStatus::class,
+    MediaVariantStatus::class,
     ProjectReadinessFilter::class,
     PublishStatus::class,
 );
@@ -40,6 +42,9 @@ it('reports the badge color for each status', function (HasColor $status, string
     'source needing optimization' => [MediaSourceStatus::NeedsOptimization, 'warning'],
     'missing source' => [MediaSourceStatus::Missing, 'danger'],
     'unreadable source' => [MediaSourceStatus::Unreadable, 'danger'],
+    'ready variants' => [MediaVariantStatus::Ready, 'success'],
+    'missing variants' => [MediaVariantStatus::Missing, 'warning'],
+    'unavailable variants' => [MediaVariantStatus::Unavailable, 'warning'],
     'ready content' => [ContentReadinessStatus::Ready, 'success'],
     'content needing attention' => [ContentReadinessStatus::NeedsAttention, 'warning'],
 ]);
@@ -57,6 +62,9 @@ it('labels each case as it was previously displayed', function (HasLabel $case, 
     'source needing optimization' => [MediaSourceStatus::NeedsOptimization, 'Needs optimization'],
     'missing source' => [MediaSourceStatus::Missing, 'Missing'],
     'unreadable source' => [MediaSourceStatus::Unreadable, 'Unreadable'],
+    'ready variants' => [MediaVariantStatus::Ready, 'Ready'],
+    'missing variants' => [MediaVariantStatus::Missing, 'Missing'],
+    'unavailable variants' => [MediaVariantStatus::Unavailable, 'Unavailable'],
     'project type' => [MediaHealthType::Project, 'Project'],
     'post type' => [MediaHealthType::Post, 'Post'],
     'podcast type' => [MediaHealthType::Podcast, 'Podcast'],
@@ -94,4 +102,11 @@ it('keeps the media source status strings', function () {
 
     expect($values)
         ->toBe(['Optimized', 'Needs optimization', 'Missing', 'Unreadable']);
+});
+
+it('keeps the media variant status strings', function () {
+    $values = array_column(MediaVariantStatus::cases(), 'value');
+
+    expect($values)
+        ->toBe(['Ready', 'Missing', 'Unavailable']);
 });

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 use function Pest\Livewire\livewire;
 
@@ -91,4 +92,38 @@ it('plots published content by month and excludes drafts and older records', fun
     livewire(PublishingTrendsChart::class)
         ->assertSee('Publishing activity')
         ->assertSee('Published content over the last six months.');
+});
+
+it('buckets published content by display timezone month', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    Date::setTestNow(Carbon::parse('2026-10-01 02:00:00'));
+    $administrator = User::factory()->create(['is_admin' => true]);
+
+    foreach (['Before the window' => '2026-04-01 02:00:00', 'July evening' => '2026-08-01 02:00:00', 'August morning' => '2026-08-01 05:00:00'] as $title => $publishedAt) {
+        Post::query()->create([
+            'title' => $title,
+            'slug' => Str::slug($title),
+            'content' => 'Content',
+            'user_id' => $administrator->id,
+            'status' => 'published',
+            'published_at' => $publishedAt,
+        ]);
+    }
+
+    $widget = new class extends PublishingTrendsChart
+    {
+        /** @return array{datasets: array<int, array{label: string, data: list<int>}>, labels: array<int, string>} */
+        public function data(): array
+        {
+            return $this->getData();
+        }
+    };
+    $data = $widget->data();
+
+    expect($data['labels'])->toBe(['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'])
+        ->and($data['datasets'][0])
+        ->toMatchArray([
+            'label' => 'Posts',
+            'data' => [0, 0, 0, 1, 1, 0],
+        ]);
 });

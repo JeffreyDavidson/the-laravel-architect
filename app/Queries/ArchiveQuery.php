@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
 use App\Support\DisplayTimezone;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -42,7 +43,8 @@ class ArchiveQuery
             ->orderBy('type');
 
         if ($year !== null) {
-            $query->whereYear('sort_date', $year);
+            $query->where('sort_date', '>=', $this->startOfDisplayYear($year))
+                ->where('sort_date', '<', $this->startOfDisplayYear($year + 1));
         }
 
         /** @var LengthAwarePaginator<int, object{ id: int, type: string, title: string, summary: string|null, slug: string, podcast_slug: string|null, youtube_id: string|null, sort_date: string }> $items */
@@ -55,6 +57,8 @@ class ArchiveQuery
     }
 
     /**
+     * The years that hold archive content, in the display timezone, newest first.
+     *
      * @return list<int>
      */
     public function years(): array
@@ -67,26 +71,26 @@ class ArchiveQuery
             $query->unionAll($contentQuery);
         }
 
-        $rawYears = DB::query()
+        $years = DB::query()
             ->fromSub($query, 'archive')
-            ->selectRaw("strftime('%Y', sort_date) as year")
+            ->whereNotNull('sort_date')
             ->distinct()
-            ->orderByDesc('year')
-            ->pluck('year')
-            ->filter()
+            ->pluck('sort_date')
+            ->filter(fn (mixed $date): bool => is_string($date))
+            ->map(fn (string $date): int => DisplayTimezone::convert(Carbon::parse($date))->year)
+            ->unique()
             ->all();
-
-        $years = [];
-
-        foreach ($rawYears as $year) {
-            if (is_string($year) && ctype_digit($year)) {
-                $years[] = (int) $year;
-            }
-        }
 
         rsort($years);
 
         return $years;
+    }
+
+    /** The UTC instant at which a year begins in the display timezone. */
+    private function startOfDisplayYear(int $year): CarbonImmutable
+    {
+        return CarbonImmutable::parse("{$year}-01-01", DisplayTimezone::name())
+            ->utc();
     }
 
     /**

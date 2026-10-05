@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
+use App\Support\DisplayTimezone;
 use DateTimeInterface;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
@@ -32,11 +33,14 @@ class PublishingTrendsChart extends ChartWidget
     protected function getData(): array
     {
         $months = collect(range(5, 0))
-            ->map(fn (int $monthsAgo): Carbon => now()->startOfMonth()
+            ->map(fn (int $monthsAgo): Carbon => DisplayTimezone::convert(now())
+                ->startOfMonth()
                 ->subMonths($monthsAgo));
         $monthKeys = $months->map(fn (Carbon $month): string => $month->format('Y-m'))
             ->all();
-        $start = $months->first();
+        $start = $months->first()
+            ?->copy()
+            ->utc();
 
         $counts = [
             'Posts' => array_fill_keys($monthKeys, 0),
@@ -51,7 +55,8 @@ class PublishingTrendsChart extends ChartWidget
                 continue;
             }
 
-            $monthKey = Carbon::parse($publishedAt)->format('Y-m');
+            $monthKey = DisplayTimezone::convert(Carbon::parse($publishedAt))
+                ->format('Y-m');
 
             if (array_key_exists($monthKey, $counts['Posts'])) {
                 $counts['Posts'][$monthKey]++;
@@ -65,7 +70,8 @@ class PublishingTrendsChart extends ChartWidget
                 continue;
             }
 
-            $monthKey = Carbon::parse($publishedAt)->format('Y-m');
+            $monthKey = DisplayTimezone::convert(Carbon::parse($publishedAt))
+                ->format('Y-m');
 
             if (array_key_exists($monthKey, $counts['Episodes'])) {
                 $counts['Episodes'][$monthKey]++;
@@ -79,7 +85,8 @@ class PublishingTrendsChart extends ChartWidget
                 continue;
             }
 
-            $monthKey = Carbon::parse($publishedAt)->format('Y-m');
+            $monthKey = DisplayTimezone::convert(Carbon::parse($publishedAt))
+                ->format('Y-m');
 
             if (array_key_exists($monthKey, $counts['Newsletter issues'])) {
                 $counts['Newsletter issues'][$monthKey]++;
