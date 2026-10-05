@@ -24,7 +24,7 @@
             </div>
         </header>
 
-        <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <section aria-labelledby="newsletter-issues-heading">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <div>
@@ -95,6 +95,6 @@
             <section id="newsletter-signup" class="mt-16">
                 <x-home.newsletter-signup class="mx-auto max-w-3xl text-center" />
             </section>
-        </main>
+        </div>
     </div>
 </x-layouts.site>

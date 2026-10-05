@@ -50,6 +50,8 @@ it('builds the post detail payload', function () {
         ->toBeTrue()
         ->and($data['relatedPosts']->modelKeys())
         ->toBe([$relatedPost->getKey()])
-        ->and($data['seoSource']->is($post))
-        ->toBeTrue();
+        ->and($data['seoSource']->title)
+        ->toBe('Current Post')
+        ->and($data['seoSource']->type)
+        ->toBe('article');
 });

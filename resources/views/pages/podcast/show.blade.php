@@ -36,12 +36,12 @@
                         {{-- Badge --}}
                         <div class="mb-4 flex items-center justify-center gap-3 md:justify-start">
                             @if ($episodes->count())
-                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">
+                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
                                     <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
                                     {{ $episodes->total() }} {{ Str::plural('Episode', $episodes->total()) }}
                                 </span>
                             @else
-                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">
+                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
                                     <span class="h-1.5 w-1.5 rounded-full bg-[var(--podcast-color)]"></span>
                                     Coming Soon
                                 </span>

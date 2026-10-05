@@ -18,7 +18,8 @@ return [
         'force_default' => false,
     ],
 
-    'favicon' => '/images/favicon-32x32.png',
+    // The site layout renders its own icon links, so the package adds none.
+    'favicon' => null,
 
     'title' => [
         'infer_title_from_url' => true,
