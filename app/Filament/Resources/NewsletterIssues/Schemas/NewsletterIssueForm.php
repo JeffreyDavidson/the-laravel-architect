@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\NewsletterIssues\Schemas;
 
+use App\Filament\Forms\Components\PublishDatePicker;
 use App\Filament\Forms\Components\PublishStatusSelect;
 use App\Models\NewsletterIssue;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -51,8 +51,7 @@ class NewsletterIssueForm
                 Section::make('Publishing')
                     ->schema([
                         PublishStatusSelect::make('status'),
-                        DateTimePicker::make('published_at')
-                            ->label('Publish Date'),
+                        PublishDatePicker::make('published_at'),
                     ])
                     ->columns(2),
                 Section::make('SEO')

@@ -35,7 +35,7 @@
                 >{{ $post->author->name ?? 'Jeffrey Davidson' }}</a>
                 @if ($post->published_at)
                     <span aria-hidden="true">·</span>
-                    <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->format('F d, Y') }}</time>
+                    <x-display-date :date="$post->published_at" format="F d, Y" />
                 @else
                     <span aria-hidden="true">·</span>
                     <span>Draft preview</span>

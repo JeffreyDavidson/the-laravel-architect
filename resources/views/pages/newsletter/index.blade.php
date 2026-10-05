@@ -51,12 +51,11 @@
                 <div class="mt-8 grid gap-6 md:grid-cols-2">
                     @forelse ($issues as $issue)
                         <article class="dark:border-surface-border dark:bg-brand-900/60 rounded-xl border border-gray-200 bg-white p-6 outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10">
-                            <time
+                            <x-display-date
+                                :date="$issue->published_at"
+                                format="F j, Y"
                                 class="text-brand-600 dark:text-brand-300 font-mono text-xs font-semibold tracking-wide uppercase"
-                                datetime="{{ $issue->published_at?->toDateString() }}"
-                            >
-                                {{ $issue->published_at?->format('F j, Y') }}
-                            </time>
+                            />
                             <h3 class="mt-3 text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
                                 <a
                                     href="{{ route('newsletter.issue', $issue) }}"

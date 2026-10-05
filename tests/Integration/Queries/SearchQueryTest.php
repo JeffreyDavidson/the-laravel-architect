@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 /**
@@ -53,6 +55,25 @@ function searchWithParameters(array $parameters, ?SearchContentType $type = null
 
     return app(SearchQuery::class)->get($parameters['q'], $type);
 }
+
+it('dates results in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $author = User::factory()->create();
+    Post::query()->create([
+        'title' => 'Evening timezone post',
+        'slug' => 'evening-timezone-post',
+        'content' => 'Content.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    $results = searchWithParameters(['q' => 'timezone']);
+
+    expect($results['Writing']->first())
+        ->toMatchArray(['meta' => 'Oct 5, 2026']);
+});
 
 it('pages each result group with its own total', function () {
     seedPagedSearchContent(posts: 13, issues: 2);

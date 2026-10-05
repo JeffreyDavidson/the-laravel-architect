@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
 use function Pest\Livewire\livewire;
@@ -58,6 +59,39 @@ it('shows scheduled and review content in its publication month', function () {
         ->assertSee('In Review')
         ->assertSee($episode->title)
         ->assertSee('Scheduled');
+});
+
+it('places content on its publication day in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    Date::setTestNow(Carbon::parse('2026-10-01 12:00:00'));
+    Post::query()->create([
+        'title' => 'Evening post',
+        'slug' => 'evening-post',
+        'content' => 'Content',
+        'user_id' => auth()->id(),
+        'status' => PublishStatus::Draft,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    livewire(EditorialCalendar::class)
+        ->assertViewHas('weeks', function (Collection $weeks): bool {
+            /** @var Collection<int, Collection<int, array{date: string, entries: Collection<int, array{title: string}>}>> $weeks */
+            foreach ($weeks as $week) {
+                foreach ($week as $day) {
+                    if ($day['date'] !== '2026-10-05') {
+                        continue;
+                    }
+
+                    $titles = $day['entries']
+                        ->pluck('title')
+                        ->all();
+
+                    return $titles === ['Evening post'];
+                }
+            }
+
+            return false;
+        });
 });
 
 it('keeps undated content in the unscheduled queue and filters other months', function () {

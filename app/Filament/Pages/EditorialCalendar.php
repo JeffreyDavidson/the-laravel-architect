@@ -7,6 +7,7 @@ use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
+use App\Support\DisplayTimezone;
 use BackedEnum;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
@@ -47,7 +48,7 @@ class EditorialCalendar extends Page
 
     public function mount(): void
     {
-        $this->month = now()->format('Y-m');
+        $this->month = now(DisplayTimezone::name())->format('Y-m');
     }
 
     public function previousMonth(): void
@@ -66,7 +67,7 @@ class EditorialCalendar extends Page
 
     public function currentMonth(): void
     {
-        $this->month = now()->format('Y-m');
+        $this->month = now(DisplayTimezone::name())->format('Y-m');
     }
 
     protected function getHeaderActions(): array
@@ -158,12 +159,12 @@ class EditorialCalendar extends Page
     private function selectedMonth(): Carbon
     {
         try {
-            $month = Carbon::createFromFormat('!Y-m', $this->month);
+            $month = Carbon::createFromFormat('!Y-m', $this->month, DisplayTimezone::name());
         } catch (\Throwable) {
             $month = null;
         }
 
-        return $month instanceof Carbon ? $month : now()->startOfMonth();
+        return $month instanceof Carbon ? $month : now(DisplayTimezone::name())->startOfMonth();
     }
 
     /**
@@ -172,8 +173,10 @@ class EditorialCalendar extends Page
     private function entries(Carbon $gridStart, Carbon $gridEnd): Collection
     {
         $range = [$gridStart->copy()
-            ->startOfDay(), $gridEnd->copy()
-            ->endOfDay()];
+            ->startOfDay()
+            ->utc(), $gridEnd->copy()
+            ->endOfDay()
+            ->utc()];
 
         $posts = Post::query()
             ->select(['id', 'title', 'status', 'published_at'])
@@ -226,7 +229,8 @@ class EditorialCalendar extends Page
         string $url,
     ): array {
         return [
-            'date' => $publishedAt?->toDateString(),
+            'date' => DisplayTimezone::convert($publishedAt)
+                ?->toDateString(),
             'title' => $title,
             'type' => $type,
             'typeKey' => $typeKey,

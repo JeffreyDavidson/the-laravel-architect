@@ -11,6 +11,7 @@ use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
+use App\Support\DisplayTimezone;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -46,7 +47,10 @@ class EditNewsletterIssue extends EditRecord
             ->whereNotNull('sent_at')
             ->count();
 
-        return "Sent {$sentAt->format('M j, Y')}. Delivered to {$delivered} of {$total} ".Str::plural('subscriber', $total).'.';
+        $sentOn = DisplayTimezone::convert($sentAt)
+            ->format('M j, Y');
+
+        return "Sent {$sentOn}. Delivered to {$delivered} of {$total} ".Str::plural('subscriber', $total).'.';
     }
 
     protected function getHeaderActions(): array

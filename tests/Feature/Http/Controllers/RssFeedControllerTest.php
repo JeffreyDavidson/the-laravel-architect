@@ -7,6 +7,9 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('serves RSS metadata with the correct media type', function () {
@@ -101,4 +104,22 @@ it('serves the newsletter RSS feed with published issues only', function () {
         ->assertSeeHtml('<description>Safe &amp; useful &lt;summary&gt;</description>')
         ->assertDontSeeHtml('Draft newsletter issue')
         ->assertDontSeeHtml('Future newsletter issue');
+});
+
+it('keeps the UTC publication instant in feed dates whatever the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $author = User::factory()->create();
+    Post::query()->create([
+        'title' => 'Evening post',
+        'slug' => 'evening-post',
+        'content' => 'Content.',
+        'user_id' => $author->id,
+        'status' => PublishStatus::Published,
+        'published_at' => '2026-10-06 01:00:00',
+    ]);
+
+    get(route('rss'))
+        ->assertOk()
+        ->assertSeeHtml('<pubDate>Tue, 06 Oct 2026 01:00:00 +0000</pubDate>');
 });

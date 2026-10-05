@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 /** @param array<string, mixed> $overrides */
@@ -103,4 +106,22 @@ it('counts only published posts in blog categories', function () {
 
             return $category instanceof Category && $category->getAttribute('posts_count') === 1;
         });
+});
+
+it('shows a post publish date in the display timezone while its metadata keeps the UTC instant', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    $post = createBlogPost(['published_at' => '2026-10-06 01:00:00']);
+
+    get(route('blog.index'))
+        ->assertOk()
+        ->assertSeeHtml('datetime="2026-10-05"')
+        ->assertSee('Oct 05, 2026')
+        ->assertDontSee('Oct 06, 2026');
+
+    get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSeeHtml('<time datetime="2026-10-05">October 05, 2026</time>')
+        ->assertSeeHtml('<meta property="article:published_time" content="2026-10-06T01:00:00+00:00">')
+        ->assertSeeHtml('"datePublished":"2026-10-06T01:00:00+00:00"');
 });
