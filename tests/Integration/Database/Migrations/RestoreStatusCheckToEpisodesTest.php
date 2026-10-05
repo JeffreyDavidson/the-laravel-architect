@@ -54,6 +54,24 @@ function removeEpisodesStatusCheck(): void
     });
 }
 
+/**
+ * Replace the (empty) episodes table with production's definition, which still has the original
+ * scaffold's audio_file and featured_image columns and no status CHECK.
+ */
+function useProductionLegacyEpisodesTable(): void
+{
+    $indexes = episodesIndexSql();
+
+    Schema::withoutForeignKeyConstraints(function () use ($indexes): void {
+        DB::statement('drop table "episodes"');
+        DB::statement('CREATE TABLE "episodes" ("id" integer primary key autoincrement not null, "title" varchar not null, "slug" varchar not null, "episode_number" integer, "season_number" integer not null default (\'1\'), "description" text not null, "show_notes" text, "audio_file" varchar, "youtube_url" varchar, "featured_image" varchar, "guest_name" varchar, "guest_title" varchar, "guest_url" varchar, "status" varchar not null default (\'draft\'), "published_at" datetime, "created_at" datetime, "updated_at" datetime, "podcast_id" integer, "featured_image_path" varchar, "transcript" text, "deleted_at" datetime, "transistor_url" varchar, "duration_seconds" integer, "slug_locked_at" datetime, foreign key("podcast_id") references "podcasts"("id") on delete cascade)');
+
+        foreach ($indexes as $index) {
+            DB::statement($index);
+        }
+    });
+}
+
 function episodesTableSql(): string
 {
     $sql = DB::scalar("select sql from sqlite_master where type = 'table' and name = 'episodes'");
@@ -85,7 +103,8 @@ function episodesIndexSql(): array
     return $indexes;
 }
 
-function insertEpisodeWithStatus(string $slug, string $status, bool $trashed = false): int
+/** @param array<string, mixed> $legacy */
+function insertEpisodeWithStatus(string $slug, string $status, bool $trashed = false, array $legacy = []): int
 {
     return DB::table('episodes')->insertGetId([
         'title' => $slug,
@@ -95,6 +114,7 @@ function insertEpisodeWithStatus(string $slug, string $status, bool $trashed = f
         'created_at' => now(),
         'updated_at' => now(),
         'deleted_at' => $trashed ? now() : null,
+        ...$legacy,
     ]);
 }
 
@@ -155,6 +175,53 @@ it('refuses to rebuild while an episode has an unsupported status, and changes n
 })->with([
     'a live episode' => [false],
     'a trashed episode' => [true],
+]);
+
+it('rebuilds production\'s legacy table to the canonical definition, keeping every episode, id and post link', function () {
+    $canonical = episodesTableSql();
+    $indexes = episodesIndexSql();
+    useProductionLegacyEpisodesTable();
+    $live = insertEpisodeWithStatus('live', PublishStatus::Published->value, legacy: ['audio_file' => null, 'featured_image' => '']);
+    $trashed = insertEpisodeWithStatus('trashed', PublishStatus::Draft->value, trashed: true);
+    linkEpisodeToNewPost($live);
+    linkEpisodeToNewPost($trashed);
+
+    runRestoreEpisodesStatusCheckMigration();
+    $episodeIds = DB::table('episodes')
+        ->pluck('id')
+        ->all();
+    $linkedEpisodeIds = DB::table('episode_post')
+        ->pluck('episode_id')
+        ->all();
+
+    expect(episodesTableSql())
+        ->toBe($canonical)
+        ->and(episodesIndexSql())
+        ->toBe($indexes)
+        ->and($episodeIds)
+        ->toBe([$live, $trashed])
+        ->and($linkedEpisodeIds)
+        ->toBe([$live, $trashed])
+        ->and(DB::select('pragma foreign_key_check'))
+        ->toBeEmpty();
+});
+
+it('refuses to rebuild production\'s legacy table while a legacy column holds data, and changes nothing', function (array $legacy, bool $trashed) {
+    /** @var array<string, mixed> $legacy */
+    useProductionLegacyEpisodesTable();
+    $before = episodesTableSql();
+    insertEpisodeWithStatus('holds-legacy-data', PublishStatus::Draft->value, $trashed, $legacy);
+
+    expect(fn () => runRestoreEpisodesStatusCheckMigration())
+        ->toThrow(RuntimeException::class, '1 episode(s) still hold a legacy audio_file or featured_image value')
+        ->and(episodesTableSql())
+        ->toBe($before)
+        ->and(DB::table('episodes')->count())
+        ->toBe(1);
+})->with([
+    'an audio file' => [['audio_file' => 'episodes/audio/a.mp3'], false],
+    'a featured image' => [['featured_image' => 'episodes/images/a.jpg'], false],
+    'a trashed episode' => [['featured_image' => 'episodes/images/a.jpg'], true],
 ]);
 
 it('refuses to rebuild a table that differs from the expected definition', function () {

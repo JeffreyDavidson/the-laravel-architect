@@ -13,6 +13,13 @@ return new class extends Migration
     private const string UNCHECKED_TABLE = 'CREATE TABLE "episodes" ("id" integer primary key autoincrement not null, "title" varchar not null, "slug" varchar not null, "episode_number" integer, "season_number" integer not null default (\'1\'), "description" text not null, "show_notes" text, "youtube_url" varchar, "guest_name" varchar, "guest_title" varchar, "guest_url" varchar, "status" varchar not null default (\'draft\'), "published_at" datetime, "created_at" datetime, "updated_at" datetime, "podcast_id" integer, "featured_image_path" varchar, "transcript" text, "deleted_at" datetime, "transistor_url" varchar, "duration_seconds" integer, "slug_locked_at" datetime, foreign key("podcast_id") references "podcasts"("id") on delete cascade)';
 
     /**
+     * The episodes table as production has it: the same, plus the original scaffold's
+     * "audio_file" and "featured_image" columns. Commit 520732d8 removed them from the
+     * create migration after production had already run it, so only production kept them.
+     */
+    private const string LEGACY_TABLE = 'CREATE TABLE "episodes" ("id" integer primary key autoincrement not null, "title" varchar not null, "slug" varchar not null, "episode_number" integer, "season_number" integer not null default (\'1\'), "description" text not null, "show_notes" text, "audio_file" varchar, "youtube_url" varchar, "featured_image" varchar, "guest_name" varchar, "guest_title" varchar, "guest_url" varchar, "status" varchar not null default (\'draft\'), "published_at" datetime, "created_at" datetime, "updated_at" datetime, "podcast_id" integer, "featured_image_path" varchar, "transcript" text, "deleted_at" datetime, "transistor_url" varchar, "duration_seconds" integer, "slug_locked_at" datetime, foreign key("podcast_id") references "podcasts"("id") on delete cascade)';
+
+    /**
      * The table's indexes, in the order they were first created.
      *
      * @var list<string>
@@ -41,10 +48,12 @@ return new class extends Migration
      * its status CHECK, so the database accepted any status and the PublishStatus cast then
      * failed on every page that loaded such an episode. SQLite cannot add a CHECK to an existing
      * table, so this rebuilds episodes by hand with the identical columns, foreign key and
-     * indexes plus the CHECK, keeping every row, id and episode_post link.
+     * indexes plus the CHECK, keeping every row, id and episode_post link. On production it also
+     * drops the two legacy scaffold columns, so every database ends with the same definition.
      *
      * It does nothing once the CHECK is present. It stops before changing anything when the
-     * table is not exactly the expected definition or an episode holds an unsupported status.
+     * table is neither known definition, a legacy column holds data, or an episode holds an
+     * unsupported status.
      */
     public function up(): void
     {
@@ -52,11 +61,26 @@ return new class extends Migration
             return;
         }
 
-        $expected = [self::UNCHECKED_TABLE, ...self::INDEXES];
-        sort($expected);
+        $definition = $this->currentDefinition();
+        $hasLegacyColumns = $definition === $this->sortedDefinition(self::LEGACY_TABLE);
 
-        if ($this->currentDefinition() !== $expected) {
+        if (! $hasLegacyColumns && $definition !== $this->sortedDefinition(self::UNCHECKED_TABLE)) {
             throw new RuntimeException('The episodes table does not match the expected definition, so its status CHECK was not restored. Compare it with this migration before running it again.');
+        }
+
+        if ($hasLegacyColumns) {
+            $holdingLegacyData = DB::table('episodes')
+                ->where(fn ($query) => $query
+                    ->whereNotNull('audio_file')
+                    ->where('audio_file', '!=', ''))
+                ->orWhere(fn ($query) => $query
+                    ->whereNotNull('featured_image')
+                    ->where('featured_image', '!=', ''))
+                ->count();
+
+            if ($holdingLegacyData > 0) {
+                throw new RuntimeException("{$holdingLegacyData} episode(s) still hold a legacy audio_file or featured_image value, so the status CHECK was not restored. Move or clear those values, then run the migration again.");
+            }
         }
 
         $statuses = array_column(PublishStatus::cases(), 'value');
@@ -96,6 +120,22 @@ return new class extends Migration
     }
 
     /**
+     * The given table SQL with the expected indexes, sorted to compare with currentDefinition().
+     *
+     * @return list<string>
+     */
+    private function sortedDefinition(string $table): array
+    {
+        $definition = [$table, ...self::INDEXES];
+        sort($definition);
+
+        return $definition;
+    }
+
+    /**
+     * Copy only the canonical columns into the canonical definition plus the CHECK, which
+     * also leaves behind the legacy columns when production still has them.
+     *
      * @param  list<string>  $statuses
      */
     private function rebuild(array $statuses): void
