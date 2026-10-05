@@ -357,7 +357,7 @@ Then verify all of the following against the deployed commit:
 - The production Nightwatch dashboard contains the deployment marker matching the expected commit.
 - A reversible upload smoke test can create, read, and delete a temporary object.
 - The manually dispatched `Production smoke` GitHub Actions workflow passes. It is also run every six hours.
-- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.
+- The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence. The smoke client retries a request once, after two seconds, only when the connection fails; an HTTP error status is never retried.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
 
@@ -369,7 +369,7 @@ Staging and production share one small Forge server (1 GB, 1 vCPU), which overlo
 - `youtube:stats` (daily) and `youtube:sync` (weekly)
 - `media:verify-responsive-images` and `media:find-orphans`
 
-Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune` and `activitylog:clean` still run on both sites.
+Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune`, `activitylog:clean` and `cache:prune-expired` still run on both sites; `cache:prune-expired` (daily at 03:30) deletes expired `cache` table rows, such as per-IP rate limiter entries, which the database cache store otherwise never removes.
 
 Owner note: archives that staging's scheduled backups wrote before this change can be deleted. With staging's `BACKUP_DISKS` unset or `local`, they sit on the `local` disk under `storage/app/private/<APP_NAME>/` in the staging site's storage; check the path before deleting anything.
 
