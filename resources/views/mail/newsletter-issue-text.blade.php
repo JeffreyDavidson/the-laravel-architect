@@ -4,7 +4,7 @@
 This is a test email. Subscribers receive their own unsubscribe link in the footer.
 @endif
 
-{!! $issue->content !!}
+{!! $bodyText !!}
 
 ---
 
