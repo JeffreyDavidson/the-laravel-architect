@@ -165,5 +165,5 @@ verify: https://thelaravelarchitect.com/deployment.json (revision), https://thel
 smoke_pages: / /blog /podcasts /search /contact /admin/login /sitemap.xml /rss   # expect 200; the podcast index is /podcasts and the feed is /rss, so /podcast and /feed return 404
 deploy_script: Forge keeps a separate copy per site (staging 3366565, production 3044519); keep both identical to the script in docs/operations.md and paste any change into both
 sync_integration: fast-forward
-backup_gate: php artisan backup:run then php artisan app:verify-backup; run by the production deploy script only when the release has pending migrations. Until the gate has run once in production, watch such a deploy in Forge: a failed backup or verification stops the deploy before it migrates, and the previous release keeps serving
+backup_gate: php artisan backup:run then php artisan app:verify-backup; run by the production deploy script only when the release has pending migrations. The gate ran successfully in production in release 2026.10.1 (Forge deployment 79150690). A failed backup or verification stops the deploy before it migrates, and the previous release keeps serving
 ```

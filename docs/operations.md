@@ -87,7 +87,7 @@ pinned staging deployment has been verified.
 1. Confirm the target commit and review its migration and storage changes.
 2. Confirm `DB_DATABASE` points to the persistent live SQLite database, not a release-local copy, and that production uses a busy timeout of at least 5000 milliseconds, WAL journal mode, and `NORMAL` or `FULL` synchronous writes. `config/database.php` also sets `IMMEDIATE` transactions: under `DEFERRED`, a read-then-write transaction such as the database queue reserving a job fails at once with "database is locked" when another process writes in between, the busy timeout never applies, and Laravel then fails that job permanently without using its retries. `app:verify-production` resolves symlinks and rejects missing files and files inside the release directory (or Forge's `releases` directory). Run verification after persistent storage is mounted.
 3. Confirm `BACKUP_MEDIA_PATH` points to the persistent `storage/app/public` directory outside the release directory. Application archives contain only the SQLite database dump and this uploaded-media directory; source code is recovered from GitHub, and `.env` must remain excluded.
-4. Create and independently validate a SQLite snapshot and public-media archive: run `php artisan backup:run`, then `php artisan app:verify-backup` immediately afterwards, and require it to exit successfully. See "Automated archive verification" below. Once the backup gate is installed in the production deploy script, a release with pending migrations does this automatically before it migrates; run it by hand for any other production change.
+4. Create and independently validate a SQLite snapshot and public-media archive: run `php artisan backup:run`, then `php artisan app:verify-backup` immediately afterwards, and require it to exit successfully. See "Automated archive verification" below. The backup gate in the production deploy script (installed on Forge and confirmed working in release 2026.10.1, Forge deployment 79150690) does this automatically before it migrates a release with pending migrations; run it by hand for any other production change.
 5. Keep both artifacts until the deployment and post-deployment checks are complete.
 
 For a migration that changes media or database structure, do not proceed without a valid database snapshot and a valid media archive.
@@ -104,7 +104,7 @@ Synchronization and archive import share a target guard that always rejects prod
 
 ## Reviewing orphaned media
 
-`php artisan media:find-orphans` only reports candidates. Its optional `--delete` mode is destructive and requires operator approval. It deletes only unreferenced files in managed media directories after a 24-hour grace period, rechecking record and embedded-content references before deletion. Attachments referenced by Markdown and SEO images are retained. Unknown directories and recent uploads are retained for review; they are not automatically safe to delete. A nonzero result can therefore mean retained candidates or missing referenced files, not just a failed storage operation. Take a recoverable backup before any approved cleanup.
+`php artisan media:find-orphans` only reports candidates. It runs weekly on production (see "Production-only scheduled tasks"). Its optional `--delete` mode is destructive and requires operator approval. It deletes only unreferenced files in managed media directories after a 24-hour grace period, rechecking record and embedded-content references before deletion. Attachments referenced by Markdown and SEO images are retained. Unknown directories and recent uploads are retained for review; they are not automatically safe to delete. A nonzero result can therefore mean retained candidates or missing referenced files, not just a failed storage operation. Without `--delete`, which is how the scheduler runs it, the command exits nonzero whenever any orphaned file or missing referenced file exists, so the weekly run emails a failure for as long as one orphan remains, until it is reviewed and removed. This sits uneasily with the rule in the failed-job section below not to schedule a command that fails merely because retained records exist; the owner has not yet decided which behavior to keep. Take a recoverable backup before any approved cleanup.
 
 ## Moving podcast episodes to Transistor
 
@@ -143,6 +143,8 @@ Staging keeps `MAIL_MAILER=log` and never receives production subscribers, so se
 ## Deploying
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
+
+Production's database queue worker runs with timeout 60 seconds and 3 tries, like staging's. Recommendation, not current state: also give the Forge worker `--max-time=3600 --memory=128` so it restarts itself hourly and when it grows past 128 MB on the shared 1 GB server. This is an owner-applied Forge setting; it has not been applied, and keeping the timeout below the queue's 90-second retry interval still applies.
 
 For production, run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting. Do not force production mail or backup credentials into staging to satisfy this production-specific verifier.
 
@@ -339,6 +341,8 @@ The command fails when the checked-out commit differs, migrations are pending, q
 | Active checkout, migrations, runtime heartbeats, and production Nightwatch | `app:verify-deployment` after activation |
 | Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email (production only) |
 | Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email (production only) |
+| Unreferenced or missing media files | Scheduled weekly `media:find-orphans` with failure email (production only); cleanup stays manual |
+| YouTube video data | Scheduled `youtube:stats` (daily) and `youtube:sync` (weekly), production only, no failure email |
 | Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
 
 The production site's Forge deployment health check was enabled on 2026-09-19 with `https://thelaravelarchitect.com/up` as its URL. Keep it enabled and require HTTP 200 from this endpoint. Reconfirm the setting in Forge when changing deployment configuration. Forge owns the external request, while the application owns its database and heartbeat checks. A running Supervisor process is not proof that queue jobs are executing, so retain the queued heartbeat. Allow heartbeat initialization after clearing cache before expecting readiness. See [Forge deployment health checks](https://laravel.com/forge/docs/sites/deployments#deployment-health-checks).
@@ -368,8 +372,8 @@ For content or authorization changes, also verify the affected public route and 
 Staging and production share one small Forge server (1 GB, 1 vCPU), which overloaded around 2026-09-26 and on 2026-10-03/04. Staging holds only a copy of production's public content, so its backups protect nothing and its YouTube runs spend API quota. These tasks in `routes/console.php` therefore run only on production:
 
 - `backup:run`, `app:verify-backup`, `backup:clean` and `backup:monitor`
-- `youtube:stats` (daily) and `youtube:sync` (weekly)
-- `media:verify-responsive-images` and `media:find-orphans`
+- `youtube:stats` (daily at 00:00 UTC) and `youtube:sync` (weekly, Sunday at 00:00 UTC)
+- `media:verify-responsive-images` (daily at 05:00 UTC) and `media:find-orphans` (weekly, Sunday at 05:30 UTC); both email the scheduler's failure output to the backup notification recipient when they exit nonzero. `media:find-orphans` runs without `--delete`, so it fails whenever an orphan or missing referenced file exists (see "Reviewing orphaned media")
 
 Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune`, `activitylog:clean` and `cache:prune-expired` still run on both sites; `cache:prune-expired` (daily at 03:30) deletes expired `cache` table rows, such as per-IP rate limiter entries, which the database cache store otherwise never removes.
 
