@@ -329,6 +329,12 @@ php artisan app:verify-deployment EXPECTED_COMMIT_SHA
 
 The command fails when the checked-out commit differs, migrations are pending, queue or scheduler heartbeats are stale, or (in production) the Nightwatch deployment identifier differs or the Nightwatch agent is unavailable. Staging does not require Nightwatch; Telescope availability is not checked or implied. It does not scan backup storage or existing media. A matching CLI checkout alone does not prove HTTP traffic is serving that release: also verify activation and the public smoke checks below.
 
+### Production uptime check
+
+The `Production uptime` workflow runs every ten minutes and on manual dispatch. It uses `curl` only, with no checkout, dependencies or secrets. It requires `https://thelaravelarchitect.com/up` to return HTTP 200 within 20 seconds and `https://thelaravelarchitect.com/deployment.json` to contain a 40-character `revision`. A failed check is retried once after 30 seconds before the job fails. Logs show only status codes and timings.
+
+GitHub emails the repository owner when a scheduled run fails, so keep Actions failure notifications enabled in GitHub notification settings. GitHub can delay or skip scheduled runs, so this check is not a guaranteed alert. An external monitor such as UptimeRobot or Better Stack watching `/up` is still recommended for independent alerting.
+
 ### Ownership of operational checks
 
 | Responsibility | Owner |
@@ -340,6 +346,7 @@ The command fails when the checked-out commit differs, migrations are pending, q
 | Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email (production only) |
 | Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email (production only) |
 | Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
+| Frequent production availability check | `Production uptime` workflow, with GitHub failure emails to the repository owner |
 
 The production site's Forge deployment health check was enabled on 2026-09-19 with `https://thelaravelarchitect.com/up` as its URL. Keep it enabled and require HTTP 200 from this endpoint. Reconfirm the setting in Forge when changing deployment configuration. Forge owns the external request, while the application owns its database and heartbeat checks. A running Supervisor process is not proof that queue jobs are executing, so retain the queued heartbeat. Allow heartbeat initialization after clearing cache before expecting readiness. See [Forge deployment health checks](https://laravel.com/forge/docs/sites/deployments#deployment-health-checks).
 
