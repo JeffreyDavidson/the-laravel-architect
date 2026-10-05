@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\MediaHealthStatus;
+use App\Enums\MediaHealthType;
+use App\Enums\MediaSourceStatus;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
@@ -69,11 +72,7 @@ class MediaHealth extends Page implements HasTable
                 TextColumn::make('source_status')
                     ->label('Source')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Optimized' => 'success',
-                        'Needs optimization' => 'warning',
-                        default => 'danger',
-                    }),
+                    ->color(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getColor() ?? 'danger'),
                 TextColumn::make('variants')
                     ->badge()
                     ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
@@ -83,17 +82,9 @@ class MediaHealth extends Page implements HasTable
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->options([
-                        'project' => 'Project',
-                        'post' => 'Post',
-                        'podcast' => 'Podcast',
-                    ]),
+                    ->options(MediaHealthType::class),
                 SelectFilter::make('status')
-                    ->options([
-                        'Healthy' => 'Healthy',
-                        'Needs repair' => 'Needs repair',
-                        'Re-upload required' => 'Re-upload required',
-                    ]),
+                    ->options(MediaHealthStatus::class),
             ])
             ->recordActions([
                 Action::make('repair')
@@ -169,10 +160,10 @@ class MediaHealth extends Page implements HasTable
         $type = $this->recordString($record, 'type_key');
         $recordKey = $this->recordString($record, 'record_key');
 
-        return match ($type) {
-            'project' => ProjectResource::getUrl('edit', ['record' => $recordKey]),
-            'post' => PostResource::getUrl('edit', ['record' => $recordKey]),
-            'podcast' => PodcastResource::getUrl('edit', ['record' => $recordKey]),
+        return match (MediaHealthType::tryFrom($type)) {
+            MediaHealthType::Project => ProjectResource::getUrl('edit', ['record' => $recordKey]),
+            MediaHealthType::Post => PostResource::getUrl('edit', ['record' => $recordKey]),
+            MediaHealthType::Podcast => PodcastResource::getUrl('edit', ['record' => $recordKey]),
             default => ProjectResource::getUrl('index'),
         };
     }

@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Enums\ProjectReadinessFilter;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -14,14 +15,14 @@ final class ProjectReadinessQuery
         $techStack = "exists (select 1 from json_each(coalesce(tech_stack, '[]')) where type = 'text' and trim(value, char(32, 9, 10, 11, 13, 0)) <> '')";
         $details = "({$filled('description')}) and ({$filled('url')} or {$filled('github_url')}) and ({$techStack})";
 
-        match ($filter) {
-            'ready' => $query->whereRaw($filled('featured_image_path'))
+        match (ProjectReadinessFilter::tryFrom((string) $filter)) {
+            ProjectReadinessFilter::Ready => $query->whereRaw($filled('featured_image_path'))
                 ->whereRaw($filled('content'))
                 ->whereRaw($details)
                 ->whereHas('tags'),
-            'needs_image' => $query->whereRaw('not ('.$filled('featured_image_path').')'),
-            'needs_case_study' => $query->whereRaw('not ('.$filled('content').')'),
-            'needs_details' => $query->where(fn (Builder $query) => $query->whereRaw("not ({$details})")
+            ProjectReadinessFilter::NeedsImage => $query->whereRaw('not ('.$filled('featured_image_path').')'),
+            ProjectReadinessFilter::NeedsCaseStudy => $query->whereRaw('not ('.$filled('content').')'),
+            ProjectReadinessFilter::NeedsDetails => $query->where(fn (Builder $query) => $query->whereRaw("not ({$details})")
                 ->orWhereDoesntHave('tags')),
             default => null,
         };

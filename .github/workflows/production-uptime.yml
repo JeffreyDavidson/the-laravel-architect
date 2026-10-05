@@ -1,0 +1,49 @@
+name: Production uptime
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: production-uptime
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  uptime:
+    name: Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check production availability
+        env:
+          BASE_URL: https://thelaravelarchitect.com
+        run: |
+          # Only status codes and timings are printed; headers and bodies never are.
+          check() {
+            local status time revision
+
+            read -r status time < <(curl --silent --output /dev/null --max-time 20 --write-out '%{http_code} %{time_total}\n' "$BASE_URL/up" || true)
+            echo "/up: HTTP ${status:-000} in ${time:-n/a}s"
+            if [ "${status:-000}" != "200" ]; then
+              return 1
+            fi
+
+            revision=$(curl --silent --fail --max-time 20 "$BASE_URL/deployment.json" | jq -r '.revision // empty' 2>/dev/null || true)
+            if ! [[ "$revision" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "/deployment.json: missing or invalid revision"
+              return 1
+            fi
+            echo "/deployment.json: valid revision"
+          }
+
+          if check; then
+            exit 0
+          fi
+
+          echo "Check failed; retrying once in 30 seconds."
+          sleep 30
+          check

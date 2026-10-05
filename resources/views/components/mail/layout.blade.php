@@ -12,7 +12,32 @@
     <meta name="supported-color-schemes" content="light dark" />
     <title>{{ $title }}</title>
     <style>
+        .mail-content a {
+            color: #3f6fa8;
+            text-decoration: underline;
+        }
+        .mail-content img {
+            max-width: 100%;
+            height: auto;
+        }
+        .mail-content pre {
+            overflow-x: auto;
+            padding: 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .mail-content code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.95em;
+        }
         @media (prefers-color-scheme: dark) {
+            .mail-content a {
+                color: #6fa3d6 !important;
+            }
+            .mail-content pre {
+                background: #1b2430 !important;
+            }
             body,
             .mail-page {
                 background: #0b1016 !important;
@@ -83,6 +108,11 @@
     >
         <tr>
             <td align="center" style="padding: 32px 16px">
+                <!--[if mso]>
+                    <table role="presentation" align="center" width="600" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td>
+                <![endif]-->
                 <table
                     role="presentation"
                     width="100%"
@@ -166,8 +196,13 @@
                         </td>
                     </tr>
                 </table>
+                <!--[if mso]> <![endif]-->
             </td>
         </tr>
+    </table>
+
+    </td>
+    </tr>
     </table>
 </body>
 </html>

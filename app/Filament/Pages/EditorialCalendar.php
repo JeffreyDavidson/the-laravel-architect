@@ -235,7 +235,7 @@ class EditorialCalendar extends Page
             'type' => $type,
             'typeKey' => $typeKey,
             'statusLabel' => $status->label(),
-            'statusColor' => $status->color(),
+            'statusColor' => $status->getColor(),
             'url' => $url,
         ];
     }

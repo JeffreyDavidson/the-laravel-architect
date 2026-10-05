@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Projects\Tables;
 
-use App\Enums\PublishStatus;
+use App\Enums\ContentReadinessStatus;
+use App\Enums\ProjectReadinessFilter;
 use App\Models\Project;
 use App\Queries\ProjectReadinessQuery;
 use App\Support\Content\ContentReadiness;
@@ -36,14 +37,13 @@ class ProjectsTable
                     ->sortable(),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Project $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (Project $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(function (Project $record): string {
                         $readiness = new ContentReadiness($record);
 
                         return $readiness->progress().' · '.$readiness->missingSummary();
                     })
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('slug')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -66,8 +66,7 @@ class ProjectsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (PublishStatus $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -81,12 +80,7 @@ class ProjectsTable
             ])
             ->filters([
                 SelectFilter::make('readiness')
-                    ->options([
-                        'ready' => 'Ready',
-                        'needs_image' => 'Needs image',
-                        'needs_case_study' => 'Needs case study',
-                        'needs_details' => 'Needs project details',
-                    ])
+                    ->options(ProjectReadinessFilter::class)
                     ->query(function (Builder $query, array $data, ProjectReadinessQuery $readinessQuery): void {
                         $readinessQuery->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
                     }),

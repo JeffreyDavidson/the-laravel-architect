@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
+use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Models\Episode;
@@ -39,10 +40,9 @@ class EpisodesTable
                     ->limit(50),
                 TextColumn::make('readiness')
                     ->label('Readiness')
-                    ->state(fn (Episode $record): string => new ContentReadiness($record)->label())
+                    ->state(fn (Episode $record): ContentReadinessStatus => new ContentReadiness($record)->status())
                     ->description(fn (Episode $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->badge(),
                 TextColumn::make('podcast.name')
                     ->label('Podcast')
                     ->sortable(),
@@ -61,8 +61,7 @@ class EpisodesTable
                     ->color(fn (string $state): string => $state === 'Available' ? 'success' : 'gray')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (PublishStatus $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime('M j, Y')
