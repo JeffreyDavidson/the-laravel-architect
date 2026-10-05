@@ -3,6 +3,7 @@
 use App\Actions\RequestNewsletterSubscription;
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
+use App\Providers\AppServiceProvider;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -39,6 +40,22 @@ it('starts a pending newsletter subscription and queues its confirmation', funct
         ConfirmNewsletterSubscription::class,
         fn (ConfirmNewsletterSubscription $mail): bool => $mail->hasTo('reader@example.com')
             && URL::hasValidSignature(Request::create($mail->confirmationUrl)),
+    );
+});
+
+it('builds the confirmation link on the application URL in production whatever the request host', function () {
+    config()->set('app.url', 'https://thelaravelarchitect.test');
+    app()->instance('request', Request::create('http://attacker.example/newsletter', 'POST'));
+    app()->instance('env', 'production');
+    new AppServiceProvider(app())
+        ->boot();
+
+    app(RequestNewsletterSubscription::class)
+        ->handle('reader@example.com');
+
+    Mail::assertQueued(
+        ConfirmNewsletterSubscription::class,
+        fn (ConfirmNewsletterSubscription $mail): bool => str_starts_with($mail->confirmationUrl, 'https://thelaravelarchitect.test/newsletter/confirm/'),
     );
 });
 

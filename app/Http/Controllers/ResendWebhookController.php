@@ -23,13 +23,20 @@ class ResendWebhookController
             return response()->noContent(503);
         }
 
+        $signature = $request->header('svix-signature', '');
+
+        // The SDK reads each space-separated "version,signature" pair without checking it has both parts.
+        if (! is_string($signature) || preg_match('/\A[^\s,]+,\S+(?: [^\s,]+,\S+)*\z/', $signature) !== 1) {
+            return response()->noContent(403);
+        }
+
         $body = $request->getContent();
 
         try {
             WebhookSignature::verify($body, [
                 'svix-id' => $request->header('svix-id', ''),
                 'svix-timestamp' => $request->header('svix-timestamp', ''),
-                'svix-signature' => $request->header('svix-signature', ''),
+                'svix-signature' => $signature,
             ], $secret);
         } catch (WebhookSignatureVerificationException) {
             return response()->noContent(403);
