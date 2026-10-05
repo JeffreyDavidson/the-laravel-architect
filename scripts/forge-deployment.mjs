@@ -8,6 +8,11 @@ const sites = {
 };
 
 const retryableHealthStatuses = new Set([500, 502, 503, 504]);
+const retryableReadStatuses = new Set([502, 503, 504]);
+const retryableReadFailures = new Set(['timeout', 'connection failure']);
+// Wait before the second and third attempts of a read-only request.
+const readRetryDelays = [5000, 15000];
+const curlMaxTimeSeconds = 15;
 
 export function validateRevision(revision) {
     if (!/^[a-f0-9]{40}$/.test(revision ?? '')) {
@@ -45,11 +50,15 @@ export function transportFailureReason(error) {
         return 'TLS negotiation';
     }
 
-    if (error?.name === 'AbortError' || error?.name === 'TimeoutError' || code === 'UND_ERR_CONNECT_TIMEOUT') {
+    if (
+        error?.name === 'AbortError' ||
+        error?.name === 'TimeoutError' ||
+        ['UND_ERR_CONNECT_TIMEOUT', 'CURL_EXIT_28'].includes(code)
+    ) {
         return 'timeout';
     }
 
-    if (['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT'].includes(code)) {
+    if (['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT', 'CURL_EXIT_7', 'CURL_EXIT_52', 'CURL_EXIT_56'].includes(code)) {
         return 'connection failure';
     }
 
@@ -150,6 +159,18 @@ export function diagnosticFailureReason(environment, diagnostics) {
     return null;
 }
 
+function requestFailure(init, description, error) {
+    const reason = transportFailureReason(error);
+    const guidance =
+        init.method === 'POST'
+            ? '; inspect Forge before retrying a trigger.'
+            : '. This was a read-only request; it did not change Forge.';
+    const failure = new Error(`${description} (${reason}${transportFailureMetadata(error)})${guidance}`);
+    failure.transportFailure = reason;
+
+    return failure;
+}
+
 async function request(url, init, options) {
     if (
         (init.method === 'POST' && options.triggerTransport === 'curl') ||
@@ -168,9 +189,7 @@ async function request(url, init, options) {
         });
     } catch (error) {
         // URLs can contain the Forge hook token; never report the underlying error.
-        throw new Error(
-            `Deployment request failed before an HTTP response (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
-        );
+        throw requestFailure(init, 'Deployment request failed before an HTTP response', error);
     }
 }
 
@@ -184,7 +203,7 @@ async function requestWithCurl(url, init, options) {
         '--connect-timeout',
         '10',
         '--max-time',
-        '15',
+        String(curlMaxTimeSeconds),
     ];
 
     for (const [name, value] of Object.entries(init.headers ?? {})) {
@@ -200,7 +219,8 @@ async function requestWithCurl(url, init, options) {
     args.push(String(url));
 
     try {
-        const { stdout } = await (options.curl ?? runCurl)('curl', args, { timeout: 15000 });
+        // Give curl time to report its own timeout (exit 28) before Node kills it.
+        const { stdout } = await (options.curl ?? runCurl)('curl', args, { timeout: (curlMaxTimeSeconds + 5) * 1000 });
         const output = String(stdout ?? '');
         const statusMarker = output.match(/\n__DEPLOYMENT_STATUS__:(\d{3})\s*$/);
         const status = Number(statusMarker?.[1] ?? output.trim());
@@ -232,9 +252,7 @@ async function requestWithCurl(url, init, options) {
         };
     } catch (error) {
         // The hook URL contains a credential; never report curl's command or output.
-        throw new Error(
-            `Deployment request failed (${transportFailureReason(error)}${transportFailureMetadata(error)}); inspect Forge before retrying a trigger.`,
-        );
+        throw requestFailure(init, 'Deployment request failed', error);
     }
 }
 
@@ -253,12 +271,31 @@ function runCurl(command, args, options) {
     return { stdout: result.stdout };
 }
 
+/**
+ * Send a read-only GET, retrying timeouts, connection failures and HTTP 502-504.
+ * Never use this for the deployment trigger: a retried POST could deploy twice.
+ */
+async function read(environment, path, options) {
+    const init = { headers: requestHeaders(environment, options) };
+
+    for (let attempt = 0; ; attempt++) {
+        const canRetry = attempt < readRetryDelays.length;
+        try {
+            const response = await request(`${siteFor(environment).origin}${path}`, init, options);
+            if (!canRetry || !retryableReadStatuses.has(response.status)) {
+                return response;
+            }
+        } catch (error) {
+            if (!canRetry || !retryableReadFailures.has(error.transportFailure)) {
+                throw error;
+            }
+        }
+        await (options.delay ?? delay)(readRetryDelays[attempt]);
+    }
+}
+
 export async function readMarker(environment, options = {}, allowMissing = false) {
-    const response = await request(
-        `${siteFor(environment).origin}/deployment.json`,
-        { headers: requestHeaders(environment, options) },
-        options,
-    );
+    const response = await read(environment, '/deployment.json', options);
     if (allowMissing && [400, 404].includes(response.status)) {
         return null;
     }
@@ -289,11 +326,7 @@ export async function diagnoseAccess(environment, options = {}) {
     const diagnostics = { credentials: accessCredentialDiagnostics(options) };
 
     try {
-        const response = await request(
-            `${siteFor(environment).origin}/up`,
-            { headers: requestHeaders(environment, options) },
-            options,
-        );
+        const response = await read(environment, '/up', options);
 
         diagnostics.response = {
             status: response.status,
@@ -316,11 +349,7 @@ export async function verifyRelease(environment, revision, options = {}) {
     if (marker.revision !== revision) {
         throw new Error('The serving revision does not match the approved commit.');
     }
-    const response = await request(
-        `${siteFor(environment).origin}/up`,
-        { headers: requestHeaders(environment, options) },
-        options,
-    );
+    const response = await read(environment, '/up', options);
     if (response.status !== 200) {
         throw new Error(`Application health returned HTTP ${response.status}.`);
     }
@@ -378,30 +407,29 @@ export async function waitForRelease(environment, revision, options = {}) {
     // Never retry the mutation. A retry could create an overlapping deployment.
     const now = options.now ?? Date.now;
     const deadline = now() + 11 * 60 * 1000;
-    let lastRetryableHealthError;
+    let lastRetryableError;
     while (now() < deadline) {
         await (options.delay ?? delay)(10000);
-        const marker = await readMarker(environment, options, true);
-        if (
-            marker?.revision === revision &&
-            (options.previousDeploymentId === undefined ||
-                String(marker.deployment_id) !== String(options.previousDeploymentId))
-        ) {
-            try {
+        // A read failure or 5xx while Forge builds means "not ready yet"; only the deadline ends polling.
+        try {
+            const marker = await readMarker(environment, options, true);
+            if (
+                marker?.revision === revision &&
+                (options.previousDeploymentId === undefined ||
+                    String(marker.deployment_id) !== String(options.previousDeploymentId))
+            ) {
                 return await verifyRelease(environment, revision, options);
-            } catch (error) {
-                const status = Number(error.message.match(/HTTP (\d+)\.$/)?.[1]);
-                if (!retryableHealthStatuses.has(status)) {
-                    throw error;
-                }
-                lastRetryableHealthError = error;
             }
+        } catch (error) {
+            const status = Number(error.message.match(/HTTP (\d+)\.$/)?.[1]);
+            if (!error.transportFailure && !retryableHealthStatuses.has(status)) {
+                throw error;
+            }
+            lastRetryableError = error;
         }
     }
-    if (lastRetryableHealthError) {
-        throw new Error(
-            `Deployment completion was not verified within 11 minutes; ${lastRetryableHealthError.message}`,
-        );
+    if (lastRetryableError) {
+        throw new Error(`Deployment completion was not verified within 11 minutes; ${lastRetryableError.message}`);
     }
     throw new Error('Deployment completion was not verified within 11 minutes; inspect Forge before retrying.');
 }
