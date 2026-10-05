@@ -55,7 +55,7 @@ it('sends the owner notification to the contact address and the confirmation to 
 it('retries only the email that failed', function () {
     $events = Event::fake([MessageSent::class]);
     Event::listen(MessageSending::class, function (MessageSending $event): void {
-        if (str_starts_with($event->message->getSubject() ?? '', 'Got your message')) {
+        if ($event->message->getSubject() === 'Thanks for getting in touch') {
             throw new RuntimeException('Simulated mail outage.');
         }
     });

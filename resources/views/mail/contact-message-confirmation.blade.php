@@ -1,17 +1,8 @@
-Hi {{ $senderName }},
+Hi there,
 
-Thanks for reaching out! Here's a copy of your message. I'll get back to you within 24–48 hours.
+Thanks for getting in touch. Your message came through, and I'll reply within 24 to 48 hours.
 
----
-
-Type: {{ $contactType }}
-Budget: {{ $budget ?? 'Not specified' }}
-Project: {{ $projectTitle ?? 'Not specified' }}
-
-Message:
-{{ $contactMessage }}
-
----
+If you didn't use the contact form on thelaravelarchitect.com, you can ignore this email.
 
 Jeffrey Davidson
 The Laravel Architect
