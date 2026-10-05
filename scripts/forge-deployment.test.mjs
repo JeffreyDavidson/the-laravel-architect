@@ -718,3 +718,15 @@ test('the documented deploy script backs up and verifies before migrating, on pr
     assert.ok(script.indexOf('app:verify-backup') < script.indexOf('artisan migrate --force'));
     assert.equal(script.split('backup:run').length - 1, 1);
 });
+
+test('production uptime workflow stays a lightweight, secret-free curl check', () => {
+    const uptime = readFileSync(new URL('../.github/workflows/production-uptime.yml', import.meta.url), 'utf8');
+
+    assert.match(uptime, /cron: '\*\/10 \* \* \* \*'/);
+    assert.match(uptime, /timeout-minutes: 5/);
+    assert.match(uptime, /permissions: \{\}/);
+    assert.match(uptime, /cancel-in-progress: true/);
+    assert.doesNotMatch(uptime, /secrets\.|uses:|composer|npm|playwright/i);
+    assert.match(uptime, /--max-time 20/);
+    assert.match(uptime, /\^\[0-9a-f\]\{40\}\$/);
+});
