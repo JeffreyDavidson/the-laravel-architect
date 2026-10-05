@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
+use App\Enums\MediaVariantStatus;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
@@ -75,7 +76,7 @@ class MediaHealth extends Page implements HasTable
                     ->color(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getColor() ?? 'danger'),
                 TextColumn::make('variants')
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'Ready' ? 'success' : 'warning'),
+                    ->color(fn (string $state): string => MediaVariantStatus::tryFrom($state)?->getColor() ?? 'warning'),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (array $record): string => $this->recordString($record, 'status_color')),
