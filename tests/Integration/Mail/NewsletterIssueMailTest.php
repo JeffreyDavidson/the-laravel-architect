@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Mail\NewsletterIssueMail;
+use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -63,4 +64,31 @@ it('marks test emails and omits unsubscribe headers', function () {
         ->assertSeeInText('This is a test email');
     expect($headers->text)
         ->toBeEmpty();
+});
+
+it('gives each delivery a stable provider idempotency key', function () {
+    $issue = publishedNewsletterIssue();
+    [$delivery, $otherDelivery] = NewsletterDelivery::factory()
+        ->count(2)
+        ->create()
+        ->all();
+    $unsubscribeUrl = 'https://example.test/newsletter/unsubscribe/1?signature=abc';
+
+    $headers = new NewsletterIssueMail($issue, $unsubscribeUrl, $delivery)
+        ->headers()
+        ->text;
+    $retryHeaders = new NewsletterIssueMail($issue, $unsubscribeUrl, $delivery->refresh())
+        ->headers()
+        ->text;
+    $otherHeaders = new NewsletterIssueMail($issue, $unsubscribeUrl, $otherDelivery)
+        ->headers()
+        ->text;
+
+    expect($headers)
+        ->toHaveKey('Resend-Idempotency-Key')
+        ->toHaveKey('List-Unsubscribe', "<{$unsubscribeUrl}>")
+        ->toBe($retryHeaders)
+        ->and($headers['Resend-Idempotency-Key'])
+        ->toStartWith('tla-newsletter-delivery-')
+        ->not->toBe($otherHeaders['Resend-Idempotency-Key'] ?? null);
 });
