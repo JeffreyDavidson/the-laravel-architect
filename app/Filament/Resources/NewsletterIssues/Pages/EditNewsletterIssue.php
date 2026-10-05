@@ -58,6 +58,7 @@ class EditNewsletterIssue extends EditRecord
                 ->label('Send test email')
                 ->icon(Heroicon::OutlinedEnvelope)
                 ->color('gray')
+                ->authorize('update')
                 ->action(function (SendNewsletterIssueTestEmail $sendNewsletterIssueTestEmail): void {
                     $issue = $this->issue();
                     $recipient = $sendNewsletterIssueTestEmail->handle($issue);
@@ -70,6 +71,7 @@ class EditNewsletterIssue extends EditRecord
             Action::make('sendToSubscribers')
                 ->label('Send to subscribers')
                 ->icon(Heroicon::OutlinedPaperAirplane)
+                ->authorize('update')
                 ->visible(
                     fn (): bool => $this->canSendToSubscribers(),
                 )
