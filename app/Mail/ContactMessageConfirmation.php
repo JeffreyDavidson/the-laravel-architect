@@ -12,7 +12,9 @@ use Illuminate\Mail\Mailables\Headers;
 
 /**
  * Confirms a contact inquiry to its sender. Sent by SendContactInquiryEmails, which
- * records the send so retries never deliver it twice.
+ * records the send so retries never deliver it twice. The recipient address is
+ * visitor-supplied, so the subject and body are fixed and never echo the inquiry;
+ * otherwise anyone could use the form to send their own text to any address.
  */
 class ContactMessageConfirmation extends Mailable
 {
@@ -20,21 +22,12 @@ class ContactMessageConfirmation extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Got your message, thanks {$this->inquiry->name}!");
+        return new Envelope(subject: 'Thanks for getting in touch');
     }
 
     public function content(): Content
     {
-        return new Content(
-            text: 'mail.contact-message-confirmation',
-            with: [
-                'senderName' => $this->inquiry->name,
-                'contactType' => $this->inquiry->type,
-                'budget' => $this->inquiry->budget,
-                'contactMessage' => $this->inquiry->message,
-                'projectTitle' => $this->inquiry->project_title,
-            ],
-        );
+        return new Content(text: 'mail.contact-message-confirmation');
     }
 
     public function headers(): Headers
