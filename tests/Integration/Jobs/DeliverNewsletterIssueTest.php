@@ -7,6 +7,7 @@ use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 
 pest()->use(RefreshDatabase::class);
 
@@ -50,6 +51,40 @@ it('does not email a delivery twice', function () {
     runDelivery($delivery);
 
     Mail::assertNothingSent();
+});
+
+it('resends a delivery whose sent stamp was lost with the same provider idempotency key', function () {
+    Mail::fake();
+    $delivery = NewsletterDelivery::factory()
+        ->create();
+    runDelivery($delivery);
+    $delivery->update(['sent_at' => null]);
+
+    runDelivery($delivery);
+
+    $keys = [];
+    foreach (Mail::sent(NewsletterIssueMail::class) as $mail) {
+        if ($mail instanceof NewsletterIssueMail) {
+            $headers = $mail->headers();
+            $keys[] = $headers->text['Resend-Idempotency-Key'] ?? null;
+        }
+    }
+    expect($keys)
+        ->toHaveCount(2)
+        ->and($keys[0])
+        ->toBeString()
+        ->toBe($keys[1]);
+});
+
+it('times out before the database queue would hand the job to another worker', function () {
+    $queue = Queue::connection('database');
+    $queue->push(new DeliverNewsletterIssue(NewsletterDelivery::factory()->create()));
+
+    $queuedJob = $queue->pop();
+
+    expect($queuedJob?->timeout())
+        ->toBeInt()
+        ->toBeLessThan(config()->integer('queue.connections.database.retry_after'));
 });
 
 it('drops the delivery when the subscriber is no longer active', function () {

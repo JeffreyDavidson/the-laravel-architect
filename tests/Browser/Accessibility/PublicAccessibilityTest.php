@@ -187,7 +187,8 @@ it('publishes machine-readable dates for articles', function () {
 
 /**
  * JavaScript that resolves to true when the element found by the given
- * expression has at least WCAG AA contrast against its effective background.
+ * expression has at least WCAG AA contrast against its effective background,
+ * blending any translucent backgrounds over the nearest opaque one.
  */
 function meetsTextContrast(string $findElement): string
 {
@@ -199,13 +200,92 @@ function meetsTextContrast(string $findElement): string
             const rgba = (color) => { canvas.clearRect(0, 0, 1, 1); canvas.fillStyle = '#000'; canvas.fillStyle = color; canvas.fillRect(0, 0, 1, 1); const d = canvas.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
             const luminance = ([r, g, b]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
             let node = element, background = null;
-            while (node && !background) { const color = rgba(getComputedStyle(node).backgroundColor); if (color[3] > 0.9) { background = color; } node = node.parentElement; }
+            const tints = [];
+            while (node && !background) { const color = rgba(getComputedStyle(node).backgroundColor); if (color[3] > 0.9) { background = color; } else if (color[3] > 0) { tints.unshift(color); } node = node.parentElement; }
+            const blended = tints.reduce((base, [r, g, b, a]) => [base[0] * (1 - a) + r * a, base[1] * (1 - a) + g * a, base[2] * (1 - a) + b * a], background ?? rgba(getComputedStyle(document.documentElement).backgroundColor));
             const text = luminance(rgba(getComputedStyle(element).color));
-            const surface = luminance(background ?? rgba(getComputedStyle(document.documentElement).backgroundColor));
+            const surface = luminance(blended);
             return (Math.max(text, surface) + 0.05) / (Math.min(text, surface) + 0.05) >= 4.5;
         })()
         JS;
 }
+
+/** JavaScript that holds the newsletter request until `window.releaseNewsletter()` is called. */
+function holdNewsletterRequest(): string
+{
+    return <<<'JS'
+        window.fetch = ((send) => (url, options) => url === document.querySelector('[data-newsletter-form]').action
+            ? new Promise((resolve) => { window.releaseNewsletter = () => resolve(send(url, options)); })
+            : send(url, options))(window.fetch.bind(window))
+        JS;
+}
+
+it('keeps keyboard focus on the newsletter button while a sign-up is sent', function () {
+    $this->withVite();
+    $page = $this->browserPage('/', 'desktop');
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
+        ->script(holdNewsletterRequest());
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('reader@example.com');
+
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->press('Enter');
+
+    $page->assertScript("document.activeElement === document.querySelector('[data-newsletter-form] button[type=\"submit\"]')")
+        ->assertAttribute('[data-newsletter-form]', 'aria-busy', 'true')
+        ->assertAttribute('[data-newsletter-form] button[type="submit"]', 'aria-disabled', 'true')
+        ->assertScript("document.querySelector('[data-newsletter-form] button[type=\"submit\"]').disabled", false)
+        ->script('window.releaseNewsletter()');
+    $page->assertSee('Check your email to confirm your subscription.')
+        ->assertScript("document.activeElement === document.querySelector('[data-newsletter-form] button[type=\"submit\"]')")
+        ->assertAttributeMissing('[data-newsletter-form]', 'aria-busy')
+        ->assertAttributeMissing('[data-newsletter-form] button[type="submit"]', 'aria-disabled')
+        ->assertNoJavaScriptErrors();
+});
+
+it('moves focus to the newsletter email field and announces a repeated error again', function () {
+    $this->withVite();
+    $page = $this->browserPage('/', 'desktop');
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('bad..address@example.com');
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->press('Enter');
+    $page->assertSee('The email field must be a valid email address.')
+        ->script(holdNewsletterRequest());
+
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->press('Enter');
+
+    $page->assertScript("document.querySelector('[data-newsletter-feedback]').innerText.trim() === ''")
+        ->assertScript("document.querySelectorAll('[data-newsletter-feedback] [role], [data-newsletter-feedback] [aria-live]').length === 0")
+        ->script('window.releaseNewsletter()');
+    $page->assertSee('The email field must be a valid email address.')
+        ->assertScript("document.activeElement === document.querySelector('#newsletter-email')")
+        ->assertNoJavaScriptErrors();
+});
+
+it('keeps the newsletter success message readable', function (string $theme) {
+    $this->withVite();
+    $page = $this->browserPageWithTheme('/', 'desktop', $theme);
+    $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'");
+    $page->page()
+        ->locator('#newsletter-email')
+        ->fill('reader@example.com');
+
+    $page->page()
+        ->locator('[data-newsletter-form] button[type="submit"]')
+        ->click();
+
+    $page->assertSee('Check your email to confirm your subscription.')
+        ->assertScript(meetsTextContrast('[...document.querySelectorAll("[data-newsletter-feedback] > div")].find((banner) => !banner.hidden)'))
+        ->assertNoJavaScriptErrors();
+})->with(['light', 'dark']);
 
 it('keeps search highlights readable in dark mode', function () {
     $this->withVite();

@@ -23,3 +23,18 @@ it('renders the inquiry details', function () {
         ->and($mail->render())
         ->toContain('Confidential message', 'private@example.test');
 });
+
+it('renders the sender\'s input as raw plain text', function () {
+    $inquiry = ContactInquiry::factory()->make([
+        'name' => 'Tom & Jerry',
+        'message' => 'I\'m keen on "Laravel" <3',
+        'project_title' => 'Q&A <site>',
+    ]);
+    $mail = new ContactMessageReceived($inquiry);
+
+    $body = $mail->render();
+
+    expect($body)
+        ->toContain('Name: Tom & Jerry', 'I\'m keen on "Laravel" <3', 'Project: Q&A <site>')
+        ->not->toContain('&amp;', '&lt;', '&quot;', '&#039;');
+});
