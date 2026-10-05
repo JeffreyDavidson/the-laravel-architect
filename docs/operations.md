@@ -59,13 +59,14 @@ Complete these steps before setting the GitHub repository variable
    database queue/cache tables, `QUEUE_CONNECTION=database`,
    `CACHE_STORE=database`, and `BACKUP_MEDIA_PATH` pointing to staging's own
    persistent `storage/app/public`. Keep `MAIL_MAILER=log` or an approved sandbox,
-   and never reuse production backup/storage write credentials. Staging local
-   backups are not a substitute for production's B2 backup policy.
+   and never reuse production backup/storage write credentials. Staging takes no
+   scheduled backups (see "Production-only scheduled tasks").
 8. Add one Forge database queue worker (`default` queue, timeout 60 seconds,
    tries 3) and a per-minute scheduler against the staging `current` directory.
-   Confirm timeout stays below the queue's 90-second retry interval. Review all
-   scheduled tasks before enabling them: backups, pruning and YouTube sync are
-   not all production-only. Preserve the working Nightwatch agent; do not add a
+   Confirm timeout stays below the queue's 90-second retry interval. Set
+   `TLA_DEPLOYMENT_ENVIRONMENT=staging` before enabling the scheduler: backups,
+   YouTube jobs and media checks run only when it is `production`, while the
+   heartbeat and pruning tasks run on both sites. Preserve the working Nightwatch agent; do not add a
    duplicate. Refresh staging configuration, observe both fresh heartbeats,
    then enable `RUNTIME_HEALTH_ENABLED=true` and refresh configuration again.
 9. After the migration PR reaches `main`, enable the repository variable and
@@ -334,13 +335,13 @@ The command fails when the checked-out commit differs, migrations are pending, q
 | Public application readiness after deployment | Forge deployment health check calling `/up` |
 | Application configuration and telemetry privacy safeguards | `app:verify-production` before migrations |
 | Active checkout, migrations, runtime heartbeats, and production Nightwatch | `app:verify-deployment` after activation |
-| Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email |
-| Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email |
+| Backup freshness and destination health | Scheduled Spatie `backup:monitor` with failure email (production only) |
+| Stored responsive-media integrity | Scheduled `media:verify-responsive-images` with failure email (production only) |
 | Ongoing public-route and HTTP health coverage | Production and staging smoke workflows |
 
 The production site's Forge deployment health check was enabled on 2026-09-19 with `https://thelaravelarchitect.com/up` as its URL. Keep it enabled and require HTTP 200 from this endpoint. Reconfirm the setting in Forge when changing deployment configuration. Forge owns the external request, while the application owns its database and heartbeat checks. A running Supervisor process is not proof that queue jobs are executing, so retain the queued heartbeat. Allow heartbeat initialization after clearing cache before expecting readiness. See [Forge deployment health checks](https://laravel.com/forge/docs/sites/deployments#deployment-health-checks).
 
-Backup monitoring uses the same configured disks as backup creation, with a maximum age of one day and a 5,000 MB storage limit in `config/backup.php`. It runs daily at 04:00 and emails failures. This is periodic detection, not continuous monitoring. The obsolete `BACKUP_MAX_AGE_HOURS` setting is no longer read; remove it during an approved environment maintenance change if present. Validated pre-migration backups and restore drills remain required independently of the release verifier.
+Backup monitoring uses the same configured disks as backup creation, with a maximum age of one day and a 5,000 MB storage limit in `config/backup.php`. It runs daily at 04:00 on production and emails failures. This is periodic detection, not continuous monitoring. The obsolete `BACKUP_MAX_AGE_HOURS` setting is no longer read; remove it during an approved environment maintenance change if present. Validated pre-migration backups and restore drills remain required independently of the release verifier.
 
 Then verify all of the following against the deployed commit:
 
@@ -359,6 +360,18 @@ Then verify all of the following against the deployed commit:
 - The `Deploy staging` workflow passes for the selected revision before production promotion. The separate scheduled `Staging smoke` workflow checks availability every twelve hours using main-branch test definitions and Cloudflare Access credentials; it is not release approval evidence.
 
 For content or authorization changes, also verify the affected public route and authenticated admin boundary.
+
+### Production-only scheduled tasks
+
+Staging and production share one small Forge server (1 GB, 1 vCPU), which overloaded around 2026-09-26 and on 2026-10-03/04. Staging holds only a copy of production's public content, so its backups protect nothing and its YouTube runs spend API quota. These tasks in `routes/console.php` therefore run only on production:
+
+- `backup:run`, `app:verify-backup`, `backup:clean` and `backup:monitor`
+- `youtube:stats` (daily) and `youtube:sync` (weekly)
+- `media:verify-responsive-images` and `media:find-orphans`
+
+Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune` and `activitylog:clean` still run on both sites.
+
+Owner note: archives that staging's scheduled backups wrote before this change can be deleted. With staging's `BACKUP_DISKS` unset or `local`, they sit on the `local` disk under `storage/app/private/<APP_NAME>/` in the staging site's storage; check the path before deleting anything.
 
 ## Backup validation
 
@@ -396,7 +409,7 @@ Confirm a new encrypted archive exists on the `b2-backups` disk and that `app:ve
 
 `php artisan app:verify-backup` performs the independent checks below against the newest archive on every configured destination. It downloads the archive into a new `0700` directory under the system temp directory and requires every file entry to be encrypted, decrypt, and read in full at its recorded size. Every path must be a database dump or sit under `BACKUP_MEDIA_PATH`. The command restores the dump with the same `sqlite3` CLI that creates it, runs `PRAGMA quick_check` on the restored and live databases, compares the migration list and every persistent table's row count, and compares the media file count and five sampled SHA-256 hashes with the live media directory. `cache`, `cache_locks`, `sessions`, `jobs`, and `job_batches` are excluded as transient. The temporary directory is always removed, and the output contains only counts, table names, and pass or fail reasons, never the archive password or backed-up content.
 
-Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. The scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
+Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. On production, the scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
 
 An exit-zero backup command is not enough. Independently verify:
 
