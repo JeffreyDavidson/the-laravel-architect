@@ -565,3 +565,22 @@ it('imports episode durations in seconds and ignores the retired minutes field',
     'an older archive that only has minutes' => [['duration_minutes' => 25], null],
     'no duration' => [[], null],
 ]);
+
+it('exports and imports the episode Transistor URL', function () {
+    publishedEpisodeWithDuration(60);
+    DB::table('episodes')->update(['transistor_url' => 'https://share.transistor.fm/s/428dcd6b']);
+    $archive = app(PublicContentArchiveExporter::class)->export();
+    $episodes = publicArchiveRecords($archive['episodes'] ?? null);
+    DB::table('episodes')->delete();
+
+    app(PublicContentArchiveImporter::class)->sync($archive);
+
+    $importedUrl = DB::table('episodes')
+        ->where('slug', 'archive-episode')
+        ->value('transistor_url');
+
+    expect($episodes[0])
+        ->toHaveKey('transistor_url', 'https://share.transistor.fm/s/428dcd6b')
+        ->and($importedUrl)
+        ->toBe('https://share.transistor.fm/s/428dcd6b');
+});
