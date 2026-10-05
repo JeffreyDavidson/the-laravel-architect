@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
+use App\Enums\MediaVariantStatus;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
@@ -91,7 +92,7 @@ class MediaHealthReport
             'dimensions' => '—',
             'file_size' => '—',
             'source_status' => MediaSourceStatus::Missing->value,
-            'variants' => 'Unavailable',
+            'variants' => MediaVariantStatus::Unavailable->value,
             'status' => MediaHealthStatus::ReuploadRequired->value,
             'status_color' => MediaHealthStatus::ReuploadRequired->getColor(),
             'repairable' => false,
@@ -130,7 +131,9 @@ class MediaHealthReport
         }
 
         $variantsReady = $this->images->hasRequiredVariants($path, $metadata['width']);
-        $base['variants'] = $variantsReady ? 'Ready' : 'Missing';
+        $base['variants'] = $variantsReady
+            ? MediaVariantStatus::Ready->value
+            : MediaVariantStatus::Missing->value;
         $base['repairable'] = ! $variantsReady;
 
         if ($base['source_status'] === MediaSourceStatus::Optimized->value && $variantsReady) {
