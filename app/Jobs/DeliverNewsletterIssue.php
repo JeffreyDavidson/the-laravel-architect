@@ -15,7 +15,10 @@ use Illuminate\Support\Facades\Mail;
 
 /**
  * Sends one newsletter delivery. Rate-limited releases are retried until the
- * deadline, while genuine failures stop after a few exceptions.
+ * deadline, while genuine failures stop after a few exceptions. The email's
+ * idempotency key stops a retry from resending when the send succeeded but
+ * recording it did not, and the timeout ends a stuck send before the database
+ * queue's retry_after hands the job to another worker.
  */
 class DeliverNewsletterIssue implements ShouldQueue
 {
@@ -24,6 +27,8 @@ class DeliverNewsletterIssue implements ShouldQueue
     public bool $deleteWhenMissingModels = true;
 
     public int $maxExceptions = 3;
+
+    public int $timeout = 60;
 
     /** @var list<int> */
     public array $backoff = [60, 300, 900];
@@ -63,6 +68,7 @@ class DeliverNewsletterIssue implements ShouldQueue
             ->send(new NewsletterIssueMail(
                 $issue,
                 $unsubscribeUrlGenerator->for($subscriber),
+                $delivery,
             ));
 
         $delivery->update(['sent_at' => now()]);
