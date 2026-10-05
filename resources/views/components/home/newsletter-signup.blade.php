@@ -13,18 +13,19 @@
         A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam,
         unsubscribe anytime.
     </p>
+    @if (session('newsletter_success'))
+        <x-home.newsletter-banner x-bind:hidden="hasMessage">
+            {{ session('newsletter_success') }}
+        </x-home.newsletter-banner>
+    @endif
+    @error('email')
+        <x-home.newsletter-banner type="error" x-bind:hidden="hasMessage">{{ $message }}</x-home.newsletter-banner>
+    @enderror
     <div data-newsletter-feedback aria-live="polite">
-        @if (session('newsletter_success'))
-            <x-home.newsletter-banner x-bind:hidden="hasMessage">
-                {{ session('newsletter_success') }}
-            </x-home.newsletter-banner>
-        @endif
-        @error('email')
-            <x-home.newsletter-banner type="error" x-bind:hidden="hasMessage">{{ $message }}</x-home.newsletter-banner>
-        @enderror
-        <x-home.newsletter-banner hidden x-bind:hidden="notSuccess" x-text="message" />
+        <x-home.newsletter-banner :announce="false" hidden x-bind:hidden="notSuccess" x-text="message" />
         <x-home.newsletter-banner
             type="error"
+            :announce="false"
             id="newsletter-email-error-live"
             hidden
             x-bind:hidden="notError"
@@ -35,6 +36,7 @@
         data-newsletter-form
         x-ref="form"
         x-on:submit.prevent="send"
+        x-bind:aria-busy="busy"
         action="{{ route('newsletter.subscribe') }}"
         method="POST"
         class="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
@@ -56,9 +58,10 @@
             aria-describedby="{{ $errors->has('email') ? 'newsletter-email-error newsletter-privacy' : 'newsletter-privacy' }}"
             x-bind:aria-invalid="ariaInvalid"
             x-bind:aria-describedby="describedBy"
-            class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:shadow-[0_0_0_2px_var(--brand-alpha-40)] focus:outline-none sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
+            x-ref="email"
+            class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 focus:border-brand-600 focus:ring-brand-600 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-[border-color,box-shadow] placeholder:text-gray-400 focus:ring-2 focus:outline-hidden sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
         />
-        <x-button type="submit" x-bind:disabled="busy" class="rounded-lg text-base font-semibold sm:text-sm">
+        <x-button type="submit" x-bind:aria-disabled="busy" class="rounded-lg text-base font-semibold sm:text-sm">
             Subscribe
         </x-button>
     </form>
