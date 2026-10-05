@@ -13,10 +13,10 @@ export function registerNewsletterForm(Alpine) {
             return this.status !== '';
         },
         get notSuccess() {
-            return this.status !== 'success';
+            return this.status !== 'success' || this.message === '';
         },
         get notError() {
-            return this.status !== 'error';
+            return this.status !== 'error' || this.message === '';
         },
         get ariaInvalid() {
             if (this.status === '') {
@@ -45,6 +45,8 @@ export function registerNewsletterForm(Alpine) {
             }
 
             this.busy = true;
+            // Empty the live region first, so a repeated message is announced again.
+            this.message = '';
 
             try {
                 const response = await fetch(this.$refs.form.action, {
@@ -69,6 +71,10 @@ export function registerNewsletterForm(Alpine) {
                 this.show('error', 'We could not reach the server. Check your connection and try again.');
             } finally {
                 this.busy = false;
+            }
+
+            if (this.status === 'error') {
+                this.$refs.email.focus();
             }
         },
     }));
