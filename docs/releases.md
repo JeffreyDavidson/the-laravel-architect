@@ -60,6 +60,17 @@ pass. Otherwise, inspect Forge before retrying because the original trigger may
 have completed late. This recovery path does not bypass the successful `main`
 staging-run requirement for production promotion.
 
+Read-only requests (the Access diagnostic, `/deployment.json` and `/up`) are
+made three times in total when they time out, cannot connect, or return HTTP
+502, 503 or 504, waiting 5 and then 15 seconds between attempts, so a slow or
+briefly overloaded server does not fail the run. While waiting for a triggered
+deployment, a failed read only means "not ready yet": polling continues until
+the 11-minute deadline. The Forge trigger itself is never retried. A failure
+before the trigger step (for example in **Diagnose staging Access
+credentials**, or production's staging recheck) means nothing was deployed, so
+re-running the failed job is safe. Only a failure that says to inspect Forge
+before retrying a trigger leaves the deployment uncertain.
+
 Forge checks out the requested revision before installing dependencies. Only
 after activation and the deployment verifier succeed does it publish
 `/deployment.json`, containing the full revision and Forge deployment ID. This
