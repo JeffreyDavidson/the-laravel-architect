@@ -7,8 +7,10 @@ namespace App\Support\Seo;
 use App\Models\Post;
 use Illuminate\Support\Facades\Date;
 
-final class ArticleSchemaBuilder
+final readonly class ArticleSchemaBuilder
 {
+    public function __construct(private PostShareImage $postShareImage) {}
+
     /**
      * @param  list<array<string, mixed>>  $schemas
      * @param  array<string, mixed>  $pageData
@@ -22,7 +24,7 @@ final class ArticleSchemaBuilder
         }
 
         $postUrl = route('blog.show', $post);
-        $article = [
+        $schemas[] = [
             '@type' => 'Article',
             '@id' => $postUrl.'#article',
             'url' => $postUrl,
@@ -39,13 +41,8 @@ final class ArticleSchemaBuilder
             ],
             'mainEntityOfPage' => $postUrl,
             'description' => $post->excerpt ?? '',
+            'image' => $this->postShareImage->url($post),
         ];
-
-        if ($post->featured_image_url) {
-            $article['image'] = $post->featured_image_url;
-        }
-
-        $schemas[] = $article;
     }
 
     /**

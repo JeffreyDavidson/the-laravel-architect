@@ -105,7 +105,7 @@
                                                     <div class="grid grid-cols-2 gap-2">
                                                         <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">8.4</span>
+                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.php') }}</span>
                                                         </div>
                                                         <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>

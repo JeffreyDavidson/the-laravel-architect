@@ -29,10 +29,6 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
-#[ObservedBy(PostObserver::class)]
-#[Sluggable(from: 'title')]
-#[PublishingStatus]
 /**
  * @property PublishStatus $status
  * @property Carbon|null $published_at
@@ -40,6 +36,10 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read string|null $featured_image_url
  * @property-read Category|null $category
  */
+#[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
+#[ObservedBy(PostObserver::class)]
+#[Sluggable(from: 'title')]
+#[PublishingStatus]
 class Post extends Model implements Publishable
 {
     use DeletesOwnedContent;
@@ -134,6 +134,9 @@ class Post extends Model implements Publishable
             title: $this->title,
             description: $this->excerpt,
             image: $this->featured_image_url,
+            published_time: $this->published_at,
+            modified_time: $this->updated_at,
+            type: 'article',
         );
     }
 

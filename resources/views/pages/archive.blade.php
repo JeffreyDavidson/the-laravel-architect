@@ -14,7 +14,7 @@
             </div>
         </header>
 
-        <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <form
                 method="GET"
                 action="{{ route('archive.index') }}"
@@ -125,6 +125,6 @@
                     <div class="mt-10">{{ $items->links() }}</div>
                 @endif
             </section>
-        </main>
+        </div>
     </div>
 </x-layouts.site>

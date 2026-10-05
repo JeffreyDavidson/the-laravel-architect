@@ -3,7 +3,7 @@
 return [
     'technology' => [
         'laravel' => 13,
-        'php' => '8.4',
+        'php' => '8.5',
         'filament' => 5,
     ],
 

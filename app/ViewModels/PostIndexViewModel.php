@@ -36,15 +36,9 @@ class PostIndexViewModel
         $publishedPostCount = $results['publishedPostCount'];
         $selectedCategory = $results['selectedCategory'];
 
-        $canonicalParameters = array_filter([
-            'category' => $categorySlug,
-            'page' => $posts->onFirstPage() ? null : $posts->currentPage(),
-        ], fn (string|int|null $value): bool => $value !== null);
-        $canonicalUrl = route('blog.index', $canonicalParameters);
-        $searchCanonicalUrl = route('blog.index', array_filter(
-            ['category' => $categorySlug],
-            fn (?string $value): bool => $value !== null,
-        ));
+        $categoryUrl = $selectedCategory ? route('blog.category', $selectedCategory) : null;
+        $canonicalUrl = $categoryUrl ?? route('blog.index', $posts->onFirstPage() ? [] : ['page' => $posts->currentPage()]);
+        $searchCanonicalUrl = $categoryUrl ?? route('blog.index');
         $title = $selectedCategory ? "{$selectedCategory->name} Articles" : 'Blog';
         $description = $selectedCategory
             ? "Articles about {$selectedCategory->name} — Laravel development insights from Jeffrey Davidson."
