@@ -179,9 +179,11 @@
                 <h1>@yield('title')</h1>
                 <p class="message">@yield('message')</p>
                 <div class="actions">
-                    {{-- An ordinary link retries with GET, never resubmitting a failed POST. --}}
-                    <a class="button primary" href="">Try again</a>
-                    <a class="button" href="/">Go home</a>
+                    @section('actions')
+                        {{-- An ordinary link retries with GET, never resubmitting a failed POST. --}}
+                        <a class="button primary" href="">Try again</a>
+                        <a class="button" href="/">Go home</a>
+                    @show
                 </div>
                 @hasSection('note')
                     <p class="note">@yield('note')</p>

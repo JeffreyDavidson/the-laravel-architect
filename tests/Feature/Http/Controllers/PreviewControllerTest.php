@@ -12,6 +12,8 @@ use App\Support\Content\PreviewUrlGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('renders signed previews for unpublished content', function () {
@@ -90,6 +92,26 @@ it('rejects unsigned preview URLs', function () {
 
     $this->get(route('preview.newsletter-issue', $issue))
         ->assertForbidden();
+});
+
+it('shows a rejected preview URL the branded forbidden page', function () {
+    $issue = NewsletterIssue::query()->create([
+        'title' => 'Private Draft',
+        'slug' => 'private-draft',
+        'content' => 'Not public.',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    $response = get(route('preview.newsletter-issue', $issue));
+
+    $response->assertForbidden()
+        ->assertSeeText('The Laravel Architect')
+        ->assertSeeText('This link can’t be opened.')
+        ->assertSeeHtml('href="/"')
+        ->assertSeeHtml('name="robots" content="noindex, nofollow"')
+        ->assertHeader('Cache-Control', 'no-store, private')
+        ->assertDontSeeText('Try again')
+        ->assertDontSeeText('Private Draft');
 });
 
 it('rejects expired preview URLs', function () {

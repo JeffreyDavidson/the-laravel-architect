@@ -7,6 +7,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
+use function Pest\Laravel\call;
+use function Pest\Laravel\followingRedirects;
+use function Pest\Laravel\post;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -117,48 +121,78 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
         ->toBeNull();
 });
 
-it('rejects unsigned newsletter state changes', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', 'token');
-    $subscriber->save();
-
-    $this->post(route('newsletter.confirm.store', [$subscriber, 'token']))
-        ->assertForbidden();
-
-    $subscriber->refresh();
-    expect($subscriber->verified_at)
-        ->toBeNull();
-});
-
-it('rejects signed confirmation links with an invalid token', function () {
+it('sends an unusable confirmation link back to the signup form without confirming anyone', function (Closure $link, string $method, string $routeName) {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => now(),
     ]);
     $subscriber->verification_token_hash = hash('sha256', 'valid-token');
     $subscriber->save();
-
-    foreach (['newsletter.confirm', 'newsletter.confirm.store'] as $routeName) {
-        $url = URL::temporarySignedRoute(
-            $routeName,
-            now()->addHour(),
-            ['subscriber' => $subscriber, 'token' => 'invalid-token'],
-        );
-
-        $this->call(
-            $routeName === 'newsletter.confirm' ? 'GET' : 'POST',
-            $url,
-        )->assertForbidden();
+    $url = $link($subscriber, $routeName);
+    if (! is_string($url)) {
+        throw new RuntimeException('The dataset must build a confirmation URL.');
     }
+
+    call($method, $url)
+        ->assertRedirect(route('home').'#newsletter-form')
+        ->assertSessionHasErrors(['email' => 'This confirmation link has expired or has already been used. If you already confirmed, you’re subscribed. Otherwise, sign up again below.']);
 
     $subscriber->refresh();
     $tokenHash = $subscriber->verification_token_hash;
     expect($subscriber->verified_at)
         ->toBeNull()
         ->and($tokenHash)
+        ->toBe(hash('sha256', 'valid-token'));
+})->with([
+    'expired signature' => [fn (Subscriber $subscriber, string $routeName): string => URL::temporarySignedRoute(
+        $routeName,
+        now()->subMinute(),
+        ['subscriber' => $subscriber, 'token' => 'valid-token'],
+    )],
+    'tampered signature' => [fn (Subscriber $subscriber, string $routeName): string => str_replace(
+        'expires=',
+        'expires=1',
+        URL::temporarySignedRoute($routeName, now()->addHour(), ['subscriber' => $subscriber, 'token' => 'valid-token']),
+    )],
+    'unsigned link' => [fn (Subscriber $subscriber, string $routeName): string => route(
+        $routeName,
+        ['subscriber' => $subscriber, 'token' => 'valid-token'],
+    )],
+    'unknown token' => [fn (Subscriber $subscriber, string $routeName): string => URL::temporarySignedRoute(
+        $routeName,
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => 'unknown-token'],
+    )],
+    'unknown subscriber' => [fn (Subscriber $subscriber, string $routeName): string => URL::temporarySignedRoute(
+        $routeName,
+        now()->addHour(),
+        ['subscriber' => $subscriber->id + 1, 'token' => 'valid-token'],
+    )],
+])->with([
+    'confirmation page' => ['GET', 'newsletter.confirm'],
+    'confirmation form' => ['POST', 'newsletter.confirm.store'],
+]);
+
+it('sends a confirmation link used a second time back to the signup form with its message', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => 'valid-token'],
+    );
+    post($url);
+
+    $response = followingRedirects()
+        ->get($url);
+
+    $response->assertSeeText('This confirmation link has expired or has already been used. If you already confirmed, you’re subscribed. Otherwise, sign up again below.');
+    $subscriber->refresh();
+    expect($subscriber->verified_at)
         ->not
         ->toBeNull();
 });

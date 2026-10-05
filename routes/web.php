@@ -29,7 +29,8 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
-use App\Http\Middleware\EnsureValidNewsletterConfirmationToken;
+use App\Http\Middleware\EnsureValidNewsletterConfirmationLink;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 // Pages
@@ -44,12 +45,16 @@ Route::post('/contact', [ContactController::class, 'store'])
 Route::post('/newsletter', [NewsletterSubscriptionController::class, 'store'])
     ->middleware('throttle:newsletter')
     ->name('newsletter.subscribe');
-Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'create'])
-    ->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])
-    ->name('newsletter.confirm');
-Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'store'])
-    ->middleware(['signed', EnsureValidNewsletterConfirmationToken::class, 'throttle:newsletter-confirm'])
-    ->name('newsletter.confirm.store');
+// The middleware checks the signature and token; an unusable link, including
+// one whose subscriber was pruned, goes back to the signup form.
+Route::middleware([EnsureValidNewsletterConfirmationLink::class, 'throttle:newsletter-confirm'])
+    ->missing(fn (): RedirectResponse => EnsureValidNewsletterConfirmationLink::redirectToSignupForm())
+    ->group(function (): void {
+        Route::get('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'create'])
+            ->name('newsletter.confirm');
+        Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'store'])
+            ->name('newsletter.confirm.store');
+    });
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])
     ->middleware(['signed', 'throttle:newsletter-confirm'])
     ->name('newsletter.unsubscribe');
