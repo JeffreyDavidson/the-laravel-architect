@@ -7,6 +7,13 @@ use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
 use Laravel\Nightwatch\Console\Sample;
 
+/*
+ * Backups, YouTube and media checks run only on the production deployment. Staging shares
+ * production's small server and runs with APP_ENV=production, so `environments()` cannot
+ * tell them apart; TLA_DEPLOYMENT_ENVIRONMENT (app.deployment_environment) can.
+ */
+$isProductionDeployment = fn (): bool => config('app.deployment_environment') === 'production';
+
 Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();
     RecordQueueHeartbeat::dispatch();
@@ -21,32 +28,36 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
 
 Schedule::command('backup:run')
     ->dailyAt(config('backup.schedule.run_at'))
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer();
 // Restores the newest archive in isolation, so a verified backup exists before any deploy.
 // A failure is reported through the scheduler's failed-task email, like the other checks.
 Schedule::command('app:verify-backup')
     ->dailyAt(config('backup.schedule.verify_at'))
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('backup:clean')
     ->weeklyOn(1, config('backup.schedule.clean_at'))
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer();
 Schedule::command('backup:monitor')
     ->dailyAt(config('backup.schedule.monitor_at'))
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer();
 Schedule::command('media:verify-responsive-images')
     ->dailyAt('05:00')
-    ->environments(['production'])
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('media:find-orphans')
     ->weeklyOn(0, '05:30')
-    ->environments(['production'])
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
@@ -66,9 +77,11 @@ Schedule::command('activitylog:clean')
     ->onOneServer();
 Schedule::command('youtube:stats')
     ->daily()
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer();
 Schedule::command('youtube:sync')
     ->weekly()
+    ->when($isProductionDeployment)
     ->withoutOverlapping()
     ->onOneServer();
