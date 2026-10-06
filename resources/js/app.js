@@ -27,6 +27,11 @@ async function initializePublicUi() {
         registerNewsletterForm(runtime.Alpine);
     }
 
+    if (document.querySelector('[data-newsletter-confirm]')) {
+        const { registerNewsletterConfirm } = await import('./pages/newsletter-confirm');
+        registerNewsletterConfirm(runtime.Alpine);
+    }
+
     if (document.querySelector('[data-blog-filter]')) {
         const { registerBlogMetadata } = await import('./pages/blog-index');
         registerBlogMetadata(runtime.Alpine);

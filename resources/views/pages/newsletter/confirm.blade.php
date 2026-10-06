@@ -4,6 +4,7 @@
     description="Confirm that you want newsletter updates sent to {{ $subscriber->email }}."
     :action-url="$actionUrl"
     button-label="Confirm subscription"
+    pending-label="Confirming your subscription…"
     :seo-source="$seoSource ?? null"
     :structured-data="$structuredData ?? []"
 />

@@ -93,7 +93,7 @@ it('shows an explicit confirmation step without changing subscriber state', func
         ->toBeNull();
 });
 
-it('confirms a subscriber with an explicit post to a valid signed link', function () {
+it('confirms a subscriber with an explicit post to a valid signed link and redirects to the confirmed page', function () {
     $token = 'valid-confirmation-token';
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
@@ -109,8 +109,7 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
     );
 
     $this->post($url)
-        ->assertRedirect(route('home').'#newsletter-form')
-        ->assertSessionHas('newsletter_success');
+        ->assertRedirect(route('newsletter.confirmed'));
 
     $subscriber->refresh();
     $tokenHash = $subscriber->verification_token_hash;
