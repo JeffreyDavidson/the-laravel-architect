@@ -167,8 +167,8 @@ it('titles the confirmation page tab with the confirming state', function () {
     $response = $this->get($url);
 
     $response->assertOk()
-        ->assertSee('<title>Confirming Your Subscription', false)
-        ->assertDontSee('<title>Confirm Your Subscription', false);
+        ->assertSeeHtml('<title>Confirming Your Subscription')
+        ->assertDontSeeHtml('<title>Confirm Your Subscription');
 });
 
 it('submits only the confirmation page by itself, never the unsubscribe page', function () {
