@@ -136,6 +136,12 @@ advisory (GHSA-rj75-hqrm-r3gf) that fails CI's `npm audit --include=dev`. The
 built CSS was byte-identical with and without the override. Remove the override
 once a typography release depends on 7.1.6 or later.
 
+`package.json` also overrides `concurrently`'s `shell-quote` to `^1.11.0`,
+because concurrently 10.0.5 pins 1.9.0, inside a critical command-injection
+advisory range (1.8.4 to 1.10.0). concurrently only runs the local `composer run
+dev` processes. Remove the override once a concurrently release depends on a
+patched shell-quote.
+
 ## Hotfixes and rollback
 
 If `main` matches the deployed revision, a focused fix follows the normal
