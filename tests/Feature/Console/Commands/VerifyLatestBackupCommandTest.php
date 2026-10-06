@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Services\BackupArchiveVerifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -11,8 +12,10 @@ pest()->use(RefreshDatabase::class);
 const BACKUP_PASSWORD = 'archive-password';
 
 beforeEach(function () {
-    $mediaRoot = sys_get_temp_dir().'/tla-media-'.bin2hex(random_bytes(6));
+    $testRoot = sys_get_temp_dir().'/tla-backup-test-'.bin2hex(random_bytes(6));
+    $mediaRoot = "{$testRoot}/media";
     File::ensureDirectoryExists("{$mediaRoot}/posts");
+    File::ensureDirectoryExists("{$testRoot}/work");
     File::put("{$mediaRoot}/posts/cover.jpg", 'cover image bytes');
     File::put("{$mediaRoot}/posts/cover-640.webp", 'variant bytes');
     Storage::fake('backups');
@@ -22,10 +25,11 @@ beforeEach(function () {
         'backup.backup.destination.disks' => ['backups'],
         'backup.backup.source.files.include' => [$mediaRoot],
     ]);
+    app()->instance(BackupArchiveVerifier::class, new BackupArchiveVerifier("{$testRoot}/work"));
 });
 
 afterEach(function () {
-    File::deleteDirectory(testMediaRoot());
+    File::deleteDirectory(dirname(testMediaRoot()));
 });
 
 /** The media root configured for this test's backups. */
@@ -40,10 +44,16 @@ function testMediaRoot(): string
     return $root;
 }
 
-/** @return list<string> */
-function verificationWorkDirectories(): array
+/**
+ * Everything left in this test's private work directory parent. Only this
+ * test's verifier writes there, so other processes verifying backups in the
+ * shared temp directory cannot affect the result.
+ *
+ * @return list<string>
+ */
+function leftoverVerificationWorkDirectories(): array
 {
-    return glob(sys_get_temp_dir().'/tla-backup-verify-*') ?: [];
+    return glob(dirname(testMediaRoot()).'/work/*') ?: [];
 }
 
 /** Write the live test database as SQL, like sqlite3's .dump. */
@@ -110,7 +120,6 @@ function storeBackupArchive(?string $dump = null, array $extraEntries = [], stri
 }
 
 it('verifies a faithful encrypted archive', function () {
-    $workDirectoriesBefore = verificationWorkDirectories();
     Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
     storeBackupArchive();
 
@@ -123,8 +132,8 @@ it('verifies a faithful encrypted archive', function () {
         ->expectsOutputToContain('The backup is verified and restorable.')
         ->assertSuccessful();
 
-    expect(verificationWorkDirectories())
-        ->toBe($workDirectoriesBefore);
+    expect(leftoverVerificationWorkDirectories())
+        ->toBeEmpty();
 });
 
 it('fails without a usable archive or password', function (Closure $arrange, string $failure) {
@@ -148,7 +157,6 @@ it('fails without a usable archive or password', function (Closure $arrange, str
 ]);
 
 it('rejects archives that cannot be trusted', function (Closure $arrange, string $failure) {
-    $workDirectoriesBefore = verificationWorkDirectories();
     $arrange();
 
     $this->artisanCommand('app:verify-backup')
@@ -156,8 +164,8 @@ it('rejects archives that cannot be trusted', function (Closure $arrange, string
         ->expectsOutputToContain('The backup could not be verified.')
         ->assertFailed();
 
-    expect(verificationWorkDirectories())
-        ->toBe($workDirectoriesBefore);
+    expect(leftoverVerificationWorkDirectories())
+        ->toBeEmpty();
 })->with([
     'wrong password' => [
         fn () => storeBackupArchive(password: 'a-different-password'),
