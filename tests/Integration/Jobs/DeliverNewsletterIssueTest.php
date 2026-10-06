@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PublishStatus;
 use App\Jobs\DeliverNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
@@ -98,6 +99,21 @@ it('drops the delivery when the subscriber is no longer active', function () {
     Mail::assertNothingSent();
     $this->assertModelMissing($delivery);
 });
+
+it('drops the delivery when the issue is no longer published', function (array $attributes) {
+    Mail::fake();
+    $delivery = NewsletterDelivery::factory()
+        ->create();
+    $delivery->newsletterIssue?->update($attributes);
+
+    runDelivery($delivery);
+
+    Mail::assertNothingSent();
+    $this->assertModelMissing($delivery);
+})->with([
+    'unpublished' => [['status' => PublishStatus::Draft]],
+    'moved to a future date' => [['published_at' => now()->addDay()]],
+]);
 
 it('sends through the newsletter delivery rate limit', function () {
     $job = new DeliverNewsletterIssue(NewsletterDelivery::factory()->create());

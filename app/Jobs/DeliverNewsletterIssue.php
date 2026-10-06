@@ -14,7 +14,9 @@ use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Sends one newsletter delivery. Rate-limited releases are retried until the
+ * Sends one newsletter delivery, dropping it instead when the issue is no longer
+ * published or the subscriber is no longer active, so nobody is emailed a link
+ * that would 404. Rate-limited releases are retried until the
  * deadline, while genuine failures stop after a few exceptions. The email's
  * idempotency key stops a retry from resending when the send succeeded but
  * recording it did not, and the timeout ends a stuck send before the database
@@ -58,7 +60,12 @@ class DeliverNewsletterIssue implements ShouldQueue
         $issue = $delivery->newsletterIssue;
         $subscriber = $delivery->subscriber;
 
-        if (! $issue instanceof NewsletterIssue || ! $subscriber instanceof Subscriber || ! $subscriber->isActive()) {
+        if (
+            ! $issue instanceof NewsletterIssue
+            || ! $issue->isPublished()
+            || ! $subscriber instanceof Subscriber
+            || ! $subscriber->isActive()
+        ) {
             $delivery->delete();
 
             return;
