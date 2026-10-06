@@ -34,4 +34,6 @@ npm run test:deployment
 composer test
 composer test:browser
 composer test:types
+composer test:types:pest
 composer test:rector
+composer test:rector:pest

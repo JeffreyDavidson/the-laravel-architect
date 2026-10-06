@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContactInquiries;
 
+use App\Enums\ContactInquiryStatus;
 use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
 use App\Filament\Resources\ContactInquiries\Pages\ListContactInquiries;
 use App\Filament\Resources\ContactInquiries\Schemas\ContactInquiryForm;
@@ -48,7 +49,7 @@ class ContactInquiryResource extends Resource
         $count = Cache::remember(
             'contact-inquiries-new-count',
             now()->addMinutes(5),
-            fn (): int => static::getModel()::query()->where('status', 'new')
+            fn (): int => static::getModel()::query()->where('status', ContactInquiryStatus::New)
                 ->count(),
         );
 

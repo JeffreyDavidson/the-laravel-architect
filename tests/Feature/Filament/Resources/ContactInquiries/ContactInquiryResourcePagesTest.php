@@ -71,3 +71,12 @@ it('does not allow inquiries to be created in the panel', function () {
         ->not
         ->toContain('create');
 });
+
+it('counts only new inquiries in the navigation badge', function () {
+    ContactInquiry::factory()
+        ->count(2)
+        ->create();
+    ContactInquiry::factory()->create(['status' => ContactInquiryStatus::Resolved]);
+
+    expect(ContactInquiryResource::getNavigationBadge())->toBe('2');
+});

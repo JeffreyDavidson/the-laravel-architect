@@ -333,6 +333,21 @@ it('supports blog search and reset with Livewire', function (): void {
         ->assertNoJavaScriptErrors();
 });
 
+it('filters the blog by category when a category pill is clicked', function (): void {
+    $this->withVite();
+
+    $page = $this->browserPage('/blog', 'desktop');
+
+    $page->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'")
+        ->click('[aria-label="Filter articles by category"] a[href$="category=e2e-career"]')
+        ->assertAriaAttribute('[aria-label="Filter articles by category"] a[href$="category=e2e-career"]', 'current', 'page')
+        ->assertSee('E2E Searchable Post')
+        ->assertDontSee('E2E Welcome Post')
+        ->assertPathIs('/blog')
+        ->assertQueryStringHas('category', 'e2e-career')
+        ->assertNoJavaScriptErrors();
+});
+
 it('supports search filters and preserves the selected result type', function (): void {
     $this->withVite();
 

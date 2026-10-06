@@ -41,6 +41,7 @@ it('keeps public routes within the mobile viewport', function (string $route): v
     '/blog',
     '/blog/e2e-code-example',
     '/contact',
+    '/newsletter/confirmed',
     '/podcasts',
     '/privacy',
     '/projects',

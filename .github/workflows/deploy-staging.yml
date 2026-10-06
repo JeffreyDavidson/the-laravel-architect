@@ -6,10 +6,6 @@ on:
         types: [completed]
         branches: [main, 'release/**']
 
-concurrency:
-    group: release-promotion
-    cancel-in-progress: false
-
 permissions:
     contents: read
     deployments: write
@@ -23,7 +19,12 @@ jobs:
             (github.event.workflow_run.head_branch == 'main' || startsWith(github.event.workflow_run.head_branch, 'release/')) &&
             github.event.workflow_run.head_repository.full_name == github.repository
         name: Stage ${{ github.event.workflow_run.head_sha }}
-        runs-on: ubuntu-latest
+        # Job-level, so runs whose job is skipped by the condition above never
+        # enter the group and cannot displace a pending staging or promotion run.
+        concurrency:
+            group: release-promotion
+            cancel-in-progress: false
+        runs-on: ubuntu-24.04
         timeout-minutes: 25
         environment: staging
         env:

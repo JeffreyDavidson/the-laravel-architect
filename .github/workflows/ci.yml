@@ -22,7 +22,7 @@ permissions:
 jobs:
   laravel:
     name: Laravel
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
@@ -77,8 +77,8 @@ jobs:
 
           exit 1
 
-      - name: Audit JavaScript development dependencies
-        run: npx --yes npm@11 audit --include=dev
+      # Development-only JavaScript advisories are reported by the daily
+      # Dependency audit workflow instead of failing unrelated pull requests.
 
       - name: Prepare application
         run: |

@@ -106,7 +106,7 @@
         "check": [
             "@composer validate --strict --no-check-publish",
             "@composer audit --locked",
-            "npx --yes npm@11 audit --include=dev",
+            "npx --yes npm@11 audit --omit=dev",
             "npm run test:deployment",
             "@test:lint",
             "php scripts/check-method-chaining.php",

@@ -10,7 +10,6 @@ use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\Attributes\Backoff;
 use Illuminate\Queue\Attributes\Connection;
 use Illuminate\Queue\Attributes\FailOnTimeout;
@@ -26,6 +25,8 @@ use Throwable;
  * Each successful send is stamped on the inquiry, so a retry only sends what is missing,
  * and the payload carries just the inquiry ID. Resend keeps idempotency keys for 24 hours,
  * so older inquiries fail for manual review instead of risking a duplicate.
+ * The confirmation goes to the bare email address, so the form cannot place visitor
+ * text in the display name of a message sent to an arbitrary inbox.
  */
 #[Connection('database')]
 #[Tries(3)]
@@ -71,7 +72,7 @@ class SendContactInquiryEmails implements ShouldBeEncrypted, ShouldQueue
         }
 
         if ($inquiry->confirmation_sent_at === null) {
-            $this->send($mailer, $inquiry, new Address($inquiry->email, $inquiry->name), new ContactMessageConfirmation($inquiry), 'confirmation_sent_at');
+            $this->send($mailer, $inquiry, $inquiry->email, new ContactMessageConfirmation($inquiry), 'confirmation_sent_at');
         }
 
         if ($inquiry->notification_sent_at === null || $inquiry->confirmation_sent_at === null) {
@@ -90,7 +91,7 @@ class SendContactInquiryEmails implements ShouldBeEncrypted, ShouldQueue
      * Send one email and stamp it only when the mailer reports it sent. Failures are
      * logged without the inquiry's contents and left unstamped for the next attempt.
      */
-    private function send(Mailer $mailer, ContactInquiry $inquiry, string|Address $recipient, Mailable $mail, string $stampColumn): void
+    private function send(Mailer $mailer, ContactInquiry $inquiry, string $recipient, Mailable $mail, string $stampColumn): void
     {
         try {
             $sent = $mailer
