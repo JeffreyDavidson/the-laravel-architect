@@ -86,6 +86,19 @@ test('release safeguards keep feature integration, pre-merge staging, and produc
     assert.ok(operations.includes('test "${FORGE_VAR_SOURCE_BRANCH:-}" = main'));
 });
 
+test('staging and promotion hold the release lock only on their deploying jobs', () => {
+    for (const name of ['deploy-staging.yml', 'promote-production.yml']) {
+        const workflow = readFileSync(new URL(`../.github/workflows/${name}`, import.meta.url), 'utf8');
+
+        assert.doesNotMatch(workflow, /^concurrency:/m, name);
+        assert.match(
+            workflow,
+            /\n {8}concurrency:\n {12}group: release-promotion\n {12}cancel-in-progress: false\n/,
+            name,
+        );
+    }
+});
+
 test('rejects a production hook before any staging deployment network request', async () => {
     let requests = 0;
     await assert.rejects(

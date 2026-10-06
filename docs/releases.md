@@ -50,7 +50,9 @@ fast-forward develop to main
 not PR CI. It checks out the tested full commit SHA and confirms the source
 branch still points to it before deployment. Deployment and production
 promotion share a concurrency lock, so staging cannot be replaced while
-promotion is checking it. Running deployments are never auto-cancelled.
+promotion is checking it. Running deployments are never auto-cancelled. The
+lock is set on the deploying jobs, not the workflows, so a run whose job is
+skipped by its condition never enters the group or displaces a pending run.
 
 If Forge accepts a staging trigger but the deploy verifier reaches its deadline,
 the workflow does not trigger another deployment. It checks the currently
@@ -70,6 +72,18 @@ before the trigger step (for example in **Diagnose staging Access
 credentials**, or production's staging recheck) means nothing was deployed, so
 re-running the failed job is safe. Only a failure that says to inspect Forge
 before retrying a trigger leaves the deployment uncertain.
+
+### Recover from stuck or cancelled runs
+
+- **Release branch push CI cancelled** (for example by a GitHub runner
+  incident): staging only follows successful push CI, so re-run that CI run
+  with `gh run rerun <push-CI-run-id>`. Its success triggers `Deploy staging`
+  for the same SHA.
+- **Approved promotion has no runner after about five minutes:** nothing has
+  been deployed yet. Cancel the run and dispatch `Promote production` again
+  from `main` with the same revision and staging run ID, then approve it.
+- **A PR's CI never starts:** close and reopen the PR. The `reopened` event
+  starts CI on the same head SHA without a new commit.
 
 Forge checks out the requested revision before installing dependencies. Only
 after activation and the deployment verifier succeed does it publish
@@ -132,7 +146,8 @@ running an unattended dependency refresh.
 
 `package.json` overrides `@tailwindcss/typography`'s `postcss-selector-parser`
 to `^7.1.6`, because typography 0.5.20 pins 6.0.10, which has a CPU-exhaustion
-advisory (GHSA-rj75-hqrm-r3gf) that fails CI's `npm audit --include=dev`. The
+advisory (GHSA-rj75-hqrm-r3gf) that fails the daily `Dependency audit`
+workflow's `npm audit --include=dev`. The
 built CSS was byte-identical with and without the override. Remove the override
 once a typography release depends on 7.1.6 or later.
 
