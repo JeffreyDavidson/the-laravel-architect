@@ -620,6 +620,56 @@ it('confirms a newsletter subscription from the email link without a click', fun
         ->toBeNull();
 });
 
+it('shows the confirming state from the first paint and never the confirm prompt', function (): void {
+    $this->withVite();
+
+    $token = 'first-paint-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'first-paint@example.test',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+    // Records every heading and whether a submit button was visible on the confirm page, from the first parsed node until it navigates away.
+    $recorder = <<<'SCRIPT'
+        if (location.pathname.startsWith('/newsletter/confirm/')) {
+            const seen = [];
+            const record = () => {
+                document.querySelectorAll('h1').forEach(heading => seen.push(heading.textContent.trim()));
+                document.querySelectorAll('form button[type="submit"]').forEach(button => {
+                    if (button.checkVisibility()) {
+                        seen.push('visible submit button');
+                    }
+                });
+                sessionStorage.setItem('confirmPageStates', JSON.stringify([...new Set(seen)]));
+            };
+            new MutationObserver(record).observe(document, { childList: true, subtree: true, characterData: true, attributes: true });
+        }
+        SCRIPT;
+
+    $page = $this->browserPage(route('newsletter.confirmed'), 'desktop');
+    $page->page()
+        ->context()
+        ->addInitScript($recorder);
+    $page->page()
+        ->goto($url);
+
+    $page->assertScript("window.location.pathname === '/newsletter/confirmed'")
+        ->assertScript("JSON.parse(sessionStorage.getItem('confirmPageStates')).includes('Confirming your subscription…')")
+        ->assertScript("JSON.parse(sessionStorage.getItem('confirmPageStates')).length === 1")
+        ->assertSee('You’re confirmed')
+        ->assertNoJavaScriptErrors();
+    $subscriber->refresh();
+    expect($subscriber->verified_at)
+        ->not
+        ->toBeNull();
+});
+
 it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
     config()->set('services.turnstile.site_key', 'test-site-key');
     $this->withVite();
