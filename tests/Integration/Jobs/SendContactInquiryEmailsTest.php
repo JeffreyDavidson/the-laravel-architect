@@ -52,6 +52,17 @@ it('sends the owner notification to the contact address and the confirmation to 
     Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'jane@example.com');
 });
 
+it('addresses the confirmation to the bare sender email without their name', function () {
+    $inquiry = ContactInquiry::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
+
+    sendContactInquiryEmails($inquiry);
+
+    Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'owner@example.com'
+        && $event->message->getReplyTo()[0]->getName() === 'Jane Doe');
+    Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'jane@example.com'
+        && $event->message->getTo()[0]->getName() === '');
+});
+
 it('retries only the email that failed', function () {
     $events = Event::fake([MessageSent::class]);
     Event::listen(MessageSending::class, function (MessageSending $event): void {
