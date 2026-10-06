@@ -64,6 +64,7 @@ class EditNewsletterIssue extends EditRecord
                 ->color('gray')
                 ->authorize('update')
                 ->action(function (SendNewsletterIssueTestEmail $sendNewsletterIssueTestEmail): void {
+                    $this->saveBeforeSending();
                     $issue = $this->issue();
                     $recipient = $sendNewsletterIssueTestEmail->handle($issue);
 
@@ -90,6 +91,7 @@ class EditNewsletterIssue extends EditRecord
                 })
                 ->modalSubmitActionLabel('Send')
                 ->action(function (SendNewsletterIssue $sendNewsletterIssue): void {
+                    $this->saveBeforeSending();
                     $issue = $this->issue();
                     $queued = $sendNewsletterIssue->handle($issue);
 
@@ -102,6 +104,15 @@ class EditNewsletterIssue extends EditRecord
             ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    /**
+     * Save the form so the email matches what is on screen. Invalid data throws a
+     * validation exception, which stops the action before anything is sent.
+     */
+    private function saveBeforeSending(): void
+    {
+        $this->save(shouldRedirect: false, shouldSendSavedNotification: false);
     }
 
     private function canSendToSubscribers(): bool

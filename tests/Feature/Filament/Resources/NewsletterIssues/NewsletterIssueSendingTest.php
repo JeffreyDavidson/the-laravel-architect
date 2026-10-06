@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
+use App\Jobs\DeliverNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -84,6 +85,80 @@ it('sends a test email to the site owner', function () {
     expect($issue->wasSent())
         ->toBeFalse();
 });
+
+it('saves unsaved edits before sending a test email', function () {
+    Mail::fake();
+    $issue = editableNewsletterIssue(['status' => PublishStatus::Draft]);
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->fillForm([
+            'title' => 'Edited title',
+            'content' => 'Edited content.',
+        ])
+        ->callAction('sendTestEmail')
+        ->assertHasNoFormErrors();
+
+    Mail::assertSent(NewsletterIssueMail::class, function (NewsletterIssueMail $mail): bool {
+        $mail->assertHasSubject('Edited title');
+        $mail->assertSeeInHtml('Edited content.');
+
+        return true;
+    });
+    expect($issue->refresh())
+        ->title->toBe('Edited title')
+        ->content->toBe('Edited content.');
+});
+
+it('saves unsaved edits before sending to subscribers', function () {
+    Mail::fake();
+    Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verified_at' => now(),
+    ]);
+    $issue = editableNewsletterIssue();
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->fillForm([
+            'title' => 'Edited title',
+            'content' => 'Edited content.',
+        ])
+        ->callAction('sendToSubscribers')
+        ->assertHasNoFormErrors()
+        ->assertNotified('Queued for 1 subscriber');
+
+    DeliverNewsletterIssue::dispatchSync(NewsletterDelivery::query()->sole());
+
+    Mail::assertSent(NewsletterIssueMail::class, function (NewsletterIssueMail $mail): bool {
+        $mail->assertHasSubject('Edited title');
+        $mail->assertSeeInHtml('Edited content.');
+
+        return $mail->hasTo('reader@example.com');
+    });
+});
+
+it('sends nothing when the unsaved edits are invalid', function (string $action) {
+    Mail::fake();
+    Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verified_at' => now(),
+    ]);
+    $issue = editableNewsletterIssue();
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->fillForm(['title' => ''])
+        ->callAction($action)
+        ->assertHasErrors(['data.title' => 'required']);
+
+    Mail::assertNothingSent();
+    $issue->refresh();
+    expect($issue->title)
+        ->toBe('Issue One')
+        ->and($issue->wasSent())
+        ->toBeFalse();
+    $this->assertDatabaseCount('newsletter_deliveries', 0);
+})->with(['sendTestEmail', 'sendToSubscribers']);
 
 it('hides the sending actions from a user who is not an administrator', function (string $action) {
     $issue = editableNewsletterIssue();
