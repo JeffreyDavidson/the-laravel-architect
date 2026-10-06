@@ -69,4 +69,5 @@ it('keeps each public page within its query budget as content grows', function (
     'search' => [fn (): string => route('search', ['q' => 'scale']), 13],
     'about' => [fn (): string => route('about'), 2],
     'contact' => [fn (): string => route('contact.create'), 4],
+    'newsletter confirmed' => [fn (): string => route('newsletter.confirmed'), 4],
 ]);
