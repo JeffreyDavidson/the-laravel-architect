@@ -13,10 +13,6 @@ on:
                 required: true
                 type: string
 
-concurrency:
-    group: release-promotion
-    cancel-in-progress: false
-
 permissions:
     contents: read
     actions: read
@@ -26,7 +22,11 @@ jobs:
     production:
         if: github.ref == 'refs/heads/main' && vars.STAGED_RELEASES_ENABLED == 'true'
         name: Approve production ${{ inputs.revision }}
-        runs-on: ubuntu-latest
+        # Job-level, so a skipped dispatch never enters the group shared with staging.
+        concurrency:
+            group: release-promotion
+            cancel-in-progress: false
+        runs-on: ubuntu-24.04
         timeout-minutes: 25
         environment: production
         env:
