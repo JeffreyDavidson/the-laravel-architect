@@ -15,7 +15,7 @@ function scheduledCommandEvent(string $command): Event
 
 dataset('production-only tasks', [
     'backup:run' => ['backup:run', '0 2 * * *'],
-    'app:verify-backup' => ['app:verify-backup', '30 2 * * *'],
+    'app:verify-backup' => ['app:verify-backup', '0 2 * * *'],
     'backup:clean' => ['backup:clean', '0 3 * * 1'],
     'backup:monitor' => ['backup:monitor', '0 4 * * *'],
     'media:verify-responsive-images' => ['media:verify-responsive-images', '0 5 * * *'],
@@ -52,6 +52,28 @@ it('runs maintenance tasks on staging', function (string $command) {
 
     expect($event->filtersPass(app()))->toBeTrue();
 })->with('tasks for every deployment');
+
+it('releases the overlap lock of a killed daily or weekly task well before its next run', function (string $command, int $minutes) {
+    $event = scheduledCommandEvent($command);
+
+    expect($event->withoutOverlapping)
+        ->toBeTrue()
+        ->and($event->expiresAt)
+        ->toBe($minutes);
+})->with([
+    'backup:run' => ['backup:run', 120],
+    'app:verify-backup' => ['app:verify-backup', 120],
+    'backup:clean' => ['backup:clean', 60],
+    'backup:monitor' => ['backup:monitor', 60],
+    'media:verify-responsive-images' => ['media:verify-responsive-images', 60],
+    'media:find-orphans' => ['media:find-orphans', 60],
+    'queue:prune-failed' => ['queue:prune-failed', 60],
+    'model:prune' => ['model:prune', 60],
+    'activitylog:clean' => ['activitylog:clean', 60],
+    'cache:prune-expired' => ['cache:prune-expired', 60],
+    'youtube:stats' => ['youtube:stats', 60],
+    'youtube:sync' => ['youtube:sync', 60],
+]);
 
 it('prunes expired cache entries daily between the backup and monitoring runs', function () {
     $event = scheduledCommandEvent('cache:prune-expired');

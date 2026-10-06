@@ -26,67 +26,75 @@ Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     ->withoutOverlapping(5)
     ->onOneServer();
 
+/*
+ * Each daily or weekly task's overlap lock expires after one or two hours instead of the
+ * default 24, so a run killed mid-way (out of memory, a hung server) cannot leave a lock
+ * that skips the next scheduled run.
+ */
 Schedule::command('backup:run')
     ->dailyAt(config('backup.schedule.run_at'))
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(120)
     ->onOneServer();
 // Restores the newest archive in isolation, so a verified backup exists before any deploy.
+// It shares the backup's minute and is defined after it: a scheduler run executes due
+// events one at a time in definition order (the backup must not run in the background),
+// so this starts the moment the backup ends and a site write rarely lands in between.
 // A failure is reported through the scheduler's failed-task email, like the other checks.
 Schedule::command('app:verify-backup')
-    ->dailyAt(config('backup.schedule.verify_at'))
+    ->dailyAt(config('backup.schedule.run_at'))
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(120)
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('backup:clean')
     ->weeklyOn(1, config('backup.schedule.clean_at'))
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('backup:monitor')
     ->dailyAt(config('backup.schedule.monitor_at'))
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('media:verify-responsive-images')
     ->dailyAt('05:00')
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('media:find-orphans')
     ->weeklyOn(0, '05:30')
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer()
     ->emailOutputOnFailure(config('backup.notifications.mail.to'));
 Schedule::command('queue:prune-failed', [
     '--hours' => config('health.failed_jobs.retention_hours'),
 ])
     ->daily()
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('model:prune', ['--model' => [ContactInquiry::class, Subscriber::class]])
     ->daily()
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('activitylog:clean')
     ->daily()
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
-// Off-peak, clear of the 02:00/02:30 backup and 05:00/05:30 media runs.
+// Off-peak, clear of the 02:00 backup and verification and the 05:00/05:30 media runs.
 Schedule::command('cache:prune-expired')
     ->dailyAt('03:30')
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('youtube:stats')
     ->daily()
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();
 Schedule::command('youtube:sync')
     ->weekly()
     ->when($isProductionDeployment)
-    ->withoutOverlapping()
+    ->withoutOverlapping(60)
     ->onOneServer();

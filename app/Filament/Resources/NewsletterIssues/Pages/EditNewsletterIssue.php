@@ -95,6 +95,17 @@ class EditNewsletterIssue extends EditRecord
                     $issue = $this->issue();
                     $queued = $sendNewsletterIssue->handle($issue);
 
+                    if ($queued === 0) {
+                        Notification::make()
+                            ->danger()
+                            ->title('No active subscribers to send to')
+                            ->body('Nothing was sent, and the issue can still be sent later.')
+                            ->persistent()
+                            ->send();
+
+                        return;
+                    }
+
                     Notification::make()
                         ->title("Queued for {$queued} ".Str::plural('subscriber', $queued))
                         ->success()

@@ -12,6 +12,9 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('includes the newsletter archive and only public newsletter issues', function () {
@@ -198,4 +201,17 @@ it('reports the latest published content change for sitemap archives', function 
     ] as [$url, $updatedAt]) {
         $response->assertSeeHtml('<loc>'.$url.'</loc><lastmod>'.$updatedAt->toW3cString().'</lastmod>');
     }
+});
+
+it('serves the sitemap to crawlers without starting a session or setting cookies', function () {
+    config()->set('session.driver', 'database');
+
+    $response = get(route('sitemap'));
+
+    $response
+        ->assertOk()
+        ->assertHeaderMissing('Set-Cookie');
+    expect($response->headers->getCookies())
+        ->toBeEmpty();
+    assertDatabaseCount('sessions', 0);
 });

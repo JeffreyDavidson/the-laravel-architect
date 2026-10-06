@@ -70,6 +70,19 @@ it('queues the issue for active subscribers', function () {
     $this->assertDatabaseCount('newsletter_deliveries', 1);
 });
 
+it('tells the admin nothing was sent when there are no active subscribers', function () {
+    $issue = editableNewsletterIssue();
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->callAction('sendToSubscribers')
+        ->assertNotified('No active subscribers to send to')
+        ->assertActionVisible('sendToSubscribers');
+
+    $issue->refresh();
+    expect($issue->wasSent())
+        ->toBeFalse();
+});
+
 it('sends a test email to the site owner', function () {
     Mail::fake();
     config()->set('mail.contact_to', 'owner@example.com');

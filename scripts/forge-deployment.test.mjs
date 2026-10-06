@@ -732,6 +732,40 @@ test('the documented deploy script backs up and verifies before migrating, on pr
     assert.equal(script.split('backup:run').length - 1, 1);
 });
 
+test('the documented deploy script builds assets and links storage before the backup gate and migrates last before activation', () => {
+    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
+    const script = operations.match(/### Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
+
+    assert.ok(script);
+
+    const steps = [
+        '$FORGE_COMPOSER install',
+        'npm ci --production=false',
+        'npm run build',
+        'artisan storage:link',
+        'artisan app:verify-production',
+        'artisan backup:run',
+        'artisan optimize',
+        'artisan migrate --force',
+        'artisan nightwatch:deploy',
+        '$ACTIVATE_RELEASE()',
+    ];
+    const positions = steps.map(step => script.indexOf(step));
+
+    for (const [index, step] of steps.entries()) {
+        assert.ok(positions[index] >= 0, `${step} is missing`);
+        assert.equal(script.split(step).length - 1, 1, `${step} must appear once`);
+    }
+    assert.deepEqual(
+        [...positions].sort((a, b) => a - b),
+        positions,
+    );
+
+    // Nothing between the migration and activation may stop the deploy.
+    const afterMigration = script.slice(positions[7] + steps[7].length, positions[9]);
+    assert.match(afterMigration, /nightwatch:deploy [^\n]*\\\n\s+\|\| echo /);
+});
+
 test('production uptime workflow stays a lightweight, secret-free curl check', () => {
     const uptime = readFileSync(new URL('../.github/workflows/production-uptime.yml', import.meta.url), 'utf8');
 

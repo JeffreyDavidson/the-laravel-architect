@@ -88,3 +88,38 @@ it('rejects a reserved slug when updating a newsletter issue', function (string 
     expect($issue->refresh())
         ->slug->toBe('original-issue');
 })->with(['confirmed', 'rss']);
+
+it('locks the publish date of a sent issue so delivered links keep working', function () {
+    $publishedAt = now()
+        ->subDay()
+        ->startOfMinute();
+    $issue = NewsletterIssue::query()->create([
+        'title' => 'Sent issue',
+        'slug' => 'sent-issue',
+        'content' => 'Content.',
+        'status' => PublishStatus::Published,
+        'published_at' => $publishedAt,
+        'sent_at' => now(),
+    ]);
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->assertFormFieldDisabled('published_at')
+        ->fillForm(['published_at' => now()->addWeek()])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($issue->refresh())
+        ->published_at->toEqual($publishedAt);
+});
+
+it('keeps the publish date editable on an issue that has not been sent', function () {
+    $issue = NewsletterIssue::query()->create([
+        'title' => 'Unsent issue',
+        'slug' => 'unsent-issue',
+        'content' => 'Content.',
+        'status' => PublishStatus::Draft,
+    ]);
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->assertFormFieldEnabled('published_at');
+});
