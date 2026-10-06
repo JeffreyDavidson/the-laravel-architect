@@ -8,7 +8,7 @@
             This notice explains what The Laravel Architect collects, why it is needed, and the choices available to
             you.
         </p>
-        <p class="mt-4 text-sm text-gray-500 dark:text-gray-500">Last updated August 23, 2026</p>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-500">Last updated October 2, 2026</p>
     </x-hero-section>
 
     <x-page-section>

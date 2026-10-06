@@ -131,6 +131,14 @@ class AppServiceProvider extends ServiceProvider
 
             return $limit->by($ipAddress);
         });
+        // Mail providers send one-click unsubscribes from a few shared addresses, often in a
+        // burst after a send. The signed link already authorizes them, so this only caps abuse.
+        RateLimiter::for('newsletter-unsubscribe', function (Request $request): Limit {
+            $ipAddress = $request->ip();
+            $limit = Limit::perMinute(120);
+
+            return $limit->by($ipAddress);
+        });
         RateLimiter::for('resend-webhook', function (Request $request): Limit {
             $ipAddress = $request->ip();
             $limit = Limit::perMinute(60);

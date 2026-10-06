@@ -48,6 +48,32 @@ it('unsubscribes with a signed one-click post', function () {
         ->toBeFalse();
 });
 
+it('accepts a burst of one-click posts from one mail provider address', function () {
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for(activeSubscriber());
+
+    $statuses = [];
+    foreach (range(1, 30) as $attempt) {
+        $response = $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+        $statuses[] = $response->status();
+    }
+
+    expect(array_unique($statuses))
+        ->toBe([204]);
+});
+
+it('still limits one-click posts from one address', function () {
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for(activeSubscriber());
+    foreach (range(1, 120) as $attempt) {
+        $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+    }
+
+    $response = $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+
+    $response->assertTooManyRequests();
+});
+
 it('rejects unsigned one-click posts', function () {
     $subscriber = activeSubscriber();
 
