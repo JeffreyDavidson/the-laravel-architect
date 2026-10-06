@@ -101,6 +101,7 @@ it('drops the delivery when the subscriber is no longer active', function () {
 });
 
 it('drops the delivery when the issue is no longer published', function (array $attributes) {
+    /** @var array<string, mixed> $attributes */
     Mail::fake();
     $delivery = NewsletterDelivery::factory()
         ->create();
