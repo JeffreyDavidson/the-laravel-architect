@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -73,6 +76,38 @@ it('regenerates an OG image when its category name changes', function () {
 
     $this->get(route('og-image', $post))
         ->assertContent('updated-png');
+});
+
+it('serves OG images to crawlers without starting a session or setting cookies', function () {
+    config()->set('session.driver', 'database');
+    $post = createPublishedPost();
+    $generator = Double::for(OgImageGenerator::class);
+    $generator->expects('generate')
+        ->returns('generated-png');
+    app()->instance(OgImageGenerator::class, $generator);
+
+    $response = get(route('og-image', $post));
+
+    $response
+        ->assertOk()
+        ->assertContent('generated-png')
+        ->assertHeaderMissing('Set-Cookie');
+    expect($response->headers->getCookies())
+        ->toBeEmpty();
+    assertDatabaseCount('sessions', 0);
+});
+
+it('returns not found without a session for a post that is not published', function () {
+    config()->set('session.driver', 'database');
+    $post = createPublishedPost();
+    $post->update(['status' => PublishStatus::Draft]);
+
+    $response = get(route('og-image', $post));
+
+    $response
+        ->assertNotFound()
+        ->assertHeaderMissing('Set-Cookie');
+    assertDatabaseCount('sessions', 0);
 });
 
 it('deletes the cached OG image with its post', function () {
