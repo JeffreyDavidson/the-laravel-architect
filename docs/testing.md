@@ -34,7 +34,7 @@ These names are shared with the mouse28 repository; keep them identical when cha
 | `composer test:architecture` | The Architecture suite |
 | `composer test:type-coverage` | Pest type coverage at a 100% minimum; CI enforces it after the non-browser tests |
 
-The pre-push hook runs `test`, `test:browser`, `test:types`, `test:types:pest`, `test:rector`, and `test:rector:pest` together with the deployment-helper tests.
+The pre-push hook runs `test`, `test:browser`, `test:types`, `test:types:pest`, `test:rector`, and `test:rector:pest` together with the deployment-helper tests. It skips every check when a push only deletes branches or tags, such as `git push origin --delete <branch>`.
 
 PR and push CI audit Composer packages and production JavaScript dependencies only, so a new advisory in a development-only JavaScript package does not fail unrelated pull requests. The `Dependency audit` workflow runs daily (08:43 UTC, and on demand) and audits Composer packages plus production and development JavaScript dependencies; treat its failure as a dependency-update task. `composer check` follows PR CI; run `npx --yes npm@11 audit --include=dev` to check development dependencies locally.
 
