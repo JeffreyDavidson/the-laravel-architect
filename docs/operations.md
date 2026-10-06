@@ -144,7 +144,7 @@ Staging keeps `MAIL_MAILER=log` and never receives production subscribers, so se
 
 The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
 
-Production's database queue worker runs with timeout 60 seconds and 3 tries, like staging's. Recommendation, not current state: also give the Forge worker `--max-time=3600 --memory=128` so it restarts itself hourly and when it grows past 128 MB on the shared 1 GB server. This is an owner-applied Forge setting; it has not been applied, and keeping the timeout below the queue's 90-second retry interval still applies.
+Production's database queue worker runs `queue:work 'database' --sleep=3 --daemon --quiet --timeout=60 --tries=3 --max-time=3600 --memory=128` (owner-applied in Forge and read back on 2026-10-06; it previously ran with `--timeout=90`). Keep the worker timeout several seconds below the queue's 90-second `retry_after`, or a job that runs that long can be reserved again before the first attempt is stopped. `--max-time` and `--memory` make the worker restart itself hourly and when it grows past 128 MB on the shared 1 GB server. Jobs that declare their own timeout (`DeliverNewsletterIssue`, `SendContactInquiryEmails`: 60 seconds) stay below `retry_after` too.
 
 For production, run `php artisan app:verify-production` after loading the release environment and before applying migrations. Stop the deployment if the command reports an unsafe or incomplete setting. Do not force production mail or backup credentials into staging to satisfy this production-specific verifier.
 
