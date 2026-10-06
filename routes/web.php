@@ -7,6 +7,7 @@ use App\Http\Controllers\BlogTagController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterConfirmationController;
+use App\Http\Controllers\NewsletterConfirmedController;
 use App\Http\Controllers\NewsletterIssueController;
 use App\Http\Controllers\NewsletterOneClickUnsubscriptionController;
 use App\Http\Controllers\NewsletterRssFeedController;
@@ -55,6 +56,7 @@ Route::middleware([EnsureValidNewsletterConfirmationLink::class, 'throttle:newsl
         Route::post('/newsletter/confirm/{subscriber}/{token}', [NewsletterConfirmationController::class, 'store'])
             ->name('newsletter.confirm.store');
     });
+Route::get('/newsletter/confirmed', NewsletterConfirmedController::class)->name('newsletter.confirmed');
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])
     ->middleware(['signed', 'throttle:newsletter-confirm'])
     ->name('newsletter.unsubscribe');
