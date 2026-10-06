@@ -346,6 +346,19 @@ it('does not count rejected or honeypot submissions against the rate limit', fun
     'honeypot' => ['website', 'filled-by-bot', true],
 ]);
 
+it('limits every contact attempt from one address to 10 a minute, before Turnstile is called', function () {
+    fakeTurnstileVerification(...array_fill(0, 11, false));
+    foreach (range(1, 10) as $attempt) {
+        submitContactForm(['cf-turnstile-response' => 'junk-token'])
+            ->assertSessionHasErrors('cf-turnstile-response');
+    }
+
+    $response = submitContactForm(['cf-turnstile-response' => 'junk-token']);
+
+    $response->assertTooManyRequests();
+    Http::assertSentCount(10);
+});
+
 it('limits each ip address separately', function () {
     fakeTurnstileVerification(true, true, true, true);
 

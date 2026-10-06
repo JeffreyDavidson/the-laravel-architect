@@ -13,9 +13,8 @@ it('exports the public archive to the requested absolute path', function () {
         ]);
     app()->instance(PublicContentArchiveExporter::class, $archive);
 
-    $directory = sys_get_temp_dir().'/the-laravel-architect-tests';
+    $directory = sys_get_temp_dir().'/the-laravel-architect-tests-'.bin2hex(random_bytes(6));
     $path = $directory.'/exports/public-content.json';
-    File::deleteDirectory($directory);
 
     try {
         $this->artisanCommand('content:export-public', ['path' => $path])
