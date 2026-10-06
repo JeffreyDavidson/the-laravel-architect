@@ -124,6 +124,26 @@ it('filters search results by content type and highlights matching text', functi
         ->assertSeeHtml('name="type"');
 });
 
+it('escapes HTML in result titles and descriptions and keeps entities whole', function () {
+    Project::query()->create([
+        'title' => '<b>Laravel</b> Q&A',
+        'slug' => 'laravel-q-and-a',
+        'description' => '<script>alert(1)</script> Laravel answers',
+        'status' => PublishStatus::Published,
+    ]);
+
+    $response = get(route('search', ['q' => 'Laravel']));
+    $entityQueryResponse = get(route('search', ['q' => 'a']));
+
+    $response->assertOk()
+        ->assertSeeHtml('&lt;b&gt;<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark>&lt;/b&gt; Q&amp;A')
+        ->assertDontSeeHtml('<b>Laravel</b>')
+        ->assertDontSeeHtml('<script>alert(1)</script>');
+    $entityQueryResponse->assertOk()
+        ->assertSeeHtml('Q&amp;<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">A</mark>')
+        ->assertDontSeeHtml('&<mark');
+});
+
 it('rejects an unknown search content type', function () {
     $this->get(route('search', ['q' => 'Laravel', 'type' => 'unknown']))
         ->assertNotFound();

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\Content\PreviewUrlGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
+use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\get;
 
@@ -82,17 +83,15 @@ it('renders signed previews for unpublished content', function () {
         ->assertSee($issue->title);
 });
 
-it('rejects unsigned preview URLs', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Private Draft',
-        'slug' => 'private-draft',
-        'content' => 'Not public.',
-        'status' => PublishStatus::Draft,
-    ]);
+it('rejects unsigned preview URLs without revealing whether the draft exists', function (string $type, string $routeName) {
+    $draft = PublishableFixtures::ready($type);
 
-    $this->get(route('preview.newsletter-issue', $issue))
-        ->assertForbidden();
-});
+    $existingDraft = get(route($routeName, $draft->slug));
+    $missingDraft = get(route($routeName, 'missing-draft'));
+
+    $existingDraft->assertForbidden();
+    $missingDraft->assertForbidden();
+})->with('preview routes');
 
 it('shows a rejected preview URL the branded forbidden page', function () {
     $issue = NewsletterIssue::query()->create([
@@ -114,20 +113,18 @@ it('shows a rejected preview URL the branded forbidden page', function () {
         ->assertDontSeeText('Private Draft');
 });
 
-it('rejects expired preview URLs', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Expired Draft',
-        'slug' => 'expired-draft',
-        'content' => 'Not public.',
-        'status' => PublishStatus::Draft,
-    ]);
+it('rejects expired preview URLs', function (string $type, string $routeName) {
+    $draft = PublishableFixtures::ready($type);
+    $expiredUrl = URL::temporarySignedRoute($routeName, now()->subMinute(), [$draft->slug]);
 
-    $expiredUrl = URL::temporarySignedRoute(
-        'preview.newsletter-issue',
-        now()->subMinute(),
-        ['newsletterIssue' => $issue],
-    );
+    $response = get($expiredUrl);
 
-    $this->get($expiredUrl)
-        ->assertForbidden();
-});
+    $response->assertForbidden();
+})->with('preview routes');
+
+dataset('preview routes', [
+    'post' => ['post', 'preview.post'],
+    'project' => ['project', 'preview.project'],
+    'episode' => ['episode', 'preview.episode'],
+    'newsletter issue' => ['newsletter issue', 'preview.newsletter-issue'],
+]);

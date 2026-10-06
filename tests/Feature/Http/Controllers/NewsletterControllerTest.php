@@ -396,6 +396,36 @@ it('rejects unsigned unsubscribe requests', function () {
         ->toBeNull();
 });
 
+it('rejects an unsigned unsubscribe link without revealing whether the subscriber exists', function (string $method, string $routeName) {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+    ]);
+
+    $existingSubscriber = call($method, route($routeName, $subscriber));
+    $missingSubscriber = call($method, route($routeName, $subscriber->id + 1));
+
+    $existingSubscriber->assertForbidden();
+    $missingSubscriber->assertForbidden();
+})->with([
+    'unsubscribe page' => ['GET', 'newsletter.unsubscribe'],
+    'unsubscribe form' => ['DELETE', 'newsletter.unsubscribe.store'],
+    'one-click unsubscribe' => ['POST', 'newsletter.unsubscribe.oneClick'],
+]);
+
+it('keeps the unsubscribe page out of every cache', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verified_at' => now(),
+    ]);
+    $url = app(UnsubscribeUrlGenerator::class)
+        ->for($subscriber);
+
+    $response = $this->get($url);
+
+    $response->assertHeader('Cache-Control', 'no-store, private');
+});
+
 it('rejects expired unsubscribe links', function () {
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
@@ -412,6 +442,18 @@ it('rejects expired unsubscribe links', function () {
     $subscriber->refresh();
     expect($subscriber->unsubscribed_at)
         ->toBeNull();
+});
+
+it('limits newsletter sign-ups to 5 an hour from one address', function () {
+    foreach (range(1, 5) as $attempt) {
+        post(route('newsletter.subscribe'), ['email' => "reader{$attempt}@example.com"])
+            ->assertRedirect();
+    }
+
+    $response = post(route('newsletter.subscribe'), ['email' => 'reader6@example.com']);
+
+    $response->assertTooManyRequests();
+    Mail::assertQueued(ConfirmNewsletterSubscription::class, 5);
 });
 
 it('does not disclose whether an email is already subscribed', function () {

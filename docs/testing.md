@@ -23,7 +23,7 @@ These names are shared with the mouse28 repository; keep them identical when cha
 
 | Script | Runs |
 | --- | --- |
-| `composer check` | Every gate in CI order: Composer validate and audit, npm audit of production dependencies (`--omit=dev`, matching PR CI), deployment-helper tests, `test:lint`, method-chain check, frontend formatting, `test:filament`, `test:types`, `test:types:pest`, `test:rector`, `test:rector:pest`, `test`, `test:type-coverage`, asset build, asset budgets, then `test:browser` |
+| `composer check` | Every gate in CI order: Composer validate, deployment-helper tests, Composer audit, npm audit of production dependencies (`--omit=dev`, matching PR CI), `test:lint`, method-chain check, `test:types`, `test:types:pest`, `test:rector`, `test:rector:pest`, `test:filament`, asset build, asset budgets, frontend formatting, `test`, `test:type-coverage`, then `test:browser`. Assets are built before `test` because some tests read `public/build/manifest.json` |
 | `composer lint` / `composer test:lint` | Pint (Blade included): fix / check only |
 | `composer rector` / `composer rector:pest` | Rector fixes for the application / Pest configuration |
 | `composer test:rector` / `composer test:rector:pest` | Rector dry runs |
