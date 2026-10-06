@@ -130,6 +130,12 @@ has no stable Packagist release. Keep its exact resolved commit in
 `composer.lock`; review that commit intentionally before updating it rather than
 running an unattended dependency refresh.
 
+`package.json` overrides `@tailwindcss/typography`'s `postcss-selector-parser`
+to `^7.1.6`, because typography 0.5.20 pins 6.0.10, which has a CPU-exhaustion
+advisory (GHSA-rj75-hqrm-r3gf) that fails CI's `npm audit --include=dev`. The
+built CSS was byte-identical with and without the override. Remove the override
+once a typography release depends on 7.1.6 or later.
+
 ## Hotfixes and rollback
 
 If `main` matches the deployed revision, a focused fix follows the normal
