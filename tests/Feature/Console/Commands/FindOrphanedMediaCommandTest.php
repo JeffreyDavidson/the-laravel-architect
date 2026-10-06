@@ -1,7 +1,13 @@
 <?php
 
 use App\Enums\PublishStatus;
+use App\Models\Episode;
+use App\Models\NewsletterIssue;
+use App\Models\Podcast;
+use App\Models\Post;
 use App\Models\Project;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -118,3 +124,68 @@ it('succeeds when all stored files are referenced', function () {
         ->expectsOutputToContain('Found 0 orphaned files')
         ->assertSuccessful();
 });
+
+it('keeps media referenced by trashed content when deleting orphans', function (Closure $createTrashedContent, string $path) {
+    foreach ([$path, 'projects/unused.png'] as $file) {
+        Storage::disk('public')->put($file, 'file');
+        touch(Storage::disk('public')->path($file), now()->subDays(2)
+            ->getTimestamp());
+    }
+
+    Model::withoutEvents(fn () => $createTrashedContent($path));
+
+    $this->artisanCommand('media:find-orphans', ['--delete' => true])
+        ->expectsOutputToContain('Deleted: projects/unused.png')
+        ->doesntExpectOutputToContain($path)
+        ->expectsOutputToContain('Found 1 orphaned files')
+        ->expectsOutputToContain('Deleted 1 orphaned files')
+        ->assertSuccessful();
+
+    Storage::disk('public')->assertExists($path);
+    Storage::disk('public')->assertMissing('projects/unused.png');
+})->with([
+    'project featured image' => [
+        fn (string $path) => Project::query()
+            ->create(['title' => 'Project', 'slug' => 'project', 'description' => 'Description', 'status' => PublishStatus::Draft, 'featured_image_path' => $path])
+            ->delete(),
+        'projects/trashed.png',
+    ],
+    'post featured image' => [
+        fn (string $path) => Post::query()
+            ->create([
+                'title' => 'Post', 'slug' => 'post', 'content' => 'Content', 'status' => PublishStatus::Draft,
+                'user_id' => User::factory()->create()
+                    ->id, 'featured_image_path' => $path,
+            ])
+            ->delete(),
+        'posts/trashed.png',
+    ],
+    'post embedded image' => [
+        fn (string $path) => Post::query()
+            ->create([
+                'title' => 'Post', 'slug' => 'post', 'content' => "![Screenshot](/storage/{$path})", 'status' => PublishStatus::Draft,
+                'user_id' => User::factory()->create()
+                    ->id,
+            ])
+            ->delete(),
+        'posts/embedded.png',
+    ],
+    'podcast cover image' => [
+        fn (string $path) => Podcast::query()
+            ->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description', 'cover_image_path' => $path])
+            ->delete(),
+        'podcasts/trashed.png',
+    ],
+    'episode featured image' => [
+        fn (string $path) => Episode::query()
+            ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description', 'status' => PublishStatus::Draft, 'featured_image_path' => $path])
+            ->delete(),
+        'episodes/images/trashed.png',
+    ],
+    'newsletter issue embedded image' => [
+        fn (string $path) => NewsletterIssue::query()
+            ->create(['title' => 'Issue', 'slug' => 'issue', 'content' => "![Screenshot](/storage/{$path})", 'status' => PublishStatus::Draft])
+            ->delete(),
+        'posts/newsletter.png',
+    ],
+]);
