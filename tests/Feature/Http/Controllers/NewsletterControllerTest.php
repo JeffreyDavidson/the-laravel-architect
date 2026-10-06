@@ -150,6 +150,27 @@ it('renders the confirmation page in its confirming state with a no-script butto
         ->assertDontSeeHtml('>Confirm your subscription</h1>');
 });
 
+it('titles the confirmation page tab with the confirming state', function () {
+    $token = 'valid-confirmation-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $response = $this->get($url);
+
+    $response->assertOk()
+        ->assertSee('<title>Confirming Your Subscription', false)
+        ->assertDontSee('<title>Confirm Your Subscription', false);
+});
+
 it('submits only the confirmation page by itself, never the unsubscribe page', function () {
     $token = 'valid-confirmation-token';
     $subscriber = Subscriber::query()->create([

@@ -16,7 +16,7 @@ class NewsletterConfirmationViewModel
             'actionUrl' => $actionUrl,
             'subscriber' => $subscriber,
             'seoSource' => new SEOData(
-                title: 'Confirm Your Subscription',
+                title: 'Confirming Your Subscription',
                 description: 'Confirm your subscription to The Laravel Architect newsletter.',
             )->markAsNoindex(),
         ];
