@@ -93,7 +93,73 @@ it('shows an explicit confirmation step without changing subscriber state', func
         ->toBeNull();
 });
 
-it('confirms a subscriber with an explicit post to a valid signed link', function () {
+it('keeps the confirmation page out of every cache, including the back-forward cache', function () {
+    $token = 'valid-confirmation-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $response = $this->get($url);
+
+    $response->assertHeader('Cache-Control', 'no-store, private');
+});
+
+it('submits only the confirmation page by itself, never the unsubscribe page', function () {
+    $token = 'valid-confirmation-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+        'verified_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $confirmUrl = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+    $unsubscribeUrl = app(UnsubscribeUrlGenerator::class)
+        ->for($subscriber);
+
+    $confirmPage = $this->get($confirmUrl);
+    $unsubscribePage = $this->get($unsubscribeUrl);
+
+    $confirmPage->assertSeeHtml('data-newsletter-confirm');
+    $unsubscribePage->assertOk()
+        ->assertDontSeeHtml('data-newsletter-confirm');
+});
+
+it('limits confirmation link requests to 10 a minute from one address', function () {
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => 'valid-token'],
+    );
+    foreach (range(1, 10) as $attempt) {
+        $this->get($url)
+            ->assertOk();
+    }
+
+    $response = $this->get($url);
+
+    $response->assertTooManyRequests();
+});
+
+it('confirms a subscriber with an explicit post to a valid signed link and redirects to the confirmed page', function () {
     $token = 'valid-confirmation-token';
     $subscriber = Subscriber::query()->create([
         'email' => 'reader@example.com',
@@ -109,8 +175,7 @@ it('confirms a subscriber with an explicit post to a valid signed link', functio
     );
 
     $this->post($url)
-        ->assertRedirect(route('home').'#newsletter-form')
-        ->assertSessionHas('newsletter_success');
+        ->assertRedirect(route('newsletter.confirmed'));
 
     $subscriber->refresh();
     $tokenHash = $subscriber->verification_token_hash;

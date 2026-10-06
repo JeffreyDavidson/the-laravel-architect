@@ -196,13 +196,10 @@
                         </td>
                     </tr>
                 </table>
-                <!--[if mso]> <![endif]-->
+                {{-- Echoed so the Blade formatter cannot move these closing tags out of the Outlook-only comment. --}}
+                {!! '<!--[if mso]></td></tr></table><![endif]-->' !!}
             </td>
         </tr>
-    </table>
-
-    </td>
-    </tr>
     </table>
 </body>
 </html>

@@ -88,6 +88,11 @@ const budgets = [
         maxGzipBytes: 2 * 1024,
     },
     {
+        entry: 'resources/js/pages/newsletter-confirm.js',
+        label: 'Newsletter confirmation auto-submit',
+        maxGzipBytes: 1 * 1024,
+    },
+    {
         entry: 'resources/js/pages/podcast.js',
         label: 'Podcast page interaction',
         maxGzipBytes: 3 * 1024,

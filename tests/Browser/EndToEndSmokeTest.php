@@ -586,9 +586,19 @@ it('shows the newsletter error in place and keeps what was typed', function (): 
 it('keeps the footer at the bottom of a short page', function (string $device): void {
     $this->withVite();
 
-    $token = 'footer-check-token';
+    $page = $this->browserPage(route('newsletter.confirmed'), $device);
+
+    $page->assertSee('You’re confirmed')
+        ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
+        ->assertNoJavaScriptErrors();
+})->with(['desktop', 'mobile']);
+
+it('confirms a newsletter subscription from the email link without a click', function (): void {
+    $this->withVite();
+
+    $token = 'one-click-token';
     $subscriber = Subscriber::query()->create([
-        'email' => 'footer-check@example.test',
+        'email' => 'one-click@example.test',
         'subscribed_at' => now(),
     ]);
     $subscriber->verification_token_hash = hash('sha256', $token);
@@ -599,12 +609,16 @@ it('keeps the footer at the bottom of a short page', function (string $device): 
         ['subscriber' => $subscriber, 'token' => $token],
     );
 
-    $page = $this->browserPage($url, $device);
+    $page = $this->browserPage($url, 'desktop');
 
-    $page->assertSee('Confirm your subscription')
-        ->assertScript("document.querySelector('footer').getBoundingClientRect().bottom >= window.innerHeight - 1")
+    $page->assertScript("window.location.pathname === '/newsletter/confirmed'")
+        ->assertSee('You’re confirmed')
         ->assertNoJavaScriptErrors();
-})->with(['desktop', 'mobile']);
+    $subscriber->refresh();
+    expect($subscriber->verified_at)
+        ->not
+        ->toBeNull();
+});
 
 it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
     config()->set('services.turnstile.site_key', 'test-site-key');
