@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\PublishStatus;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -102,7 +103,7 @@ class ScaleTestContentWorkflow
                     'content' => $this->articleContent($number),
                     'category_id' => $categoryId,
                     'user_id' => $authorId,
-                    'status' => 'published',
+                    'status' => PublishStatus::Published->value,
                     'published_at' => $this->publishedAt($now, self::POST_COUNT - $number),
                     'created_at' => $now,
                     'updated_at' => $now,
@@ -128,7 +129,7 @@ class ScaleTestContentWorkflow
                     'tech_stack' => json_encode(array_slice($technologies, 0, 1 + ($number % count($technologies))), JSON_THROW_ON_ERROR),
                     'is_featured' => false,
                     'sort_order' => 1000 + $number,
-                    'status' => 'published',
+                    'status' => PublishStatus::Published->value,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
@@ -153,7 +154,7 @@ class ScaleTestContentWorkflow
                     'transcript' => $this->episodeTranscript($number),
                     'youtube_url' => null,
                     'duration_seconds' => (25 + ($number % 20)) * 60,
-                    'status' => 'published',
+                    'status' => PublishStatus::Published->value,
                     'published_at' => $this->publishedAt($now, self::EPISODE_COUNT - $number),
                     'created_at' => $now,
                     'updated_at' => $now,
