@@ -66,7 +66,7 @@ it('builds a paginated tag archive payload', function () {
             ->relationLoaded('author'))
         ->toBeTrue()
         ->and($data['seoSource']->title)
-        ->toBe('Boundaries Articles — Page 2')
+        ->toBe('Articles Tagged Boundaries — Page 2')
         ->and($data['seoSource']->description)
         ->toBe(
             'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',

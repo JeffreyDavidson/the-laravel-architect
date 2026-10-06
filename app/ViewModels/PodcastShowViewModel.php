@@ -46,6 +46,7 @@ class PodcastShowViewModel
             'seoSource' => new SEOData(
                 title: $title,
                 description: $description,
+                image: $podcast->cover_image_url,
                 url: $canonicalUrl,
                 canonical_url: $canonicalUrl,
             ),

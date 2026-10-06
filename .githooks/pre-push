@@ -6,8 +6,15 @@ if [[ "${SKIP_PRE_PUSH_CHECKS:-0}" == "1" ]]; then
     exit 0
 fi
 
+refs=$(cat)
+
+if [[ -n "$refs" ]] && ! grep -Evq '^[^ ]+ 0+ ' <<< "$refs"; then
+    echo "pre-push: only deleting refs; skipping checks."
+    exit 0
+fi
+
 while read -r local_ref local_sha remote_ref remote_sha; do
-    [[ "$local_sha" == 0000000000000000000000000000000000000000 ]] && continue
+    [[ -z "$local_sha" || "$local_sha" =~ ^0+$ ]] && continue
     if [[ "$remote_sha" == 0000000000000000000000000000000000000000 ]]; then
         commits=$(git rev-list "$local_sha" --not --remotes=origin)
         if [[ -n "$commits" ]]; then
@@ -27,7 +34,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
         done <<< "$files"
         php scripts/check-method-chaining.php "${changed_files[@]}"
     fi
-done
+done <<< "$refs"
 
 echo "Running project pre-push checks..."
 npm run test:deployment

@@ -15,19 +15,19 @@ pest()->use(RefreshDatabase::class);
 
 it('refreshes responsive variants when generation overwrites the same source path', function () {
     Storage::fake('public');
-    $path = 'posts/same.webp';
-    Storage::disk('public')->put($path, UploadedFile::fake()->image('same.webp', 1280, 8)
+    $path = 'featured-images/same.png';
+    Storage::disk('public')->put($path, UploadedFile::fake()->image('same.png', 1280, 8)
         ->getContent());
     Post::query()->create([
         'title' => 'Same path', 'slug' => 'same-path', 'content' => 'Content',
         'user_id' => User::factory()->create()
             ->id, 'featured_image_path' => $path,
     ]);
-    Storage::disk('public')->assertExists('posts/responsive/same-1280.webp');
+    Storage::disk('public')->assertExists('featured-images/responsive/same-1280.webp');
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
         ->resolves(function () use ($path): string {
-            Storage::disk('public')->put($path, UploadedFile::fake()->image('same.webp', 640, 8)
+            Storage::disk('public')->put($path, UploadedFile::fake()->image('same.png', 640, 8)
                 ->getContent());
 
             return $path;
@@ -37,8 +37,8 @@ it('refreshes responsive variants when generation overwrites the same source pat
     $this->artisanCommand('posts:generate-images', ['--force' => true])
         ->assertSuccessful();
 
-    Storage::disk('public')->assertExists('posts/responsive/same-640.webp');
-    Storage::disk('public')->assertMissing('posts/responsive/same-1280.webp');
+    Storage::disk('public')->assertExists('featured-images/responsive/same-640.webp');
+    Storage::disk('public')->assertMissing('featured-images/responsive/same-1280.webp');
 });
 
 it('succeeds without invoking the generator when no posts need images', function () {
@@ -88,7 +88,7 @@ it('generates and persists images only for posts without one by default', functi
         ->toBe('featured-images/existing.png');
 });
 
-it('regenerates and persists every post image when forced', function () {
+it('regenerates and persists generated and missing post images when forced', function () {
     $user = User::factory()->create();
     $firstPost = Post::query()->create([
         'title' => 'First Post',
@@ -126,6 +126,41 @@ it('regenerates and persists every post image when forced', function () {
         ->and($secondPost->refresh()
             ->featured_image_path)
         ->toBe('featured-images/new-second.png');
+});
+
+it('keeps uploaded post images when forced', function () {
+    Storage::fake('public');
+    $uploadPath = 'posts/upload.webp';
+    Storage::disk('public')->put($uploadPath, UploadedFile::fake()->image('upload.webp', 640, 8)
+        ->getContent());
+    $user = User::factory()->create();
+    $uploadedImage = Post::query()->create([
+        'title' => 'Uploaded Image',
+        'slug' => 'uploaded-image',
+        'content' => 'Content',
+        'user_id' => $user->id,
+        'featured_image_path' => $uploadPath,
+    ]);
+    $missingImage = Post::query()->create([
+        'title' => 'Missing Image',
+        'slug' => 'missing-image',
+        'content' => 'Content',
+        'user_id' => $user->id,
+    ]);
+
+    $generator = Double::for(FeaturedImageGenerator::class);
+    $generator->expects('generate')
+        ->with(Argument::satisfies(fn (mixed $post): bool => $post instanceof Post && $post->is($missingImage)))
+        ->returns('featured-images/missing-image.png');
+    app()->instance(FeaturedImageGenerator::class, $generator);
+
+    $this->artisanCommand('posts:generate-images', ['--force' => true])
+        ->expectsOutput('Done! Generated images for 1 posts.')
+        ->assertSuccessful();
+
+    expect($uploadedImage->refresh()
+        ->featured_image_path)->toBe($uploadPath);
+    Storage::disk('public')->assertExists($uploadPath);
 });
 
 it('propagates generator failures without persisting an image path', function () {

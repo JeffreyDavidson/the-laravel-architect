@@ -8,11 +8,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\freezeSecond;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-beforeEach(fn () => actingAs(User::factory()->create(['is_admin' => true])));
+// Frozen so the review dates and the cutoff share one day, even across midnight.
+beforeEach(function () {
+    freezeSecond();
+    actingAs(User::factory()->create(['is_admin' => true]));
+});
 
 it('saves the official source with its review date', function () {
     $post = PublishableFixtures::readyPost();

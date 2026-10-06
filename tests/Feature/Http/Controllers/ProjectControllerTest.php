@@ -308,3 +308,38 @@ it('loads only the related projects displayed on a project page', function () {
         ->assertDontSee('Related Project 5')
         ->assertDontSee('Draft Project');
 });
+
+it('shares a project featured image in social cards', function () {
+    Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
+    $project = Project::query()->create([
+        'title' => 'Project showcase',
+        'description' => 'An uploaded product screenshot.',
+        'featured_image_path' => 'projects/showcase.png',
+        'status' => PublishStatus::Published,
+    ]);
+    $imageUrl = $project->featured_image_url;
+    if ($imageUrl === null) {
+        throw new RuntimeException('Expected the uploaded project image URL.');
+    }
+
+    $response = $this->get(route('projects.show', $project));
+
+    $response->assertOk()
+        ->assertSeeHtml("<meta property=\"og:image\" content=\"{$imageUrl}\">")
+        ->assertSeeHtml('<meta name="twitter:card" content="summary_large_image">')
+        ->assertDontSeeHtml('logo-color-black-bg.png');
+});
+
+it('shares the site image for a project without a featured image', function () {
+    $project = Project::query()->create([
+        'title' => 'Project without artwork',
+        'description' => 'A project with no uploaded image.',
+        'status' => PublishStatus::Published,
+    ]);
+
+    $response = $this->get(route('projects.show', $project));
+
+    $response->assertOk()
+        ->assertSeeHtml('<meta property="og:image" content="'.secure_url('/images/logo-color-black-bg.png').'">')
+        ->assertSeeHtml('<meta name="twitter:card" content="summary">');
+});

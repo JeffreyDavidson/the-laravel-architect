@@ -30,7 +30,7 @@ class BlogTagViewModel
         $canonicalUrl = $posts->onFirstPage()
             ? route('blog.tag', $tag)
             : route('blog.tag', ['tag' => $tag, 'page' => $posts->currentPage()]);
-        $title = "{$tag->name} Articles";
+        $title = "Articles Tagged {$tag->name}";
         $description = "Articles tagged with {$tag->name} on The Laravel Architect.";
 
         if (! $posts->onFirstPage()) {

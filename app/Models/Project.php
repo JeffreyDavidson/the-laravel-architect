@@ -59,6 +59,7 @@ class Project extends Model implements Publishable
         return new SEOData(
             title: $this->title,
             description: $this->description,
+            image: $this->featured_image_url,
         );
     }
 

@@ -55,6 +55,23 @@ it('queues one delivery for each active subscriber and marks the issue sent', fu
     $this->assertDatabaseCount('jobs', 1);
 });
 
+it('leaves the issue unsent when there are no active subscribers', function () {
+    subscriberWithState('unconfirmed@example.com', confirmed: false);
+    $issue = newsletterIssueToSend();
+
+    $queued = app(SendNewsletterIssue::class)
+        ->handle($issue);
+
+    $issue->refresh();
+    $wasSent = $issue->wasSent();
+    expect($queued)
+        ->toBe(0)
+        ->and($wasSent)
+        ->toBeFalse();
+    $this->assertDatabaseCount('newsletter_deliveries', 0);
+    $this->assertDatabaseCount('jobs', 0);
+});
+
 it('refuses issues that cannot be sent', function (Closure $createIssue, string $message) {
     subscriberWithState('active@example.com', confirmed: true);
     $issue = $createIssue();

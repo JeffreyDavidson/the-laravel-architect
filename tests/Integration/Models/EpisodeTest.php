@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
+use Illuminate\Support\Carbon;
 
 it('formats an episode code when its optional episode number is missing', function () {
     $episode = new Episode([
@@ -26,7 +27,7 @@ it('generates SEO data when its podcast is missing', function () {
         ->toBe('An episode without an available podcast.');
 });
 
-it('knows whether it is publicly published', function (?PublishStatus $status, mixed $publishedAt, bool $expected) {
+it('knows whether it is publicly published', function (?PublishStatus $status, ?Carbon $publishedAt, bool $expected) {
     $episode = new Episode([
         'status' => $status,
         'published_at' => $publishedAt,
@@ -34,10 +35,10 @@ it('knows whether it is publicly published', function (?PublishStatus $status, m
 
     expect($episode->isPublished())->toBe($expected);
 })->with([
-    [PublishStatus::Published, now()->subMinute(), true],
-    [PublishStatus::Published, now()->addMinute(), false],
+    [PublishStatus::Published, fn (): Carbon => now()->subMinute(), true],
+    [PublishStatus::Published, fn (): Carbon => now()->addMinute(), false],
     [PublishStatus::Published, null, false],
-    [PublishStatus::Draft, now()->subMinute(), false],
+    [PublishStatus::Draft, fn (): Carbon => now()->subMinute(), false],
 ]);
 
 it('turns only a Transistor share URL into its embed URL', function (?string $url, ?string $embedUrl) {

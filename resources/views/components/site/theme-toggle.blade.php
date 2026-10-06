@@ -10,7 +10,8 @@
         'dark:hover:bg-brand-800/50 rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => ! $mobile,
     ])
     title="Toggle theme"
-    aria-label="Toggle theme"
+    {{-- The mobile toggle is named by its visible label. --}}
+    @if (! $mobile) aria-label="Toggle theme" @endif
     aria-pressed="false"
 >
     <svg

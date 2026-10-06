@@ -56,6 +56,9 @@ class SubscribersTable
                         $status->scope($query);
                     }),
             ])
+            ->checkIfRecordIsSelectableUsing(
+                fn (Subscriber $record): bool => ! $record->isSuppressed(),
+            )
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()

@@ -86,7 +86,7 @@
                     :content="$post->content"
                     heading-ids
                     data-article-prose
-                    class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]"
+                    class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-action dark:prose-a:text-brand-300 prose-code:text-brand-300 max-w-[70ch]"
                 />
 
                 @if ($post->tags->count())
@@ -158,7 +158,7 @@
                                         <p class="mt-3 line-clamp-2 text-base text-pretty text-gray-600 dark:text-gray-400">
                                             {{ $related->excerpt }}
                                         </p>
-                                        <div class="mt-5 text-sm text-gray-500">
+                                        <div class="mt-5 text-sm text-gray-500 dark:text-gray-400">
                                             {{ \App\Presenters\PostPresenter::from($related)->readingTime() }} min read
                                         </div>
                                     </div>

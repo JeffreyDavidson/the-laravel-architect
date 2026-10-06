@@ -31,8 +31,13 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
 use App\Http\Middleware\EnsureValidNewsletterConfirmationLink;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 // Pages
 Route::get('/', HomeController::class)->name('home');
@@ -60,8 +65,9 @@ Route::middleware([EnsureValidNewsletterConfirmationLink::class, 'throttle:newsl
             ->name('newsletter.confirm.store');
     });
 Route::get('/newsletter/confirmed', NewsletterConfirmedController::class)->name('newsletter.confirmed');
+// Shows the subscriber's email and a CSRF token, so it is never cached either.
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])
-    ->middleware(['signed', 'throttle:newsletter-unsubscribe'])
+    ->middleware(['signed', 'throttle:newsletter-unsubscribe', 'cache.headers:no_store;private'])
     ->name('newsletter.unsubscribe');
 Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])
     ->middleware(['signed', 'throttle:newsletter-unsubscribe'])
@@ -70,7 +76,10 @@ Route::post('/newsletter/unsubscribe/{subscriber}', NewsletterOneClickUnsubscrip
     ->middleware(['signed', 'throttle:newsletter-unsubscribe'])
     ->name('newsletter.unsubscribe.oneClick');
 Route::get('/newsletter', [NewsletterIssueController::class, 'index'])->name('newsletter.index');
-Route::get('/newsletter/rss', NewsletterRssFeedController::class)->name('newsletter.rss');
+// Feed readers poll this: no session, so a hit writes no session row or cookie.
+Route::get('/newsletter/rss', NewsletterRssFeedController::class)
+    ->withoutMiddleware('web')
+    ->name('newsletter.rss');
 Route::get('/newsletter/{newsletterIssue:slug}', [NewsletterIssueController::class, 'show'])->name('newsletter.issue');
 Route::get('/uses', UsesController::class)->name('uses');
 Route::get('/search', SearchController::class)
@@ -89,7 +98,10 @@ Route::middleware('signed')
     });
 
 // RSS & Sitemap
-Route::get('/rss', RssFeedController::class)->name('rss');
+// Feed readers and crawlers poll /rss and /sitemap.xml: no session, so a hit writes no session row or cookie.
+Route::get('/rss', RssFeedController::class)
+    ->withoutMiddleware('web')
+    ->name('rss');
 // Served like a static file (no session cookies, publicly cacheable) so the CDN keeps it.
 Route::get('/robots.txt', RobotsController::class)
     ->withoutMiddleware('web')
@@ -99,7 +111,9 @@ Route::post('/webhooks/resend', ResendWebhookController::class)
     ->withoutMiddleware('web')
     ->middleware('throttle:resend-webhook')
     ->name('webhooks.resend');
-Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/sitemap.xml', SitemapController::class)
+    ->withoutMiddleware('web')
+    ->name('sitemap');
 
 // Blog
 Route::get('/blog', [PostController::class, 'index'])->name('blog.index');
@@ -108,7 +122,17 @@ Route::get('/blog/category/{category:slug}', BlogCategoryController::class)->nam
 Route::get('/blog/tag/{tag:slug}', BlogTagController::class)->name('blog.tag');
 
 // OG Images
-Route::get('/og-image/{post:slug}', OgImageController::class)->name('og-image');
+// Fetched by social crawlers: no session row or cookie. Excluding the whole `web` group
+// would also drop the {post:slug} binding, so only the session middleware is removed.
+Route::get('/og-image/{post:slug}', OgImageController::class)
+    ->withoutMiddleware([
+        EncryptCookies::class,
+        AddQueuedCookiesToResponse::class,
+        StartSession::class,
+        ShareErrorsFromSession::class,
+        PreventRequestForgery::class,
+    ])
+    ->name('og-image');
 
 // Podcasts
 Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcast.index');

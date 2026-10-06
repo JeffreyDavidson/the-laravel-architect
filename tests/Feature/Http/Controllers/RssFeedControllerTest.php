@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
 use function Pest\Laravel\travelTo;
 
@@ -123,3 +124,19 @@ it('keeps the UTC publication instant in feed dates whatever the display timezon
         ->assertOk()
         ->assertSeeHtml('<pubDate>Tue, 06 Oct 2026 01:00:00 +0000</pubDate>');
 });
+
+it('serves feeds to feed readers without starting a session or setting cookies', function (string $routeName) {
+    config()->set('session.driver', 'database');
+
+    $response = get(route($routeName));
+
+    $response
+        ->assertOk()
+        ->assertHeaderMissing('Set-Cookie');
+    expect($response->headers->getCookies())
+        ->toBeEmpty();
+    assertDatabaseCount('sessions', 0);
+})->with([
+    'site feed' => 'rss',
+    'newsletter feed' => 'newsletter.rss',
+]);

@@ -49,3 +49,34 @@ it('configures a private S3-compatible disk for Backblaze backups', function () 
             'report' => true,
         ]);
 });
+
+it('backs up the default database connection when DB_CONNECTION is unset', function () {
+    $environment = [
+        'getenv' => getenv('DB_CONNECTION'),
+        '_ENV' => $_ENV['DB_CONNECTION'] ?? null,
+        '_SERVER' => $_SERVER['DB_CONNECTION'] ?? null,
+    ];
+    putenv('DB_CONNECTION');
+    unset($_ENV['DB_CONNECTION'], $_SERVER['DB_CONNECTION']);
+
+    try {
+        $backup = require config_path('backup.php');
+        $database = require config_path('database.php');
+    } finally {
+        if (is_string($environment['getenv'])) {
+            putenv("DB_CONNECTION={$environment['getenv']}");
+        }
+
+        if ($environment['_ENV'] !== null) {
+            $_ENV['DB_CONNECTION'] = $environment['_ENV'];
+        }
+
+        if ($environment['_SERVER'] !== null) {
+            $_SERVER['DB_CONNECTION'] = $environment['_SERVER'];
+        }
+    }
+
+    expect(data_get($backup, 'backup.source.databases'))
+        ->toBe([data_get($database, 'default')])
+        ->toBe(['sqlite']);
+});

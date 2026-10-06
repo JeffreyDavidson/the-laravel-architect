@@ -23,7 +23,7 @@ These names are shared with the mouse28 repository; keep them identical when cha
 
 | Script | Runs |
 | --- | --- |
-| `composer check` | Every gate in CI order: Composer validate and audit, npm audit of production dependencies (`--omit=dev`, matching PR CI), deployment-helper tests, `test:lint`, method-chain check, frontend formatting, `test:filament`, `test:types`, `test:types:pest`, `test:rector`, `test:rector:pest`, `test`, `test:type-coverage`, asset build, asset budgets, then `test:browser` |
+| `composer check` | Every gate in CI order: Composer validate, deployment-helper tests, Composer audit, npm audit of production dependencies (`--omit=dev`, matching PR CI), `test:lint`, method-chain check, `test:types`, `test:types:pest`, `test:rector`, `test:rector:pest`, `test:filament`, asset build, asset budgets, frontend formatting, `test`, `test:type-coverage`, then `test:browser`. Assets are built before `test` because some tests read `public/build/manifest.json` |
 | `composer lint` / `composer test:lint` | Pint (Blade included): fix / check only |
 | `composer rector` / `composer rector:pest` | Rector fixes for the application / Pest configuration |
 | `composer test:rector` / `composer test:rector:pest` | Rector dry runs |
@@ -34,7 +34,7 @@ These names are shared with the mouse28 repository; keep them identical when cha
 | `composer test:architecture` | The Architecture suite |
 | `composer test:type-coverage` | Pest type coverage at a 100% minimum; CI enforces it after the non-browser tests |
 
-The pre-push hook runs `test`, `test:browser`, `test:types`, `test:types:pest`, `test:rector`, and `test:rector:pest` together with the deployment-helper tests.
+The pre-push hook runs `test`, `test:browser`, `test:types`, `test:types:pest`, `test:rector`, and `test:rector:pest` together with the deployment-helper tests. It skips every check when a push only deletes branches or tags, such as `git push origin --delete <branch>`.
 
 PR and push CI audit Composer packages and production JavaScript dependencies only, so a new advisory in a development-only JavaScript package does not fail unrelated pull requests. The `Dependency audit` workflow runs daily (08:43 UTC, and on demand) and audits Composer packages plus production and development JavaScript dependencies; treat its failure as a dependency-update task. `composer check` follows PR CI; run `npx --yes npm@11 audit --include=dev` to check development dependencies locally.
 

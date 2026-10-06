@@ -36,6 +36,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as ViewInstance;
 use Laravel\Nightwatch\Facades\Nightwatch;
 use Livewire\Livewire;
+use RalphJSmit\Laravel\SEO\Facades\SEOManager;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Sentry\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
@@ -69,6 +71,12 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentTimezone::set(DisplayTimezone::name(...));
 
+        SEOManager::SEODataTransformer(function (SEOData $seoData): SEOData {
+            $seoData->locale = config()->string('seo.og_locale');
+
+            return $seoData;
+        });
+
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
             ->where('slug->'.App::getLocale(), $value)
             ->firstOrFail());
@@ -97,15 +105,21 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        // Only a sent message counts, so typos and failed checks never lock out a visitor.
-        RateLimiter::for('contact-form', function (Request $request): Limit {
-            $limit = Limit::perHour(3)
-                ->by($request->ip())
-                ->after(fn (): bool => blank($request->input('website')) && session()->has('success'));
+        // Only a sent message counts toward the hourly limit, so typos and failed checks never
+        // lock out a visitor. Every attempt counts toward the looser per-minute limit, which
+        // caps the blocking Turnstile verification calls junk submissions can trigger.
+        RateLimiter::for('contact-form', function (Request $request): array {
+            $ipAddress = $request->ip();
+            $sentMessages = Limit::perHour(3)
+                ->by("sent:{$ipAddress}")
+                ->after(fn (): bool => blank($request->input('website')) && session()->has('success'))
+                ->response(fn (): RedirectResponse => back()
+                    ->withErrors(['message' => 'Too many submissions. Please try again later.'])
+                    ->withInput($request->except(['website', 'cf-turnstile-response'])));
+            $attempts = Limit::perMinute(10)
+                ->by("attempts:{$ipAddress}");
 
-            return $limit->response(fn (): RedirectResponse => back()
-                ->withErrors(['message' => 'Too many submissions. Please try again later.'])
-                ->withInput($request->except(['website', 'cf-turnstile-response'])));
+            return [$sentMessages, $attempts];
         });
         RateLimiter::for('newsletter', function (Request $request): Limit {
             $ipAddress = $request->ip();

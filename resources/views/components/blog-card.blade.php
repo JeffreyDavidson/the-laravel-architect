@@ -54,7 +54,7 @@
             <a
                 href="{{ route('blog.show', $post) }}"
                 aria-label="Read article: {{ $post->title }}"
-                class="focus-visible:ring-brand-500 dark:focus-visible:ring-offset-brand-950 text-brand-600 mt-auto inline-flex items-center gap-2 rounded-sm text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-white motion-reduce:transition-none"
+                class="focus-visible:ring-brand-500 dark:focus-visible:ring-offset-brand-950 text-brand-action dark:text-brand-600 mt-auto inline-flex items-center gap-2 rounded-sm text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-white motion-reduce:transition-none"
             >
                 Read article
                 <x-svg-icon

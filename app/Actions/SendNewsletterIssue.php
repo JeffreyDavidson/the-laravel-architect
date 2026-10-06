@@ -13,7 +13,8 @@ use LogicException;
 final class SendNewsletterIssue
 {
     /**
-     * Queue one delivery per active subscriber and mark the issue sent.
+     * Queue one delivery per active subscriber and mark the issue sent. With no active
+     * subscribers nothing is queued and the issue stays unsent, so it can be sent later.
      *
      * @return int The number of deliveries queued.
      */
@@ -52,6 +53,10 @@ final class SendNewsletterIssue
                     ->onConnection('database')
                     ->beforeCommit();
                 $queued++;
+            }
+
+            if ($queued === 0) {
+                return 0;
             }
 
             $issue->update(['sent_at' => now()]);

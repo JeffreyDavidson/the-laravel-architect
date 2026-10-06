@@ -15,15 +15,19 @@ function scheduledEventFor(string $command): ?Event
     return null;
 }
 
-/** Minutes after midnight for an "H i" daily cron expression such as "30 2 * * *". */
-function minutesAfterMidnight(string $expression): int
+/** The position of the given artisan command in the schedule, which is the order a scheduler run executes due events in. */
+function scheduledEventPosition(string $command): int
 {
-    [$minute, $hour] = array_map(intval(...), explode(' ', $expression));
+    foreach (array_values(app(Schedule::class)->events()) as $position => $event) {
+        if (str_ends_with($event->command ?? '', $command)) {
+            return $position;
+        }
+    }
 
-    return $hour * 60 + $minute;
+    throw new RuntimeException("[{$command}] is not scheduled.");
 }
 
-it('verifies the newest backup every day, after the backup has run', function () {
+it('verifies the newest backup in the same scheduler run, straight after the backup finishes', function () {
     $backup = scheduledEventFor('backup:run');
     $verification = scheduledEventFor('app:verify-backup');
 
@@ -32,9 +36,12 @@ it('verifies the newest backup every day, after the backup has run', function ()
     }
 
     expect($verification->expression)
-        ->toBe('30 2 * * *')
-        ->and(minutesAfterMidnight($verification->expression))
-        ->toBeGreaterThan(minutesAfterMidnight($backup->expression));
+        ->toBe('0 2 * * *')
+        ->toBe($backup->expression)
+        ->and(scheduledEventPosition('app:verify-backup'))
+        ->toBeGreaterThan(scheduledEventPosition('backup:run'))
+        ->and($backup->runInBackground)
+        ->toBeFalse();
 });
 
 it('runs the verification on one server at a time without overlapping the backup schedule', function () {

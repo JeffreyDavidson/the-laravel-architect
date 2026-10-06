@@ -5,9 +5,15 @@ use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
 
+use function Pest\Laravel\freezeSecond;
+
 pest()->use(RefreshDatabase::class);
 
-beforeEach(fn () => config()->set('content.post_review_interval_days', 180));
+// Frozen so the review dates and the cutoff share one day, even across midnight.
+beforeEach(function () {
+    freezeSecond();
+    config()->set('content.post_review_interval_days', 180);
+});
 
 it('works out whether a post source is due for review', function (?string $sourceUrl, ?int $reviewedDaysAgo, bool $due, SourceReviewStatus $status) {
     $post = PublishableFixtures::readyPost([

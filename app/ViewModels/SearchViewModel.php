@@ -69,18 +69,32 @@ class SearchViewModel
         );
     }
 
+    /**
+     * Wrap each match of the query in a mark element, matching against the raw
+     * text and escaping every segment, so a match can never split an entity
+     * such as `&amp;` and the result stays safe to print unescaped.
+     */
     private function highlight(string $value, string $query): string
     {
-        $escapedValue = e($value);
-
         if ($query === '') {
-            return $escapedValue;
+            return e($value);
         }
 
-        return preg_replace(
-            '/'.preg_quote(e($query), '/').'/iu',
-            '<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">$0</mark>',
-            $escapedValue,
-        ) ?? $escapedValue;
+        $quotedQuery = preg_quote($query, '/');
+        $segments = preg_split("/({$quotedQuery})/iu", $value, flags: PREG_SPLIT_DELIM_CAPTURE);
+
+        if ($segments === false) {
+            return e($value);
+        }
+
+        $highlightedSegments = array_map(
+            fn (string $segment, int $index): string => $index % 2 === 1
+                ? '<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">'.e($segment).'</mark>'
+                : e($segment),
+            $segments,
+            array_keys($segments),
+        );
+
+        return implode('', $highlightedSegments);
     }
 }
