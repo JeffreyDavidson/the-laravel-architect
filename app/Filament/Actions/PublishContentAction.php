@@ -15,6 +15,8 @@ use Livewire\Component;
 
 /**
  * Publishes content once its required details are present, keeping any scheduled date.
+ * On an edit page the form is saved first, so the publish date and details on screen are
+ * the ones checked and published; invalid form data stops the action before publishing.
  */
 class PublishContentAction extends Action
 {
@@ -33,6 +35,10 @@ class PublishContentAction extends Action
             ->requiresConfirmation()
             ->visible(fn (Publishable $record): bool => ! $record->isPublished() && ! $record->isScheduled())
             ->action(function (Model&Publishable $record, Component $livewire): void {
+                if ($livewire instanceof EditRecord) {
+                    $livewire->save(shouldRedirect: false, shouldSendSavedNotification: false);
+                }
+
                 $contentType = Str::headline(class_basename($record));
                 $issues = $record->publishingIssues();
 
