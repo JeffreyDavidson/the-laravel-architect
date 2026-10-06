@@ -56,6 +56,20 @@ it('filters published posts by search and category without leaving the component
         ->assertSee('No matching articles');
 });
 
+it('renders each category pill with a compiled selectCategory call', function () {
+    $author = User::factory()->create();
+    $category = Category::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+
+    createBlogIndexComponentPost($author, $category, 'Laravel Architecture');
+
+    Livewire::test(BlogIndex::class)
+        ->assertDontSeeHtml('@js(')
+        ->assertSeeHtml('wire:click.prevent="selectCategory(\'laravel\')"');
+});
+
 it('clears the interactive blog filters', function () {
     $author = User::factory()->create();
     $category = Category::query()->create([
