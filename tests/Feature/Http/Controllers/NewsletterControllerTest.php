@@ -112,6 +112,65 @@ it('keeps the confirmation page out of every cache, including the back-forward c
     $response->assertHeader('Cache-Control', 'no-store, private');
 });
 
+it('renders the confirmation page in its confirming state with a no-script button inside the signed form', function () {
+    $token = 'valid-confirmation-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $escapedUrl = e($url);
+
+    $response = $this->get($url);
+
+    $response->assertOk()
+        ->assertSeeHtmlInOrder([
+            '<h1',
+            'Confirming your subscription…',
+            '</h1>',
+            '<form',
+            "action=\"{$escapedUrl}\"",
+            'method="POST"',
+            'name="_token"',
+            'One moment.',
+            '<noscript>',
+            'Confirm that you want newsletter updates sent to reader@example.com.',
+            'type="submit"',
+            'Confirm subscription',
+            '</noscript>',
+            '</form>',
+        ])
+        ->assertDontSeeHtml('>Confirm your subscription</h1>');
+});
+
+it('titles the confirmation page tab with the confirming state', function () {
+    $token = 'valid-confirmation-token';
+    $subscriber = Subscriber::query()->create([
+        'email' => 'reader@example.com',
+        'subscribed_at' => now(),
+    ]);
+    $subscriber->verification_token_hash = hash('sha256', $token);
+    $subscriber->save();
+    $url = URL::temporarySignedRoute(
+        'newsletter.confirm',
+        now()->addHour(),
+        ['subscriber' => $subscriber, 'token' => $token],
+    );
+
+    $response = $this->get($url);
+
+    $response->assertOk()
+        ->assertSeeHtml('<title>Confirming Your Subscription')
+        ->assertDontSeeHtml('<title>Confirm Your Subscription');
+});
+
 it('submits only the confirmation page by itself, never the unsubscribe page', function () {
     $token = 'valid-confirmation-token';
     $subscriber = Subscriber::query()->create([
