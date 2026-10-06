@@ -45,6 +45,19 @@ final class BackupArchiveVerifier
     /** @var list<string> */
     private array $failures = [];
 
+    /** The directory that holds each run's isolated work directory. */
+    private readonly string $workDirectoryParent;
+
+    /**
+     * The work directory parent defaults to the system temp directory. Tests
+     * pass a private parent so they can prove cleanup of their own run without
+     * racing other processes that verify backups in the shared temp directory.
+     */
+    public function __construct(?string $workDirectoryParent = null)
+    {
+        $this->workDirectoryParent = $workDirectoryParent ?? sys_get_temp_dir();
+    }
+
     /** @return list<BackupVerificationResult> */
     public function verifyAll(): array
     {
@@ -488,7 +501,7 @@ final class BackupArchiveVerifier
 
     private function createWorkDirectory(): string
     {
-        $directory = sys_get_temp_dir().'/'.self::WORK_DIRECTORY_PREFIX.bin2hex(random_bytes(8));
+        $directory = "{$this->workDirectoryParent}/".self::WORK_DIRECTORY_PREFIX.bin2hex(random_bytes(8));
 
         if (! mkdir($directory, 0700) || ! chmod($directory, 0700)) {
             throw new RuntimeException('The isolated work directory could not be created.');
@@ -497,17 +510,17 @@ final class BackupArchiveVerifier
         return $directory;
     }
 
-    /** Remove only a directory this verifier created inside the system temp directory. */
+    /** Remove only a directory this verifier created inside its work directory parent. */
     private function removeWorkDirectory(string $directory): void
     {
         $resolvedDirectory = realpath($directory);
-        $resolvedTemp = realpath(sys_get_temp_dir());
+        $resolvedParent = realpath($this->workDirectoryParent);
 
-        if ($resolvedDirectory === false || $resolvedTemp === false) {
+        if ($resolvedDirectory === false || $resolvedParent === false) {
             return;
         }
 
-        if (! str_starts_with($resolvedDirectory, $resolvedTemp.DIRECTORY_SEPARATOR.self::WORK_DIRECTORY_PREFIX)) {
+        if (! str_starts_with($resolvedDirectory, $resolvedParent.DIRECTORY_SEPARATOR.self::WORK_DIRECTORY_PREFIX)) {
             return;
         }
 
