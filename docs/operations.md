@@ -96,6 +96,8 @@ Keep a worker consuming the `database` queue connection. The contact email job i
 
 With `APP_ENV=production`, every absolute URL, including newsletter confirmation links, is built from `APP_URL` instead of the request's Host header, so `APP_URL` must be each site's canonical HTTPS address (the staging address on staging).
 
+Both sites sit behind Cloudflare. On the server, Forge's Nginx configuration uses the `real_ip` module with Cloudflare's published IP ranges to restore each visitor's address from Cloudflare's header (verified on production in October 2026), so PHP already sees the real client IP and the application trusts no proxies. A new or rebuilt server must get the same Nginx `real_ip` configuration before it takes traffic; without it every request appears to come from a Cloudflare edge, and the IP-keyed rate limits (contact form, newsletter, search, unsubscribe, Resend webhook) would throttle unrelated visitors together.
+
 ## Synchronizing public production content to staging
 
 Run `php artisan content:sync-production --staging` from the staging release to replace staging's public content with the current production versions. The flag permits `APP_ENV=production` only on `staging.thelaravelarchitect.com`; local environments do not require it. The command transfers only published posts, projects and newsletter issues, referenced categories and tags, active podcasts and their published episodes, published videos, their SEO metadata, and referenced public media. Responsive image variants are regenerated after media transfer, including same-path replacements.
@@ -144,7 +146,7 @@ Staging keeps `MAIL_MAILER=log` and never receives production subscribers, so se
 
 ## Deploying
 
-The Forge deployment should install locked Composer dependencies, build assets, run forward-only migrations, refresh optimized caches, and restart the queue worker. The scheduler must continue running every minute.
+The Forge deployment should install locked Composer dependencies, build assets, refresh optimized caches, run forward-only migrations as the last step that can fail, activate the release, and restart the queue worker. The scheduler must continue running every minute.
 
 Production's database queue worker runs `queue:work 'database' --sleep=3 --daemon --quiet --timeout=60 --tries=3 --max-time=3600 --memory=128` (owner-applied in Forge and read back on 2026-10-06; it previously ran with `--timeout=90`). Keep the worker timeout several seconds below the queue's 90-second `retry_after`, or a job that runs that long can be reserved again before the first attempt is stopped. `--max-time` and `--memory` make the worker restart itself hourly and when it grows past 128 MB on the shared 1 GB server. Jobs that declare their own timeout (`DeliverNewsletterIssue`, `SendContactInquiryEmails`: 60 seconds) stay below `retry_after` too.
 
@@ -196,6 +198,14 @@ test ! -e public/deployment.json
 
 $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
+export NODE_OPTIONS="--max-old-space-size=1024"
+npm ci --production=false
+npm run build
+
+# Recreate the public storage link in the new release
+rm -f public/storage
+$FORGE_PHP artisan storage:link
+
 if test "$FORGE_SITE_ID" = 3044519; then
     $FORGE_PHP artisan app:verify-production --no-ansi
 
@@ -214,17 +224,12 @@ if test "$FORGE_SITE_ID" = 3044519; then
     fi
 fi
 $FORGE_PHP artisan optimize
+# Migrate last: once the schema has changed, nothing may stop the release from activating.
 $FORGE_PHP artisan migrate --force
 
-export NODE_OPTIONS="--max-old-space-size=1024"
-npm ci --production=false
-npm run build
-
-$FORGE_PHP artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT"
-
-# Recreate the public storage link in the new release
-rm -f public/storage
-$FORGE_PHP artisan storage:link
+# Records the deploy in Nightwatch; a failure here must not block activation.
+$FORGE_PHP artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT" \
+    || echo "nightwatch:deploy failed; check the deployment marker in Nightwatch." >&2
 
 $ACTIVATE_RELEASE()
 $RESTART_QUEUES()
@@ -249,7 +254,9 @@ mv public/deployment.json.tmp public/deployment.json
 
 The backup gate runs only on production, and only when the release has pending migrations, so ordinary deploys are not slowed. Staging is skipped because it has no B2 destination. It takes a new backup and verifies it straight away; a write between the two commands can make the verification fail, so it repeats the pair once before stopping the deployment. If both attempts fail, the script exits before `migrate --force` and the previous release keeps serving traffic. Look at the failure output, fix the cause, and redeploy. A failed `migrate:status` also stops the deploy, because the assignment runs under `set -e`.
 
-`$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic. `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
+`$ACTIVATE_RELEASE()` is required for Forge zero-downtime deployments. Without it, Forge can report that a deployment completed while `current` still points to the previous release. Keep activation after all preparation steps so a failed build or check leaves the previous release serving traffic.
+
+`migrate --force` must stay the last step that can stop the deploy before activation. The migration changes the shared live database, so once it has run the new release has to go live: a failure after it would leave the previous release serving a schema it was not written for. The asset install and build and `storage:link` therefore run first, before the backup gate, and a failed `npm ci` or `npm run build` stops the deploy with the database untouched. `nightwatch:deploy` runs after the migration, so it only records a deploy whose migrations succeeded, and its `|| echo` keeps a Nightwatch failure from blocking activation (the package already exits successfully on API errors; this also covers a crash). Confirm the marker in the Nightwatch dashboard as described under "Nightwatch deployment tracking". `$RESTART_QUEUES()` must follow activation so long-running workers are restarted against the active release. See the [Forge deployment documentation](https://laravel.com/forge/docs/sites/deployments#release-creation-and-activation).
 
 ### Observability environments
 
@@ -292,7 +299,7 @@ After enabling or changing Nightwatch, refresh the application's cached configur
 
 ### Nightwatch deployment tracking
 
-Forge exposes the immutable release commit as `FORGE_DEPLOY_COMMIT`. Run Nightwatch's deployment command from the new release after its caches and assets are ready. The Forge script sends this deployment marker before activating the release:
+Forge exposes the immutable release commit as `FORGE_DEPLOY_COMMIT`. Run Nightwatch's deployment command from the new release after its caches and assets are ready. The Forge script sends this deployment marker after migrating and just before activating the release, without letting a failure stop the deploy:
 
 ```bash
 php artisan nightwatch:deploy "$FORGE_DEPLOY_COMMIT" --ref="$FORGE_DEPLOY_COMMIT"
@@ -380,9 +387,11 @@ For content or authorization changes, also verify the affected public route and 
 
 Staging and production share one small Forge server (1 GB, 1 vCPU), which overloaded around 2026-09-26 and on 2026-10-03/04. Staging holds only a copy of production's public content, so its backups protect nothing and its YouTube runs spend API quota. These tasks in `routes/console.php` therefore run only on production:
 
-- `backup:run`, `app:verify-backup`, `backup:clean` and `backup:monitor`
+- `backup:run` and `app:verify-backup` (daily at `BACKUP_RUN_AT`, default 02:00 UTC, verification straight after the backup), `backup:clean` and `backup:monitor`
 - `youtube:stats` (daily at 00:00 UTC) and `youtube:sync` (weekly, Sunday at 00:00 UTC)
 - `media:verify-responsive-images` (daily at 05:00 UTC) and `media:find-orphans` (weekly, Sunday at 05:30 UTC); both email the scheduler's failure output to the backup notification recipient when they exit nonzero. `media:find-orphans` runs without `--delete`, so it fails whenever an orphan or missing referenced file exists (see "Reviewing orphaned media")
+
+Every daily and weekly task uses `withoutOverlapping()` with an explicit lock expiry (120 minutes for the backup and its verification, 60 for the rest) instead of the 24-hour default. A run killed mid-way, as when the server ran out of memory on 2026-10-03, leaves its lock behind; with the default it could still be held when the next day's run is due and silently skip it.
 
 Staging runs with `APP_ENV=production`, so the gate is `TLA_DEPLOYMENT_ENVIRONMENT` (`app.deployment_environment`), not `APP_ENV` or the scheduler's `environments()` filter. The tasks run only when it is `production`. The setting falls back to `APP_ENV` when unset, so staging must set `TLA_DEPLOYMENT_ENVIRONMENT=staging` or these jobs run there too; confirm this when reviewing the staging environment. The scheduler heartbeat, `queue:prune-failed`, `model:prune`, `activitylog:clean` and `cache:prune-expired` still run on both sites; `cache:prune-expired` (daily at 03:30) deletes expired `cache` table rows, such as per-IP rate limiter entries, which the database cache store otherwise never removes.
 
@@ -424,7 +433,7 @@ Confirm a new encrypted archive exists on the `b2-backups` disk and that `app:ve
 
 `php artisan app:verify-backup` performs the independent checks below against the newest archive on every configured destination. It downloads the archive into a new `0700` directory under the system temp directory and requires every file entry to be encrypted, decrypt, and read in full at its recorded size. Every path must be a database dump or sit under `BACKUP_MEDIA_PATH`. The command restores the dump with the same `sqlite3` CLI that creates it, runs `PRAGMA quick_check` on the restored and live databases, compares the migration list and every persistent table's row count, and compares the media file count and five sampled SHA-256 hashes with the live media directory. `cache`, `cache_locks`, `sessions`, `jobs`, and `job_batches` are excluded as transient. The temporary directory is always removed, and the output contains only counts, table names, and pass or fail reasons, never the archive password or backed-up content.
 
-Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. On production, the scheduler also runs it daily at `BACKUP_VERIFY_AT` (default `02:30`, 30 minutes after the `02:00` backup); a failure is emailed to the backup notification address like the other scheduled checks. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback and the procedure for an actual restore.
+Run it straight after `backup:run`: a write between the two commands shows up as a row-count or media mismatch, so rerun both. On production, the scheduler runs it every day straight after the scheduled backup: both are due at `BACKUP_RUN_AT` (default `02:00`), and one scheduler run executes due tasks one at a time in the order `routes/console.php` defines them, so verification starts the moment the backup finishes. Keep `app:verify-backup` defined after `backup:run`, and never run the backup in the background, or the two would race. A failure is emailed to the backup notification address like the other scheduled checks; if the backup itself failed, verification checks the previous archive and usually fails too. A verified backup therefore normally exists at deploy time, and the production deploy script also takes and verifies a fresh one before it applies any pending migration (see "Forge deploy script"), so no manual step is needed for a release with migrations. A non-zero exit means the backup must not be relied on for a release. The manual drill below remains the fallback check; an actual restore follows "Restore from backup". The old `BACKUP_VERIFY_AT` setting is no longer read; remove it from the production environment during an approved maintenance change if present.
 
 An exit-zero backup command is not enough. Independently verify:
 
@@ -445,7 +454,7 @@ Perform this drill in an isolated temporary directory, never over the live datab
 2. Copy one explicit backup archive into that directory. Confirm its resolved source path before copying.
 3. Supply `BACKUP_ARCHIVE_PASSWORD` through the process environment or approved secret manager. Never paste it into a command, log, ticket, or shell history.
 4. Use PHP's `ZipArchive` to set the password, test every encrypted entry, and extract the archive into a child directory. Stop if any entry cannot be decrypted or read.
-5. Locate the extracted SQLite database and run `PRAGMA quick_check`; require exactly `ok`.
+5. Rebuild a database from the extracted SQL dump (`db-dumps/sqlite-*.sql`) with `sqlite3 -bail restored.sqlite < dump.sql`, then run `PRAGMA quick_check` on it; require exactly `ok`.
 6. Compare the restored and live migration lists and the record counts for critical tables.
 7. Confirm restored media paths remain inside the isolated extraction root, then compare file counts and sample file hashes.
 8. Record the archive timestamp, checks performed, and result without recording credentials or private content.
@@ -463,11 +472,56 @@ Run `php artisan app:test-backup-notification` after configuring or changing the
 
 Nightwatch reports new failed jobs. Failures are retained for `QUEUE_FAILED_JOB_RETENTION_HOURS` and then pruned by Laravel's native `queue:prune-failed` command; do not add a scheduled command that fails merely because retained records exist, because Laravel will surface every nonzero scheduled run as a new exception.
 
+## Restore from backup
+
+Restoring replaces the live database and media with an older copy and loses every change made since that backup. It runs only with the owner's explicit approval for the specific archive, and only the owner runs it on the server: agents never run any part of it. Practise it on staging, never first on production. Run the commands as the `forge` user from the site's `current` directory (`/home/forge/thelaravelarchitect.com/current` on production), and never paste the archive password anywhere.
+
+1. Choose the archive with the owner and record its name (`php artisan backup:list` shows them; on B2 they sit under `<APP_NAME>/`). Run `php artisan app:verify-backup` first if it is the newest one.
+2. Note the live database path (`php artisan tinker --execute 'echo config("database.connections.sqlite.database");'`) and the media path (`BACKUP_MEDIA_PATH`).
+3. Put the site in maintenance mode with `php artisan down`. In Forge, stop the production queue worker and pause the production scheduler, so nothing writes while the files change. Maintenance mode also holds back the scheduler and worker, but stopping them in Forge keeps them from holding the old database open.
+4. Download and decrypt the archive into a private temporary directory. The archive is an AES-encrypted ZIP; the password is read from the application's configuration, so it never reaches the shell:
+
+   ```bash
+   umask 077
+   export TLA_RESTORE_DIR="$(mktemp -d)"
+   export TLA_ARCHIVE="<APP_NAME>/<archive>.zip"
+   php artisan tinker --execute 'file_put_contents(getenv("TLA_RESTORE_DIR")."/backup.zip", Storage::disk("b2-backups")->readStream(getenv("TLA_ARCHIVE")));'
+   php artisan tinker --execute '$zip = new ZipArchive; $zip->open(getenv("TLA_RESTORE_DIR")."/backup.zip"); $zip->setPassword(config("backup.backup.password")); echo $zip->extractTo(getenv("TLA_RESTORE_DIR")."/extracted") ? "extracted" : "FAILED";'
+   ```
+
+   Stop unless it prints `extracted`.
+5. The archive holds a plain SQL dump (made with `sqlite3 .dump`), not a copy of the database file. Rebuild a new database file from it and check it:
+
+   ```bash
+   sqlite3 -bail "$TLA_RESTORE_DIR/restored.sqlite" < "$TLA_RESTORE_DIR"/extracted/db-dumps/sqlite-*.sql
+   sqlite3 "$TLA_RESTORE_DIR/restored.sqlite" 'PRAGMA quick_check;'
+   ```
+
+   Require exactly `ok`. The application switches the file to WAL mode when it next connects.
+6. Stop PHP access to the database: stop PHP-FPM (`sudo service php8.5-fpm stop`, using the server's PHP version). Staging shares this PHP-FPM, so it is down for the same few minutes.
+7. Swap the file in. Move the live database aside together with its `-wal` and `-shm` files, never deleting them, so no stale WAL file is applied to the restored database, then copy the restored file into place and match the old file's owner and permissions (`ls -l`):
+
+   ```bash
+   TLA_DB="<live database path>"
+   TLA_STAMP="$(date -u +%Y%m%d%H%M%S)"
+   for tla_suffix in "" -wal -shm; do
+       if test -e "$TLA_DB$tla_suffix"; then mv "$TLA_DB$tla_suffix" "$TLA_DB$tla_suffix.before-restore-$TLA_STAMP"; fi
+   done
+   cp "$TLA_RESTORE_DIR/restored.sqlite" "$TLA_DB"
+   ```
+
+8. Restore public media the same way: move the live `BACKUP_MEDIA_PATH` directory aside with the same suffix, then copy the extracted copy into place. The archive stores media under its full path, so it is at `$TLA_RESTORE_DIR/extracted` followed by `BACKUP_MEDIA_PATH`.
+9. Start PHP-FPM again (`sudo service php8.5-fpm start`), then clear the caches, including the database cache table restored with the dump, and rebuild them: `php artisan optimize:clear` then `php artisan optimize`.
+10. While still in maintenance mode, run `php artisan migrate:status`. If the archive predates a migration in the active release, a migration shows as pending: stop and decide with the owner whether to redeploy the release that matches the archive (see "Rollback") or migrate. Check the restored `jobs` table as well: jobs queued at backup time may already have run since (a contact email, a newsletter delivery) and would run again.
+11. Restart the queue worker and resume the scheduler in Forge, then leave maintenance mode with `php artisan up`. The scheduler and worker do not run while the site is down, so the runtime checks below only pass after this step.
+12. Verify: `/up` returns HTTP 200, `/deployment.json` still shows the active revision, `php artisan app:verify-deployment <that revision>` passes, and `/`, `/blog`, a post, a public media URL and the `/admin` sign-in load. Run `php artisan media:verify-responsive-images`.
+13. Record the archive, the time of the restore and the checks in the incident notes, without credentials or private content. Keep the `.before-restore-*` copies until the owner agrees they can go, then remove only the temporary restore directory.
+
 ## Rollback
 
 1. Stop the release if post-deployment verification fails.
 2. Do not restore over the live database or media directory until the exact targets are confirmed.
-3. Restore the validated SQLite snapshot and media archive using the approved Forge procedure.
+3. With the owner's explicit approval, restore the validated SQLite snapshot and media archive by following "Restore from backup".
 4. Redeploy the last known-good commit.
 5. Re-run migration, route, media, queue, and scheduler verification.
 6. Record the failure, restoration commands, artifact paths, and final production commit.
