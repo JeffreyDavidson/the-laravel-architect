@@ -42,4 +42,7 @@ return [
     'twitter' => [
         '@username' => 'thelaravelarch',
     ],
+
+    // Open Graph expects a language_TERRITORY locale; the app locale stays "en" for translations.
+    'og_locale' => 'en_US',
 ];

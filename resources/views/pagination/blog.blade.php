@@ -5,7 +5,7 @@
                 href="{{ $paginator->previousPageUrl() }}"
                 wire:click.prevent="previousPage"
                 rel="prev"
-                class="text-brand-600 dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
+                class="text-brand-action dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
             >
                 Previous
             </a>
@@ -27,7 +27,7 @@
                             href="{{ $url }}"
                             wire:click.prevent="gotoPage({{ $page }})"
                             aria-label="Go to page {{ $page }}"
-                            class="text-brand-600 dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
+                            class="text-brand-action dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
                         >{{ $page }}</a>
                     @endif
                 @endforeach
@@ -39,7 +39,7 @@
                 href="{{ $paginator->nextPageUrl() }}"
                 wire:click.prevent="nextPage"
                 rel="next"
-                class="text-brand-600 dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
+                class="text-brand-action dark:text-brand-300 rounded px-3 py-2 hover:underline focus-visible:outline-2"
             >
                 Next
             </a>

@@ -36,6 +36,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as ViewInstance;
 use Laravel\Nightwatch\Facades\Nightwatch;
 use Livewire\Livewire;
+use RalphJSmit\Laravel\SEO\Facades\SEOManager;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Sentry\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
@@ -68,6 +70,12 @@ class AppServiceProvider extends ServiceProvider
         Blade::components([SocialLinks::class]);
 
         FilamentTimezone::set(DisplayTimezone::name(...));
+
+        SEOManager::SEODataTransformer(function (SEOData $seoData): SEOData {
+            $seoData->locale = config()->string('seo.og_locale');
+
+            return $seoData;
+        });
 
         Route::bind('tag', static fn (string $value): Tag => Tag::query()
             ->where('slug->'.App::getLocale(), $value)
