@@ -8,11 +8,16 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use Throwable;
 
+/**
+ * Finds files on the public disk that no content references. Trashed content still
+ * counts as a reference, so restoring a post or episode never brings back broken media.
+ */
 class StoredMediaOrphanWorkflow
 {
     private const array OWNED_DIRECTORIES = ['projects/', 'posts/', 'podcasts/', 'episodes/images/', 'episodes/audio/'];
@@ -133,7 +138,9 @@ class StoredMediaOrphanWorkflow
         $content = [];
 
         foreach (self::CONTENT_ATTRIBUTES as [$modelClass, $column]) {
-            foreach ($modelClass::query()->whereNotNull($column)
+            foreach ($modelClass::query()
+                ->withoutGlobalScopes([SoftDeletingScope::class])
+                ->whereNotNull($column)
                 ->pluck($column) as $value) {
                 if (is_string($value)) {
                     $content[] = rawurldecode($value);
@@ -160,6 +167,7 @@ class StoredMediaOrphanWorkflow
 
         foreach (self::MEDIA_ATTRIBUTES as [$modelClass, $column]) {
             $modelClass::query()
+                ->withoutGlobalScopes([SoftDeletingScope::class])
                 ->whereNotNull($column)
                 ->select([$column])
                 ->cursor()
