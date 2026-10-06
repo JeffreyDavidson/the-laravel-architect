@@ -11,7 +11,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('posts:generate-images {--force : Regenerate all images}')]
+#[Signature('posts:generate-images {--force : Also regenerate previously generated images (uploaded images are kept)}')]
 #[Description('Generate missing featured images for posts')]
 class GenerateMissingPostImages extends Command
 {
