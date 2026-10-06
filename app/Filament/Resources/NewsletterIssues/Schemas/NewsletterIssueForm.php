@@ -57,7 +57,11 @@ class NewsletterIssueForm
                 Section::make('Publishing')
                     ->schema([
                         PublishStatusSelect::make('status'),
-                        PublishDatePicker::make('published_at'),
+                        PublishDatePicker::make('published_at')
+                            ->disabled(fn (?NewsletterIssue $record): bool => $record?->wasSent() ?? false)
+                            ->hint(fn (?NewsletterIssue $record): ?string => $record?->wasSent() === true
+                                ? 'Locked after sending, so emailed links keep working.'
+                                : null),
                     ])
                     ->columns(2),
                 Section::make('SEO')
