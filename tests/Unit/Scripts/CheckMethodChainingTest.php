@@ -5,14 +5,24 @@ use Symfony\Component\Process\Process;
 /** Run the chaining check against one PHP snippet and return the process. */
 function checkChaining(string $code): Process
 {
-    $file = tempnam(sys_get_temp_dir(), 'tla-chaining-').'.php';
-    file_put_contents($file, "<?php\n\n{$code}\n");
+    $reservedFile = tempnam(sys_get_temp_dir(), 'tla-chaining-');
+    if ($reservedFile === false) {
+        throw new RuntimeException('Could not create a temporary file.');
+    }
+    $file = "{$reservedFile}.php";
 
-    $process = new Process([PHP_BINARY, dirname(__DIR__, 3).'/scripts/check-method-chaining.php', $file]);
-    $process->run();
-    unlink($file);
+    try {
+        file_put_contents($file, "<?php\n\n{$code}\n");
+        $process = new Process([PHP_BINARY, dirname(__DIR__, 3).'/scripts/check-method-chaining.php', $file]);
+        $process->run();
 
-    return $process;
+        return $process;
+    } finally {
+        if (is_file($file)) {
+            unlink($file);
+        }
+        unlink($reservedFile);
+    }
 }
 
 it('flags a method chain continued on the same line', function (string $code) {

@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Presenters\PostPresenter;
+use Illuminate\Support\Carbon;
 
 it('calculates reading time from post content', function () {
     $post = new Post([
@@ -26,7 +27,7 @@ it('returns its cast publishing values', function () {
         ->toBeTrue();
 });
 
-it('knows whether it is publicly published', function (?PublishStatus $status, mixed $publishedAt, bool $expected) {
+it('knows whether it is publicly published', function (?PublishStatus $status, ?Carbon $publishedAt, bool $expected) {
     $post = new Post([
         'status' => $status,
         'published_at' => $publishedAt,
@@ -34,8 +35,8 @@ it('knows whether it is publicly published', function (?PublishStatus $status, m
 
     expect($post->isPublished())->toBe($expected);
 })->with([
-    [PublishStatus::Published, now()->subMinute(), true],
-    [PublishStatus::Published, now()->addMinute(), false],
+    [PublishStatus::Published, fn (): Carbon => now()->subMinute(), true],
+    [PublishStatus::Published, fn (): Carbon => now()->addMinute(), false],
     [PublishStatus::Published, null, false],
-    [PublishStatus::Draft, now()->subMinute(), false],
+    [PublishStatus::Draft, fn (): Carbon => now()->subMinute(), false],
 ]);
