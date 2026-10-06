@@ -54,6 +54,7 @@ The pre-push hook runs `test`, `test:browser`, `test:types`, and `test:rector` t
 | Podcast index | 3 | Search | 13 |
 | Podcast | 6 | About | 2 |
 | Episode | 11 | Contact | 4 |
+| Newsletter confirmed | 4 | | |
 
 Search runs one count query per result group for its per-group pagination, and skips the results query for groups with no matches.
 

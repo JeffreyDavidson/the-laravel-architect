@@ -132,6 +132,8 @@ The endpoint skips the session and CSRF middleware because Resend posts server t
 
 ## Sending a newsletter issue
 
+**Send test email** and **Send to subscribers** both save the edit form before sending, so unsaved edits are stored and the email matches what is on screen. If the form has invalid data, the validation errors show and nothing is sent.
+
 1. Publish the issue, then use **Send test email** on its edit page. The copy goes to `MAIL_CONTACT_TO`, records no delivery, and omits unsubscribe headers.
 2. Check the Resend dashboard's daily and monthly sending quota against the active-subscriber count shown in the send confirmation. A send that exceeds the quota fails part-way; remaining deliveries retry for up to a day.
 3. Confirm the production database queue worker is running, then use **Send to subscribers**. The button appears only for published issues that have not been sent, and a send cannot be undone.
@@ -333,9 +335,9 @@ The command fails when the checked-out commit differs, migrations are pending, q
 
 ### Production uptime check
 
-The `Production uptime` workflow runs every ten minutes and on manual dispatch. It uses `curl` only, with no checkout, dependencies or secrets. It requires `https://thelaravelarchitect.com/up` to return HTTP 200 within 20 seconds and `https://thelaravelarchitect.com/deployment.json` to contain a 40-character `revision`. A failed check is retried once after 30 seconds before the job fails. Logs show only status codes and timings.
+The `Production uptime` workflow runs every ten minutes and on manual dispatch. It uses only `curl` and `jq` (preinstalled on GitHub-hosted runners), with no checkout, installed dependencies or secrets. It requires `https://thelaravelarchitect.com/up` to return HTTP 200 within 20 seconds and `https://thelaravelarchitect.com/deployment.json` to contain a 40-character `revision`. A failed check is retried once after 30 seconds before the job fails. Logs show only status codes and timings.
 
-GitHub emails the repository owner when a scheduled run fails, so keep Actions failure notifications enabled in GitHub notification settings. GitHub can delay or skip scheduled runs, so this check is not a guaranteed alert. An external monitor such as UptimeRobot or Better Stack watching `/up` is still recommended for independent alerting.
+GitHub emails the repository owner when a scheduled run fails, so keep Actions failure notifications enabled in GitHub notification settings. GitHub can delay or skip scheduled runs, and in practice runs them far less often than the cron asks (about three runs in 22 hours were observed after the workflow was added), so this check is not a guaranteed or timely alert. An external monitor such as UptimeRobot or Better Stack watching `/up` is the reliable option for independent alerting.
 
 ### Ownership of operational checks
 
