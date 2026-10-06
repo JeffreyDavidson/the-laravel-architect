@@ -31,6 +31,7 @@ it('links the view on site action to the public post URL', function () {
 });
 
 it('links the view on site action to a signed preview for a draft', function () {
+    $this->freezeSecond();
     $user = User::factory()->create(['is_admin' => true]);
     $this->actingAs($user);
 
