@@ -286,7 +286,7 @@
 :root:not(.dark) .prose {
     --tw-prose-body: var(--text-secondary);
     --tw-prose-headings: var(--text-primary);
-    --tw-prose-links: var(--color-brand-600);
+    --tw-prose-links: var(--color-brand-action);
     --tw-prose-bold: var(--text-primary);
     --tw-prose-code: var(--color-brand-600);
 }

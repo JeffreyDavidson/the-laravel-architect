@@ -55,7 +55,7 @@ final class CollectionSchemaBuilder
             && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator
             && ($tag = $this->tag($pageData)) instanceof Tag) {
             $collectionPage = [
-                'name' => $tag->name.' Articles',
+                'name' => "Articles Tagged {$tag->name}",
                 'url' => $this->canonicalUrl($seoSource, route('blog.tag', $tag)),
             ];
             $positionOffset = ($posts->currentPage() - 1) * $posts->perPage();

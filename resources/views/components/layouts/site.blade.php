@@ -1,10 +1,19 @@
 @props([
     'seoSource' => null,
     'structuredData' => [],
+    'canonical' => true,
 ])
+
+@use('RalphJSmit\Laravel\SEO\Tags\CanonicalTag')
 
 @php
     $content = $slot->toHtml();
+    $seoTags = seo($seoSource ?? null);
+
+    // An error page has no URL of its own to point search engines at.
+    if (! $canonical) {
+        $seoTags->tags = $seoTags->tags->reject(fn (object $tag): bool => $tag instanceof CanonicalTag);
+    }
 @endphp
 
 <!DOCTYPE html>
@@ -14,12 +23,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script nonce="{{ Vite::cspNonce() }}">
         // Sync theme before paint to prevent a flash of the wrong color scheme.
-        if (
-            localStorage.theme === 'light' ||
-            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)
-        ) {
-            document.documentElement.classList.remove('dark');
-        }
+        (() => {
+            let theme = null;
+
+            // Blocked storage throws on access, so fall back to the system preference.
+            try {
+                theme = localStorage.getItem('theme');
+            } catch {}
+
+            if (theme === 'light' || (theme === null && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
     </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-companion-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/images/elephant-companion-16.png" />
@@ -27,7 +42,7 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="transparent" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
-    {!! seo($seoSource ?? null) !!}
+    {!! $seoTags !!}
     <x-json-ld :schemas="$structuredData" />
     @if (request()->routeIs('blog.index'))
         @livewireStyles

@@ -15,3 +15,11 @@ it('titles a missing page without words from its address', function (string $pat
     'unknown nested page' => ['/admin-backup/wp-login', 'Wp Login'],
     'missing blog post' => ['/blog/missing-post', 'Missing Post'],
 ]);
+
+it('keeps a missing page out of search results without a canonical link', function () {
+    $response = $this->get('/nope');
+
+    $response->assertNotFound()
+        ->assertSeeHtml('<meta name="robots" content="noindex, nofollow">')
+        ->assertDontSeeHtml('rel="canonical"');
+});

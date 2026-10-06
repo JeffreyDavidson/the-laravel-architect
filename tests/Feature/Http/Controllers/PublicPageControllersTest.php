@@ -181,6 +181,44 @@ it('renders page-specific SEO metadata', function () {
         ->assertSeeHtml('<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">');
 });
 
+it('shares pages with a territory-specific Open Graph locale', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSeeHtml('<meta property="og:locale" content="en_US">');
+});
+
+it('names the mobile theme toggle by its visible label', function () {
+    $content = responseContent($this->get(route('home'))
+        ->assertOk()
+        ->getContent());
+
+    preg_match('/<button[^>]*theme-toggle-mobile[^>]*>/', $content, $mobileToggle);
+
+    expect($mobileToggle[0] ?? '')
+        ->toContain('data-theme-toggle')
+        ->not->toContain('aria-label')
+        ->and(substr_count($content, 'aria-label="Toggle theme"'))
+        ->toBe(1);
+});
+
+it('gives tag and category archives with the same name distinct titles', function () {
+    $category = Category::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+    $tag = Tag::query()->create([
+        'name' => 'Laravel',
+        'slug' => 'laravel',
+    ]);
+
+    $this->get(route('blog.category', $category))
+        ->assertOk()
+        ->assertSeeHtml('<title>Laravel Articles — Jeffrey Davidson</title>');
+    $this->get(route('blog.tag', $tag))
+        ->assertOk()
+        ->assertSeeHtml('<title>Articles Tagged Laravel — Jeffrey Davidson</title>');
+});
+
 it('renders model-specific SEO metadata', function () {
     $author = User::factory()->create();
 
@@ -539,7 +577,7 @@ it('renders canonical structured data for public content collections', function 
     $collections = [
         [route('blog.index'), 'Blog', $post->title, route('blog.show', $post)],
         [route('blog.category', $category), 'Architecture Articles', $post->title, route('blog.show', $post)],
-        [route('blog.tag', $tag), 'Boundaries Articles', $post->title, route('blog.show', $post)],
+        [route('blog.tag', $tag), 'Articles Tagged Boundaries', $post->title, route('blog.show', $post)],
         [route('projects.index'), 'Projects', $project->title, route('projects.show', $project)],
         [route('podcast.index'), 'Podcast', $podcast->name, route('podcast.show', $podcast)],
     ];
@@ -610,7 +648,7 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
         ],
         [
             'url' => route('blog.tag', ['tag' => $tag, 'page' => 2]),
-            'title' => 'Boundaries Articles — Page 2 — Jeffrey Davidson',
+            'title' => 'Articles Tagged Boundaries — Page 2 — Jeffrey Davidson',
             'description' => 'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',
         ],
     ] as $metadata) {
@@ -829,6 +867,22 @@ it('keeps public technology and channel details consistent', function () {
         ->assertOk()
         ->assertSeeHtml('https://youtube.com/@thelaravelarchitect')
         ->assertSee('Away from the editor');
+});
+
+it('keeps the developer card name out of the about page heading outline', function () {
+    $content = responseContent($this->get(route('about'))
+        ->assertOk()
+        ->getContent());
+
+    expect(stringPosition($content, '<h1'))
+        ->toBeLessThan(stringPosition($content, '<h2'));
+});
+
+it('describes the developer card stat sheet to assistive technology', function () {
+    $this->get(route('about'))
+        ->assertOk()
+        ->assertSeeHtml('aria-describedby="about-card-stats"')
+        ->assertSeeHtml('id="about-card-stats"');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
@@ -1210,6 +1264,42 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertOk()
         ->assertSeeHtml('sizes="224px"')
         ->assertSeeHtml(configuredString($podcast->cover_image_url));
+});
+
+it('shares the podcast cover in social cards', function (?string $coverImagePath, string $slug) {
+    $this->withVite();
+    Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
+    $podcast = Podcast::query()->create([
+        'name' => 'Shared Podcast',
+        'slug' => $slug,
+        'description' => 'A podcast with cover artwork.',
+        'cover_image_path' => $coverImagePath,
+        'is_active' => true,
+    ]);
+    $coverImageUrl = configuredString($podcast->cover_image_url);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml("<meta property=\"og:image\" content=\"{$coverImageUrl}\">")
+        ->assertSeeHtml('<meta name="twitter:card" content="summary_large_image">')
+        ->assertDontSeeHtml('logo-color-black-bg.png');
+})->with([
+    'uploaded cover' => ['podcasts/cover.png', 'shared-podcast'],
+    'bundled cover' => [null, 'coffee-with-the-laravel-architect'],
+]);
+
+it('shares the site image for a podcast without a cover', function () {
+    $podcast = Podcast::query()->create([
+        'name' => 'Podcast Without Artwork',
+        'slug' => 'podcast-without-artwork',
+        'description' => 'A podcast with no cover artwork.',
+        'is_active' => true,
+    ]);
+
+    $this->get(route('podcast.show', $podcast))
+        ->assertOk()
+        ->assertSeeHtml('<meta property="og:image" content="'.secure_url('/images/logo-color-black-bg.png').'">')
+        ->assertSeeHtml('<meta name="twitter:card" content="summary">');
 });
 
 it('serves responsive optimized fallback artwork for known podcasts', function () {

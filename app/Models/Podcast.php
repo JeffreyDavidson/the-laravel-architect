@@ -171,6 +171,7 @@ class Podcast extends Model
         return new SEOData(
             title: $this->name,
             description: $this->description,
+            image: $this->cover_image_url,
         );
     }
 

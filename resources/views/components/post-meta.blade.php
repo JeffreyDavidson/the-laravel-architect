@@ -1,7 +1,7 @@
 @props(['post', 'showCategory' => true, 'editorial' => false])
 <div {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-3']) }}>
     @if ($showCategory && $post->category)
-        <span class="text-brand-600 text-xs font-semibold tracking-wider uppercase">{{ $post->category->name }}</span>
+        <span class="text-brand-action dark:text-brand-600 text-xs font-semibold tracking-wider uppercase">{{ $post->category->name }}</span>
         @unless ($editorial)
             <span class="text-gray-300 dark:text-gray-700">·</span>
         @endunless
@@ -9,7 +9,7 @@
     <x-display-date
         :date="$post->published_at"
         @class([
-            'text-xs text-gray-500',
+            'text-xs text-gray-500 dark:text-gray-400',
             'border-l border-gray-300 pl-3 dark:border-gray-700' => $editorial && $showCategory && $post->category,
         ])
     />
@@ -18,7 +18,7 @@
     @endunless
     <span
         @class([
-            'text-xs text-gray-500',
+            'text-xs text-gray-500 dark:text-gray-400',
             'border-l border-gray-300 pl-3 dark:border-gray-700' => $editorial,
         ])
     >{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min read</span>

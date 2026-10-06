@@ -32,6 +32,7 @@
                             role="button"
                             tabindex="0"
                             aria-label="Flip Jeffrey Davidson developer card"
+                            aria-describedby="about-card-stats"
                             aria-pressed="false"
                         >
                             <div
@@ -61,9 +62,9 @@
                                                 />
                                             </div>
                                             <div class="px-5 pt-3 pb-3 text-center">
-                                                <h2 class="font-empera text-xl tracking-wide text-gray-900 dark:text-white">
+                                                <p class="font-empera text-xl tracking-wide text-gray-900 dark:text-white">
                                                     Jeffrey Davidson
-                                                </h2>
+                                                </p>
                                                 <div class="mt-1 flex items-center justify-center gap-2">
                                                     <div class="bg-brand-600/20 h-px flex-1"></div>
                                                     <p class="text-brand-600 tracking-micro text-xs font-semibold uppercase">
@@ -88,9 +89,9 @@
                                             <div class="flex flex-1 flex-col justify-center">
                                                 {{-- Name plate on back too --}}
                                                 <div class="px-5 pt-2 pb-3 text-center">
-                                                    <h2 class="font-empera text-lg tracking-wide text-gray-900 dark:text-white">
+                                                    <p class="font-empera text-lg tracking-wide text-gray-900 dark:text-white">
                                                         Jeffrey Davidson
-                                                    </h2>
+                                                    </p>
                                                     <div class="mt-0.5 flex items-center justify-center gap-2">
                                                         <div class="bg-accent-600/20 h-px flex-1"></div>
                                                         <p class="text-accent-700 dark:text-accent-300 tracking-micro text-xs font-semibold uppercase">
@@ -100,8 +101,8 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Stats grid --}}
-                                                <div class="px-4 pb-3">
+                                                {{-- Stats grid: also the card's accessible description, so it is read on either side --}}
+                                                <div id="about-card-stats" class="px-4 pb-3">
                                                     <div class="grid grid-cols-2 gap-2">
                                                         <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
                                                             <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
