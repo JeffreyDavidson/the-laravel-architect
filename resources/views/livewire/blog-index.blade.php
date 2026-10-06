@@ -62,7 +62,7 @@
                         @foreach ($categories as $category)
                             <x-blog.category-filter
                                 href="{{ route('blog.index', array_filter(['q' => $query !== '' ? $query : null, 'category' => $category->slug], fn ($value) => $value !== null)) }}"
-                                wire:click.prevent="selectCategory(@js($category->slug))"
+                                wire:click.prevent="selectCategory({{ \Illuminate\Support\Js::from($category->slug) }})"
                                 :active="$categorySlug === $category->slug"
                                 :count="$category->posts_count"
                             >
