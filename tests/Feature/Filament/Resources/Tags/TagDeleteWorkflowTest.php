@@ -6,19 +6,17 @@ use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes a tag through the authenticated resource', function () {
-    $tag = Tag::query()->create([
-        'name' => 'Tag delete coverage',
-        'slug' => 'tag-delete-coverage',
-    ]);
+    $tag = Tag::factory()->create();
 
     livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->callAction(DeleteAction::class);

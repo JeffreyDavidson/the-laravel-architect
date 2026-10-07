@@ -28,7 +28,7 @@ beforeEach(fn () => actingAs(User::factory()->create(['is_admin' => true])));
 function trashableRecord(string $type): Post|Project|Episode|NewsletterIssue|Podcast
 {
     return $type === 'podcast'
-        ? Podcast::query()->create(['name' => 'Trashable podcast', 'slug' => 'trashable-podcast', 'description' => 'A show.'])
+        ? Podcast::factory()->create()
         : PublishableFixtures::ready($type);
 }
 
