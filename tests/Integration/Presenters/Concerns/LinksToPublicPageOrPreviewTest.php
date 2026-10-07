@@ -94,7 +94,7 @@ it('signs a preview link that expires after two hours', function (string $type, 
 it('falls back to a signed preview when there is no public page', function () {
     freezeSecond();
     $project = PublishableFixtures::ready('project');
-    $presenter = ProjectPresenter::from($project);
+    $presenter = contentPresenter($project);
 
     $url = $presenter->publicOrPreviewUrl();
 

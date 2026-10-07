@@ -2,6 +2,7 @@
 
 use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
+use App\Models\NewsletterIssue;
 use App\Models\User;
 use App\Presenters\NewsletterIssuePresenter;
 use Filament\Actions\Testing\TestAction;
@@ -30,6 +31,9 @@ it('links the view on site action to the public issue URL', function () {
 it('links the view on site action to a signed preview for a draft', function () {
     freezeSecond();
     $issue = PublishableFixtures::ready('newsletter issue');
+    if (! $issue instanceof NewsletterIssue) {
+        throw new RuntimeException('Expected the fixture to create a NewsletterIssue.');
+    }
 
     livewire(ListNewsletterIssues::class)
         ->assertActionHasUrl(TestAction::make('view_on_site')->table($issue), NewsletterIssuePresenter::from($issue)->previewUrl())
