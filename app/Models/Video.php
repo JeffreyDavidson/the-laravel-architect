@@ -9,7 +9,6 @@ use App\Models\Concerns\HasPublicationDate;
 use App\Models\Concerns\TracksActivity;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -60,17 +59,5 @@ final class Video extends Model
             ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    /** @return Attribute<string, never> */
-    protected function youtubeUrl(): Attribute
-    {
-        return Attribute::make(get: fn (): string => "https://www.youtube.com/watch?v={$this->youtube_id}");
-    }
-
-    /** @return Attribute<string, never> */
-    protected function embedUrl(): Attribute
-    {
-        return Attribute::make(get: fn (): string => "https://www.youtube.com/embed/{$this->youtube_id}");
     }
 }

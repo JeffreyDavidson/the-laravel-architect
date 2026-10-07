@@ -20,10 +20,18 @@ final readonly class ProjectPresenter
         return app()->make(self::class, ['project' => $project]);
     }
 
+    /** The uploaded featured image's URL, or null when the project has none. */
+    public function featuredImageUrl(): ?string
+    {
+        $path = $this->project->featured_image_path;
+
+        return is_string($path) && $path !== '' ? $this->images->url($path) : null;
+    }
+
     /** The uploaded featured image with its WebP variants, or null when the project has none. */
     public function featuredImage(): ?ResponsiveImage
     {
-        $src = $this->project->featured_image_url;
+        $src = $this->featuredImageUrl();
 
         if ($src === null) {
             return null;

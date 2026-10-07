@@ -201,7 +201,7 @@ final readonly class ContentReadinessCriteria
     }
 
     /**
-     * SQL for Episode::transistorEmbedUrl() !== null: the 30-character prefix
+     * SQL for Episode::transistorEpisodeId() !== null: the 30-character prefix
      * https://share.transistor.fm/s/ followed by a letters-and-digits ID and at
      * most one trailing slash. GLOB is case-sensitive, like the PHP pattern.
      *

@@ -29,13 +29,21 @@ final readonly class PostPresenter
         return max(1, (int) ceil(str_word_count(strip_tags($this->post->content)) / 250));
     }
 
+    /** The uploaded featured image's URL, or null when the post has none. */
+    public function featuredImageUrl(): ?string
+    {
+        $path = $this->post->featured_image_path;
+
+        return is_string($path) && $path !== '' ? $this->images->url($path) : null;
+    }
+
     /**
      * The post's artwork: the uploaded featured image with its WebP variants, then the bundled
      * launch artwork. Null when the post has neither.
      */
     public function artwork(): ?ResponsiveImage
     {
-        $uploadedUrl = $this->post->featured_image_url;
+        $uploadedUrl = $this->featuredImageUrl();
         $bundledUrls = $this->bundledArtwork->urls($this->post->slug);
         $src = $uploadedUrl ?? $bundledUrls['large'] ?? null;
 
@@ -59,7 +67,7 @@ final readonly class PostPresenter
      */
     public function shareImageUrl(): string
     {
-        return $this->post->featured_image_url
+        return $this->featuredImageUrl()
             ?? $this->bundledArtwork->urls($this->post->slug)['large']
             ?? $this->urls->route('og-image', $this->post);
     }

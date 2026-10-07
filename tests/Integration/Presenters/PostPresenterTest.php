@@ -11,6 +11,17 @@ use function Pest\Laravel\withVite;
 
 covers(PostPresenter::class);
 
+it('links the uploaded featured image on the public disk', function (?string $path, ?string $expected) {
+    Storage::fake('public');
+    $post = new Post(['featured_image_path' => $path]);
+
+    expect(PostPresenter::from($post)->featuredImageUrl())->toBe($expected === null ? null : Storage::disk('public')->url($expected));
+})->with([
+    'upload' => ['posts/image.png', 'posts/image.png'],
+    'no upload' => [null, null],
+    'blank path' => ['', null],
+]);
+
 it('uses the uploaded featured image with its responsive variants', function () {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('post.png', 1400, 700);

@@ -9,12 +9,12 @@ use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
-use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
+use App\Presenters\ProjectPresenter;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -32,7 +32,6 @@ use Spatie\Activitylog\Support\LogOptions;
 #[PublishingStatus(publishedAt: null)]
 /**
  * @property array<int, string>|null $tech_stack
- * @property-read string|null $featured_image_url
  */
 final class Project extends Model implements Publishable
 {
@@ -42,7 +41,6 @@ final class Project extends Model implements Publishable
     /** @use HasFactory<ProjectFactory> */
     use HasFactory;
 
-    use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
@@ -87,12 +85,16 @@ final class Project extends Model implements Publishable
         return $technologies;
     }
 
+    /**
+     * Temporary: the image URL comes from the presenter until page ViewModels own SEO
+     * (architecture plan C2), when models drop HasSEO and this method goes.
+     */
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
             title: $this->title,
             description: $this->description,
-            image: $this->featured_image_url,
+            image: ProjectPresenter::from($this)->featuredImageUrl(),
         );
     }
 

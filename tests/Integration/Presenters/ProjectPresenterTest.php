@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\Storage;
 
 covers(ProjectPresenter::class);
 
+it('links the uploaded featured image on the public disk', function (?string $path, ?string $expected) {
+    Storage::fake('public');
+    $project = new Project(['featured_image_path' => $path]);
+
+    expect(ProjectPresenter::from($project)->featuredImageUrl())->toBe($expected === null ? null : Storage::disk('public')->url($expected));
+})->with([
+    'upload' => ['projects/image.png', 'projects/image.png'],
+    'no upload' => [null, null],
+    'blank path' => ['', null],
+]);
+
 it('uses the uploaded featured image with its responsive variants', function () {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('project.png', 1600, 900);

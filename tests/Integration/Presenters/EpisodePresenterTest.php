@@ -20,6 +20,18 @@ it('formats an episode duration stored in seconds', function (?int $seconds, str
     'two hours' => [7260, '2h 1m'],
 ]);
 
+it('turns only a Transistor share URL into its embed URL', function (?string $url, ?string $embedUrl) {
+    $episode = new Episode(['transistor_url' => $url]);
+
+    expect(EpisodePresenter::from($episode)->transistorEmbedUrl())
+        ->toBe($embedUrl);
+})->with([
+    'share URL' => ['https://share.transistor.fm/s/428dcd6b', 'https://share.transistor.fm/e/428dcd6b'],
+    'share URL with trailing slash' => ['https://share.transistor.fm/s/428dcd6b/', 'https://share.transistor.fm/e/428dcd6b'],
+    'missing' => [null, null],
+    'other host' => ['https://example.com/s/428dcd6b', null],
+]);
+
 it('finds the YouTube video ID in watch, embed and short links', function (?string $url, bool $hasYouTube, ?string $videoId) {
     $presenter = EpisodePresenter::from(new Episode(['youtube_url' => $url]));
 

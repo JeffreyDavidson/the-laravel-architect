@@ -11,6 +11,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Presenters\VideoPresenter;
 use App\Queries\SearchQuery;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -76,7 +77,7 @@ final class SearchViewModel
             $model instanceof Podcast => [$model->name, $model->description, route('podcast.show', $model), null, 'Podcast'],
             $model instanceof NewsletterIssue => [$model->title, $model->excerpt, route('newsletter.issue', $model), $model->publishedAt(), 'Newsletter'],
             $model instanceof Episode => [$model->title, $model->description, $this->episodeUrl($model), $model->publishedAt(), 'Episode'],
-            $model instanceof Video => [$model->title, $model->description, $model->youtube_url, null, 'YouTube video'],
+            $model instanceof Video => [$model->title, $model->description, VideoPresenter::from($model)->youtubeUrl(), null, 'YouTube video'],
             default => throw new UnexpectedValueException('Unsupported search result model.'),
         };
 

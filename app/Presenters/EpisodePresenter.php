@@ -36,6 +36,14 @@ final readonly class EpisodePresenter
         return $hours > 0 ? "{$hours}h {$minutes}m" : "{$minutes} min";
     }
 
+    /** The Transistor player URL for a valid share URL, or null when the episode has none. */
+    public function transistorEmbedUrl(): ?string
+    {
+        $episodeId = $this->episode->transistorEpisodeId();
+
+        return $episodeId === null ? null : "https://share.transistor.fm/e/{$episodeId}";
+    }
+
     /** Whether the episode links to YouTube, which gives it a video block on its page. */
     public function hasYouTube(): bool
     {

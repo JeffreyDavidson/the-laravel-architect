@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -77,22 +76,15 @@ final class Podcast extends Model
     }
 
     /**
-     * The cover URL for SEO and the public pages; PodcastPresenter decides between the uploaded
-     * cover and the bundled artwork.
-     *
-     * @return Attribute<string|null, never>
+     * Temporary: the image URL comes from the presenter until page ViewModels own SEO
+     * (architecture plan C2), when models drop HasSEO and this method goes.
      */
-    protected function coverImageUrl(): Attribute
-    {
-        return Attribute::get(fn (): ?string => PodcastPresenter::from($this)->coverImageUrl());
-    }
-
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
             title: $this->name,
             description: $this->description,
-            image: $this->cover_image_url,
+            image: PodcastPresenter::from($this)->coverImageUrl(),
         );
     }
 

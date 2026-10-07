@@ -9,12 +9,12 @@ use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
-use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
+use App\Presenters\PostPresenter;
 use Carbon\CarbonInterface;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -36,7 +36,6 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property PublishStatus $status
  * @property Carbon|null $published_at
  * @property Carbon|null $updated_at
- * @property-read string|null $featured_image_url
  * @property-read Category|null $category
  */
 #[Fillable('title', 'slug', 'excerpt', 'content', 'featured_image_path', 'category_id', 'user_id', 'status', 'published_at', 'review_notes', 'reviewed_by', 'reviewed_at', 'source_url', 'last_reviewed_at')]
@@ -50,7 +49,6 @@ final class Post extends Model implements Publishable
     /** @use HasFactory<PostFactory> */
     use HasFactory;
 
-    use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
@@ -134,12 +132,16 @@ final class Post extends Model implements Publishable
         return $this->belongsToMany(Episode::class);
     }
 
+    /**
+     * Temporary: the image URL comes from the presenter until page ViewModels own SEO
+     * (architecture plan C2), when models drop HasSEO and this method goes.
+     */
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
             title: $this->title,
             description: $this->excerpt,
-            image: $this->featured_image_url,
+            image: PostPresenter::from($this)->featuredImageUrl(),
             published_time: $this->published_at,
             modified_time: $this->updated_at,
             type: 'article',

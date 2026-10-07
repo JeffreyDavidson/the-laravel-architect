@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Podcast;
+use App\Presenters\PodcastPresenter;
 
 it('renders nothing for a podcast without cover artwork', function () {
     $podcast = new Podcast([
@@ -28,7 +29,7 @@ it('renders an uploaded podcast cover', function () {
         ['podcast' => $podcast],
     );
 
-    expect($html)->toContain('src="'.$podcast->cover_image_url.'"');
+    expect($html)->toContain('src="'.PodcastPresenter::from($podcast)->coverImageUrl().'"');
 });
 
 it('renders the placeholder for a podcast without cover artwork', function () {
