@@ -4,6 +4,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
+arch('keeps models independent of application services')
+    ->expect('App\Models')
+    ->not->toUse('App\Services');
+
 it('keeps route binding concerns outside Eloquent models', function () {
     $directory = app_path('Models');
 

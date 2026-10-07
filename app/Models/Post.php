@@ -13,7 +13,6 @@ use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
-use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
 use Carbon\CarbonInterface;
@@ -56,7 +55,6 @@ final class Post extends Model implements Publishable
     use HasSEO;
     use HasTagsUntilForceDeleted;
     use LocksSlugAfterPublication;
-    use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
 
@@ -167,10 +165,5 @@ final class Post extends Model implements Publishable
             ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    protected function storedMediaAttributes(): array
-    {
-        return ['featured_image_path'];
     }
 }

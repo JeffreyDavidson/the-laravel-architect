@@ -12,10 +12,11 @@ use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
-use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
+use App\Observers\EpisodeObserver;
 use Database\Factories\EpisodeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,7 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
+#[ObservedBy(EpisodeObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
 /**
@@ -48,7 +50,6 @@ final class Episode extends Model implements Publishable
     use HasSEO;
     use HasTagsUntilForceDeleted;
     use LocksSlugAfterPublication;
-    use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
 
@@ -124,10 +125,5 @@ final class Episode extends Model implements Publishable
             ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    protected function storedMediaAttributes(): array
-    {
-        return ['featured_image_path'];
     }
 }

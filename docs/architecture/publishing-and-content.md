@@ -116,6 +116,9 @@ The episodes it trashes are stamped with the podcast's own `deleted_at` (even
 when the delete spans several seconds), so restoring it restores the episodes
 trashed with it (same or later `deleted_at`) but not ones trashed separately
 before. Force deleting it force deletes all of its episodes with their cleanup.
+The whole cascade lives in `PodcastObserver` (`trashed`, `restoring`, and
+`deleting` for a force delete) and runs inside the podcast delete's transaction,
+so an episode that cannot be deleted rolls the podcast delete back.
 
 ## Related posts and episodes
 
