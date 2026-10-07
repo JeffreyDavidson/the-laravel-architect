@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use App\Models\NewsletterIssue;
 
-class GenerateNewsletterRssFeed
+final class GenerateNewsletterRssFeed
 {
     public function handle(): string
     {
