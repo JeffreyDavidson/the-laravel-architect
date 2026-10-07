@@ -17,11 +17,11 @@ enum SearchContentType: string
     public static function labels(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $type): array => [$type->value => $type->label()])
+            ->mapWithKeys(fn (self $type): array => [$type->value => $type->getLabel()])
             ->all();
     }
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Writing => 'Writing',
