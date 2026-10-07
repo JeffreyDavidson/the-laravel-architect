@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Models\Video;
 use App\ViewModels\HomeViewModel;
@@ -12,14 +11,9 @@ it('builds the bounded public homepage payload', function () {
     foreach (range(1, 5) as $sortOrder) {
         createHomeViewModelProject($sortOrder);
     }
-    Project::query()->create([
-        'title' => 'Draft project',
-        'slug' => 'draft-project',
-        'description' => 'This project is not public.',
-        'is_featured' => true,
-        'sort_order' => 0,
-        'status' => PublishStatus::Draft,
-    ]);
+    Project::factory()
+        ->featured()
+        ->create();
 
     foreach (range(1, 4) as $sortOrder) {
         createHomeViewModelVideo($sortOrder);
@@ -60,22 +54,16 @@ it('builds the bounded public homepage payload', function () {
 
 function createHomeViewModelProject(int $sortOrder): void
 {
-    Project::query()->create([
-        'title' => "Published project {$sortOrder}",
-        'slug' => "published-project-{$sortOrder}",
-        'description' => "Description for published project {$sortOrder}.",
-        'is_featured' => true,
-        'sort_order' => $sortOrder,
-        'status' => PublishStatus::Published,
-    ]);
+    Project::factory()
+        ->featured()
+        ->published()
+        ->create(['sort_order' => $sortOrder]);
 }
 
 function createHomeViewModelVideo(int $position, ?DateTimeInterface $publishedAt = null): void
 {
-    Video::query()->create([
+    Video::factory()->create([
         'youtube_id' => "video-{$position}",
-        'title' => "Video {$position}",
-        'slug' => "video-{$position}",
         'published_at' => $publishedAt ?? now()->subDays($position),
     ]);
 }

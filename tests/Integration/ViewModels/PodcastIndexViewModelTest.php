@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\ViewModels\PodcastIndexViewModel;
@@ -9,36 +8,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 it('builds the public podcast index payload', function () {
-    Podcast::query()->create([
-        'name' => 'Later Podcast',
-        'slug' => 'later-podcast',
-        'description' => 'Description',
-        'is_active' => true,
-        'sort_order' => 2,
-    ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Earlier Podcast',
-        'slug' => 'earlier-podcast',
-        'description' => 'Description',
-        'is_active' => true,
-        'sort_order' => 1,
-    ]);
-    Podcast::query()->create([
-        'name' => 'Inactive Podcast',
-        'slug' => 'inactive-podcast',
-        'description' => 'Description',
-        'is_active' => false,
-        'sort_order' => 0,
-    ]);
-    Episode::query()->create([
-        'podcast_id' => $podcast->getKey(),
-        'title' => 'Published Episode',
-        'slug' => 'published-episode',
-        'episode_number' => 1,
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    Podcast::factory()->create(['sort_order' => 2]);
+    $podcast = Podcast::factory()->create(['sort_order' => 1]);
+    Podcast::factory()
+        ->inactive()
+        ->create();
+    Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create();
 
     $data = app(PodcastIndexViewModel::class)
         ->data();

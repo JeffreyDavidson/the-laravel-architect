@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Enums\SearchContentType;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
@@ -22,24 +21,22 @@ function seedPagedSearchContent(int $posts, int $issues): void
     $author = User::factory()->create();
 
     foreach (range(1, $posts) as $number) {
-        Post::query()->create([
-            'title' => "Paging post {$number}",
-            'slug' => "paging-post-{$number}",
-            'content' => 'Content.',
-            'user_id' => $author->id,
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subMinutes($number),
-        ]);
+        Post::factory()
+            ->for($author, 'author')
+            ->published()
+            ->create([
+                'title' => "Paging post {$number}",
+                'published_at' => now()->subMinutes($number),
+            ]);
     }
 
     foreach (range(1, $issues) as $number) {
-        NewsletterIssue::query()->create([
-            'title' => "Paging issue {$number}",
-            'slug' => "paging-issue-{$number}",
-            'content' => 'Content.',
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subMinutes($number),
-        ]);
+        NewsletterIssue::factory()
+            ->published()
+            ->create([
+                'title' => "Paging issue {$number}",
+                'published_at' => now()->subMinutes($number),
+            ]);
     }
 }
 
@@ -59,15 +56,12 @@ function searchWithParameters(array $parameters, ?SearchContentType $type = null
 it('dates results in the display timezone', function () {
     config(['app.display_timezone' => 'America/New_York']);
     travelTo('2026-10-10 12:00:00');
-    $author = User::factory()->create();
-    Post::query()->create([
-        'title' => 'Evening timezone post',
-        'slug' => 'evening-timezone-post',
-        'content' => 'Content.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => '2026-10-06 01:00:00',
-    ]);
+    Post::factory()
+        ->published()
+        ->create([
+            'title' => 'Evening timezone post',
+            'published_at' => '2026-10-06 01:00:00',
+        ]);
 
     $results = searchWithParameters(['q' => 'timezone']);
 

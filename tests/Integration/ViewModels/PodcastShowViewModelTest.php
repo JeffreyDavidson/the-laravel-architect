@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\ViewModels\PodcastShowViewModel;
@@ -11,31 +10,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 pest()->use(RefreshDatabase::class);
 
 it('builds a page-aware podcast payload', function () {
-    $podcast = Podcast::query()->create([
+    $podcast = Podcast::factory()->create([
         'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
         'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
     ]);
 
     foreach (range(1, 21) as $index) {
-        Episode::query()->create([
-            'podcast_id' => $podcast->getKey(),
-            'title' => "Architecture Session {$index}",
-            'slug' => "architecture-session-{$index}",
-            'description' => "A conversation about architecture topic {$index}.",
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        Episode::factory()
+            ->for($podcast)
+            ->published()
+            ->create([
+                'slug' => "architecture-session-{$index}",
+                'published_at' => now()->subDays($index),
+            ]);
     }
 
-    Episode::query()->create([
-        'podcast_id' => $podcast->getKey(),
-        'title' => 'Draft Session',
-        'slug' => 'draft-session',
-        'description' => 'An unpublished conversation.',
-        'status' => PublishStatus::Draft,
-    ]);
+    Episode::factory()
+        ->for($podcast)
+        ->create();
 
     Paginator::currentPageResolver(fn (): int => 2);
 
@@ -76,11 +68,9 @@ it('builds a page-aware podcast payload', function () {
 });
 
 it('rejects an out-of-range podcast page', function () {
-    $podcast = Podcast::query()->create([
+    $podcast = Podcast::factory()->create([
         'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
         'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
     ]);
 
     Paginator::currentPageResolver(fn (): int => 2);

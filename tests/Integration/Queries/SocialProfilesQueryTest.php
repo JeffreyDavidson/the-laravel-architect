@@ -61,7 +61,7 @@ function createSocialProfilesQueryRecord(
     bool $isEnabled = true,
     string $url = 'https://example.com/profile',
 ): SocialProfile {
-    return SocialProfile::query()->create([
+    return SocialProfile::factory()->create([
         'platform' => $platform,
         'url' => $url,
         'is_enabled' => $isEnabled,
