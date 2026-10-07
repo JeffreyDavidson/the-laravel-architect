@@ -111,7 +111,7 @@
                             <a
                                 href="{{ route('blog.index') }}"
                                 wire:click.prevent="clearFilters"
-                                class="hover:border-brand-500 hover:text-brand-600 focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-brand-950 mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100"
+                                class="hover:border-brand-500 hover:text-brand-action focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-brand-950 dark:hover:text-brand-600 mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100"
                             >
                                 Show all articles
                             </a>

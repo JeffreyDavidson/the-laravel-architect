@@ -26,7 +26,7 @@
             <x-markdown
                 :content="$issue->content"
                 data-article-prose
-                class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-600 dark:prose-a:text-brand-300 prose-code:text-brand-300"
+                class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-action dark:prose-a:text-brand-300 prose-code:text-brand-300"
             />
 
             <div class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">

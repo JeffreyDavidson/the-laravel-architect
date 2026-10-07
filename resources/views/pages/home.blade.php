@@ -191,7 +191,7 @@
                                     @if ($featuredPost->category)
                                         <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $featuredPost->category->name }}</span>
                                     @endif
-                                    <h3 class="group-hover:text-brand-400 mt-2 mb-4 text-2xl font-semibold text-gray-900 transition-colors md:text-3xl dark:text-white">
+                                    <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-4 text-2xl font-semibold text-gray-900 transition-colors md:text-3xl dark:text-white">
                                         {{ $featuredPost->title }}
                                     </h3>
                                     <p class="line-clamp-3 max-w-3xl text-base text-gray-600 dark:text-gray-400">
@@ -230,7 +230,7 @@
                                             @if ($post->category)
                                                 <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $post->category->name }}</span>
                                             @endif
-                                            <h3 class="group-hover:text-brand-400 mt-2 mb-3 text-lg font-semibold text-gray-900 transition-colors dark:text-white">
+                                            <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-3 text-lg font-semibold text-gray-900 transition-colors dark:text-white">
                                                 {{ $post->title }}
                                             </h3>
                                             <p class="line-clamp-2 hidden text-sm text-gray-600 md:block dark:text-gray-400">
