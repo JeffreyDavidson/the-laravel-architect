@@ -21,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Vite;
 
 class PostsTable
 {
@@ -35,7 +36,7 @@ class PostsTable
                     ->label('Image')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn (): string => asset('images/admin/post-placeholder.svg')),
+                    ->defaultImageUrl(fn (): string => Vite::asset('resources/images/admin-post-placeholder.svg')),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
