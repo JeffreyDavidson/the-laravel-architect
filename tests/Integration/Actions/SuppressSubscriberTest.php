@@ -5,6 +5,9 @@ use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\freezeTime;
+use function Pest\Laravel\travel;
+
 pest()->use(RefreshDatabase::class);
 
 covers(SuppressSubscriber::class);
@@ -33,7 +36,7 @@ it('unsubscribes an active reader and records why', function () {
 });
 
 it('keeps the original unsubscribe date', function () {
-    $this->freezeTime();
+    freezeTime();
     $unsubscribedAt = now()->subDays(3)
         ->startOfSecond();
     $reader = Subscriber::factory()->create(['unsubscribed_at' => $unsubscribedAt]);
@@ -60,12 +63,12 @@ it('stops the confirmation of a pending sign-up', function () {
 });
 
 it('keeps the first reason and date when suppressed twice', function () {
-    $this->freezeTime();
+    freezeTime();
     $reader = Subscriber::factory()->create();
     $action = app(SuppressSubscriber::class);
 
     $action->handle($reader->email, SuppressionReason::Bounced);
-    $this->travel(2)
+    travel(2)
         ->days();
     $found = $action->handle($reader->email, SuppressionReason::Complained);
 

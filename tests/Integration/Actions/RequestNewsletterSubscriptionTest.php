@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use JMac\Testing\Double;
 
+use function Pest\Laravel\travel;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -65,7 +67,7 @@ it('does not restart an active verified subscription', function () {
     $verifiedAt = now()->subMonth()
         ->addMinute()
         ->startOfSecond();
-    $subscriber = Subscriber::query()->create([
+    $subscriber = Subscriber::factory()->create([
         'email' => 'reader@example.com',
         'subscribed_at' => $subscribedAt,
         'verified_at' => $verifiedAt,
@@ -86,13 +88,9 @@ it('does not restart an active verified subscription', function () {
 });
 
 it('restarts confirmation for an unsubscribed reader', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now()->subMonth(),
-        'verified_at' => now()->subMonth()
-            ->addMinute(),
-        'unsubscribed_at' => now()->subWeek(),
-    ]);
+    $subscriber = Subscriber::factory()
+        ->unsubscribed()
+        ->create(['email' => 'reader@example.com']);
 
     app(RequestNewsletterSubscription::class)
         ->handle('reader@example.com');
@@ -134,7 +132,7 @@ it('allows a pending confirmation to be requested again after the cooldown expir
     $tokenHash = Subscriber::query()->sole()
         ->verification_token_hash;
 
-    $this->travel(901)
+    travel(901)
         ->seconds();
     $action->handle('reader@example.com');
 

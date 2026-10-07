@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterIssue;
@@ -12,13 +11,9 @@ pest()->use(RefreshDatabase::class);
 dataset('layout mailables', [
     'newsletter confirmation' => fn (): Mailable => new ConfirmNewsletterSubscription('https://example.test/confirm?signature=abc'),
     'newsletter issue' => fn (): Mailable => new NewsletterIssueMail(
-        NewsletterIssue::query()->create([
-            'title' => 'Issue One',
-            'slug' => 'issue-one',
-            'content' => 'Hello readers.',
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDay(),
-        ]),
+        NewsletterIssue::factory()
+            ->published()
+            ->create(),
         'https://example.test/unsubscribe',
     ),
 ]);

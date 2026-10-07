@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -10,13 +9,13 @@ pest()->use(RefreshDatabase::class);
 
 function publishedNewsletterIssue(string $content = 'Hello **readers**.'): NewsletterIssue
 {
-    return NewsletterIssue::query()->create([
-        'title' => 'Issue One & Beyond',
-        'slug' => 'issue-one',
-        'content' => $content,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    return NewsletterIssue::factory()
+        ->published()
+        ->create([
+            'title' => 'Issue One & Beyond',
+            'slug' => 'issue-one',
+            'content' => $content,
+        ]);
 }
 
 it('renders the issue as html and plain text with its links', function () {
