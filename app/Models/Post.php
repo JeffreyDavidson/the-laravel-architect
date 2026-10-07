@@ -15,10 +15,12 @@ use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
 use Carbon\CarbonInterface;
+use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -43,6 +45,10 @@ use Spatie\Activitylog\Support\LogOptions;
 class Post extends Model implements Publishable
 {
     use DeletesOwnedContent;
+
+    /** @use HasFactory<PostFactory> */
+    use HasFactory;
+
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;

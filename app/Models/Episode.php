@@ -12,7 +12,9 @@ use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
+use Database\Factories\EpisodeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,6 +37,10 @@ use Spatie\Activitylog\Support\LogOptions;
 class Episode extends Model implements Publishable
 {
     use DeletesOwnedContent;
+
+    /** @use HasFactory<EpisodeFactory> */
+    use HasFactory;
+
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;

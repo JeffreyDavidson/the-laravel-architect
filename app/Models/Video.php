@@ -7,8 +7,10 @@ namespace App\Models;
 use App\Models\Concerns\Featurable;
 use App\Models\Concerns\HasPublicationDate;
 use App\Models\Concerns\TracksActivity;
+use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -20,6 +22,10 @@ use Spatie\Activitylog\Support\LogOptions;
 class Video extends Model
 {
     use Featurable;
+
+    /** @use HasFactory<VideoFactory> */
+    use HasFactory;
+
     use HasPublicationDate;
     use TracksActivity;
 
