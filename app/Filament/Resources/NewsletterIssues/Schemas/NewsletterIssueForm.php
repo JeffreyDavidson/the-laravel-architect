@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\NewsletterIssues\Schemas;
 
 use App\Filament\Forms\Components\PublishDatePicker;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Route as Router;
 use Illuminate\Support\Str;
 use RalphJSmit\Filament\SEO\SEO;
 
-class NewsletterIssueForm
+final class NewsletterIssueForm
 {
     public static function configure(Schema $schema): Schema
     {

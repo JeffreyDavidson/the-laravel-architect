@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\Episode;
@@ -10,11 +12,11 @@ use App\Queries\RelatedProjectsQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ProjectShowViewModel
+final readonly class ProjectShowViewModel
 {
     public function __construct(
-        private readonly RelatedProjectsQuery $relatedProjectsQuery,
-        private readonly RelatedProjectContentQuery $relatedProjectContentQuery,
+        private RelatedProjectsQuery $relatedProjectsQuery,
+        private RelatedProjectContentQuery $relatedProjectContentQuery,
     ) {}
 
     /**

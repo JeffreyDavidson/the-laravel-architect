@@ -19,7 +19,7 @@ use WeakMap;
  * Readiness badge for content tables, with the missing public details as its description.
  * The readiness check runs once per row and is shared by the badge and the description.
  */
-class ReadinessColumn extends TextColumn
+final class ReadinessColumn extends TextColumn
 {
     protected bool $showsProgress = false;
 

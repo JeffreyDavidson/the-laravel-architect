@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\Podcast;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PodcastIndexViewModel
+final class PodcastIndexViewModel
 {
     /**
      * @return array{

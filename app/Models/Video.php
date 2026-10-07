@@ -19,7 +19,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
 #[Sluggable(from: 'title')]
-class Video extends Model
+final class Video extends Model
 {
     use Featurable;
 

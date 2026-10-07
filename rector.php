@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Rector\CodeQuality\Rector\Class_\RemoveReadonlyPropertyVisibilityOnReadonlyClassRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -13,5 +15,9 @@ return RectorConfig::configure()
     ->withSets([
         SetList::CODE_QUALITY,
         SetList::TYPE_DECLARATION,
+    ])
+    ->withRules([
+        DeclareStrictTypesRector::class,
+        RemoveReadonlyPropertyVisibilityOnReadonlyClassRector::class,
     ])
     ->withComposerBased(laravel: true);

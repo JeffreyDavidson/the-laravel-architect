@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enums\MediaHealthStatus;
@@ -17,7 +19,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Throwable;
 
-class MediaHealthReport
+final readonly class MediaHealthReport
 {
     /** @var array<string, array{model: class-string<Model>, title: string, path: string, label: string}> */
     private const array SOURCES = [
@@ -26,7 +28,7 @@ class MediaHealthReport
         MediaHealthType::Podcast->value => ['model' => Podcast::class, 'title' => 'name', 'path' => 'cover_image_path', 'label' => 'Podcast'],
     ];
 
-    public function __construct(private readonly ResponsiveImageVariants $images) {}
+    public function __construct(private ResponsiveImageVariants $images) {}
 
     /** @return array<string, array{type: string, type_key: string, record_key: string, title: string, filename: string, dimensions: string, file_size: string, source_status: string, variants: string, status: string, status_color: string, repairable: bool}> */
     public function records(?string $typeFilter = null, ?string $search = null): array

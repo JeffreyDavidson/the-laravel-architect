@@ -7,15 +7,14 @@ namespace App\Jobs;
 use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Tries;
 
-class RecordQueueHeartbeat implements ShouldQueue
+#[Tries(3)]
+#[Backoff([5, 15, 30])]
+final class RecordQueueHeartbeat implements ShouldQueue
 {
     use Queueable;
-
-    public int $tries = 3;
-
-    /** @var list<int> */
-    public array $backoff = [5, 15, 30];
 
     public function handle(RuntimeHealthMonitor $runtimeHealthMonitor): void
     {

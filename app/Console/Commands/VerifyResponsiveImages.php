@@ -15,7 +15,7 @@ use Illuminate\Console\Command;
 
 #[Signature('media:verify-responsive-images')]
 #[Description('Verify responsive image variants for stored project, post, and podcast media')]
-class VerifyResponsiveImages extends Command
+final class VerifyResponsiveImages extends Command
 {
     public function handle(ResponsiveImageVariants $images, ResponsiveImageWorkflow $workflow): int
     {

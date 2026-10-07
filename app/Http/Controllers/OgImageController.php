@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Services\OgImageCache;
 use Illuminate\Http\Response;
 
-class OgImageController
+final class OgImageController
 {
     public function __invoke(Post $post, OgImageCache $cache): Response
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectReadinessFilter;
@@ -20,7 +22,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ProjectsTable
+final class ProjectsTable
 {
     public static function configure(Table $table): Table
     {

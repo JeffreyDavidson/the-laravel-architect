@@ -13,7 +13,7 @@ use Illuminate\Console\Command;
 
 #[Signature('posts:generate-images {--force : Also regenerate previously generated images (uploaded images are kept)}')]
 #[Description('Generate missing featured images for posts')]
-class GenerateMissingPostImages extends Command
+final class GenerateMissingPostImages extends Command
 {
     public function handle(
         FeaturedImageGenerator $generator,

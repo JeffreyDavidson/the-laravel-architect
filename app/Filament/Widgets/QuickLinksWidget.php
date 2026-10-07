@@ -11,7 +11,7 @@ use App\Filament\Resources\Projects\ProjectResource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
 
-class QuickLinksWidget extends Widget
+final class QuickLinksWidget extends Widget
 {
     #[\Override]
     protected string $view = 'filament.widgets.quick-links-widget';

@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Episodes\Pages;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateEpisode extends CreateRecord
+final class CreateEpisode extends CreateRecord
 {
     #[\Override]
     protected static string $resource = EpisodeResource::class;

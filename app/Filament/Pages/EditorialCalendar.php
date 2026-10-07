@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
 use App\Data\CalendarEntry;
@@ -17,7 +19,7 @@ use UnitEnum;
 /**
  * @phpstan-type CalendarDay array{date: string, day: int, isCurrentMonth: bool, isToday: bool, entries: Collection<int, CalendarEntry>}
  */
-class EditorialCalendar extends Page
+final class EditorialCalendar extends Page
 {
     #[\Override]
     protected static ?string $title = 'Editorial Calendar';

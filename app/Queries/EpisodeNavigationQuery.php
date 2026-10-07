@@ -8,7 +8,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use Illuminate\Database\Eloquent\Builder;
 
-class EpisodeNavigationQuery
+final class EpisodeNavigationQuery
 {
     /** @return array{previous: Episode|null, next: Episode|null} */
     public function get(Podcast $podcast, Episode $episode): array

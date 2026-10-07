@@ -10,7 +10,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditPodcast extends EditRecord
+final class EditPodcast extends EditRecord
 {
     #[\Override]
     protected static string $resource = PodcastResource::class;

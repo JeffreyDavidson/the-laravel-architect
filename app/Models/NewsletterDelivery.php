@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Database\Factories\NewsletterDeliveryFactory;
@@ -19,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property-read Subscriber|null $subscriber
  */
 #[Fillable('newsletter_issue_id', 'subscriber_id', 'sent_at')]
-class NewsletterDelivery extends Model
+final class NewsletterDelivery extends Model
 {
     /** @use HasFactory<NewsletterDeliveryFactory> */
     use HasFactory;

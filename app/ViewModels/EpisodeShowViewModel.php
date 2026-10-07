@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\Episode;
@@ -9,9 +11,9 @@ use App\Presenters\PodcastPresenter;
 use App\Queries\EpisodeNavigationQuery;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class EpisodeShowViewModel
+final readonly class EpisodeShowViewModel
 {
-    public function __construct(private readonly EpisodeNavigationQuery $episodeNavigationQuery) {}
+    public function __construct(private EpisodeNavigationQuery $episodeNavigationQuery) {}
 
     /**
      * @return array{

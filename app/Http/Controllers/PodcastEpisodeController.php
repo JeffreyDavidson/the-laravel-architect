@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Episode;
@@ -7,7 +9,7 @@ use App\Models\Podcast;
 use App\ViewModels\EpisodeShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PodcastEpisodeController
+final class PodcastEpisodeController
 {
     public function __invoke(
         Podcast $podcast,

@@ -9,7 +9,7 @@ use App\Enums\ContactType;
 use App\Models\Project;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ContactViewModel
+final class ContactViewModel
 {
     /**
      * @return array{

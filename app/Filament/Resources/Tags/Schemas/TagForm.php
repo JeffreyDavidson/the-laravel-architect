@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Tags\Schemas;
 
 use App\Filament\Forms\Components\SlugInput;
@@ -9,7 +11,7 @@ use Closure;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class TagForm
+final class TagForm
 {
     public static function configure(Schema $schema): Schema
     {

@@ -18,7 +18,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use RalphJSmit\Filament\SEO\SEO;
 
-class EpisodeForm
+final class EpisodeForm
 {
     public static function configure(Schema $schema): Schema
     {

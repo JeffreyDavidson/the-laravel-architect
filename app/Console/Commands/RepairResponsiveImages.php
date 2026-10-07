@@ -12,7 +12,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('media:repair-responsive-images {--force : Regenerate variants that already pass verification}')]
 #[Description('Repair responsive image variants for stored project, post, and podcast media')]
-class RepairResponsiveImages extends Command implements Isolatable
+final class RepairResponsiveImages extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

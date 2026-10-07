@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  */
 #[Signature('cache:prune-expired')]
 #[Description('Delete expired entries from the database cache table')]
-class PruneExpiredCacheEntries extends Command
+final class PruneExpiredCacheEntries extends Command
 {
     public function handle(): int
     {

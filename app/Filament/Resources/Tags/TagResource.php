@@ -18,7 +18,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class TagResource extends Resource
+final class TagResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Tag::class;

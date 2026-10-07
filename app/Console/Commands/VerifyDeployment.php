@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('app:verify-deployment {commit : Expected deployed Git commit SHA}')]
 #[Description('Verify the deployed commit, migrations, monitoring, and runtime heartbeats')]
-class VerifyDeployment extends Command
+final class VerifyDeployment extends Command
 {
     public function handle(DeploymentVerifier $verifier): int
     {

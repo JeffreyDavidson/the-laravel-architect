@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Models\Subscriber;
@@ -14,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  * already used, goes back to the signup form with the same message, so the
  * response never reveals whether the subscriber or token exists.
  */
-class EnsureValidNewsletterConfirmationLink
+final class EnsureValidNewsletterConfirmationLink
 {
     /** @param Closure(Request): Response $next */
     public function handle(Request $request, Closure $next): Response

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\ContactInquiries\Tables;
 
 use App\Enums\ContactInquiryStatus;
@@ -14,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
-class ContactInquiriesTable
+final class ContactInquiriesTable
 {
     public static function configure(Table $table): Table
     {

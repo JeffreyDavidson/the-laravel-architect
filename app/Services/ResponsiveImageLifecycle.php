@@ -7,9 +7,9 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class ResponsiveImageLifecycle
+final readonly class ResponsiveImageLifecycle
 {
-    public function __construct(private readonly ResponsiveImageVariants $images) {}
+    public function __construct(private ResponsiveImageVariants $images) {}
 
     public function created(Model $model, string $pathColumn, string $label): void
     {

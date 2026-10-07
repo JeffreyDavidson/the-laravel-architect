@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SubscribeNewsletterRequest extends FormRequest
+final class SubscribeNewsletterRequest extends FormRequest
 {
     public function authorize(): bool
     {

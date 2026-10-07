@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Contracts\Http\Kernel;
@@ -8,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
-class PublicPageBenchmark
+final class PublicPageBenchmark
 {
     private const array PAGES = [
         '/blog',

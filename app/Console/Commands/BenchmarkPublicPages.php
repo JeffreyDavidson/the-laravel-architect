@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Services\PublicPageBenchmark;
@@ -9,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('content:benchmark {--iterations=5 : Requests per page, from 2 to 25}')]
 #[Description('Measure local response time, database queries, SQL time, and memory for representative public pages')]
-class BenchmarkPublicPages extends Command
+final class BenchmarkPublicPages extends Command
 {
     public function handle(PublicPageBenchmark $benchmark): int
     {

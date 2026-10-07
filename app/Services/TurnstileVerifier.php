@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class TurnstileVerifier
+final class TurnstileVerifier
 {
     public function passes(Request $request, string $expectedAction): bool
     {

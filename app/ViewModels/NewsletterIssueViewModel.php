@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\NewsletterIssue;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class NewsletterIssueViewModel
+final class NewsletterIssueViewModel
 {
     /**
      * @return array{issue: NewsletterIssue, seoSource: NewsletterIssue}

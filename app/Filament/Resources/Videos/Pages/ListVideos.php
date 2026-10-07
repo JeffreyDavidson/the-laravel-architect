@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Videos\Pages;
 use App\Filament\Resources\Videos\VideoResource;
 use Filament\Resources\Pages\ListRecords;
 
-class ListVideos extends ListRecords
+final class ListVideos extends ListRecords
 {
     #[\Override]
     protected static string $resource = VideoResource::class;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\ContactInquiryStatus;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 
 #[Fillable('name', 'email', 'type', 'budget', 'message', 'project_title', 'status', 'notes', 'email_attempted_at', 'notification_sent_at', 'confirmation_sent_at')]
-class ContactInquiry extends Model
+final class ContactInquiry extends Model
 {
     /** @use HasFactory<ContactInquiryFactory> */
     use HasFactory, Prunable;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Contracts\Publishable;
@@ -42,7 +44,7 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PostObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
-class Post extends Model implements Publishable
+final class Post extends Model implements Publishable
 {
     use DeletesOwnedContent;
 

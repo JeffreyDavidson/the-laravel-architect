@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
 use App\Enums\MediaHealthStatus;
@@ -23,7 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class MediaHealth extends Page implements HasTable
+final class MediaHealth extends Page implements HasTable
 {
     use InteractsWithTable;
 

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Image\ImageException;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
-class ResponsiveImageVariants
+final class ResponsiveImageVariants
 {
     public function generate(string $originalPath): bool
     {

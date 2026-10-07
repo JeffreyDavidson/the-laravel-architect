@@ -8,7 +8,7 @@ use App\Filament\Resources\SocialProfiles\SocialProfileResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditSocialProfile extends EditRecord
+final class EditSocialProfile extends EditRecord
 {
     #[\Override]
     protected static string $resource = SocialProfileResource::class;

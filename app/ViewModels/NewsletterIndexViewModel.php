@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\NewsletterIssue;
@@ -7,7 +9,7 @@ use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class NewsletterIndexViewModel
+final class NewsletterIndexViewModel
 {
     private const int ISSUES_PER_PAGE = 12;
 

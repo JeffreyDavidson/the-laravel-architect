@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Enums\SearchContentType;
@@ -20,7 +22,7 @@ use UnexpectedValueException;
 /**
  * @phpstan-import-type SearchResultPage from SearchQuery
  */
-class SearchViewModel
+final class SearchViewModel
 {
     /**
      * @param  array<string, SearchResultPage>  $results  matching models keyed by content type value

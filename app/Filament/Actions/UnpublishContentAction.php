@@ -16,9 +16,9 @@ use Livewire\Component;
 /**
  * Takes live or scheduled content back to draft while keeping its publish date and permalink.
  */
-class UnpublishContentAction extends Action
+final class UnpublishContentAction extends Action
 {
-    public static function getDefaultName(): ?string
+    public static function getDefaultName(): string
     {
         return 'unpublish';
     }

@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class ScaleTestContentWorkflow
+final class ScaleTestContentWorkflow
 {
     private const int POST_COUNT = 100;
 

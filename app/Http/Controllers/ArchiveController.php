@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\SearchContentType;
@@ -8,7 +10,7 @@ use App\Queries\ArchiveQuery;
 use App\ViewModels\ArchiveViewModel;
 use Illuminate\Contracts\View\View;
 
-class ArchiveController
+final class ArchiveController
 {
     public function __invoke(ArchiveIndexRequest $request, ArchiveQuery $archiveQuery, ArchiveViewModel $viewModel): View
     {

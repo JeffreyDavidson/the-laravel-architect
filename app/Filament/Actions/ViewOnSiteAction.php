@@ -15,9 +15,9 @@ use Filament\Support\Icons\Heroicon;
 /**
  * Opens the content in a new tab: the public page while it is live, otherwise a signed preview.
  */
-class ViewOnSiteAction extends Action
+final class ViewOnSiteAction extends Action
 {
-    public static function getDefaultName(): ?string
+    public static function getDefaultName(): string
     {
         return 'view_on_site';
     }

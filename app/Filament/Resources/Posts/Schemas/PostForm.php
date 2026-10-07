@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
@@ -22,7 +24,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use RalphJSmit\Filament\SEO\SEO;
 
-class PostForm
+final class PostForm
 {
     public static function configure(Schema $schema): Schema
     {

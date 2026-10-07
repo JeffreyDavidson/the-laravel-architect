@@ -8,7 +8,7 @@ use App\Filament\Resources\Podcasts\PodcastResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListPodcasts extends ListRecords
+final class ListPodcasts extends ListRecords
 {
     #[\Override]
     protected static string $resource = PodcastResource::class;

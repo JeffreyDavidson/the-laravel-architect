@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\View\Components;
 
 use App\Models\SocialProfile;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 use InvalidArgumentException;
 
-class SocialLinks extends Component
+final class SocialLinks extends Component
 {
     /** @var Collection<int, SocialProfile> */
     public Collection $profiles;

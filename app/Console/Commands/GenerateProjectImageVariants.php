@@ -14,7 +14,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('projects:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing project images')]
-class GenerateProjectImageVariants extends Command implements Isolatable
+final class GenerateProjectImageVariants extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

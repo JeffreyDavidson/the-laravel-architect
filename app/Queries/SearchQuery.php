@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Queries;
 
 use App\Enums\SearchContentType;
@@ -16,7 +18,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 /**
  * @phpstan-type SearchResultPage LengthAwarePaginator<int, Post>|LengthAwarePaginator<int, Project>|LengthAwarePaginator<int, Podcast>|LengthAwarePaginator<int, NewsletterIssue>|LengthAwarePaginator<int, Episode>|LengthAwarePaginator<int, Video>
  */
-class SearchQuery
+final class SearchQuery
 {
     /**
      * Each group pages independently through its own query parameter (for example

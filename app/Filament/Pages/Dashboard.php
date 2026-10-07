@@ -12,7 +12,7 @@ use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 
-class Dashboard extends BaseDashboard
+final class Dashboard extends BaseDashboard
 {
     #[\Override]
     protected static bool $isDiscovered = false;

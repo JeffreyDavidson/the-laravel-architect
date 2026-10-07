@@ -6,7 +6,7 @@ namespace App\ViewModels;
 
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class AboutViewModel
+final class AboutViewModel
 {
     /**
      * @return array{

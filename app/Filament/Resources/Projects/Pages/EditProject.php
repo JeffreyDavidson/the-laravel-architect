@@ -12,7 +12,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProject extends EditRecord
+final class EditProject extends EditRecord
 {
     #[\Override]
     protected static string $resource = ProjectResource::class;

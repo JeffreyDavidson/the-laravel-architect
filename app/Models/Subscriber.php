@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Date;
  */
 #[Fillable('email', 'subscribed_at', 'verified_at', 'unsubscribed_at', 'suppressed_at', 'suppression_reason')]
 #[Hidden('verification_token_hash')]
-class Subscriber extends Model
+final class Subscriber extends Model
 {
     /** @use HasFactory<SubscriberFactory> */
     use HasFactory, Prunable;

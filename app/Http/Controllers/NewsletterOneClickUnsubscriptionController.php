@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\UnsubscribeFromNewsletter;
@@ -11,7 +13,7 @@ use Illuminate\Http\Response;
  * to the List-Unsubscribe URL. Providers post server-to-server without a
  * session or forgery token, so the signed URL is the only credential.
  */
-class NewsletterOneClickUnsubscriptionController
+final class NewsletterOneClickUnsubscriptionController
 {
     public function __invoke(Subscriber $subscriber, UnsubscribeFromNewsletter $unsubscribeFromNewsletter): Response
     {

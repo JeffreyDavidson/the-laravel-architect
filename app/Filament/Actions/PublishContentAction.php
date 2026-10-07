@@ -18,9 +18,9 @@ use Livewire\Component;
  * On an edit page the form is saved first, so the publish date and details on screen are
  * the ones checked and published; invalid form data stops the action before publishing.
  */
-class PublishContentAction extends Action
+final class PublishContentAction extends Action
 {
-    public static function getDefaultName(): ?string
+    public static function getDefaultName(): string
     {
         return 'publish';
     }

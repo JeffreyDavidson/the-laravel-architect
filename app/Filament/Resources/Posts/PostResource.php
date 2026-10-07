@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Posts;
 
 use App\Enums\NavigationGroup;
@@ -19,7 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
-class PostResource extends Resource
+final class PostResource extends Resource
 {
     use ResolvesTrashedRecords;
 
@@ -41,8 +43,8 @@ class PostResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         $counts = Cache::remember('filament.navigation.posts-status-counts', now()->addMinutes(5), fn (): array => [
-            'review' => static::getModel()::where('status', PublishStatus::InReview)->count(),
-            'draft' => static::getModel()::where('status', PublishStatus::Draft)->count(),
+            'review' => self::getModel()::where('status', PublishStatus::InReview)->count(),
+            'draft' => self::getModel()::where('status', PublishStatus::Draft)->count(),
         ]);
         $reviewCount = $counts['review'];
         $draftCount = $counts['draft'];
@@ -54,9 +56,9 @@ class PostResource extends Resource
         return $draftCount > 0 ? $draftCount.' draft'.($draftCount > 1 ? 's' : '') : null;
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    public static function getNavigationBadgeColor(): string
     {
-        $reviewCount = Cache::remember('filament.navigation.posts-review-count', now()->addMinutes(5), fn (): int => static::getModel()::where('status', PublishStatus::InReview)->count());
+        $reviewCount = Cache::remember('filament.navigation.posts-review-count', now()->addMinutes(5), fn (): int => self::getModel()::where('status', PublishStatus::InReview)->count());
 
         return $reviewCount > 0 ? 'info' : 'gray';
     }

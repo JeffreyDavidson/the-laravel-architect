@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\GenerateRssFeed;
 use Illuminate\Http\Response;
 
-class RssFeedController
+final class RssFeedController
 {
     public function __invoke(GenerateRssFeed $generateRssFeed): Response
     {

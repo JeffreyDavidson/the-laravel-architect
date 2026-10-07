@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Concerns\DeletesOwnedContent;
@@ -27,7 +29,7 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PodcastObserver::class)]
 #[Sluggable(from: 'name')]
 /** @property-read Collection<int, Episode> $publishedEpisodes */
-class Podcast extends Model
+final class Podcast extends Model
 {
     use DeletesOwnedContent;
 

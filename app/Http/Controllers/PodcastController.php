@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Podcast;
@@ -7,7 +9,7 @@ use App\ViewModels\PodcastIndexViewModel;
 use App\ViewModels\PodcastShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PodcastController
+final class PodcastController
 {
     public function index(PodcastIndexViewModel $podcastIndexViewModel): View
     {

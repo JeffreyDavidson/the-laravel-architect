@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
 use App\Models\Post;
@@ -9,10 +11,10 @@ use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PostShowViewModel
+final readonly class PostShowViewModel
 {
     public function __construct(
-        private readonly RelatedPostsQuery $relatedPostsQuery,
+        private RelatedPostsQuery $relatedPostsQuery,
     ) {}
 
     /**

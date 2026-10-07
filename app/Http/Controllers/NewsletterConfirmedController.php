@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\ViewModels\NewsletterConfirmedViewModel;
 use Illuminate\Contracts\View\View;
 
-class NewsletterConfirmedController
+final class NewsletterConfirmedController
 {
     public function __invoke(NewsletterConfirmedViewModel $viewModel): View
     {

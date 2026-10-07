@@ -14,7 +14,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('posts:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing post images')]
-class GeneratePostImageVariants extends Command implements Isolatable
+final class GeneratePostImageVariants extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

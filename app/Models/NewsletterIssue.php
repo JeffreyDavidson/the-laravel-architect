@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Contracts\Publishable;
@@ -29,7 +31,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property Carbon|null $published_at
  * @property Carbon|null $sent_at
  */
-class NewsletterIssue extends Model implements Publishable
+final class NewsletterIssue extends Model implements Publishable
 {
     use DeletesOwnedContent;
 
