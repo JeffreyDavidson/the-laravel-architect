@@ -8,25 +8,22 @@ use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
-
-    $this->podcast = Podcast::query()->create([
-        'name' => 'Podcast name',
-        'slug' => 'podcast-name',
-        'description' => 'Podcast description',
-    ]);
+    actingAs($user);
 });
 
 it('rejects non-normalized episode slugs when creating an episode', function (string $slug) {
+    $podcast = Podcast::factory()->create();
+
     livewire(CreateEpisode::class)
         ->fillForm([
-            'podcast_id' => $this->podcast->id,
+            'podcast_id' => $podcast->id,
             'title' => 'Episode title',
             'slug' => $slug,
             'description' => 'Episode description',
@@ -46,9 +43,11 @@ it('rejects non-normalized episode slugs when creating an episode', function (st
 ]);
 
 it('accepts a normalized episode slug when creating an episode', function () {
+    $podcast = Podcast::factory()->create();
+
     livewire(CreateEpisode::class)
         ->fillForm([
-            'podcast_id' => $this->podcast->id,
+            'podcast_id' => $podcast->id,
             'title' => 'Episode title',
             'slug' => 'episode-title-2',
             'description' => 'Episode description',
@@ -62,13 +61,7 @@ it('accepts a normalized episode slug when creating an episode', function () {
 });
 
 it('rejects a non-normalized episode slug when editing an episode', function () {
-    $episode = Episode::query()->create([
-        'podcast_id' => $this->podcast->id,
-        'title' => 'Episode title',
-        'slug' => 'episode-title',
-        'description' => 'Episode description',
-        'status' => PublishStatus::Draft,
-    ]);
+    $episode = Episode::factory()->create(['slug' => 'episode-title']);
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->fillForm(['slug' => '../episode-title'])
@@ -80,13 +73,7 @@ it('rejects a non-normalized episode slug when editing an episode', function () 
 });
 
 it('preserves an existing episode slug when the title changes', function () {
-    $episode = Episode::query()->create([
-        'podcast_id' => $this->podcast->id,
-        'title' => 'Episode title',
-        'slug' => 'curated-episode-slug',
-        'description' => 'Episode description',
-        'status' => PublishStatus::Draft,
-    ]);
+    $episode = Episode::factory()->create(['slug' => 'curated-episode-slug']);
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->fillForm(['title' => 'Updated episode title', 'slug' => 'curated-episode-slug'])

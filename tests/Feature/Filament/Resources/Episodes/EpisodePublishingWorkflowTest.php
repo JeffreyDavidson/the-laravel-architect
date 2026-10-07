@@ -3,43 +3,22 @@
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\Episode;
-use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
-function episodeForPublishingWorkflow(PublishStatus $status = PublishStatus::Draft, ?DateTimeInterface $publishedAt = null): Episode
-{
-    $podcast = Podcast::query()->create([
-        'name' => 'Publishing Workflow Podcast',
-        'slug' => 'publishing-workflow-podcast',
-        'description' => 'Podcast description.',
-        'is_active' => true,
-    ]);
-
-    return Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode Publishing Workflow',
-        'slug' => 'episode-publishing-workflow',
-        'episode_number' => 1,
-        'season_number' => 1,
-        'description' => 'Episode description.',
-        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
-        'status' => $status,
-        'published_at' => $publishedAt,
-    ]);
-}
-
 it('publishes an episode through Filament and exposes it publicly', function () {
-    $episode = episodeForPublishingWorkflow();
+    $episode = Episode::factory()->create();
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->callAction('publish')
@@ -49,14 +28,16 @@ it('publishes an episode through Filament and exposes it publicly', function () 
 
     expect($episode->status)->toBe(PublishStatus::Published);
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcast.episode', [$episode->podcast, $episode]))
         ->assertOk();
-    $this->get('/sitemap.xml')
+    get('/sitemap.xml')
         ->assertSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });
 
 it('hides an episode again when Filament unpublishes it', function () {
-    $episode = episodeForPublishingWorkflow(PublishStatus::Published, now()->subMinute());
+    $episode = Episode::factory()
+        ->published()
+        ->create();
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->callAction('unpublish')
@@ -66,14 +47,14 @@ it('hides an episode again when Filament unpublishes it', function () {
 
     expect($episode->status)->toBe(PublishStatus::Draft);
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcast.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
-    $this->get('/sitemap.xml')
+    get('/sitemap.xml')
         ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });
 
 it('keeps an episode hidden while its published date is scheduled in the future', function () {
-    $episode = episodeForPublishingWorkflow(publishedAt: now()->addDay());
+    $episode = Episode::factory()->create(['published_at' => now()->addDay()]);
 
     livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
         ->callAction('publish')
@@ -87,8 +68,8 @@ it('keeps an episode hidden while its published date is scheduled in the future'
         ->and(Date::parse($episode->published_at)->isFuture())
         ->toBeTrue();
 
-    $this->get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcast.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
-    $this->get('/sitemap.xml')
+    get('/sitemap.xml')
         ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
 });

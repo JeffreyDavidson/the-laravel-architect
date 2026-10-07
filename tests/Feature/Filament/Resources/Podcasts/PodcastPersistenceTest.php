@@ -6,13 +6,14 @@ use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('creates a podcast through the Filament form', function () {
@@ -62,12 +63,7 @@ it('creates a podcast through the Filament form', function () {
 });
 
 it('updates a podcast through the Filament form', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Original podcast',
-        'slug' => 'original-podcast',
-        'description' => 'Original description.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm([
