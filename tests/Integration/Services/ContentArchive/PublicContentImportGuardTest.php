@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\Content\Archives\PublicContentImportGuard;
+use App\Services\ContentArchive\PublicContentImportGuard;
 
 it('permits content replacement only on safe target environments', function (string $environment, string $url, bool $staging, bool $allowed) {
     app()->detectEnvironment(fn (): string => $environment);

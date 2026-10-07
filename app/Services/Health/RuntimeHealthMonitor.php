@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Monitoring\Health;
+namespace App\Services\Health;
 
 use Illuminate\Support\Facades\Cache;
 use RuntimeException;

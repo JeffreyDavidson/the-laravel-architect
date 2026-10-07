@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Content\Archives;
+namespace App\Services\ContentArchive;
 
 use App\Enums\PublishStatus;
 use App\Models\Category;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Content\Archives;
+namespace App\Services\ContentArchive;
 
 use App\Models\Episode;
 use App\Models\NewsletterIssue;

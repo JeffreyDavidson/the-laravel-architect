@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Monitoring\Health;
+namespace App\Services\Health;
 
 use Laravel\Nightwatch\Core;
 use Laravel\Nightwatch\State\CommandState;
