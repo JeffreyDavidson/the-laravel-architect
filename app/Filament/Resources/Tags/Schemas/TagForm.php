@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Tags\Schemas;
 use App\Filament\Forms\Components\SlugInput;
 use App\Filament\Forms\Components\SlugSourceInput;
 use App\Models\Tag;
-use Closure;
+use App\Rules\UniqueTagSlug;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -19,46 +19,28 @@ final class TagForm
             ->components([
                 SlugSourceInput::make('name')
                     ->required()
-                    ->formatStateUsing(function (mixed $state): string {
-                        if (is_array($state)) {
-                            $state = $state[app()->getLocale()] ?? '';
-                        }
-
-                        return is_string($state) ? $state : '';
-                    }),
+                    ->formatStateUsing(self::currentLocaleValue(...)),
                 TextInput::make('slug')
                     ->required()
-                    ->formatStateUsing(function (mixed $state): string {
-                        if (is_array($state)) {
-                            $state = $state[app()->getLocale()] ?? '';
-                        }
-
-                        return is_string($state) ? $state : '';
-                    })
+                    ->formatStateUsing(self::currentLocaleValue(...))
                     ->maxLength(255)
                     ->regex(SlugInput::PATTERN)
-                    ->rule(fn (?Tag $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
-                        if (! is_string($value) || preg_match(SlugInput::PATTERN, $value) !== 1) {
-                            $fail('The slug must contain only lowercase letters, numbers, and single hyphens.');
-
-                            return;
-                        }
-
-                        $query = Tag::query()->where('slug->'.app()->getLocale(), $value);
-
-                        if ($record instanceof Tag) {
-                            $query->whereKeyNot($record->getKey());
-                        }
-
-                        if ($query->exists()) {
-                            $fail('The slug has already been taken.');
-                        }
-                    }),
+                    ->rule(fn (?Tag $record): UniqueTagSlug => new UniqueTagSlug($record)),
                 TextInput::make('type')
                     ->nullable(),
                 TextInput::make('order_column')
                     ->numeric()
                     ->nullable(),
             ]);
+    }
+
+    /** Tag names and slugs are translatable, so the form edits the current locale's value. */
+    private static function currentLocaleValue(mixed $state): string
+    {
+        if (is_array($state)) {
+            $state = $state[app()->getLocale()] ?? '';
+        }
+
+        return is_string($state) ? $state : '';
     }
 }
