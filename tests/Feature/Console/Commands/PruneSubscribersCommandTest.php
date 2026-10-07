@@ -4,11 +4,13 @@ use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 
+use function Pest\Laravel\assertModelExists;
+use function Pest\Laravel\assertModelMissing;
+
 pest()->use(RefreshDatabase::class);
 
 it('prunes stale subscribers', function (Carbon $subscribedAt, ?Carbon $verifiedAt, ?Carbon $unsubscribedAt) {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
+    $subscriber = Subscriber::factory()->create([
         'subscribed_at' => $subscribedAt,
         'verified_at' => $verifiedAt,
         'unsubscribed_at' => $unsubscribedAt,
@@ -17,7 +19,7 @@ it('prunes stale subscribers', function (Carbon $subscribedAt, ?Carbon $verified
     $this->artisanCommand('model:prune', ['--model' => Subscriber::class])
         ->assertSuccessful();
 
-    $this->assertModelMissing($subscriber);
+    assertModelMissing($subscriber);
 })->with([
     'unconfirmed past the grace period' => [
         fn (): Carbon => now()->subDays(8),
@@ -32,8 +34,7 @@ it('prunes stale subscribers', function (Carbon $subscribedAt, ?Carbon $verified
 ]);
 
 it('keeps current subscribers', function (Carbon $subscribedAt, ?Carbon $verifiedAt, ?Carbon $unsubscribedAt) {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
+    $subscriber = Subscriber::factory()->create([
         'subscribed_at' => $subscribedAt,
         'verified_at' => $verifiedAt,
         'unsubscribed_at' => $unsubscribedAt,
@@ -42,7 +43,7 @@ it('keeps current subscribers', function (Carbon $subscribedAt, ?Carbon $verifie
     $this->artisanCommand('model:prune', ['--model' => Subscriber::class])
         ->assertSuccessful();
 
-    $this->assertModelExists($subscriber);
+    assertModelExists($subscriber);
 })->with([
     'unconfirmed within the grace period' => [
         fn (): Carbon => now()->subDays(6),

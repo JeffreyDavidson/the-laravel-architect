@@ -1,11 +1,13 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
 use App\Models\Video;
 use App\Services\ScaleTestContentWorkflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Laravel\expectsDatabaseQueryCount;
+use function Pest\Laravel\get;
 
 pest()->use(RefreshDatabase::class);
 
@@ -29,17 +31,13 @@ function seedQueryBudgetContent(): void
     }
 
     foreach (range(1, 30) as $number) {
-        NewsletterIssue::query()->create([
-            'title' => "Budget Issue {$number}",
-            'slug' => "budget-issue-{$number}",
-            'content' => 'Issue content.',
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($number),
-        ]);
-        Video::query()->create([
-            'youtube_id' => "budget-video-{$number}",
-            'title' => "Budget Video {$number}",
-            'slug' => "budget-video-{$number}",
+        NewsletterIssue::factory()->published()
+            ->create([
+                'title' => "Budget Issue {$number}",
+                'slug' => "budget-issue-{$number}",
+                'published_at' => now()->subDays($number),
+            ]);
+        Video::factory()->create([
             'published_at' => now()->subDays($number),
         ]);
     }
@@ -48,9 +46,9 @@ function seedQueryBudgetContent(): void
 it('keeps each public page within its query budget as content grows', function (string $url, int $budget) {
     seedQueryBudgetContent();
 
-    $this->expectsDatabaseQueryCount($budget);
+    expectsDatabaseQueryCount($budget);
 
-    $this->get($url)
+    get($url)
         ->assertOk();
 })->with([
     'home' => [fn (): string => route('home'), 12],

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -8,20 +7,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 it('builds the project detail payload', function () {
-    $project = Project::query()->create([
-        'title' => 'Current Project',
-        'slug' => 'current-project',
-        'description' => 'The current project.',
-        'status' => PublishStatus::Published,
-        'sort_order' => 1,
-    ]);
-    $relatedProject = Project::query()->create([
-        'title' => 'Related Project',
-        'slug' => 'related-project',
-        'description' => 'A related project.',
-        'status' => PublishStatus::Published,
-        'sort_order' => 2,
-    ]);
+    $project = Project::factory()
+        ->published()
+        ->create(['sort_order' => 1]);
+    $relatedProject = Project::factory()
+        ->published()
+        ->create(['sort_order' => 2]);
 
     $data = app(ProjectShowViewModel::class)
         ->data($project);

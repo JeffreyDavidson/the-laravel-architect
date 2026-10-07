@@ -15,7 +15,7 @@ final class GenerateSitemap
 {
     public function handle(): string
     {
-        $posts = Post::published()
+        $posts = Post::query()->published()
             ->select(['id', 'slug', 'category_id', 'published_at', 'updated_at'])
             ->with('tags')
             ->latest('published_at')
@@ -30,7 +30,8 @@ final class GenerateSitemap
             ->active()
             ->with('publishedEpisodes:id,podcast_id,slug,updated_at')
             ->get();
-        $projects = Project::published()->get(['id', 'slug', 'updated_at']);
+        $projects = Project::query()->published()
+            ->get(['id', 'slug', 'updated_at']);
         $issues = NewsletterIssue::query()->published()
             ->get(['id', 'slug', 'updated_at']);
         $podcastModels = [];
@@ -51,8 +52,7 @@ final class GenerateSitemap
             ...$podcastModels,
         ]);
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        $urls = [];
 
         foreach ([
             ['url' => route('home'), 'priority' => '1.0', 'freq' => 'weekly', 'lastmod' => $latestContentUpdatedAt],
@@ -67,27 +67,11 @@ final class GenerateSitemap
             ['url' => route('newsletter.index'), 'priority' => '0.8', 'freq' => 'weekly', 'lastmod' => $this->latestUpdatedAt($issues)],
             ['url' => route('archive.index'), 'priority' => '0.7', 'freq' => 'weekly', 'lastmod' => $latestContentUpdatedAt],
         ] as $page) {
-            $xml .= '<url>';
-            $xml .= '<loc>'.$page['url'].'</loc>';
-            if ($page['lastmod'] instanceof CarbonInterface) {
-                $xml .= '<lastmod>'.$page['lastmod']->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>'.$page['freq'].'</changefreq>';
-            $xml .= '<priority>'.$page['priority'].'</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement($page['url'], $page['lastmod'], $page['freq'], $page['priority']);
         }
 
         foreach ($posts as $post) {
-            $updatedAt = $post->updated_at;
-
-            $xml .= '<url>';
-            $xml .= '<loc>'.route('blog.show', $post).'</loc>';
-            if ($updatedAt !== null) {
-                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>monthly</changefreq>';
-            $xml .= '<priority>0.7</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement(route('blog.show', $post), $post->updated_at, 'monthly', '0.7');
         }
 
         foreach ($categories as $category) {
@@ -95,14 +79,7 @@ final class GenerateSitemap
                 $posts->where('category_id', $category->id),
             );
 
-            $xml .= '<url>';
-            $xml .= '<loc>'.route('blog.category', $category).'</loc>';
-            if ($updatedAt instanceof CarbonInterface) {
-                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.5</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement(route('blog.category', $category), $updatedAt, 'weekly', '0.5');
         }
 
         foreach ($tags as $tag) {
@@ -114,14 +91,7 @@ final class GenerateSitemap
                 $posts->filter(fn (Post $post) => $post->tags->contains($tag)),
             );
 
-            $xml .= '<url>';
-            $xml .= '<loc>'.route('blog.tag', $tag).'</loc>';
-            if ($updatedAt instanceof CarbonInterface) {
-                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.5</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement(route('blog.tag', $tag), $updatedAt, 'weekly', '0.5');
         }
 
         foreach ($podcasts as $podcast) {
@@ -129,51 +99,33 @@ final class GenerateSitemap
                 collect([$podcast])->concat($podcast->publishedEpisodes),
             );
 
-            $xml .= '<url>';
-            $xml .= '<loc>'.route('podcast.show', $podcast).'</loc>';
-            if ($updatedAt instanceof CarbonInterface) {
-                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.7</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement(route('podcast.show', $podcast), $updatedAt, 'weekly', '0.7');
 
             foreach ($podcast->publishedEpisodes as $episode) {
-                $updatedAt = $episode->updated_at;
-
-                $xml .= '<url>';
-                $xml .= '<loc>'.route('podcast.episode', [$podcast, $episode]).'</loc>';
-                if ($updatedAt !== null) {
-                    $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-                }
-                $xml .= '<changefreq>monthly</changefreq>';
-                $xml .= '<priority>0.6</priority>';
-                $xml .= '</url>';
+                $urls[] = $this->urlElement(route('podcast.episode', [$podcast, $episode]), $episode->updated_at, 'monthly', '0.6');
             }
         }
 
         foreach ($projects as $project) {
-            $updatedAt = $project->updated_at;
-
-            $xml .= '<url>';
-            $xml .= '<loc>'.route('projects.show', $project).'</loc>';
-            if ($updatedAt !== null) {
-                $xml .= '<lastmod>'.$updatedAt->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>monthly</changefreq>';
-            $xml .= '<priority>0.6</priority>';
-            $xml .= '</url>';
+            $urls[] = $this->urlElement(route('projects.show', $project), $project->updated_at, 'monthly', '0.6');
         }
 
         foreach ($issues as $issue) {
-            $xml .= '<url><loc>'.route('newsletter.issue', $issue).'</loc>';
-            if ($issue->updated_at !== null) {
-                $xml .= '<lastmod>'.$issue->updated_at->toW3cString().'</lastmod>';
-            }
-            $xml .= '<changefreq>monthly</changefreq><priority>0.6</priority></url>';
+            $urls[] = $this->urlElement(route('newsletter.issue', $issue), $issue->updated_at, 'monthly', '0.6');
         }
 
-        return $xml.'</urlset>';
+        $body = implode('', $urls);
+
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">{$body}</urlset>";
+    }
+
+    private function urlElement(string $loc, ?CarbonInterface $lastmod, string $changefreq, string $priority): string
+    {
+        $lastmodElement = $lastmod instanceof CarbonInterface
+            ? "<lastmod>{$lastmod->toW3cString()}</lastmod>"
+            : '';
+
+        return "<url><loc>{$loc}</loc>{$lastmodElement}<changefreq>{$changefreq}</changefreq><priority>{$priority}</priority></url>";
     }
 
     /** @param iterable<array-key, Model> $models */

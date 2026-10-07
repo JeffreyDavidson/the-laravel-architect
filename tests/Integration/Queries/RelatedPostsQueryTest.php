@@ -12,18 +12,9 @@ pest()->use(RefreshDatabase::class);
 
 it('selects related posts by category, shared tags, and latest publication', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $otherCategory = Category::query()->create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
+    $category = Category::factory()->create();
+    $otherCategory = Category::factory()->create();
+    $tag = Tag::factory()->create();
     $post = createRelatedPostsQueryPost($author, $category, 'Current post', now());
     $categoryRelated = createRelatedPostsQueryPost(
         $author,
@@ -58,10 +49,7 @@ it('selects related posts by category, shared tags, and latest publication', fun
 
 it('excludes unavailable posts and respects the requested limit', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
+    $category = Category::factory()->create();
     $post = createRelatedPostsQueryPost($author, $category, 'Current post', now());
     $newer = createRelatedPostsQueryPost($author, $category, 'Newer post', now()->subDay());
     createRelatedPostsQueryPost($author, $category, 'Older post', now()->subDays(2));
@@ -92,13 +80,12 @@ function createRelatedPostsQueryPost(
     ?DateTimeInterface $publishedAt,
     PublishStatus $status = PublishStatus::Published,
 ): Post {
-    return Post::query()->create([
-        'title' => $title,
-        'slug' => str($title)->slug(),
-        'content' => 'Post content.',
-        'category_id' => $category->id,
-        'user_id' => $author->id,
-        'status' => $status,
-        'published_at' => $publishedAt,
-    ]);
+    return Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->create([
+            'title' => $title,
+            'status' => $status,
+            'published_at' => $publishedAt,
+        ]);
 }

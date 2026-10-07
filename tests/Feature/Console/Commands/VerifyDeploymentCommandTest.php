@@ -1,9 +1,8 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
-use App\Support\Monitoring\Health\NightwatchHealthMonitor;
-use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Services\Health\NightwatchHealthMonitor;
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -134,13 +133,12 @@ it('does not use existing incomplete responsive media as a release gate', functi
     $imageContents = $image->getContent();
     Storage::disk('public')->put('projects/private-project-name.png', $imageContents);
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/private-project-name.png',
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/private-project-name.png',
+        ]));
 
     $this->artisanCommand('app:verify-deployment', ['commit' => 'expected-commit'])
         ->expectsOutput('Deployment verification passed.')

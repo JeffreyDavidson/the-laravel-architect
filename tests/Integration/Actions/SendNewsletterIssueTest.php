@@ -7,27 +7,25 @@ use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
+
 pest()->use(RefreshDatabase::class);
 
 /** @param array<string, mixed> $overrides */
 function newsletterIssueToSend(array $overrides = []): NewsletterIssue
 {
-    return NewsletterIssue::query()->create([
-        'title' => 'Issue One',
-        'content' => 'Content.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-        ...$overrides,
-    ]);
+    return NewsletterIssue::factory()
+        ->published()
+        ->create($overrides);
 }
 
 function subscriberWithState(string $email, bool $confirmed, bool $unsubscribed = false): Subscriber
 {
-    return Subscriber::query()->create([
+    return Subscriber::factory()->create([
         'email' => $email,
-        'subscribed_at' => now()->subMonth(),
-        'verified_at' => $confirmed ? now()->subMonth() : null,
-        'unsubscribed_at' => $unsubscribed ? now()->subWeek() : null,
+        'verified_at' => $confirmed ? now()->subDay() : null,
+        'unsubscribed_at' => $unsubscribed ? now() : null,
     ]);
 }
 
@@ -46,13 +44,13 @@ it('queues one delivery for each active subscriber and marks the issue sent', fu
         ->toBe(1)
         ->and($wasSent)
         ->toBeTrue();
-    $this->assertDatabaseHas('newsletter_deliveries', [
+    assertDatabaseHas('newsletter_deliveries', [
         'newsletter_issue_id' => $issue->getKey(),
         'subscriber_id' => $active->getKey(),
         'sent_at' => null,
     ]);
-    $this->assertDatabaseCount('newsletter_deliveries', 1);
-    $this->assertDatabaseCount('jobs', 1);
+    assertDatabaseCount('newsletter_deliveries', 1);
+    assertDatabaseCount('jobs', 1);
 });
 
 it('leaves the issue unsent when there are no active subscribers', function () {
@@ -68,8 +66,8 @@ it('leaves the issue unsent when there are no active subscribers', function () {
         ->toBe(0)
         ->and($wasSent)
         ->toBeFalse();
-    $this->assertDatabaseCount('newsletter_deliveries', 0);
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('newsletter_deliveries', 0);
+    assertDatabaseCount('jobs', 0);
 });
 
 it('refuses issues that cannot be sent', function (Closure $createIssue, string $message) {
@@ -82,8 +80,8 @@ it('refuses issues that cannot be sent', function (Closure $createIssue, string 
     expect(fn () => app(SendNewsletterIssue::class)->handle($issue))
         ->toThrow(LogicException::class, $message);
 
-    $this->assertDatabaseCount('newsletter_deliveries', 0);
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('newsletter_deliveries', 0);
+    assertDatabaseCount('jobs', 0);
 })->with([
     'draft' => [
         fn (): NewsletterIssue => newsletterIssueToSend(['status' => PublishStatus::Draft]),
@@ -116,14 +114,14 @@ it('rolls back every delivery when a job cannot be queued and allows a clean ret
     $issue->refresh();
     expect($issue->wasSent())
         ->toBeFalse();
-    $this->assertDatabaseCount('newsletter_deliveries', 0);
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('newsletter_deliveries', 0);
+    assertDatabaseCount('jobs', 0);
 
     app(SendNewsletterIssue::class)
         ->handle($issue);
 
-    $this->assertDatabaseCount('newsletter_deliveries', 2);
-    $this->assertDatabaseCount('jobs', 2);
+    assertDatabaseCount('newsletter_deliveries', 2);
+    assertDatabaseCount('jobs', 2);
 });
 
 it('rejects a separate queue database before creating deliveries', function () {
@@ -137,7 +135,7 @@ it('rejects a separate queue database before creating deliveries', function () {
     expect(fn () => app(SendNewsletterIssue::class)->handle($issue))
         ->toThrow(LogicException::class, 'Newsletter deliveries must share the application database.');
 
-    $this->assertDatabaseCount('newsletter_deliveries', 0);
+    assertDatabaseCount('newsletter_deliveries', 0);
 });
 
 it('does not queue a delivery for a suppressed address', function () {
@@ -150,9 +148,9 @@ it('does not queue a delivery for a suppressed address', function () {
 
     expect($queued)
         ->toBe(1);
-    $this->assertDatabaseHas('newsletter_deliveries', [
+    assertDatabaseHas('newsletter_deliveries', [
         'newsletter_issue_id' => $issue->getKey(),
         'subscriber_id' => $active->getKey(),
     ]);
-    $this->assertDatabaseCount('newsletter_deliveries', 1);
+    assertDatabaseCount('newsletter_deliveries', 1);
 });

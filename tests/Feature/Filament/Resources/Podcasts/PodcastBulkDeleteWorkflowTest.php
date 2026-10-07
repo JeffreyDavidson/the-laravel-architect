@@ -8,12 +8,13 @@ use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('permanently deletes trashed podcasts and their stored cover images through the table bulk action', function () {
@@ -21,18 +22,8 @@ it('permanently deletes trashed podcasts and their stored cover images through t
     Storage::disk('public')->put('podcasts/bulk-delete-one.jpg', 'cover one');
     Storage::disk('public')->put('podcasts/bulk-delete-two.jpg', 'cover two');
 
-    $firstPodcast = Podcast::query()->create([
-        'name' => 'First bulk delete podcast',
-        'slug' => 'first-bulk-delete-podcast',
-        'description' => 'Podcast description.',
-        'cover_image_path' => 'podcasts/bulk-delete-one.jpg',
-    ]);
-    $secondPodcast = Podcast::query()->create([
-        'name' => 'Second bulk delete podcast',
-        'slug' => 'second-bulk-delete-podcast',
-        'description' => 'Podcast description.',
-        'cover_image_path' => 'podcasts/bulk-delete-two.jpg',
-    ]);
+    $firstPodcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/bulk-delete-one.jpg']);
+    $secondPodcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/bulk-delete-two.jpg']);
 
     collect([$firstPodcast, $secondPodcast])->each->delete();
 

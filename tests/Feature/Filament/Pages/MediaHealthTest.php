@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Pages\MediaHealth;
 use App\Models\Project;
 use App\Models\User;
@@ -12,27 +11,25 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\withoutMiddleware;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('public');
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('shows source and responsive variant health for stored images', function () {
-    $healthy = Project::withoutEvents(fn (): Project => Project::query()->create([
+    $healthy = Project::withoutEvents(fn (): Project => Project::factory()->create([
         'title' => 'Healthy project',
         'slug' => 'healthy-project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
     ]));
-    $needsRepair = Project::withoutEvents(fn (): Project => Project::query()->create([
+    $needsRepair = Project::withoutEvents(fn (): Project => Project::factory()->create([
         'title' => 'Needs repair project',
         'slug' => 'needs-repair-project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
     ]));
 
     $healthyPath = app(ImageUploadOptimizer::class)->store(
@@ -67,12 +64,7 @@ it('shows source and responsive variant health for stored images', function () {
 });
 
 it('repairs missing responsive variants for a stored image', function () {
-    $project = Project::withoutEvents(fn (): Project => Project::query()->create([
-        'title' => 'Repairable project',
-        'slug' => 'repairable-project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-    ]));
+    $project = Project::withoutEvents(fn (): Project => Project::factory()->create(['slug' => 'repairable-project']));
     $path = app(ImageUploadOptimizer::class)->store(
         UploadedFile::fake()->image('repairable.jpg', 1600, 900),
         'projects',
@@ -94,12 +86,7 @@ it('repairs missing responsive variants for a stored image', function () {
 });
 
 it('withholds variant repair from a user who is not an administrator', function () {
-    $project = Project::withoutEvents(fn (): Project => Project::query()->create([
-        'title' => 'Repairable project',
-        'slug' => 'repairable-project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-    ]));
+    $project = Project::withoutEvents(fn (): Project => Project::factory()->create(['slug' => 'repairable-project']));
     $path = app(ImageUploadOptimizer::class)->store(
         UploadedFile::fake()->image('repairable.jpg', 1600, 900),
         'projects',
@@ -116,7 +103,7 @@ it('withholds variant repair from a user who is not an administrator', function 
         ->assertActionVisible($repair);
 
     // The panel middleware already turns non-administrators away; skip it so the action's own authorization is what refuses the repair.
-    $this->withoutMiddleware(Authenticate::class)
+    withoutMiddleware(Authenticate::class)
         ->actingAs(User::factory()->create(['is_admin' => false]));
 
     $page->assertActionHidden($repair)

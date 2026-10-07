@@ -1,39 +1,34 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+
+use function Pest\Laravel\get;
 
 pest()->use(RefreshDatabase::class);
 
 it('renders validated search filters with pagination metadata and accessible result status', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Laravel',
         'slug' => 'laravel',
     ]);
 
     foreach (range(1, 13) as $index) {
-        Post::query()->create([
-            'title' => "Laravel Article {$index}",
-            'slug' => "laravel-article-{$index}",
-            'excerpt' => 'A practical guide.',
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'category_id' => $category->getKey(),
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        Post::factory()->for($category)
+            ->published()
+            ->create([
+                'title' => "Laravel Article {$index}",
+                'published_at' => now()->subDays($index),
+            ]);
     }
 
     $url = route('blog.index', ['q' => 'Laravel', 'category' => 'laravel', 'page' => 2]);
 
     DB::enableQueryLog();
 
-    $this->get($url)
+    get($url)
         ->assertOk()
         ->assertSeeHtml('Showing 13–13 of 13 articles.')
         ->assertSeeHtml('name="q"')
@@ -51,38 +46,26 @@ it('renders validated search filters with pagination metadata and accessible res
 });
 
 it('returns not found for an out-of-range public blog page', function () {
-    $author = User::factory()->create();
+    Post::factory()->published()
+        ->create();
 
-    Post::query()->create([
-        'title' => 'Only Article',
-        'slug' => 'only-article',
-        'content' => 'A maintainable application starts with clear boundaries.',
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-
-    $this->get(route('blog.index', ['page' => 2]))
+    get(route('blog.index', ['page' => 2]))
         ->assertNotFound();
 });
 
 it('uses stable item positions and page metadata for an unfiltered archive page', function () {
-    $author = User::factory()->create();
     $publishedAt = now()->subDay();
 
     foreach (range(1, 13) as $index) {
-        Post::query()->create([
-            'title' => "Stable Article {$index}",
-            'slug' => "stable-article-{$index}",
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => $publishedAt,
-        ]);
+        Post::factory()->published()
+            ->create([
+                'title' => "Stable Article {$index}",
+                'published_at' => $publishedAt,
+            ]);
     }
 
     $url = route('blog.index', ['page' => 2]);
-    $content = $this->get($url)
+    $content = get($url)
         ->assertOk()
         ->assertSeeHtml('<title>Blog — Page 2 — Jeffrey Davidson</title>')
         ->assertSeeHtml('<link rel="canonical" href="'.$url.'">')
@@ -120,25 +103,17 @@ it('uses stable item positions and page metadata for an unfiltered archive page'
 });
 
 it('points a category-filtered blog page at its category archive', function (array $filters) {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Laravel',
         'slug' => 'laravel',
     ]);
-    $author = User::factory()->create();
 
-    foreach (range(1, 13) as $index) {
-        Post::query()->create([
-            'title' => "Laravel Article {$index}",
-            'slug' => "laravel-article-{$index}",
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'category_id' => $category->getKey(),
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
-    }
+    Post::factory()->count(13)
+        ->for($category)
+        ->published()
+        ->create();
 
-    $response = $this->get(route('blog.index', ['category' => 'laravel', ...$filters]));
+    $response = get(route('blog.index', ['category' => 'laravel', ...$filters]));
 
     $response->assertSeeHtml('<link rel="canonical" href="'.route('blog.category', $category).'">')
         ->assertSeeHtml('<meta property="og:url" content="'.route('blog.category', $category).'">');
@@ -148,31 +123,18 @@ it('points a category-filtered blog page at its category archive', function (arr
 ]);
 
 it('rejects invalid public blog filters', function () {
-    $this->get(route('blog.index', ['category' => 'missing-category']))
+    get(route('blog.index', ['category' => 'missing-category']))
         ->assertNotFound();
 
-    $this->get(route('blog.index', ['q' => str_repeat('x', 121)]))
+    get(route('blog.index', ['q' => str_repeat('x', 121)]))
         ->assertNotFound();
 });
 
 it('preserves a zero-valued search filter in canonical category links', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
+    Post::factory()->published()
+        ->create();
 
-    Post::query()->create([
-        'title' => 'Zero Search',
-        'slug' => 'zero-search',
-        'content' => 'A search term with a zero.',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-
-    $this->get(route('blog.index', ['q' => '0']))
+    get(route('blog.index', ['q' => '0']))
         ->assertOk()
         ->assertSeeHtml('href="'.route('blog.index', ['q' => '0']).'"')
         ->assertSeeHtml('value="0"');

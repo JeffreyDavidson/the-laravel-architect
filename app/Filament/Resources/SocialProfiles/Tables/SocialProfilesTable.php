@@ -20,7 +20,6 @@ class SocialProfilesTable
             ->columns([
                 TextColumn::make('platform')
                     ->searchable()
-                    ->formatStateUsing(fn (SocialPlatform $state): string => self::platformLabel($state))
                     ->badge(),
                 TextColumn::make('label')
                     ->label('Display label')
@@ -52,10 +51,5 @@ class SocialProfilesTable
             ])
             ->reorderable('sort_order')
             ->defaultSort('sort_order');
-    }
-
-    private static function platformLabel(SocialPlatform $platform): string
-    {
-        return $platform->getLabel();
     }
 }

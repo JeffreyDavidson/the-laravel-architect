@@ -1,89 +1,136 @@
 <?php
 
+use App\Enums\SearchContentType;
+use App\Models\Episode;
+use App\Models\NewsletterIssue;
+use App\Models\Podcast;
+use App\Models\Post;
+use App\Models\Project;
+use App\Models\Video;
+use App\Queries\SearchQuery;
 use App\ViewModels\SearchViewModel;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+pest()->use(RefreshDatabase::class);
 
 /**
- * Run one search result through the ViewModel and return its highlighted title and description.
+ * Search for the query and return the first result the ViewModel builds for one content type.
  *
- * @return array{title: string, description: string|null}
+ * @return array{title: string, description: string|null, url: string, date: CarbonInterface|null, label: string, external: bool}
  */
-function highlightSearchResult(string $title, ?string $description, string $query): array
+function firstSearchViewModelResult(string $query, SearchContentType $type): array
 {
-    $results = [
-        'posts' => new LengthAwarePaginator([[
-            'title' => $title,
-            'description' => $description,
-            'url' => 'https://thelaravelarchitect.test/blog/result',
-            'meta' => 'Post',
-            'external' => false,
-        ]], 1, 10),
-    ];
-
     $data = app(SearchViewModel::class)
-        ->data($results, $query);
-    $item = $data['results']['posts']->items()[0];
+        ->data(app(SearchQuery::class)->get($query, $type), $query, $type);
+    $result = $data['results'][$type->value]->items()[0] ?? null;
 
-    return [
-        'title' => $item['highlightedTitle'],
-        'description' => $item['highlightedDescription'],
-    ];
+    if ($result === null) {
+        throw new RuntimeException("Expected a {$type->value} search result.");
+    }
+
+    return $result;
 }
 
-it('highlights every match of the query in its original case', function () {
-    $highlighted = highlightSearchResult('Laravel and laravel', 'Testing Laravel queues.', 'laravel');
+it('turns each matching model into a search result', function (SearchContentType $type, Closure $createModel, Closure $expectedUrl, string $label, bool $dated, bool $external) {
+    /** @var Closure(): Model $createModel */
+    /** @var Closure(Model): string $expectedUrl */
+    $model = $createModel();
 
-    expect($highlighted)->toBe([
-        'title' => '<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark> and <mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">laravel</mark>',
-        'description' => 'Testing <mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark> queues.',
-    ]);
-});
+    $result = firstSearchViewModelResult('Zephyrquill', $type);
 
-it('escapes HTML in titles and descriptions, inside and outside a match', function (string $title, string $description, string $query, string $expectedTitle, string $expectedDescription) {
-    $highlighted = highlightSearchResult($title, $description, $query);
-
-    expect($highlighted)->toBe([
-        'title' => $expectedTitle,
-        'description' => $expectedDescription,
-    ]);
+    expect($result['title'])->toBe('Zephyrquill result')
+        ->and($result['url'])
+        ->toBe($expectedUrl($model))
+        ->and($result['label'])
+        ->toBe($label)
+        ->and($result['date'] instanceof CarbonInterface)
+        ->toBe($dated)
+        ->and($result['external'])
+        ->toBe($external);
 })->with([
-    'markup around a match' => [
-        '<b>Laravel</b> tips',
-        '<script>alert(1)</script> Laravel & "friends"',
-        'Laravel',
-        '&lt;b&gt;<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark>&lt;/b&gt; tips',
-        'alert(1) <mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">Laravel</mark> &amp; &quot;friends&quot;',
+    'post' => [
+        SearchContentType::Writing,
+        fn (): Post => Post::factory()
+            ->published()
+            ->create(['title' => 'Zephyrquill result']),
+        fn (Post $post): string => route('blog.show', $post),
+        'Article',
+        true,
+        false,
     ],
-    'markup inside a match' => [
-        '<script>alert(1)</script>',
-        'No match here.',
-        '<script>',
-        '<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">&lt;script&gt;</mark>alert(1)&lt;/script&gt;',
-        'No match here.',
+    'project' => [
+        SearchContentType::Projects,
+        fn (): Project => Project::factory()
+            ->published()
+            ->create(['title' => 'Zephyrquill result']),
+        fn (Project $project): string => route('projects.show', $project),
+        'Project',
+        false,
+        false,
     ],
-    'an ampersand query' => [
-        'Q&A',
-        'Questions & answers',
-        '&',
-        'Q<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">&amp;</mark>A',
-        'Questions <mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">&amp;</mark> answers',
+    'podcast' => [
+        SearchContentType::Podcasts,
+        fn (): Podcast => Podcast::factory()->create(['name' => 'Zephyrquill result']),
+        fn (Podcast $podcast): string => route('podcast.show', $podcast),
+        'Podcast',
+        false,
+        false,
+    ],
+    'newsletter issue' => [
+        SearchContentType::Newsletter,
+        fn (): NewsletterIssue => NewsletterIssue::factory()
+            ->published()
+            ->create(['title' => 'Zephyrquill result']),
+        fn (NewsletterIssue $issue): string => route('newsletter.issue', $issue),
+        'Newsletter',
+        true,
+        false,
+    ],
+    'episode' => [
+        SearchContentType::Episodes,
+        fn (): Episode => Episode::factory()
+            ->published()
+            ->create(['title' => 'Zephyrquill result']),
+        fn (Episode $episode): string => route('podcast.episode', [$episode->podcast, $episode]),
+        'Episode',
+        true,
+        false,
+    ],
+    'video' => [
+        SearchContentType::Videos,
+        fn (): Video => Video::factory()->create(['title' => 'Zephyrquill result', 'youtube_id' => 'abc123']),
+        fn (): string => 'https://www.youtube.com/watch?v=abc123',
+        'YouTube video',
+        false,
+        true,
     ],
 ]);
 
-it('never highlights inside an escaped entity', function (string $query) {
-    $highlighted = highlightSearchResult('Q&A <tips> "Laravel"', 'Q&A <tips> "Laravel"', $query);
+it('shows result descriptions as plain text cut to 180 characters', function () {
+    Post::factory()
+        ->published()
+        ->create([
+            'title' => 'Zephyrquill result',
+            'excerpt' => '<p>Q&A <tips> "Laravel"</p>'.str_repeat('x', 200),
+        ]);
 
-    expect($highlighted)->toBe([
-        'title' => 'Q&amp;A &lt;tips&gt; &quot;Laravel&quot;',
-        'description' => 'Q&amp;A  &quot;Laravel&quot;',
-    ]);
-})->with(['amp', 'lt', 'gt', 'quot']);
+    $result = firstSearchViewModelResult('Zephyrquill', SearchContentType::Writing);
 
-it('escapes the result without highlighting when there is no query', function () {
-    $highlighted = highlightSearchResult('<b>Laravel</b>', null, '');
+    expect($result['description'])
+        ->toStartWith('Q&A  "Laravel"x')
+        ->toEndWith('...')
+        ->toHaveLength(183);
+});
 
-    expect($highlighted)->toBe([
-        'title' => '&lt;b&gt;Laravel&lt;/b&gt;',
+it('leaves out the description of a result without one', function () {
+    Video::factory()->create([
+        'title' => 'Zephyrquill result',
         'description' => null,
     ]);
+
+    $result = firstSearchViewModelResult('Zephyrquill', SearchContentType::Videos);
+
+    expect($result['description'])->toBeNull();
 });

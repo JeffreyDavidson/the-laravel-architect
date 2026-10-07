@@ -7,11 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 it('marks a subscriber as unsubscribed and clears pending confirmation state', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now()->subDay(),
-        'verified_at' => now()->subHour(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
     $subscriber->verification_token_hash = hash('sha256', 'confirmation-token');
     $subscriber->save();
 

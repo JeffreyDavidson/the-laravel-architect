@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Widgets\ContentPerformanceOverview;
 use App\Filament\Widgets\EditorialOperationsOverview;
 use App\Filament\Widgets\PublishingTrendsChart;
@@ -26,7 +27,7 @@ class Insights extends Page
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Operations;
 
     #[\Override]
     protected static ?int $navigationSort = 0;

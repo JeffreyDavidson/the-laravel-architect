@@ -13,10 +13,24 @@ use App\Models\Post;
 use App\Models\Project;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
+/**
+ * @phpstan-type Activity array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}
+ */
 class RecentActivityWidget extends Widget
 {
+    /**
+     * Each content model with the label and admin resource used for its activity rows.
+     */
+    private const array SOURCES = [
+        Post::class => ['Post', PostResource::class],
+        Episode::class => ['Episode', EpisodeResource::class],
+        NewsletterIssue::class => ['Newsletter', NewsletterIssueResource::class],
+        Project::class => ['Project', ProjectResource::class],
+    ];
+
     #[\Override]
     protected string $view = 'filament.widgets.recent-activity-widget';
 
@@ -27,55 +41,16 @@ class RecentActivityWidget extends Widget
     protected static ?int $sort = -4;
 
     /**
-     * @return array{activities: Collection<int, array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}>}
+     * @return array{activities: Collection<int, Activity>}
      */
     protected function getViewData(): array
     {
-        $activities = Post::query()->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->map(
-                fn (Post $post): array => $this->activity(
-                    kind: 'Post',
-                    label: $post->title,
-                    status: $post->publishStatus(),
-                    updatedAt: $post->updated_at,
-                    url: PostResource::getUrl('edit', ['record' => $post]),
-                ),
-            )->concat(Episode::query()->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->map(
-                fn (Episode $episode): array => $this->activity(
-                    kind: 'Episode',
-                    label: $episode->title,
-                    status: $episode->publishStatus(),
-                    updatedAt: $episode->updated_at,
-                    url: EpisodeResource::getUrl('edit', ['record' => $episode]),
-                ),
-            ))->concat(NewsletterIssue::query()->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->map(
-                fn (NewsletterIssue $issue): array => $this->activity(
-                    kind: 'Newsletter',
-                    label: $issue->title,
-                    status: $issue->publishStatus(),
-                    updatedAt: $issue->updated_at,
-                    url: NewsletterIssueResource::getUrl('edit', ['record' => $issue]),
-                ),
-            ))->concat(Project::query()->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->map(
-                fn (Project $project): array => $this->activity(
-                    kind: 'Project',
-                    label: $project->title,
-                    status: $project->publishStatus(),
-                    updatedAt: $project->updated_at,
-                    url: ProjectResource::getUrl('edit', ['record' => $project]),
-                ),
-            ));
+        /** @var Collection<int, Activity> $activities */
+        $activities = collect();
+
+        foreach (self::SOURCES as $model => [$kind, $resource]) {
+            $activities = $activities->concat($this->recentActivities($model::query(), $kind, $resource));
+        }
 
         return [
             'activities' => $activities->sortByDesc('timestamp')
@@ -85,7 +60,26 @@ class RecentActivityWidget extends Widget
     }
 
     /**
-     * @return array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}
+     * @param  Builder<Post>|Builder<Episode>|Builder<NewsletterIssue>|Builder<Project>  $query
+     * @param  class-string<PostResource|EpisodeResource|NewsletterIssueResource|ProjectResource>  $resource
+     * @return Collection<int, Activity>
+     */
+    private function recentActivities(Builder $query, string $kind, string $resource): Collection
+    {
+        return $query->latest('updated_at')
+            ->take(5)
+            ->get()
+            ->map(fn (Post|Episode|NewsletterIssue|Project $record): array => $this->activity(
+                kind: $kind,
+                label: $record->title,
+                status: $record->publishStatus(),
+                updatedAt: $record->updated_at,
+                url: $resource::getUrl('edit', ['record' => $record]),
+            ));
+    }
+
+    /**
+     * @return Activity
      */
     private function activity(
         string $kind,

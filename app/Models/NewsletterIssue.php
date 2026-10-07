@@ -9,7 +9,9 @@ use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
+use Database\Factories\NewsletterIssueFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,6 +32,10 @@ use Spatie\Activitylog\Support\LogOptions;
 class NewsletterIssue extends Model implements Publishable
 {
     use DeletesOwnedContent;
+
+    /** @use HasFactory<NewsletterIssueFactory> */
+    use HasFactory;
+
     use HasPublishingStatus;
     use HasSEO;
     use LocksSlugAfterPublication;

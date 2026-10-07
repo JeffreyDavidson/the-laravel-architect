@@ -7,32 +7,20 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes the selected videos through the table bulk action', function () {
-    $selectedVideos = collect([
-        Video::query()->create([
-            'youtube_id' => 'video-bulk-delete-one',
-            'title' => 'First video bulk delete coverage',
-            'slug' => 'first-video-bulk-delete-coverage',
-        ]),
-        Video::query()->create([
-            'youtube_id' => 'video-bulk-delete-two',
-            'title' => 'Second video bulk delete coverage',
-            'slug' => 'second-video-bulk-delete-coverage',
-        ]),
-    ]);
-    $remainingVideo = Video::query()->create([
-        'youtube_id' => 'video-bulk-delete-remaining',
-        'title' => 'Remaining video bulk delete coverage',
-        'slug' => 'remaining-video-bulk-delete-coverage',
-    ]);
+    $selectedVideos = Video::factory()
+        ->count(2)
+        ->create();
+    $remainingVideo = Video::factory()->create();
 
     livewire(ListVideos::class)
         ->selectTableRecords($selectedVideos)

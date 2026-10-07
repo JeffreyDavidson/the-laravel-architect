@@ -5,12 +5,13 @@ use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 it('rejects podcast text inputs longer than their database columns', function (string $field) {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 
     livewire(CreatePodcast::class)
         ->fillForm([

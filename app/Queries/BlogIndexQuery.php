@@ -75,8 +75,6 @@ final class BlogIndexQuery
                 'category' => $categorySlug,
             ], fn (?string $value): bool => $value !== null));
 
-        abort_if($posts->currentPage() > $posts->lastPage(), 404);
-
         return [
             'posts' => $posts,
             'categories' => Category::query()
@@ -84,7 +82,9 @@ final class BlogIndexQuery
                 ->get(),
             'publishedPostCount' => $selectedCategory === null && $search === ''
                 ? $posts->total()
-                : Post::published()->count(),
+                : Post::query()
+                    ->published()
+                    ->count(),
             'selectedCategory' => $selectedCategory,
         ];
     }

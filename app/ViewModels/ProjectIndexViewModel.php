@@ -26,7 +26,7 @@ class ProjectIndexViewModel
     {
         $selectedTechnology = $this->normaliseFilter($filters['technology'] ?? null);
         $selectedTag = $this->normaliseFilter($filters['tag'] ?? null);
-        $allProjects = Project::published()
+        $allProjects = Project::query()->published()
             ->with('tags')
             ->orderBy('sort_order')
             ->get();
@@ -99,17 +99,7 @@ class ProjectIndexViewModel
         $technologies = [];
 
         foreach ($projects as $project) {
-            $techStack = $project->tech_stack;
-
-            if (! is_array($techStack)) {
-                continue;
-            }
-
-            foreach ($techStack as $technology) {
-                if (is_string($technology) && trim($technology) !== '') {
-                    $technologies[] = trim($technology);
-                }
-            }
+            array_push($technologies, ...$project->technologies());
         }
 
         return collect($technologies)
@@ -142,16 +132,9 @@ class ProjectIndexViewModel
 
     private function matchesTechnology(Project $project, string $technology): bool
     {
-        $techStack = $project->tech_stack;
-
-        if (! is_array($techStack)) {
-            return false;
-        }
-
         return array_any(
-            $techStack,
-            fn (mixed $projectTechnology): bool => is_string($projectTechnology)
-                && strcasecmp(trim($projectTechnology), $technology) === 0,
+            $project->technologies(),
+            fn (string $projectTechnology): bool => strcasecmp($projectTechnology, $technology) === 0,
         );
     }
 

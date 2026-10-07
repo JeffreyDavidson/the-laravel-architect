@@ -139,12 +139,18 @@ class MediaHealthReport
         if ($base['source_status'] === MediaSourceStatus::Optimized->value && $variantsReady) {
             $base['status'] = MediaHealthStatus::Healthy->value;
             $base['status_color'] = MediaHealthStatus::Healthy->getColor();
-        } elseif ($base['source_status'] === MediaSourceStatus::NeedsOptimization->value) {
-            $base['status'] = MediaHealthStatus::ReuploadRequired->value;
-        } else {
-            $base['status'] = MediaHealthStatus::NeedsRepair->value;
-            $base['status_color'] = MediaHealthStatus::NeedsRepair->getColor();
+
+            return $base;
         }
+
+        if ($base['source_status'] === MediaSourceStatus::NeedsOptimization->value) {
+            $base['status'] = MediaHealthStatus::ReuploadRequired->value;
+
+            return $base;
+        }
+
+        $base['status'] = MediaHealthStatus::NeedsRepair->value;
+        $base['status_color'] = MediaHealthStatus::NeedsRepair->getColor();
 
         return $base;
     }

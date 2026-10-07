@@ -7,12 +7,13 @@ use App\Queries\EpisodeNavigationQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Str;
+
+use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
 
 it('uses record IDs to navigate episodes with the same publication timestamp', function () {
-    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
+    $podcast = Podcast::factory()->create();
     $date = now()->subDay();
     $previous = createEpisodeNavigationEpisode($podcast, 'First', $date);
     $current = createEpisodeNavigationEpisode($podcast, 'Second', $date);
@@ -26,20 +27,10 @@ it('uses record IDs to navigate episodes with the same publication timestamp', f
 });
 
 it('finds the closest published episodes before and after the current episode', function () {
-    $this->travelTo(Date::parse('2026-08-28 12:00:00'));
+    travelTo(Date::parse('2026-08-28 12:00:00'));
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'is_active' => true,
-    ]);
-    $otherPodcast = Podcast::query()->create([
-        'name' => 'Other Sessions',
-        'slug' => 'other-sessions',
-        'description' => 'A different podcast.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
+    $otherPodcast = Podcast::factory()->create();
     $currentEpisode = createEpisodeNavigationEpisode($podcast, 'Current episode', now()->subDays(3));
     createEpisodeNavigationEpisode($podcast, 'Farther previous episode', now()->subDays(5));
     $previousEpisode = createEpisodeNavigationEpisode($podcast, 'Previous episode', now()->subDays(4));
@@ -58,12 +49,7 @@ it('finds the closest published episodes before and after the current episode', 
 });
 
 it('returns null at both ends when there are no adjacent published episodes', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
     $episode = createEpisodeNavigationEpisode($podcast, 'Only episode', now()->subDay());
 
     $navigation = app(EpisodeNavigationQuery::class)
@@ -77,12 +63,7 @@ it('returns null at both ends when there are no adjacent published episodes', fu
 });
 
 it('returns null navigation for an episode without a publication date', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
     $episode = createEpisodeNavigationEpisode($podcast, 'Draft episode', now()->subDay(), PublishStatus::Draft);
     $episode->update(['published_at' => null]);
 
@@ -102,12 +83,11 @@ function createEpisodeNavigationEpisode(
     Carbon $publishedAt,
     PublishStatus $status = PublishStatus::Published,
 ): Episode {
-    return Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => $title,
-        'slug' => Str::slug($title),
-        'description' => "Description for {$title}.",
-        'status' => $status,
-        'published_at' => $publishedAt,
-    ]);
+    return Episode::factory()
+        ->for($podcast)
+        ->create([
+            'title' => $title,
+            'status' => $status,
+            'published_at' => $publishedAt,
+        ]);
 }

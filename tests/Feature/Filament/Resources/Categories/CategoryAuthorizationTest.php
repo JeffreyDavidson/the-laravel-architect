@@ -8,74 +8,65 @@ use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-beforeEach(function () {
-    $this->author = User::factory()->create();
-    $this->category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $this->post = Post::query()->create([
-        'title' => 'Authorization boundaries',
-        'slug' => 'authorization-boundaries',
-        'content' => 'Protected content.',
-        'user_id' => $this->author->id,
-        'category_id' => $this->category->id,
-    ]);
-});
-
 it('allows an administrator to manage categories', function () {
+    $category = Category::factory()->create();
+    $post = Post::factory()
+        ->for($category)
+        ->create();
     $administrator = User::factory()->create(['is_admin' => true]);
 
     expect($administrator->can('viewAny', Category::class))->toBeTrue()
-        ->and($administrator->can('view', $this->category))
+        ->and($administrator->can('view', $category))
         ->toBeTrue()
         ->and($administrator->can('create', Category::class))
         ->toBeTrue()
-        ->and($administrator->can('update', $this->category))
+        ->and($administrator->can('update', $category))
         ->toBeTrue()
-        ->and($administrator->can('delete', $this->category))
+        ->and($administrator->can('delete', $category))
         ->toBeTrue()
         ->and($administrator->can('deleteAny', Category::class))
         ->toBeTrue()
-        ->and($administrator->can('restore', $this->category))
+        ->and($administrator->can('restore', $category))
         ->toBeTrue()
         ->and($administrator->can('restoreAny', Category::class))
         ->toBeTrue()
-        ->and($administrator->can('forceDelete', $this->category))
+        ->and($administrator->can('forceDelete', $category))
         ->toBeTrue()
         ->and($administrator->can('forceDeleteAny', Category::class))
         ->toBeTrue()
-        ->and($administrator->can('replicate', $this->category))
+        ->and($administrator->can('replicate', $category))
         ->toBeTrue()
         ->and($administrator->can('reorder', Category::class))
         ->toBeTrue();
 
-    $this->actingAs($administrator)
+    actingAs($administrator)
         ->get(CategoryResource::getUrl('index'))
         ->assertOk();
 
-    livewire(EditPost::class, ['record' => $this->post->getRouteKey()])
+    livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->assertActionVisible(TestAction::make('createOption')->schemaComponent('category_id'));
 });
 
 it('prevents a non-administrator from managing categories', function () {
+    $category = Category::factory()->create();
     $panelUser = User::factory()->create();
 
     expect($panelUser->can('viewAny', Category::class))->toBeFalse()
-        ->and($panelUser->can('view', $this->category))
+        ->and($panelUser->can('view', $category))
         ->toBeFalse()
         ->and($panelUser->can('create', Category::class))
         ->toBeFalse()
-        ->and($panelUser->can('update', $this->category))
+        ->and($panelUser->can('update', $category))
         ->toBeFalse()
-        ->and($panelUser->can('delete', $this->category))
+        ->and($panelUser->can('delete', $category))
         ->toBeFalse();
 
-    $this->actingAs($panelUser)
+    actingAs($panelUser)
         ->get(CategoryResource::getUrl('index'))
         ->assertForbidden();
 });

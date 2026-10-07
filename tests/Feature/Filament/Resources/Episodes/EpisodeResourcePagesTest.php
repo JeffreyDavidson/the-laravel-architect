@@ -2,35 +2,27 @@
 
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Models\Episode;
-use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('renders the episode create page for an authorized user', function () {
-    $this->get(EpisodeResource::getUrl('create'))
+    get(EpisodeResource::getUrl('create'))
         ->assertOk();
 });
 
 it('renders the episode edit page for an authorized user', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Episode page coverage',
-        'slug' => 'episode-page-coverage',
-        'description' => 'Podcast description',
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode page coverage',
-        'slug' => 'episode-page-coverage',
-        'description' => 'Episode description',
-    ]);
+    $episode = Episode::factory()->create();
 
-    $this->get(EpisodeResource::getUrl('edit', ['record' => $episode]))
+    get(EpisodeResource::getUrl('edit', ['record' => $episode]))
         ->assertOk();
 });

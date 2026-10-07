@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\NavigationGroup as AdminNavigationGroup;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditorialCalendar;
 use App\Filament\Pages\Insights;
@@ -101,7 +102,7 @@ class AdminPanelProvider extends PanelProvider
                     ...Dashboard::getNavigationItems(),
                 ])
                 ->groups([
-                    NavigationGroup::make('Publish')
+                    NavigationGroup::fromEnum(AdminNavigationGroup::Publish)
                         ->items([
                             ...EditorialCalendar::getNavigationItems(),
                             ...PostResource::getNavigationItems(),
@@ -109,20 +110,20 @@ class AdminPanelProvider extends PanelProvider
                             ...EpisodeResource::getNavigationItems(),
                             ...NewsletterIssueResource::getNavigationItems(),
                         ]),
-                    NavigationGroup::make('Library')
+                    NavigationGroup::fromEnum(AdminNavigationGroup::Library)
                         ->items([
                             ...ProjectResource::getNavigationItems(),
                             ...CategoryResource::getNavigationItems(),
                             ...TagResource::getNavigationItems(),
                             ...VideoResource::getNavigationItems(),
                         ]),
-                    NavigationGroup::make('Audience')
+                    NavigationGroup::fromEnum(AdminNavigationGroup::Audience)
                         ->items([
                             ...SocialProfileResource::getNavigationItems(),
                             ...SubscriberResource::getNavigationItems(),
                             ...ContactInquiryResource::getNavigationItems(),
                         ]),
-                    NavigationGroup::make('Operations')
+                    NavigationGroup::fromEnum(AdminNavigationGroup::Operations)
                         ->items([
                             ...Insights::getNavigationItems(),
                             ...MediaHealth::getNavigationItems(),

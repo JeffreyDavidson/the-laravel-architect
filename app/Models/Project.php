@@ -14,8 +14,10 @@ use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
+use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -35,6 +37,10 @@ class Project extends Model implements Publishable
 {
     use DeletesOwnedContent;
     use Featurable;
+
+    /** @use HasFactory<ProjectFactory> */
+    use HasFactory;
+
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
@@ -52,6 +58,33 @@ class Project extends Model implements Publishable
             'status' => PublishStatus::class,
             'slug_locked_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The tech stack with surrounding whitespace removed and blank or non-string
+     * entries dropped. ContentReadinessQuery mirrors this rule in SQL.
+     *
+     * @return list<non-empty-string>
+     */
+    public function technologies(): array
+    {
+        $techStack = $this->tech_stack;
+
+        if (! is_array($techStack)) {
+            return [];
+        }
+
+        $technologies = [];
+
+        foreach ($techStack as $technology) {
+            $technology = is_string($technology) ? trim($technology) : '';
+
+            if ($technology !== '') {
+                $technologies[] = $technology;
+            }
+        }
+
+        return $technologies;
     }
 
     public function getDynamicSEOData(): SEOData

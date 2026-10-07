@@ -1,11 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\Browser\Components\NewsletterForm;
@@ -13,6 +11,8 @@ use Tests\Browser\Pages\BlogPostPage;
 use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
 use Tests\Browser\Pages\ProjectIndexPage;
+
+use function Pest\Laravel\withVite;
 
 pest()->use(RefreshDatabase::class);
 
@@ -50,14 +50,13 @@ it('keeps newsletter validation accessible and preserves the submitted email', f
 });
 
 it('gives project entries a heading and a labeled technology list', function () {
-    Project::query()->create([
-        'title' => 'Architecture Decisions',
-        'slug' => 'architecture-decisions',
-        'description' => 'A project shaped by explicit technical tradeoffs.',
-        'tech_stack' => ['Laravel', 'Pest'],
-        'is_featured' => true,
-        'status' => PublishStatus::Published,
-    ]);
+    Project::factory()
+        ->published()
+        ->featured()
+        ->create([
+            'title' => 'Architecture Decisions',
+            'tech_stack' => ['Laravel', 'Pest'],
+        ]);
 
     $page = ProjectIndexPage::visit();
 
@@ -69,30 +68,22 @@ it('gives project entries a heading and a labeled technology list', function () 
 });
 
 it('exposes podcast navigation, dates, and share actions to assistive technology', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Designing Clear Boundaries',
-        'slug' => 'designing-clear-boundaries',
-        'episode_number' => 12,
-        'season_number' => 1,
-        'description' => 'A practical discussion about application boundaries.',
-        'transcript' => <<<'MARKDOWN'
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create([
+            'title' => 'Designing Clear Boundaries',
+            'transistor_url' => null,
+            'transcript' => <<<'MARKDOWN'
 ## Architecture notes
 
 Clear boundaries make this episode easier to follow.
 MARKDOWN,
-        'duration_seconds' => 2520,
-        'status' => PublishStatus::Published,
-        'published_at' => '2026-08-20 12:00:00',
-    ]);
+            'published_at' => '2026-08-20 12:00:00',
+        ]);
 
-    $this->withVite();
+    withVite();
     $page = PodcastEpisodePage::visit($podcast, $episode);
 
     $page->assertPresent('nav[aria-label="Breadcrumb"]')
@@ -115,29 +106,21 @@ MARKDOWN,
 /** @return array{0: Podcast, 1: Episode} */
 function transcriptEpisode(): array
 {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Designing Clear Boundaries',
-        'slug' => 'designing-clear-boundaries',
-        'description' => 'A practical discussion about application boundaries.',
-        'transcript' => "## Opening thoughts\n\nBoundaries matter.\n\n## Boundaries in practice\n\nMore about boundaries here.",
-        'duration_seconds' => 2520,
-        'status' => PublishStatus::Published,
-        'published_at' => '2026-08-20 12:00:00',
-    ]);
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create([
+            'transistor_url' => null,
+            'transcript' => "## Opening thoughts\n\nBoundaries matter.\n\n## Boundaries in practice\n\nMore about boundaries here.",
+        ]);
 
     return [$podcast, $episode];
 }
 
 it('clears transcript search matches and copies a section link', function () {
     [$podcast, $episode] = transcriptEpisode();
-    $this->withVite();
+    withVite();
     $page = PodcastEpisodePage::visit($podcast, $episode);
 
     $page->assertPresent('[data-transcript-anchor]')
@@ -160,7 +143,7 @@ it('clears transcript search matches and copies a section link', function () {
 
 it('opens the transcript at a deep-linked section', function () {
     [$podcast, $episode] = transcriptEpisode();
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage(route('podcast.episode', [$podcast, $episode]).'#transcript-boundaries-in-practice', 'desktop');
 
@@ -169,15 +152,9 @@ it('opens the transcript at a deep-linked section', function () {
 });
 
 it('publishes machine-readable dates for articles', function () {
-    $author = User::factory()->create();
-    $post = Post::query()->create([
-        'title' => 'Designing Clear Laravel Boundaries',
-        'excerpt' => 'A focused guide to keeping Laravel applications maintainable.',
-        'content' => 'Clear boundaries keep application behavior understandable.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => '2026-08-19 09:00:00',
-    ]);
+    $post = Post::factory()
+        ->published()
+        ->create(['published_at' => '2026-08-19 09:00:00']);
 
     $page = BlogPostPage::visit($post);
 
@@ -221,7 +198,7 @@ function holdNewsletterRequest(): string
 }
 
 it('keeps keyboard focus on the newsletter button while a sign-up is sent', function () {
-    $this->withVite();
+    withVite();
     $page = $this->browserPage('/', 'desktop');
     $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
         ->script(holdNewsletterRequest());
@@ -246,7 +223,7 @@ it('keeps keyboard focus on the newsletter button while a sign-up is sent', func
 });
 
 it('moves focus to the newsletter email field and announces a repeated error again', function () {
-    $this->withVite();
+    withVite();
     $page = $this->browserPage('/', 'desktop');
     $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'");
     $page->page()
@@ -271,7 +248,7 @@ it('moves focus to the newsletter email field and announces a repeated error aga
 });
 
 it('keeps the newsletter success message readable', function (string $theme) {
-    $this->withVite();
+    withVite();
     $page = $this->browserPageWithTheme('/', 'desktop', $theme);
     $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'");
     $page->page()
@@ -288,16 +265,10 @@ it('keeps the newsletter success message readable', function (string $theme) {
 })->with(['light', 'dark']);
 
 it('keeps search highlights readable in dark mode', function () {
-    $this->withVite();
-    Post::query()->create([
-        'title' => 'Laravel Boundaries',
-        'content' => 'Clear boundaries.',
-        'user_id' => User::factory()
-            ->create()
-            ->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    withVite();
+    Post::factory()
+        ->published()
+        ->create(['title' => 'Laravel Boundaries']);
 
     $page = $this->browserPageWithTheme('/search?q=Laravel', 'desktop', 'dark');
 
@@ -305,7 +276,7 @@ it('keeps search highlights readable in dark mode', function () {
 });
 
 it('keeps the developer card badge readable in light mode', function () {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme('/about', 'desktop', 'light');
 
@@ -313,7 +284,7 @@ it('keeps the developer card badge readable in light mode', function () {
 });
 
 it('wraps the site navigation in a banner landmark', function () {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme('/', 'desktop', 'light');
 
@@ -322,7 +293,7 @@ it('wraps the site navigation in a banner landmark', function () {
 });
 
 it('gives footer links comfortable touch targets on phones', function () {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme('/', 'mobile', 'light');
 
@@ -330,13 +301,8 @@ it('gives footer links comfortable touch targets on phones', function () {
 });
 
 it('keeps the podcast coming soon badge readable in dark mode', function () {
-    $this->withVite();
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
+    withVite();
+    $podcast = Podcast::factory()->create();
 
     $page = $this->browserPageWithTheme(route('podcast.show', $podcast, false), 'desktop', 'dark');
 

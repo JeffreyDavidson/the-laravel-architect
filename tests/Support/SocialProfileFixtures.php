@@ -15,7 +15,7 @@ class SocialProfileFixtures
         bool $isEnabled = true,
         ?string $label = null,
     ): SocialProfile {
-        return SocialProfile::query()->create([
+        return SocialProfile::factory()->create([
             'platform' => $platform,
             'label' => $label,
             'url' => $url,

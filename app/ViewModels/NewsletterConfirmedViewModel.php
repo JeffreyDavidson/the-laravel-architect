@@ -14,7 +14,7 @@ class NewsletterConfirmedViewModel
     public function data(): array
     {
         return [
-            'latestPosts' => Post::published()
+            'latestPosts' => Post::query()->published()
                 ->with('category')
                 ->latest('published_at')
                 ->take(3)

@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Data\ContentListItem;
 use App\Enums\SearchContentType;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -22,7 +23,7 @@ class ArchiveQuery
     private const int ITEMS_PER_PAGE = 18;
 
     /**
-     * @return LengthAwarePaginator<int, array{type: string, typeLabel: string, title: string, summary: string|null, url: string, external: bool, date: string, dateTime: string}>
+     * @return LengthAwarePaginator<int, ContentListItem>
      */
     public function get(?SearchContentType $type = null, ?int $year = null): LengthAwarePaginator
     {
@@ -51,9 +52,7 @@ class ArchiveQuery
         $items = $query->paginate(self::ITEMS_PER_PAGE)
             ->withQueryString();
 
-        abort_if($items->currentPage() > $items->lastPage(), 404);
-
-        return $items->through(fn (object $item): array => $this->record($item));
+        return $items->through(fn (object $item): ContentListItem => $this->record($item));
     }
 
     /**
@@ -137,31 +136,17 @@ class ArchiveQuery
 
     /**
      * @param  object{ id: int, type: string, title: string, summary: string|null, slug: string, podcast_slug: string|null, youtube_id: string|null, sort_date: string }  $item
-     * @return array{type: string, typeLabel: string, title: string, summary: string|null, url: string, external: bool, date: string, dateTime: string}
      */
-    private function record(object $item): array
+    private function record(object $item): ContentListItem
     {
-        $type = SearchContentType::from($item->type);
-        $date = DisplayTimezone::convert(Carbon::parse($item->sort_date));
-
-        $url = match ($type) {
-            SearchContentType::Writing => route('blog.show', ['post' => $item->slug]),
-            SearchContentType::Projects => route('projects.show', ['project' => $item->slug]),
-            SearchContentType::Podcasts => route('podcast.show', ['podcast' => $item->slug]),
-            SearchContentType::Newsletter => route('newsletter.issue', ['newsletterIssue' => $item->slug]),
-            SearchContentType::Episodes => route('podcast.episode', ['podcast' => $item->podcast_slug, 'episode' => $item->slug]),
-            SearchContentType::Videos => 'https://www.youtube.com/watch?v='.$item->youtube_id,
-        };
-
-        return [
-            'type' => $type->value,
-            'typeLabel' => $type->label(),
-            'title' => $item->title,
-            'summary' => $item->summary,
-            'url' => $url,
-            'external' => $type === SearchContentType::Videos,
-            'date' => $date->format('F j, Y'),
-            'dateTime' => $date->toDateString(),
-        ];
+        return new ContentListItem(
+            type: SearchContentType::from($item->type),
+            title: $item->title,
+            summary: $item->summary,
+            slug: $item->slug,
+            date: CarbonImmutable::parse($item->sort_date),
+            podcastSlug: $item->podcast_slug,
+            youtubeId: $item->youtube_id,
+        );
     }
 }

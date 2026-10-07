@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -13,13 +12,12 @@ it('backfills responsive variants for existing project images', function () {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('project.png', 1280, 72);
     Storage::disk('public')->put('projects/project.png', $image->getContent());
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/project.png',
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/project.png',
+        ]));
 
     $this->artisanCommand('projects:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 1 project.')

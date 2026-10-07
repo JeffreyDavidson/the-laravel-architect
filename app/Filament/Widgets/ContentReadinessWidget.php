@@ -2,20 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\ContentReadinessArea;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
-use App\Models\Episode;
-use App\Models\NewsletterIssue;
-use App\Models\Podcast;
-use App\Models\Post;
-use App\Models\Project;
-use App\Models\Video;
+use App\Queries\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class ContentReadinessWidget extends Widget
@@ -51,103 +46,39 @@ class ContentReadinessWidget extends Widget
      */
     private function buildViewData(): array
     {
-        $items = array_values(array_filter([
-            [
-                'label' => 'Project previews',
-                'description' => 'Add an optimized featured image to each project.',
-                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('featured_image_path')
-                    ->orWhere('featured_image_path', ''))
-                    ->count(),
-                'url' => ProjectResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Project stories',
-                'description' => 'Finish the case study for each project.',
-                'count' => Project::query()->where(fn (Builder $query) => $query->whereNull('content')
-                    ->orWhere('content', ''))
-                    ->count(),
-                'url' => ProjectResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Podcast links',
-                'description' => 'Add at least one place listeners can subscribe.',
-                'count' => Podcast::query()
-                    ->active()
-                    ->where(function (Builder $query): void {
-                        foreach (['apple_url', 'spotify_url', 'rss_url', 'youtube_url'] as $column) {
-                            $query->where(function (Builder $query) use ($column): void {
-                                $query->whereNull($column)
-                                    ->orWhere($column, '');
-                            });
-                        }
-                    })
-                    ->count(),
-                'url' => PodcastResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Episode details',
-                'description' => 'Add a playable episode source and show notes.',
-                'count' => $this->missingEpisodeDetailsCount(),
-                'url' => EpisodeResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Post content',
-                'description' => 'Add an excerpt, image, and SEO description to each post.',
-                'count' => Post::query()->where(fn (Builder $query) => $query->whereNull('excerpt')
-                    ->orWhere('excerpt', '')
-                    ->orWhereNull('featured_image_path')
-                    ->orWhere('featured_image_path', ''))
-                    ->count(),
-                'url' => PostResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Newsletter issues',
-                'description' => 'Add an excerpt and SEO description before sending an issue.',
-                'count' => NewsletterIssue::query()->where(fn (Builder $query) => $query->whereNull('excerpt')
-                    ->orWhere('excerpt', ''))
-                    ->count(),
-                'url' => NewsletterIssueResource::getUrl('index'),
-            ],
-            [
-                'label' => 'Video metadata',
-                'description' => 'Complete the description, thumbnail, duration, and sync data.',
-                'count' => Video::query()->where(fn (Builder $query) => $query->whereNull('description')
-                    ->orWhere('description', '')
-                    ->orWhereNull('thumbnail_url')
-                    ->orWhere('thumbnail_url', '')
-                    ->orWhereNull('duration')
-                    ->orWhere('duration', '')
-                    ->orWhereNull('synced_at'))
-                    ->count(),
-                'url' => VideoResource::getUrl('index'),
-            ],
-        ], fn (array $item): bool => $item['count'] > 0));
+        $summary = app(ContentReadinessSummaryQuery::class);
+        $items = [];
 
-        $outstandingCount = 0;
+        foreach (ContentReadinessArea::cases() as $area) {
+            $count = $summary->count($area);
 
-        foreach ($items as $item) {
-            $outstandingCount += $item['count'];
+            if ($count === 0) {
+                continue;
+            }
+
+            $items[] = [
+                'label' => $area->getLabel(),
+                'description' => $area->getDescription(),
+                'count' => $count,
+                'url' => $this->url($area),
+            ];
         }
 
         return [
             'items' => array_slice($items, 0, 4),
-            'outstandingCount' => $outstandingCount,
+            'outstandingCount' => array_sum(array_column($items, 'count')),
         ];
     }
 
-    private function missingEpisodeDetailsCount(): int
+    private function url(ContentReadinessArea $area): string
     {
-        $missing = 0;
-
-        foreach (Episode::query()->get(['transistor_url', 'youtube_url', 'show_notes']) as $episode) {
-            $hasMedia = $episode->transistorEmbedUrl() !== null
-                || filled($episode->youtube_url);
-
-            if (! $hasMedia || blank($episode->show_notes)) {
-                $missing++;
-            }
-        }
-
-        return $missing;
+        return match ($area) {
+            ContentReadinessArea::ProjectPreviews, ContentReadinessArea::ProjectStories => ProjectResource::getUrl('index'),
+            ContentReadinessArea::PodcastLinks => PodcastResource::getUrl('index'),
+            ContentReadinessArea::EpisodeDetails => EpisodeResource::getUrl('index'),
+            ContentReadinessArea::PostContent => PostResource::getUrl('index'),
+            ContentReadinessArea::NewsletterIssues => NewsletterIssueResource::getUrl('index'),
+            ContentReadinessArea::VideoMetadata => VideoResource::getUrl('index'),
+        };
     }
 }

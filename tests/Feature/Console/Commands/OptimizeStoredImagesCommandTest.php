@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Podcast;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,9 +16,9 @@ it('rolls back the image path when an updated listener fails', function () {
     $path = 'projects/original.png';
     Storage::disk('public')->put($path, UploadedFile::fake()->image('original.png', 100, 100)
         ->getContent());
-    $project = Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
-        'status' => PublishStatus::Draft, 'featured_image_path' => $path,
+    $project = Project::withoutEvents(fn () => Project::factory()->create([
+        'slug' => 'project',
+        'featured_image_path' => $path,
     ]));
     Project::updated(function (): never {
         throw new RuntimeException('An updated listener failed.');
@@ -37,9 +36,9 @@ it('keeps the committed replacement if an after-commit listener fails', function
     $path = 'projects/original.png';
     Storage::disk('public')->put($path, UploadedFile::fake()->image('original.png', 100, 100)
         ->getContent());
-    $project = Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
-        'status' => PublishStatus::Draft, 'featured_image_path' => $path,
+    $project = Project::withoutEvents(fn () => Project::factory()->create([
+        'slug' => 'project',
+        'featured_image_path' => $path,
     ]));
     Project::updated(function (Project $project): void {
         $project->getConnection()
@@ -68,13 +67,12 @@ it('replaces legacy project images with optimized webp files', function () {
             ->getContent(),
     );
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $originalPath,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $originalPath,
+        ]));
 
     $this->artisanCommand('media:optimize-images')
         ->expectsOutputToContain('Optimized 1 project.')
@@ -111,13 +109,12 @@ it('skips existing webp files unless forced', function () {
     Storage::disk('public')->put($path, UploadedFile::fake()->image('project.webp', 800, 400)
         ->getContent());
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $path,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $path,
+        ]));
 
     $this->artisanCommand('media:optimize-images')
         ->expectsOutputToContain('Skipped 1 already optimized project.')
@@ -143,17 +140,14 @@ it('reports unsupported sources while continuing other media types', function ()
             ->getContent(),
     );
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/invalid.png',
-    ]));
-    Podcast::withoutEvents(fn () => Podcast::query()->create([
-        'name' => 'Podcast',
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/invalid.png',
+        ]));
+    Podcast::withoutEvents(fn () => Podcast::factory()->create([
         'slug' => 'podcast',
-        'description' => 'Description',
         'cover_image_path' => 'podcasts/podcast.png',
     ]));
 
@@ -175,13 +169,12 @@ it('reports planned changes without writing in dry-run mode', function () {
     Storage::disk('public')->put($path, UploadedFile::fake()->image('project.png', 1800, 900)
         ->getContent());
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $path,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $path,
+        ]));
 
     $this->artisanCommand('media:optimize-images', ['--dry-run' => true])
         ->expectsOutputToContain('Would optimize 1 project.')

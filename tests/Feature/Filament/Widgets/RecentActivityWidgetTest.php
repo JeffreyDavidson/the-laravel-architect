@@ -3,7 +3,6 @@
 use App\Enums\PublishStatus;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 
@@ -17,8 +16,6 @@ it('renders an empty state when there is no recent activity', function () {
 });
 
 it('renders the newest posts in chronological order', function () {
-    $user = User::factory()->create();
-
     $posts = [
         ['Old post', PublishStatus::Draft, '2026-08-19 09:00:00'],
         ['Published post', PublishStatus::Published, '2026-08-19 13:00:00'],
@@ -27,11 +24,8 @@ it('renders the newest posts in chronological order', function () {
     ];
 
     foreach ($posts as [$title, $status, $updatedAt]) {
-        $post = Post::query()->create([
+        $post = Post::factory()->create([
             'title' => $title,
-            'slug' => str($title)->slug(),
-            'content' => 'Content',
-            'user_id' => $user->id,
             'status' => $status,
         ]);
 

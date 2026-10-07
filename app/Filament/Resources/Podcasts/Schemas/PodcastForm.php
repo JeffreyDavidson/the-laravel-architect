@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Podcasts\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
+use App\Filament\Forms\Components\SlugInput;
+use App\Filament\Forms\Components\SlugSourceInput;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 use RalphJSmit\Filament\SEO\SEO;
 
 class PodcastForm
@@ -22,20 +23,10 @@ class PodcastForm
             ->components([
                 Section::make('Show Details')
                     ->schema([
-                        TextInput::make('name')
+                        SlugSourceInput::make('name')
                             ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Get $get, Set $set, ?string $state, string $operation): void {
-                                if ($operation === 'create' && blank($get('slug'))) {
-                                    $set('slug', Str::slug($state ?? ''));
-                                }
-                            }),
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(),
+                            ->maxLength(255),
+                        SlugInput::make('slug'),
                         Textarea::make('description')
                             ->required()
                             ->rows(3)

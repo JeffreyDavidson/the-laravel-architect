@@ -12,7 +12,9 @@ use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
+use Database\Factories\EpisodeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,6 +37,10 @@ use Spatie\Activitylog\Support\LogOptions;
 class Episode extends Model implements Publishable
 {
     use DeletesOwnedContent;
+
+    /** @use HasFactory<EpisodeFactory> */
+    use HasFactory;
+
     use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
@@ -68,6 +74,16 @@ class Episode extends Model implements Publishable
         }
 
         return "https://share.transistor.fm/e/{$matches[1]}";
+    }
+
+    /**
+     * Whether the episode has something to play: a valid Transistor share URL
+     * or a YouTube link. ContentReadinessQuery mirrors this rule in SQL.
+     */
+    public function hasMedia(): bool
+    {
+        return $this->transistorEmbedUrl() !== null
+            || filled($this->youtube_url);
     }
 
     /** @return BelongsTo<Podcast, $this> */

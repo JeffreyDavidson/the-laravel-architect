@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\PublishStatus;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
@@ -21,24 +20,8 @@ class NewsletterDeliveryFactory extends Factory
     public function definition(): array
     {
         return [
-            'newsletter_issue_id' => fn (): mixed => NewsletterIssue::query()
-                ->create([
-                    'title' => fake()->sentence(3),
-                    'content' => fake()->paragraph(),
-                    'status' => PublishStatus::Published,
-                    'published_at' => now()->subDay(),
-                    'sent_at' => now(),
-                ])
-                ->getKey(),
-            'subscriber_id' => fn (): mixed => Subscriber::query()
-                ->create([
-                    'email' => fake()
-                        ->unique()
-                        ->safeEmail(),
-                    'subscribed_at' => now()->subMonth(),
-                    'verified_at' => now()->subMonth(),
-                ])
-                ->getKey(),
+            'newsletter_issue_id' => NewsletterIssue::factory()->sent(),
+            'subscriber_id' => Subscriber::factory(),
             'sent_at' => null,
         ];
     }

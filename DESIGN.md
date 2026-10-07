@@ -341,8 +341,18 @@ content is not production copy or a source of business claims.
 Use [the public button component](resources/views/components/button.blade.php)
 for primary and outline actions. It supports `sm`, `md`, and `lg` sizes, an `href`
 for links, and visible keyboard focus. The medium size uses the frontmatter's
-button padding. Filament actions retain native loading, disabled, and validation
-behavior under the admin theme.
+button padding. Its `brand` and `brand-soft` variants are the flat brand-600
+buttons used on the projects, archive, search, and error pages; they ignore the
+size, so callers add padding and layout classes. Filament actions retain native
+loading, disabled, and validation behavior under the admin theme.
+
+Listing pages open with [page-header](resources/views/components/page-header.blade.php)
+and label headings with [eyebrow](resources/views/components/eyebrow.blade.php).
+Closing contact prompts use [contact-cta](resources/views/components/contact-cta.blade.php).
+Form labels, the spam honeypot, and success or error messages use
+[form/label](resources/views/components/form/label.blade.php),
+[form/honeypot](resources/views/components/form/honeypot.blade.php), and
+[alert](resources/views/components/alert.blade.php).
 
 Use [card](resources/views/components/card.blade.php) and
 [muted-card](resources/views/components/public/muted-card.blade.php) for their

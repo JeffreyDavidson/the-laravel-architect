@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
 
+use function Pest\Laravel\withVite;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
@@ -12,7 +14,7 @@ beforeEach(function (): void {
 });
 
 it('keeps public routes within the mobile viewport', function (string $route): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme($route, 'mobile', 'dark');
 
@@ -50,7 +52,7 @@ it('keeps public routes within the mobile viewport', function (string $route): v
 ]);
 
 it('opens mobile navigation and navigates to the blog', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'dark'));
     $menuButton = $page->page()
@@ -86,7 +88,7 @@ it('opens mobile navigation and navigates to the blog', function (): void {
 });
 
 it('persists the mobile theme choice across navigation', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'light'));
     $root = $page->page()

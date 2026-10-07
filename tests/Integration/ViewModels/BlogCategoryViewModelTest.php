@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
@@ -11,31 +10,20 @@ pest()->use(RefreshDatabase::class);
 
 it('builds a paginated category archive payload', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
+    $category = Category::factory()->create(['name' => 'Architecture']);
 
     foreach (range(1, 11) as $index) {
-        Post::query()->create([
-            'title' => "Architecture Article {$index}",
-            'slug' => "architecture-article-{$index}",
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'category_id' => $category->getKey(),
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        Post::factory()
+            ->for($category)
+            ->for($author, 'author')
+            ->published()
+            ->create(['published_at' => now()->subDays($index)]);
     }
 
-    Post::query()->create([
-        'title' => 'Architecture Draft',
-        'slug' => 'architecture-draft',
-        'content' => 'This draft must remain private.',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Draft,
-    ]);
+    Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->create();
 
     request()->query->set('page', 2);
 

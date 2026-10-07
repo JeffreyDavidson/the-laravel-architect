@@ -10,6 +10,8 @@ use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
+use function Pest\Laravel\assertModelMissing;
+
 pest()->use(RefreshDatabase::class);
 
 function runDelivery(NewsletterDelivery $delivery): void
@@ -97,7 +99,7 @@ it('drops the delivery when the subscriber is no longer active', function () {
     runDelivery($delivery);
 
     Mail::assertNothingSent();
-    $this->assertModelMissing($delivery);
+    assertModelMissing($delivery);
 });
 
 it('drops the delivery when the issue is no longer published', function (array $attributes) {
@@ -110,7 +112,7 @@ it('drops the delivery when the issue is no longer published', function (array $
     runDelivery($delivery);
 
     Mail::assertNothingSent();
-    $this->assertModelMissing($delivery);
+    assertModelMissing($delivery);
 })->with([
     'unpublished' => [['status' => PublishStatus::Draft]],
     'moved to a future date' => [['published_at' => now()->addDay()]],

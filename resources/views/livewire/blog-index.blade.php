@@ -6,7 +6,7 @@
     aria-busy="false"
 >
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="blog-index__filters dark:border-surface-border dark:border-surface-border flex flex-col gap-5 border-b border-gray-200 py-6 lg:flex-row lg:items-center lg:justify-between">
+        <div class="blog-index__filters dark:border-surface-border flex flex-col gap-5 border-b border-gray-200 py-6 lg:flex-row lg:items-center lg:justify-between">
             <form
                 method="GET"
                 action="{{ route('blog.index') }}"

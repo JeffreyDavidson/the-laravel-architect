@@ -3,61 +3,35 @@
 namespace App\Actions;
 
 use App\Models\Post;
+use App\Support\Feeds\RssChannelWriter;
 
-final class GenerateRssFeed
+final readonly class GenerateRssFeed
 {
+    public function __construct(private RssChannelWriter $writer) {}
+
     public function handle(): string
     {
-        $posts = Post::published()
+        $posts = Post::query()->published()
             ->latest('published_at')
             ->latest('id')
             ->with('category')
             ->take(20)
             ->get();
 
-        $siteUrl = url('/');
-        $feedUrl = route('rss');
-        $lastBuild = $posts->first()
-            ?->publishedAt()
-            ?->toRssString() ?? now()->toRssString();
-
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-        $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n";
-        $xml .= "<channel>\n";
-        $xml .= '<title>'.$this->escape(config()->string('seo.site_name'))."</title>\n";
-        $xml .= '<link>'.$this->escape($siteUrl)."</link>\n";
-        $xml .= '<description>'.$this->escape(config()->string('seo.feed_description'))."</description>\n";
-        $xml .= "<language>en-us</language>\n";
-        $xml .= "<lastBuildDate>{$lastBuild}</lastBuildDate>\n";
-        $xml .= '<atom:link href="'.$this->escape($feedUrl).'" rel="self" type="application/rss+xml" />'."\n";
-
-        foreach ($posts as $post) {
-            $title = htmlspecialchars($post->title, ENT_XML1, 'UTF-8');
-            $link = $this->escape(route('blog.show', $post));
-            $description = htmlspecialchars($post->excerpt ?? '', ENT_XML1, 'UTF-8');
-            $pubDate = $post->publishedAt()
-                ?->toRssString() ?? now()->toRssString();
-
-            $xml .= "<item>\n";
-            $xml .= "<title>{$title}</title>\n";
-            $xml .= "<link>{$link}</link>\n";
-            $xml .= "<guid isPermaLink=\"true\">{$link}</guid>\n";
-            $xml .= "<description>{$description}</description>\n";
-            $xml .= "<pubDate>{$pubDate}</pubDate>\n";
-
-            if ($post->category) {
-                $category = $this->escape($post->category->name);
-                $xml .= "<category>{$category}</category>\n";
-            }
-
-            $xml .= "</item>\n";
-        }
-
-        return $xml."</channel>\n</rss>";
-    }
-
-    private function escape(string $value): string
-    {
-        return htmlspecialchars($value, ENT_XML1, 'UTF-8');
+        return $this->writer->write(
+            title: config()->string('seo.site_name'),
+            link: url('/'),
+            description: config()->string('seo.feed_description'),
+            feedUrl: route('rss'),
+            items: $posts
+                ->map(fn (Post $post): array => [
+                    'title' => $post->title,
+                    'link' => route('blog.show', $post),
+                    'description' => $post->excerpt,
+                    'publishedAt' => $post->publishedAt(),
+                    'category' => $post->category?->name,
+                ])
+                ->all(),
+        );
     }
 }

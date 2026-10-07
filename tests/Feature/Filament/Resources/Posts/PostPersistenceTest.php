@@ -9,13 +9,14 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('creates a post through the Filament form', function () {
@@ -38,13 +39,7 @@ it('creates a post through the Filament form', function () {
 });
 
 it('updates a post through the Filament form', function () {
-    $post = Post::query()->create([
-        'title' => 'Original title',
-        'slug' => 'original-title',
-        'content' => 'Original content.',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create();
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm([
@@ -64,22 +59,13 @@ it('updates a post through the Filament form', function () {
 });
 
 it('links and unlinks related episodes through the Filament form', function () {
-    $podcast = Podcast::query()->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.']);
-    $episodes = collect(['one', 'two'])->map(fn (string $slug): Episode => Episode::query()->create([
-        'podcast_id' => $podcast->getKey(),
-        'title' => "Episode {$slug}",
-        'slug' => $slug,
-        'description' => 'Description.',
-    ]));
-    $episodeIds = $episodes->pluck('id')
+    $episodeIds = Episode::factory()
+        ->count(2)
+        ->recycle(Podcast::factory()->create())
+        ->create()
+        ->pluck('id')
         ->all();
-    $post = Post::query()->create([
-        'title' => 'Linked post',
-        'slug' => 'linked-post',
-        'content' => 'Content.',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create();
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['episodes' => $episodeIds])

@@ -2,36 +2,25 @@
 
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\Episode;
-use App\Models\Podcast;
 use App\Models\User;
 use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('public');
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('permanently deletes a trashed episode and its native media through the edit page', function () {
     Storage::disk('public')->put('episodes/images/delete-test.png', 'image');
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Episode delete coverage',
-        'slug' => 'episode-delete-coverage',
-        'description' => 'Podcast description',
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode delete coverage',
-        'slug' => 'episode-delete-coverage',
-        'description' => 'Episode description',
-        'featured_image_path' => 'episodes/images/delete-test.png',
-    ]);
+    $episode = Episode::factory()->create(['featured_image_path' => 'episodes/images/delete-test.png']);
 
     $episode->delete();
 

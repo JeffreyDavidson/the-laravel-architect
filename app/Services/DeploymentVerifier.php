@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Enums\DeploymentEnvironment;
-use App\Support\Monitoring\Health\NightwatchHealthMonitor;
-use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Services\Health\NightwatchHealthMonitor;
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Process;
 

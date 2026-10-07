@@ -7,19 +7,19 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes selected categories through the table bulk action', function () {
-    $categories = collect([
-        Category::query()->create(['name' => 'First category', 'slug' => 'first-category']),
-        Category::query()->create(['name' => 'Second category', 'slug' => 'second-category']),
-    ]);
+    $categories = Category::factory()
+        ->count(2)
+        ->create();
 
     livewire(ListCategories::class)
         ->selectTableRecords($categories)

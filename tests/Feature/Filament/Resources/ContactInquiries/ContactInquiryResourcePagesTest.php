@@ -1,19 +1,23 @@
 <?php
 
+use App\Enums\ContactBudget;
 use App\Enums\ContactInquiryStatus;
+use App\Enums\ContactType;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
 use App\Filament\Resources\ContactInquiries\Pages\ListContactInquiries;
 use App\Models\ContactInquiry;
 use App\Models\User;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('renders inquiry details for an authorized administrator', function () {
@@ -35,6 +39,52 @@ it('renders inquiry details for an authorized administrator', function () {
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'message' => 'Please review my application.',
+    ]);
+});
+
+it('does not offer search on encrypted sender columns', function (string $column) {
+    $component = livewire(ListContactInquiries::class);
+
+    $component->assertTableColumnExists($column, fn (TextColumn $textColumn): bool => ! $textColumn->isSearchable());
+})->with([
+    'name',
+    'email',
+]);
+
+it('finds inquiries by the type label shown in the table', function () {
+    $consulting = ContactInquiry::factory()->create(['type' => ContactType::Consulting->value]);
+    $freelance = ContactInquiry::factory()->create(['type' => ContactType::Freelance->value]);
+
+    $component = livewire(ListContactInquiries::class)->searchTable('code review');
+
+    $component
+        ->assertCanSeeTableRecords([$consulting])
+        ->assertCanNotSeeTableRecords([$freelance])
+        ->assertTableColumnFormattedStateSet('type', 'Consulting / Code Review', $consulting);
+});
+
+it('filters inquiries by status', function () {
+    $resolved = ContactInquiry::factory()->create(['status' => ContactInquiryStatus::Resolved]);
+    $new = ContactInquiry::factory()->create();
+
+    $component = livewire(ListContactInquiries::class)->filterTable('status', ContactInquiryStatus::Resolved);
+
+    $component
+        ->assertCanSeeTableRecords([$resolved])
+        ->assertCanNotSeeTableRecords([$new]);
+});
+
+it('shows the inquiry type and decrypted budget as labels', function () {
+    $inquiry = ContactInquiry::factory()->create([
+        'type' => ContactType::Consulting->value,
+        'budget' => ContactBudget::Small->value,
+    ]);
+
+    $component = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
+
+    $component->assertSchemaStateSet([
+        'type' => ContactType::Consulting,
+        'budget' => ContactBudget::Small,
     ]);
 });
 

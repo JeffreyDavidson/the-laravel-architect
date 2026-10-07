@@ -1,4 +1,5 @@
 @props(['video'])
+@php($duration = \App\Presenters\VideoPresenter::from($video)->duration())
 
 <a
     href="{{ $video->youtube_url }}"
@@ -31,9 +32,9 @@
             </div>
         @endif
 
-        @if (\App\Presenters\VideoPresenter::from($video)->duration())
+        @if ($duration)
             <div class="text-meta absolute right-2 bottom-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-white">
-                {{ \App\Presenters\VideoPresenter::from($video)->duration() }}
+                {{ $duration }}
             </div>
         @endif
     </div>

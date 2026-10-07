@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\Projects\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\ProjectReadinessFilter;
-use App\Models\Project;
+use App\Filament\Actions\ViewOnSiteAction;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Queries\ProjectReadinessQuery;
-use App\Support\Content\ContentReadiness;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -35,15 +32,8 @@ class ProjectsTable
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Project $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(function (Project $record): string {
-                        $readiness = new ContentReadiness($record);
-
-                        return $readiness->progress().' · '.$readiness->missingSummary();
-                    })
-                    ->badge(),
+                ReadinessColumn::make()
+                    ->withProgress(),
                 TextColumn::make('slug')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -88,11 +78,7 @@ class ProjectsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('preview')
-                    ->label('Preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Project $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

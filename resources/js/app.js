@@ -1,50 +1,35 @@
 import { registerSiteHeader } from './site-header';
 import { registerCopyButton } from './copy-button';
 
+// Each page module loads only when its data hook is on the page, and registers its Alpine components.
+const pageModules = [
+    ['[data-about-card]', () => import('./pages/about').then(module => module.registerAboutCard)],
+    ['[data-home-reveal]', () => import('./pages/home').then(module => module.registerHomeReveal)],
+    ['[data-contact-form]', () => import('./pages/contact').then(module => module.registerTurnstileWidget)],
+    ['[data-newsletter-form]', () => import('./pages/newsletter').then(module => module.registerNewsletterForm)],
+    [
+        '[data-newsletter-confirm]',
+        () => import('./pages/newsletter-confirm').then(module => module.registerNewsletterConfirm),
+    ],
+    ['[data-blog-filter]', () => import('./pages/blog-index').then(module => module.registerBlogMetadata)],
+    ['[data-article]', () => import('./pages/blog').then(module => module.registerBlogArticle)],
+    [
+        '[data-podcast-copy-url], [data-youtube-facade], [data-transcript]',
+        () => import('./pages/podcast').then(module => module.registerPodcast),
+    ],
+];
+
 async function initializePublicUi() {
     const runtime = window.livewireScriptConfig ? await import('./livewire') : await import('./alpine');
 
     registerSiteHeader(runtime.Alpine);
     registerCopyButton(runtime.Alpine);
 
-    if (document.querySelector('[data-about-card]')) {
-        const { registerAboutCard } = await import('./pages/about');
-        registerAboutCard(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-home-hero]')) {
-        const { registerHomeReveal } = await import('./pages/home');
-        registerHomeReveal(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-contact-form]')) {
-        const { registerTurnstileWidget } = await import('./pages/contact');
-        registerTurnstileWidget(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-newsletter-form]')) {
-        const { registerNewsletterForm } = await import('./pages/newsletter');
-        registerNewsletterForm(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-newsletter-confirm]')) {
-        const { registerNewsletterConfirm } = await import('./pages/newsletter-confirm');
-        registerNewsletterConfirm(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-blog-filter]')) {
-        const { registerBlogMetadata } = await import('./pages/blog-index');
-        registerBlogMetadata(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-article]')) {
-        const { registerBlogArticle } = await import('./pages/blog');
-        registerBlogArticle(runtime.Alpine);
-    }
-
-    if (document.querySelector('[data-podcast-copy-url], [data-youtube-facade], [data-transcript]')) {
-        const { registerPodcast } = await import('./pages/podcast');
-        registerPodcast(runtime.Alpine);
+    for (const [selector, load] of pageModules) {
+        if (document.querySelector(selector)) {
+            const register = await load();
+            register(runtime.Alpine);
+        }
     }
 
     runtime.start();

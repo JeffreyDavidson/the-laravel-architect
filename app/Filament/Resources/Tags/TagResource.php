@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Tags;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Tags\Pages\CreateTag;
 use App\Filament\Resources\Tags\Pages\EditTag;
 use App\Filament\Resources\Tags\Pages\ListTags;
@@ -26,7 +27,7 @@ class TagResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Library';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Library;
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
@@ -42,13 +43,6 @@ class TagResource extends Resource
     public static function table(Table $table): Table
     {
         return TagsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

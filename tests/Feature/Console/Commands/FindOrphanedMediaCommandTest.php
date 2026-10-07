@@ -1,12 +1,10 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -25,13 +23,12 @@ it('reports orphaned files while preserving referenced sources and variants', fu
     Storage::disk('public')->put('projects/responsive/project-640.webp', 'variant');
     Storage::disk('public')->put('orphan/unused.png', 'unused');
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $referencedPath,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $referencedPath,
+        ]));
 
     $this->artisanCommand('media:find-orphans')
         ->expectsOutputToContain('Orphaned: orphan/unused.png')
@@ -54,13 +51,12 @@ it('deletes only orphaned files when requested', function () {
     touch(Storage::disk('public')->path('projects/unused.png'), now()->subDays(2)
         ->getTimestamp());
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $referencedPath,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $referencedPath,
+        ]));
 
     $this->artisanCommand('media:find-orphans', ['--delete' => true])
         ->expectsOutputToContain('Deleted: projects/unused.png')
@@ -79,10 +75,9 @@ it('preserves embedded attachments, unmanaged files, and recent uploads', functi
         ->getTimestamp());
     touch(Storage::disk('public')->path('attachments/download.pdf'), now()->subDays(2)
         ->getTimestamp());
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project', 'slug' => 'project', 'description' => 'Description',
+    Project::withoutEvents(fn () => Project::factory()->create([
+        'slug' => 'project',
         'content' => '![Screenshot](/storage/projects/attachment.png)',
-        'status' => PublishStatus::Draft,
     ]));
 
     $this->artisanCommand('media:find-orphans', ['--delete' => true])
@@ -93,13 +88,12 @@ it('preserves embedded attachments, unmanaged files, and recent uploads', functi
 });
 
 it('reports missing referenced files without treating them as orphans', function () {
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/missing.webp',
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/missing.webp',
+        ]));
 
     $this->artisanCommand('media:find-orphans')
         ->expectsOutputToContain('Found 0 orphaned files')
@@ -112,13 +106,12 @@ it('succeeds when all stored files are referenced', function () {
     $path = 'projects/project.webp';
     Storage::disk('public')->put($path, 'referenced');
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => $path,
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => $path,
+        ]));
 
     $this->artisanCommand('media:find-orphans')
         ->expectsOutputToContain('Found 0 orphaned files')
@@ -145,46 +138,38 @@ it('keeps media referenced by trashed content when deleting orphans', function (
     Storage::disk('public')->assertMissing('projects/unused.png');
 })->with([
     'project featured image' => [
-        fn (string $path) => Project::query()
-            ->create(['title' => 'Project', 'slug' => 'project', 'description' => 'Description', 'status' => PublishStatus::Draft, 'featured_image_path' => $path])
+        fn (string $path) => Project::factory()
+            ->create(['slug' => 'project', 'featured_image_path' => $path])
             ->delete(),
         'projects/trashed.png',
     ],
     'post featured image' => [
-        fn (string $path) => Post::query()
-            ->create([
-                'title' => 'Post', 'slug' => 'post', 'content' => 'Content', 'status' => PublishStatus::Draft,
-                'user_id' => User::factory()->create()
-                    ->id, 'featured_image_path' => $path,
-            ])
+        fn (string $path) => Post::factory()
+            ->create(['slug' => 'post', 'category_id' => null, 'featured_image_path' => $path])
             ->delete(),
         'posts/trashed.png',
     ],
     'post embedded image' => [
-        fn (string $path) => Post::query()
-            ->create([
-                'title' => 'Post', 'slug' => 'post', 'content' => "![Screenshot](/storage/{$path})", 'status' => PublishStatus::Draft,
-                'user_id' => User::factory()->create()
-                    ->id,
-            ])
+        fn (string $path) => Post::factory()
+            ->create(['slug' => 'post', 'category_id' => null, 'content' => "![Screenshot](/storage/{$path})"])
             ->delete(),
         'posts/embedded.png',
     ],
     'podcast cover image' => [
-        fn (string $path) => Podcast::query()
-            ->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description', 'cover_image_path' => $path])
+        fn (string $path) => Podcast::factory()
+            ->create(['slug' => 'podcast', 'cover_image_path' => $path])
             ->delete(),
         'podcasts/trashed.png',
     ],
     'episode featured image' => [
-        fn (string $path) => Episode::query()
-            ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description', 'status' => PublishStatus::Draft, 'featured_image_path' => $path])
+        fn (string $path) => Episode::factory()
+            ->create(['slug' => 'episode', 'podcast_id' => null, 'featured_image_path' => $path])
             ->delete(),
         'episodes/images/trashed.png',
     ],
     'newsletter issue embedded image' => [
-        fn (string $path) => NewsletterIssue::query()
-            ->create(['title' => 'Issue', 'slug' => 'issue', 'content' => "![Screenshot](/storage/{$path})", 'status' => PublishStatus::Draft])
+        fn (string $path) => NewsletterIssue::factory()
+            ->create(['slug' => 'issue', 'content' => "![Screenshot](/storage/{$path})"])
             ->delete(),
         'posts/newsletter.png',
     ],

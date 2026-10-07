@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\NewsletterIssue;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,7 +38,7 @@ function requiredHeader(?string $value): string
 }
 
 it('adds security headers to public responses', function () {
-    $response = $this->get(route('home'));
+    $response = get(route('home'));
     $policy = requiredHeader($response->headers->get('Content-Security-Policy'));
 
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
@@ -64,11 +63,11 @@ it('adds security headers to public responses', function () {
 });
 
 it('adds transport security only to secure responses', function () {
-    $this->get('https://the-laravel-architect.test/privacy')
+    get('https://the-laravel-architect.test/privacy')
         ->assertOk()
         ->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
-    $this->get('http://the-laravel-architect.test/privacy')
+    get('http://the-laravel-architect.test/privacy')
         ->assertOk()
         ->assertHeaderMissing('Strict-Transport-Security');
 });
@@ -80,7 +79,7 @@ it('adds security headers to admin responses', function () {
         throw new RuntimeException('The admin login URL was not configured.');
     }
 
-    $this->get($loginUrl)
+    get($loginUrl)
         ->assertOk()
         ->assertHeader('Content-Security-Policy', expectedContentSecurityPolicy())
         ->assertSeeHtml('livewire-standard.js')
@@ -93,9 +92,9 @@ it('adds security headers to admin responses', function () {
 });
 
 it('allows the local Vite development server without weakening other environments', function () {
-    $this->app->detectEnvironment(fn (): string => 'local');
+    app()->detectEnvironment(fn (): string => 'local');
 
-    $response = $this->get(route('home'));
+    $response = get(route('home'));
     $policy = requiredHeader($response->headers->get('Content-Security-Policy'));
 
     preg_match("/'nonce-([^']+)'/", $policy, $matches);
@@ -111,12 +110,7 @@ it('allows the local Vite development server without weakening other environment
 
 function draftPreviewIssue(): NewsletterIssue
 {
-    return NewsletterIssue::query()->create([
-        'title' => 'Private Draft',
-        'slug' => 'private-draft',
-        'content' => 'Not public.',
-        'status' => PublishStatus::Draft,
-    ]);
+    return NewsletterIssue::factory()->create();
 }
 
 /**

@@ -7,13 +7,14 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('creates a project through the resource form', function () {
@@ -45,13 +46,7 @@ it('creates a project through the resource form', function () {
 });
 
 it('updates a project through the resource form', function () {
-    $project = Project::query()->create([
-        'title' => 'Existing project',
-        'slug' => 'existing-project',
-        'description' => 'The original description.',
-        'content' => 'The original write-up.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $project = Project::factory()->create();
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
         ->fillForm([

@@ -2,12 +2,7 @@
 
 {{-- Vertical timeline on small and large screens. --}}
 <div class="hidden flex-shrink-0 lg:block lg:w-80">
-    <h2 class="mb-8 flex items-center gap-3 text-2xl font-extrabold">
-        <span class="bg-brand-600/10 flex h-8 w-8 items-center justify-center rounded-lg">
-            <svg class="text-brand-600 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </span>
-        Timeline
-    </h2>
+    <x-section-heading icon="clock" class="mb-8">Timeline</x-section-heading>
     <div class="space-y-6">
         @foreach ($items as $item)
             <x-about.timeline-item :item="$item" />
@@ -53,12 +48,7 @@
 
 {{-- Vertical timeline on mobile. --}}
 <div class="mt-12 md:hidden">
-    <h2 class="mb-8 flex items-center gap-3 text-2xl font-extrabold">
-        <span class="bg-brand-600/10 flex h-8 w-8 items-center justify-center rounded-lg">
-            <svg class="text-brand-600 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </span>
-        Timeline
-    </h2>
+    <x-section-heading icon="clock" class="mb-8">Timeline</x-section-heading>
     <div class="space-y-6">
         @foreach ($items as $item)
             <x-about.timeline-item :item="$item" />

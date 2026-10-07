@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\ContactInquiryStatus;
+use App\Enums\PublicationState;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
@@ -53,19 +54,19 @@ class EditorialOperationsOverview extends StatsOverviewWidget
                 ->description('Ready to publish')
                 ->descriptionIcon(Heroicon::OutlinedCalendar)
                 ->color('success')
-                ->url(PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublishStatus::Scheduled->value]]])),
+                ->url(PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Scheduled->value]]])),
             Stat::make('Episode queue', Episode::query()->unpublished()
                 ->count())
                 ->description('Unpublished episodes')
                 ->descriptionIcon(Heroicon::OutlinedMusicalNote)
                 ->color('primary')
-                ->url(EpisodeResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
+                ->url(EpisodeResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])),
             Stat::make('Newsletter queue', NewsletterIssue::query()->unpublished()
                 ->count())
                 ->description('Unpublished issues')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
-                ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['unpublished' => ['isActive' => true]]])),
+                ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])),
             Stat::make('Active subscribers', Subscriber::query()->active()
                 ->count())
                 ->description('Confirmed audience')

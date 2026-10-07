@@ -1,5 +1,5 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
+    <div class="podcast-detail" style="--podcast-color: {{ $podcastPresenter->displayColor() }};">
         {{-- ===== EPISODE HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
@@ -18,33 +18,36 @@
                     <span
                         aria-current="page"
                         class="font-mono text-xs text-gray-600 dark:text-gray-400"
-                    >{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
+                    >{{ $episodePresenter->code() }}</span>
                 </nav>
 
                 <div class="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
                     {{-- Podcast artwork --}}
                     <div class="relative flex-shrink-0">
-                        @if ($podcast->cover_image_url)
-                            <x-podcast-cover
-                                :podcast="$podcast"
-                                sizes="224px"
-                                width="224"
-                                height="224"
-                                priority
-                                class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56"
-                            />
-                        @else
-                            <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56">
-                                <svg class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                            </div>
-                        @endif
+                        <x-podcast-cover
+                            :podcast="$podcast"
+                            sizes="224px"
+                            width="224"
+                            height="224"
+                            priority
+                            class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56"
+                        >
+                            <x-slot:placeholder>
+                                <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56">
+                                    <x-svg-icon
+                                        name="microphone"
+                                        class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]"
+                                    />
+                                </div>
+                            </x-slot:placeholder>
+                        </x-podcast-cover>
                     </div>
 
                     {{-- Episode info --}}
                     <div class="min-w-0 flex-1 text-center lg:text-left">
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                            <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
+                            <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ $episodePresenter->code() }}</span>
                             @if ($episode->published_at)
                                 <x-display-date
                                     :date="$episode->published_at"
@@ -54,10 +57,10 @@
                             @else
                                 <span class="text-sm text-gray-500">Draft preview</span>
                             @endif
-                            @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
+                            @if ($episodePresenter->duration())
                                 <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
+                                    {{ $episodePresenter->duration() }}
                                 </span>
                             @endif
                         </div>
@@ -77,18 +80,21 @@
                             href="{{ route('podcast.show', $podcast) }}"
                             class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         >
-                            @if ($podcast->cover_image_url)
-                                <x-podcast-cover
-                                    :podcast="$podcast"
-                                    alt=""
-                                    sizes="20px"
-                                    width="20"
-                                    height="20"
-                                    class="h-5 w-5 rounded object-cover"
-                                />
-                            @else
-                                <svg class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                            @endif
+                            <x-podcast-cover
+                                :podcast="$podcast"
+                                alt=""
+                                sizes="20px"
+                                width="20"
+                                height="20"
+                                class="h-5 w-5 rounded object-cover"
+                            >
+                                <x-slot:placeholder>
+                                    <x-svg-icon
+                                        name="microphone"
+                                        class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]"
+                                    />
+                                </x-slot:placeholder>
+                            </x-podcast-cover>
                             {{ $podcast->name }}
                         </a>
                     </div>
@@ -118,7 +124,7 @@
                         @endif
 
                         {{-- Description Fallback (no player, no show_notes, no transcript, no youtube) --}}
-                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
+                        @if ($showDescriptionFallback)
                             <div class="dark:border-surface-border dark:bg-surface-control relative mb-10 rounded-2xl border border-gray-200 bg-white p-8">
                                 <div class="text-archive-link absolute top-6 left-6 text-6xl leading-none opacity-15 dark:text-[var(--podcast-color)]">
                                     "
@@ -132,13 +138,9 @@
                         @endif
 
                         {{-- YouTube Embed --}}
-                        @if ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu'))
+                        @if ($episodePresenter->hasYouTube())
                             <div class="dark:border-surface-border mb-10 overflow-hidden rounded-2xl border border-gray-200">
-                                @php
-                                    preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/', $episode->youtube_url, $matches);
-                                    $videoId = $matches[1] ?? null;
-                                @endphp
-                                @if ($videoId)
+                                @if ($youtubeVideoId)
                                     <div
                                         class="bg-surface-page relative aspect-video w-full"
                                         data-youtube-facade
@@ -146,7 +148,7 @@
                                     >
                                         <template data-youtube-player x-if="loaded">
                                             <iframe
-                                                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
+                                                src="https://www.youtube-nocookie.com/embed/{{ $youtubeVideoId }}?autoplay=1"
                                                 title="{{ $episode->title }} on YouTube"
                                                 class="absolute inset-0 h-full w-full border-0"
                                                 allow="autoplay; encrypted-media; picture-in-picture"
@@ -218,7 +220,7 @@
                         @endif
 
                         {{-- Empty State Fallback --}}
-                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
+                        @if ($showDetailsComingSoon)
                             <div class="dark:border-surface-border mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center">
                                 <svg class="mx-auto mb-4 h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <p class="text-lg font-semibold text-gray-600 dark:text-gray-400">
@@ -235,25 +237,25 @@
                     <div class="flex-shrink-0 lg:w-80">
                         <div class="space-y-6 lg:sticky lg:top-8">
                             {{-- About This Podcast --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    About This Podcast
-                                </h3>
+                            <x-sidebar-card title="About This Podcast" class="p-5">
                                 <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                                     <div class="mb-3 flex items-center gap-3">
-                                        @if ($podcast->cover_image_url)
-                                            <x-podcast-cover
-                                                :podcast="$podcast"
-                                                sizes="48px"
-                                                width="48"
-                                                height="48"
-                                                class="h-12 w-12 rounded-lg object-cover"
-                                            />
-                                        @else
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
-                                                <svg class="text-archive-link h-6 w-6 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                                            </div>
-                                        @endif
+                                        <x-podcast-cover
+                                            :podcast="$podcast"
+                                            sizes="48px"
+                                            width="48"
+                                            height="48"
+                                            class="h-12 w-12 rounded-lg object-cover"
+                                        >
+                                            <x-slot:placeholder>
+                                                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
+                                                    <x-svg-icon
+                                                        name="microphone"
+                                                        class="text-archive-link h-6 w-6 dark:text-[var(--podcast-color)]"
+                                                    />
+                                                </div>
+                                            </x-slot:placeholder>
+                                        </x-podcast-cover>
                                         <div class="min-w-0">
                                             <p class="truncate text-sm font-semibold transition-opacity group-hover:opacity-80">
                                                 {{ $podcast->name }}
@@ -265,18 +267,15 @@
                                 <p class="text-xs leading-relaxed text-gray-500">
                                     {{ Str::limit($podcast->description, 150) }}
                                 </p>
-                            </div>
+                            </x-sidebar-card>
 
                             {{-- Episode Details --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    Episode Details
-                                </h3>
+                            <x-sidebar-card title="Episode Details" class="p-5">
                                 <dl class="space-y-3 text-sm">
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Episode</dt>
                                         <dd class="text-archive-link font-mono font-semibold dark:text-[var(--podcast-color)]">
-                                            {{ \App\Presenters\EpisodePresenter::from($episode)->code() }}
+                                            {{ $episodePresenter->code() }}
                                         </dd>
                                     </div>
                                     <div class="flex justify-between">
@@ -289,11 +288,11 @@
                                             @endif
                                         </dd>
                                     </div>
-                                    @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
+                                    @if ($episodePresenter->duration())
                                         <div class="flex justify-between">
                                             <dt class="text-gray-500">Duration</dt>
                                             <dd class="text-gray-700 dark:text-gray-300">
-                                                {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
+                                                {{ $episodePresenter->duration() }}
                                             </dd>
                                         </div>
                                     @endif
@@ -312,13 +311,10 @@
                                         </div>
                                     @endif
                                 </dl>
-                            </div>
+                            </x-sidebar-card>
 
                             {{-- Share Episode --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    Share Episode
-                                </h3>
+                            <x-sidebar-card title="Share Episode" class="p-5">
                                 <div class="flex gap-2">
                                     <a
                                         href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}"
@@ -346,7 +342,7 @@
                                         class="dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     />
                                 </div>
-                            </div>
+                            </x-sidebar-card>
                         </div>
                     </div>
                 </div>

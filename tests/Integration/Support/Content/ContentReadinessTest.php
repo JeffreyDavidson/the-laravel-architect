@@ -1,14 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
-use App\Models\Category;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
-use App\Models\User;
 use App\Models\Video;
 use App\Support\Content\ContentReadiness;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,39 +25,13 @@ it('counts only a Transistor share link or a YouTube link as episode media', fun
 ]);
 
 it('reports actionable missing details for every supported content type', function () {
-    $user = User::factory()->create();
     $records = [
-        Post::query()->create([
-            'title' => 'Incomplete post',
-            'slug' => 'incomplete-post',
-            'content' => 'Content.',
-            'user_id' => $user->id,
-        ]),
-        Project::query()->create([
-            'title' => 'Incomplete project',
-            'slug' => 'incomplete-project',
-            'description' => 'Description.',
-        ]),
-        Podcast::query()->create([
-            'name' => 'Incomplete podcast',
-            'slug' => 'incomplete-podcast',
-            'description' => 'Description.',
-        ]),
-        Episode::query()->create([
-            'title' => 'Incomplete episode',
-            'slug' => 'incomplete-episode',
-            'description' => 'Description.',
-        ]),
-        NewsletterIssue::query()->create([
-            'title' => 'Incomplete issue',
-            'slug' => 'incomplete-issue',
-            'content' => 'Content.',
-        ]),
-        Video::query()->create([
-            'youtube_id' => 'incomplete-video',
-            'title' => 'Incomplete video',
-            'slug' => 'incomplete-video',
-        ]),
+        Post::factory()->create(),
+        Project::factory()->create(),
+        Podcast::factory()->create(),
+        Episode::factory()->create(),
+        NewsletterIssue::factory()->create(),
+        Video::factory()->create(),
     ];
 
     foreach ($records as $record) {
@@ -77,64 +48,35 @@ it('reports actionable missing details for every supported content type', functi
 });
 
 it('reports complete public details for each content type that supports readiness checks', function () {
-    $user = User::factory()->create();
-    $category = Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
-    $tag = Tag::query()->create(['name' => 'Featured', 'slug' => 'featured']);
+    $tag = Tag::factory()->create();
 
-    $post = Post::query()->create([
-        'title' => 'Complete post',
-        'slug' => 'complete-post',
-        'excerpt' => 'Summary.',
-        'content' => 'Content.',
-        'featured_image_path' => 'posts/complete.webp',
-        'category_id' => $category->id,
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create(['featured_image_path' => 'posts/complete.webp']);
     $post->attachTag($tag);
 
-    $project = Project::query()->create([
-        'title' => 'Complete project',
-        'slug' => 'complete-project',
-        'description' => 'Description.',
-        'content' => 'Case study.',
+    $project = Project::factory()->create([
         'featured_image_path' => 'projects/complete.webp',
         'url' => 'https://example.com',
         'tech_stack' => ['Laravel'],
     ]);
     $project->attachTag($tag);
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Complete podcast',
-        'slug' => 'complete-podcast',
-        'description' => 'Description.',
+    $podcast = Podcast::factory()->create([
         'long_description' => 'About.',
         'cover_image_path' => 'podcasts/complete.webp',
         'rss_url' => 'https://example.com/feed.xml',
     ]);
 
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Complete episode',
-        'slug' => 'complete-episode',
-        'description' => 'Description.',
-        'show_notes' => 'Show notes.',
-        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
-        'featured_image_path' => 'episodes/complete.webp',
-    ]);
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create([
+            'show_notes' => 'Show notes.',
+            'featured_image_path' => 'episodes/complete.webp',
+        ]);
     $episode->attachTag($tag);
 
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Complete issue',
-        'slug' => 'complete-issue',
-        'excerpt' => 'Summary.',
-        'content' => 'Content.',
-    ]);
+    $issue = NewsletterIssue::factory()->create(['excerpt' => 'Summary.']);
 
-    $video = Video::query()->create([
-        'youtube_id' => 'complete-video',
-        'title' => 'Complete video',
-        'slug' => 'complete-video',
+    $video = Video::factory()->create([
         'description' => 'Description.',
         'thumbnail_url' => 'https://example.com/thumb.jpg',
         'duration' => '10:00',
@@ -147,11 +89,7 @@ it('reports complete public details for each content type that supports readines
 });
 
 it('reports the missing public project details', function () {
-    $project = Project::query()->create([
-        'title' => 'Incomplete project',
-        'slug' => 'incomplete-project',
-        'description' => 'A project description.',
-    ]);
+    $project = Project::factory()->create(['content' => null]);
 
     $readiness = new ContentReadiness($project);
 
@@ -165,19 +103,12 @@ it('reports the missing public project details', function () {
 });
 
 it('reports a project as ready when all public details are present', function () {
-    $project = Project::query()->create([
-        'title' => 'Complete project',
-        'slug' => 'complete-project',
-        'description' => 'A project description.',
-        'content' => 'A complete case study.',
+    $project = Project::factory()->create([
         'featured_image_path' => 'projects/complete.webp',
         'url' => 'https://example.com',
         'tech_stack' => ['Laravel', 'Filament'],
     ]);
-    $project->attachTag(Tag::query()->create([
-        'name' => ['en' => 'Laravel'],
-        'slug' => ['en' => 'laravel'],
-    ]));
+    $project->attachTag(Tag::factory()->create());
 
     $project->load('tags');
     $readiness = new ContentReadiness($project);

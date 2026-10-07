@@ -1,11 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +13,9 @@ use JMac\Testing\Double;
 use Psr\Log\LoggerInterface;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 
+use function Pest\Laravel\assertModelExists;
+use function Pest\Laravel\assertModelMissing;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -22,9 +23,10 @@ beforeEach(function () {
 });
 
 it('deletes owned episode metadata and tag links with its podcast', function () {
-    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
-    $episode = $podcast->episodes()
-        ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create();
     $episode->attachTag('Architecture');
     $seoIds = [$podcast->seo()
         ->sole()
@@ -34,7 +36,7 @@ it('deletes owned episode metadata and tag links with its podcast', function () 
 
     $podcast->forceDelete();
 
-    $this->assertModelMissing($episode);
+    assertModelMissing($episode);
     expect(DB::table('taggables')->where('taggable_type', $episode->getMorphClass())
         ->where('taggable_id', $episode->id)
         ->exists())->toBeFalse()
@@ -44,9 +46,10 @@ it('deletes owned episode metadata and tag links with its podcast', function () 
 });
 
 it('preserves owned content when podcast deletion rolls back', function () {
-    $podcast = Podcast::query()->create(['name' => 'Podcast', 'slug' => 'podcast', 'description' => 'Description']);
-    $episode = $podcast->episodes()
-        ->create(['title' => 'Episode', 'slug' => 'episode', 'description' => 'Description']);
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create();
     $episode->attachTag('Architecture');
     $seoIds = [$podcast->seo()
         ->sole()
@@ -58,7 +61,7 @@ it('preserves owned content when podcast deletion rolls back', function () {
     $podcast->forceDelete();
     DB::rollBack();
 
-    $this->assertModelExists($episode);
+    assertModelExists($episode);
     expect($episode->tags()
         ->count())->toBe(1)
         ->and(SEO::query()->whereKey($seoIds)
@@ -70,13 +73,7 @@ it('deletes the previous file when native media is replaced', function () {
     Storage::disk('public')->put('projects/old.png', 'old');
     Storage::disk('public')->put('projects/new.png', 'new');
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/old.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/old.png']);
 
     $project->update(['featured_image_path' => 'projects/new.png']);
 
@@ -87,13 +84,7 @@ it('deletes the previous file when native media is replaced', function () {
 it('keeps native media when unrelated attributes change', function () {
     Storage::disk('public')->put('projects/image.png', 'image');
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/image.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/image.png']);
 
     $project->update(['title' => 'Renamed Project']);
 
@@ -104,13 +95,7 @@ it('keeps replaced native media when the transaction rolls back', function () {
     Storage::disk('public')->put('projects/old.png', 'old');
     Storage::disk('public')->put('projects/new.png', 'new');
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/old.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/old.png']);
 
     DB::beginTransaction();
     $project->update(['featured_image_path' => 'projects/new.png']);
@@ -125,12 +110,7 @@ it('preserves original images and responsive variants when replacement rolls bac
         ->getContent();
     Storage::disk('public')->put('projects/original.png', $image);
     Storage::disk('public')->put('projects/replacement.png', $image);
-    $project = Project::query()->create([
-        'title' => 'Responsive rollback',
-        'description' => 'Preserve committed media.',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/original.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/original.png']);
 
     DB::beginTransaction();
     $project->update(['featured_image_path' => 'projects/replacement.png']);
@@ -147,13 +127,7 @@ it('preserves original images and responsive variants when replacement rolls bac
 
 it('preserves cached OG images when post deletion rolls back', function () {
     Storage::fake('local');
-    $post = Post::query()->create([
-        'title' => 'OG rollback',
-        'content' => 'Preserve the committed post.',
-        'user_id' => User::factory()->create()
-            ->getKey(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create();
     $path = "og-images/{$post->id}/cached.png";
     Storage::disk('local')->put($path, 'cached image');
 
@@ -170,13 +144,7 @@ it('deletes replaced native media after the transaction commits', function () {
     Storage::disk('public')->put('projects/old.png', 'old');
     Storage::disk('public')->put('projects/new.png', 'new');
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/old.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/old.png']);
 
     DB::beginTransaction();
     $project->update(['featured_image_path' => 'projects/new.png']);
@@ -189,13 +157,7 @@ it('deletes replaced native media after the transaction commits', function () {
 it('deletes native media with its record', function () {
     Storage::disk('public')->put('projects/image.png', 'image');
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/image.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/image.png']);
 
     $project->forceDelete();
 
@@ -208,13 +170,7 @@ it('keeps responsive project image variants in sync with the original image', fu
     Storage::disk('public')->put('projects/old.png', $image);
     Storage::disk('public')->put('projects/new.png', $image);
 
-    $project = Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/old.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/old.png']);
 
     Storage::disk('public')->assertExists([
         'projects/responsive/old-640.webp',
@@ -245,16 +201,8 @@ it('keeps responsive post image variants in sync with the original image', funct
         ->getContent();
     Storage::disk('public')->put('posts/old.png', $image);
     Storage::disk('public')->put('posts/new.png', $image);
-    $author = User::factory()->create();
 
-    $post = Post::query()->create([
-        'title' => 'Post',
-        'slug' => 'post',
-        'content' => 'Content',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'posts/old.png',
-    ]);
+    $post = Post::factory()->create(['featured_image_path' => 'posts/old.png']);
 
     Storage::disk('public')->assertExists([
         'posts/responsive/old-640.webp',
@@ -286,12 +234,7 @@ it('keeps responsive podcast cover variants in sync with the original image', fu
     Storage::disk('public')->put('podcasts/old.png', $image);
     Storage::disk('public')->put('podcasts/new.png', $image);
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast',
-        'slug' => 'podcast',
-        'description' => 'Description',
-        'cover_image_path' => 'podcasts/old.png',
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/old.png']);
 
     Storage::disk('public')->assertExists([
         'podcasts/responsive/old-640.webp',
@@ -329,29 +272,10 @@ it('logs responsive generation failures without exposing media paths', function 
     Storage::disk('public')->put('projects/private-project-name.png', 'not an image');
     Storage::disk('public')->put('posts/private-post-name.png', 'not an image');
     Storage::disk('public')->put('podcasts/private-podcast-name.png', 'not an image');
-    $author = User::factory()->create();
 
-    Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'projects/private-project-name.png',
-    ]);
-    Post::query()->create([
-        'title' => 'Post',
-        'slug' => 'post',
-        'content' => 'Content',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'posts/private-post-name.png',
-    ]);
-    Podcast::query()->create([
-        'name' => 'Podcast',
-        'slug' => 'podcast',
-        'description' => 'Description',
-        'cover_image_path' => 'podcasts/private-podcast-name.png',
-    ]);
+    Project::factory()->create(['featured_image_path' => 'projects/private-project-name.png']);
+    Post::factory()->create(['featured_image_path' => 'posts/private-post-name.png']);
+    Podcast::factory()->create(['cover_image_path' => 'podcasts/private-podcast-name.png']);
 
 });
 
@@ -359,19 +283,10 @@ it('deletes episode media when its podcast is deleted', function () {
     Storage::disk('public')->put('podcasts/cover.png', 'cover');
     Storage::disk('public')->put('episodes/images/episode.png', 'image');
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast',
-        'slug' => 'podcast',
-        'description' => 'Description',
-        'cover_image_path' => 'podcasts/cover.png',
-    ]);
-    Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode',
-        'slug' => 'episode',
-        'description' => 'Description',
-        'featured_image_path' => 'episodes/images/episode.png',
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/cover.png']);
+    Episode::factory()
+        ->for($podcast)
+        ->create(['featured_image_path' => 'episodes/images/episode.png']);
 
     $podcast->forceDelete();
 
@@ -385,19 +300,10 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
     Storage::disk('public')->put('podcasts/cover.png', 'cover');
     Storage::disk('public')->put('episodes/images/episode.png', 'image');
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast',
-        'slug' => 'podcast',
-        'description' => 'Description',
-        'cover_image_path' => 'podcasts/cover.png',
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode',
-        'slug' => 'episode',
-        'description' => 'Description',
-        'featured_image_path' => 'episodes/images/episode.png',
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/cover.png']);
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create(['featured_image_path' => 'episodes/images/episode.png']);
 
     DB::beginTransaction();
     $podcast->forceDelete();
@@ -412,17 +318,10 @@ it('keeps podcast and episode media when the podcast deletion rolls back', funct
 it('keeps podcast and episode files when deletion is cancelled without an application transaction', function () {
     Storage::disk('public')->put('podcasts/kept.png', 'cover');
     Storage::disk('public')->put('episodes/images/kept.png', 'image');
-    $podcast = Podcast::query()->create([
-        'name' => 'Cancelled deletion',
-        'description' => 'Preserve record-owned files on failure.',
-        'cover_image_path' => 'podcasts/kept.png',
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->getKey(),
-        'title' => 'Episode that must remain',
-        'description' => 'Preserve episode files on failure.',
-        'featured_image_path' => 'episodes/images/kept.png',
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/kept.png']);
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create(['featured_image_path' => 'episodes/images/kept.png']);
     Podcast::deleting(fn (): bool => false);
 
     $deleted = $podcast->delete();

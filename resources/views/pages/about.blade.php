@@ -1,15 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    @php
-        $timelineItems = [
-            ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
-            ['year' => '2012', 'title' => 'Full Sail University', 'desc' => 'B.S. in Web Design & Development'],
-            ['year' => '2014', 'title' => 'Discovered Laravel 4.2', 'desc' => 'Everything clicked'],
-            ['year' => '2015', 'title' => 'Moved to Florida', 'desc' => 'Packed up Kansas, headed south'],
-            ['year' => '2017', 'title' => 'Daughter Viola born', 'desc' => 'Changed everything'],
-            ['year' => '2026', 'title' => 'The Laravel Architect', 'desc' => 'Blog, podcast, YouTube. Building in public'],
-        ];
-    @endphp
-
     {{-- Hero --}}
     <div class="dark:border-brand-700 dark:bg-surface-page relative overflow-hidden border-b border-gray-200 bg-white">
         <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
@@ -104,30 +93,12 @@
                                                 {{-- Stats grid: also the card's accessible description, so it is read on either side --}}
                                                 <div id="about-card-stats" class="px-4 pb-3">
                                                     <div class="grid grid-cols-2 gap-2">
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.php') }}</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.laravel') }}</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Stack</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">TALL</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Role</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Sr. Software Eng</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Works</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Remote</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Call Me When</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
-                                                        </div>
+                                                        @foreach ($stats as $stat)
+                                                            <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                                <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">{{ $stat['label'] }}</span>
+                                                                <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ $stat['value'] }}</span>
+                                                            </div>
+                                                        @endforeach
                                                     </div>
                                                     {{-- Flavor text --}}
                                                     <div class="dark:border-brand-700/50 mt-3 border-t border-gray-200 px-1 pt-3">
@@ -200,12 +171,7 @@
             <div class="flex flex-col gap-16 lg:flex-row">
                 {{-- Main story --}}
                 <div class="flex-1">
-                    <h2 class="mb-8 flex items-center gap-3 text-2xl font-extrabold">
-                        <span class="bg-brand-600/10 flex h-8 w-8 items-center justify-center rounded-lg">
-                            <svg class="text-brand-600 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                        </span>
-                        My Story
-                    </h2>
+                    <x-section-heading icon="book" class="mb-8">My Story</x-section-heading>
 
                     <div class="space-y-6 leading-relaxed text-gray-600 dark:text-gray-400">
                         <p>
@@ -261,7 +227,7 @@
                     </section>
                 </div>
 
-                <x-about.timeline :items="$timelineItems" />
+                <x-about.timeline :items="$timeline" />
             </div>
         </div>
     </div>
@@ -329,28 +295,18 @@
     </div>
 
     {{-- CTA --}}
-    <div class="dark:border-brand-700 dark:bg-surface-page relative overflow-hidden border-t border-gray-200 bg-gray-50">
-        {{-- Floating orbs --}}
-        <div class="hidden"></div>
+    <x-contact-cta
+        variant="availability"
+        heading="Want to work together?"
+        :href="route('contact.create')"
+        button-label="Contact Me"
+    >
+        <x-slot:decoration>
+            {{-- Floating orbs --}}
+            <div class="hidden"></div>
+        </x-slot:decoration>
 
-        <div class="relative mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
-            <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold tracking-widest text-green-800 uppercase dark:text-green-400">
-                <span class="relative flex h-2 w-2">
-                    <span class="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-                </span>
-                Available for Projects
-            </div>
-            <h2 class="mb-4 text-3xl font-extrabold md:text-4xl">
-                <span>Want to work together?</span>
-            </h2>
-            <p class="mx-auto mb-8 max-w-xl text-lg text-gray-600 dark:text-gray-400">
-                I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's
-                talk about what you're building.
-            </p>
-            <x-button href="{{ route('contact.create') }}" class="px-8 py-3.5 text-lg">
-                Contact Me
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-            </x-button>
-        </div>
-    </div>
+        I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about
+        what you're building.
+    </x-contact-cta>
 </x-layouts.site>

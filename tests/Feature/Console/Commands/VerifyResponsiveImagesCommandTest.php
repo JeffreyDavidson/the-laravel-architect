@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Podcast;
 use App\Models\Project;
 use App\Services\ResponsiveImageVariants;
@@ -20,17 +19,14 @@ it('verifies responsive media using aggregate results', function () {
     Storage::disk('public')->put('projects/project.png', $projectImage->getContent());
     Storage::disk('public')->put('podcasts/podcast.png', $podcastImage->getContent());
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/project.png',
-    ]));
-    Podcast::withoutEvents(fn () => Podcast::query()->create([
-        'name' => 'Podcast',
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/project.png',
+        ]));
+    Podcast::withoutEvents(fn () => Podcast::factory()->create([
         'slug' => 'podcast',
-        'description' => 'Description',
         'cover_image_path' => 'podcasts/podcast.png',
     ]));
 
@@ -50,13 +46,12 @@ it('fails without exposing media paths when required variants are missing', func
     $image = UploadedFile::fake()->image('private-project-name.png', 1280, 72);
     Storage::disk('public')->put('projects/private-project-name.png', $image->getContent());
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/private-project-name.png',
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/private-project-name.png',
+        ]));
 
     $this->artisanCommand('media:verify-responsive-images')
         ->expectsOutputToContain('Projects: 1 checked, 0 verified, 1 failed.')

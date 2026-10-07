@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Tags\Pages\CreateTag;
 use App\Filament\Resources\Tags\Pages\EditTag;
 use App\Models\Post;
@@ -8,13 +7,15 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('creates a tag with the normalized slug generated from its name', function () {
@@ -45,7 +46,7 @@ it('rejects a slug that is empty or cannot be normalized', function (string $nam
 ]);
 
 it('rejects a duplicate localized tag slug across tag types', function () {
-    Tag::query()->create([
+    Tag::factory()->create([
         'name' => 'Tag name',
         'type' => 'topic',
     ]);
@@ -63,14 +64,8 @@ it('rejects a duplicate localized tag slug across tag types', function () {
 });
 
 it('rejects a duplicate localized tag slug when editing a tag', function () {
-    Tag::query()->create([
-        'name' => 'Existing tag',
-        'slug' => 'existing-tag',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Tag name',
-        'slug' => 'tag-name',
-    ]);
+    Tag::factory()->create(['slug' => 'existing-tag']);
+    $tag = Tag::factory()->create(['slug' => 'tag-name']);
 
     livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm([
@@ -85,7 +80,7 @@ it('rejects a duplicate localized tag slug when editing a tag', function () {
 });
 
 it('allows a tag to retain its localized slug when editing', function () {
-    $tag = Tag::query()->create([
+    $tag = Tag::factory()->create([
         'name' => 'Tag name',
         'slug' => 'tag-name',
     ]);
@@ -100,10 +95,7 @@ it('allows a tag to retain its localized slug when editing', function () {
 });
 
 it('preserves an existing tag slug when the name changes', function () {
-    $tag = Tag::query()->create([
-        'name' => 'Tag name',
-        'slug' => 'curated-tag-slug',
-    ]);
+    $tag = Tag::factory()->create(['slug' => 'curated-tag-slug']);
 
     livewire(EditTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'Updated tag name', 'slug' => 'curated-tag-slug'])
@@ -116,21 +108,13 @@ it('preserves an existing tag slug when the name changes', function () {
 });
 
 it('resolves the validated localized slug on the public tag route', function () {
-    $tag = Tag::query()->create([
-        'name' => 'Tag name',
-        'slug' => 'tag-name',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Tagged post',
-        'slug' => 'tagged-post',
-        'content' => 'Tagged post content',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subMinute(),
-    ]);
+    $tag = Tag::factory()->create();
+    $post = Post::factory()
+        ->published()
+        ->create(['title' => 'Tagged post']);
     $post->attachTag($tag);
 
-    $this->get(route('blog.tag', $tag))
+    get(route('blog.tag', $tag))
         ->assertOk()
         ->assertSee('Tagged post');
 });

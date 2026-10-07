@@ -1,0 +1,157 @@
+# Public site and SEO
+
+Public pages are server-rendered Blade views. This page covers how they get
+their data, how they describe themselves to search engines and social sites,
+and the public routes beside the main pages.
+
+## Pages and ViewModels
+
+Page controllers pass their data through ViewModels in `app/ViewModels`, which
+assemble page payloads such as the homepage, blog index, category and tag
+archives, the newsletter and content archives, search, and the post, podcast,
+episode, and project detail pages. Signed previews reuse the same ViewModels
+through their `previewData()` methods.
+
+Presenters in `app/Presenters` format one model for display and never query.
+They own the image fallbacks: `PostPresenter::artwork()` and
+`shareImageUrl()` (uploaded image, bundled launch artwork, then the generated
+OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
+(uploaded cover, then the bundled artwork in `config/podcasts.php`), and
+`ProjectPresenter::featuredImage()`. The image methods return an
+`App\Data\ResponsiveImage` (`src` plus an optional WebP `srcset`) that the
+`post-artwork`, `podcast-cover` and `projects.artwork` components render.
+`PodcastPresenter::platformLinks()` lists the show's linked listening platforms
+for the subscribe buttons. `EpisodePresenter` formats episode codes, durations
+and YouTube video IDs, and `EpisodeShowViewModel` turns them into the episode
+page's display flags.
+
+Reusable content selection, including related posts, related projects, and
+adjacent-episode navigation, lives in query objects rather than controllers.
+Sitemap and RSS serialization, the newsletter subscription lifecycle, and
+contact message delivery live in focused actions, leaving their HTTP controllers
+responsible for request and response concerns.
+
+Route-model binding uses content slugs, while publication scopes keep drafts and
+future content off public pages, feeds, and the sitemap (see
+[Publishing and content](publishing-and-content.md)).
+
+## SEO metadata
+
+Pages provide page-specific `SEOData` or an SEO-enabled content model to the
+shared layout, which renders titles, descriptions, canonical links, social
+metadata, and robots directives.
+
+- Blog posts share as articles with publication times and one wide image (the
+  uploaded featured image, the bundled launch artwork, or the generated
+  `og-image` card), used in both the social tags and the Article JSON-LD.
+- Projects share their featured image and podcasts their cover (uploaded or
+  bundled), falling back to the site logo when there is none.
+- Social tags use the `en_US` Open Graph locale from `config/seo.php` while the
+  app locale stays `en`.
+- The 404 page is `noindex, nofollow` and renders no canonical link.
+- A category-filtered `/blog` page canonicalizes to its `/blog/category/{slug}`
+  archive.
+- Newsletter action pages are explicitly excluded from indexing.
+
+## Structured data
+
+The shared JSON-LD graph uses named Laravel routes for canonical site, author,
+static-page, article, podcast, episode, project case-study, collection,
+item-list, and breadcrumb entities. Structured-data generation is separated into
+article, podcast, and collection builders behind `StructuredDataBuilder`.
+
+## Archives and pagination
+
+Paginated public archives reject out-of-range pages and use page-specific
+titles, descriptions, canonical and collection URLs, and continuous item
+positions. Dynamic sitemap archives report the latest modification date from
+their public content.
+
+## Blog archive and search
+
+The blog archive returns 12 articles per page, ordered by publication date and
+ID. Its GET search and category filters work without JavaScript and persist in
+pagination links.
+
+Search covers article titles, excerpts, and localized tag names; `%` and `_` are
+literal search characters. Search result pages are excluded from indexing, and
+invalid filters or out-of-range pages return 404. How the blog index updates
+without a reload is in [Frontend](frontend.md#livewire-on-the-blog).
+
+## Projects
+
+Public project pages present summaries, optional screenshots, authored
+write-ups, and contact links. Project repository URLs remain available in admin
+records but are not rendered as public links or included in project JSON-LD.
+Editors should also avoid inserting private repository URLs into public
+descriptions, write-ups, or website-link fields. The general author GitHub
+profile link is independent of project repository visibility.
+
+The projects index separates featured and additional projects using the shared
+`projects.index-entry` Blade component, styled entirely with Tailwind utilities.
+Entries show existing screenshots with available responsive variants, or use a
+text-only layout without fabricated fallback imagery. An empty-state message and
+the persistent contact section keep the page useful when no projects are
+published. See also [Portfolio presentation](../portfolio-presentation.md).
+
+## Social profiles
+
+Social profile URLs and their enabled, placement, display-label, and ordering
+settings are managed in Filament and stored in `social_profiles`. The footer and
+contact page use separate visibility flags, while the homepage's YouTube call to
+action uses the enabled YouTube profile. The initial migration preserves the
+existing public links.
+
+## Other public routes
+
+- `/newsletter` is a paginated archive of published issues (12 per page,
+  out-of-range pages return 404), and `/newsletter/rss` is an RSS 2.0 feed of
+  the 20 newest published issues (`GenerateNewsletterRssFeed`). Individual
+  issues live at `/newsletter/{slug}` and unpublished ones return 404. The issue
+  form rejects a slug that matches a static `/newsletter/*` route (such as `rss`
+  or `confirmed`), because those routes are registered first and would make the
+  issue unreachable.
+- `/archive` (`ArchiveController`, `ArchiveQuery`) is one reverse-chronological
+  list of published posts, projects, active podcasts, newsletter issues,
+  episodes and videos, filtered by `type` and `year` and paginated at 18 per
+  page with a 404 for out-of-range pages. Videos link out to YouTube.
+- Admin "Preview" actions open signed `/preview/*` routes (`preview.post`,
+  `preview.project`, `preview.episode`, `preview.newsletter-issue`), generated by
+  `PreviewUrlGenerator` as temporary signed URLs valid for two hours. They render
+  the unpublished item through the same ViewModels' `previewData()`, titled as a
+  preview with `noindex, nofollow`, and a missing or invalid signature is
+  rejected.
+
+## Feeds, sitemap and OG images without sessions
+
+The feeds (`/rss`, `/newsletter/rss`), `/sitemap.xml` and `/og-image/{post}` run
+without session, cookie and forgery-token middleware, because feed readers and
+crawlers poll them and the database session driver would otherwise insert a
+`sessions` row on every hit.
+
+The feeds and sitemap remove the whole `web` group like `/robots.txt`. The OG
+image route removes only those middleware classes, because excluding the group
+would also drop the route-model binding for its post slug.
+
+## robots.txt
+
+`/robots.txt` is served by `RobotsController` and `GenerateRobotsTxt`. The route
+removes the `web` middleware group, so the response sets no session or CSRF
+cookies, and it is sent with `Cache-Control: public, max-age=3600` so it behaves
+like a static file at the CDN. Do not add a static `public/robots.txt`, because
+the web server would serve it before Laravel.
+
+The content depends on `app.deployment_environment` (`TLA_DEPLOYMENT_ENVIRONMENT`),
+read through `App\Enums\DeploymentEnvironment::current()` (null for any value
+other than `production` or `staging`), rather than `APP_ENV`, because staging
+also runs with `APP_ENV=production`.
+
+- Only the `production` deployment allows crawling. It lists `/admin` and
+  `/preview/` (the signed preview URLs) as disallowed and advertises the sitemap
+  from `APP_URL`. It does not disallow `/search`: its results are `noindex`, and
+  crawlers must be able to fetch them to read that tag.
+- Every other deployment, including staging, answers `Disallow: /`.
+
+Cloudflare is known to rewrite the response in front of production; see
+[robots.txt on production](../operations/environments.md#robotstxt-on-production)
+for that open issue and the after-deploy check.

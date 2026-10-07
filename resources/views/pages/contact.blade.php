@@ -28,24 +28,14 @@
                     timeline you have in mind. I’ll reply within 24 to 48 hours.
                 </p>
 
-                @if (session('success'))
-                    <div
-                        class="mb-6 rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400"
-                        role="status"
-                        aria-live="polite"
-                    >
-                        {{ session('success') }}
-                    </div>
-                @endif
+                @session('success')
+                    <x-alert class="mb-6 rounded-xl p-4" aria-live="polite">{{ $value }}</x-alert>
+                @endsession
 
                 @php($firstErrorField = $errors->keys()[0] ?? null)
 
                 @if ($errors->any())
-                    <div
-                        role="alert"
-                        aria-live="assertive"
-                        class="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-400"
-                    >
+                    <x-alert type="error" class="mb-6 rounded-xl p-4" aria-live="assertive">
                         <p class="font-semibold">Please review the highlighted fields.</p>
                         <ul class="mt-2 list-disc space-y-1 pl-5">
                             @foreach ($errors->getMessages() as $field => $messages)
@@ -56,7 +46,7 @@
                                 @endforeach
                             @endforeach
                         </ul>
-                    </div>
+                    </x-alert>
                 @endif
 
                 <form
@@ -79,14 +69,10 @@
                         </div>
                         <input type="hidden" name="project" value="{{ $selectedProject->slug }}" />
                     @endif
-                    {{-- Honeypot: hidden from humans, bots fill it --}}
-                    <div class="absolute -top-[9999px] -left-[9999px]" aria-hidden="true">
-                        <input type="text" name="website" tabindex="-1" autocomplete="off" value="" />
-                    </div>
+                    <x-form.honeypot />
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                            <label for="name" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                >Name</label>
+                            <x-form.label for="name">Name</x-form.label>
                             <x-form.input
                                 id="name"
                                 name="name"
@@ -97,8 +83,7 @@
                             />
                         </div>
                         <div>
-                            <label for="email" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                >Email</label>
+                            <x-form.label for="email">Email</x-form.label>
                             <x-form.input
                                 id="email"
                                 name="email"
@@ -112,8 +97,7 @@
                     </div>
 
                     <div>
-                        <label for="type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >What can I help with?</label>
+                        <x-form.label for="type">What can I help with?</x-form.label>
                         <x-form.select
                             id="type"
                             name="type"
@@ -124,8 +108,9 @@
                     </div>
 
                     <div>
-                        <label for="budget" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >Budget Range <span class="text-gray-600">(optional)</span></label>
+                        <x-form.label for="budget">
+                            Budget Range <span class="text-gray-600">(optional)</span>
+                        </x-form.label>
                         <x-form.select
                             id="budget"
                             name="budget"
@@ -135,8 +120,7 @@
                     </div>
 
                     <div>
-                        <label for="message" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >Message</label>
+                        <x-form.label for="message">Message</x-form.label>
                         <x-form.textarea
                             id="message"
                             name="message"

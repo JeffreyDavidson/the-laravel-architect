@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Posts;
 
+use App\Enums\NavigationGroup;
 use App\Enums\PublishStatus;
+use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
@@ -14,13 +16,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
 class PostResource extends Resource
 {
+    use ResolvesTrashedRecords;
+
     #[\Override]
     protected static ?string $model = Post::class;
 
@@ -28,7 +30,7 @@ class PostResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Publish';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
     protected static ?int $navigationSort = 1;
@@ -59,12 +61,6 @@ class PostResource extends Resource
         return $reviewCount > 0 ? 'info' : 'gray';
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([SoftDeletingScope::class]);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return PostForm::configure($schema);
@@ -73,13 +69,6 @@ class PostResource extends Resource
     public static function table(Table $table): Table
     {
         return PostsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

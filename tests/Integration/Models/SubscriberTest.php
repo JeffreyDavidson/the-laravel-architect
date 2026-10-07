@@ -4,12 +4,18 @@ use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\freezeTime;
+
 pest()->use(RefreshDatabase::class);
 
 it('only counts verified subscriptions that have not unsubscribed as active', function () {
-    $active = Subscriber::query()->create(['email' => 'active@example.test', 'verified_at' => now()]);
-    $pending = Subscriber::query()->create(['email' => 'pending@example.test']);
-    $unsubscribed = Subscriber::query()->create(['email' => 'gone@example.test', 'verified_at' => now(), 'unsubscribed_at' => now()]);
+    $active = Subscriber::factory()->create();
+    $pending = Subscriber::factory()
+        ->pending()
+        ->create();
+    $unsubscribed = Subscriber::factory()
+        ->unsubscribed()
+        ->create();
 
     expect(Subscriber::query()->active()
         ->pluck('id')
@@ -46,7 +52,7 @@ it('hides its verification token hash from serialization', function () {
 });
 
 it('never treats a suppressed reader as active or prunes it', function () {
-    $this->freezeTime();
+    freezeTime();
     $suppressed = Subscriber::factory()
         ->suppressed(SuppressionReason::Complained)
         ->create([

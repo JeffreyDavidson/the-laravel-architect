@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\ContactInquiryStatus;
-use App\Enums\PublishStatus;
 use App\Filament\Widgets\EditorialOperationsOverview;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
@@ -13,40 +12,26 @@ use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\freezeSecond;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('summarizes first-party editorial work and links', function () {
     $user = User::factory()->create(['is_admin' => true]);
 
-    $this->actingAs($user);
+    actingAs($user);
 
     ContactInquiry::factory()->create(['status' => ContactInquiryStatus::New]);
-    Post::query()->create([
-        'title' => 'Post in review',
-        'excerpt' => 'An excerpt.',
-        'content' => 'Content.',
-        'status' => PublishStatus::InReview,
-        'user_id' => $user->id,
-    ]);
-    Post::query()->create([
-        'title' => 'Scheduled post',
-        'excerpt' => 'An excerpt.',
-        'content' => 'Content.',
-        'status' => PublishStatus::Scheduled,
-        'published_at' => now()->addDay(),
-        'user_id' => $user->id,
-    ]);
-    NewsletterIssue::query()->create([
-        'title' => 'Draft issue',
-        'excerpt' => 'An excerpt.',
-        'content' => 'Content.',
-        'status' => PublishStatus::Draft,
-    ]);
-    Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    Post::factory()
+        ->inReview()
+        ->create();
+    Post::factory()
+        ->scheduled()
+        ->create();
+    NewsletterIssue::factory()->create();
+    Subscriber::factory()->create();
 
     $widget = new class extends EditorialOperationsOverview
     {
@@ -73,12 +58,17 @@ it('summarizes first-party editorial work and links', function () {
 });
 
 it('excludes already live scheduled content from unpublished operational queues', function () {
-    $this->freezeSecond();
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
-    $podcast = Podcast::query()->create(['name' => 'Audit podcast', 'description' => 'Description']);
+    freezeSecond();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $podcast = Podcast::factory()->create();
     foreach ([now()->subMinute(), now()->addDay(), null] as $index => $date) {
-        Episode::query()->create(['title' => "Queue episode {$index}", 'description' => 'Description', 'podcast_id' => $podcast->id, 'status' => PublishStatus::Scheduled, 'published_at' => $date]);
-        NewsletterIssue::query()->create(['title' => "Queue issue {$index}", 'excerpt' => 'Excerpt', 'content' => 'Content', 'status' => PublishStatus::Scheduled, 'published_at' => $date]);
+        Episode::factory()
+            ->for($podcast)
+            ->scheduled()
+            ->create(['title' => "Queue episode {$index}", 'published_at' => $date]);
+        NewsletterIssue::factory()
+            ->scheduled()
+            ->create(['title' => "Queue issue {$index}", 'published_at' => $date]);
     }
     $widget = new class extends EditorialOperationsOverview
     {
@@ -101,7 +91,7 @@ it('excludes already live scheduled content from unpublished operational queues'
             throw new RuntimeException("Missing {$type} queue URL.");
         }
 
-        $response = $this->get($url);
+        $response = get($url);
 
         $response->assertSuccessful()
             ->assertSee("Queue {$type} 1")

@@ -16,7 +16,7 @@ class RelatedPostsQuery
 
         $post->loadMissing('tags');
 
-        $relatedPosts = Post::published()
+        $relatedPosts = Post::query()->published()
             ->whereKeyNot($post->getKey())
             ->where('category_id', $post->category_id)
             ->with(['category', 'tags'])
@@ -26,7 +26,7 @@ class RelatedPostsQuery
             ->get();
 
         if ($relatedPosts->count() < $limit && $post->tags->isNotEmpty()) {
-            $tagRelatedPosts = Post::published()
+            $tagRelatedPosts = Post::query()->published()
                 ->whereNotIn('id', $relatedPosts->modelKeys())
                 ->whereKeyNot($post->getKey())
                 ->withAnyTags($post->tags)
@@ -40,7 +40,7 @@ class RelatedPostsQuery
         }
 
         if ($relatedPosts->count() < $limit) {
-            $latestPosts = Post::published()
+            $latestPosts = Post::query()->published()
                 ->whereNotIn('id', $relatedPosts->modelKeys())
                 ->whereKeyNot($post->getKey())
                 ->with(['category', 'tags'])

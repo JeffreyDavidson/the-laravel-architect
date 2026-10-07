@@ -6,6 +6,7 @@ namespace App\ViewModels;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -36,8 +37,9 @@ class PostIndexViewModel
         $publishedPostCount = $results['publishedPostCount'];
         $selectedCategory = $results['selectedCategory'];
 
+        $page = PaginatedPageSeo::forCurrentPage($posts);
         $categoryUrl = $selectedCategory ? route('blog.category', $selectedCategory) : null;
-        $canonicalUrl = $categoryUrl ?? route('blog.index', $posts->onFirstPage() ? [] : ['page' => $posts->currentPage()]);
+        $canonicalUrl = $categoryUrl ?? $page->url('blog.index');
         $searchCanonicalUrl = $categoryUrl ?? route('blog.index');
         $title = $selectedCategory ? "{$selectedCategory->name} Articles" : 'Blog';
         $description = $selectedCategory
@@ -49,11 +51,6 @@ class PostIndexViewModel
             $description = "Search results for {$query} on The Laravel Architect.";
         }
 
-        if (! $posts->onFirstPage()) {
-            $title .= " — Page {$posts->currentPage()}";
-            $description .= " Page {$posts->currentPage()} of {$posts->lastPage()}.";
-        }
-
         return [
             'posts' => $posts,
             'categories' => $categories,
@@ -62,8 +59,8 @@ class PostIndexViewModel
             'categorySlug' => $categorySlug,
             'selectedCategory' => $selectedCategory,
             'seoSource' => new SEOData(
-                title: $title,
-                description: $description,
+                title: $page->title($title),
+                description: $page->description($description),
                 url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,
                 robots: $query === '' ? null : 'noindex, follow',
                 canonical_url: $query === '' ? $canonicalUrl : $searchCanonicalUrl,

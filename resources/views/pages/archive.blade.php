@@ -1,18 +1,12 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <div class="dark:bg-surface-page bg-gray-50">
-        <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-                <p class="text-brand-600 dark:text-brand-300 font-mono text-sm font-semibold tracking-wide uppercase">
-                    Archive
-                </p>
-                <h1 class="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-gray-950 sm:text-5xl dark:text-white">
-                    Everything worth revisiting.
-                </h1>
-                <p class="mt-5 max-w-2xl text-lg text-pretty text-gray-600 dark:text-gray-400">
-                    Browse the complete public collection of writing, projects, conversations, newsletters, and videos.
-                </p>
-            </div>
-        </header>
+        <x-page-header
+            width="6xl"
+            eyebrow="Archive"
+            eyebrow-variant="section"
+            title="Everything worth revisiting."
+            description="Browse the complete public collection of writing, projects, conversations, newsletters, and videos."
+        />
 
         <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <form
@@ -43,12 +37,13 @@
                         placeholder="Any year"
                     />
                 </div>
-                <button
+                <x-button
                     type="submit"
-                    class="bg-brand-600 hover:bg-brand-500 focus-visible:outline-brand-500 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2"
+                    variant="brand-soft"
+                    class="focus-visible:outline-brand-500 inline-flex min-h-11 items-center justify-center px-5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                     Apply filters
-                </button>
+                </x-button>
             </form>
 
             <div class="mt-10 flex flex-wrap items-end justify-between gap-4">
@@ -79,10 +74,11 @@
                         <article class="dark:border-surface-border dark:bg-brand-900/60 flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10">
                             <div class="flex items-center justify-between gap-3 text-xs font-semibold tracking-wide uppercase">
                                 <span class="text-brand-600 dark:text-brand-300">{{ $item['typeLabel'] }}</span>
-                                <time
+                                <x-display-date
+                                    :date="$item['date']"
+                                    format="F j, Y"
                                     class="font-mono text-gray-500 dark:text-gray-400"
-                                    datetime="{{ $item['dateTime'] }}"
-                                >{{ $item['date'] }}</time>
+                                />
                             </div>
                             <h3 class="mt-4 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">
                                 <a

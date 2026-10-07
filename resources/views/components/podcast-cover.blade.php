@@ -1,3 +1,4 @@
+{{-- A podcast's cover artwork. When the podcast has no cover, the optional placeholder slot renders instead. --}}
 @props([
     'podcast',
     'alt' => null,
@@ -5,19 +6,18 @@
     'width',
     'height',
     'priority' => false,
+    'placeholder' => null,
 ])
 
-@inject('responsiveImages', 'App\Services\ResponsiveImageVariants')
+@php($cover = \App\Presenters\PodcastPresenter::from($podcast)->cover())
 
-@php($srcset = $responsiveImages->srcset($podcast->cover_image_path) ?? $podcast->fallback_cover_image_srcset)
-
-@if ($podcast->cover_image_url)
+@if ($cover)
     <picture>
-        @if ($srcset)
-            <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}" />
+        @if ($cover->srcset)
+            <source type="image/webp" srcset="{{ $cover->srcset }}" sizes="{{ $sizes }}" />
         @endif
         <img
-            src="{{ $podcast->cover_image_url }}"
+            src="{{ $cover->src }}"
             alt="{{ $alt ?? $podcast->name }}"
             width="{{ $width }}"
             height="{{ $height }}"
@@ -30,4 +30,6 @@
             {{ $attributes }}
         />
     </picture>
+@else
+    {{ $placeholder }}
 @endif

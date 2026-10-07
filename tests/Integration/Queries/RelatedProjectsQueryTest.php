@@ -44,10 +44,8 @@ function createRelatedProjectsQueryProject(
     int $sortOrder,
     PublishStatus $status = PublishStatus::Published,
 ): Project {
-    return Project::query()->create([
+    return Project::factory()->create([
         'title' => $title,
-        'slug' => str($title)->slug(),
-        'description' => "{$title} description.",
         'status' => $status,
         'sort_order' => $sortOrder,
     ]);
