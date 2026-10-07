@@ -35,6 +35,26 @@ Shared CSS retains fonts, theme tokens, animation keyframes, and browser
 integration rules; Prism and the Filament admin theme remain separate
 integrations.
 
+## Shared Blade components
+
+Repeated page markup lives in Blade components rather than being pasted per
+page:
+
+- `blog-card` is the one post card. Its `variant` picks the layout: `list` (the
+  default blog row), `editorial`, `featured` and `compact` (the homepage's
+  latest writing) or `related` (under an article). The older `editorial` flag
+  still selects the editorial layout, and extra attributes such as reveal hooks
+  land on the card's `<article>`.
+- `podcast-cover` renders a podcast's cover artwork, or its `placeholder` slot
+  when the podcast has none.
+- `podcast.equalizer` draws the animated equalizer bars, as the hero `badge` or
+  the hover-revealed episode `row`.
+- `podcast.platform-links` renders a podcast's subscribe buttons from
+  `PodcastPresenter::platformLinks()`, or an episode's YouTube "Listen on" row.
+- `sidebar-card` is the bordered card with a small uppercase heading used by the
+  episode sidebar and the featured guest.
+- `svg-icon` holds shared icons such as the podcast microphone.
+
 ## Site layout
 
 The site layout (`components/layouts/site.blade.php`) is a full-height column
@@ -51,14 +71,18 @@ Public UI state uses named CSP-safe Alpine components for:
 - the newsletter sign-up and confirmation auto-submit (see
   [Newsletter](newsletter.md));
 - the contact form's Turnstile loader;
-- the homepage reveal and count-up animations;
+- the homepage reveal and count-up animations, scoped to the
+  `[data-home-reveal]` wrapper around the page's sections;
 - the blog index's live title and meta tag updates after a search;
 - the blog article's code copy buttons, lazy syntax highlighting and contents
   list;
 - the podcast transcript's section links, search and deep links.
 
-JavaScript uses data attributes for behavior hooks, and article navigation
-clones its styled link markup from a Blade template.
+JavaScript uses data attributes for behavior hooks, never styling classes. Markup
+that JavaScript adds (article contents links and code copy buttons, transcript
+section links and search highlights) is cloned from a Blade `<template>`, so its
+Tailwind classes live in Blade and compile. Transcript section links reuse the
+`copyButton` component for their copy feedback.
 
 Pages without Livewire load standalone `@alpinejs/csp`; the blog uses Alpine
 bundled with Livewire's CSP-safe runtime. Components register before the
@@ -70,9 +94,9 @@ and the Prism syntax highlighter (a vendor module the article component loads
 lazily).
 
 `resources/js/app.js` registers the site header and copy button on every page
-and imports each `resources/js/pages/*` module (`about`, `home`, `contact`,
-`newsletter`, `newsletter-confirm`, `blog-index`, `blog`, `podcast`) only when
-its `data-*` hook is on the page. The admin panel's script is
+and, from a lookup table of hooks, imports each `resources/js/pages/*` module
+(`about`, `home`, `contact`, `newsletter`, `newsletter-confirm`, `blog-index`,
+`blog`, `podcast`) only when its `data-*` hook is on the page. The admin panel's script is
 `resources/js/filament/admin.js`.
 
 ## Livewire on the blog

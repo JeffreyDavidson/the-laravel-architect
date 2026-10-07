@@ -24,20 +24,20 @@
                     href="{{ route('podcast.show', $podcast) }}"
                     class="group focus-visible:outline-brand-400 dark:border-surface-border grid gap-10 border-y border-gray-200 py-10 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[18rem_minmax(0,1fr)] md:items-center md:py-14"
                 >
-                    @if ($podcast->cover_image_url)
-                        <x-podcast-cover
-                            :podcast="$podcast"
-                            sizes="288px"
-                            width="288"
-                            height="288"
-                            priority
-                            class="aspect-square w-full max-w-72 object-cover grayscale-[15%]"
-                        />
-                    @else
-                        <div class="border-surface-border bg-surface-card flex aspect-square w-full max-w-72 items-center justify-center border">
-                            <x-svg-icon name="microphone" class="text-brand-600 h-12 w-12" />
-                        </div>
-                    @endif
+                    <x-podcast-cover
+                        :podcast="$podcast"
+                        sizes="288px"
+                        width="288"
+                        height="288"
+                        priority
+                        class="aspect-square w-full max-w-72 object-cover grayscale-[15%]"
+                    >
+                        <x-slot:placeholder>
+                            <div class="border-surface-border bg-surface-card flex aspect-square w-full max-w-72 items-center justify-center border">
+                                <x-svg-icon name="microphone" class="text-brand-600 h-12 w-12" />
+                            </div>
+                        </x-slot:placeholder>
+                    </x-podcast-cover>
 
                     <div>
                         <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Current show</p>

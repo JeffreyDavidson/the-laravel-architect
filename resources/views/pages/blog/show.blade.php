@@ -55,7 +55,7 @@
         </div>
 
         <template data-code-copy-template>
-            <x-copy-button class="copy-btn" />
+            <x-copy-button class="copy-btn" data-code-copy="" />
         </template>
 
         <template data-article-toc-template>
@@ -138,32 +138,7 @@
                     </h2>
                     <div class="mt-8 grid gap-6 md:grid-cols-2">
                         @foreach ($relatedPosts as $related)
-                            <article class="group dark:bg-brand-900/60 overflow-hidden rounded-xl bg-white outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10">
-                                <a
-                                    href="{{ route('blog.show', $related) }}"
-                                    class="focus-visible:outline-brand-500 block focus-visible:outline-2 focus-visible:outline-offset-4"
-                                >
-                                    <x-post-artwork
-                                        :post="$related"
-                                        sizes="(min-width: 768px) 560px, calc(100vw - 2rem)"
-                                        class="dark:bg-brand-900 aspect-[3/2] bg-gray-100"
-                                    />
-                                    <div class="p-6">
-                                        @if ($related->category)
-                                            <span class="text-brand-600 dark:text-brand-300 font-mono text-sm font-semibold tracking-wide uppercase">{{ $related->category->name }}</span>
-                                        @endif
-                                        <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-300 mt-2 text-xl font-semibold tracking-tight text-gray-950 transition-colors dark:text-white">
-                                            {{ $related->title }}
-                                        </h3>
-                                        <p class="mt-3 line-clamp-2 text-base text-pretty text-gray-600 dark:text-gray-400">
-                                            {{ $related->excerpt }}
-                                        </p>
-                                        <div class="mt-5 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ \App\Presenters\PostPresenter::from($related)->readingTime() }} min read
-                                        </div>
-                                    </div>
-                                </a>
-                            </article>
+                            <x-blog-card :post="$related" variant="related" />
                         @endforeach
                     </div>
                 </div>

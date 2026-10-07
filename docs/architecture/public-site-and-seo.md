@@ -20,8 +20,10 @@ OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
 `ProjectPresenter::featuredImage()`. The image methods return an
 `App\Data\ResponsiveImage` (`src` plus an optional WebP `srcset`) that the
 `post-artwork`, `podcast-cover` and `projects.artwork` components render.
-`EpisodePresenter` formats episode codes, durations and YouTube video IDs, and
-`EpisodeShowViewModel` turns them into the episode page's display flags.
+`PodcastPresenter::platformLinks()` lists the show's linked listening platforms
+for the subscribe buttons. `EpisodePresenter` formats episode codes, durations
+and YouTube video IDs, and `EpisodeShowViewModel` turns them into the episode
+page's display flags.
 
 Reusable content selection, including related posts, related projects, and
 adjacent-episode navigation, lives in query objects rather than controllers.

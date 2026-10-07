@@ -64,6 +64,32 @@ final readonly class PodcastPresenter
             : self::DEFAULT_COLOR;
     }
 
+    /**
+     * The podcast's listening platforms that have a link, in display order. The icon names the
+     * platform's icon and colours in the platform-links component.
+     *
+     * @return list<array{label: string, url: string, icon: string}>
+     */
+    public function platformLinks(): array
+    {
+        $platforms = [
+            ['label' => 'Spotify', 'url' => $this->podcast->spotify_url, 'icon' => 'spotify'],
+            ['label' => 'Apple Podcasts', 'url' => $this->podcast->apple_url, 'icon' => 'apple-podcasts'],
+            ['label' => 'YouTube', 'url' => $this->podcast->youtube_url, 'icon' => 'youtube'],
+            ['label' => 'RSS', 'url' => $this->podcast->rss_url, 'icon' => 'rss'],
+        ];
+
+        $links = [];
+
+        foreach ($platforms as $platform) {
+            if (is_string($platform['url']) && $platform['url'] !== '') {
+                $links[] = ['label' => $platform['label'], 'url' => $platform['url'], 'icon' => $platform['icon']];
+            }
+        }
+
+        return $links;
+    }
+
     private function fallbackArtworkSrcset(): ?string
     {
         if ($this->podcast->cover_image_path) {

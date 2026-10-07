@@ -4,8 +4,8 @@ export function registerHomeReveal(Alpine) {
         countObserver: null,
 
         init() {
-            const reveals = document.querySelectorAll('[data-reveal]');
-            const counts = document.querySelectorAll('[data-count-up]');
+            const reveals = this.$root.querySelectorAll('[data-reveal]');
+            const counts = this.$root.querySelectorAll('[data-count-up]');
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             reveals.forEach(element => (element.dataset.reveal = 'pending'));
