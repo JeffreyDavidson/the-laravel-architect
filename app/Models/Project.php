@@ -60,6 +60,33 @@ class Project extends Model implements Publishable
         ];
     }
 
+    /**
+     * The tech stack with surrounding whitespace removed and blank or non-string
+     * entries dropped. ContentReadinessQuery mirrors this rule in SQL.
+     *
+     * @return list<non-empty-string>
+     */
+    public function technologies(): array
+    {
+        $techStack = $this->tech_stack;
+
+        if (! is_array($techStack)) {
+            return [];
+        }
+
+        $technologies = [];
+
+        foreach ($techStack as $technology) {
+            $technology = is_string($technology) ? trim($technology) : '';
+
+            if ($technology !== '') {
+                $technologies[] = $technology;
+            }
+        }
+
+        return $technologies;
+    }
+
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
