@@ -16,15 +16,16 @@ class ImageUploadOptimizer
 
     /**
      * GD holds a decoded image at about 4 bytes per pixel. Measured through a decode, scale and
-     * WebP encode, a 40 megapixel image peaks at about 170 MB, which one admin upload can afford
-     * on the shared 1 GB server. Without a cap, a 10 MB upload can declare far more pixels and
-     * expand to several hundred megabytes, exhausting PHP's memory limit or the server.
+     * WebP encode, a 20 megapixel image peaks at about 90 MB, which stays under PHP's common
+     * 128 MB memory limit and is affordable on the shared 1 GB server (40 megapixels peaks at
+     * about 170 MB). Without a cap, a 10 MB upload can declare far more pixels and expand to
+     * several hundred megabytes, exhausting PHP's memory limit or the server.
      */
-    public const int MAX_PIXELS = 40_000_000;
+    public const int MAX_PIXELS = 20_000_000;
 
-    public const string UPLOAD_HELPER_TEXT = 'Images are converted to WebP and resized to a maximum of 1600 px per side. Maximum upload size: 10 MB and 40 megapixels.';
+    public const string UPLOAD_HELPER_TEXT = 'Images are converted to WebP and resized to a maximum of 1600 px per side. Maximum upload size: 10 MB and 20 megapixels.';
 
-    public const string PIXEL_LIMIT_MESSAGE = 'This image is too large to process. Images can be at most 40 megapixels (8000 × 5000 px, for example). Resize it and upload it again.';
+    public const string PIXEL_LIMIT_MESSAGE = 'This image is too large to process. Images can be at most 20 megapixels (5000 × 4000 px, for example). Resize it and upload it again.';
 
     private const int QUALITY = 82;
 

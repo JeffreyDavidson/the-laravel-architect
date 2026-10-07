@@ -45,13 +45,13 @@ it('compares the declared pixel count with the limit', function (int $width, int
 
     expect($exceedsLimit)->toBe($exceeds);
 })->with([
-    'exactly 40 megapixels' => [8000, 5000, false],
-    'one row over the limit' => [8000, 5001, true],
+    'exactly 20 megapixels' => [5000, 4000, false],
+    'one row over the limit' => [5000, 4001, true],
     'a very wide panorama' => [100000, 500, true],
 ]);
 
 it('does not decode or store an image above the pixel limit', function () {
-    $contents = ImageFixtures::blankPng(8000, 5001);
+    $contents = ImageFixtures::blankPng(5000, 4001);
 
     $path = app(ImageUploadOptimizer::class)->storeContents($contents, 'projects', 'public');
 
