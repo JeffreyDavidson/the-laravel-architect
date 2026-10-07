@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Post;
-use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -41,11 +40,7 @@ class PostsTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Post $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (Post $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('author.name')
                     ->label('Author')
                     ->sortable()

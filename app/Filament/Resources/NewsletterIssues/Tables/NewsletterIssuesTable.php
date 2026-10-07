@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\NewsletterIssues\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\NewsletterIssue;
-use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -32,11 +31,7 @@ class NewsletterIssuesTable
                     ->searchable()
                     ->sortable()
                     ->limit(60),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (NewsletterIssue $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (NewsletterIssue $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('status')
                     ->badge(),
                 TextColumn::make('published_at')

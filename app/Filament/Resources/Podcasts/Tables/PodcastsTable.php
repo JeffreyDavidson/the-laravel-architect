@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Podcasts\Tables;
 
-use App\Enums\ContentReadinessStatus;
-use App\Models\Podcast;
-use App\Support\Content\ContentReadiness;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -32,11 +30,7 @@ class PodcastsTable
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Podcast $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (Podcast $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('description')
                     ->limit(50)
                     ->toggleable(isToggledHiddenByDefault: true),

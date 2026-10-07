@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\Projects\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\ProjectReadinessFilter;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Project;
 use App\Queries\ProjectReadinessQuery;
-use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -35,15 +34,8 @@ class ProjectsTable
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Project $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(function (Project $record): string {
-                        $readiness = new ContentReadiness($record);
-
-                        return $readiness->progress().' · '.$readiness->missingSummary();
-                    })
-                    ->badge(),
+                ReadinessColumn::make()
+                    ->withProgress(),
                 TextColumn::make('slug')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
-use App\Support\Content\ContentReadiness;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
@@ -38,11 +37,7 @@ class EpisodesTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Episode $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (Episode $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('podcast.name')
                     ->label('Podcast')
                     ->sortable(),
