@@ -79,10 +79,11 @@
                         <article class="dark:border-surface-border dark:bg-brand-900/60 flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10">
                             <div class="flex items-center justify-between gap-3 text-xs font-semibold tracking-wide uppercase">
                                 <span class="text-brand-600 dark:text-brand-300">{{ $item['typeLabel'] }}</span>
-                                <time
+                                <x-display-date
+                                    :date="$item['date']"
+                                    format="F j, Y"
                                     class="font-mono text-gray-500 dark:text-gray-400"
-                                    datetime="{{ $item['dateTime'] }}"
-                                >{{ $item['date'] }}</time>
+                                />
                             </div>
                             <h3 class="mt-4 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">
                                 <a

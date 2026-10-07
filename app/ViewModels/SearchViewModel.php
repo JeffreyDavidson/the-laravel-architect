@@ -3,17 +3,30 @@
 namespace App\ViewModels;
 
 use App\Enums\SearchContentType;
+use App\Models\Episode;
+use App\Models\NewsletterIssue;
+use App\Models\Podcast;
+use App\Models\Post;
+use App\Models\Project;
+use App\Models\Video;
+use App\Queries\SearchQuery;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use UnexpectedValueException;
 
+/**
+ * @phpstan-import-type SearchResultPage from SearchQuery
+ */
 class SearchViewModel
 {
     /**
-     * @param  array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
+     * @param  array<string, SearchResultPage>  $results  matching models keyed by content type value
      * @return array{
      *     query: string,
-     *     results: array<string, LengthAwarePaginator<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>,
+     *     results: array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, date: CarbonInterface|null, label: string, external: bool}>>,
      *     resultCount: int,
      *     typeOptions: array<string, string>,
      *     selectedType: string|null,
@@ -23,7 +36,11 @@ class SearchViewModel
     public function data(array $results, ?string $query, ?SearchContentType $selectedType = null): array
     {
         $query = trim($query ?? '');
-        $results = $this->highlightResults($results, $query);
+
+        $results = array_map(
+            fn (LengthAwarePaginator $group): LengthAwarePaginator => $group->through(fn (Model $model): array => $this->result($model)),
+            $results,
+        );
 
         return [
             'query' => $query,
@@ -44,57 +61,41 @@ class SearchViewModel
     }
 
     /**
-     * @param  array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
-     * @return array<string, LengthAwarePaginator<int, array{title: string, description: string|null, highlightedTitle: string, highlightedDescription: string|null, url: string, meta: string, external: bool}>>
+     * One search result as the page shows it: a plain-text description cut to 180 characters, and the
+     * publication date, or the label shown in its place for undated content.
+     *
+     * @return array{title: string, description: string|null, url: string, date: CarbonInterface|null, label: string, external: bool}
      */
-    private function highlightResults(array $results, string $query): array
+    private function result(Model $model): array
     {
-        return array_map(
-            fn (LengthAwarePaginator $group): LengthAwarePaginator => $group->through(function (array $item) use ($query): array {
-                $description = $item['description'] === null
-                    ? null
-                    : Str::limit(strip_tags($item['description']), 180);
+        [$title, $description, $url, $date, $label] = match (true) {
+            $model instanceof Post => [$model->title, $model->excerpt, route('blog.show', $model), $model->publishedAt(), 'Article'],
+            $model instanceof Project => [$model->title, $model->description, route('projects.show', $model), null, 'Project'],
+            $model instanceof Podcast => [$model->name, $model->description, route('podcast.show', $model), null, 'Podcast'],
+            $model instanceof NewsletterIssue => [$model->title, $model->excerpt, route('newsletter.issue', $model), $model->publishedAt(), 'Newsletter'],
+            $model instanceof Episode => [$model->title, $model->description, $this->episodeUrl($model), $model->publishedAt(), 'Episode'],
+            $model instanceof Video => [$model->title, $model->description, $model->youtube_url, null, 'YouTube video'],
+            default => throw new UnexpectedValueException('Unsupported search result model.'),
+        };
 
-                return [
-                    'title' => $item['title'],
-                    'description' => $item['description'],
-                    'highlightedTitle' => $this->highlight($item['title'], $query),
-                    'highlightedDescription' => $description === null ? null : $this->highlight($description, $query),
-                    'url' => $item['url'],
-                    'meta' => $item['meta'],
-                    'external' => $item['external'],
-                ];
-            }),
-            $results,
-        );
+        return [
+            'title' => $title,
+            'description' => $description === null ? null : Str::limit(strip_tags($description), 180),
+            'url' => $url,
+            'date' => $date,
+            'label' => $label,
+            'external' => $model instanceof Video,
+        ];
     }
 
-    /**
-     * Wrap each match of the query in a mark element, matching against the raw
-     * text and escaping every segment, so a match can never split an entity
-     * such as `&amp;` and the result stays safe to print unescaped.
-     */
-    private function highlight(string $value, string $query): string
+    private function episodeUrl(Episode $episode): string
     {
-        if ($query === '') {
-            return e($value);
+        $podcast = $episode->podcast;
+
+        if ($podcast === null) {
+            throw new UnexpectedValueException('Search result episode is missing its podcast.');
         }
 
-        $quotedQuery = preg_quote($query, '/');
-        $segments = preg_split("/({$quotedQuery})/iu", $value, flags: PREG_SPLIT_DELIM_CAPTURE);
-
-        if ($segments === false) {
-            return e($value);
-        }
-
-        $highlightedSegments = array_map(
-            fn (string $segment, int $index): string => $index % 2 === 1
-                ? '<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">'.e($segment).'</mark>'
-                : e($segment),
-            $segments,
-            array_keys($segments),
-        );
-
-        return implode('', $highlightedSegments);
+        return route('podcast.episode', [$podcast, $episode]);
     }
 }

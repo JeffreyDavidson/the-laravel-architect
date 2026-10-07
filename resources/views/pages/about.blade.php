@@ -1,15 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    @php
-        $timelineItems = [
-            ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
-            ['year' => '2012', 'title' => 'Full Sail University', 'desc' => 'B.S. in Web Design & Development'],
-            ['year' => '2014', 'title' => 'Discovered Laravel 4.2', 'desc' => 'Everything clicked'],
-            ['year' => '2015', 'title' => 'Moved to Florida', 'desc' => 'Packed up Kansas, headed south'],
-            ['year' => '2017', 'title' => 'Daughter Viola born', 'desc' => 'Changed everything'],
-            ['year' => '2026', 'title' => 'The Laravel Architect', 'desc' => 'Blog, podcast, YouTube. Building in public'],
-        ];
-    @endphp
-
     {{-- Hero --}}
     <div class="dark:border-brand-700 dark:bg-surface-page relative overflow-hidden border-b border-gray-200 bg-white">
         <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
@@ -104,30 +93,12 @@
                                                 {{-- Stats grid: also the card's accessible description, so it is read on either side --}}
                                                 <div id="about-card-stats" class="px-4 pb-3">
                                                     <div class="grid grid-cols-2 gap-2">
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">PHP</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.php') }}</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Laravel</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ config('public-site.technology.laravel') }}</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Stack</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">TALL</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Role</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Sr. Software Eng</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Works</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">Remote</span>
-                                                        </div>
-                                                        <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                                                            <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">Call Me When</span>
-                                                            <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">It's Broken</span>
-                                                        </div>
+                                                        @foreach ($stats as $stat)
+                                                            <div class="dark:bg-brand-950/80 dark:border-brand-700/50 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                                                <span class="text-meta block tracking-wider text-gray-500 uppercase dark:text-gray-400">{{ $stat['label'] }}</span>
+                                                                <span class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">{{ $stat['value'] }}</span>
+                                                            </div>
+                                                        @endforeach
                                                     </div>
                                                     {{-- Flavor text --}}
                                                     <div class="dark:border-brand-700/50 mt-3 border-t border-gray-200 px-1 pt-3">
@@ -261,7 +232,7 @@
                     </section>
                 </div>
 
-                <x-about.timeline :items="$timelineItems" />
+                <x-about.timeline :items="$timeline" />
             </div>
         </div>
     </div>

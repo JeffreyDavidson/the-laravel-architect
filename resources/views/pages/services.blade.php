@@ -1,12 +1,4 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    @php
-        $services = [
-            ['id' => 'build', 'icon' => 'heroicon-o-squares-2x2', 'title' => 'Build your application', 'description' => 'Turn the way your business works into software that supports it. From a new product to an internal tool, start with the workflows that matter most.', 'examples' => ['Custom Laravel applications and new features', 'Admin panels and tools for everyday operations', 'Data modeling and integrations'], 'tools' => 'Laravel · Filament · Livewire'],
-            ['id' => 'improve', 'icon' => 'heroicon-o-wrench-screwdriver', 'title' => 'Improve an existing codebase', 'description' => 'You don’t always need a rewrite. Find what’s slowing your team down, preserve what works, and make focused changes that are easier to maintain.', 'examples' => ['Code reviews and practical technical priorities', 'Laravel and PHP upgrades', 'Refactoring backed by regression tests'], 'tools' => 'PHP · Laravel · Code review'],
-            ['id' => 'ship', 'icon' => 'heroicon-o-shield-check', 'title' => 'Ship with confidence', 'description' => 'Make important behavior easier to verify and releases easier to repeat. Build the safety net around the workflows your business depends on.', 'examples' => ['Automated tests for critical user journeys', 'Continuous integration and deployment workflows', 'Production monitoring and error visibility'], 'tools' => 'Pest · Laravel Forge · Production monitoring'],
-        ];
-    @endphp
-
     <header class="dark:border-brand-800 dark:bg-surface-page border-b border-gray-200 bg-white">
         <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.3fr_1fr] lg:items-end lg:gap-20 lg:px-8">
             <div>

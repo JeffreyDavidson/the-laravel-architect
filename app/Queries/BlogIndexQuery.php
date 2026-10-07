@@ -75,8 +75,6 @@ final class BlogIndexQuery
                 'category' => $categorySlug,
             ], fn (?string $value): bool => $value !== null));
 
-        abort_if($posts->currentPage() > $posts->lastPage(), 404);
-
         return [
             'posts' => $posts,
             'categories' => Category::query()

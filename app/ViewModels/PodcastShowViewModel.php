@@ -4,6 +4,7 @@ namespace App\ViewModels;
 
 use App\Models\Episode;
 use App\Models\Podcast;
+use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -25,27 +26,16 @@ class PodcastShowViewModel
             ->latest('id')
             ->paginate(20);
 
-        abort_if($episodes->currentPage() > $episodes->lastPage(), 404);
-
-        $latestEpisode = $episodes->onFirstPage() ? $episodes->first() : null;
-        $canonicalUrl = $episodes->onFirstPage()
-            ? route('podcast.show', $podcast)
-            : route('podcast.show', ['podcast' => $podcast, 'page' => $episodes->currentPage()]);
-        $title = $podcast->name;
-        $description = $podcast->description;
-
-        if (! $episodes->onFirstPage()) {
-            $title .= " — Page {$episodes->currentPage()}";
-            $description = trim(($description ?? '')." Page {$episodes->currentPage()} of {$episodes->lastPage()}.");
-        }
+        $page = PaginatedPageSeo::forCurrentPage($episodes);
+        $canonicalUrl = $page->url('podcast.show', ['podcast' => $podcast]);
 
         return [
             'podcast' => $podcast,
             'episodes' => $episodes,
-            'latestEpisode' => $latestEpisode,
+            'latestEpisode' => $episodes->onFirstPage() ? $episodes->first() : null,
             'seoSource' => new SEOData(
-                title: $title,
-                description: $description,
+                title: $page->title($podcast->name),
+                description: $page->description($podcast->description),
                 image: $podcast->cover_image_url,
                 url: $canonicalUrl,
                 canonical_url: $canonicalUrl,
