@@ -46,13 +46,8 @@ Import replaces the target's current public content, so use it on a fresh or
 backed-up local database. Archives contain public text and metadata, not
 uploaded media; do not copy a production database to local development.
 
-For listing and pagination performance checks, create an opt-in synthetic data
-set with `php artisan content:scale-test seed`. It adds one podcast with 300
-episodes, 100 posts, and 50 projects. Remove only those generated records with
-`php artisan content:scale-test clear`. The command is not part of `db:seed`, is
-guarded against production, and creates no audio or uploaded files. Compare the
-same pages and filters before considering application caching; keep caching
-decisions tied to measured query and response timings.
+For listing and pagination performance checks, use the opt-in synthetic data set
+described in [Local content and scale checks](docs/testing.md#local-content-and-scale-checks).
 
 ## Quality checks
 
@@ -68,11 +63,16 @@ composer check
 - [Editorial design](docs/editorial-design.md)
 - [Voice guide](docs/voice.md)
 - [Project art direction](docs/project-art-direction.md)
-- [Architecture](docs/architecture.md)
+- [Portfolio presentation](docs/portfolio-presentation.md)
+- [Project description template](docs/project-description-template.md)
+- [Architecture](docs/architecture.md), with detail pages in `docs/architecture/`
 - [Testing](docs/testing.md)
-- [Operations and deployment](docs/operations.md)
+- [Operations and deployment](docs/operations.md), with detail pages and
+  runbooks in `docs/operations/`
 - [Release process](docs/releases.md)
 - [Brand assets](docs/brand-assets.md)
+- [YouTube brand kit](docs/youtube-brand-kit.md)
+- [History](docs/history/): records of finished operational changes
 
 ## Repository notes
 

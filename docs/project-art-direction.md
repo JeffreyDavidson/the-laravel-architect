@@ -106,7 +106,7 @@ the uploaded copy is optimized automatically:
 The project observer generates variants when a record is created or its image
 path changes. Sources are not upscaled to satisfy a variant width. Replacing
 bytes at an unchanged storage path does not follow the same changed-path flow;
-prefer the normal upload/save process. Use [the media operations procedure](operations.md)
+prefer the normal upload/save process. Use [the media operations procedure](operations/media.md)
 for verification or repair rather than manually naming and copying derivatives.
 
 For local working files, use descriptive names such as

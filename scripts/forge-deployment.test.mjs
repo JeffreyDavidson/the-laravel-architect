@@ -54,7 +54,7 @@ test('release safeguards keep feature integration, pre-merge staging, and produc
     const staging = readFileSync(new URL('../.github/workflows/deploy-staging.yml', import.meta.url), 'utf8');
     const production = readFileSync(new URL('../.github/workflows/promote-production.yml', import.meta.url), 'utf8');
     const releases = readFileSync(new URL('../docs/releases.md', import.meta.url), 'utf8');
-    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
+    const deployScript = readFileSync(new URL('../docs/operations/forge-deploy-script.md', import.meta.url), 'utf8');
     const deploymentClient = readFileSync(new URL('./forge-deployment.mjs', import.meta.url), 'utf8');
 
     assert.match(ci, /pull_request:[\s\S]*?branches:[\s\S]*?- develop[\s\S]*?- 'release\/\*\*'/);
@@ -73,17 +73,17 @@ test('release safeguards keep feature integration, pre-merge staging, and produc
     assert.match(releases, /git merge --ff-only origin\/main/);
     assert.doesNotMatch(releases, /git push --force/);
     assert.ok(
-        operations.includes(
+        deployScript.includes(
             'git fetch --no-tags origin "$FORGE_VAR_SOURCE_BRANCH:refs/remotes/origin/$FORGE_VAR_SOURCE_BRANCH"',
         ),
     );
-    assert.ok(operations.includes('test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"'));
+    assert.ok(deployScript.includes('test "$(git rev-parse "origin/$FORGE_VAR_SOURCE_BRANCH")" = "$FORGE_VAR_REVISION"'));
     assert.ok(
-        operations.includes(
+        deployScript.includes(
             '[[ "${FORGE_VAR_SOURCE_BRANCH:-}" = main || "${FORGE_VAR_SOURCE_BRANCH:-}" =~ ^release/[0-9]{4}\\.(0[1-9]|1[0-2])\\.[0-9]+$ ]]',
         ),
     );
-    assert.ok(operations.includes('test "${FORGE_VAR_SOURCE_BRANCH:-}" = main'));
+    assert.ok(deployScript.includes('test "${FORGE_VAR_SOURCE_BRANCH:-}" = main'));
 });
 
 test('staging and promotion hold the release lock only on their deploying jobs', () => {
@@ -715,8 +715,8 @@ test('times out without retrying an accepted deployment', async () => {
 });
 
 test('the documented deploy script backs up and verifies before migrating, on production only', () => {
-    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
-    const script = operations.match(/### Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
+    const deployScript = readFileSync(new URL('../docs/operations/forge-deploy-script.md', import.meta.url), 'utf8');
+    const script = deployScript.match(/# Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
 
     assert.ok(script);
 
@@ -733,8 +733,8 @@ test('the documented deploy script backs up and verifies before migrating, on pr
 });
 
 test('the documented deploy script builds assets and links storage before the backup gate and migrates last before activation', () => {
-    const operations = readFileSync(new URL('../docs/operations.md', import.meta.url), 'utf8');
-    const script = operations.match(/### Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
+    const deployScript = readFileSync(new URL('../docs/operations/forge-deploy-script.md', import.meta.url), 'utf8');
+    const script = deployScript.match(/# Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
 
     assert.ok(script);
 

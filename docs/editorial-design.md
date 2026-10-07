@@ -108,7 +108,7 @@ Two existing server generators produce 1200 × 630 graphics:
   is a different deliverable from the editorial image; inspect the actual SEO
   configuration and resulting share image instead of assuming the hero crop is used.
 
-Use [the media operations guide](operations.md) if responsive variants need repair.
+Use [the media operations guide](operations/media.md#responsive-image-repair) if responsive variants need repair.
 Do not run bulk regeneration just to create artwork for one article.
 
 ## Podcast pages

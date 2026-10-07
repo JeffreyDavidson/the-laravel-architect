@@ -1,0 +1,49 @@
+# Contact
+
+The contact form saves an inquiry and queues one job that emails the owner and
+the sender. The design aims for enqueue atomicity plus per-email idempotency,
+not a guarantee of exactly-once delivery by an external mail provider. The
+queue worker requirements are in
+[Deploying](../operations/deploying.md#queue-worker).
+
+## Saving and queueing
+
+Contact inquiries and their one encrypted `SendContactInquiryEmails` job are
+inserted in one database transaction.
+
+- The job explicitly uses the `database` queue connection, on the same
+  application database connection, with its insert before commit. A separate
+  database or non-database queue implementation is rejected before saving.
+- Its payload carries only the inquiry ID, and queued contact mail payloads are
+  encrypted.
+- The worker cannot see uncommitted jobs; a failed enqueue rolls back the
+  inquiry too, allowing a clean retry.
+
+## Sending
+
+The job sends the owner notification (`ContactMessageReceived`) and the sender
+confirmation (`ContactMessageConfirmation`) separately. It stamps
+`notification_sent_at` / `confirmation_sent_at` only after each succeeds, so a
+retry sends only what is missing (3 tries, 60/300/900-second backoff, one worker
+per inquiry).
+
+Because the sender's address is unverified, the confirmation has a fixed subject
+and body and never echoes the inquiry's name, message, or project, so the form
+cannot relay visitor text to an arbitrary address. The owner notification
+carries the full details as raw plain text.
+
+Each email carries a stable `Resend-Idempotency-Key`. Resend keeps these for 24
+hours, so inquiries older than 23 hours fail for manual review instead of
+resending. The inquiry's admin page shows both send times and offers **Retry
+unsent emails** within that window.
+
+## Abuse controls
+
+The `contact-form` limiter allows three sent messages an hour per IP address,
+counting only successful sends. It also counts every attempt against ten a
+minute per IP address, so junk submissions cannot trigger unlimited blocking
+Turnstile verification calls. The form's Turnstile loader is an Alpine component
+(see [Frontend](frontend.md#alpine-components)).
+
+Contact inquiries cannot be created from the admin (see
+[Admin panel](admin-panel.md)).
