@@ -42,8 +42,14 @@ unsent emails** within that window.
 The `contact-form` limiter allows three sent messages an hour per IP address,
 counting only successful sends. It also counts every attempt against ten a
 minute per IP address, so junk submissions cannot trigger unlimited blocking
-Turnstile verification calls. The form's Turnstile loader is an Alpine component
-(see [Frontend](frontend.md#alpine-components)).
+Turnstile verification calls.
+
+`StoreContactRequest` owns the bot checks. A filled hidden `website` field skips
+validation and returns the normal success message without saving anything.
+Otherwise the `App\Rules\PassesTurnstile` rule runs only after every other
+field is valid; a failure returns to the form with the input except the spent
+token. The form's Turnstile loader is an Alpine component (see
+[Frontend](frontend.md#alpine-components)).
 
 Contact inquiries cannot be created from the admin (see
 [Admin panel](admin-panel.md)).
