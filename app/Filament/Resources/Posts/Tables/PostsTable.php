@@ -2,13 +2,12 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
+use App\Filament\Actions\ViewOnSiteAction;
+use App\Filament\Tables\Columns\ReadinessColumn;
+use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Post;
-use App\Support\Content\ContentReadiness;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -22,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Vite;
 
 class PostsTable
 {
@@ -36,16 +36,12 @@ class PostsTable
                     ->label('Image')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn (): string => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
+                    ->defaultImageUrl(fn (): string => Vite::asset('resources/images/admin-post-placeholder.svg')),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Post $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (Post $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('author.name')
                     ->label('Author')
                     ->sortable()
@@ -79,14 +75,8 @@ class PostsTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels()),
-                SelectFilter::make('publication')
-                    ->label('Publication')
-                    ->options([
-                        PublishStatus::Published->value => 'Live on the site',
-                        PublishStatus::Scheduled->value => 'Scheduled for later',
-                    ])
-                    ->query(self::filterPublication(...)),
+                    ->options(PublishStatus::class),
+                PublicationFilter::make(),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
                 Filter::make('review_due')
@@ -98,13 +88,7 @@ class PostsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('view_on_site')
-                    ->label('View on site')
-                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (Post $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
-                        ? route('blog.show', $record)
-                        : $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -117,19 +101,5 @@ class PostsTable
             ->emptyStateIcon(Heroicon::OutlinedDocumentText)
             ->emptyStateHeading('No posts yet')
             ->emptyStateDescription('Start a draft when the next Laravel idea is ready to develop.');
-    }
-
-    /**
-     * @param  Builder<Post>  $query
-     * @param  array<string, mixed>  $data
-     * @return Builder<Post>
-     */
-    private static function filterPublication(Builder $query, array $data): Builder
-    {
-        return match ($data['value'] ?? null) {
-            PublishStatus::Published->value => $query->published(),
-            PublishStatus::Scheduled->value => $query->scheduled(),
-            default => $query,
-        };
     }
 }

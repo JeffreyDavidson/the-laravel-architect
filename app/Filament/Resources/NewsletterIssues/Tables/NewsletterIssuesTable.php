@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\NewsletterIssues\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
-use App\Models\NewsletterIssue;
-use App\Support\Content\ContentReadiness;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
+use App\Filament\Actions\ViewOnSiteAction;
+use App\Filament\Tables\Columns\ReadinessColumn;
+use App\Filament\Tables\Filters\PublicationFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,7 +13,6 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -32,11 +29,7 @@ class NewsletterIssuesTable
                     ->searchable()
                     ->sortable()
                     ->limit(60),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (NewsletterIssue $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (NewsletterIssue $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('status')
                     ->badge(),
                 TextColumn::make('published_at')
@@ -51,22 +44,14 @@ class NewsletterIssuesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filter::make('unpublished')
-                    ->label('Not yet published')
-                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels()),
+                    ->options(PublishStatus::class),
+                PublicationFilter::make(),
                 TrashedFilter::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('view_on_site')
-                    ->label('View on site')
-                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (NewsletterIssue $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
-                        ? route('newsletter.issue', $record)
-                        : $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -79,14 +64,5 @@ class NewsletterIssuesTable
             ->emptyStateIcon(Heroicon::OutlinedNewspaper)
             ->emptyStateHeading('No newsletter issues yet')
             ->emptyStateDescription('Draft the first issue when there is an update worth sending.');
-    }
-
-    /**
-     * @param  Builder<NewsletterIssue>  $query
-     * @return Builder<NewsletterIssue>
-     */
-    private static function filterUnpublished(Builder $query): Builder
-    {
-        return $query->unpublished();
     }
 }

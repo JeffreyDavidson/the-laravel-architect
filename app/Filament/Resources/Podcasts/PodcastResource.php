@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Podcasts;
 
 use App\Enums\NavigationGroup;
+use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Podcasts\Pages\CreatePodcast;
 use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Filament\Resources\Podcasts\Pages\ListPodcasts;
@@ -16,12 +17,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
 class PodcastResource extends Resource
 {
+    use ResolvesTrashedRecords;
+
     #[\Override]
     protected static ?string $model = Podcast::class;
 
@@ -37,12 +38,6 @@ class PodcastResource extends Resource
     #[\Override]
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([SoftDeletingScope::class]);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return PodcastForm::configure($schema);
@@ -51,13 +46,6 @@ class PodcastResource extends Resource
     public static function table(Table $table): Table
     {
         return PodcastsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

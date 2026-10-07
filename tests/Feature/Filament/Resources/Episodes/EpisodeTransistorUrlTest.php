@@ -56,3 +56,14 @@ it('lists published episodes still missing a Transistor URL', function () {
         ->assertCanNotSeeTableRecords([$added, $draft])
         ->assertTableColumnExists('transistor');
 });
+
+it('shows whether each episode has a valid Transistor URL', function (?string $transistorUrl, bool $available) {
+    $episode = PublishableFixtures::ready('episode', ['transistor_url' => $transistorUrl]);
+
+    livewire(ListEpisodes::class)
+        ->assertTableColumnStateSet('transistor', $available, $episode);
+})->with([
+    'valid share URL' => ['https://share.transistor.fm/s/428dcd6b', true],
+    'no URL' => [null, false],
+    'not a share URL' => ['https://example.com/episode', false],
+]);

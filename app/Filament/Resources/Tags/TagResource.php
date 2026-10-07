@@ -45,13 +45,6 @@ class TagResource extends Resource
         return TagsTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

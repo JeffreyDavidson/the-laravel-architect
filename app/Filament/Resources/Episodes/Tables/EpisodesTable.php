@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
-use App\Enums\ContentReadinessStatus;
 use App\Enums\PublishStatus;
-use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Actions\ViewOnSiteAction;
+use App\Filament\Tables\Columns\ReadinessColumn;
+use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
-use App\Support\Content\ContentReadiness;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -38,11 +39,7 @@ class EpisodesTable
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                TextColumn::make('readiness')
-                    ->label('Readiness')
-                    ->state(fn (Episode $record): ContentReadinessStatus => new ContentReadiness($record)->status())
-                    ->description(fn (Episode $record): string => new ContentReadiness($record)->missingSummary())
-                    ->badge(),
+                ReadinessColumn::make(),
                 TextColumn::make('podcast.name')
                     ->label('Podcast')
                     ->sortable(),
@@ -54,11 +51,10 @@ class EpisodesTable
                     ->label('Duration')
                     ->state(fn (Episode $record): string => EpisodePresenter::from($record)->duration())
                     ->toggleable(),
-                TextColumn::make('transistor')
+                IconColumn::make('transistor')
                     ->label('Transistor')
-                    ->state(fn (Episode $record): string => $record->transistorEmbedUrl() === null ? 'Not added' : 'Available')
-                    ->badge()
-                    ->color(fn (string $state): string => $state === 'Available' ? 'success' : 'gray')
+                    ->state(fn (Episode $record): bool => $record->transistorEmbedUrl() !== null)
+                    ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge(),
@@ -69,11 +65,12 @@ class EpisodesTable
                     ->sortable(),
             ])
             ->filters([
-                Filter::make('unpublished')
-                    ->label('Not yet published')
-                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels(includeInReview: false)),
+                    ->options(collect(PublishStatus::cases())
+                        ->reject(fn (PublishStatus $status): bool => $status === PublishStatus::InReview)
+                        ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->getLabel()])
+                        ->all()),
+                PublicationFilter::make(),
                 Filter::make('missing_transistor_url')
                     ->label('Missing Transistor URL')
                     ->query(fn (Builder $query): Builder => $query->whereIn('episodes.id', Episode::query()
@@ -84,33 +81,19 @@ class EpisodesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                Action::make('edit')
-                    ->label('Edit')
-                    ->icon(Heroicon::OutlinedPencilSquare)
-                    ->url(fn (Episode $record): string => EpisodeResource::getUrl('edit', ['record' => $record])),
-                Action::make('preview')
-                    ->label('Preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Episode $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                EditAction::make(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
-                ForceDeleteBulkAction::make(),
-                RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
             ])
             ->defaultSort('episode_number', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)
             ->emptyStateHeading('No episodes yet')
             ->emptyStateDescription('Create an episode when its Transistor link, show notes, or a recording plan is ready.');
-    }
-
-    /**
-     * @param  Builder<Episode>  $query
-     * @return Builder<Episode>
-     */
-    private static function filterUnpublished(Builder $query): Builder
-    {
-        return $query->unpublished();
     }
 }

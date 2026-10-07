@@ -43,11 +43,6 @@ class SocialProfileResource extends Resource
         return SocialProfilesTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
-
     public static function getRecordTitle(?Model $record): string|Htmlable|null
     {
         if (! $record instanceof SocialProfile) {

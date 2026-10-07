@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
+use App\Models\Podcast;
 use App\Models\User;
 use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Testing\TestAction;
@@ -13,12 +14,36 @@ use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-it('links the preview action to a signed preview of the episode', function () {
+beforeEach(fn () => actingAs(User::factory()->create(['is_admin' => true])));
+
+it('links the view on site action to the public episode URL', function () {
+    $episode = PublishableFixtures::ready('episode');
+    $episode->publish();
+
+    livewire(ListEpisodes::class)
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), route('podcast.episode', ['podcast' => 'show', 'episode' => 'ready-episode']))
+        ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($episode));
+});
+
+it('links the view on site action to a signed preview for a draft episode', function () {
     freezeSecond();
-    actingAs(User::factory()->create(['is_admin' => true]));
     $episode = PublishableFixtures::ready('episode');
 
     livewire(ListEpisodes::class)
-        ->assertActionHasUrl(TestAction::make('preview')->table($episode), app(PreviewUrlGenerator::class)->for($episode))
-        ->assertActionShouldOpenUrlInNewTab(TestAction::make('preview')->table($episode));
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), app(PreviewUrlGenerator::class)->for($episode))
+        ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($episode));
+});
+
+it('links the view on site action to a signed preview when the show is inactive', function () {
+    freezeSecond();
+    $episode = PublishableFixtures::ready('episode', [
+        'podcast_id' => Podcast::factory()
+            ->inactive()
+            ->create()
+            ->id,
+    ]);
+    $episode->publish();
+
+    livewire(ListEpisodes::class)
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), app(PreviewUrlGenerator::class)->for($episode));
 });

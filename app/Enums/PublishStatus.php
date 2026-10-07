@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasColor;
@@ -11,29 +13,6 @@ enum PublishStatus: string implements HasColor, HasLabel
     case InReview = 'in_review';
     case Published = 'published';
     case Scheduled = 'scheduled';
-
-    /**
-     * @return array<string, string>
-     */
-    public static function labels(bool $includeInReview = true): array
-    {
-        $labels = [
-            self::Draft->value => 'Draft',
-            self::Published->value => 'Published',
-            self::Scheduled->value => 'Scheduled',
-        ];
-
-        if ($includeInReview) {
-            return [
-                self::Draft->value => 'Draft',
-                self::InReview->value => 'In Review',
-                self::Published->value => 'Published',
-                self::Scheduled->value => 'Scheduled',
-            ];
-        }
-
-        return $labels;
-    }
 
     public function getColor(): string
     {
@@ -47,11 +26,16 @@ enum PublishStatus: string implements HasColor, HasLabel
 
     public function label(): string
     {
-        return self::labels()[$this->value];
+        return $this->getLabel();
     }
 
     public function getLabel(): string
     {
-        return $this->label();
+        return match ($this) {
+            self::Draft => 'Draft',
+            self::InReview => 'In Review',
+            self::Published => 'Published',
+            self::Scheduled => 'Scheduled',
+        };
     }
 }

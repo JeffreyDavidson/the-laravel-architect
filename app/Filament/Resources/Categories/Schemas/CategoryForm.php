@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Categories\Schemas;
 
+use App\Filament\Forms\Components\SlugInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -17,11 +18,7 @@ class CategoryForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                    ->unique(),
+                SlugInput::make('slug'),
                 Textarea::make('description')
                     ->columnSpanFull(),
             ])->columns(2);

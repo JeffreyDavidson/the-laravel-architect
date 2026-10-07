@@ -4,6 +4,7 @@ namespace App\Support\Content;
 
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
+use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Support\Facades\URL;
@@ -34,5 +35,40 @@ final class PreviewUrlGenerator
                 ['newsletterIssue' => $content],
             ),
         };
+    }
+
+    /**
+     * The public page for content that is live on the site, or null while the public page
+     * would not be reachable (unpublished, scheduled, or an episode of an inactive show).
+     */
+    public function publicUrl(Post|Project|Episode|NewsletterIssue $content): ?string
+    {
+        if (! $content->isPublished()) {
+            return null;
+        }
+
+        return match (true) {
+            $content instanceof Post => route('blog.show', $content),
+            $content instanceof Project => route('projects.show', $content),
+            $content instanceof Episode => $this->episodeUrl($content),
+            $content instanceof NewsletterIssue => route('newsletter.issue', $content),
+        };
+    }
+
+    /** The public page when the content is live, otherwise a signed preview. */
+    public function publicOrPreviewUrl(Post|Project|Episode|NewsletterIssue $content): string
+    {
+        return $this->publicUrl($content) ?? $this->for($content);
+    }
+
+    private function episodeUrl(Episode $episode): ?string
+    {
+        $podcast = $episode->podcast;
+
+        if (! $podcast instanceof Podcast || ! $podcast->is_active) {
+            return null;
+        }
+
+        return route('podcast.episode', [$podcast, $episode]);
     }
 }

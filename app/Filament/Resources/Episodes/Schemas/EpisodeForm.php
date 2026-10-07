@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Forms\Components\PublishDatePicker;
 use App\Filament\Forms\Components\PublishStatusSelect;
-use App\Models\Episode;
+use App\Filament\Forms\Components\SlugInput;
+use App\Filament\Forms\Components\SlugSourceInput;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 use RalphJSmit\Filament\SEO\SEO;
 
 class EpisodeForm
@@ -32,22 +32,11 @@ class EpisodeForm
                             ->searchable()
                             ->preload()
                             ->columnSpanFull(),
-                        TextInput::make('title')
+                        SlugSourceInput::make('title')
                             ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Get $get, Set $set, ?string $state, string $operation): void {
-                                if ($operation === 'create' && blank($get('slug'))) {
-                                    $set('slug', Str::slug($state ?? ''));
-                                }
-                            }),
-                        TextInput::make('slug')
-                            ->disabled(fn (?Episode $record): bool => $record?->isSlugLocked() ?? false)
-                            ->helperText('URLs stay locked after first publication, even when unpublished.')
-                            ->required()
-                            ->maxLength(255)
-                            ->regex('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/')
-                            ->unique(),
+                            ->maxLength(255),
+                        SlugInput::make('slug')
+                            ->lockedAfterPublication(),
                         TextInput::make('episode_number')
                             ->numeric()
                             ->label('Episode #'),
