@@ -5,6 +5,8 @@ use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
+use function Pest\Laravel\seed;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -12,7 +14,7 @@ beforeEach(function () {
 });
 
 it('does not create users with the former known seeder passwords', function () {
-    $this->seed(DatabaseSeeder::class);
+    seed(DatabaseSeeder::class);
 
     $admin = User::query()
         ->where('email', 'admin@example.test')
@@ -29,7 +31,7 @@ it('preserves the existing admin password when the seeder runs', function () {
         'email' => 'admin@example.test',
         'password' => 'chosen-admin-password',
     ]);
-    $this->seed(DatabaseSeeder::class);
+    seed(DatabaseSeeder::class);
 
     expect(Hash::check('chosen-admin-password', $admin->refresh()
         ->password))->toBeTrue()

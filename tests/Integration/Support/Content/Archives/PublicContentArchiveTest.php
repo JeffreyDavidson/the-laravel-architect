@@ -13,13 +13,14 @@ use App\Support\Content\Archives\PublicContentArchiveImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 test('public archives exclude private project repository URLs', function () {
-    Project::query()->create([
-        'title' => 'Public case study', 'slug' => 'public-case-study', 'description' => 'Description',
-        'status' => PublishStatus::Published, 'github_url' => 'https://github.com/example/confidential-project',
-    ]);
+    Project::factory()
+        ->published()
+        ->create(['github_url' => 'https://github.com/example/confidential-project']);
 
     $archive = app(PublicContentArchiveExporter::class)->export();
 
@@ -122,7 +123,7 @@ function publicArchiveProject(mixed $value): array
 }
 
 test('exports every public record exactly once when lazy chunk sort values tie', function (): void {
-    $this->travelTo('2026-09-01 12:00:00');
+    travelTo('2026-09-01 12:00:00');
 
     $recordCount = 101;
     $timestamp = now()->subDay()
@@ -246,11 +247,9 @@ test('exports every public record exactly once when lazy chunk sort values tie',
 });
 
 test('export query count stays bounded as tagged content grows', function (): void {
-    $project = Project::query()->create([
-        'title' => 'First project',
-        'description' => 'A public project.',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()
+        ->published()
+        ->create();
     $project->syncTags(['Laravel']);
 
     DB::enableQueryLog();
@@ -259,11 +258,9 @@ test('export query count stays bounded as tagged content grows', function (): vo
     DB::disableQueryLog();
 
     foreach (range(1, 9) as $index) {
-        $project = Project::query()->create([
-            'title' => "Additional project {$index}",
-            'description' => 'Another public project.',
-            'status' => PublishStatus::Published,
-        ]);
+        $project = Project::factory()
+            ->published()
+            ->create();
         $project->syncTags(['Laravel']);
     }
 
@@ -279,14 +276,12 @@ test('export query count stays bounded as tagged content grows', function (): vo
 });
 
 it('exports and synchronizes published newsletter issues', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Production newsletter issue',
-        'slug' => 'production-newsletter-issue',
-        'excerpt' => 'A public issue.',
-        'content' => 'Issue content.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $issue = NewsletterIssue::factory()
+        ->published()
+        ->create([
+            'title' => 'Production newsletter issue',
+            'content' => 'Issue content.',
+        ]);
 
     $archive = app(PublicContentArchiveExporter::class)->export();
     $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
@@ -312,50 +307,34 @@ test('only public content and its presentation data are exported', function (): 
         'email' => 'private-author@example.test',
         'password' => 'private-password',
     ]);
-    Subscriber::query()->create([
-        'email' => 'private-subscriber@example.test',
-        'subscribed_at' => now(),
-    ]);
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Published post',
-        'slug' => 'published-post',
-        'content' => 'Public content',
-        'featured_image_path' => 'posts/published.webp',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-        'review_notes' => 'Private editorial note',
-        'reviewed_by' => $author->getKey(),
-    ]);
+    Subscriber::factory()
+        ->pending()
+        ->create(['email' => 'private-subscriber@example.test']);
+    $category = Category::factory()->create(['name' => 'Architecture']);
+    $post = Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->published()
+        ->create([
+            'slug' => 'published-post',
+            'featured_image_path' => 'posts/published.webp',
+            'review_notes' => 'Private editorial note',
+            'reviewed_by' => $author->getKey(),
+        ]);
     $post->syncTags(['Laravel']);
     $post->seo()
         ->update(['canonical_url' => 'https://thelaravelarchitect.com/blog/published-post']);
-    Post::query()->create([
-        'title' => 'Draft post',
-        'slug' => 'draft-post',
-        'content' => 'Not public',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Draft,
-    ]);
-    Project::query()->create([
-        'title' => 'Published project',
-        'slug' => 'published-project',
-        'description' => 'Public project',
-        'tech_stack' => ['Laravel', 'Pest'],
-        'status' => PublishStatus::Published,
-    ]);
-    Project::query()->create([
-        'title' => 'Draft project',
-        'slug' => 'draft-project',
-        'description' => 'Not public',
-        'status' => PublishStatus::Draft,
-    ]);
+    Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->create();
+    Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'published-project',
+            'tech_stack' => ['Laravel', 'Pest'],
+        ]);
+    Project::factory()->create();
 
     $archive = app(PublicContentArchiveExporter::class)->export();
     $encoded = json_encode($archive, JSON_THROW_ON_ERROR);
@@ -393,22 +372,10 @@ test('only public content and its presentation data are exported', function (): 
 test('public content is synchronized without importing production identities', function (): void {
     config()->set('content-sync.staging_author.email', 'staging-content@example.test');
     config()->set('content-sync.staging_author.name', 'Staging Content');
-    $localAuthor = User::factory()->create();
-    $localDraft = Post::query()->create([
-        'title' => 'Local draft',
-        'slug' => 'local-draft',
-        'content' => 'Keep me',
-        'user_id' => $localAuthor->getKey(),
-        'status' => PublishStatus::Draft,
-    ]);
-    $stale = Post::query()->create([
-        'title' => 'Stale public post',
-        'slug' => 'stale-public-post',
-        'content' => 'Unpublish me',
-        'user_id' => $localAuthor->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $localDraft = Post::factory()->create();
+    $stale = Post::factory()
+        ->published()
+        ->create();
 
     $counts = app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
 
@@ -514,12 +481,7 @@ function publicContentArchiveFixture(): array
  */
 function publishedEpisodeWithDuration(int $seconds): void
 {
-    $podcast = Podcast::query()->create([
-        'name' => 'Archive show',
-        'slug' => 'archive-show',
-        'description' => 'A show.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
 
     DB::table('episodes')->insert([
         'podcast_id' => $podcast->id,
