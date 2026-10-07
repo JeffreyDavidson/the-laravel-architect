@@ -68,10 +68,10 @@ it('rejects an image above the pixel limit through the Filament project form', f
             'slug' => 'project',
             'description' => 'Description',
             'status' => PublishStatus::Draft,
-            'featured_image_path' => UploadedFile::fake()->createWithContent('huge.png', ImageFixtures::blankPng(8000, 5001)),
+            'featured_image_path' => UploadedFile::fake()->createWithContent('huge.png', ImageFixtures::blankPng(5000, 4001)),
         ])
         ->call('create')
-        ->assertHasFormErrors(['featured_image_path' => 'This image is too large to process. Images can be at most 40 megapixels (8000 × 5000 px, for example). Resize it and upload it again.']);
+        ->assertHasFormErrors(['featured_image_path' => 'This image is too large to process. Images can be at most 20 megapixels (5000 × 4000 px, for example). Resize it and upload it again.']);
 
     expect(Project::query()->count())
         ->toBe(0)
