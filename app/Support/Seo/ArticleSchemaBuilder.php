@@ -6,12 +6,11 @@ namespace App\Support\Seo;
 
 use App\Data\StructuredDataPage;
 use App\Models\Post;
+use App\Presenters\PostPresenter;
 use Illuminate\Support\Facades\Date;
 
 final readonly class ArticleSchemaBuilder
 {
-    public function __construct(private PostShareImage $postShareImage) {}
-
     /**
      * @param  list<array<string, mixed>>  $schemas
      */
@@ -41,7 +40,7 @@ final readonly class ArticleSchemaBuilder
             ],
             'mainEntityOfPage' => $postUrl,
             'description' => $post->excerpt ?? '',
-            'image' => $this->postShareImage->url($post),
+            'image' => PostPresenter::from($post)->shareImageUrl(),
         ];
     }
 }

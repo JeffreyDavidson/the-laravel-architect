@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Video;
+use App\Presenters\PodcastPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Date;
@@ -1114,10 +1115,11 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
     withVite();
 
     $podcast = Podcast::factory()->create(['slug' => 'coffee-with-the-laravel-architect']);
+    $cover = PodcastPresenter::from($podcast)->cover();
 
     get(route('podcast.show', $podcast))
         ->assertOk()
-        ->assertSeeHtml('srcset="'.$podcast->fallback_cover_image_srcset.'"')
+        ->assertSeeHtml('srcset="'.$cover?->srcset.'"')
         ->assertSeeHtml('sizes="224px"')
         ->assertSeeHtml(configuredString($podcast->cover_image_url));
 });

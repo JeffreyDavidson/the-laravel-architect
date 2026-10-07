@@ -12,6 +12,17 @@ archives, the newsletter and content archives, search, and the post, podcast,
 episode, and project detail pages. Signed previews reuse the same ViewModels
 through their `previewData()` methods.
 
+Presenters in `app/Presenters` format one model for display and never query.
+They own the image fallbacks: `PostPresenter::artwork()` and
+`shareImageUrl()` (uploaded image, bundled launch artwork, then the generated
+OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
+(uploaded cover, then the bundled artwork in `config/podcasts.php`), and
+`ProjectPresenter::featuredImage()`. The image methods return an
+`App\Data\ResponsiveImage` (`src` plus an optional WebP `srcset`) that the
+`post-artwork`, `podcast-cover` and `projects.artwork` components render.
+`EpisodePresenter` formats episode codes, durations and YouTube video IDs, and
+`EpisodeShowViewModel` turns them into the episode page's display flags.
+
 Reusable content selection, including related posts, related projects, and
 adjacent-episode navigation, lives in query objects rather than controllers.
 Sitemap and RSS serialization, the newsletter subscription lifecycle, and

@@ -1,8 +1,7 @@
 @props(['project', 'priority' => false, 'detail' => false])
-@inject('projectImages', 'App\Services\ResponsiveImageVariants')
 
 @php
-    $srcset = $project->featured_image_url ? $projectImages->srcset($project->featured_image_path) : null;
+    $image = \App\Presenters\ProjectPresenter::from($project)->featuredImage();
     $sizes = $detail
         ? '(min-width: 1280px) 1152px, calc(100vw - 4rem)'
         : '(min-width: 1280px) 560px, (min-width: 1024px) 44vw, calc(100vw - 4rem)';
@@ -17,13 +16,13 @@
         <span class="text-brand-700 dark:text-brand-300 shrink-0">The Laravel Architect</span>
     </div>
     <div class="p-4 sm:p-6">
-        @if ($project->featured_image_url)
+        @if ($image)
             <picture class="dark:bg-brand-950 block overflow-hidden rounded-lg bg-white">
-                @if ($srcset)
-                    <source type="image/webp" srcset="{{ $srcset }}" sizes="{{ $sizes }}" />
+                @if ($image->srcset)
+                    <source type="image/webp" srcset="{{ $image->srcset }}" sizes="{{ $sizes }}" />
                 @endif
                 <img
-                    src="{{ $project->featured_image_url }}"
+                    src="{{ $image->src }}"
                     alt="{{ $project->title }} project preview"
                     loading="{{ $priority ? 'eager' : 'lazy' }}"
                     decoding="async"

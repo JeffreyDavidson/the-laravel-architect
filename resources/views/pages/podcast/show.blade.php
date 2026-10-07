@@ -1,5 +1,8 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
+    <div
+        class="podcast-detail"
+        style="--podcast-color: {{ \App\Presenters\PodcastPresenter::from($podcast)->displayColor() }};"
+    >
         {{-- ===== PODCAST HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
@@ -155,13 +158,12 @@
                         <div class="p-8 md:p-10">
                             <div class="mb-5 flex items-center gap-3">
                                 <span class="text-archive-link rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">Latest Episode</span>
-                                <span class="font-mono text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->code() }}</span>
-                                <span class="text-sm text-gray-600">·</span>
-                                <x-display-date :date="$latestEpisode->published_at" class="text-sm text-gray-500" />
-                                @if (\App\Presenters\EpisodePresenter::from($latestEpisode)->duration())
-                                    <span class="text-sm text-gray-600">·</span>
-                                    <span class="text-sm text-gray-500">{{ \App\Presenters\EpisodePresenter::from($latestEpisode)->duration() }}</span>
-                                @endif
+                                <x-podcast.episode-meta
+                                    :episode="$latestEpisode"
+                                    code-class="font-mono text-sm text-gray-500"
+                                    separator-class="text-sm text-gray-600"
+                                    item-class="text-sm text-gray-500"
+                                />
                             </div>
 
                             <h2 class="mb-3 text-2xl font-extrabold text-gray-900 transition-opacity group-hover:opacity-80 md:text-3xl dark:text-white">
@@ -235,11 +237,10 @@
                                         {{ $episode->title }}
                                     </h3>
                                     <div class="mt-1 flex items-center gap-3 text-xs text-gray-500">
-                                        <x-display-date :date="$episode->published_at" />
-                                        @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
-                                            <span class="text-gray-300 dark:text-gray-700">·</span>
-                                            <span>{{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}</span>
-                                        @endif
+                                        <x-podcast.episode-meta
+                                            :episode="$episode"
+                                            separator-class="text-gray-300 dark:text-gray-700"
+                                        />
                                         @if ($episode->guest_name)
                                             <span class="hidden text-gray-300 sm:inline dark:text-gray-700">·</span>
                                             <span class="hidden sm:inline"

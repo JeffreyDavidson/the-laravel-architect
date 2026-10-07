@@ -3,6 +3,7 @@
 <div class="dark:border-surface-border mt-16 border-t border-gray-200 pt-8">
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         @if ($previous)
+            @php($previousPresenter = \App\Presenters\EpisodePresenter::from($previous))
             <a
                 href="{{ route('podcast.episode', [$podcast, $previous]) }}"
                 class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
@@ -15,8 +16,8 @@
                             {{ $previous->title }}
                         </p>
                         <span class="font-mono text-xs text-gray-500">
-                            {{ \App\Presenters\EpisodePresenter::from($previous)->code() }}
-                            @if (\App\Presenters\EpisodePresenter::from($previous)->duration()) ·{{ \App\Presenters\EpisodePresenter::from($previous)->duration() }}@endif
+                            {{ $previousPresenter->code() }}
+                            @if ($previousPresenter->duration()) ·{{ $previousPresenter->duration() }}@endif
                         </span>
                     </div>
                 </div>
@@ -26,6 +27,7 @@
         @endif
 
         @if ($next)
+            @php($nextPresenter = \App\Presenters\EpisodePresenter::from($next))
             <a
                 href="{{ route('podcast.episode', [$podcast, $next]) }}"
                 class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
@@ -37,8 +39,8 @@
                             {{ $next->title }}
                         </p>
                         <span class="font-mono text-xs text-gray-500">
-                            {{ \App\Presenters\EpisodePresenter::from($next)->code() }}
-                            @if (\App\Presenters\EpisodePresenter::from($next)->duration()) ·{{ \App\Presenters\EpisodePresenter::from($next)->duration() }}@endif
+                            {{ $nextPresenter->code() }}
+                            @if ($nextPresenter->duration()) ·{{ $nextPresenter->duration() }}@endif
                         </span>
                     </div>
                     <svg class="h-5 w-5 flex-shrink-0 text-gray-600 transition-transform group-hover:translate-x-[var(--arrow-dir,4px)] motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>

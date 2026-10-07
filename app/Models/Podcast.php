@@ -6,6 +6,7 @@ use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PodcastObserver;
+use App\Presenters\PodcastPresenter;
 use Database\Factories\PodcastFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -17,8 +18,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Vite;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -41,8 +40,6 @@ class Podcast extends Model
         performDeleteOnModel as performSoftDeleteOnModel;
     }
     use TracksActivity;
-
-    private const string DEFAULT_COLOR = '#6366f1';
 
     protected function casts(): array
     {
@@ -122,54 +119,15 @@ class Podcast extends Model
         $query->where('is_active', true);
     }
 
-    /** @return Attribute<string|null, never> */
+    /**
+     * The cover URL for SEO and the public pages; PodcastPresenter decides between the uploaded
+     * cover and the bundled artwork.
+     *
+     * @return Attribute<string|null, never>
+     */
     protected function coverImageUrl(): Attribute
     {
-        return Attribute::get(function (): ?string {
-            if ($this->cover_image_path) {
-                return Storage::disk('public')
-                    ->url(
-                        $this->cover_image_path,
-                    );
-            }
-
-            $resources = $this->fallbackCoverImageResources();
-
-            return $resources ? Vite::asset($resources[512]) : null;
-        });
-    }
-
-    /** @return Attribute<non-falsy-string|null, never> */
-    protected function fallbackCoverImageSrcset(): Attribute
-    {
-        return Attribute::get(function (): ?string {
-            if ($this->cover_image_path) {
-                return null;
-            }
-
-            $resources = $this->fallbackCoverImageResources();
-
-            if (! $resources) {
-                return null;
-            }
-
-            $srcset = [];
-
-            foreach ($resources as $width => $resource) {
-                $srcset[] = Vite::asset($resource)." {$width}w";
-            }
-
-            return implode(', ', $srcset);
-        });
-    }
-
-    /** @return Attribute<non-falsy-string, never> */
-    protected function displayColor(): Attribute
-    {
-        return Attribute::get(fn (): string => is_string($this->color)
-            && preg_match('/\A#[0-9a-fA-F]{6}\z/', $this->color) === 1
-            ? $this->color
-            : self::DEFAULT_COLOR);
+        return Attribute::get(fn (): ?string => PodcastPresenter::from($this)->coverImageUrl());
     }
 
     public function getDynamicSEOData(): SEOData
@@ -204,25 +162,5 @@ class Podcast extends Model
     protected function storedMediaAttributes(): array
     {
         return ['cover_image_path'];
-    }
-
-    /** @return array<int, string>|null */
-    private function fallbackCoverImageResources(): ?array
-    {
-        $artwork = config()->array('podcasts.fallback_artwork')[$this->slug] ?? null;
-
-        if (! is_array($artwork)) {
-            return null;
-        }
-
-        $resources = [];
-
-        foreach ($artwork as $width => $resource) {
-            if (is_int($width) && is_string($resource)) {
-                $resources[$width] = $resource;
-            }
-        }
-
-        return $resources ?: null;
     }
 }

@@ -1,5 +1,5 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
-    <div class="podcast-detail" style="--podcast-color: {{ $podcast->display_color }};">
+    <div class="podcast-detail" style="--podcast-color: {{ $podcastPresenter->displayColor() }};">
         {{-- ===== EPISODE HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
             <div class="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
@@ -18,13 +18,13 @@
                     <span
                         aria-current="page"
                         class="font-mono text-xs text-gray-600 dark:text-gray-400"
-                    >{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
+                    >{{ $episodePresenter->code() }}</span>
                 </nav>
 
                 <div class="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
                     {{-- Podcast artwork --}}
                     <div class="relative flex-shrink-0">
-                        @if ($podcast->cover_image_url)
+                        @if ($podcastPresenter->coverImageUrl())
                             <x-podcast-cover
                                 :podcast="$podcast"
                                 sizes="224px"
@@ -44,7 +44,7 @@
                     <div class="min-w-0 flex-1 text-center lg:text-left">
                         {{-- Meta badges --}}
                         <div class="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                            <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ \App\Presenters\EpisodePresenter::from($episode)->code() }}</span>
+                            <span class="text-archive-link rounded-lg bg-[var(--archive-link-alpha-08)] px-3 py-1.5 font-mono text-sm font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">{{ $episodePresenter->code() }}</span>
                             @if ($episode->published_at)
                                 <x-display-date
                                     :date="$episode->published_at"
@@ -54,10 +54,10 @@
                             @else
                                 <span class="text-sm text-gray-500">Draft preview</span>
                             @endif
-                            @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
+                            @if ($episodePresenter->duration())
                                 <span class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
+                                    {{ $episodePresenter->duration() }}
                                 </span>
                             @endif
                         </div>
@@ -77,7 +77,7 @@
                             href="{{ route('podcast.show', $podcast) }}"
                             class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         >
-                            @if ($podcast->cover_image_url)
+                            @if ($podcastPresenter->coverImageUrl())
                                 <x-podcast-cover
                                     :podcast="$podcast"
                                     alt=""
@@ -118,7 +118,7 @@
                         @endif
 
                         {{-- Description Fallback (no player, no show_notes, no transcript, no youtube) --}}
-                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
+                        @if ($showDescriptionFallback)
                             <div class="dark:border-surface-border dark:bg-surface-control relative mb-10 rounded-2xl border border-gray-200 bg-white p-8">
                                 <div class="text-archive-link absolute top-6 left-6 text-6xl leading-none opacity-15 dark:text-[var(--podcast-color)]">
                                     "
@@ -132,13 +132,9 @@
                         @endif
 
                         {{-- YouTube Embed --}}
-                        @if ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu'))
+                        @if ($episodePresenter->hasYouTube())
                             <div class="dark:border-surface-border mb-10 overflow-hidden rounded-2xl border border-gray-200">
-                                @php
-                                    preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/', $episode->youtube_url, $matches);
-                                    $videoId = $matches[1] ?? null;
-                                @endphp
-                                @if ($videoId)
+                                @if ($youtubeVideoId)
                                     <div
                                         class="bg-surface-page relative aspect-video w-full"
                                         data-youtube-facade
@@ -146,7 +142,7 @@
                                     >
                                         <template data-youtube-player x-if="loaded">
                                             <iframe
-                                                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?autoplay=1"
+                                                src="https://www.youtube-nocookie.com/embed/{{ $youtubeVideoId }}?autoplay=1"
                                                 title="{{ $episode->title }} on YouTube"
                                                 class="absolute inset-0 h-full w-full border-0"
                                                 allow="autoplay; encrypted-media; picture-in-picture"
@@ -218,7 +214,7 @@
                         @endif
 
                         {{-- Empty State Fallback --}}
-                        @if (! $embedUrl && ! $episode->show_notes && ! $episode->transcript && ! $episode->guest_name && ! $episode->tags->count() && ! ($episode->youtube_url && str_contains($episode->youtube_url, 'youtu')))
+                        @if ($showDetailsComingSoon)
                             <div class="dark:border-surface-border mb-12 rounded-2xl border border-dashed border-gray-200 p-8 text-center">
                                 <svg class="mx-auto mb-4 h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <p class="text-lg font-semibold text-gray-600 dark:text-gray-400">
@@ -241,7 +237,7 @@
                                 </h3>
                                 <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                                     <div class="mb-3 flex items-center gap-3">
-                                        @if ($podcast->cover_image_url)
+                                        @if ($podcastPresenter->coverImageUrl())
                                             <x-podcast-cover
                                                 :podcast="$podcast"
                                                 sizes="48px"
@@ -276,7 +272,7 @@
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Episode</dt>
                                         <dd class="text-archive-link font-mono font-semibold dark:text-[var(--podcast-color)]">
-                                            {{ \App\Presenters\EpisodePresenter::from($episode)->code() }}
+                                            {{ $episodePresenter->code() }}
                                         </dd>
                                     </div>
                                     <div class="flex justify-between">
@@ -289,11 +285,11 @@
                                             @endif
                                         </dd>
                                     </div>
-                                    @if (\App\Presenters\EpisodePresenter::from($episode)->duration())
+                                    @if ($episodePresenter->duration())
                                         <div class="flex justify-between">
                                             <dt class="text-gray-500">Duration</dt>
                                             <dd class="text-gray-700 dark:text-gray-300">
-                                                {{ \App\Presenters\EpisodePresenter::from($episode)->duration() }}
+                                                {{ $episodePresenter->duration() }}
                                             </dd>
                                         </div>
                                     @endif
