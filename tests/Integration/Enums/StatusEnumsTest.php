@@ -93,14 +93,14 @@ it('keeps the project readiness filter keys', function () {
         ->toBe(['ready', 'needs_image', 'needs_case_study', 'needs_details']);
 });
 
-it('uses snake_case keys for the status values', function (string $enum, array $values) {
-    $keys = array_column($enum::cases(), 'value');
+it('uses snake_case keys for the status values', function (array $cases, array $values) {
+    $keys = array_column($cases, 'value');
 
     expect($keys)
         ->toBe($values);
 })->with([
-    'media health' => [MediaHealthStatus::class, ['healthy', 'needs_repair', 'reupload_required']],
-    'media source' => [MediaSourceStatus::class, ['optimized', 'needs_optimization', 'missing', 'unreadable']],
-    'media variants' => [MediaVariantStatus::class, ['ready', 'missing', 'unavailable']],
-    'content readiness' => [ContentReadinessStatus::class, ['ready', 'needs_attention']],
+    'media health' => [MediaHealthStatus::cases(), ['healthy', 'needs_repair', 'reupload_required']],
+    'media source' => [MediaSourceStatus::cases(), ['optimized', 'needs_optimization', 'missing', 'unreadable']],
+    'media variants' => [MediaVariantStatus::cases(), ['ready', 'missing', 'unavailable']],
+    'content readiness' => [ContentReadinessStatus::cases(), ['ready', 'needs_attention']],
 ]);

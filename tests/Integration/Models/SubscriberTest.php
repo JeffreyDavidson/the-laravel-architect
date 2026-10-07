@@ -113,10 +113,11 @@ it('narrows a query to exactly the subscribers that report each status', functio
         ],
         Arr::crossJoin($dates, $dates, $dates),
     );
-    $subscribers = Subscriber::factory()
-        ->forEachSequence(...$combinations)
-        ->create();
-    $expected = $subscribers
+    $subscribers = array_map(
+        fn (array $attributes): Subscriber => Subscriber::factory()->create($attributes),
+        $combinations,
+    );
+    $expected = collect($subscribers)
         ->filter(fn (Subscriber $subscriber): bool => $subscriber->status() === $status)
         ->pluck('id')
         ->values()
