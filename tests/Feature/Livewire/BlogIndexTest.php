@@ -1,23 +1,22 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Livewire\BlogIndex;
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 it('updates collection metadata and preserves real pagination links', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
-    foreach (range(1, 13) as $number) {
-        createBlogIndexComponentPost($author, $category, "Article {$number}");
-    }
+    $category = Category::factory()->create(['name' => 'Laravel', 'slug' => 'laravel']);
+    Post::factory()->count(13)
+        ->for($category)
+        ->published()
+        ->create();
 
-    Livewire::test(BlogIndex::class)
+    livewire(BlogIndex::class)
         ->assertSeeHtml('href="'.e(route('blog.index', ['page' => 2])).'"')
         ->call('gotoPage', 2)
         ->assertDispatched('blog-metadata-updated', function (string $event, array $data): bool {
@@ -33,20 +32,23 @@ it('updates collection metadata and preserves real pagination links', function (
 });
 
 it('filters published posts by search and category without leaving the component', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Laravel',
         'slug' => 'laravel',
     ]);
-    $otherCategory = Category::query()->create([
+    $otherCategory = Category::factory()->create([
         'name' => 'PHP',
         'slug' => 'php',
     ]);
 
-    createBlogIndexComponentPost($author, $category, 'Laravel Architecture');
-    createBlogIndexComponentPost($author, $otherCategory, 'PHP Architecture');
+    Post::factory()->for($category)
+        ->published()
+        ->create(['title' => 'Laravel Architecture']);
+    Post::factory()->for($otherCategory)
+        ->published()
+        ->create(['title' => 'PHP Architecture']);
 
-    Livewire::test(BlogIndex::class)
+    livewire(BlogIndex::class)
         ->set('search', 'Laravel')
         ->assertSet('search', 'Laravel')
         ->assertSee('Laravel Architecture')
@@ -57,29 +59,31 @@ it('filters published posts by search and category without leaving the component
 });
 
 it('renders each category pill with a compiled selectCategory call', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Laravel',
         'slug' => 'laravel',
     ]);
 
-    createBlogIndexComponentPost($author, $category, 'Laravel Architecture');
+    Post::factory()->for($category)
+        ->published()
+        ->create(['title' => 'Laravel Architecture']);
 
-    Livewire::test(BlogIndex::class)
+    livewire(BlogIndex::class)
         ->assertDontSeeHtml('@js(')
         ->assertSeeHtml('wire:click.prevent="selectCategory(\'laravel\')"');
 });
 
 it('clears the interactive blog filters', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Laravel',
         'slug' => 'laravel',
     ]);
 
-    createBlogIndexComponentPost($author, $category, 'Laravel Architecture');
+    Post::factory()->for($category)
+        ->published()
+        ->create(['title' => 'Laravel Architecture']);
 
-    Livewire::test(BlogIndex::class, ['search' => 'Laravel', 'categorySlug' => 'laravel'])
+    livewire(BlogIndex::class, ['search' => 'Laravel', 'categorySlug' => 'laravel'])
         ->assertSet('search', 'Laravel')
         ->assertSet('categorySlug', 'laravel')
         ->call('clearFilters')
@@ -87,16 +91,3 @@ it('clears the interactive blog filters', function () {
         ->assertSet('categorySlug', null)
         ->assertSee('Laravel Architecture');
 });
-
-function createBlogIndexComponentPost(User $author, Category $category, string $title): Post
-{
-    return Post::query()->create([
-        'title' => $title,
-        'slug' => str($title)->slug(),
-        'content' => "{$title} content.",
-        'user_id' => $author->getKey(),
-        'category_id' => $category->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-}

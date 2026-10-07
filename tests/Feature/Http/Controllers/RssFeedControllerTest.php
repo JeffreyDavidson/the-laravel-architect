@@ -1,10 +1,8 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -14,7 +12,7 @@ use function Pest\Laravel\travelTo;
 pest()->use(RefreshDatabase::class);
 
 it('serves RSS metadata with the correct media type', function () {
-    $response = $this->get(route('rss'));
+    $response = get(route('rss'));
 
     $response
         ->assertOk()
@@ -24,42 +22,29 @@ it('serves RSS metadata with the correct media type', function () {
 });
 
 it('includes only currently published posts and safely escapes feed content', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Architecture & Design',
-        'slug' => 'architecture-design',
     ]);
 
-    Post::query()->create([
-        'title' => 'Laravel & PHP <Patterns>',
-        'slug' => 'laravel-php-patterns',
-        'excerpt' => 'Safe & useful <summary>',
-        'content' => 'Published feed content.',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subHour(),
-    ]);
+    Post::factory()->for($category)
+        ->published()
+        ->create([
+            'title' => 'Laravel & PHP <Patterns>',
+            'excerpt' => 'Safe & useful <summary>',
+        ]);
 
-    Post::query()->create([
+    Post::factory()->create([
         'title' => 'Draft feed post',
-        'slug' => 'draft-feed-post',
-        'content' => 'Draft content.',
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Draft,
         'published_at' => now()->subDay(),
     ]);
 
-    Post::query()->create([
-        'title' => 'Future feed post',
-        'slug' => 'future-feed-post',
-        'content' => 'Scheduled content.',
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->addDay(),
-    ]);
+    Post::factory()->published()
+        ->create([
+            'title' => 'Future feed post',
+            'published_at' => now()->addDay(),
+        ]);
 
-    $response = $this->get(route('rss'));
+    $response = get(route('rss'));
 
     $response->assertOk()
         ->assertSeeHtml('<title>Laravel &amp; PHP &lt;Patterns&gt;</title>')
@@ -70,32 +55,22 @@ it('includes only currently published posts and safely escapes feed content', fu
 });
 
 it('serves the newsletter RSS feed with published issues only', function () {
-    NewsletterIssue::query()->create([
-        'title' => 'Laravel & PHP <Patterns>',
-        'slug' => 'laravel-php-patterns',
-        'excerpt' => 'Safe & useful <summary>',
-        'content' => 'Published newsletter content.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subHour(),
-    ]);
-    NewsletterIssue::query()->create([
+    NewsletterIssue::factory()->published()
+        ->create([
+            'title' => 'Laravel & PHP <Patterns>',
+            'excerpt' => 'Safe & useful <summary>',
+        ]);
+    NewsletterIssue::factory()->create([
         'title' => 'Draft newsletter issue',
-        'slug' => 'draft-newsletter-issue',
-        'excerpt' => 'Draft issue.',
-        'content' => 'Draft newsletter content.',
-        'status' => PublishStatus::Draft,
         'published_at' => now()->subDay(),
     ]);
-    NewsletterIssue::query()->create([
-        'title' => 'Future newsletter issue',
-        'slug' => 'future-newsletter-issue',
-        'excerpt' => 'Scheduled issue.',
-        'content' => 'Future newsletter content.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->addDay(),
-    ]);
+    NewsletterIssue::factory()->published()
+        ->create([
+            'title' => 'Future newsletter issue',
+            'published_at' => now()->addDay(),
+        ]);
 
-    $response = $this->get(route('newsletter.rss'));
+    $response = get(route('newsletter.rss'));
 
     $response
         ->assertOk()
@@ -110,15 +85,10 @@ it('serves the newsletter RSS feed with published issues only', function () {
 it('keeps the UTC publication instant in feed dates whatever the display timezone', function () {
     config(['app.display_timezone' => 'America/New_York']);
     travelTo('2026-10-10 12:00:00');
-    $author = User::factory()->create();
-    Post::query()->create([
-        'title' => 'Evening post',
-        'slug' => 'evening-post',
-        'content' => 'Content.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => '2026-10-06 01:00:00',
-    ]);
+    Post::factory()->published()
+        ->create([
+            'published_at' => '2026-10-06 01:00:00',
+        ]);
 
     get(route('rss'))
         ->assertOk()

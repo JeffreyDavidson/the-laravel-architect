@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -8,7 +7,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -18,84 +16,41 @@ use function Pest\Laravel\get;
 pest()->use(RefreshDatabase::class);
 
 it('includes the newsletter archive and only public newsletter issues', function () {
-    $published = NewsletterIssue::query()->create(['title' => 'Public issue', 'slug' => 'public-issue', 'content' => 'Content', 'status' => PublishStatus::Published, 'published_at' => now()->subDay()]);
-    $draft = NewsletterIssue::query()->create(['title' => 'Draft issue', 'slug' => 'draft-issue', 'content' => 'Content']);
+    $published = NewsletterIssue::factory()->published()
+        ->create();
+    $draft = NewsletterIssue::factory()->create();
 
-    $this->get(route('sitemap'))
+    get(route('sitemap'))
         ->assertSeeHtml(route('newsletter.index'))
         ->assertSeeHtml(route('newsletter.issue', $published))
         ->assertDontSeeHtml(route('newsletter.issue', $draft));
 });
 
 it('only includes public content in the sitemap', function () {
-    $user = User::query()->create([
-        'name' => 'Jeffrey Davidson',
-        'email' => 'jeffrey@example.test',
-        'password' => bcrypt('password'),
-    ]);
+    $publishedPost = Post::factory()->published()
+        ->create();
 
-    $publishedPost = Post::query()->create([
-        'title' => 'Published Sitemap Post',
-        'slug' => 'published-sitemap-post',
-        'excerpt' => 'Visible post',
-        'content' => 'Visible post content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $draftOnlyCategory = Category::factory()->create();
+    $scheduledPost = Post::factory()->for($draftOnlyCategory)
+        ->published()
+        ->create(['published_at' => now()->addDay()]);
 
-    $scheduledPost = Post::query()->create([
-        'title' => 'Scheduled Sitemap Post',
-        'slug' => 'scheduled-sitemap-post',
-        'content' => 'Scheduled post content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->addDay(),
-    ]);
+    $publishedProject = Project::factory()->published()
+        ->create();
 
-    $publishedProject = Project::query()->create([
-        'title' => 'Published Sitemap Project',
-        'slug' => 'published-sitemap-project',
-        'description' => 'Visible project',
-        'status' => 'published',
-    ]);
+    $draftProject = Project::factory()->create();
 
-    $draftProject = Project::query()->create([
-        'title' => 'Draft Sitemap Project',
-        'slug' => 'draft-sitemap-project',
-        'description' => 'Hidden project',
-        'status' => 'draft',
-    ]);
+    $podcast = Podcast::factory()->create();
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Coffee With The Laravel Architect',
-        'slug' => 'coffee-with-the-laravel-architect',
-        'description' => 'Laravel conversations',
-        'is_active' => true,
-    ]);
+    $publishedEpisode = Episode::factory()->for($podcast)
+        ->published()
+        ->create();
 
-    $publishedEpisode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Published Sitemap Episode',
-        'slug' => 'published-sitemap-episode',
-        'description' => 'Visible episode',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $draftEpisode = Episode::factory()->for($podcast)
+        ->create();
 
-    $draftEpisode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Draft Sitemap Episode',
-        'slug' => 'draft-sitemap-episode',
-        'description' => 'Hidden episode',
-        'status' => PublishStatus::Draft,
-    ]);
-
-    $draftOnlyCategory = Category::query()->create(['name' => 'Private', 'slug' => 'private']);
-    $scheduledPost->update(['category_id' => $draftOnlyCategory->id]);
-
-    $publishedTag = Tag::query()->create(['name' => 'Public tag', 'slug' => 'public-tag']);
-    $scheduledOnlyTag = Tag::query()->create(['name' => 'Scheduled tag', 'slug' => 'scheduled-tag']);
+    $publishedTag = Tag::factory()->create();
+    $scheduledOnlyTag = Tag::factory()->create();
     $publishedPost->attachTag($publishedTag);
     $scheduledPost->attachTag($scheduledOnlyTag);
 
@@ -108,7 +63,7 @@ it('only includes public content in the sitemap', function () {
     DB::table('episodes')->where('id', $publishedEpisode->id)
         ->update(['updated_at' => null]);
 
-    $this->get('/sitemap.xml')
+    get('/sitemap.xml')
         ->assertOk()
         ->assertSeeHtml(route('blog.show', $publishedPost))
         ->assertDontSeeHtml(route('blog.show', $scheduledPost))
@@ -123,50 +78,19 @@ it('only includes public content in the sitemap', function () {
 });
 
 it('reports the latest published content change for sitemap archives', function () {
-    $user = User::query()->create([
-        'name' => 'Jeffrey Davidson',
-        'email' => 'jeffrey@example.test',
-        'password' => bcrypt('password'),
-    ]);
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Published Architecture Post',
-        'slug' => 'published-architecture-post',
-        'content' => 'Visible post content',
-        'category_id' => $category->id,
-        'user_id' => $user->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create();
+    $post = Post::factory()->for($category)
+        ->published()
+        ->create();
     $post->attachTag($tag);
 
-    $project = Project::query()->create([
-        'title' => 'Published Architecture Project',
-        'slug' => 'published-architecture-project',
-        'description' => 'Visible project',
-        'status' => 'published',
-    ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Laravel conversations',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Published Architecture Episode',
-        'slug' => 'published-architecture-episode',
-        'description' => 'Visible episode',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $project = Project::factory()->published()
+        ->create();
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()->for($podcast)
+        ->published()
+        ->create();
 
     $postUpdatedAt = now()->subDays(4)
         ->startOfSecond();
@@ -186,7 +110,7 @@ it('reports the latest published content change for sitemap archives', function 
     DB::table('episodes')->where('id', $episode->id)
         ->update(['updated_at' => $episodeUpdatedAt]);
 
-    $response = $this->get(route('sitemap'))
+    $response = get(route('sitemap'))
         ->assertOk();
 
     foreach ([

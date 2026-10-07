@@ -1,9 +1,7 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,41 +10,14 @@ use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
 
-/** @param array<string, mixed> $overrides */
-function createBlogPost(array $overrides = []): Post
-{
-    $user = User::query()->create([
-        'name' => 'Jeffrey Davidson',
-        'email' => fake()->unique()
-            ->safeEmail(),
-        'password' => bcrypt('password'),
-    ]);
-
-    $category = Category::query()->firstOrCreate(
-        ['slug' => 'laravel'],
-        ['name' => 'Laravel'],
-    );
-
-    return Post::query()->create(array_merge([
-        'title' => fake()->unique()
-            ->sentence(3),
-        'slug' => fake()->unique()
-            ->slug(),
-        'excerpt' => fake()->sentence(),
-        'content' => fake()->paragraphs(3, true),
-        'category_id' => $category->id,
-        'user_id' => $user->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ], $overrides));
-}
-
 it('lists published posts and hides drafts and scheduled posts', function () {
-    $published = createBlogPost(['title' => 'Published Laravel Architecture']);
-    $draft = createBlogPost(['title' => 'Draft Laravel Architecture', 'status' => PublishStatus::Draft, 'published_at' => null]);
-    $scheduled = createBlogPost(['title' => 'Scheduled Laravel Architecture', 'published_at' => now()->addDay()]);
+    $published = Post::factory()->published()
+        ->create(['title' => 'Published Laravel Architecture']);
+    $draft = Post::factory()->create(['title' => 'Draft Laravel Architecture']);
+    $scheduled = Post::factory()->published()
+        ->create(['title' => 'Scheduled Laravel Architecture', 'published_at' => now()->addDay()]);
 
-    $this->get('/blog')
+    get('/blog')
         ->assertOk()
         ->assertSee($published->title)
         ->assertDontSee($draft->title)
@@ -54,21 +25,24 @@ it('lists published posts and hides drafts and scheduled posts', function () {
 });
 
 it('only allows directly viewing posts that are published now', function () {
-    $published = createBlogPost();
-    $draft = createBlogPost(['status' => PublishStatus::Draft, 'published_at' => null]);
-    $scheduled = createBlogPost(['published_at' => now()->addDay()]);
+    $published = Post::factory()->published()
+        ->create();
+    $draft = Post::factory()->create();
+    $scheduled = Post::factory()->published()
+        ->create(['published_at' => now()->addDay()]);
 
-    $this->get(route('blog.show', $published))
+    get(route('blog.show', $published))
         ->assertOk();
-    $this->get(route('blog.show', $draft))
+    get(route('blog.show', $draft))
         ->assertNotFound();
-    $this->get(route('blog.show', $scheduled))
+    get(route('blog.show', $scheduled))
         ->assertNotFound();
 });
 
 it('renders post content as markdown with anchored headings', function () {
-    $post = createBlogPost([
-        'content' => <<<'MARKDOWN'
+    $post = Post::factory()->published()
+        ->create([
+            'content' => <<<'MARKDOWN'
 ## Native Markdown
 
 This is **rendered** content.
@@ -77,9 +51,9 @@ This is **rendered** content.
 
 [Unsafe link](javascript:alert('unsafe'))
 MARKDOWN,
-    ]);
+        ]);
 
-    $this->get(route('blog.show', $post))
+    get(route('blog.show', $post))
         ->assertOk()
         ->assertSeeHtml('<h2 id="native-markdown">Native Markdown</h2>')
         ->assertSeeHtml('This is <strong>rendered</strong> content.')
@@ -88,14 +62,13 @@ MARKDOWN,
 });
 
 it('counts only published posts in blog categories', function () {
-    $published = createBlogPost();
-    createBlogPost([
+    $published = Post::factory()->published()
+        ->create();
+    Post::factory()->create([
         'category_id' => $published->category_id,
-        'status' => PublishStatus::Draft,
-        'published_at' => null,
     ]);
 
-    $this->get(route('blog.index'))
+    get(route('blog.index'))
         ->assertOk()
         ->assertViewHas('categories', function (mixed $categories): bool {
             if (! $categories instanceof Collection) {
@@ -111,7 +84,8 @@ it('counts only published posts in blog categories', function () {
 it('shows a post publish date in the display timezone while its metadata keeps the UTC instant', function () {
     config(['app.display_timezone' => 'America/New_York']);
     travelTo('2026-10-10 12:00:00');
-    $post = createBlogPost(['published_at' => '2026-10-06 01:00:00']);
+    $post = Post::factory()->published()
+        ->create(['published_at' => '2026-10-06 01:00:00']);
 
     get(route('blog.index'))
         ->assertOk()

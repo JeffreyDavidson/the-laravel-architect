@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Enums\SocialPlatform;
 use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
@@ -16,7 +15,10 @@ use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Support\SocialProfileFixtures;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\from;
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 pest()->use(RefreshDatabase::class);
 
@@ -33,7 +35,7 @@ beforeEach(function () {
 });
 
 it('renders the Turnstile widget on the contact page', function () {
-    $response = $this->get(route('contact.create'));
+    $response = get(route('contact.create'));
 
     $response->assertOk()
         ->assertSeeHtml('data-turnstile-widget')
@@ -53,14 +55,10 @@ it('renders the Turnstile widget on the contact page', function () {
 });
 
 it('keeps a published project selected on the contact page', function () {
-    $project = Project::query()->create([
-        'title' => 'Selected project',
-        'slug' => 'selected-project',
-        'description' => 'A project description.',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create();
 
-    $this->get(route('contact.create', ['project' => $project->slug]))
+    get(route('contact.create', ['project' => $project->slug]))
         ->assertOk()
         ->assertSee('Project inquiry')
         ->assertSee($project->title)
@@ -68,14 +66,9 @@ it('keeps a published project selected on the contact page', function () {
 });
 
 it('rejects a draft project context on contact submissions', function () {
-    $project = Project::query()->create([
-        'title' => 'Draft project',
-        'slug' => 'draft-project',
-        'description' => 'A project description.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $project = Project::factory()->create();
 
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -83,11 +76,11 @@ it('rejects a draft project context on contact submissions', function () {
         'message' => 'Can you help with an audit?',
     ])->assertSessionHasErrors('project');
 
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
 });
 
 it('silently accepts honeypot submissions without sending mail', function () {
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Spam Bot',
         'email' => 'spam@example.com',
         'type' => 'freelance',
@@ -96,18 +89,14 @@ it('silently accepts honeypot submissions without sending mail', function () {
         'website' => 'filled-by-bot',
     ])->assertSessionHas('success');
 
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
     expect(ContactInquiry::query()->count())->toBe(0);
     Http::assertNothingSent();
 });
 
 it('saves the inquiry and queues its emails after a valid submission', function () {
-    $project = Project::query()->create([
-        'title' => 'Inquiry project',
-        'slug' => 'inquiry-project',
-        'description' => 'A project description.',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create(['title' => 'Inquiry project']);
 
     Http::fake([
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response([
@@ -117,7 +106,7 @@ it('saves the inquiry and queues its emails after a valid submission', function 
         ]),
     ]);
 
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -132,7 +121,7 @@ it('saves the inquiry and queues its emails after a valid submission', function 
         ->email->toBe('jane@example.com')
         ->message->toBe('Can you help with an audit?')
         ->project_title->toBe('Inquiry project');
-    $this->assertDatabaseCount('jobs', 1);
+    assertDatabaseCount('jobs', 1);
     expect(DB::table('jobs')->value('payload'))
         ->toContain(addslashes(SendContactInquiryEmails::class));
     Http::assertSent(fn (Request $request): bool => $request->url() === 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
@@ -146,7 +135,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response(['success' => false]),
     ]);
 
-    $response = $this->post(route('contact.store'), [
+    $response = post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -160,7 +149,7 @@ it('rejects a contact submission when Turnstile verification fails', function ()
 
     expect(session()->getOldInput('cf-turnstile-response'))
         ->toBeNull();
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
     expect(ContactInquiry::query()->count())->toBe(0);
 });
 
@@ -169,7 +158,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
         'https://challenges.cloudflare.com/turnstile/v0/siteverify' => Http::response($turnstileResponse),
     ]);
 
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -177,7 +166,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
 })->with([
     'wrong hostname' => [[
         'success' => true,
@@ -202,7 +191,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
 it('fails closed when the Turnstile secret is missing', function () {
     config()->set('services.turnstile.secret_key');
 
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -211,13 +200,13 @@ it('fails closed when the Turnstile secret is missing', function () {
     ])->assertSessionHasErrors('cf-turnstile-response');
 
     Http::assertNothingSent();
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
 });
 
 it('fails closed when Turnstile cannot be reached', function () {
     Http::fake(fn () => throw new ConnectionException('Turnstile unavailable.'));
 
-    $this->post(route('contact.store'), [
+    post(route('contact.store'), [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'type' => 'consulting',
@@ -225,11 +214,11 @@ it('fails closed when Turnstile cannot be reached', function () {
         'cf-turnstile-response' => 'valid-token',
     ])->assertSessionHasErrors('cf-turnstile-response');
 
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
 });
 
 it('does not count invalid submissions against the rate limit', function () {
-    $this->from(route('contact.create'))
+    from(route('contact.create'))
         ->post(route('contact.store'), [
             'name' => 'Jane Doe',
             'email' => 'not-an-email',
@@ -246,12 +235,12 @@ it('does not count invalid submissions against the rate limit', function () {
         'type' => 'consulting',
         'budget' => 'medium',
     ]);
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('jobs', 0);
     Http::assertNothingSent();
 });
 
 it('renders preserved values and accessible validation feedback', function () {
-    $this->from(route('contact.create'))
+    from(route('contact.create'))
         ->post(route('contact.store'), [
             'name' => 'Jane Doe',
             'email' => 'not-an-email',
@@ -260,7 +249,7 @@ it('renders preserved values and accessible validation feedback', function () {
             'message' => '',
         ]);
 
-    $this->get(route('contact.create'))
+    get(route('contact.create'))
         ->assertOk()
         ->assertSee('Please review the highlighted fields.')
         ->assertSeeHtml('value="Jane Doe"')
@@ -386,7 +375,7 @@ it('renders enabled contact and footer social profiles but not disabled ones', f
     $contactProfile = SocialProfileFixtures::create(SocialPlatform::LinkedIn, 'https://linkedin.com/in/contact-only', false, true);
     SocialProfileFixtures::create(SocialPlatform::Bluesky, 'https://bsky.app/profile/disabled', true, true, false);
 
-    $this->get(route('contact.create'))
+    get(route('contact.create'))
         ->assertSeeHtml($contactProfile->url)
         ->assertSeeHtml($footerProfile->url)
         ->assertDontSeeHtml('https://bsky.app/profile/disabled');
@@ -404,7 +393,7 @@ it('escapes a social profile display label on the contact page', function () {
         '<img src=x onerror=alert(1)>',
     );
 
-    $this->get(route('contact.create'))
+    get(route('contact.create'))
         ->assertSee('<img src=x onerror=alert(1)>')
         ->assertDontSeeHtml('<img src=x onerror=alert(1)>');
 });

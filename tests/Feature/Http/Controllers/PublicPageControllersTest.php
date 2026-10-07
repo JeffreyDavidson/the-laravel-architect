@@ -1,13 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
-use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -15,7 +13,10 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
+
+use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
+use function Pest\Laravel\withVite;
 
 pest()->use(RefreshDatabase::class);
 
@@ -159,7 +160,7 @@ beforeEach(function () {
 });
 
 it('renders the core public pages', function (string $uri, string $copy) {
-    $this->get($uri)
+    get($uri)
         ->assertOk()
         ->assertSeeHtml($copy);
 })->with([
@@ -175,20 +176,20 @@ it('renders the core public pages', function (string $uri, string $copy) {
 ]);
 
 it('renders page-specific SEO metadata', function () {
-    $this->get(route('about'))
+    get(route('about'))
         ->assertOk()
         ->assertSeeHtml('<title>About — Jeffrey Davidson</title>')
         ->assertSeeHtml('<meta name="description" content="Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.">');
 });
 
 it('shares pages with a territory-specific Open Graph locale', function () {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('<meta property="og:locale" content="en_US">');
 });
 
 it('names the mobile theme toggle by its visible label', function () {
-    $content = responseContent($this->get(route('home'))
+    $content = responseContent(get(route('home'))
         ->assertOk()
         ->getContent());
 
@@ -202,54 +203,38 @@ it('names the mobile theme toggle by its visible label', function () {
 });
 
 it('gives tag and category archives with the same name distinct titles', function () {
-    $category = Category::query()->create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
+    $category = Category::factory()->create(['name' => 'Laravel']);
+    $tag = Tag::factory()->create(['name' => 'Laravel']);
 
-    $this->get(route('blog.category', $category))
+    get(route('blog.category', $category))
         ->assertOk()
         ->assertSeeHtml('<title>Laravel Articles — Jeffrey Davidson</title>');
-    $this->get(route('blog.tag', $tag))
+    get(route('blog.tag', $tag))
         ->assertOk()
         ->assertSeeHtml('<title>Articles Tagged Laravel — Jeffrey Davidson</title>');
 });
 
 it('renders model-specific SEO metadata', function () {
-    $author = User::factory()->create();
+    $post = Post::factory()->published()
+        ->create([
+            'title' => 'Designing Clear Laravel Boundaries',
+            'excerpt' => 'A focused guide to keeping Laravel applications maintainable.',
+        ]);
 
-    $post = Post::query()->create([
-        'title' => 'Designing Clear Laravel Boundaries',
-        'excerpt' => 'A focused guide to keeping Laravel applications maintainable.',
-        'content' => 'Clear boundaries keep application behavior understandable.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-
-    $this->get(route('blog.show', $post))
+    get(route('blog.show', $post))
         ->assertOk()
         ->assertSeeHtml('<title>Designing Clear Laravel Boundaries — Jeffrey Davidson</title>')
         ->assertSeeHtml('<meta name="description" content="A focused guide to keeping Laravel applications maintainable.">');
 });
 
 it('shares blog posts as articles with their publication times', function () {
-    $this->travelTo(Date::parse('2026-09-01 12:00:00'));
-    $post = Post::query()->create([
-        'title' => 'Designing Clear Laravel Boundaries',
-        'content' => 'Clear boundaries keep application behavior understandable.',
-        'user_id' => User::factory()
-            ->create()
-            ->id,
-        'status' => PublishStatus::Published,
-        'published_at' => Date::parse('2026-08-19 09:30:00'),
-    ]);
+    travelTo(Date::parse('2026-09-01 12:00:00'));
+    $post = Post::factory()->published()
+        ->create([
+            'published_at' => Date::parse('2026-08-19 09:30:00'),
+        ]);
 
-    $response = $this->get(route('blog.show', $post));
+    $response = get(route('blog.show', $post));
 
     $response->assertSeeHtml('<meta property="og:type" content="article">')
         ->assertSeeHtml('<meta property="article:published_time" content="2026-08-19T09:30:00+00:00">')
@@ -257,22 +242,16 @@ it('shares blog posts as articles with their publication times', function () {
 });
 
 it('shares one wide article image in social cards and structured data', function (string $slug, ?string $featuredImagePath, Closure $expectedImage) {
-    $this->withVite();
+    withVite();
     Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
-    $post = Post::query()->create([
-        'title' => 'Designing Clear Laravel Boundaries',
-        'slug' => $slug,
-        'content' => 'Clear boundaries keep application behavior understandable.',
-        'featured_image_path' => $featuredImagePath,
-        'user_id' => User::factory()
-            ->create()
-            ->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $post = Post::factory()->published()
+        ->create([
+            'slug' => $slug,
+            'featured_image_path' => $featuredImagePath,
+        ]);
     $image = configuredString($expectedImage($post));
 
-    $content = responseContent($this->get(route('blog.show', $post))
+    $content = responseContent(get(route('blog.show', $post))
         ->getContent());
 
     $graph = structuredDataGraph(decodeStructuredData($content)['@graph'] ?? null);
@@ -302,13 +281,8 @@ it('shares one wide article image in social cards and structured data', function
 ]);
 
 it('renders bundled editorial artwork and article navigation for seeded posts', function () {
-    $this->withVite();
+    withVite();
 
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
     $posts = [
         'hello-world-why-im-starting-this-blog' => 'post-hello-world-768',
         'from-kansas-to-florida-a-developers-journey' => 'post-kansas-florida-768',
@@ -318,18 +292,13 @@ it('renders bundled editorial artwork and article navigation for seeded posts', 
     ];
 
     foreach ($posts as $slug => $asset) {
-        $post = Post::query()->create([
-            'title' => Str::headline($slug),
-            'slug' => $slug,
-            'excerpt' => 'A practical structure for maintainable Laravel applications.',
-            'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
-            'category_id' => $category->id,
-            'user_id' => $author->id,
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDay(),
-        ]);
+        $post = Post::factory()->published()
+            ->create([
+                'slug' => $slug,
+                'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
+            ]);
 
-        $this->get(route('blog.show', $post))
+        get(route('blog.show', $post))
             ->assertOk()
             ->assertSeeHtml("data-post-artwork=\"{$slug}\"")
             ->assertSeeHtml($asset)
@@ -337,7 +306,7 @@ it('renders bundled editorial artwork and article navigation for seeded posts', 
             ->assertSeeHtml('data-article-toc');
     }
 
-    $blog = $this->get(route('blog.index'))
+    $blog = get(route('blog.index'))
         ->assertOk();
 
     foreach (array_keys($posts) as $slug) {
@@ -346,18 +315,10 @@ it('renders bundled editorial artwork and article navigation for seeded posts', 
 });
 
 it('renders canonical structured data for the site and blog posts', function () {
-    $author = User::factory()->create();
+    $post = Post::factory()->published()
+        ->create();
 
-    $post = Post::query()->create([
-        'title' => 'Structuring Laravel Applications',
-        'excerpt' => 'A practical guide to application structure.',
-        'content' => 'A maintainable application starts with clear boundaries.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-
-    $content = $this->get(route('blog.show', $post))
+    $content = get(route('blog.show', $post))
         ->assertOk()
         ->getContent();
 
@@ -393,17 +354,10 @@ it('renders canonical structured data for the site and blog posts', function () 
 
 it('keeps a post title from closing the structured data script', function () {
     $title = '</script><h1>x';
-    $author = User::factory()->create();
-    $post = Post::query()->create([
-        'title' => $title,
-        'slug' => 'script-breakout',
-        'content' => 'Body.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $post = Post::factory()->published()
+        ->create(['title' => $title]);
 
-    $content = $this->get(route('blog.show', $post))
+    $content = get(route('blog.show', $post))
         ->assertDontSeeHtml('</script><h1>')
         ->getContent();
 
@@ -416,7 +370,7 @@ it('keeps a post title from closing the structured data script', function () {
 
 it('renders canonical structured data for static public pages', function (string $routeName, string $type, string $name) {
     $url = route($routeName);
-    $content = $this->get($url)
+    $content = get($url)
         ->assertOk()
         ->getContent();
 
@@ -449,24 +403,15 @@ it('renders canonical structured data for static public pages', function (string
 ]);
 
 it('renders canonical structured data for podcasts and episodes', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Designing Clear Boundaries',
-        'slug' => 'designing-clear-boundaries',
-        'episode_number' => 12,
-        'description' => 'A practical discussion about application boundaries.',
-        'duration_seconds' => 3725,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()->for($podcast)
+        ->published()
+        ->create([
+            'episode_number' => 12,
+            'duration_seconds' => 3725,
+        ]);
 
-    $content = $this->get(route('podcast.episode', [$podcast, $episode]))
+    $content = get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
         ->getContent();
 
@@ -503,17 +448,14 @@ it('renders canonical structured data for podcasts and episodes', function () {
 });
 
 it('renders canonical structured data for project case studies', function () {
-    $project = Project::query()->create([
-        'title' => 'Architecture Decisions',
-        'slug' => 'architecture-decisions',
-        'description' => 'A project shaped by explicit technical tradeoffs.',
-        'url' => 'https://example.com/architecture-decisions',
-        'github_url' => 'https://github.com/example/architecture-decisions',
-        'tech_stack' => ['Laravel', 'Pest'],
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create([
+            'url' => 'https://example.com/architecture-decisions',
+            'github_url' => 'https://github.com/example/architecture-decisions',
+            'tech_stack' => ['Laravel', 'Pest'],
+        ]);
 
-    $content = $this->get(route('projects.show', $project))
+    $content = get(route('projects.show', $project))
         ->assertOk()
         ->getContent();
 
@@ -542,37 +484,15 @@ it('renders canonical structured data for project case studies', function () {
 });
 
 it('renders canonical structured data for public content collections', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Structuring Laravel Applications',
-        'slug' => 'structuring-laravel-applications',
-        'content' => 'A maintainable application starts with clear boundaries.',
-        'category_id' => $category->id,
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $category = Category::factory()->create(['name' => 'Architecture']);
+    $tag = Tag::factory()->create(['name' => 'Boundaries']);
+    $post = Post::factory()->for($category)
+        ->published()
+        ->create();
     $post->attachTag($tag);
-    $project = Project::query()->create([
-        'title' => 'Architecture Decisions',
-        'slug' => 'architecture-decisions',
-        'description' => 'A project shaped by explicit technical tradeoffs.',
-        'status' => PublishStatus::Published,
-    ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
+    $project = Project::factory()->published()
+        ->create();
+    $podcast = Podcast::factory()->create();
 
     $collections = [
         [route('blog.index'), 'Blog', $post->title, route('blog.show', $post)],
@@ -583,7 +503,7 @@ it('renders canonical structured data for public content collections', function 
     ];
 
     foreach ($collections as [$url, $name, $itemName, $itemUrl]) {
-        $content = $this->get($url)
+        $content = get($url)
             ->assertOk()
             ->getContent();
 
@@ -617,26 +537,13 @@ it('renders canonical structured data for public content collections', function 
 });
 
 it('uses page-specific metadata for paginated taxonomy archives', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
+    $category = Category::factory()->create(['name' => 'Architecture']);
+    $tag = Tag::factory()->create(['name' => 'Boundaries']);
 
     foreach (range(1, 11) as $index) {
-        $post = Post::query()->create([
-            'title' => "Architecture Article {$index}",
-            'slug' => "architecture-article-{$index}",
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'category_id' => $category->id,
-            'user_id' => $author->id,
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        $post = Post::factory()->for($category)
+            ->published()
+            ->create(['published_at' => now()->subDays($index)]);
         $post->attachTag($tag);
     }
 
@@ -653,7 +560,7 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
         ],
     ] as $metadata) {
         $url = $metadata['url'];
-        $content = $this->get($url)
+        $content = get($url)
             ->assertOk()
             ->assertSeeHtml('<title>'.$metadata['title'].'</title>')
             ->assertSeeHtml('<meta name="description" content="'.$metadata['description'].'">')
@@ -691,56 +598,40 @@ it('uses page-specific metadata for paginated taxonomy archives', function () {
 });
 
 it('returns not found for out-of-range taxonomy archive pages', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Designing Clear Laravel Boundaries',
-        'slug' => 'designing-clear-laravel-boundaries',
-        'content' => 'A maintainable application starts with clear boundaries.',
-        'category_id' => $category->id,
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create();
+    $post = Post::factory()->for($category)
+        ->published()
+        ->create();
     $post->attachTag($tag);
 
     foreach ([
         route('blog.category', ['category' => $category, 'page' => 2]),
         route('blog.tag', ['tag' => $tag, 'page' => 2]),
     ] as $url) {
-        $this->get($url)
+        get($url)
             ->assertNotFound();
     }
 });
 
 it('uses page-specific metadata for paginated podcast archives', function () {
-    $podcast = Podcast::query()->create([
+    $podcast = Podcast::factory()->create([
         'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
         'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
     ]);
 
     foreach (range(1, 21) as $index) {
-        Episode::query()->create([
-            'podcast_id' => $podcast->id,
-            'title' => "Architecture Session {$index}",
-            'slug' => "architecture-session-{$index}",
-            'description' => "A conversation about architecture topic {$index}.",
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        Episode::factory()->for($podcast)
+            ->published()
+            ->create([
+                'title' => "Architecture Session {$index}",
+                'slug' => "architecture-session-{$index}",
+                'published_at' => now()->subDays($index),
+            ]);
     }
 
     $url = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
-    $content = $this->get($url)
+    $content = get($url)
         ->assertOk()
         ->assertSeeHtml('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>')
         ->assertSeeHtml('<meta name="description" content="Conversations about maintainable Laravel applications. Page 2 of 2.">')
@@ -782,27 +673,17 @@ it('uses page-specific metadata for paginated podcast archives', function () {
 });
 
 it('returns not found for out-of-range podcast archive pages', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about maintainable Laravel applications.',
-        'is_active' => true,
-    ]);
-    Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Designing Clear Boundaries',
-        'slug' => 'designing-clear-boundaries',
-        'description' => 'A practical discussion about application boundaries.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $podcast = Podcast::factory()->create();
+    Episode::factory()->for($podcast)
+        ->published()
+        ->create();
 
-    $this->get(route('podcast.show', ['podcast' => $podcast, 'page' => 2]))
+    get(route('podcast.show', ['podcast' => $podcast, 'page' => 2]))
         ->assertNotFound();
 });
 
 it('keeps one main landmark on public index pages', function (string $routeName) {
-    $content = responseContent($this->get(route($routeName))
+    $content = responseContent(get(route($routeName))
         ->assertOk()
         ->getContent());
 
@@ -817,14 +698,14 @@ it('keeps one main landmark on public index pages', function (string $routeName)
 ]);
 
 it('renders only the site icon links', function () {
-    $response = $this->get(route('home'));
+    $response = get(route('home'));
 
     $response->assertSeeHtml('<link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-companion-32.png" />')
         ->assertDontSeeHtml('rel="shortcut icon"');
 });
 
 it('uses a concise primary navigation and a project-focused call to action', function () {
-    $content = responseContent($this->get(route('home'))
+    $content = responseContent(get(route('home'))
         ->assertOk()
         ->assertSee('Writing')
         ->assertSee('Discuss a Project')
@@ -849,7 +730,7 @@ it('provides a valid legacy favicon fallback', function () {
 });
 
 it('keeps public technology and channel details consistent', function () {
-    $this->get(route('about'))
+    get(route('about'))
         ->assertOk()
         ->assertSeeHtml('aria-label="Flip Jeffrey Davidson developer card"')
         ->assertSeeHtml('aria-pressed="false"')
@@ -858,19 +739,19 @@ it('keeps public technology and channel details consistent', function () {
         ->assertSeeHtml('>8.5</span>')
         ->assertSee('I share practical Laravel videos');
 
-    $this->get(route('uses'))
+    get(route('uses'))
         ->assertOk()
         ->assertSee('Laravel '.configuredString(config('public-site.technology.laravel')))
         ->assertSee('Filament '.configuredString(config('public-site.technology.filament')));
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('https://youtube.com/@thelaravelarchitect')
         ->assertSee('Away from the editor');
 });
 
 it('keeps the developer card name out of the about page heading outline', function () {
-    $content = responseContent($this->get(route('about'))
+    $content = responseContent(get(route('about'))
         ->assertOk()
         ->getContent());
 
@@ -879,14 +760,14 @@ it('keeps the developer card name out of the about page heading outline', functi
 });
 
 it('describes the developer card stat sheet to assistive technology', function () {
-    $this->get(route('about'))
+    get(route('about'))
         ->assertOk()
         ->assertSeeHtml('aria-describedby="about-card-stats"')
         ->assertSeeHtml('id="about-card-stats"');
 });
 
 it('places the mobile uses jump navigation before the equipment list', function () {
-    $content = responseContent($this->get(route('uses'))
+    $content = responseContent(get(route('uses'))
         ->assertOk()
         ->assertSeeHtml('aria-label="Jump to uses section"')
         ->getContent());
@@ -898,18 +779,18 @@ it('places the mobile uses jump navigation before the equipment list', function 
 it('links the privacy notice from public collection points', function () {
     $privacyUrl = route('privacy');
 
-    $this->get(route('contact.create'))
+    get(route('contact.create'))
         ->assertOk()
         ->assertSeeHtml($privacyUrl)
         ->assertSee('Your details are used to reply to this inquiry.');
 });
 
 it('loads public interactivity and typography from the local Vite bundle', function () {
-    $this->withVite();
+    withVite();
 
     $manifest = assetManifest();
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')
         ->assertDontSeeHtml('fonts.bunny.net')
@@ -923,24 +804,24 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSeeHtml($manifest['resources/images/podcast-coffee-logo-512.webp']['file'])
         ->assertSeeHtml($manifest['resources/js/app.js']['file']);
 
-    $this->get(route('about'))
+    get(route('about'))
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/app.css']['file'])
         ->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])
         ->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])
         ->assertSeeHtml('sizes="(min-width: 1024px) 300px, 250px"');
 
-    $this->get(route('blog.index'))
+    get(route('blog.index'))
         ->assertOk()
         ->assertSeeHtml('x-data="siteHeader"')
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('projects.index'))
+    get(route('projects.index'))
         ->assertOk()
         ->assertSeeHtml('x-data="siteHeader"')
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    $this->get(route('podcast.index'))
+    get(route('podcast.index'))
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
@@ -960,7 +841,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 });
 
 it('renders one concise client-focused services section', function () {
-    $content = responseContent($this->get(route('home'))
+    $content = responseContent(get(route('home'))
         ->assertOk()
         ->assertSee('Where I can help')
         ->assertSee('Improve an existing codebase')
@@ -975,7 +856,7 @@ it('renders one concise client-focused services section', function () {
 });
 
 it('prioritizes the art-directed homepage hero', function () {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('media="(max-width: 767px)"')
         ->assertSeeHtml('sizes="100vw"')
@@ -986,9 +867,7 @@ it('prioritizes the art-directed homepage hero', function () {
 });
 
 it('gives every homepage article a responsive image', function () {
-    $this->withVite();
-
-    $author = User::factory()->create();
+    withVite();
 
     $posts = [
         'what-15-years-of-web-development-taught-me',
@@ -997,17 +876,14 @@ it('gives every homepage article a responsive image', function () {
     ];
 
     foreach ($posts as $index => $slug) {
-        Post::query()->create([
-            'title' => Str::headline($slug),
-            'slug' => $slug,
-            'content' => 'A practical Laravel architecture article.',
-            'user_id' => $author->id,
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        Post::factory()->published()
+            ->create([
+                'slug' => $slug,
+                'published_at' => now()->subDays($index),
+            ]);
     }
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('home-writing-fallback-384')
         ->assertSeeHtml('home-writing-fallback-768')
@@ -1018,7 +894,7 @@ it('gives every homepage article a responsive image', function () {
 });
 
 it('places the theme bootstrap inside the document head', function () {
-    $content = responseContent($this->get(route('home'))
+    $content = responseContent(get(route('home'))
         ->assertOk()
         ->getContent());
 
@@ -1027,24 +903,15 @@ it('places the theme bootstrap inside the document head', function () {
 });
 
 it('renders accessible podcast episode embeds and external links', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'color' => '#2563eb',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Designing Laravel Applications',
-        'slug' => 'designing-laravel-applications',
-        'description' => 'A practical architecture discussion.',
-        'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $podcast = Podcast::factory()->create(['color' => '#2563eb']);
+    $episode = Episode::factory()->for($podcast)
+        ->published()
+        ->create([
+            'title' => 'Designing Laravel Applications',
+            'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ]);
 
-    $this->get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcast.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSeeHtml('Play Designing Laravel Applications on YouTube')
         ->assertSeeHtml('title="Designing Laravel Applications on YouTube"')
@@ -1060,7 +927,7 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertDontSeeHtml('<style>')
         ->assertDontSeeHtml('onclick=');
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('style="--podcast-color: #2563eb;"')
         ->assertSeeHtml('[--dur:0.7s]')
@@ -1069,28 +936,22 @@ it('renders accessible podcast episode embeds and external links', function () {
 });
 
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'color' => 'url(https://example.com/image.png)',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create(['color' => 'url(https://example.com/image.png)']);
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('style="--podcast-color: #6366f1;"')
         ->assertDontSeeHtml('url(https://example.com/image.png)');
 });
 
 it('keeps the admin panel behind authentication', function () {
-    $this->withVite();
+    withVite();
 
     $manifest = assetManifest();
 
-    $this->get('/admin')
+    get('/admin')
         ->assertRedirect('/admin/login');
-    $this->get('/admin/login')
+    get('/admin/login')
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
         ->assertSee('Appearance')
@@ -1100,40 +961,17 @@ it('keeps the admin panel behind authentication', function () {
 });
 
 it('uses published work as homepage proof', function () {
-    $author = User::factory()->create();
+    Post::factory()->published()
+        ->create();
 
-    Post::query()->create([
-        'title' => 'Published architecture notes',
-        'slug' => 'published-architecture-notes',
-        'content' => 'Useful Laravel architecture notes.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    Post::factory()->create();
 
-    Post::query()->create([
-        'title' => 'Unpublished architecture notes',
-        'slug' => 'unpublished-architecture-notes',
-        'content' => 'A draft that should not count.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Draft,
-    ]);
+    Project::factory()->published()
+        ->create();
 
-    Project::query()->create([
-        'title' => 'Published Laravel application',
-        'slug' => 'published-laravel-application',
-        'description' => 'A published project.',
-        'status' => PublishStatus::Published,
-    ]);
+    Project::factory()->create();
 
-    Project::query()->create([
-        'title' => 'Draft Laravel application',
-        'slug' => 'draft-laravel-application',
-        'description' => 'A draft project that should not count.',
-        'status' => PublishStatus::Draft,
-    ]);
-
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertViewHas('publishedPostCount', 1)
         ->assertViewHas('publishedProjectCount', 1)
@@ -1148,7 +986,7 @@ it('uses published work as homepage proof', function () {
 });
 
 it('does not present zero-value homepage proof', function () {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSee('Years building PHP')
         ->assertDontSee('Published articles')
@@ -1157,24 +995,21 @@ it('does not present zero-value homepage proof', function () {
 });
 
 it('presents published projects as case studies without inferring product status', function () {
-    $project = Project::query()->create([
-        'title' => 'Architecture Decisions',
-        'slug' => 'architecture-decisions',
-        'description' => 'A project shaped by explicit technical tradeoffs.',
-        'content' => '## The challenge\n\nModel a complex domain without hiding its rules.',
-        'github_url' => 'https://github.com/example/architecture-decisions',
-        'tech_stack' => ['Laravel', 'Pest'],
-        'is_featured' => true,
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->featured()
+        ->create([
+            'content' => '## The challenge\n\nModel a complex domain without hiding its rules.',
+            'github_url' => 'https://github.com/example/architecture-decisions',
+            'tech_stack' => ['Laravel', 'Pest'],
+        ]);
 
-    $this->get(route('projects.index'))
+    get(route('projects.index'))
         ->assertOk()
         ->assertSee('Selected projects')
         ->assertSee('Explore the project')
         ->assertSee($project->title);
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('Project overview')
         ->assertSee('Discuss a similar project')
@@ -1187,23 +1022,18 @@ it('serves responsive project images while retaining the original fallback', fun
     $image = UploadedFile::fake()->image('architecture.png', 1280, 72);
     Storage::disk('public')->put('projects/architecture.png', $image->getContent());
 
-    $project = Project::query()->create([
-        'title' => 'Responsive Architecture',
-        'slug' => 'responsive-architecture',
-        'description' => 'A project with responsive imagery.',
-        'is_featured' => true,
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/architecture.png',
-    ]);
+    $project = Project::factory()->published()
+        ->featured()
+        ->create(['featured_image_path' => 'projects/architecture.png']);
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('architecture-640.webp')
         ->assertSeeHtml('architecture-1280.webp')
         ->assertSeeHtml(configuredString($project->featured_image_url));
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('aspect-video')
@@ -1215,19 +1045,11 @@ it('serves responsive post images while retaining the original fallback', functi
     Storage::fake('public');
     $image = UploadedFile::fake()->image('article.png', 1280, 72);
     Storage::disk('public')->put('posts/article.png', $image->getContent());
-    $author = User::factory()->create();
 
-    $post = Post::query()->create([
-        'title' => 'Responsive Article',
-        'slug' => 'responsive-article',
-        'content' => 'An article with responsive imagery.',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now(),
-        'featured_image_path' => 'posts/article.png',
-    ]);
+    $post = Post::factory()->published()
+        ->create(['featured_image_path' => 'posts/article.png']);
 
-    $this->get(route('blog.show', $post))
+    get(route('blog.show', $post))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('article-640.webp')
@@ -1243,15 +1065,9 @@ it('serves responsive podcast cover images while retaining the original fallback
     $image = UploadedFile::fake()->image('podcast.png', 1280, 72);
     Storage::disk('public')->put('podcasts/podcast.png', $image->getContent());
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Responsive Podcast',
-        'slug' => 'responsive-podcast',
-        'description' => 'A podcast with responsive cover artwork.',
-        'cover_image_path' => 'podcasts/podcast.png',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/podcast.png']);
 
-    $this->get(route('podcast.index'))
+    get(route('podcast.index'))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('podcast-640.webp')
@@ -1260,25 +1076,22 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertSeeHtml('fetchpriority="high"')
         ->assertSeeHtml(configuredString($podcast->cover_image_url));
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('sizes="224px"')
         ->assertSeeHtml(configuredString($podcast->cover_image_url));
 });
 
 it('shares the podcast cover in social cards', function (?string $coverImagePath, string $slug) {
-    $this->withVite();
+    withVite();
     Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Shared Podcast',
+    $podcast = Podcast::factory()->create([
         'slug' => $slug,
-        'description' => 'A podcast with cover artwork.',
         'cover_image_path' => $coverImagePath,
-        'is_active' => true,
     ]);
     $coverImageUrl = configuredString($podcast->cover_image_url);
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml("<meta property=\"og:image\" content=\"{$coverImageUrl}\">")
         ->assertSeeHtml('<meta name="twitter:card" content="summary_large_image">')
@@ -1289,30 +1102,20 @@ it('shares the podcast cover in social cards', function (?string $coverImagePath
 ]);
 
 it('shares the site image for a podcast without a cover', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast Without Artwork',
-        'slug' => 'podcast-without-artwork',
-        'description' => 'A podcast with no cover artwork.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create();
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('<meta property="og:image" content="'.secure_url('/images/logo-color-black-bg.png').'">')
         ->assertSeeHtml('<meta name="twitter:card" content="summary">');
 });
 
 it('serves responsive optimized fallback artwork for known podcasts', function () {
-    $this->withVite();
+    withVite();
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Coffee With The Laravel Architect',
-        'slug' => 'coffee-with-the-laravel-architect',
-        'description' => 'A podcast with bundled fallback artwork.',
-        'is_active' => true,
-    ]);
+    $podcast = Podcast::factory()->create(['slug' => 'coffee-with-the-laravel-architect']);
 
-    $this->get(route('podcast.show', $podcast))
+    get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('srcset="'.$podcast->fallback_cover_image_srcset.'"')
         ->assertSeeHtml('sizes="224px"')
@@ -1320,22 +1123,10 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {
-    $publishedVideo = Video::query()->create([
-        'youtube_id' => 'published-video',
-        'title' => 'Modern Laravel Architecture',
-        'slug' => 'modern-laravel-architecture',
-        'thumbnail_url' => 'https://example.com/video.jpg',
-        'duration' => 'PT12M34S',
-        'published_at' => now()->subDay(),
-    ]);
-    $futureVideo = Video::query()->create([
-        'youtube_id' => 'future-video',
-        'title' => 'Future Laravel Video',
-        'slug' => 'future-laravel-video',
-        'published_at' => now()->addDay(),
-    ]);
+    $publishedVideo = Video::factory()->create();
+    $futureVideo = Video::factory()->create(['published_at' => now()->addDay()]);
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSee($publishedVideo->title)
         ->assertSee($publishedVideo->youtube_url)
@@ -1346,42 +1137,28 @@ it('shows synced published YouTube videos without stale launch content', functio
 });
 
 it('hides inactive podcasts from public podcast surfaces', function () {
-    $activePodcast = Podcast::query()->create([
-        'name' => 'Coffee With The Laravel Architect',
-        'slug' => 'coffee-with-the-laravel-architect',
-        'description' => 'Laravel conversations',
-        'is_active' => true,
-    ]);
+    $activePodcast = Podcast::factory()->create();
 
-    $inactivePodcast = Podcast::query()->create([
-        'name' => 'Embracing Cloudy Days',
-        'slug' => 'embracing-cloudy-days',
-        'description' => 'Personal essays',
-        'is_active' => false,
-    ]);
+    $inactivePodcast = Podcast::factory()->inactive()
+        ->create();
 
-    $episode = Episode::query()->create([
-        'podcast_id' => $inactivePodcast->id,
-        'title' => 'Welcome to the Clouds',
-        'slug' => 'welcome-to-the-clouds',
-        'description' => 'A preserved inactive episode',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $episode = Episode::factory()->for($inactivePodcast)
+        ->published()
+        ->create();
 
-    $this->get('/podcasts')
+    get('/podcasts')
         ->assertOk()
         ->assertSee($activePodcast->name)
         ->assertDontSee($inactivePodcast->name)
         ->assertDontSee('Real Talk on Hard Days');
 
-    $this->get('/')
+    get('/')
         ->assertOk()
         ->assertDontSee($inactivePodcast->name)
         ->assertDontSeeHtml('toHaveCount</span>(<span class="syn-variable">2</span>');
 
-    $this->get(route('podcast.show', $inactivePodcast))
+    get(route('podcast.show', $inactivePodcast))
         ->assertNotFound();
-    $this->get(route('podcast.episode', [$inactivePodcast, $episode]))
+    get(route('podcast.episode', [$inactivePodcast, $episode]))
         ->assertNotFound();
 });

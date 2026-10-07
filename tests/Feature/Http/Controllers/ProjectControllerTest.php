@@ -1,35 +1,33 @@
 <?php
 
-use App\Enums\PublishStatus;
-use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('shows published projects once in their featured groups without repository links', function () {
     foreach ([['Later featured', true, 2], ['First featured', true, 1], ['Other work', false, 0]] as [$title, $featured, $order]) {
-        Project::query()->create([
-            'title' => $title,
-            'description' => "Summary for {$title}.",
-            'is_featured' => $featured,
-            'sort_order' => $order,
-            'github_url' => 'https://github.com/example/private-repository',
-            'status' => PublishStatus::Published,
-        ]);
+        Project::factory()->published()
+            ->create([
+                'description' => "Summary for {$title}.",
+                'is_featured' => $featured,
+                'sort_order' => $order,
+                'github_url' => 'https://github.com/example/private-repository',
+            ]);
     }
 
-    Project::query()->create(['title' => 'Unpublished work', 'description' => 'Private draft.', 'status' => PublishStatus::Draft]);
+    Project::factory()->create(['title' => 'Unpublished work']);
 
-    $response = $this->get(route('projects.index'));
+    $response = get(route('projects.index'));
 
     $response->assertOk()
         ->assertSeeInOrder(['Summary for First featured.', 'Summary for Later featured.', 'Summary for Other work.'])
@@ -47,7 +45,7 @@ it('shows published projects once in their featured groups without repository li
 });
 
 it('offers a contact path when no published projects are available', function () {
-    $response = $this->get(route('projects.index'));
+    $response = get(route('projects.index'));
 
     $response->assertOk()
         ->assertSee('Project details aren’t available here yet.')
@@ -58,25 +56,20 @@ it('offers a contact path when no published projects are available', function ()
 });
 
 it('filters published projects by technology and topic', function () {
-    $tag = Tag::query()->create([
-        'name' => ['en' => 'Laravel'],
-        'slug' => ['en' => 'laravel'],
-    ]);
-    $matchingProject = Project::query()->create([
-        'title' => 'Laravel project',
-        'description' => 'A Laravel project.',
-        'tech_stack' => ['Laravel', 'Filament'],
-        'status' => PublishStatus::Published,
-    ]);
+    $tag = Tag::factory()->create(['name' => 'Laravel']);
+    $matchingProject = Project::factory()->published()
+        ->create([
+            'title' => 'Laravel project',
+            'tech_stack' => ['Laravel', 'Filament'],
+        ]);
     $matchingProject->attachTag($tag);
-    Project::query()->create([
-        'title' => 'Vue project',
-        'description' => 'A Vue project.',
-        'tech_stack' => ['Vue'],
-        'status' => PublishStatus::Published,
-    ]);
+    Project::factory()->published()
+        ->create([
+            'title' => 'Vue project',
+            'tech_stack' => ['Vue'],
+        ]);
 
-    $this->get(route('projects.index', ['technology' => 'laravel', 'tag' => 'laravel']))
+    get(route('projects.index', ['technology' => 'laravel', 'tag' => 'laravel']))
         ->assertOk()
         ->assertSee('Laravel project')
         ->assertDontSee('Vue project')
@@ -85,31 +78,23 @@ it('filters published projects by technology and topic', function () {
 });
 
 it('explains when valid project filters have no matching projects', function () {
-    $laravelTag = Tag::query()->create([
-        'name' => ['en' => 'Laravel'],
-        'slug' => ['en' => 'laravel'],
-    ]);
-    $vueTag = Tag::query()->create([
-        'name' => ['en' => 'Vue'],
-        'slug' => ['en' => 'vue'],
-    ]);
+    $laravelTag = Tag::factory()->create(['name' => 'Laravel']);
+    $vueTag = Tag::factory()->create(['name' => 'Vue']);
 
-    $laravelProject = Project::query()->create([
-        'title' => 'Laravel project',
-        'description' => 'A Laravel project.',
-        'tech_stack' => ['Laravel'],
-        'status' => PublishStatus::Published,
-    ]);
+    $laravelProject = Project::factory()->published()
+        ->create([
+            'title' => 'Laravel project',
+            'tech_stack' => ['Laravel'],
+        ]);
     $laravelProject->attachTag($laravelTag);
-    $vueProject = Project::query()->create([
-        'title' => 'Vue project',
-        'description' => 'A Vue project.',
-        'tech_stack' => ['Vue'],
-        'status' => PublishStatus::Published,
-    ]);
+    $vueProject = Project::factory()->published()
+        ->create([
+            'title' => 'Vue project',
+            'tech_stack' => ['Vue'],
+        ]);
     $vueProject->attachTag($vueTag);
 
-    $this->get(route('projects.index', ['technology' => 'Laravel', 'tag' => 'vue']))
+    get(route('projects.index', ['technology' => 'Laravel', 'tag' => 'vue']))
         ->assertOk()
         ->assertSee('No projects match those filters.')
         ->assertSeeHtml(route('projects.index'))
@@ -122,15 +107,13 @@ it('uses responsive uploaded images in either project group', function (bool $fe
     $image = UploadedFile::fake()->image('showcase.png', 1280, 720);
     Storage::disk('public')->put('projects/showcase.png', $image->getContent());
 
-    $project = Project::query()->create([
-        'title' => 'Project showcase',
-        'description' => 'An uploaded product screenshot.',
-        'featured_image_path' => 'projects/showcase.png',
-        'is_featured' => $featured,
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create([
+            'featured_image_path' => 'projects/showcase.png',
+            'is_featured' => $featured,
+        ]);
 
-    $response = $this->get(route('projects.index'));
+    $response = get(route('projects.index'));
 
     $imageUrl = $project->featured_image_url;
     if ($imageUrl === null) {
@@ -146,15 +129,13 @@ it('uses responsive uploaded images in either project group', function (bool $fe
 })->with([true, false]);
 
 it('keeps repository URLs out of public project markup and structured data', function (?string $website) {
-    $project = Project::query()->create([
-        'title' => 'Private repository project',
-        'description' => 'Public case study, private source.',
-        'github_url' => 'https://github.com/example/confidential-repository',
-        'url' => $website,
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create([
+            'github_url' => 'https://github.com/example/confidential-repository',
+            'url' => $website,
+        ]);
 
-    $response = $this->get(route('projects.show', $project));
+    $response = get(route('projects.show', $project));
 
     $response->assertOk()
         ->assertDontSeeHtml('confidential-repository')
@@ -170,10 +151,9 @@ it('keeps repository URLs out of public project markup and structured data', fun
 })->with([null, 'https://example.com/product']);
 
 it('renders project content as safe Markdown', function () {
-    $project = Project::query()->create([
-        'title' => 'Safe project content',
-        'description' => 'A public case study.',
-        'content' => <<<'MARKDOWN'
+    $project = Project::factory()->published()
+        ->create([
+            'content' => <<<'MARKDOWN'
 ## Project approach
 
 This is **rendered** content.
@@ -182,10 +162,9 @@ This is **rendered** content.
 
 [Unsafe link](javascript:alert('unsafe'))
 MARKDOWN,
-        'status' => PublishStatus::Published,
-    ]);
+        ]);
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertSeeHtml('id="project-story"')
         ->assertSee('Project story')
@@ -196,19 +175,15 @@ MARKDOWN,
 });
 
 it('renders project metadata without filter links', function () {
-    $tag = Tag::query()->create([
-        'name' => ['en' => 'Architecture'],
-        'slug' => ['en' => 'architecture'],
-    ]);
-    $project = Project::query()->create([
-        'title' => 'Metadata project',
-        'description' => 'A project with useful metadata.',
-        'tech_stack' => ['Laravel'],
-        'status' => PublishStatus::Published,
-    ]);
+    $tag = Tag::factory()->create(['name' => 'Architecture']);
+    $project = Project::factory()->published()
+        ->create([
+            'title' => 'Metadata project',
+            'tech_stack' => ['Laravel'],
+        ]);
     $project->attachTag($tag);
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('Project story')
         ->assertSeeHtml('aria-label="Technologies used for Metadata project"')
@@ -219,51 +194,22 @@ it('renders project metadata without filter links', function () {
 });
 
 it('shows published writing and podcast episodes connected by project tags', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about architecture.',
-        'is_active' => true,
-    ]);
-    $tag = Tag::query()->create([
-        'name' => ['en' => 'Architecture'],
-        'slug' => ['en' => 'architecture'],
-    ]);
-    $project = Project::query()->create([
-        'title' => 'Connected project',
-        'description' => 'A project with related content.',
-        'status' => PublishStatus::Published,
-    ]);
+    $podcast = Podcast::factory()->create();
+    $tag = Tag::factory()->create(['name' => 'Architecture']);
+    $project = Project::factory()->published()
+        ->create();
     $project->attachTag($tag);
 
-    $post = Post::query()->create([
-        'title' => 'Connected article',
-        'slug' => 'connected-article',
-        'excerpt' => 'A connected article.',
-        'content' => 'Article content.',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $post = Post::factory()->published()
+        ->create(['title' => 'Connected article']);
     $post->attachTag($tag);
 
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->getKey(),
-        'title' => 'Connected episode',
-        'slug' => 'connected-episode',
-        'description' => 'A connected episode.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subHours(2),
-    ]);
+    $episode = Episode::factory()->for($podcast)
+        ->published()
+        ->create(['title' => 'Connected episode']);
     $episode->attachTag($tag);
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('Keep exploring')
         ->assertSee('Connected article')
@@ -274,33 +220,23 @@ it('shows published writing and podcast episodes connected by project tags', fun
 });
 
 it('loads only the related projects displayed on a project page', function () {
-    $project = Project::query()->create([
-        'title' => 'Current Project',
-        'slug' => 'current-project',
-        'description' => 'The current project.',
-        'status' => PublishStatus::Published,
-        'sort_order' => 1,
-    ]);
+    $project = Project::factory()->published()
+        ->create(['sort_order' => 1]);
 
     foreach (range(2, 5) as $sortOrder) {
-        Project::query()->create([
-            'title' => "Related Project {$sortOrder}",
-            'slug' => "related-project-{$sortOrder}",
-            'description' => "Related project {$sortOrder}.",
-            'status' => PublishStatus::Published,
-            'sort_order' => $sortOrder,
-        ]);
+        Project::factory()->published()
+            ->create([
+                'title' => "Related Project {$sortOrder}",
+                'sort_order' => $sortOrder,
+            ]);
     }
 
-    Project::query()->create([
+    Project::factory()->create([
         'title' => 'Draft Project',
-        'slug' => 'draft-project',
-        'description' => 'A draft project.',
-        'status' => PublishStatus::Draft,
         'sort_order' => 0,
     ]);
 
-    $this->get(route('projects.show', $project))
+    get(route('projects.show', $project))
         ->assertOk()
         ->assertViewHas('otherProjects', fn (mixed $otherProjects): bool => $otherProjects instanceof Collection && $otherProjects->count() === 3)
         ->assertSee('Related Project 2')
@@ -311,18 +247,14 @@ it('loads only the related projects displayed on a project page', function () {
 
 it('shares a project featured image in social cards', function () {
     Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
-    $project = Project::query()->create([
-        'title' => 'Project showcase',
-        'description' => 'An uploaded product screenshot.',
-        'featured_image_path' => 'projects/showcase.png',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create(['featured_image_path' => 'projects/showcase.png']);
     $imageUrl = $project->featured_image_url;
     if ($imageUrl === null) {
         throw new RuntimeException('Expected the uploaded project image URL.');
     }
 
-    $response = $this->get(route('projects.show', $project));
+    $response = get(route('projects.show', $project));
 
     $response->assertOk()
         ->assertSeeHtml("<meta property=\"og:image\" content=\"{$imageUrl}\">")
@@ -331,13 +263,10 @@ it('shares a project featured image in social cards', function () {
 });
 
 it('shares the site image for a project without a featured image', function () {
-    $project = Project::query()->create([
-        'title' => 'Project without artwork',
-        'description' => 'A project with no uploaded image.',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()->published()
+        ->create();
 
-    $response = $this->get(route('projects.show', $project));
+    $response = get(route('projects.show', $project));
 
     $response->assertOk()
         ->assertSeeHtml('<meta property="og:image" content="'.secure_url('/images/logo-color-black-bg.png').'">')

@@ -2,10 +2,12 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('prioritizes main destinations and keeps secondary links discoverable', function (): void {
-    $response = $this->get(route('home'));
+    $response = get(route('home'));
     $response->assertOk();
 
     $content = $response->getContent();
