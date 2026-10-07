@@ -98,7 +98,7 @@
                                                             <span class="sr-only">(opens in a new tab)</span>
                                                         @endif
                                                     </div>
-                                                    <h3 class="group-hover:text-brand-600 mt-2 text-xl font-semibold text-gray-900 transition-colors dark:text-white">
+                                                    <h3 class="group-hover:text-archive-link mt-2 text-xl font-semibold text-gray-900 transition-colors dark:text-white">
                                                         {!! $item['highlightedTitle'] !!}
                                                     </h3>
                                                     @if ($item['highlightedDescription'])

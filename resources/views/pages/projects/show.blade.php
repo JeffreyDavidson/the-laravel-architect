@@ -95,7 +95,7 @@
                     @if ($project->content)
                         <x-markdown
                             :content="$project->content"
-                            class="prose-headings:font-semibold prose-h2:mt-10 prose-h2:text-2xl prose-h3:text-xl prose-p:leading-8 prose-pre:overflow-x-auto [&_h2:first-child]:mt-0 [&_img]:rounded-xl break-words"
+                            class="prose-headings:font-semibold dark:prose-a:text-brand-600 prose-h2:mt-10 prose-h2:text-2xl prose-h3:text-xl prose-p:leading-8 prose-pre:overflow-x-auto [&_h2:first-child]:mt-0 [&_img]:rounded-xl break-words"
                         />
                     @else
                         <p class="text-lg leading-8 text-gray-600 dark:text-gray-400">

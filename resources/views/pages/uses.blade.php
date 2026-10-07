@@ -28,11 +28,15 @@
         class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white lg:hidden"
     >
         <div class="mx-auto flex max-w-7xl gap-6 overflow-x-auto px-4 py-4 font-mono text-xs tracking-wide text-gray-600 uppercase sm:px-6 dark:text-gray-400">
-            <a href="#hardware" class="hover:text-brand-600 whitespace-nowrap">Hardware</a>
-            <a href="#development" class="hover:text-brand-600 whitespace-nowrap">Development</a>
-            <a href="#content-creation" class="hover:text-brand-600 whitespace-nowrap">Content</a>
-            <a href="#productivity" class="hover:text-brand-600 whitespace-nowrap">Productivity</a>
-            <a href="#this-site" class="hover:text-brand-600 whitespace-nowrap">This site</a>
+            <a href="#hardware" class="hover:text-brand-action dark:hover:text-brand-600 whitespace-nowrap">Hardware</a>
+            <a href="#development" class="hover:text-brand-action dark:hover:text-brand-600 whitespace-nowrap"
+                >Development</a>
+            <a href="#content-creation" class="hover:text-brand-action dark:hover:text-brand-600 whitespace-nowrap"
+                >Content</a>
+            <a href="#productivity" class="hover:text-brand-action dark:hover:text-brand-600 whitespace-nowrap"
+                >Productivity</a>
+            <a href="#this-site" class="hover:text-brand-action dark:hover:text-brand-600 whitespace-nowrap"
+                >This site</a>
         </div>
     </nav>
 
@@ -171,23 +175,23 @@
                             <nav aria-label="Jump to uses section" class="space-y-2">
                                 <a
                                     href="#hardware"
-                                    class="hover:text-brand-600 block text-sm text-gray-600 transition-colors dark:text-gray-400"
+                                    class="hover:text-brand-action block text-sm text-gray-600 transition-colors dark:text-gray-400"
                                 >Hardware</a>
                                 <a
                                     href="#development"
-                                    class="hover:text-brand-600 block text-sm text-gray-600 transition-colors dark:text-gray-400"
+                                    class="hover:text-brand-action block text-sm text-gray-600 transition-colors dark:text-gray-400"
                                 >Development</a>
                                 <a
                                     href="#content-creation"
-                                    class="hover:text-brand-600 block text-sm text-gray-600 transition-colors dark:text-gray-400"
+                                    class="hover:text-brand-action block text-sm text-gray-600 transition-colors dark:text-gray-400"
                                 >Content Creation</a>
                                 <a
                                     href="#productivity"
-                                    class="hover:text-brand-600 block text-sm text-gray-600 transition-colors dark:text-gray-400"
+                                    class="hover:text-brand-action block text-sm text-gray-600 transition-colors dark:text-gray-400"
                                 >Productivity</a>
                                 <a
                                     href="#this-site"
-                                    class="hover:text-brand-600 block text-sm text-gray-600 transition-colors dark:text-gray-400"
+                                    class="hover:text-brand-action block text-sm text-gray-600 transition-colors dark:text-gray-400"
                                 >This Site</a>
                             </nav>
                         </section>

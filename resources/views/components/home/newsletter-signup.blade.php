@@ -69,7 +69,7 @@
         Confirmation is required. See the
         <a
             href="{{ route('privacy') }}"
-            class="hover:text-brand-600 dark:hover:text-brand-300 underline decoration-gray-300 underline-offset-2 transition-colors dark:decoration-gray-700"
+            class="hover:text-brand-action dark:hover:text-brand-300 underline decoration-gray-300 underline-offset-2 transition-colors dark:decoration-gray-700"
         >privacy notice</a>
         for how your email is handled.
     </p>

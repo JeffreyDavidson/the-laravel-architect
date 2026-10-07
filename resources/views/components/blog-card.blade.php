@@ -24,7 +24,7 @@
             class="focus-visible:ring-brand-500 dark:focus-visible:ring-offset-brand-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-white"
         >
             <h2 @class([
-                'mb-3 text-balance font-semibold text-gray-900 group-hover:text-brand-600 dark:text-gray-100',
+                'mb-3 text-balance font-semibold text-gray-900 group-hover:text-brand-action dark:group-hover:text-brand-600 dark:text-gray-100',
                 'line-clamp-2 text-2xl tracking-[-0.025em] md:text-3xl transition-colors duration-200 motion-reduce:transition-none' => $editorial,
                 'text-xl md:text-2xl' => ! $editorial,
             ])>

@@ -49,7 +49,7 @@
                 :content="$content"
                 data-transcript-content
                 x-ref="content"
-                class="prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-600 dark:prose-p:text-gray-600 dark:prose-p:text-gray-400 [--tw-prose-code:var(--accent-pink)] [--tw-prose-links:var(--podcast-color)]"
+                class="prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline dark:prose-a:text-brand-600 hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-400 dark:prose-p:text-gray-400 [--tw-prose-code:var(--accent-pink)] [--tw-prose-links:var(--podcast-color)]"
             />
         </div>
     </details>
