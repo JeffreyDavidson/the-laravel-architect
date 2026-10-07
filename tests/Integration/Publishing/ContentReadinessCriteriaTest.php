@@ -2,6 +2,7 @@
 
 use App\Enums\ContentReadinessArea;
 use App\Enums\ProjectReadinessFilter;
+use App\Enums\ReadinessCheck;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -9,10 +10,10 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Video;
-use App\Queries\ContentReadinessQuery;
-use App\Queries\ContentReadinessSummaryQuery;
-use App\Queries\ProjectReadinessQuery;
-use App\Support\Content\ContentReadiness;
+use App\Publishing\ContentReadiness;
+use App\Publishing\ContentReadinessCriteria;
+use App\Publishing\ContentReadinessSummaryQuery;
+use App\Publishing\ProjectReadinessCriteria;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,25 +26,25 @@ beforeEach(function () {
 
 it('gives the same verdict as ContentReadiness for every check of every content type', function (string $modelClass) {
     /** @var class-string<Post|Project|Podcast|Episode|NewsletterIssue|Video> $modelClass */
-    $readinessQuery = app(ContentReadinessQuery::class);
-    $checkKeys = $readinessQuery->checkKeys(new $modelClass);
+    $criteria = app(ContentReadinessCriteria::class);
+    $checks = $criteria->checks(new $modelClass);
 
-    expect($checkKeys)->toBe(array_keys(new ContentReadiness($modelClass::query()->firstOrFail())->checks()));
+    expect($checks)->toBe(new ContentReadiness($modelClass::query()->firstOrFail())->checks());
 
-    foreach ($checkKeys as $check) {
+    foreach ($checks as $check) {
         $incomplete = $modelClass::query();
-        $readinessQuery->whereIncomplete($incomplete, [$check]);
+        $criteria->whereIncomplete($incomplete, [$check]);
         $complete = $modelClass::query();
-        $readinessQuery->whereComplete($complete, [$check]);
+        $criteria->whereComplete($complete, [$check]);
 
         expect(contentReadinessQueryIds($incomplete))
-            ->toBe(contentReadinessVerdictIds($modelClass::query(), fn (ContentReadiness $readiness): bool => ! $readiness->checkComplete($check)), "SQL and PHP disagree on incomplete [{$check}]")
+            ->toBe(contentReadinessVerdictIds($modelClass::query(), fn (ContentReadiness $readiness): bool => ! $readiness->isComplete($check)), "SQL and PHP disagree on incomplete [{$check->value}]")
             ->and(contentReadinessQueryIds($complete))
-            ->toBe(contentReadinessVerdictIds($modelClass::query(), fn (ContentReadiness $readiness): bool => $readiness->checkComplete($check)), "SQL and PHP disagree on complete [{$check}]");
+            ->toBe(contentReadinessVerdictIds($modelClass::query(), fn (ContentReadiness $readiness): bool => $readiness->isComplete($check)), "SQL and PHP disagree on complete [{$check->value}]");
     }
 
     $ready = $modelClass::query();
-    $readinessQuery->whereReady($ready);
+    $criteria->whereReady($ready);
 
     expect(contentReadinessQueryIds($ready))
         ->toBe(contentReadinessVerdictIds($modelClass::query(), fn (ContentReadiness $readiness): bool => $readiness->isReady()))
@@ -61,7 +62,7 @@ it('counts the same incomplete records as ContentReadiness for each dashboard ar
     $summaryQuery = app(ContentReadinessSummaryQuery::class);
     $expectedIds = contentReadinessVerdictIds(
         $summaryQuery->records($area),
-        fn (ContentReadiness $readiness): bool => ! array_all($area->checks(), $readiness->checkComplete(...)),
+        fn (ContentReadiness $readiness): bool => ! array_all($area->checks(), $readiness->isComplete(...)),
     );
 
     expect(contentReadinessQueryIds($summaryQuery->incomplete($area)))
@@ -74,16 +75,16 @@ it('counts the same incomplete records as ContentReadiness for each dashboard ar
 it('filters the same projects as ContentReadiness for each project readiness filter', function (ProjectReadinessFilter $filter, Closure $verdict) {
     /** @var Closure(ContentReadiness): bool $verdict */
     $query = Project::query();
-    app(ProjectReadinessQuery::class)->apply($query, $filter->value);
+    app(ProjectReadinessCriteria::class)->apply($query, $filter->value);
 
     expect(contentReadinessQueryIds($query))
         ->toBe(contentReadinessVerdictIds(Project::query(), $verdict))
         ->not->toBeEmpty();
 })->with([
     'ready' => [ProjectReadinessFilter::Ready, fn (ContentReadiness $readiness): bool => $readiness->isReady()],
-    'needs image' => [ProjectReadinessFilter::NeedsImage, fn (ContentReadiness $readiness): bool => ! $readiness->checkComplete('featured_image')],
-    'needs case study' => [ProjectReadinessFilter::NeedsCaseStudy, fn (ContentReadiness $readiness): bool => ! $readiness->checkComplete('case_study')],
-    'needs details' => [ProjectReadinessFilter::NeedsDetails, fn (ContentReadiness $readiness): bool => ! array_all(['description', 'project_link', 'tech_stack', 'tags'], $readiness->checkComplete(...))],
+    'needs image' => [ProjectReadinessFilter::NeedsImage, fn (ContentReadiness $readiness): bool => ! $readiness->isComplete(ReadinessCheck::FeaturedImage)],
+    'needs case study' => [ProjectReadinessFilter::NeedsCaseStudy, fn (ContentReadiness $readiness): bool => ! $readiness->isComplete(ReadinessCheck::CaseStudy)],
+    'needs details' => [ProjectReadinessFilter::NeedsDetails, fn (ContentReadiness $readiness): bool => ! array_all([ReadinessCheck::Description, ReadinessCheck::ProjectLink, ReadinessCheck::TechStack, ReadinessCheck::Tags], $readiness->isComplete(...))],
 ]);
 
 /**

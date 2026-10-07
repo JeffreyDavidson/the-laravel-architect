@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Exceptions\NewsletterIssueCannotBeSent;
 use App\Jobs\DeliverNewsletterIssue;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
@@ -19,15 +20,17 @@ final class SendNewsletterIssue
      * subscribers nothing is queued and the issue stays unsent, so it can be sent later.
      *
      * @return int The number of deliveries queued.
+     *
+     * @throws NewsletterIssueCannotBeSent When the issue is not live yet or was already sent.
      */
     public function handle(NewsletterIssue $issue): int
     {
         if (! $issue->isPublished()) {
-            throw new LogicException('Only published newsletter issues can be sent.');
+            throw NewsletterIssueCannotBeSent::notPublished();
         }
 
         if ($issue->wasSent()) {
-            throw new LogicException('This newsletter issue has already been sent.');
+            throw NewsletterIssueCannotBeSent::alreadySent();
         }
 
         $queue = Queue::connection('database');

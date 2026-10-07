@@ -19,7 +19,7 @@ The PHP suites are registered in `phpunit.xml` and executed through Pest. Pest B
 
 ## Test data
 
-Every model has a factory in `database/factories`. Create records with `Model::factory()` and a named state (for example `Post::factory()->published()->create()`) instead of `Model::query()->create([...])`, and pass only the attributes the test depends on. Publishable factories default to a draft that has every required-to-publish detail (`publishingIssues()` is empty); `published()` is live since yesterday and `scheduled()` goes live tomorrow. Factories leave slugs to the `#[Sluggable]` attribute, leave image paths empty so nothing touches storage, and create required parents through their own factories (use `for($parent)` or `recycle($parent)` to share one). `Integration/Database/Factories/ModelFactoriesTest.php` checks every factory state against the schema.
+Every model has a factory in `database/factories`. Create records with `Model::factory()` and a named state (for example `Post::factory()->published()->create()`) instead of `Model::query()->create([...])`, and pass only the attributes the test depends on. Publishable factories default to a draft that has every required-to-publish detail (`ContentReadiness::publishingIssues()` is empty); `published()` is live since yesterday and `scheduled()` goes live tomorrow. Factories leave slugs to the `#[Sluggable]` attribute, leave image paths empty so nothing touches storage, and create required parents through their own factories (use `for($parent)` or `recycle($parent)` to share one). `Integration/Database/Factories/ModelFactoriesTest.php` checks every factory state against the schema.
 
 ## Composer scripts
 

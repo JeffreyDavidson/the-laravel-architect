@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Tables\Columns;
 
 use App\Enums\ContentReadinessStatus;
+use App\Enums\ReadinessCheck;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Support\Content\ContentReadiness;
+use App\Publishing\ContentReadiness;
 use Filament\Tables\Columns\TextColumn;
 use WeakMap;
 
@@ -62,12 +63,32 @@ final class ReadinessColumn extends TextColumn
         }
 
         $readiness = new ContentReadiness($record);
+        $missingSummary = $this->missingSummary($readiness->missing());
 
         return $this->resolvedReadiness[$record] = [
             'status' => $readiness->status(),
             'description' => $this->showsProgress
-                ? "{$readiness->progress()} · {$readiness->missingSummary()}"
-                : $readiness->missingSummary(),
+                ? "{$this->progress($readiness)} · {$missingSummary}"
+                : $missingSummary,
         ];
+    }
+
+    /** How many checks are complete, such as "4/6 complete". */
+    private function progress(ContentReadiness $readiness): string
+    {
+        $total = count($readiness->checks());
+        $complete = $total - count($readiness->missing());
+
+        return "{$complete}/{$total} complete";
+    }
+
+    /** @param list<ReadinessCheck> $missing */
+    private function missingSummary(array $missing): string
+    {
+        if ($missing === []) {
+            return 'All public details are complete.';
+        }
+
+        return 'Missing: '.implode(', ', array_map(fn (ReadinessCheck $check): string => $check->getLabel(), $missing));
     }
 }

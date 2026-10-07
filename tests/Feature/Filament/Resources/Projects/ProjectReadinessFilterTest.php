@@ -4,7 +4,7 @@ use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
-use App\Support\Content\ContentReadiness;
+use App\Publishing\ContentReadiness;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;

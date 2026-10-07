@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Queries;
+namespace App\Publishing;
 
+use App\Enums\ReadinessCheck;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -11,7 +12,6 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
 use App\Support\Content\BundledPostArtwork;
-use App\Support\Content\ContentReadiness;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,13 +19,13 @@ use InvalidArgumentException;
 
 /**
  * The SQL form of the ContentReadiness checks, so lists and counts can filter on
- * readiness without loading records into memory. Every check key matches a key in
- * ContentReadiness::checks() and gives the same verdict for the same record;
- * ContentReadinessQueryTest proves the two agree.
+ * readiness without loading records into memory. It modifies the builder it is
+ * given. Every check matches one in ContentReadiness::checks() and gives the same
+ * verdict for the same record; ContentReadinessCriteriaTest proves the two agree.
  *
  * @see ContentReadiness
  */
-final readonly class ContentReadinessQuery
+final readonly class ContentReadinessCriteria
 {
     public function __construct(private BundledPostArtwork $bundledPostArtwork) {}
 
@@ -36,14 +36,14 @@ final readonly class ContentReadinessQuery
      */
     public function whereReady(Builder $query): void
     {
-        $this->whereComplete($query, $this->checkKeys($query->getModel()));
+        $this->whereComplete($query, $this->checks($query->getModel()));
     }
 
     /**
      * Keep the records that pass every one of the given checks.
      *
      * @param  Builder<covariant Model>  $query
-     * @param  list<string>  $checks
+     * @param  list<ReadinessCheck>  $checks
      */
     public function whereComplete(Builder $query, array $checks): void
     {
@@ -56,7 +56,7 @@ final readonly class ContentReadinessQuery
      * Keep the records that fail at least one of the given checks.
      *
      * @param  Builder<covariant Model>  $query
-     * @param  list<string>  $checks
+     * @param  list<ReadinessCheck>  $checks
      */
     public function whereIncomplete(Builder $query, array $checks): void
     {
@@ -70,24 +70,25 @@ final readonly class ContentReadinessQuery
     }
 
     /**
-     * The check keys for the model's content type, in ContentReadiness order.
+     * The checks for the model's content type, in ContentReadiness order.
      *
-     * @return list<string>
+     * @return list<ReadinessCheck>
      */
-    public function checkKeys(Model $model): array
+    public function checks(Model $model): array
     {
-        return array_keys($this->constraints($model));
+        return array_map(ReadinessCheck::from(...), array_keys($this->constraints($model)));
     }
 
-    private function constraint(Model $model, string $check): Closure
+    private function constraint(Model $model, ReadinessCheck $check): Closure
     {
-        return $this->constraints($model)[$check]
-            ?? throw new InvalidArgumentException(sprintf('Unknown readiness check [%s] for [%s].', $check, $model::class));
+        return $this->constraints($model)[$check->value]
+            ?? throw new InvalidArgumentException(sprintf('Unknown readiness check [%s] for [%s].', $check->value, $model::class));
     }
 
     /**
      * Each constraint keeps the records that pass the check. None of them can
      * evaluate to SQL NULL, so negating one keeps exactly the failing records.
+     * Keyed by ReadinessCheck value.
      *
      * @return array<string, Closure>
      */
@@ -95,55 +96,55 @@ final readonly class ContentReadinessQuery
     {
         return match (true) {
             $model instanceof Post => [
-                'content' => $this->filled('content'),
-                'excerpt' => $this->filled('excerpt'),
-                'featured_image' => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('featured_image_path'))
+                ReadinessCheck::Content->value => $this->filled('content'),
+                ReadinessCheck::Excerpt->value => $this->filled('excerpt'),
+                ReadinessCheck::FeaturedImage->value => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('featured_image_path'))
                     ->orWhereIn('slug', $this->bundledPostArtwork->slugs()),
-                'category' => fn (Builder $query): Builder => $query->whereNotNull('category_id'),
-                'tags' => $this->hasTags(...),
-                'seo_description' => $this->hasSeoDescription('excerpt'),
+                ReadinessCheck::Category->value => fn (Builder $query): Builder => $query->whereNotNull('category_id'),
+                ReadinessCheck::Tags->value => $this->hasTags(...),
+                ReadinessCheck::SeoDescription->value => $this->hasSeoDescription('excerpt'),
             ],
             $model instanceof Project => [
-                'description' => $this->filled('description'),
-                'case_study' => $this->filled('content'),
-                'featured_image' => $this->filled('featured_image_path'),
-                'project_link' => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('url'))
+                ReadinessCheck::Description->value => $this->filled('description'),
+                ReadinessCheck::CaseStudy->value => $this->filled('content'),
+                ReadinessCheck::FeaturedImage->value => $this->filled('featured_image_path'),
+                ReadinessCheck::ProjectLink->value => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('url'))
                     ->orWhereRaw($this->filledSql('github_url')),
-                'tech_stack' => fn (Builder $query): Builder => $query->whereRaw($this->hasTechnologySql()),
-                'tags' => $this->hasTags(...),
+                ReadinessCheck::TechStack->value => fn (Builder $query): Builder => $query->whereRaw($this->hasTechnologySql()),
+                ReadinessCheck::Tags->value => $this->hasTags(...),
             ],
             $model instanceof Podcast => [
-                'description' => $this->filled('description'),
-                'long_description' => $this->filled('long_description'),
-                'cover_image' => $this->filled('cover_image_path'),
-                'subscribe_link' => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('apple_url'))
+                ReadinessCheck::Description->value => $this->filled('description'),
+                ReadinessCheck::LongDescription->value => $this->filled('long_description'),
+                ReadinessCheck::CoverImage->value => $this->filled('cover_image_path'),
+                ReadinessCheck::SubscribeLink->value => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('apple_url'))
                     ->orWhereRaw($this->filledSql('spotify_url'))
                     ->orWhereRaw($this->filledSql('rss_url'))
                     ->orWhereRaw($this->filledSql('youtube_url')),
-                'seo_description' => $this->hasSeoDescription('description'),
+                ReadinessCheck::SeoDescription->value => $this->hasSeoDescription('description'),
             ],
             $model instanceof Episode => [
-                'podcast' => fn (Builder $query): Builder => $query->whereNotNull('podcast_id'),
-                'description' => $this->filled('description'),
-                'episode_media' => fn (Builder $query): Builder => $query->whereRaw($this->transistorShareUrlSql())
+                ReadinessCheck::Podcast->value => fn (Builder $query): Builder => $query->whereNotNull('podcast_id'),
+                ReadinessCheck::Description->value => $this->filled('description'),
+                ReadinessCheck::EpisodeMedia->value => fn (Builder $query): Builder => $query->whereRaw($this->transistorShareUrlSql())
                     ->orWhereRaw($this->filledSql('youtube_url')),
-                'show_notes' => $this->filled('show_notes'),
-                'featured_image' => $this->filled('featured_image_path'),
-                'tags' => $this->hasTags(...),
-                'seo_description' => $this->hasSeoDescription('description'),
+                ReadinessCheck::ShowNotes->value => $this->filled('show_notes'),
+                ReadinessCheck::FeaturedImage->value => $this->filled('featured_image_path'),
+                ReadinessCheck::Tags->value => $this->hasTags(...),
+                ReadinessCheck::SeoDescription->value => $this->hasSeoDescription('description'),
             ],
             $model instanceof NewsletterIssue => [
-                'content' => $this->filled('content'),
-                'excerpt' => $this->filled('excerpt'),
-                'seo_description' => $this->hasSeoDescription('excerpt'),
+                ReadinessCheck::Content->value => $this->filled('content'),
+                ReadinessCheck::Excerpt->value => $this->filled('excerpt'),
+                ReadinessCheck::SeoDescription->value => $this->hasSeoDescription('excerpt'),
             ],
             $model instanceof Video => [
-                'title' => $this->filled('title'),
-                'youtube_id' => $this->filled('youtube_id'),
-                'description' => $this->filled('description'),
-                'thumbnail' => $this->filled('thumbnail_url'),
-                'duration' => $this->filled('duration'),
-                'synced' => fn (Builder $query): Builder => $query->whereNotNull('synced_at'),
+                ReadinessCheck::Title->value => $this->filled('title'),
+                ReadinessCheck::YoutubeId->value => $this->filled('youtube_id'),
+                ReadinessCheck::Description->value => $this->filled('description'),
+                ReadinessCheck::Thumbnail->value => $this->filled('thumbnail_url'),
+                ReadinessCheck::Duration->value => $this->filled('duration'),
+                ReadinessCheck::Synced->value => fn (Builder $query): Builder => $query->whereNotNull('synced_at'),
             ],
             default => throw new InvalidArgumentException(sprintf('[%s] has no readiness checks.', $model::class)),
         };
