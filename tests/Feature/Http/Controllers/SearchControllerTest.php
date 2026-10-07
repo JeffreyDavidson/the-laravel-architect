@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
 
@@ -97,6 +98,22 @@ it('escapes HTML in result titles and descriptions and keeps entities whole', fu
     $entityQueryResponse->assertOk()
         ->assertSeeHtml('Q&amp;<mark class="rounded bg-brand-100 px-0.5 text-inherit dark:bg-brand-800">A</mark>')
         ->assertDontSeeHtml('&<mark');
+});
+
+it('dates results in the display timezone', function () {
+    config(['app.display_timezone' => 'America/New_York']);
+    travelTo('2026-10-10 12:00:00');
+    Post::factory()
+        ->published()
+        ->create([
+            'title' => 'Evening timezone post',
+            'published_at' => '2026-10-06 01:00:00',
+        ]);
+
+    get(route('search', ['q' => 'timezone']))
+        ->assertOk()
+        ->assertSeeHtml('<time datetime="2026-10-05">Oct 5, 2026</time>')
+        ->assertDontSee('Oct 6, 2026');
 });
 
 it('rejects an unknown search content type', function () {

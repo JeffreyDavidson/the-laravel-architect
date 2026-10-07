@@ -107,6 +107,14 @@ it('leaves out an episode whose podcast is in the trash', function () {
         ->assertDontSee('Orphaned episode');
 });
 
+it('returns not found for an out-of-range archive page', function () {
+    Post::factory()->published()
+        ->create();
+
+    get(route('archive.index', ['page' => 2]))
+        ->assertNotFound();
+});
+
 it('rejects invalid archive filters', function (array $filters) {
     get(route('archive.index', $filters))
         ->assertNotFound();

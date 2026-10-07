@@ -16,8 +16,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-use function Pest\Laravel\travelTo;
-
 pest()->use(RefreshDatabase::class);
 
 /**
@@ -51,7 +49,7 @@ function seedPagedSearchContent(int $posts, int $issues): void
  * Run the search as if the given query string had been requested.
  *
  * @param  array<string, string>  $parameters
- * @return array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>
+ * @return array<string, LengthAwarePaginator<int, Post>|LengthAwarePaginator<int, Project>|LengthAwarePaginator<int, Podcast>|LengthAwarePaginator<int, NewsletterIssue>|LengthAwarePaginator<int, Episode>|LengthAwarePaginator<int, Video>>
  */
 function searchWithParameters(array $parameters, ?SearchContentType $type = null): array
 {
@@ -63,12 +61,12 @@ function searchWithParameters(array $parameters, ?SearchContentType $type = null
 /**
  * Count the matches in each result group, with every group present and zero by default.
  *
- * @param  array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, meta: string, external: bool}>>  $results
+ * @param  array<string, LengthAwarePaginator<int, Post>|LengthAwarePaginator<int, Project>|LengthAwarePaginator<int, Podcast>|LengthAwarePaginator<int, NewsletterIssue>|LengthAwarePaginator<int, Episode>|LengthAwarePaginator<int, Video>>  $results
  * @return array<string, int>
  */
 function searchTotals(array $results): array
 {
-    $totals = array_fill_keys(array_values(SearchContentType::labels()), 0);
+    $totals = array_fill_keys(array_keys(SearchContentType::labels()), 0);
 
     foreach ($results as $group => $paginator) {
         $totals[$group] = $paginator->total();
@@ -77,10 +75,8 @@ function searchTotals(array $results): array
     return $totals;
 }
 
-it('dates results in the display timezone', function () {
-    config(['app.display_timezone' => 'America/New_York']);
-    travelTo('2026-10-10 12:00:00');
-    Post::factory()
+it('returns the matching published models with their raw publication dates', function () {
+    $post = Post::factory()
         ->published()
         ->create([
             'title' => 'Evening timezone post',
@@ -88,9 +84,15 @@ it('dates results in the display timezone', function () {
         ]);
 
     $results = searchWithParameters(['q' => 'timezone']);
+    $result = $results['writing']->first();
 
-    expect($results['Writing']->first())
-        ->toMatchArray(['meta' => 'Oct 5, 2026']);
+    if (! $result instanceof Post) {
+        throw new RuntimeException('Expected the matching post.');
+    }
+
+    expect($result->is($post))->toBeTrue()
+        ->and($result->published_at?->toDateTimeString())
+        ->toBe('2026-10-06 01:00:00');
 });
 
 it('pages each result group with its own total', function () {
@@ -99,13 +101,13 @@ it('pages each result group with its own total', function () {
     $firstPage = searchWithParameters(['q' => 'paging']);
     $secondPage = searchWithParameters(['q' => 'paging', 'postsPage' => '2']);
 
-    expect($firstPage['Writing']->count())
+    expect($firstPage['writing']->count())
         ->toBe(12)
-        ->and($firstPage['Writing']->total())
+        ->and($firstPage['writing']->total())
         ->toBe(13)
-        ->and($secondPage['Writing']->count())
+        ->and($secondPage['writing']->count())
         ->toBe(1)
-        ->and($secondPage['Writing']->currentPage())
+        ->and($secondPage['writing']->currentPage())
         ->toBe(2);
 });
 
@@ -114,9 +116,9 @@ it('keeps the other groups on their first page when one group is paged', functio
 
     $results = searchWithParameters(['q' => 'paging', 'postsPage' => '2']);
 
-    expect($results['Newsletter']->currentPage())
+    expect($results['newsletter']->currentPage())
         ->toBe(1)
-        ->and($results['Newsletter']->count())
+        ->and($results['newsletter']->count())
         ->toBe(2);
 });
 
@@ -124,7 +126,7 @@ it('keeps the search terms and returns to the group heading in page links', func
     seedPagedSearchContent(posts: 13, issues: 0);
 
     $results = searchWithParameters(['q' => 'paging', 'type' => 'writing'], SearchContentType::Writing);
-    $nextPageUrl = $results['Writing']->nextPageUrl();
+    $nextPageUrl = $results['writing']->nextPageUrl();
 
     expect($nextPageUrl)
         ->toContain('q=paging', 'type=writing', 'postsPage=2')
@@ -139,12 +141,12 @@ it('uses a distinct page parameter for every group', function () {
 
     expect($pageNames)
         ->toBe([
-            'Writing' => 'postsPage',
-            'Projects' => 'projectsPage',
-            'Podcasts' => 'podcastsPage',
-            'Newsletter' => 'newsletterPage',
-            'Episodes' => 'episodesPage',
-            'Videos' => 'videosPage',
+            'writing' => 'postsPage',
+            'projects' => 'projectsPage',
+            'podcasts' => 'podcastsPage',
+            'newsletter' => 'newsletterPage',
+            'episodes' => 'episodesPage',
+            'videos' => 'videosPage',
         ]);
 });
 
@@ -154,11 +156,11 @@ it('reads the page size for every group from configuration', function () {
 
     $results = searchWithParameters(['q' => 'paging']);
 
-    expect($results['Writing']->count())
+    expect($results['writing']->count())
         ->toBe(5)
-        ->and($results['Writing']->perPage())
+        ->and($results['writing']->perPage())
         ->toBe(5)
-        ->and($results['Writing']->total())
+        ->and($results['writing']->total())
         ->toBe(7);
 });
 
@@ -173,25 +175,25 @@ it('finds published content by every searched column', function (Closure $factor
     expect(searchTotals($results))
         ->toBe([...searchTotals([]), $group => 1]);
 })->with([
-    'post title' => [fn (): Factory => Post::factory()->published(), ['title' => 'A Zephyrquill post'], 'Writing'],
-    'post excerpt' => [fn (): Factory => Post::factory()->published(), ['excerpt' => 'A zephyrquill excerpt'], 'Writing'],
-    'post content' => [fn (): Factory => Post::factory()->published(), ['content' => '<p>A zephyrquill body</p>'], 'Writing'],
-    'project title' => [fn (): Factory => Project::factory()->published(), ['title' => 'Zephyrquill studio'], 'Projects'],
-    'project description' => [fn (): Factory => Project::factory()->published(), ['description' => 'A zephyrquill tool'], 'Projects'],
-    'project content' => [fn (): Factory => Project::factory()->published(), ['content' => 'Built around zephyrquill.'], 'Projects'],
-    'podcast name' => [fn (): Factory => Podcast::factory(), ['name' => 'Zephyrquill radio'], 'Podcasts'],
-    'podcast description' => [fn (): Factory => Podcast::factory(), ['description' => 'A zephyrquill show'], 'Podcasts'],
-    'podcast long description' => [fn (): Factory => Podcast::factory(), ['long_description' => 'All about zephyrquill.'], 'Podcasts'],
-    'newsletter title' => [fn (): Factory => NewsletterIssue::factory()->published(), ['title' => 'Zephyrquill weekly'], 'Newsletter'],
-    'newsletter excerpt' => [fn (): Factory => NewsletterIssue::factory()->published(), ['excerpt' => 'A zephyrquill note'], 'Newsletter'],
-    'newsletter content' => [fn (): Factory => NewsletterIssue::factory()->published(), ['content' => 'More zephyrquill.'], 'Newsletter'],
-    'episode title' => [fn (): Factory => Episode::factory()->published(), ['title' => 'Zephyrquill episode'], 'Episodes'],
-    'episode description' => [fn (): Factory => Episode::factory()->published(), ['description' => 'A zephyrquill chat'], 'Episodes'],
-    'episode show notes' => [fn (): Factory => Episode::factory()->published(), ['show_notes' => 'Links on zephyrquill.'], 'Episodes'],
-    'episode transcript' => [fn (): Factory => Episode::factory()->published(), ['transcript' => 'We talk zephyrquill.'], 'Episodes'],
-    'episode guest name' => [fn (): Factory => Episode::factory()->published(), ['guest_name' => 'Ada Zephyrquill'], 'Episodes'],
-    'video title' => [fn (): Factory => Video::factory(), ['title' => 'Zephyrquill on video'], 'Videos'],
-    'video description' => [fn (): Factory => Video::factory(), ['description' => 'A zephyrquill demo'], 'Videos'],
+    'post title' => [fn (): Factory => Post::factory()->published(), ['title' => 'A Zephyrquill post'], 'writing'],
+    'post excerpt' => [fn (): Factory => Post::factory()->published(), ['excerpt' => 'A zephyrquill excerpt'], 'writing'],
+    'post content' => [fn (): Factory => Post::factory()->published(), ['content' => '<p>A zephyrquill body</p>'], 'writing'],
+    'project title' => [fn (): Factory => Project::factory()->published(), ['title' => 'Zephyrquill studio'], 'projects'],
+    'project description' => [fn (): Factory => Project::factory()->published(), ['description' => 'A zephyrquill tool'], 'projects'],
+    'project content' => [fn (): Factory => Project::factory()->published(), ['content' => 'Built around zephyrquill.'], 'projects'],
+    'podcast name' => [fn (): Factory => Podcast::factory(), ['name' => 'Zephyrquill radio'], 'podcasts'],
+    'podcast description' => [fn (): Factory => Podcast::factory(), ['description' => 'A zephyrquill show'], 'podcasts'],
+    'podcast long description' => [fn (): Factory => Podcast::factory(), ['long_description' => 'All about zephyrquill.'], 'podcasts'],
+    'newsletter title' => [fn (): Factory => NewsletterIssue::factory()->published(), ['title' => 'Zephyrquill weekly'], 'newsletter'],
+    'newsletter excerpt' => [fn (): Factory => NewsletterIssue::factory()->published(), ['excerpt' => 'A zephyrquill note'], 'newsletter'],
+    'newsletter content' => [fn (): Factory => NewsletterIssue::factory()->published(), ['content' => 'More zephyrquill.'], 'newsletter'],
+    'episode title' => [fn (): Factory => Episode::factory()->published(), ['title' => 'Zephyrquill episode'], 'episodes'],
+    'episode description' => [fn (): Factory => Episode::factory()->published(), ['description' => 'A zephyrquill chat'], 'episodes'],
+    'episode show notes' => [fn (): Factory => Episode::factory()->published(), ['show_notes' => 'Links on zephyrquill.'], 'episodes'],
+    'episode transcript' => [fn (): Factory => Episode::factory()->published(), ['transcript' => 'We talk zephyrquill.'], 'episodes'],
+    'episode guest name' => [fn (): Factory => Episode::factory()->published(), ['guest_name' => 'Ada Zephyrquill'], 'episodes'],
+    'video title' => [fn (): Factory => Video::factory(), ['title' => 'Zephyrquill on video'], 'videos'],
+    'video description' => [fn (): Factory => Video::factory(), ['description' => 'A zephyrquill demo'], 'videos'],
 ]);
 
 it('finds published posts by tag name', function () {
@@ -203,7 +205,7 @@ it('finds published posts by tag name', function () {
     $results = searchWithParameters(['q' => 'zephyrquill']);
 
     expect(searchTotals($results))
-        ->toBe([...searchTotals([]), 'Writing' => 1]);
+        ->toBe([...searchTotals([]), 'writing' => 1]);
 });
 
 it('matches percent signs and underscores in the query literally', function (string $query, string $matchingTitle, string $wildcardTitle) {
@@ -215,7 +217,7 @@ it('matches percent signs and underscores in the query literally', function (str
         ->create(['title' => $wildcardTitle]);
 
     $results = searchWithParameters(['q' => $query]);
-    $titles = $results['Writing']
+    $titles = $results['writing']
         ->getCollection()
         ->pluck('title')
         ->all();
@@ -229,5 +231,5 @@ it('matches percent signs and underscores in the query literally', function (str
 it('returns only the requested group for a filtered search', function (SearchContentType $type) {
     $results = searchWithParameters(['q' => 'anything'], $type);
 
-    expect(array_keys($results))->toBe([$type->getLabel()]);
+    expect(array_keys($results))->toBe([$type->value]);
 })->with(SearchContentType::cases());

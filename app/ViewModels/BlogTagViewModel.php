@@ -4,6 +4,7 @@ namespace App\ViewModels;
 
 use App\Models\Post;
 use App\Models\Tag;
+use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -25,25 +26,15 @@ class BlogTagViewModel
             ->latest('id')
             ->paginate(10);
 
-        abort_if($posts->currentPage() > $posts->lastPage(), 404);
-
-        $canonicalUrl = $posts->onFirstPage()
-            ? route('blog.tag', $tag)
-            : route('blog.tag', ['tag' => $tag, 'page' => $posts->currentPage()]);
-        $title = "Articles Tagged {$tag->name}";
-        $description = "Articles tagged with {$tag->name} on The Laravel Architect.";
-
-        if (! $posts->onFirstPage()) {
-            $title .= " — Page {$posts->currentPage()}";
-            $description .= " Page {$posts->currentPage()} of {$posts->lastPage()}.";
-        }
+        $page = PaginatedPageSeo::forCurrentPage($posts);
+        $canonicalUrl = $page->url('blog.tag', ['tag' => $tag]);
 
         return [
             'tag' => $tag,
             'posts' => $posts,
             'seoSource' => new SEOData(
-                title: $title,
-                description: $description,
+                title: $page->title("Articles Tagged {$tag->name}"),
+                description: $page->description("Articles tagged with {$tag->name} on The Laravel Architect."),
                 url: $canonicalUrl,
                 canonical_url: $canonicalUrl,
             ),

@@ -19,6 +19,14 @@ it('gives each newsletter archive page its own canonical URL', function () {
         ->assertSeeHtml('<title>Newsletter Archive — Page 2 — Jeffrey Davidson</title>');
 });
 
+it('returns not found for an out-of-range newsletter archive page', function () {
+    NewsletterIssue::factory()->published()
+        ->create();
+
+    get(route('newsletter.index', ['page' => 2]))
+        ->assertNotFound();
+});
+
 it('lists published newsletter issues and excludes drafts', function () {
     $published = NewsletterIssue::factory()->published()
         ->create();

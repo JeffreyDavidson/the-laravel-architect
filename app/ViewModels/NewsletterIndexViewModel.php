@@ -3,6 +3,7 @@
 namespace App\ViewModels;
 
 use App\Models\NewsletterIssue;
+use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -21,15 +22,13 @@ class NewsletterIndexViewModel
             ->orderByDesc('id')
             ->paginate(self::ISSUES_PER_PAGE);
 
-        abort_if($issues->currentPage() > $issues->lastPage(), 404);
-
-        $url = route('newsletter.index', $issues->onFirstPage() ? [] : ['page' => $issues->currentPage()]);
-        $pageSuffix = $issues->onFirstPage() ? '' : " — Page {$issues->currentPage()}";
+        $page = PaginatedPageSeo::forCurrentPage($issues);
+        $url = $page->url('newsletter.index');
 
         return [
             'issues' => $issues,
             'seoSource' => new SEOData(
-                title: 'Newsletter Archive'.$pageSuffix,
+                title: $page->title('Newsletter Archive'),
                 description: 'Practical Laravel architecture notes, tutorials, and updates from Jeffrey Davidson.',
                 url: $url,
                 canonical_url: $url,

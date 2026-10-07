@@ -73,13 +73,13 @@
                     <div class="mt-8 space-y-12">
                         @foreach ($results as $type => $items)
                             @if ($items->total() > 0)
-                                <section aria-labelledby="search-{{ \Illuminate\Support\Str::slug($type) }}">
+                                <section aria-labelledby="search-{{ $type }}">
                                     <div class="dark:border-surface-border mb-4 flex items-baseline justify-between border-b border-gray-200 pb-3">
                                         <h2
-                                            id="search-{{ \Illuminate\Support\Str::slug($type) }}"
+                                            id="search-{{ $type }}"
                                             class="text-xl font-semibold text-gray-900 dark:text-white"
                                         >
-                                            {{ $type }}
+                                            {{ $typeOptions[$type] }}
                                         </h2>
                                         <span class="font-mono text-xs text-gray-500">{{ $items->total() }}</span>
                                     </div>
@@ -92,18 +92,27 @@
                                                     class="group focus-visible:outline-brand-500 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                                                 >
                                                     <div class="flex items-center gap-3 font-mono text-xs tracking-wide text-gray-500 uppercase">
-                                                        <span>{{ $item['meta'] }}</span>
+                                                        <span>
+                                                            @if ($item['date'])
+                                                                <x-display-date :date="$item['date']" format="M j, Y" />
+                                                            @else
+                                                                {{ $item['label'] }}
+                                                            @endif
+                                                        </span>
                                                         @if ($item['external'])
                                                             <span aria-hidden="true">↗</span>
                                                             <span class="sr-only">(opens in a new tab)</span>
                                                         @endif
                                                     </div>
                                                     <h3 class="group-hover:text-archive-link mt-2 text-xl font-semibold text-gray-900 transition-colors dark:text-white">
-                                                        {!! $item['highlightedTitle'] !!}
+                                                        <x-search-highlight :text="$item['title']" :query="$query" />
                                                     </h3>
-                                                    @if ($item['highlightedDescription'])
+                                                    @if ($item['description'])
                                                         <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                                            {!! $item['highlightedDescription'] !!}
+                                                            <x-search-highlight
+                                                                :text="$item['description']"
+                                                                :query="$query"
+                                                            />
                                                         </p>
                                                     @endif
                                                 </a>

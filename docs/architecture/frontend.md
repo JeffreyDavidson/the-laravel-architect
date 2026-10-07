@@ -26,9 +26,10 @@ Public presentation styles live in Tailwind utility classes on the owning Blade
 pages and components, compiled into one `resources/css/app.css` bundle. There
 are no page-specific CSS entry points.
 
-Tailwind scans only the files listed with `@source`. Classes built in PHP, such
-as the search highlight markup in `SearchViewModel`, must be listed there or
-they are never generated.
+Tailwind scans only the files listed with `@source`, which cover the Blade views
+and JavaScript but not PHP classes. Keep class names in Blade (search
+highlighting, for example, is the `search-highlight` component) rather than
+building them in PHP, or they are never generated.
 
 Shared CSS retains fonts, theme tokens, animation keyframes, and browser
 integration rules; Prism and the Filament admin theme remain separate
