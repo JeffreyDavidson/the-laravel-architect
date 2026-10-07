@@ -155,7 +155,7 @@ class ArchiveQuery
 
         return [
             'type' => $type->value,
-            'typeLabel' => $type->label(),
+            'typeLabel' => $type->getLabel(),
             'title' => $item->title,
             'summary' => $item->summary,
             'url' => $url,

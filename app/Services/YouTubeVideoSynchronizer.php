@@ -38,7 +38,7 @@ final readonly class YouTubeVideoSynchronizer
                 continue;
             }
 
-            Video::query()->create([
+            Video::create([
                 ...$videoData->toArray(),
                 'slug' => $this->uniqueSlug($videoData->title, $videoData->youtubeId),
                 'synced_at' => now(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Videos;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Videos\Pages\EditVideo;
 use App\Filament\Resources\Videos\Pages\ListVideos;
 use App\Filament\Resources\Videos\Schemas\VideoForm;
@@ -25,7 +26,7 @@ class VideoResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Library';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Library;
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'title';

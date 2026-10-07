@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Categories;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Categories\Pages\CreateCategory;
 use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Categories\Pages\ListCategories;
@@ -26,7 +27,7 @@ class CategoryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Library';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Library;
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'name';

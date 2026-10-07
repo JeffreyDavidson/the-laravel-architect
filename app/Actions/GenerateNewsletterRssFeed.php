@@ -4,11 +4,11 @@ namespace App\Actions;
 
 use App\Models\NewsletterIssue;
 
-class GenerateNewsletterRssFeed
+final class GenerateNewsletterRssFeed
 {
     public function handle(): string
     {
-        $issues = NewsletterIssue::published()
+        $issues = NewsletterIssue::query()->published()
             ->latest('published_at')
             ->latest('id')
             ->take(20)

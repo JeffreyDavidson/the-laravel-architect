@@ -34,14 +34,14 @@ class RelatedProjectContentQuery
         }
 
         return [
-            'posts' => Post::published()
+            'posts' => Post::query()->published()
                 ->withAnyTags($project->tags)
                 ->with(['category', 'tags'])
                 ->latest('published_at')
                 ->latest('id')
                 ->take($limit)
                 ->get(),
-            'episodes' => Episode::published()
+            'episodes' => Episode::query()->published()
                 ->whereHas('podcast', function (Builder $query): void {
                     $query->where('is_active', true);
                 })

@@ -23,7 +23,7 @@ final class SendContactMessage
         // The inquiry and its email job share one transaction. Deferring the job
         // insert until after commit could leave an inquiry that is never emailed.
         DB::transaction(function () use ($data): void {
-            $inquiry = ContactInquiry::query()->create([
+            $inquiry = ContactInquiry::create([
                 'name' => $data->name,
                 'email' => $data->email,
                 'type' => $data->type->value,

@@ -18,7 +18,7 @@ class BlogTagViewModel
      */
     public function data(Tag $tag): array
     {
-        $posts = Post::published()
+        $posts = Post::query()->published()
             ->withAnyTags([$tag])
             ->with(['category', 'author'])
             ->latest('published_at')

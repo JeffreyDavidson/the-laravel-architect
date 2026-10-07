@@ -30,7 +30,7 @@ class HomeViewModel
      */
     public function data(): array
     {
-        $latestPosts = Post::published()
+        $latestPosts = Post::query()->published()
             ->with(['category', 'tags'])
             ->latest('published_at')
             ->take(3)
@@ -39,21 +39,23 @@ class HomeViewModel
         return [
             'latestPosts' => $latestPosts,
             'featuredPost' => $latestPosts->first(),
-            'featuredProjects' => Project::published()
+            'featuredProjects' => Project::query()->published()
                 ->featured()
                 ->orderBy('sort_order')
                 ->take(4)
                 ->get(),
-            'podcast' => Podcast::active()
+            'podcast' => Podcast::query()->active()
                 ->orderBy('sort_order')
                 ->first(),
-            'latestYouTubeVideos' => Video::published()
+            'latestYouTubeVideos' => Video::query()->published()
                 ->latest('published_at')
                 ->take(3)
                 ->get(),
             'youtubeProfileUrl' => $this->socialProfilesQuery->enabledUrlFor(SocialPlatform::YouTube),
-            'publishedPostCount' => Post::published()->count(),
-            'publishedProjectCount' => Project::published()->count(),
+            'publishedPostCount' => Post::query()->published()
+                ->count(),
+            'publishedProjectCount' => Project::query()->published()
+                ->count(),
             'seoSource' => new SEOData(
                 title: 'The Laravel Architect — Jeffrey Davidson',
                 description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',

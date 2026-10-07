@@ -84,7 +84,9 @@ final class BlogIndexQuery
                 ->get(),
             'publishedPostCount' => $selectedCategory === null && $search === ''
                 ? $posts->total()
-                : Post::published()->count(),
+                : Post::query()
+                    ->published()
+                    ->count(),
             'selectedCategory' => $selectedCategory,
         ];
     }

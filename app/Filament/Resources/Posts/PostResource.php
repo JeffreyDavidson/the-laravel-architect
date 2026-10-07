@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts;
 
+use App\Enums\NavigationGroup;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
@@ -28,7 +29,7 @@ class PostResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Publish';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
     protected static ?int $navigationSort = 1;

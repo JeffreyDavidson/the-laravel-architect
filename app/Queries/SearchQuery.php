@@ -147,7 +147,7 @@ class SearchQuery
         ];
 
         if ($type instanceof SearchContentType) {
-            $searches = [$type->label() => $searches[$type->label()]];
+            $searches = [$type->getLabel() => $searches[$type->getLabel()]];
         }
 
         return array_map(fn (callable $search): LengthAwarePaginator => $search(), $searches);

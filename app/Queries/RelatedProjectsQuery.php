@@ -14,7 +14,7 @@ class RelatedProjectsQuery
             return new Collection;
         }
 
-        return Project::published()
+        return Project::query()->published()
             ->whereKeyNot($project->getKey())
             ->with('tags')
             ->orderBy('sort_order')

@@ -26,7 +26,7 @@ class ProjectIndexViewModel
     {
         $selectedTechnology = $this->normaliseFilter($filters['technology'] ?? null);
         $selectedTag = $this->normaliseFilter($filters['tag'] ?? null);
-        $allProjects = Project::published()
+        $allProjects = Project::query()->published()
             ->with('tags')
             ->orderBy('sort_order')
             ->get();

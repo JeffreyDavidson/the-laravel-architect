@@ -6,6 +6,7 @@ use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
 use App\Enums\MediaVariantStatus;
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
@@ -36,7 +37,7 @@ class MediaHealth extends Page implements HasTable
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Operations;
 
     #[\Override]
     protected static ?int $navigationSort = 1;

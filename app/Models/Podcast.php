@@ -209,15 +209,15 @@ class Podcast extends Model
     /** @return array<int, string>|null */
     private function fallbackCoverImageResources(): ?array
     {
-        $artwork = config('podcasts.fallback_artwork');
+        $artwork = config()->array('podcasts.fallback_artwork')[$this->slug] ?? null;
 
-        if (! is_array($artwork) || ! is_array($artwork[$this->slug] ?? null)) {
+        if (! is_array($artwork)) {
             return null;
         }
 
         $resources = [];
 
-        foreach ($artwork[$this->slug] as $width => $resource) {
+        foreach ($artwork as $width => $resource) {
             if (is_int($width) && is_string($resource)) {
                 $resources[$width] = $resource;
             }
