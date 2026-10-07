@@ -7,13 +7,14 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('rejects non-normalized project slugs when creating a project', function (string $slug) {
@@ -53,12 +54,7 @@ it('accepts a normalized project slug when creating a project', function () {
 });
 
 it('rejects a non-normalized project slug when editing a project', function () {
-    $project = Project::query()->create([
-        'title' => 'Project title',
-        'slug' => 'project-title',
-        'description' => 'Project description',
-        'status' => PublishStatus::Draft,
-    ]);
+    $project = Project::factory()->create(['slug' => 'project-title']);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
         ->fillForm(['slug' => '../project-title'])
@@ -70,12 +66,7 @@ it('rejects a non-normalized project slug when editing a project', function () {
 });
 
 it('preserves an existing project slug when the title changes', function () {
-    $project = Project::query()->create([
-        'title' => 'Project title',
-        'slug' => 'curated-project-slug',
-        'description' => 'Project description',
-        'status' => PublishStatus::Draft,
-    ]);
+    $project = Project::factory()->create(['slug' => 'curated-project-slug']);
 
     livewire(EditProject::class, ['record' => $project->getRouteKey()])
         ->fillForm(['title' => 'Updated project title', 'slug' => 'curated-project-slug'])

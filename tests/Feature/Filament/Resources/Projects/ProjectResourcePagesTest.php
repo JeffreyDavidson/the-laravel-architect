@@ -5,25 +5,24 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('renders the project create page for an authorized user', function () {
-    $this->get(ProjectResource::getUrl('create'))
+    get(ProjectResource::getUrl('create'))
         ->assertOk();
 });
 
 it('renders the project edit page for an authorized user', function () {
-    $project = Project::query()->create([
-        'title' => 'Project page coverage',
-        'slug' => 'project-page-coverage',
-        'description' => 'Project description',
-    ]);
+    $project = Project::factory()->create();
 
-    $this->get(ProjectResource::getUrl('edit', ['record' => $project]))
+    get(ProjectResource::getUrl('edit', ['record' => $project]))
         ->assertOk();
 });
