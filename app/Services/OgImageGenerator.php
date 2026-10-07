@@ -128,9 +128,11 @@ class OgImageGenerator
             if (strlen($current.' '.$word) > $maxChars && $current !== '') {
                 $lines[] = trim($current);
                 $current = $word;
-            } else {
-                $current .= ($current ? ' ' : '').$word;
+
+                continue;
             }
+
+            $current .= ($current ? ' ' : '').$word;
         }
         if ($current) {
             $lines[] = trim($current);

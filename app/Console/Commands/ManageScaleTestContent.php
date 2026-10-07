@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\ScaleTestContentAction;
 use App\Services\ScaleTestContentWorkflow;
 use App\Support\Content\Archives\PublicContentImportGuard;
 use Illuminate\Console\Attributes\Description;
@@ -16,9 +17,12 @@ class ManageScaleTestContent extends Command
 {
     public function handle(ScaleTestContentWorkflow $workflow, PublicContentImportGuard $guard): int
     {
-        $action = $this->argument('action');
+        $argument = $this->argument('action');
+        $action = is_string($argument)
+            ? ScaleTestContentAction::tryFrom($argument)
+            : null;
 
-        if (! is_string($action) || ! in_array($action, ['seed', 'clear'], true)) {
+        if (! $action instanceof ScaleTestContentAction) {
             $this->error('The action must be either seed or clear.');
 
             return self::INVALID;
@@ -32,16 +36,15 @@ class ManageScaleTestContent extends Command
             return self::FAILURE;
         }
 
-        if ($action === 'seed') {
-            $counts = $workflow->seed();
-        } else {
-            $counts = $workflow->clear();
-        }
+        $counts = match ($action) {
+            ScaleTestContentAction::Seed => $workflow->seed(),
+            ScaleTestContentAction::Clear => $workflow->clear(),
+        };
         $summary = collect($counts)
             ->map(fn (int $count, string $type): string => "{$count} {$type}")
             ->join(', ');
 
-        $this->info("Scale-test content {$action} completed: {$summary}.");
+        $this->info("Scale-test content {$action->value} completed: {$summary}.");
 
         return self::SUCCESS;
     }

@@ -117,12 +117,14 @@ class StoredMediaOrphanWorkflow
                     $wasDeleted = false;
                 }
 
-                if ($wasDeleted) {
-                    $deleted++;
-                    $files[$index]['deleted'] = true;
-                } else {
+                if (! $wasDeleted) {
                     $failed++;
+
+                    continue;
                 }
+
+                $deleted++;
+                $files[$index]['deleted'] = true;
             }
         }
 
