@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -8,10 +7,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\withVite;
+
 pest()->use(RefreshDatabase::class);
 
 it('renders responsive project images without overflow', function (string $route, string $device) {
-    $this->withVite();
+    withVite();
     Storage::fake('public', ['url' => '/test-project-images?path=']);
     Storage::disk('public')->put('showcase.png', UploadedFile::fake()->image('showcase.png', 1280, 720)
         ->getContent());
@@ -26,13 +27,10 @@ it('renders responsive project images without overflow', function (string $route
         ]);
     });
 
-    $project = Project::query()->create([
-        'title' => 'Screenshot layout fixture',
-        'description' => 'A test project with an uploaded screenshot.',
-        'featured_image_path' => 'showcase.png',
-        'is_featured' => true,
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()
+        ->published()
+        ->featured()
+        ->create(['featured_image_path' => 'showcase.png']);
 
     $project->refresh();
     expect($project->featured_image_path)->toBe('showcase.png');
@@ -52,14 +50,11 @@ it('renders responsive project images without overflow', function (string $route
     ->with(['mobile', 'desktop']);
 
 it('keeps image-free projects navigable', function (string $device) {
-    $this->withVite();
+    withVite();
 
-    $project = Project::query()->create([
-        'title' => 'A project without a screenshot',
-        'description' => 'Practical software built around a client’s needs.',
-        'is_featured' => false,
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()
+        ->published()
+        ->create(['content' => null]);
 
     $page = $this->browserPage(route('projects.index', absolute: false), $device);
 
@@ -82,13 +77,9 @@ it('keeps image-free projects navigable', function (string $device) {
 })->with(['mobile', 'desktop']);
 
 it('offers contact when there are no published projects', function (string $device) {
-    $this->withVite();
+    withVite();
 
-    Project::query()->create([
-        'title' => 'Unpublished client project',
-        'description' => 'Not ready for the portfolio.',
-        'status' => PublishStatus::Draft,
-    ]);
+    Project::factory()->create(['title' => 'Unpublished client project']);
 
     $page = $this->browserPage(route('projects.index', absolute: false), $device);
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -12,6 +11,8 @@ use RuntimeException;
 use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
 
+use function Pest\Laravel\withVite;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
@@ -21,7 +22,7 @@ beforeEach(function (): void {
 });
 
 it('loads public routes without high impact accessibility issues in both themes', function (string $route, string $theme): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme($route, 'desktop', $theme);
 
@@ -59,7 +60,7 @@ it('loads public routes without high impact accessibility issues in both themes'
 ])->with(['light', 'dark']);
 
 it('keeps the homepage hero actions visible at a laptop viewport height', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = HomePage::visit();
     $page->resize(1280, 720);
@@ -79,7 +80,7 @@ it('keeps the homepage hero actions visible at a laptop viewport height', functi
 });
 
 it('keeps homepage hero copy readable over the artwork on mobile', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPageWithTheme('/', 'mobile', 'dark');
     $hero = $page->page()
@@ -226,7 +227,7 @@ it('keeps homepage hero copy readable over the artwork on mobile', function (): 
 });
 
 it('initializes homepage reveal animations', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = HomePage::visit();
     $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
@@ -241,7 +242,7 @@ it('initializes homepage reveal animations', function (): void {
 });
 
 it('counts the homepage proof figures up to their targets', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = HomePage::visit();
     $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
@@ -258,7 +259,7 @@ it('counts the homepage proof figures up to their targets', function (): void {
 });
 
 it('supports the homepage services link', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = HomePage::visit();
 
@@ -269,7 +270,7 @@ it('supports the homepage services link', function (): void {
 });
 
 it('supports keyboard interaction on the about card', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/about', 'desktop');
     $card = $page->page()
@@ -287,7 +288,7 @@ it('supports keyboard interaction on the about card', function (): void {
 });
 
 it('loads standalone Alpine without Livewire on non-Livewire pages', function (): void {
-    $this->withVite();
+    withVite();
 
     foreach (['/', '/about'] as $route) {
         $page = $this->browserPage($route, 'desktop');
@@ -300,7 +301,7 @@ it('loads standalone Alpine without Livewire on non-Livewire pages', function ()
 });
 
 it('supports blog search and reset with Livewire', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/blog', 'desktop');
 
@@ -334,7 +335,7 @@ it('supports blog search and reset with Livewire', function (): void {
 });
 
 it('filters the blog by category when a category pill is clicked', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/blog', 'desktop');
 
@@ -349,7 +350,7 @@ it('filters the blog by category when a category pill is clicked', function (): 
 });
 
 it('supports search filters and preserves the selected result type', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/search', 'desktop');
 
@@ -376,7 +377,7 @@ it('supports search filters and preserves the selected result type', function ()
 });
 
 it('exposes the code copy action and delayed syntax highlighting', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
 
@@ -389,7 +390,7 @@ it('exposes the code copy action and delayed syntax highlighting', function (): 
 });
 
 it('keeps stray whitespace out of code blocks around the copy action', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
 
@@ -399,7 +400,7 @@ it('keeps stray whitespace out of code blocks around the copy action', function 
 });
 
 it('reports clipboard failure without claiming the code was copied', function (): void {
-    $this->withVite();
+    withVite();
     $page = $this->browserPage(route('blog.show', 'e2e-code-example'), 'desktop');
     $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Denied"); } } }); document.execCommand = () => false;');
 
@@ -409,17 +410,16 @@ it('reports clipboard failure without claiming the code was copied', function ()
 });
 
 it('loads the podcast video only on activation and copies its share link', function (): void {
-    $this->withVite();
+    withVite();
     $podcast = Podcast::query()->where('slug', 'e2e-podcast')
         ->sole();
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Video controls',
-        'description' => 'A click-to-load video.',
-        'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create([
+            'transistor_url' => null,
+            'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ]);
     $page = PodcastEpisodePage::visit($podcast, $episode);
     $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>"; Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
 
@@ -435,7 +435,7 @@ it('loads the podcast video only on activation and copies its share link', funct
 });
 
 it('builds styled article navigation from the Blade template', function (): void {
-    $this->withVite();
+    withVite();
     $post = Post::query()->where('slug', 'e2e-code-example')
         ->sole();
     $post->update(['content' => "## First section\n\nIntroduction.\n\n## Second section\n\nDetails."]);
@@ -449,7 +449,7 @@ it('builds styled article navigation from the Blade template', function (): void
 });
 
 it('marks the article section being read in the contents list', function (): void {
-    $this->withVite();
+    withVite();
     $filler = str_repeat("Some paragraph text that makes the section long enough to scroll through.\n\n", 18);
     $post = Post::query()->where('slug', 'e2e-code-example')
         ->sole();
@@ -465,7 +465,7 @@ it('marks the article section being read in the contents list', function (): voi
 });
 
 it('allows an administrator to reach the dashboard', function (string $theme, string $device): void {
-    $this->withVite();
+    withVite();
 
     User::factory()->create([
         'name' => 'E2E Admin',
@@ -557,7 +557,7 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
     ->with(['desktop', 'mobile']);
 
 it('subscribes to the newsletter in place without reloading the page', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/', 'desktop');
 
@@ -578,7 +578,7 @@ it('subscribes to the newsletter in place without reloading the page', function 
 });
 
 it('shows the newsletter error in place and keeps what was typed', function (): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/', 'desktop');
 
@@ -599,7 +599,7 @@ it('shows the newsletter error in place and keeps what was typed', function (): 
 });
 
 it('keeps the footer at the bottom of a short page', function (string $device): void {
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage(route('newsletter.confirmed'), $device);
 
@@ -609,15 +609,12 @@ it('keeps the footer at the bottom of a short page', function (string $device): 
 })->with(['desktop', 'mobile']);
 
 it('confirms a newsletter subscription from the email link without a click', function (): void {
-    $this->withVite();
+    withVite();
 
     $token = 'one-click-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'one-click@example.test',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()
+        ->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
@@ -636,15 +633,12 @@ it('confirms a newsletter subscription from the email link without a click', fun
 });
 
 it('shows the confirming state from the first paint and never the confirm prompt', function (): void {
-    $this->withVite();
+    withVite();
 
     $token = 'first-paint-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'first-paint@example.test',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()
+        ->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
@@ -687,7 +681,7 @@ it('shows the confirming state from the first paint and never the confirm prompt
 
 it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
     config()->set('services.turnstile.site_key', 'test-site-key');
-    $this->withVite();
+    withVite();
 
     $page = $this->browserPage('/contact', 'desktop');
 

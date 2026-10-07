@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Post;
-use App\Models\User;
 use App\Services\FeaturedImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -18,11 +16,7 @@ it('refreshes responsive variants when generation overwrites the same source pat
     $path = 'featured-images/same.png';
     Storage::disk('public')->put($path, UploadedFile::fake()->image('same.png', 1280, 8)
         ->getContent());
-    Post::query()->create([
-        'title' => 'Same path', 'slug' => 'same-path', 'content' => 'Content',
-        'user_id' => User::factory()->create()
-            ->id, 'featured_image_path' => $path,
-    ]);
+    Post::factory()->create(['featured_image_path' => $path]);
     Storage::disk('public')->assertExists('featured-images/responsive/same-1280.webp');
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
@@ -53,22 +47,8 @@ it('succeeds without invoking the generator when no posts need images', function
 });
 
 it('generates and persists images only for posts without one by default', function () {
-    $user = User::factory()->create();
-    $missingImage = Post::query()->create([
-        'title' => 'Missing Image',
-        'slug' => 'missing-image',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-    ]);
-    $existingImage = Post::query()->create([
-        'title' => 'Existing Image',
-        'slug' => 'existing-image',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'featured-images/existing.png',
-    ]);
+    $missingImage = Post::factory()->create();
+    $existingImage = Post::factory()->create(['featured_image_path' => 'featured-images/existing.png']);
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
@@ -89,22 +69,8 @@ it('generates and persists images only for posts without one by default', functi
 });
 
 it('regenerates and persists generated and missing post images when forced', function () {
-    $user = User::factory()->create();
-    $firstPost = Post::query()->create([
-        'title' => 'First Post',
-        'slug' => 'first-post',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'featured-images/old-first.png',
-    ]);
-    $secondPost = Post::query()->create([
-        'title' => 'Second Post',
-        'slug' => 'second-post',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-    ]);
+    $firstPost = Post::factory()->create(['featured_image_path' => 'featured-images/old-first.png']);
+    $secondPost = Post::factory()->create();
 
     // One expectation returns each post's image in processing order; the
     // assertions below prove each post saved its own path.
@@ -133,20 +99,8 @@ it('keeps uploaded post images when forced', function () {
     $uploadPath = 'posts/upload.webp';
     Storage::disk('public')->put($uploadPath, UploadedFile::fake()->image('upload.webp', 640, 8)
         ->getContent());
-    $user = User::factory()->create();
-    $uploadedImage = Post::query()->create([
-        'title' => 'Uploaded Image',
-        'slug' => 'uploaded-image',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'featured_image_path' => $uploadPath,
-    ]);
-    $missingImage = Post::query()->create([
-        'title' => 'Missing Image',
-        'slug' => 'missing-image',
-        'content' => 'Content',
-        'user_id' => $user->id,
-    ]);
+    $uploadedImage = Post::factory()->create(['featured_image_path' => $uploadPath]);
+    $missingImage = Post::factory()->create();
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')
@@ -164,14 +118,7 @@ it('keeps uploaded post images when forced', function () {
 });
 
 it('propagates generator failures without persisting an image path', function () {
-    $user = User::factory()->create();
-    $post = Post::query()->create([
-        'title' => 'Failed Image',
-        'slug' => 'failed-image',
-        'content' => 'Content',
-        'user_id' => $user->id,
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create();
 
     $generator = Double::for(FeaturedImageGenerator::class);
     $generator->expects('generate')

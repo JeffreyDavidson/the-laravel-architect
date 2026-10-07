@@ -5,6 +5,8 @@ use App\Services\YouTubeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JMac\Testing\Double;
 
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('succeeds without calling YouTube when there are no videos', function () {
@@ -19,13 +21,11 @@ it('succeeds without calling YouTube when there are no videos', function () {
 });
 
 it('updates video statistics in batches of fifty', function () {
-    $this->travelTo('2026-08-19 11:45:00');
+    travelTo('2026-08-19 11:45:00');
 
     foreach (range(1, 51) as $index) {
-        Video::query()->create([
+        Video::factory()->create([
             'youtube_id' => "video-{$index}",
-            'title' => "Video {$index}",
-            'slug' => "video-{$index}",
             'view_count' => $index,
             'like_count' => $index,
             'comment_count' => $index,
@@ -91,10 +91,8 @@ it('updates video statistics in batches of fifty', function () {
 });
 
 it('fails without changing statistics when YouTube is unavailable', function () {
-    $video = Video::query()->create([
+    $video = Video::factory()->create([
         'youtube_id' => 'existing-video',
-        'title' => 'Existing Video',
-        'slug' => 'existing-video',
         'view_count' => 25,
         'like_count' => 5,
         'comment_count' => 2,

@@ -120,7 +120,7 @@ function storeBackupArchive(?string $dump = null, array $extraEntries = [], stri
 }
 
 it('verifies a faithful encrypted archive', function () {
-    Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
+    Category::factory()->create();
     storeBackupArchive();
 
     $this->artisanCommand('app:verify-backup')
@@ -197,7 +197,7 @@ it('rejects archives that cannot be trusted', function (Closure $arrange, string
     'rows written after the backup' => [
         function (): void {
             storeBackupArchive();
-            Category::query()->create(['name' => 'Architecture', 'slug' => 'architecture']);
+            Category::factory()->create();
         },
         'Table categories has 0 restored rows but 1 live rows.',
     ],
