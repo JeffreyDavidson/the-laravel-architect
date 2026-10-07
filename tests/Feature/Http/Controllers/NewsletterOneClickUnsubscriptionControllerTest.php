@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Subscriber;
-use App\Support\Newsletter\UnsubscribeUrlGenerator;
+use App\Presenters\SubscriberPresenter;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,8 +35,8 @@ function enforcedForgeryMiddleware(): PreventRequestForgery
 
 it('unsubscribes with a signed one-click post', function () {
     $subscriber = activeSubscriber();
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $url = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
 
     post($url, ['List-Unsubscribe' => 'One-Click'])
         ->assertNoContent();
@@ -47,8 +47,8 @@ it('unsubscribes with a signed one-click post', function () {
 });
 
 it('accepts a burst of one-click posts from one mail provider address', function () {
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for(activeSubscriber());
+    $url = SubscriberPresenter::from(activeSubscriber())
+        ->unsubscribeUrl();
 
     $statuses = [];
     foreach (range(1, 30) as $attempt) {
@@ -61,8 +61,8 @@ it('accepts a burst of one-click posts from one mail provider address', function
 });
 
 it('still limits one-click posts from one address', function () {
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for(activeSubscriber());
+    $url = SubscriberPresenter::from(activeSubscriber())
+        ->unsubscribeUrl();
     foreach (range(1, 120) as $attempt) {
         post($url, ['List-Unsubscribe' => 'One-Click']);
     }
@@ -84,8 +84,8 @@ it('rejects unsigned one-click posts', function () {
 });
 
 it('accepts one-click posts from mail providers without a forgery token', function () {
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for(activeSubscriber());
+    $url = SubscriberPresenter::from(activeSubscriber())
+        ->unsubscribeUrl();
     $request = Request::create($url, 'POST', ['List-Unsubscribe' => 'One-Click']);
     $request->setLaravelSession(app('session.store'));
 
