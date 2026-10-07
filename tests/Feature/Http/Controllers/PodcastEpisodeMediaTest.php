@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,21 +14,15 @@ pest()->use(RefreshDatabase::class);
  */
 function createPublicEpisode(array $attributes = []): array
 {
-    $podcast = Podcast::query()->create([
-        'name' => 'Architecture Sessions',
-        'slug' => 'architecture-sessions',
-        'description' => 'Conversations about Laravel architecture.',
-        'is_active' => true,
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode media coverage',
-        'slug' => 'episode-media-coverage',
-        'description' => 'An episode with media.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-        ...$attributes,
-    ]);
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create([
+            'title' => 'Episode media coverage',
+            'transistor_url' => null,
+            ...$attributes,
+        ]);
 
     return [$podcast, $episode];
 }

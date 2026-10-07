@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Enums\SocialPlatform;
 use App\Models\Podcast;
 use App\Models\Project;
@@ -10,13 +9,16 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\Support\SocialProfileFixtures;
 
+use function Pest\Laravel\from;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('renders the homepage without requesting external statistics on a cold cache', function () {
     Cache::flush();
     Http::fake();
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk();
 
     Http::assertNothingSent();
@@ -24,16 +26,14 @@ it('renders the homepage without requesting external statistics on a cold cache'
 
 it('presents featured projects without duplicated summaries or invented artwork', function (int $count) {
     foreach (range(1, $count) as $index) {
-        Project::query()->create([
-            'title' => "Selected project {$index}",
-            'description' => "A distinct project summary {$index}.",
-            'status' => PublishStatus::Published,
-            'is_featured' => true,
-            'sort_order' => $index,
-        ]);
+        Project::factory()->published()
+            ->featured()
+            ->create([
+                'description' => "A distinct project summary {$index}.",
+            ]);
     }
 
-    $response = $this->get(route('home'));
+    $response = get(route('home'));
 
     $response->assertOk()
         ->assertSee('Selected work')
@@ -50,28 +50,23 @@ it('presents featured projects without duplicated summaries or invented artwork'
 })->with([1, 2, 4]);
 
 it('omits selected work when no projects are featured', function () {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertDontSeeHtml('data-home-work');
 });
 
 it('uses the active podcast artwork on the homepage', function () {
-    Podcast::query()->create([
-        'name' => 'Coffee with The Laravel Architect',
-        'slug' => 'coffee-with-the-laravel-architect',
-        'description' => 'Conversations about Laravel and the developer life.',
+    Podcast::factory()->create([
         'cover_image_path' => 'podcasts/current-cover.webp',
-        'is_active' => true,
-        'sort_order' => 1,
     ]);
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSeeHtml('/storage/podcasts/current-cover.webp');
 });
 
 it('flashes invalid newsletter input for recovery', function () {
-    $this->from(route('home'))
+    from(route('home'))
         ->post(route('newsletter.subscribe'), ['email' => 'not-an-email'])
         ->assertSessionHasErrors('email')
         ->assertSessionHasInput('email', 'not-an-email');
@@ -79,7 +74,7 @@ it('flashes invalid newsletter input for recovery', function () {
 });
 
 it('presents honest inquiry links and one media destination per channel', function () {
-    $this->get(route('home'))
+    get(route('home'))
         ->assertOk()
         ->assertSee('Explore services')
         ->assertDontSee('Book a review')
@@ -95,7 +90,7 @@ it('renders enabled footer social profiles and hides contact-only and disabled o
     $contactProfile = SocialProfileFixtures::create(SocialPlatform::LinkedIn, 'https://linkedin.com/in/contact-only', false, true);
     SocialProfileFixtures::create(SocialPlatform::Bluesky, 'https://bsky.app/profile/disabled', true, true, false);
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertSeeHtml($footerProfile->url)
         ->assertDontSeeHtml($contactProfile->url)
         ->assertDontSeeHtml('https://bsky.app/profile/disabled');
@@ -111,11 +106,11 @@ it('uses the enabled YouTube profile for the homepage channel link', function ()
         false,
     );
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertSeeHtml($youtubeProfile->url);
 
     $youtubeProfile->update(['is_enabled' => false]);
 
-    $this->get(route('home'))
+    get(route('home'))
         ->assertDontSeeHtml($youtubeProfile->url);
 });
