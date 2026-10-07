@@ -35,7 +35,7 @@ class PostsTable
                     ->label('Image')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn (): string => 'https://ui-avatars.com/api/?name=P&background=6366f1&color=fff'),
+                    ->defaultImageUrl(fn (): string => asset('images/admin/post-placeholder.svg')),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()

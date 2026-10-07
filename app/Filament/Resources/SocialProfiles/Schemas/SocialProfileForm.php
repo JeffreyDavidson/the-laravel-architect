@@ -19,15 +19,13 @@ class SocialProfileForm
                 Section::make('Profile')
                     ->schema([
                         Select::make('platform')
-                            ->options(collect(SocialPlatform::cases())
-                                ->mapWithKeys(fn (SocialPlatform $platform): array => [$platform->value => $platform->getLabel()])
-                                ->all())
+                            ->options(SocialPlatform::class)
                             ->required()
                             ->live(),
                         TextInput::make('label')
                             ->label('Display label')
                             ->helperText('Optional text shown on the contact page. The platform name is used when blank.')
-                            ->required(fn (Get $get): bool => $get('platform') === SocialPlatform::Other->value)
+                            ->required(fn (Get $get): bool => $get->enum('platform', SocialPlatform::class, isNullable: true) === SocialPlatform::Other)
                             ->maxLength(255),
                         TextInput::make('url')
                             ->label('Profile URL')

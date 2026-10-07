@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Videos\Tables;
 
-use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Tables\Columns\ReadinessColumn;
-use App\Models\Video;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -63,8 +61,7 @@ class VideosTable
                     ->label('Featured'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->url(fn (Video $record): string => VideoResource::getUrl('edit', ['record' => $record])),
+                EditAction::make(),
             ])
             ->defaultSort('published_at', 'desc')
             ->toolbarActions([
