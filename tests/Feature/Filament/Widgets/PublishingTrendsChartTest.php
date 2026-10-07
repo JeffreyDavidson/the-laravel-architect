@@ -8,8 +8,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Str;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -22,45 +22,21 @@ it('plots published content by month and excludes drafts and older records', fun
     Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
     $administrator = User::factory()->create(['is_admin' => true]);
 
-    Post::query()->create([
-        'title' => 'September post',
-        'slug' => 'september-post',
-        'content' => 'Content',
-        'user_id' => $administrator->id,
-        'status' => 'published',
-        'published_at' => '2026-09-10 12:00:00',
-    ]);
-    Post::query()->create([
-        'title' => 'Draft post',
-        'slug' => 'draft-post',
-        'content' => 'Content',
-        'user_id' => $administrator->id,
-        'status' => 'draft',
-        'published_at' => '2026-09-11 12:00:00',
-    ]);
-    Episode::query()->create([
-        'title' => 'August episode',
-        'slug' => 'august-episode',
-        'description' => 'Description',
-        'status' => 'published',
-        'published_at' => '2026-08-20 12:00:00',
-    ]);
-    NewsletterIssue::query()->create([
-        'title' => 'April issue',
-        'slug' => 'april-issue',
-        'content' => 'Content',
-        'status' => 'published',
-        'published_at' => '2026-04-02 12:00:00',
-    ]);
-    NewsletterIssue::query()->create([
-        'title' => 'Older issue',
-        'slug' => 'older-issue',
-        'content' => 'Content',
-        'status' => 'published',
-        'published_at' => '2026-03-31 12:00:00',
-    ]);
+    Post::factory()
+        ->published()
+        ->create(['published_at' => '2026-09-10 12:00:00']);
+    Post::factory()->create(['published_at' => '2026-09-11 12:00:00']);
+    Episode::factory()
+        ->published()
+        ->create(['published_at' => '2026-08-20 12:00:00']);
+    NewsletterIssue::factory()
+        ->published()
+        ->create(['published_at' => '2026-04-02 12:00:00']);
+    NewsletterIssue::factory()
+        ->published()
+        ->create(['published_at' => '2026-03-31 12:00:00']);
 
-    $this->actingAs($administrator);
+    actingAs($administrator);
 
     $widget = new class extends PublishingTrendsChart
     {
@@ -97,17 +73,14 @@ it('plots published content by month and excludes drafts and older records', fun
 it('buckets published content by display timezone month', function () {
     config(['app.display_timezone' => 'America/New_York']);
     Date::setTestNow(Carbon::parse('2026-10-01 02:00:00'));
-    $administrator = User::factory()->create(['is_admin' => true]);
 
     foreach (['Before the window' => '2026-04-01 02:00:00', 'July evening' => '2026-08-01 02:00:00', 'August morning' => '2026-08-01 05:00:00'] as $title => $publishedAt) {
-        Post::query()->create([
-            'title' => $title,
-            'slug' => Str::slug($title),
-            'content' => 'Content',
-            'user_id' => $administrator->id,
-            'status' => 'published',
-            'published_at' => $publishedAt,
-        ]);
+        Post::factory()
+            ->published()
+            ->create([
+                'title' => $title,
+                'published_at' => $publishedAt,
+            ]);
     }
 
     $widget = new class extends PublishingTrendsChart
