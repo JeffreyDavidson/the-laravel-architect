@@ -2,6 +2,7 @@
 
 use App\Actions\SendNewsletterIssue;
 use App\Enums\PublishStatus;
+use App\Exceptions\NewsletterIssueCannotBeSent;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -78,7 +79,7 @@ it('refuses issues that cannot be sent', function (Closure $createIssue, string 
     }
 
     expect(fn () => app(SendNewsletterIssue::class)->handle($issue))
-        ->toThrow(LogicException::class, $message);
+        ->toThrow(NewsletterIssueCannotBeSent::class, $message);
 
     assertDatabaseCount('newsletter_deliveries', 0);
     assertDatabaseCount('jobs', 0);

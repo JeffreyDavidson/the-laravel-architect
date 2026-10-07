@@ -62,7 +62,7 @@ final class Project extends Model implements Publishable
 
     /**
      * The tech stack with surrounding whitespace removed and blank or non-string
-     * entries dropped. ContentReadinessQuery mirrors this rule in SQL.
+     * entries dropped. ContentReadinessCriteria mirrors this rule in SQL.
      *
      * @return list<non-empty-string>
      */

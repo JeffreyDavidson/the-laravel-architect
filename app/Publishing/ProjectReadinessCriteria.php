@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Queries;
+namespace App\Publishing;
 
 use App\Enums\ProjectReadinessFilter;
+use App\Enums\ReadinessCheck;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
 
-final readonly class ProjectReadinessQuery
+/**
+ * Applies the projects table's readiness filter to the builder it is given.
+ */
+final readonly class ProjectReadinessCriteria
 {
-    public function __construct(private ContentReadinessQuery $readiness) {}
+    public function __construct(private ContentReadinessCriteria $readiness) {}
 
     /** @param Builder<Project> $query */
     public function apply(Builder $query, ?string $filter): void
@@ -28,9 +32,9 @@ final readonly class ProjectReadinessQuery
         }
 
         $this->readiness->whereIncomplete($query, match ($readinessFilter) {
-            ProjectReadinessFilter::NeedsImage => ['featured_image'],
-            ProjectReadinessFilter::NeedsCaseStudy => ['case_study'],
-            ProjectReadinessFilter::NeedsDetails => ['description', 'project_link', 'tech_stack', 'tags'],
+            ProjectReadinessFilter::NeedsImage => [ReadinessCheck::FeaturedImage],
+            ProjectReadinessFilter::NeedsCaseStudy => [ReadinessCheck::CaseStudy],
+            ProjectReadinessFilter::NeedsDetails => [ReadinessCheck::Description, ReadinessCheck::ProjectLink, ReadinessCheck::TechStack, ReadinessCheck::Tags],
         });
     }
 }

@@ -144,7 +144,8 @@ are stored and the email matches the screen; invalid form data stops the action
 before anything is sent. A test email to the site owner records no delivery and
 omits unsubscribe headers.
 
-`SendNewsletterIssue` refuses unpublished or already-sent issues. Otherwise, in
+`SendNewsletterIssue` refuses unpublished or already-sent issues by throwing
+`App\Exceptions\NewsletterIssueCannotBeSent`. Otherwise, in
 one transaction, it creates one `newsletter_deliveries` row per active
 subscriber, marks the issue sent, and enqueues one `DeliverNewsletterIssue` job
 per delivery on the application database queue, so a failure leaves nothing

@@ -81,7 +81,7 @@ final class Episode extends Model implements Publishable
 
     /**
      * Whether the episode has something to play: a valid Transistor share URL
-     * or a YouTube link. ContentReadinessQuery mirrors this rule in SQL.
+     * or a YouTube link. ContentReadinessCriteria mirrors this rule in SQL.
      */
     public function hasMedia(): bool
     {

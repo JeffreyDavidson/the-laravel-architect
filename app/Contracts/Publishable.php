@@ -16,13 +16,9 @@ interface Publishable
     public function isScheduled(): bool;
 
     /**
-     * The required details still missing before the content can be published.
-     *
-     * @return list<string>
+     * Publish the content, keeping an existing publish date and otherwise using now.
+     * This is the state change only; readiness is enforced by the action that calls it.
      */
-    public function publishingIssues(): array;
-
-    /** Publish the content, keeping an existing publish date and otherwise using now. */
     public function publish(): void;
 
     /** Return the content to draft, keeping its publish date and permalink. */
