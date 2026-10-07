@@ -1,5 +1,6 @@
 <?php
 
+use App\Data\CalendarEntry;
 use App\Filament\Pages\EditorialCalendar;
 use App\Models\Episode;
 use App\Models\Post;
@@ -56,7 +57,7 @@ it('places content on its publication day in the display timezone', function () 
 
     livewire(EditorialCalendar::class)
         ->assertViewHas('weeks', function (Collection $weeks): bool {
-            /** @var Collection<int, Collection<int, array{date: string, entries: Collection<int, array{title: string}>}>> $weeks */
+            /** @var Collection<int, Collection<int, array{date: string, entries: Collection<int, CalendarEntry>}>> $weeks */
             foreach ($weeks as $week) {
                 foreach ($week as $day) {
                     if ($day['date'] !== '2026-10-05') {

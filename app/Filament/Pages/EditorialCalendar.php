@@ -2,28 +2,20 @@
 
 namespace App\Filament\Pages;
 
+use App\Data\CalendarEntry;
 use App\Enums\NavigationGroup;
-use App\Enums\PublishStatus;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
-use App\Models\Episode;
-use App\Models\Post;
+use App\Queries\EditorialCalendarQuery;
 use App\Support\DisplayTimezone;
 use BackedEnum;
-use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use UnitEnum;
 
 /**
- * @phpstan-type CalendarEntry array{date: string|null, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
- * @phpstan-type UnscheduledEntry array{date: null, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
- * @phpstan-type ScheduledCalendarEntry array{date: string, title: string, type: string, typeKey: string, statusLabel: string, statusColor: string, url: string}
- * @phpstan-type CalendarDay array{date: string, day: int, isCurrentMonth: bool, isToday: bool, entries: Collection<int, ScheduledCalendarEntry>}
+ * @phpstan-type CalendarDay array{date: string, day: int, isCurrentMonth: bool, isToday: bool, entries: Collection<int, CalendarEntry>}
  */
 class EditorialCalendar extends Page
 {
@@ -97,7 +89,7 @@ class EditorialCalendar extends Page
     }
 
     /**
-     * @return array{calendarMonth: Carbon, weeks: Collection<int, Collection<int, CalendarDay>>, unscheduled: Collection<int, UnscheduledEntry>, statuses: array<string, int>}
+     * @return array{calendarMonth: Carbon, weeks: Collection<int, Collection<int, CalendarDay>>, unscheduled: Collection<int, CalendarEntry>, statuses: array<string, int>}
      */
     protected function getViewData(): array
     {
@@ -108,7 +100,7 @@ class EditorialCalendar extends Page
         $gridEnd = $month->copy()
             ->endOfMonth()
             ->endOfWeek(Carbon::SATURDAY);
-        $entries = $this->entries($gridStart, $gridEnd);
+        $entries = app(EditorialCalendarQuery::class)->get($gridStart, $gridEnd);
         /** @var Collection<int, CalendarDay> $days */
         $days = collect();
 
@@ -128,10 +120,10 @@ class EditorialCalendar extends Page
             'calendarMonth' => $month,
             'weeks' => $days->chunk(7)
                 ->values(),
-            'unscheduled' => $entries->filter(fn (array $entry): bool => $entry['date'] === null)
+            'unscheduled' => $entries->filter(fn (CalendarEntry $entry): bool => $entry->date === null)
                 ->values(),
             'statuses' => $entries
-                ->countBy('statusLabel')
+                ->countBy(fn (CalendarEntry $entry): string => $entry->status->label())
                 ->mapWithKeys(fn (int $count, string|int $status): array => [(string) $status => $count])
                 ->all(),
         ];
@@ -139,21 +131,12 @@ class EditorialCalendar extends Page
 
     /**
      * @param  Collection<int, CalendarEntry>  $entries
-     * @return Collection<int, ScheduledCalendarEntry>
+     * @return Collection<int, CalendarEntry>
      */
     private function entriesForDate(Collection $entries, string $dateKey): Collection
     {
         return $entries
-            ->filter(fn (array $entry): bool => $entry['date'] === $dateKey)
-            ->map(fn (array $entry): array => [
-                'date' => (string) $entry['date'],
-                'title' => $entry['title'],
-                'type' => $entry['type'],
-                'typeKey' => $entry['typeKey'],
-                'statusLabel' => $entry['statusLabel'],
-                'statusColor' => $entry['statusColor'],
-                'url' => $entry['url'],
-            ])
+            ->filter(fn (CalendarEntry $entry): bool => $entry->date === $dateKey)
             ->values();
     }
 
@@ -166,78 +149,5 @@ class EditorialCalendar extends Page
         }
 
         return $month instanceof Carbon ? $month : now(DisplayTimezone::name())->startOfMonth();
-    }
-
-    /**
-     * @return Collection<int, CalendarEntry>
-     */
-    private function entries(Carbon $gridStart, Carbon $gridEnd): Collection
-    {
-        $range = [$gridStart->copy()
-            ->startOfDay()
-            ->utc(), $gridEnd->copy()
-            ->endOfDay()
-            ->utc()];
-
-        $posts = Post::query()
-            ->select(['id', 'title', 'status', 'published_at'])
-            ->where(fn (Builder $query): Builder => $query
-                ->whereBetween('published_at', $range)
-                ->orWhereNull('published_at'))
-            ->orderBy('published_at')
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Post $post): array => $this->entry(
-                title: $post->title,
-                type: 'Post',
-                typeKey: 'post',
-                status: $post->publishStatus(),
-                publishedAt: $post->publishedAt(),
-                url: PostResource::getUrl('edit', ['record' => $post]),
-            ));
-
-        $episodes = Episode::query()
-            ->select(['id', 'title', 'status', 'published_at'])
-            ->where(fn (Builder $query): Builder => $query
-                ->whereBetween('published_at', $range)
-                ->orWhereNull('published_at'))
-            ->orderBy('published_at')
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Episode $episode): array => $this->entry(
-                title: $episode->title,
-                type: 'Episode',
-                typeKey: 'episode',
-                status: $episode->publishStatus(),
-                publishedAt: $episode->publishedAt(),
-                url: EpisodeResource::getUrl('edit', ['record' => $episode]),
-            ));
-
-        return $posts->concat($episodes)
-            ->sortBy(fn (array $entry): string => $entry['date'] ?? '9999-12-31')
-            ->values();
-    }
-
-    /**
-     * @return CalendarEntry
-     */
-    private function entry(
-        string $title,
-        string $type,
-        string $typeKey,
-        PublishStatus $status,
-        ?CarbonInterface $publishedAt,
-        string $url,
-    ): array {
-        return [
-            'date' => DisplayTimezone::convert($publishedAt)
-                ?->toDateString(),
-            'title' => $title,
-            'type' => $type,
-            'typeKey' => $typeKey,
-            'statusLabel' => $status->label(),
-            'statusColor' => $status->getColor(),
-            'url' => $url,
-        ];
     }
 }
