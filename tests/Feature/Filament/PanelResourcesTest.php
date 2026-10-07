@@ -28,11 +28,14 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Vite;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('renders each registered resource index for an authorized user', function (string $resource) {
@@ -42,7 +45,7 @@ it('renders each registered resource index for an authorized user', function (st
         throw new RuntimeException('The resource URL was not a string.');
     }
 
-    $this->get($url)
+    get($url)
         ->assertOk();
 })->with([
     CategoryResource::class,
@@ -73,7 +76,7 @@ it('registers visible navigation items for every admin section', function () {
 });
 
 it('renders the publishing dashboard for an authorized user', function () {
-    $this->get(route('filament.admin.pages.dashboard'))
+    get(route('filament.admin.pages.dashboard'))
         ->assertOk()
         ->assertSee('Dashboard')
         ->assertSeeHtml(Vite::asset('resources/js/filament/admin.js'))
@@ -90,7 +93,7 @@ it('keeps the dashboard focused on daily publishing work', function () {
 });
 
 it('moves reporting widgets to a dedicated insights page', function () {
-    $this->get(Insights::getUrl())
+    get(Insights::getUrl())
         ->assertOk()
         ->assertSee('Insights')
         ->assertSee('without crowding the daily workspace');

@@ -6,6 +6,8 @@ use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+
 pest()->use(RefreshDatabase::class);
 
 it('only admits administrators to the admin panel', function () {
@@ -26,7 +28,7 @@ it('rejects a non-administrator at the admin panel boundary', function () {
 
     expect($user->canAccessPanel($panel))->toBeFalse();
 
-    $this->actingAs($user)
+    actingAs($user)
         ->get(Dashboard::getUrl(panel: 'admin'))
         ->assertForbidden();
 });
@@ -37,7 +39,7 @@ it('allows an administrator to manage their profile', function () {
 
     expect(Filament::getPanel('admin')->getProfileUrl())->toBe($profileUrl);
 
-    $this->actingAs($administrator)
+    actingAs($administrator)
         ->get($profileUrl)
         ->assertOk()
         ->assertSee('Dashboard')
