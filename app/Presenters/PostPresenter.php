@@ -8,6 +8,7 @@ use App\Data\ResponsiveImage;
 use App\Models\Post;
 use App\Services\ResponsiveImageVariants;
 use App\Support\Content\BundledPostArtwork;
+use Illuminate\Contracts\Routing\UrlGenerator;
 
 final readonly class PostPresenter
 {
@@ -15,11 +16,12 @@ final readonly class PostPresenter
         private Post $post,
         private BundledPostArtwork $bundledArtwork,
         private ResponsiveImageVariants $images,
+        private UrlGenerator $urls,
     ) {}
 
     public static function from(Post $post): self
     {
-        return new self($post, app(BundledPostArtwork::class), app(ResponsiveImageVariants::class));
+        return app()->make(self::class, ['post' => $post]);
     }
 
     public function readingTime(): int
@@ -59,6 +61,6 @@ final readonly class PostPresenter
     {
         return $this->post->featured_image_url
             ?? $this->bundledArtwork->urls($this->post->slug)['large']
-            ?? route('og-image', $this->post);
+            ?? $this->urls->route('og-image', $this->post);
     }
 }

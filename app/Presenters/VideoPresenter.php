@@ -12,7 +12,7 @@ final readonly class VideoPresenter
 
     public static function from(Video $video): self
     {
-        return new self($video);
+        return app()->make(self::class, ['video' => $video]);
     }
 
     public function duration(): ?string

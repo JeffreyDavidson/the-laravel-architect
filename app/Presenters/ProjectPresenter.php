@@ -17,7 +17,7 @@ final readonly class ProjectPresenter
 
     public static function from(Project $project): self
     {
-        return new self($project, app(ResponsiveImageVariants::class));
+        return app()->make(self::class, ['project' => $project]);
     }
 
     /** The uploaded featured image with its WebP variants, or null when the project has none. */

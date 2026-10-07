@@ -12,7 +12,7 @@ final readonly class EpisodePresenter
 
     public static function from(Episode $episode): self
     {
-        return new self($episode);
+        return app()->make(self::class, ['episode' => $episode]);
     }
 
     public function code(): string
