@@ -188,10 +188,9 @@
                             {{ $footer ?? '' }}
                             <p style="margin: 0">
                                 The Laravel Architect ·
-                                <a href="{{ route('home') }}" class="mail-link" style="color: #3f6fa8"
-                                    >thelaravelarchitect.com</a>
+                                <x-mail.link :href="route('home')">thelaravelarchitect.com</x-mail.link>
                                 ·
-                                <a href="{{ route('privacy') }}" class="mail-link" style="color: #3f6fa8">Privacy</a>
+                                <x-mail.link :href="route('privacy')">Privacy</x-mail.link>
                             </p>
                         </td>
                     </tr>

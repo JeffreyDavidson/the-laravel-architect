@@ -12,12 +12,12 @@
     </div>
     <x-slot:footer>
         <p style="margin: 0 0 8px;">
-            <a href="{{ $issueUrl }}" class="mail-link" style="color: #3f6fa8;">Read this issue on the web</a>
+            <x-mail.link :href="$issueUrl">Read this issue on the web</x-mail.link>
         </p>
         <p style="margin: 0 0 8px;">
             You're receiving this because you confirmed a subscription to The Laravel Architect newsletter.
             @if ($unsubscribeUrl !== null)
-                <a href="{{ $unsubscribeUrl }}" class="mail-link" style="color: #3f6fa8;">Unsubscribe</a>
+                <x-mail.link :href="$unsubscribeUrl">Unsubscribe</x-mail.link>
             @endif
         </p>
     </x-slot:footer>

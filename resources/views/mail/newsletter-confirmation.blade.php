@@ -19,7 +19,7 @@
     </p>
     <p class="mail-muted" style="margin: 0; font-size: 13px; line-height: 1.6; color: #6b7280;">
         If the button doesn't work, copy and paste this link into your browser:<br />
-        <a href="{{ $confirmationUrl }}" class="mail-link" style="color: #3f6fa8; word-break: break-all;">{{ $confirmationUrl }}</a>
+        <x-mail.link :href="$confirmationUrl" style="word-break: break-all;">{{ $confirmationUrl }}</x-mail.link>
     </p>
     <x-slot:footer>
         <p style="margin: 0 0 8px;">You're receiving this because this address was entered on the newsletter sign-up form.</p>
