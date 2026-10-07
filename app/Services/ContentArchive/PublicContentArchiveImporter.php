@@ -21,27 +21,10 @@ use InvalidArgumentException;
 
 class PublicContentArchiveImporter
 {
-    private const int VERSION = 1;
-
     public function __construct(
         private readonly PublicContentArchiveValidator $validator,
-        private readonly PublicContentArchiveMedia $media,
         private readonly PublicContentArchiveRelations $relations,
     ) {}
-
-    private const array POST_FIELDS = ['title', 'slug', 'excerpt', 'content', 'featured_image_path', 'published_at'];
-
-    private const array PROJECT_FIELDS = ['title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order'];
-
-    private const array PODCAST_FIELDS = ['name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'sort_order'];
-
-    private const array EPISODE_FIELDS = ['title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'transistor_url', 'published_at'];
-
-    private const array NEWSLETTER_ISSUE_FIELDS = ['title', 'slug', 'excerpt', 'content', 'published_at'];
-
-    private const array VIDEO_FIELDS = ['youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at'];
-
-    private const array SEO_FIELDS = ['description', 'title', 'image', 'author', 'robots', 'canonical_url'];
 
     /**
      * @param  array<string, mixed>  $archive
@@ -49,85 +32,19 @@ class PublicContentArchiveImporter
      */
     public function sync(array $archive): array
     {
-        $records = $this->validator->validate($archive, self::VERSION);
+        $records = $this->validator->validate($archive, PublicContentArchiveSchema::VERSION);
 
         return Model::withoutEvents(fn (): array => DB::transaction(function () use ($records): array {
             $this->unpublishExistingContent();
             $author = $this->stagingAuthor();
 
-            foreach ($records['categories'] as $attributes) {
-                Category::query()->updateOrCreate(
-                    ['slug' => $this->stringValue($attributes, 'slug')],
-                    $this->only($attributes, ['name', 'description']),
-                );
-            }
-
-            foreach ($records['podcasts'] as $attributes) {
-                $podcast = Podcast::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $podcast->setAttribute('deleted_at', null);
-                $podcast->fill([...$this->only($attributes, self::PODCAST_FIELDS), 'is_active' => true]);
-                $podcast->save();
-                $this->relations->syncSeo($podcast, $this->nullableRecord($attributes['seo'] ?? null, 'podcast SEO'), self::SEO_FIELDS);
-            }
-
-            foreach ($records['posts'] as $attributes) {
-                $post = Post::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $post->setAttribute('deleted_at', null);
-                $post->fill([
-                    ...$this->only($attributes, self::POST_FIELDS),
-                    'category_id' => Category::query()->where('slug', $this->nullableStringValue($attributes, 'category_slug'))
-                        ->value('id'),
-                    'user_id' => $author->getKey(),
-                    'status' => PublishStatus::Published,
-                    'review_notes' => null,
-                    'reviewed_by' => null,
-                    'reviewed_at' => null,
-                ]);
-                $post->save();
-                $this->relations->syncTags($post, $this->relations->tagRecords($attributes['tags'] ?? []));
-                $this->relations->syncSeo($post, $this->nullableRecord($attributes['seo'] ?? null, 'post SEO'), self::SEO_FIELDS);
-            }
-
-            foreach ($records['projects'] as $attributes) {
-                $project = Project::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $project->setAttribute('deleted_at', null);
-                $project->fill([...$this->only($attributes, self::PROJECT_FIELDS), 'status' => PublishStatus::Published]);
-                $project->save();
-                $this->relations->syncTags($project, $this->relations->tagRecords($attributes['tags'] ?? []));
-                $this->relations->syncSeo($project, $this->nullableRecord($attributes['seo'] ?? null, 'project SEO'), self::SEO_FIELDS);
-            }
-
-            foreach ($records['episodes'] as $attributes) {
-                $episode = Episode::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $episode->setAttribute('deleted_at', null);
-                $episode->fill([
-                    ...$this->only($attributes, self::EPISODE_FIELDS),
-                    'podcast_id' => Podcast::query()->where('slug', $this->nullableStringValue($attributes, 'podcast_slug'))
-                        ->value('id'),
-                    'status' => PublishStatus::Published,
-                ]);
-                $episode->save();
-                $this->relations->syncTags($episode, $this->relations->tagRecords($attributes['tags'] ?? []));
-                $this->relations->syncSeo($episode, $this->nullableRecord($attributes['seo'] ?? null, 'episode SEO'), self::SEO_FIELDS);
-            }
-
-            foreach ($records['newsletter_issues'] as $attributes) {
-                $issue = NewsletterIssue::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
-                $issue->setAttribute('deleted_at', null);
-                $issue->fill([
-                    ...$this->only($attributes, self::NEWSLETTER_ISSUE_FIELDS),
-                    'status' => PublishStatus::Published,
-                ]);
-                $issue->save();
-                $this->relations->syncSeo($issue, $this->nullableRecord($attributes['seo'] ?? null, 'newsletter issue SEO'), self::SEO_FIELDS);
-            }
-
-            foreach ($records['videos'] as $attributes) {
-                Video::query()->updateOrCreate(
-                    ['youtube_id' => $this->stringValue($attributes, 'youtube_id')],
-                    $this->only($attributes, self::VIDEO_FIELDS),
-                );
-            }
+            $this->syncCategories($records['categories']);
+            $this->syncPodcasts($records['podcasts']);
+            $this->syncPosts($records['posts'], $author);
+            $this->syncProjects($records['projects']);
+            $this->syncEpisodes($records['episodes']);
+            $this->syncNewsletterIssues($records['newsletter_issues']);
+            $this->syncVideos($records['videos']);
 
             return collect(['categories', 'posts', 'projects', 'podcasts', 'episodes', 'newsletter_issues', 'videos'])
                 ->mapWithKeys(fn (string $type): array => [$type => count($records[$type])])
@@ -141,7 +58,7 @@ class PublicContentArchiveImporter
      */
     public function mediaPaths(array $archive, bool $imagesOnly = false): array
     {
-        $records = $this->validator->validate($archive, self::VERSION);
+        $records = $this->validator->validate($archive, PublicContentArchiveSchema::VERSION);
 
         $paths = [];
 
@@ -149,7 +66,7 @@ class PublicContentArchiveImporter
             foreach ($records[$type] as $attributes) {
                 foreach ($imagesOnly ? ['featured_image_path', 'cover_image_path'] : ['featured_image_path', 'cover_image_path'] as $field) {
                     if (filled($attributes[$field] ?? null)) {
-                        $paths[] = $this->media->validatePath($attributes[$field]);
+                        $paths[] = $this->validator->validateMediaPath($attributes[$field]);
                     }
                 }
             }
@@ -192,6 +109,108 @@ class PublicContentArchiveImporter
         return $archive;
     }
 
+    /** @param list<array<string, mixed>> $records */
+    private function syncCategories(array $records): void
+    {
+        foreach ($records as $attributes) {
+            Category::updateOrCreate(
+                ['slug' => $this->stringValue($attributes, 'slug')],
+                PublicContentArchiveSchema::only($attributes, ['name', 'description']),
+            );
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncPodcasts(array $records): void
+    {
+        foreach ($records as $attributes) {
+            $podcast = Podcast::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+            $podcast->setAttribute('deleted_at', null);
+            $podcast->fill([...PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::PODCAST_FIELDS), 'is_active' => true]);
+            $podcast->save();
+            $this->relations->syncSeo($podcast, $this->nullableRecord($attributes['seo'] ?? null, 'podcast SEO'), PublicContentArchiveSchema::SEO_FIELDS);
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncPosts(array $records, User $author): void
+    {
+        foreach ($records as $attributes) {
+            $post = Post::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+            $post->setAttribute('deleted_at', null);
+            $post->fill([
+                ...PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::POST_FIELDS),
+                'category_id' => Category::query()->where('slug', $this->nullableStringValue($attributes, 'category_slug'))
+                    ->value('id'),
+                'user_id' => $author->getKey(),
+                'status' => PublishStatus::Published,
+                'review_notes' => null,
+                'reviewed_by' => null,
+                'reviewed_at' => null,
+            ]);
+            $post->save();
+            $this->relations->syncTags($post, $this->relations->tagRecords($attributes['tags'] ?? []));
+            $this->relations->syncSeo($post, $this->nullableRecord($attributes['seo'] ?? null, 'post SEO'), PublicContentArchiveSchema::SEO_FIELDS);
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncProjects(array $records): void
+    {
+        foreach ($records as $attributes) {
+            $project = Project::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+            $project->setAttribute('deleted_at', null);
+            $project->fill([...PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::PROJECT_FIELDS), 'status' => PublishStatus::Published]);
+            $project->save();
+            $this->relations->syncTags($project, $this->relations->tagRecords($attributes['tags'] ?? []));
+            $this->relations->syncSeo($project, $this->nullableRecord($attributes['seo'] ?? null, 'project SEO'), PublicContentArchiveSchema::SEO_FIELDS);
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncEpisodes(array $records): void
+    {
+        foreach ($records as $attributes) {
+            $episode = Episode::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+            $episode->setAttribute('deleted_at', null);
+            $episode->fill([
+                ...PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::EPISODE_FIELDS),
+                'podcast_id' => Podcast::query()->where('slug', $this->nullableStringValue($attributes, 'podcast_slug'))
+                    ->value('id'),
+                'status' => PublishStatus::Published,
+            ]);
+            $episode->save();
+            $this->relations->syncTags($episode, $this->relations->tagRecords($attributes['tags'] ?? []));
+            $this->relations->syncSeo($episode, $this->nullableRecord($attributes['seo'] ?? null, 'episode SEO'), PublicContentArchiveSchema::SEO_FIELDS);
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncNewsletterIssues(array $records): void
+    {
+        foreach ($records as $attributes) {
+            $issue = NewsletterIssue::withTrashed()->firstOrNew(['slug' => $this->stringValue($attributes, 'slug')]);
+            $issue->setAttribute('deleted_at', null);
+            $issue->fill([
+                ...PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::NEWSLETTER_ISSUE_FIELDS),
+                'status' => PublishStatus::Published,
+            ]);
+            $issue->save();
+            $this->relations->syncSeo($issue, $this->nullableRecord($attributes['seo'] ?? null, 'newsletter issue SEO'), PublicContentArchiveSchema::SEO_FIELDS);
+        }
+    }
+
+    /** @param list<array<string, mixed>> $records */
+    private function syncVideos(array $records): void
+    {
+        foreach ($records as $attributes) {
+            Video::updateOrCreate(
+                ['youtube_id' => $this->stringValue($attributes, 'youtube_id')],
+                PublicContentArchiveSchema::only($attributes, PublicContentArchiveSchema::VIDEO_FIELDS),
+            );
+        }
+    }
+
     private function stagingAuthor(): User
     {
         $author = User::query()->firstOrNew([
@@ -225,23 +244,6 @@ class PublicContentArchiveImporter
             ->update(['status' => PublishStatus::Draft->value, 'published_at' => null]);
         Video::query()->published()
             ->update(['published_at' => null]);
-    }
-
-    /** @param array<string, mixed> $attributes
-     * @param  list<string>  $fields
-     * @return array<string, mixed>
-     */
-    private function only(array $attributes, array $fields): array
-    {
-        $selected = [];
-
-        foreach ($fields as $field) {
-            if (array_key_exists($field, $attributes)) {
-                $selected[$field] = $attributes[$field];
-            }
-        }
-
-        return $selected;
     }
 
     /** @param array<string, mixed> $attributes */

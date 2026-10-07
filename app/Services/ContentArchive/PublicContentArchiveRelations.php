@@ -35,7 +35,7 @@ class PublicContentArchiveRelations
         }
 
         $model->seo()
-            ->updateOrCreate([], $this->only($attributes, $fields));
+            ->updateOrCreate([], PublicContentArchiveSchema::only($attributes, $fields));
     }
 
     /** @return list<array{name: string, type?: string|null}> */
@@ -81,23 +81,5 @@ class PublicContentArchiveRelations
         $tag->save();
 
         return $tag;
-    }
-
-    /**
-     * @param  array<string, mixed>  $attributes
-     * @param  list<string>  $fields
-     * @return array<string, mixed>
-     */
-    private function only(array $attributes, array $fields): array
-    {
-        $selected = [];
-
-        foreach ($fields as $field) {
-            if (array_key_exists($field, $attributes)) {
-                $selected[$field] = $attributes[$field];
-            }
-        }
-
-        return $selected;
     }
 }
