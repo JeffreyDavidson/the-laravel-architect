@@ -44,6 +44,8 @@ page:
   when the podcast has none.
 - `podcast.equalizer` draws the animated equalizer bars, as the hero `badge` or
   the hover-revealed episode `row`.
+- `podcast.platform-links` renders a podcast's subscribe buttons from
+  `PodcastPresenter::platformLinks()`, or an episode's YouTube "Listen on" row.
 - `sidebar-card` is the bordered card with a small uppercase heading used by the
   episode sidebar and the featured guest.
 - `svg-icon` holds shared icons such as the podcast microphone.

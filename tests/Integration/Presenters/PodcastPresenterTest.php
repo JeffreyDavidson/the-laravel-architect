@@ -85,3 +85,17 @@ it('falls back to the default public color for invalid values', function (mixed 
     'non-hex value' => 'rebeccapurple',
     'css expression' => 'url(https://example.com/image.png)',
 ]);
+
+it('lists the linked listening platforms in display order', function () {
+    $podcast = new Podcast([
+        'rss_url' => 'https://feeds.example.com/podcast',
+        'spotify_url' => 'https://open.spotify.com/show/podcast',
+        'apple_url' => '',
+        'youtube_url' => null,
+    ]);
+
+    expect(PodcastPresenter::from($podcast)->platformLinks())->toBe([
+        ['label' => 'Spotify', 'url' => 'https://open.spotify.com/show/podcast', 'icon' => 'spotify'],
+        ['label' => 'RSS', 'url' => 'https://feeds.example.com/podcast', 'icon' => 'rss'],
+    ]);
+});
