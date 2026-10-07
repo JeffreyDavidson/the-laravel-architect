@@ -22,7 +22,9 @@ public rendering at the widths listed in `config/media.php` (`responsive_widths`
 removes its variants.
 
 Bundled podcast cover fallbacks provide 128px, 320px, and 512px Vite-managed
-variants for smaller episode artwork.
+variants for smaller episode artwork. The presenters in `app/Presenters` choose
+between an upload and its bundled fallback and build each `srcset` (see
+[Public site and SEO](public-site-and-seo.md#pages-and-viewmodels)).
 
 Posts without a featured image can get generated artwork under
 `featured-images/` (see

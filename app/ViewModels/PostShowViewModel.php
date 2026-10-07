@@ -3,8 +3,8 @@
 namespace App\ViewModels;
 
 use App\Models\Post;
+use App\Presenters\PostPresenter;
 use App\Queries\RelatedPostsQuery;
-use App\Support\Seo\PostShareImage;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -13,7 +13,6 @@ class PostShowViewModel
 {
     public function __construct(
         private readonly RelatedPostsQuery $relatedPostsQuery,
-        private readonly PostShareImage $postShareImage,
     ) {}
 
     /**
@@ -33,7 +32,7 @@ class PostShowViewModel
         $seoSource = $seo instanceof SEO
             ? $seo->prepareForUsage()
             : $post->getDynamicSEOData();
-        $seoSource->image = $this->postShareImage->url($post);
+        $seoSource->image = PostPresenter::from($post)->shareImageUrl();
 
         return [
             'post' => $post,
