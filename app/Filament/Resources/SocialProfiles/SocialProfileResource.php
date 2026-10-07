@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialProfiles;
 
+use App\Enums\NavigationGroup;
 use App\Enums\SocialPlatform;
 use App\Filament\Resources\SocialProfiles\Pages\CreateSocialProfile;
 use App\Filament\Resources\SocialProfiles\Pages\EditSocialProfile;
@@ -27,7 +28,7 @@ class SocialProfileResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Audience';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Audience;
 
     #[\Override]
     protected static ?int $navigationSort = 1;

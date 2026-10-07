@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Episodes;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
@@ -28,7 +29,7 @@ class EpisodeResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMusicalNote;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Publish';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
     protected static ?int $navigationSort = 4;

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Posts\PostResource;
@@ -36,7 +37,7 @@ class EditorialCalendar extends Page
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Publish';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
     protected static ?int $navigationSort = 0;

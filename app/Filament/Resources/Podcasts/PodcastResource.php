@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Podcasts;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Podcasts\Pages\CreatePodcast;
 use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Filament\Resources\Podcasts\Pages\ListPodcasts;
@@ -28,7 +29,7 @@ class PodcastResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMicrophone;
 
     #[\Override]
-    protected static string|UnitEnum|null $navigationGroup = 'Publish';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
     protected static ?int $navigationSort = 3;
