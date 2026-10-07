@@ -93,7 +93,7 @@ final class RecentActivityWidget extends Widget
         return [
             'kind' => $kind,
             'label' => $label,
-            'status' => $status->label(),
+            'status' => $status->getLabel(),
             'time' => $updatedAt?->diffForHumans() ?? 'Unknown',
             'timestamp' => $updatedAt,
             'url' => $url,

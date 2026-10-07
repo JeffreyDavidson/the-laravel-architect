@@ -125,7 +125,7 @@ final class EditorialCalendar extends Page
             'unscheduled' => $entries->filter(fn (CalendarEntry $entry): bool => $entry->date === null)
                 ->values(),
             'statuses' => $entries
-                ->countBy(fn (CalendarEntry $entry): string => $entry->status->label())
+                ->countBy(fn (CalendarEntry $entry): string => $entry->status->getLabel())
                 ->mapWithKeys(fn (int $count, string|int $status): array => [(string) $status => $count])
                 ->all(),
         ];

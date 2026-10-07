@@ -50,7 +50,7 @@ final class PublishStatusSelect extends Select
             : $this->selectableStatuses;
 
         return collect($statuses)
-            ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->label()])
+            ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->getLabel()])
             ->all();
     }
 
