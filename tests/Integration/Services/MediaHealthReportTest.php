@@ -22,7 +22,7 @@ function mediaHealthProject(string $slug, ?string $path): Project
     ]));
 }
 
-it('reports the status strings and colors for each image state', function () {
+it('reports the status keys and colors for each image state', function () {
     $optimizer = app(ImageUploadOptimizer::class);
     $healthyPath = $optimizer->store(UploadedFile::fake()->image('healthy.jpg', 1600, 900), 'projects', 'public');
     $repairPath = $optimizer->store(UploadedFile::fake()->image('repair.jpg', 1600, 900), 'projects', 'public');
@@ -52,10 +52,10 @@ it('reports the status strings and colors for each image state', function () {
 
     expect($summary)
         ->toBe([
-            "project:{$healthy->id}" => ['Optimized', 'Ready', 'Healthy', 'success', false],
-            "project:{$repair->id}" => ['Optimized', 'Missing', 'Needs repair', 'warning', true],
-            "project:{$large->id}" => ['Needs optimization', 'Missing', 'Re-upload required', 'danger', true],
-            "project:{$missingFile->id}" => ['Missing', 'Unavailable', 'Re-upload required', 'danger', false],
-            "project:{$noImage->id}" => ['Missing', 'Unavailable', 'Re-upload required', 'danger', false],
+            "project:{$healthy->id}" => ['optimized', 'ready', 'healthy', 'success', false],
+            "project:{$repair->id}" => ['optimized', 'missing', 'needs_repair', 'warning', true],
+            "project:{$large->id}" => ['needs_optimization', 'missing', 'reupload_required', 'danger', true],
+            "project:{$missingFile->id}" => ['missing', 'unavailable', 'reupload_required', 'danger', false],
+            "project:{$noImage->id}" => ['missing', 'unavailable', 'reupload_required', 'danger', false],
         ]);
 });

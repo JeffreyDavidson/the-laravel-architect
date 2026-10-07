@@ -76,12 +76,15 @@ final class MediaHealth extends Page implements HasTable
                 TextColumn::make('source_status')
                     ->label('Source')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getColor() ?? 'danger'),
                 TextColumn::make('variants')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaVariantStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (string $state): string => MediaVariantStatus::tryFrom($state)?->getColor() ?? 'warning'),
                 TextColumn::make('status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaHealthStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (array $record): string => $this->recordString($record, 'status_color')),
             ])
             ->filters([
