@@ -2,10 +2,12 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 it('titles a missing page without words from its address', function (string $path, string $addressTitle) {
-    $response = $this->get($path);
+    $response = get($path);
 
     $response->assertNotFound()
         ->assertSeeHtml('<title>Page not found — Jeffrey Davidson</title>')
@@ -17,7 +19,7 @@ it('titles a missing page without words from its address', function (string $pat
 ]);
 
 it('keeps a missing page out of search results without a canonical link', function () {
-    $response = $this->get('/nope');
+    $response = get('/nope');
 
     $response->assertNotFound()
         ->assertSeeHtml('<meta name="robots" content="noindex, nofollow">')

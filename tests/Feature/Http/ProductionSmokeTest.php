@@ -22,7 +22,7 @@ beforeEach(function (): void {
     $baseUrl = productionSmokeBaseUrl();
 
     if ($baseUrl === null) {
-        $this->markTestSkipped('Set PRODUCTION_BASE_URL to run production smoke tests.');
+        test()->markTestSkipped('Set PRODUCTION_BASE_URL to run production smoke tests.');
     }
 
     // The suite checks the deployed site over real HTTP; every other host stays blocked.
