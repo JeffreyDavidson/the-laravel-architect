@@ -45,6 +45,23 @@ it('rejects a slug that is empty or cannot be normalized', function (string $nam
     'overlong generated slug' => [str_repeat('a', 256), str_repeat('a', 256)],
 ]);
 
+it('rejects a slug that is not lowercase kebab-case with the format rule', function (string $slug) {
+    livewire(CreateTag::class)
+        ->fillForm([
+            'name' => 'Tag name',
+            'slug' => $slug,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['slug' => 'regex']);
+
+    expect(Tag::query()->exists())->toBeFalse();
+})->with([
+    'uppercase' => ['Tag-name'],
+    'spaces' => ['tag name'],
+    'double hyphen' => ['tag--name'],
+    'trailing hyphen' => ['tag-name-'],
+]);
+
 it('rejects a duplicate localized tag slug across tag types', function () {
     Tag::factory()->create([
         'name' => 'Tag name',

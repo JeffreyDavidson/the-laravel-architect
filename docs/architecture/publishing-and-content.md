@@ -81,7 +81,10 @@ This is separate from the editorial approval fields (`reviewed_by`,
 ## Slugs
 
 Admin forms generate an initial slug but preserve it when titles change, and
-explicit slug edits retain uniqueness validation.
+explicit slug edits retain uniqueness validation. Tag slugs are translatable
+JSON, so `App\Rules\UniqueTagSlug` checks them in the current locale, and
+`App\Rules\NotReservedNewsletterSlug` rejects newsletter issue slugs taken by
+static `/newsletter/*` routes such as `rss` and `confirmed`.
 
 Slugs of posts, projects, episodes and newsletter issues lock once their content
 has a Published or Scheduled status (`LocksSlugAfterPublication` stamps
