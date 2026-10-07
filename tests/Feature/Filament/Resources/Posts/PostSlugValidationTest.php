@@ -89,3 +89,16 @@ it('rejects a non-normalized slug when creating a category inline', function () 
 
     expect(Category::query()->exists())->toBeFalse();
 });
+
+it('rejects a duplicate category slug when creating a category inline', function () {
+    Category::factory()->create(['slug' => 'laravel']);
+
+    livewire(CreatePost::class)
+        ->callAction(TestAction::make('createOption')->schemaComponent('category_id'), data: [
+            'name' => 'Laravel again',
+            'slug' => 'laravel',
+        ])
+        ->assertHasFormErrors(['slug' => 'unique']);
+
+    expect(Category::query()->count())->toBe(1);
+});
