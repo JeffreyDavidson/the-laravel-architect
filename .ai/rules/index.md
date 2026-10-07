@@ -17,6 +17,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Observers/** | .ai/rules/observers.md |
 | app/Presenters/** | .ai/rules/presenters.md |
 | app/Queries/** | .ai/rules/queries.md |
+| app/Rules/** | .ai/rules/rules.md |
 | app/Services/** | .ai/rules/services.md |
 | tests/** | .ai/rules/tests.md |
 | app/ViewModels/** | .ai/rules/view-models.md |
