@@ -29,7 +29,7 @@ class ContactInquiryResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Audience;
 
     #[\Override]
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 8;
 
     #[\Override]
     protected static ?string $navigationLabel = 'Inquiry inbox';
@@ -65,13 +65,6 @@ class ContactInquiryResource extends Resource
     public static function table(Table $table): Table
     {
         return ContactInquiriesTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

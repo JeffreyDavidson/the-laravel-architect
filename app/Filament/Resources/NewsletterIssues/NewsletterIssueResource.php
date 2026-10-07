@@ -27,13 +27,13 @@ class NewsletterIssueResource extends Resource
     protected static ?string $model = NewsletterIssue::class;
 
     #[\Override]
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
 
     #[\Override]
     protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Publish;
 
     #[\Override]
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
@@ -46,13 +46,6 @@ class NewsletterIssueResource extends Resource
     public static function table(Table $table): Table
     {
         return NewsletterIssuesTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

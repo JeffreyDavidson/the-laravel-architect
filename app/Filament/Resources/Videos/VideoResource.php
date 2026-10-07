@@ -29,6 +29,9 @@ class VideoResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Library;
 
     #[\Override]
+    protected static ?int $navigationSort = 7;
+
+    #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema

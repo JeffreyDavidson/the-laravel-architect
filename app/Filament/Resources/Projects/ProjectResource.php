@@ -33,7 +33,7 @@ class ProjectResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = NavigationGroup::Library;
 
     #[\Override]
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
@@ -46,13 +46,6 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return ProjectsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array
