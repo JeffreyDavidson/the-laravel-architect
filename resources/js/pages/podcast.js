@@ -1,5 +1,3 @@
-import { copyText } from '../utils/clipboard';
-
 function transcriptSlug(value) {
     return (
         value
@@ -18,7 +16,7 @@ function clearTranscriptMatches(content) {
     content.normalize();
 }
 
-function highlightTranscriptMatches(content, query) {
+function highlightTranscriptMatches(content, query, matchTemplate) {
     const normalizedQuery = query.toLocaleLowerCase();
     const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     const textNodes = [];
@@ -53,9 +51,7 @@ function highlightTranscriptMatches(content, query) {
 
             fragment.append(document.createTextNode(text.slice(searchStart, matchStart)));
 
-            const mark = document.createElement('mark');
-            mark.dataset.transcriptMatch = '';
-            mark.className = 'bg-amber-500/10 text-amber-700 dark:text-amber-300';
+            const mark = matchTemplate.content.firstElementChild.cloneNode(true);
             mark.textContent = text.slice(matchStart, matchEnd);
             fragment.append(mark);
             matches++;
@@ -93,6 +89,7 @@ export function registerPodcast(Alpine) {
             this.$root.dataset.ready = 'true';
         },
         addSectionLinks() {
+            const anchorTemplate = this.$root.querySelector('[data-transcript-anchor-template]');
             const usedIds = new Set();
 
             this.$refs.content.querySelectorAll('h2, h3, h4').forEach(heading => {
@@ -113,25 +110,12 @@ export function registerPodcast(Alpine) {
                 usedIds.add(id);
                 heading.id = id;
 
-                const anchor = document.createElement('a');
+                // The copy button component copies the section URL and shows its feedback in the label.
+                const anchor = anchorTemplate.content.firstElementChild.cloneNode(true);
                 anchor.href = `#${id}`;
-                anchor.dataset.transcriptAnchor = '';
-                anchor.className =
-                    'inline-flex text-sm font-semibold text-gray-500 transition-colors hover:text-blue-500 dark:text-gray-400';
-                anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
-                anchor.textContent = ' #';
-
-                anchor.addEventListener('click', async () => {
-                    const url = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
-
-                    if (await copyText(url)) {
-                        anchor.setAttribute('aria-label', 'Section link copied');
-
-                        window.setTimeout(() => {
-                            anchor.setAttribute('aria-label', `Copy link to section: ${label}`);
-                        }, 2000);
-                    }
-                });
+                anchor.dataset.copyText = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
+                anchor.dataset.copyLabel = `Copy link to section: ${label}`;
+                anchor.setAttribute('aria-label', anchor.dataset.copyLabel);
 
                 heading.append(anchor);
             });
@@ -158,7 +142,11 @@ export function registerPodcast(Alpine) {
 
             this.$root.open = true;
 
-            const matches = highlightTranscriptMatches(this.$refs.content, query);
+            const matches = highlightTranscriptMatches(
+                this.$refs.content,
+                query,
+                this.$root.querySelector('[data-transcript-match-template]'),
+            );
 
             this.status = matches === 0 ? 'No matches found' : `${matches} match${matches === 1 ? '' : 'es'} found`;
         },

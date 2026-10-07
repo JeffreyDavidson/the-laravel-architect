@@ -28,7 +28,7 @@ it('loads public routes without high impact accessibility issues in both themes'
 
     if ($route === '/') {
         // The home component resets the reveal state when it starts; let it finish before settling the content.
-        $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+        $page->assertScript('document.querySelector("[data-home-reveal]").dataset.ready === "true"');
     }
 
     // Audit settled content, independently of scroll-reveal animation timing.
@@ -230,7 +230,7 @@ it('initializes homepage reveal animations', function (): void {
     withVite();
 
     $page = HomePage::visit();
-    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    $page->assertScript('document.querySelector("[data-home-reveal]").dataset.ready === "true"');
 
     $page->page()
         ->locator('[data-reveal]')
@@ -245,7 +245,7 @@ it('counts the homepage proof figures up to their targets', function (): void {
     withVite();
 
     $page = HomePage::visit();
-    $page->assertScript('document.querySelector("[data-home-hero]").dataset.ready === "true"');
+    $page->assertScript('document.querySelector("[data-home-reveal]").dataset.ready === "true"');
     $page->script('window.countUpChanges = 0; new MutationObserver(() => window.countUpChanges++).observe(document.querySelector("[data-count-up]"), { childList: true, characterData: true, subtree: true });');
 
     $page->page()
@@ -381,9 +381,9 @@ it('exposes the code copy action and delayed syntax highlighting', function (): 
 
     $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
 
-    $page->assertPresent('.copy-btn')
-        ->click('.copy-btn')
-        ->assertAttribute('.copy-btn', 'aria-label', 'Copied');
+    $page->assertPresent('[data-code-copy]')
+        ->click('[data-code-copy]')
+        ->assertAttribute('[data-code-copy]', 'aria-label', 'Copied');
 
     $page->assertScript("document.documentElement.dataset.codeHighlightingState === 'ready'")
         ->assertPresent('.prose code .token');
@@ -394,9 +394,9 @@ it('keeps stray whitespace out of code blocks around the copy action', function 
 
     $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
 
-    $page->assertPresent('.copy-btn')
-        ->assertScript('Array.from(document.querySelectorAll(".prose pre")).every((pre) => Array.from(pre.childNodes).every((node) => node.nodeType === Node.ELEMENT_NODE))')
-        ->assertScript('Array.from(document.querySelectorAll(".prose pre")).every((pre) => pre.getBoundingClientRect().height < pre.querySelector("code").getBoundingClientRect().height + 60)');
+    $page->assertPresent('[data-code-copy]')
+        ->assertScript('Array.from(document.querySelectorAll("[data-article-prose] pre")).every((pre) => Array.from(pre.childNodes).every((node) => node.nodeType === Node.ELEMENT_NODE))')
+        ->assertScript('Array.from(document.querySelectorAll("[data-article-prose] pre")).every((pre) => pre.getBoundingClientRect().height < pre.querySelector("code").getBoundingClientRect().height + 60)');
 });
 
 it('reports clipboard failure without claiming the code was copied', function (): void {
@@ -404,8 +404,8 @@ it('reports clipboard failure without claiming the code was copied', function ()
     $page = $this->browserPage(route('blog.show', 'e2e-code-example'), 'desktop');
     $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Denied"); } } }); document.execCommand = () => false;');
 
-    $page->click('.copy-btn')
-        ->assertAttribute('.copy-btn', 'aria-label', 'Copy failed')
+    $page->click('[data-code-copy]')
+        ->assertAttribute('[data-code-copy]', 'aria-label', 'Copy failed')
         ->assertNoJavaScriptErrors();
 });
 

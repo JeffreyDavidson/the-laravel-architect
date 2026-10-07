@@ -18,14 +18,14 @@ export function registerBlogArticle(Alpine) {
                 return;
             }
 
-            this.$root.querySelectorAll('.prose pre').forEach(pre => {
-                if (pre.querySelector('code') && !pre.querySelector('.copy-btn')) {
+            this.$root.querySelectorAll('[data-article-prose] pre').forEach(pre => {
+                if (pre.querySelector('code') && !pre.querySelector('[data-code-copy]')) {
                     pre.append(...Array.from(template.content.children, child => child.cloneNode(true)));
                 }
             });
         },
         scheduleHighlighting() {
-            if (!this.$root.querySelector('.prose code[class*="language-"]')) {
+            if (!this.$root.querySelector('[data-article-prose] code[class*="language-"]')) {
                 return;
             }
 

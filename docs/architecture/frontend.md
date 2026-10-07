@@ -71,14 +71,18 @@ Public UI state uses named CSP-safe Alpine components for:
 - the newsletter sign-up and confirmation auto-submit (see
   [Newsletter](newsletter.md));
 - the contact form's Turnstile loader;
-- the homepage reveal and count-up animations;
+- the homepage reveal and count-up animations, scoped to the
+  `[data-home-reveal]` wrapper around the page's sections;
 - the blog index's live title and meta tag updates after a search;
 - the blog article's code copy buttons, lazy syntax highlighting and contents
   list;
 - the podcast transcript's section links, search and deep links.
 
-JavaScript uses data attributes for behavior hooks, and article navigation
-clones its styled link markup from a Blade template.
+JavaScript uses data attributes for behavior hooks, never styling classes. Markup
+that JavaScript adds (article contents links and code copy buttons, transcript
+section links and search highlights) is cloned from a Blade `<template>`, so its
+Tailwind classes live in Blade and compile. Transcript section links reuse the
+`copyButton` component for their copy feedback.
 
 Pages without Livewire load standalone `@alpinejs/csp`; the blog uses Alpine
 bundled with Livewire's CSP-safe runtime. Components register before the
@@ -90,9 +94,9 @@ and the Prism syntax highlighter (a vendor module the article component loads
 lazily).
 
 `resources/js/app.js` registers the site header and copy button on every page
-and imports each `resources/js/pages/*` module (`about`, `home`, `contact`,
-`newsletter`, `newsletter-confirm`, `blog-index`, `blog`, `podcast`) only when
-its `data-*` hook is on the page. The admin panel's script is
+and, from a lookup table of hooks, imports each `resources/js/pages/*` module
+(`about`, `home`, `contact`, `newsletter`, `newsletter-confirm`, `blog-index`,
+`blog`, `podcast`) only when its `data-*` hook is on the page. The admin panel's script is
 `resources/js/filament/admin.js`.
 
 ## Livewire on the blog

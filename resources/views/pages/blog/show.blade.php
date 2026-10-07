@@ -55,7 +55,7 @@
         </div>
 
         <template data-code-copy-template>
-            <x-copy-button class="copy-btn" />
+            <x-copy-button class="copy-btn" data-code-copy="" />
         </template>
 
         <template data-article-toc-template>
