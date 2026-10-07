@@ -2,6 +2,7 @@
 
 use App\Jobs\RecordQueueHeartbeat;
 use App\Services\Health\RuntimeHealthMonitor;
+use Illuminate\Queue\Queue;
 use Illuminate\Support\Facades\Cache;
 
 use function Pest\Laravel\travelTo;
@@ -21,9 +22,14 @@ it('records a queue heartbeat when the job is processed', function () {
 
 it('retries after transient queue storage contention', function () {
     $job = new RecordQueueHeartbeat;
+    $queue = app('queue')->connection();
 
-    expect($job->tries)
+    if (! $queue instanceof Queue) {
+        throw new UnexpectedValueException('The default queue connection does not read job retry settings.');
+    }
+
+    expect($queue->getJobTries($job))
         ->toBe(3)
-        ->and($job->backoff)
-        ->toBe([5, 15, 30]);
+        ->and($queue->getJobBackoff($job))
+        ->toBe('5,15,30');
 });
