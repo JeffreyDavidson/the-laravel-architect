@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Seo;
 
+use App\Data\StructuredDataPage;
 use App\Models\Post;
 use Illuminate\Support\Facades\Date;
 
@@ -13,13 +14,12 @@ final readonly class ArticleSchemaBuilder
 
     /**
      * @param  list<array<string, mixed>>  $schemas
-     * @param  array<string, mixed>  $pageData
      */
-    public function add(array &$schemas, array $pageData, string $routeName, string $authorUrl): void
+    public function add(array &$schemas, StructuredDataPage $page, string $authorUrl): void
     {
-        $post = $this->post($pageData);
+        $post = $page->post;
 
-        if ($routeName !== 'blog.show' || ! $post instanceof Post) {
+        if ($page->routeName !== 'blog.show' || ! $post instanceof Post) {
             return;
         }
 
@@ -43,15 +43,5 @@ final readonly class ArticleSchemaBuilder
             'description' => $post->excerpt ?? '',
             'image' => $this->postShareImage->url($post),
         ];
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function post(array $pageData): ?Post
-    {
-        $value = $pageData['post'] ?? null;
-
-        return $value instanceof Post ? $value : null;
     }
 }

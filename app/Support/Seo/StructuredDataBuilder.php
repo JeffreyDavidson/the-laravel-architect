@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Seo;
 
+use App\Data\StructuredDataPage;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -11,10 +12,22 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
 use Illuminate\Http\Request;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final readonly class StructuredDataBuilder
 {
+    /**
+     * Pages with a fixed schema type and breadcrumb name, keyed by route name. Each page's URL
+     * is its route. The home page also gets a page schema, but no breadcrumb.
+     *
+     * @var array<string, array{type: string, name: string}>
+     */
+    private const array STATIC_PAGES = [
+        'about' => ['type' => 'ProfilePage', 'name' => 'About'],
+        'contact.create' => ['type' => 'ContactPage', 'name' => 'Contact'],
+        'privacy' => ['type' => 'WebPage', 'name' => 'Privacy'],
+        'uses' => ['type' => 'WebPage', 'name' => 'Uses'],
+    ];
+
     public function __construct(
         private Request $request,
         private ArticleSchemaBuilder $articles,
@@ -28,29 +41,32 @@ final readonly class StructuredDataBuilder
      */
     public function build(array $pageData, ?string $routeName = null): array
     {
-        $routeName ??= $this->request->route()
-            ?->getName() ?? '';
+        $page = StructuredDataPage::fromViewData(
+            $pageData,
+            $routeName ?? $this->request->route()
+                ?->getName() ?? '',
+        );
         $siteUrl = route('home');
         $authorUrl = route('about');
         $schemas = [[
             '@type' => 'WebSite',
-            '@id' => $siteUrl.'#website',
+            '@id' => "{$siteUrl}#website",
             'name' => 'The Laravel Architect',
             'url' => $siteUrl,
             'author' => [
                 '@type' => 'Person',
-                '@id' => $authorUrl.'#person',
+                '@id' => "{$authorUrl}#person",
                 'name' => 'Jeffrey Davidson',
                 'url' => $authorUrl,
             ],
         ]];
 
-        $this->addStaticPageSchema($schemas, $siteUrl, $authorUrl, $routeName);
-        $this->articles->add($schemas, $pageData, $routeName, $authorUrl);
-        $this->podcasts->add($schemas, $pageData, $routeName, $authorUrl);
-        $this->addProjectSchema($schemas, $pageData, $authorUrl, $routeName);
-        $this->collections->add($schemas, $pageData, $routeName);
-        $this->addBreadcrumbSchema($schemas, $pageData, $siteUrl, $routeName);
+        $this->addStaticPageSchema($schemas, $page->routeName, $siteUrl, $authorUrl);
+        $this->articles->add($schemas, $page, $authorUrl);
+        $this->podcasts->add($schemas, $page, $authorUrl);
+        $this->addProjectSchema($schemas, $page, $authorUrl);
+        $this->collections->add($schemas, $page);
+        $this->addBreadcrumbSchema($schemas, $page, $siteUrl);
 
         return $schemas;
     }
@@ -58,36 +74,32 @@ final readonly class StructuredDataBuilder
     /**
      * @param  list<array<string, mixed>>  $schemas
      */
-    private function addStaticPageSchema(array &$schemas, string $siteUrl, string $authorUrl, string $routeName): void
+    private function addStaticPageSchema(array &$schemas, string $routeName, string $siteUrl, string $authorUrl): void
     {
-        $staticPage = match (true) {
-            $routeName === 'home' => ['type' => 'WebPage', 'name' => 'The Laravel Architect', 'url' => $siteUrl],
-            $routeName === 'about' => ['type' => 'ProfilePage', 'name' => 'About', 'url' => route('about')],
-            $routeName === 'contact.create' => ['type' => 'ContactPage', 'name' => 'Contact', 'url' => route('contact.create')],
-            $routeName === 'privacy' => ['type' => 'WebPage', 'name' => 'Privacy', 'url' => route('privacy')],
-            $routeName === 'uses' => ['type' => 'WebPage', 'name' => 'Uses', 'url' => route('uses')],
-            default => null,
-        };
+        $staticPage = $routeName === 'home'
+            ? ['type' => 'WebPage', 'name' => 'The Laravel Architect']
+            : self::STATIC_PAGES[$routeName] ?? null;
 
         if ($staticPage === null) {
             return;
         }
 
+        $pageUrl = route($routeName);
         $pageSchema = [
             '@type' => $staticPage['type'],
-            '@id' => $staticPage['url'].'#page',
+            '@id' => "{$pageUrl}#page",
             'name' => $staticPage['name'],
-            'url' => $staticPage['url'],
+            'url' => $pageUrl,
             'isPartOf' => [
                 '@type' => 'WebSite',
-                '@id' => $siteUrl.'#website',
+                '@id' => "{$siteUrl}#website",
             ],
         ];
 
         if ($routeName === 'about') {
             $pageSchema['mainEntity'] = [
                 '@type' => 'Person',
-                '@id' => $authorUrl.'#person',
+                '@id' => "{$authorUrl}#person",
             ];
         }
 
@@ -96,27 +108,26 @@ final readonly class StructuredDataBuilder
 
     /**
      * @param  list<array<string, mixed>>  $schemas
-     * @param  array<string, mixed>  $pageData
      */
-    private function addProjectSchema(array &$schemas, array $pageData, string $authorUrl, string $routeName): void
+    private function addProjectSchema(array &$schemas, StructuredDataPage $page, string $authorUrl): void
     {
-        $project = $this->project($pageData);
+        $project = $page->project;
 
-        if ($routeName !== 'projects.show' || ! $project instanceof Project) {
+        if ($page->routeName !== 'projects.show' || ! $project instanceof Project) {
             return;
         }
 
         $projectUrl = route('projects.show', $project);
         $projectCaseStudy = [
             '@type' => 'CreativeWork',
-            '@id' => $projectUrl.'#project',
+            '@id' => "{$projectUrl}#project",
             'name' => $project->title,
             'url' => $projectUrl,
             'mainEntityOfPage' => $projectUrl,
             'description' => $project->description,
             'author' => [
                 '@type' => 'Person',
-                '@id' => $authorUrl.'#person',
+                '@id' => "{$authorUrl}#person",
             ],
         ];
 
@@ -144,60 +155,16 @@ final readonly class StructuredDataBuilder
 
     /**
      * @param  list<array<string, mixed>>  $schemas
-     * @param  array<string, mixed>  $pageData
      */
-    private function addBreadcrumbSchema(array &$schemas, array $pageData, string $siteUrl, string $routeName): void
+    private function addBreadcrumbSchema(array &$schemas, StructuredDataPage $page, string $siteUrl): void
     {
-        $seoSource = $this->seoSource($pageData);
-        $post = $this->post($pageData);
-        $category = $this->category($pageData);
-        $tag = $this->tag($pageData);
-        $project = $this->project($pageData);
-        $podcast = $this->podcast($pageData);
-        $episode = $this->episode($pageData);
-        $breadcrumbs = [['name' => 'Home', 'url' => $siteUrl]];
+        $trail = $this->breadcrumbTrail($page);
 
-        if ($routeName === 'blog.index') {
-            $breadcrumbs[] = ['name' => 'Blog', 'url' => $this->canonicalUrl($seoSource, route('blog.index'))];
-        } elseif ($routeName === 'blog.show' && $post instanceof Post) {
-            $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
-            $breadcrumbs[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
-        } elseif ($routeName === 'blog.category' && $category instanceof Category) {
-            $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
-            $breadcrumbs[] = ['name' => $category->name, 'url' => $this->canonicalUrl($seoSource, route('blog.category', $category))];
-        } elseif ($routeName === 'blog.tag' && $tag instanceof Tag) {
-            $breadcrumbs[] = ['name' => 'Blog', 'url' => route('blog.index')];
-            $breadcrumbs[] = ['name' => $tag->name, 'url' => $this->canonicalUrl($seoSource, route('blog.tag', $tag))];
-        } elseif ($routeName === 'projects.index') {
-            $breadcrumbs[] = ['name' => 'Projects', 'url' => route('projects.index')];
-        } elseif ($routeName === 'projects.show' && $project instanceof Project) {
-            $breadcrumbs[] = ['name' => 'Projects', 'url' => route('projects.index')];
-            $breadcrumbs[] = ['name' => $project->title, 'url' => route('projects.show', $project)];
-        } elseif ($routeName === 'podcast.index') {
-            $breadcrumbs[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
-        } elseif ($routeName === 'podcast.show' && $podcast instanceof Podcast) {
-            $breadcrumbs[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
-            $breadcrumbs[] = ['name' => $podcast->name, 'url' => $this->canonicalUrl($seoSource, route('podcast.show', $podcast))];
-        } elseif ($routeName === 'podcast.episode' && $podcast instanceof Podcast && $episode instanceof Episode) {
-            $breadcrumbs[] = ['name' => 'Podcast', 'url' => route('podcast.index')];
-            $breadcrumbs[] = ['name' => $podcast->name, 'url' => route('podcast.show', $podcast)];
-            $breadcrumbs[] = ['name' => $episode->title, 'url' => route('podcast.episode', [$podcast, $episode])];
-        } elseif ($routeName === 'about') {
-            $breadcrumbs[] = ['name' => 'About', 'url' => route('about')];
-        } elseif ($routeName === 'contact.create') {
-            $breadcrumbs[] = ['name' => 'Contact', 'url' => route('contact.create')];
-        } elseif ($routeName === 'privacy') {
-            $breadcrumbs[] = ['name' => 'Privacy', 'url' => route('privacy')];
-        } elseif ($routeName === 'uses') {
-            $breadcrumbs[] = ['name' => 'Uses', 'url' => route('uses')];
-        } elseif ($routeName === 'archive.index') {
-            $breadcrumbs[] = ['name' => 'Archive', 'url' => $this->canonicalUrl($seoSource, route('archive.index'))];
-        }
-
-        if (count($breadcrumbs) < 2) {
+        if ($trail === []) {
             return;
         }
 
+        $breadcrumbs = [['name' => 'Home', 'url' => $siteUrl], ...$trail];
         $schemas[] = [
             '@type' => 'BreadcrumbList',
             'itemListElement' => array_map(
@@ -213,80 +180,50 @@ final readonly class StructuredDataBuilder
         ];
     }
 
-    private function canonicalUrl(mixed $seoSource, string $fallback): string
-    {
-        return $seoSource instanceof SEOData && is_string($seoSource->canonical_url)
-            ? $seoSource->canonical_url
-            : $fallback;
-    }
-
     /**
-     * @param  array<string, mixed>  $pageData
+     * The breadcrumbs that follow Home, or none when the page has no breadcrumb trail.
+     *
+     * @return list<array{name: string, url: string}>
      */
-    private function seoSource(array $pageData): ?SEOData
+    private function breadcrumbTrail(StructuredDataPage $page): array
     {
-        $value = $pageData['seoSource'] ?? null;
+        $routeName = $page->routeName;
+        $blog = ['name' => 'Blog', 'url' => route('blog.index')];
+        $projects = ['name' => 'Projects', 'url' => route('projects.index')];
+        $podcasts = ['name' => 'Podcast', 'url' => route('podcast.index')];
 
-        return $value instanceof SEOData ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function post(array $pageData): ?Post
-    {
-        $value = $pageData['post'] ?? null;
-
-        return $value instanceof Post ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function podcast(array $pageData): ?Podcast
-    {
-        $value = $pageData['podcast'] ?? null;
-
-        return $value instanceof Podcast ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function episode(array $pageData): ?Episode
-    {
-        $value = $pageData['episode'] ?? null;
-
-        return $value instanceof Episode ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function project(array $pageData): ?Project
-    {
-        $value = $pageData['project'] ?? null;
-
-        return $value instanceof Project ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function category(array $pageData, string $key = 'category'): ?Category
-    {
-        $value = $pageData[$key] ?? null;
-
-        return $value instanceof Category ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function tag(array $pageData): ?Tag
-    {
-        $value = $pageData['tag'] ?? null;
-
-        return $value instanceof Tag ? $value : null;
+        return match (true) {
+            $routeName === 'blog.index' => [['name' => 'Blog', 'url' => $page->canonicalUrl(route('blog.index'))]],
+            $routeName === 'blog.show' && $page->post instanceof Post => [
+                $blog,
+                ['name' => $page->post->title, 'url' => route('blog.show', $page->post)],
+            ],
+            $routeName === 'blog.category' && $page->category instanceof Category => [
+                $blog,
+                ['name' => $page->category->name, 'url' => $page->canonicalUrl(route('blog.category', $page->category))],
+            ],
+            $routeName === 'blog.tag' && $page->tag instanceof Tag => [
+                $blog,
+                ['name' => $page->tag->name, 'url' => $page->canonicalUrl(route('blog.tag', $page->tag))],
+            ],
+            $routeName === 'projects.index' => [$projects],
+            $routeName === 'projects.show' && $page->project instanceof Project => [
+                $projects,
+                ['name' => $page->project->title, 'url' => route('projects.show', $page->project)],
+            ],
+            $routeName === 'podcast.index' => [$podcasts],
+            $routeName === 'podcast.show' && $page->podcast instanceof Podcast => [
+                $podcasts,
+                ['name' => $page->podcast->name, 'url' => $page->canonicalUrl(route('podcast.show', $page->podcast))],
+            ],
+            $routeName === 'podcast.episode' && $page->podcast instanceof Podcast && $page->episode instanceof Episode => [
+                $podcasts,
+                ['name' => $page->podcast->name, 'url' => route('podcast.show', $page->podcast)],
+                ['name' => $page->episode->title, 'url' => route('podcast.episode', [$page->podcast, $page->episode])],
+            ],
+            $routeName === 'archive.index' => [['name' => 'Archive', 'url' => $page->canonicalUrl(route('archive.index'))]],
+            isset(self::STATIC_PAGES[$routeName]) => [['name' => self::STATIC_PAGES[$routeName]['name'], 'url' => route($routeName)]],
+            default => [],
+        };
     }
 }

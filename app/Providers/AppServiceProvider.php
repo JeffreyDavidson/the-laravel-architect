@@ -15,8 +15,8 @@ use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
 use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
 use App\Support\Monitoring\Sentry\RedactSentryEvent;
-use App\Support\Seo\StructuredDataBuilder;
 use App\View\Components\SocialLinks;
+use App\View\Composers\StructuredDataComposer;
 use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +33,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\View as ViewInstance;
 use Laravel\Nightwatch\Facades\Nightwatch;
 use Livewire\Livewire;
 use RalphJSmit\Laravel\SEO\Facades\SEOManager;
@@ -87,6 +86,19 @@ class AppServiceProvider extends ServiceProvider
             $handle,
         ));
 
+        $this->configureNightwatch();
+        $this->configureHealthChecks();
+        $this->configureRateLimiting();
+        $this->configureUrls();
+
+        View::composer([
+            'errors.404',
+            'pages.*',
+        ], StructuredDataComposer::class);
+    }
+
+    private function configureNightwatch(): void
+    {
         Nightwatch::user(app(ResolveNightwatchUser::class));
         Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
         Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
@@ -94,7 +106,10 @@ class AppServiceProvider extends ServiceProvider
         Nightwatch::redactOutgoingRequests(app(RedactNightwatchOutgoingRequest::class));
         Nightwatch::redactQueries(app(RedactNightwatchQuery::class));
         Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
+    }
 
+    private function configureHealthChecks(): void
+    {
         Event::listen(DiagnosingHealth::class, function (): void {
             $migrations = DB::table('migrations');
             $migrations->limit(1);
@@ -104,7 +119,10 @@ class AppServiceProvider extends ServiceProvider
                 app(RuntimeHealthMonitor::class)->ensureHealthy();
             }
         });
+    }
 
+    private function configureRateLimiting(): void
+    {
         // Only a sent message counts toward the hourly limit, so typos and failed checks never
         // lock out a visitor. Every attempt counts toward the looser per-minute limit, which
         // caps the blocking Turnstile verification calls junk submissions can trigger.
@@ -159,10 +177,13 @@ class AppServiceProvider extends ServiceProvider
 
             return $limit->by($ipAddress);
         });
+    }
 
+    /** Absolute links, such as newsletter confirmations, must never follow a spoofed Host header. */
+    private function configureUrls(): void
+    {
         $appUrl = config()->string('app.url');
 
-        // Absolute links, such as newsletter confirmations, must never follow a spoofed Host header.
         if (app()->isProduction()) {
             URL::forceRootUrl($appUrl);
         }
@@ -170,18 +191,5 @@ class AppServiceProvider extends ServiceProvider
         if (str_starts_with($appUrl, 'https://')) {
             URL::forceScheme('https');
         }
-
-        View::composer([
-            'errors.404',
-            'pages.*',
-        ], function (ViewInstance $view): void {
-            /** @var array<string, mixed> $pageData */
-            $pageData = $view->getData();
-
-            $view->with(
-                'structuredData',
-                app(StructuredDataBuilder::class)->build($pageData),
-            );
-        });
     }
 }

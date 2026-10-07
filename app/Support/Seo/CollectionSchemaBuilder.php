@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Seo;
 
+use App\Data\StructuredDataPage;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -12,107 +13,26 @@ use App\Models\Project;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final class CollectionSchemaBuilder
 {
     /**
      * @param  list<array<string, mixed>>  $schemas
-     * @param  array<string, mixed>  $pageData
      */
-    public function add(array &$schemas, array $pageData, string $routeName): void
+    public function add(array &$schemas, StructuredDataPage $page): void
     {
-        $seoSource = $this->seoSource($pageData);
-        $collectionPage = null;
-        $collectionItems = [];
-        $positionOffset = 0;
+        $listing = $this->listing($page);
 
-        if ($routeName === 'blog.index' && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator) {
-            $collectionPage = [
-                'name' => ($selectedCategory = $this->category($pageData, 'selectedCategory')) instanceof Category
-                    ? $selectedCategory->name.' Articles'
-                    : 'Blog',
-                'url' => $this->canonicalUrl($seoSource, route('blog.index')),
-            ];
-            $positionOffset = ($posts->currentPage() - 1) * $posts->perPage();
-
-            foreach ($posts as $post) {
-                $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
-            }
-        } elseif ($routeName === 'blog.category'
-            && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator
-            && ($category = $this->category($pageData)) instanceof Category) {
-            $collectionPage = [
-                'name' => $category->name.' Articles',
-                'url' => $this->canonicalUrl($seoSource, route('blog.category', $category)),
-            ];
-            $positionOffset = ($posts->currentPage() - 1) * $posts->perPage();
-
-            foreach ($posts as $post) {
-                $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
-            }
-        } elseif ($routeName === 'blog.tag'
-            && ($posts = $this->posts($pageData)) instanceof LengthAwarePaginator
-            && ($tag = $this->tag($pageData)) instanceof Tag) {
-            $collectionPage = [
-                'name' => "Articles Tagged {$tag->name}",
-                'url' => $this->canonicalUrl($seoSource, route('blog.tag', $tag)),
-            ];
-            $positionOffset = ($posts->currentPage() - 1) * $posts->perPage();
-
-            foreach ($posts as $post) {
-                $collectionItems[] = ['name' => $post->title, 'url' => route('blog.show', $post)];
-            }
-        } elseif ($routeName === 'projects.index' && ($projects = $this->projects($pageData)) instanceof EloquentCollection) {
-            $collectionPage = ['name' => 'Projects', 'url' => route('projects.index')];
-
-            foreach ($projects as $project) {
-                $collectionItems[] = ['name' => $project->title, 'url' => route('projects.show', $project)];
-            }
-        } elseif ($routeName === 'podcast.show'
-            && ($podcast = $this->podcast($pageData)) instanceof Podcast
-            && ($episodes = $this->episodes($pageData)) instanceof LengthAwarePaginator) {
-            $collectionPage = [
-                'name' => $podcast->name.' Episodes',
-                'url' => $this->canonicalUrl($seoSource, route('podcast.show', $podcast)),
-            ];
-            $positionOffset = ($episodes->currentPage() - 1) * $episodes->perPage();
-
-            foreach ($episodes as $episode) {
-                $collectionItems[] = [
-                    'name' => $episode->title,
-                    'url' => route('podcast.episode', [$podcast, $episode]),
-                ];
-            }
-        } elseif ($routeName === 'podcast.index') {
-            $collectionPage = ['name' => 'Podcast', 'url' => route('podcast.index')];
-            $podcast = $this->podcast($pageData);
-
-            if ($podcast instanceof Podcast) {
-                $collectionItems[] = ['name' => $podcast->name, 'url' => route('podcast.show', $podcast)];
-            }
-        } elseif ($routeName === 'archive.index' && ($items = $this->items($pageData)) instanceof LengthAwarePaginator) {
-            $collectionPage = [
-                'name' => 'Archive',
-                'url' => $this->canonicalUrl($seoSource, route('archive.index')),
-            ];
-            $positionOffset = ($items->currentPage() - 1) * $items->perPage();
-
-            foreach ($items as $item) {
-                $collectionItems[] = ['name' => $item['title'], 'url' => $item['url']];
-            }
-        }
-
-        if ($collectionPage === null) {
+        if (! $listing instanceof CollectionListing) {
             return;
         }
 
-        $itemListId = $collectionPage['url'].'#items';
+        $itemListId = "{$listing->url}#items";
         $schemas[] = [
             '@type' => 'CollectionPage',
-            '@id' => $collectionPage['url'].'#collection',
-            'name' => $collectionPage['name'],
-            'url' => $collectionPage['url'],
+            '@id' => "{$listing->url}#collection",
+            'name' => $listing->name,
+            'url' => $listing->url,
             'mainEntity' => [
                 '@type' => 'ItemList',
                 '@id' => $itemListId,
@@ -120,10 +40,10 @@ final class CollectionSchemaBuilder
         ];
 
         $itemListElements = [];
-        foreach ($collectionItems as $index => $item) {
+        foreach ($listing->items as $index => $item) {
             $itemListElements[] = [
                 '@type' => 'ListItem',
-                'position' => $positionOffset + $index + 1,
+                'position' => $listing->positionOffset + $index + 1,
                 'name' => $item['name'],
                 'item' => $item['url'],
             ];
@@ -137,94 +57,60 @@ final class CollectionSchemaBuilder
         ];
     }
 
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function seoSource(array $pageData): ?SEOData
+    private function listing(StructuredDataPage $page): ?CollectionListing
     {
-        $value = $pageData['seoSource'] ?? null;
+        $postItem = static fn (Post $post): array => ['name' => $post->title, 'url' => route('blog.show', $post)];
 
-        return $value instanceof SEOData ? $value : null;
-    }
-
-    private function canonicalUrl(mixed $seoSource, string $fallback): string
-    {
-        return $seoSource instanceof SEOData && is_string($seoSource->canonical_url)
-            ? $seoSource->canonical_url
-            : $fallback;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function category(array $pageData, string $key = 'category'): ?Category
-    {
-        $value = $pageData[$key] ?? null;
-
-        return $value instanceof Category ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     * @return LengthAwarePaginator<int, Post>|null
-     */
-    private function posts(array $pageData): ?LengthAwarePaginator
-    {
-        $value = $pageData['posts'] ?? null;
-
-        return $value instanceof LengthAwarePaginator ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function tag(array $pageData): ?Tag
-    {
-        $value = $pageData['tag'] ?? null;
-
-        return $value instanceof Tag ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     * @return EloquentCollection<int, Project>|null
-     */
-    private function projects(array $pageData): ?EloquentCollection
-    {
-        $value = $pageData['projects'] ?? null;
-
-        return $value instanceof EloquentCollection ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function podcast(array $pageData): ?Podcast
-    {
-        $value = $pageData['podcast'] ?? null;
-
-        return $value instanceof Podcast ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     * @return LengthAwarePaginator<int, Episode>|null
-     */
-    private function episodes(array $pageData): ?LengthAwarePaginator
-    {
-        $value = $pageData['episodes'] ?? null;
-
-        return $value instanceof LengthAwarePaginator ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     * @return LengthAwarePaginator<int, array{title: string, url: string}>|null
-     */
-    private function items(array $pageData): ?LengthAwarePaginator
-    {
-        $value = $pageData['items'] ?? null;
-
-        return $value instanceof LengthAwarePaginator ? $value : null;
+        return match (true) {
+            $page->routeName === 'blog.index' && $page->posts instanceof LengthAwarePaginator => CollectionListing::paginated(
+                $page->selectedCategory instanceof Category ? "{$page->selectedCategory->name} Articles" : 'Blog',
+                $page->canonicalUrl(route('blog.index')),
+                $page->posts,
+                $postItem,
+            ),
+            $page->routeName === 'blog.category' && $page->posts instanceof LengthAwarePaginator && $page->category instanceof Category => CollectionListing::paginated(
+                "{$page->category->name} Articles",
+                $page->canonicalUrl(route('blog.category', $page->category)),
+                $page->posts,
+                $postItem,
+            ),
+            $page->routeName === 'blog.tag' && $page->posts instanceof LengthAwarePaginator && $page->tag instanceof Tag => CollectionListing::paginated(
+                "Articles Tagged {$page->tag->name}",
+                $page->canonicalUrl(route('blog.tag', $page->tag)),
+                $page->posts,
+                $postItem,
+            ),
+            $page->routeName === 'projects.index' && $page->projects instanceof EloquentCollection => new CollectionListing(
+                'Projects',
+                route('projects.index'),
+                array_values(array_map(
+                    static fn (Project $project): array => ['name' => $project->title, 'url' => route('projects.show', $project)],
+                    $page->projects->all(),
+                )),
+            ),
+            $page->routeName === 'podcast.show' && $page->podcast instanceof Podcast && $page->episodes instanceof LengthAwarePaginator => CollectionListing::paginated(
+                "{$page->podcast->name} Episodes",
+                $page->canonicalUrl(route('podcast.show', $page->podcast)),
+                $page->episodes,
+                fn (Episode $episode): array => [
+                    'name' => $episode->title,
+                    'url' => route('podcast.episode', [$page->podcast, $episode]),
+                ],
+            ),
+            $page->routeName === 'podcast.index' => new CollectionListing(
+                'Podcast',
+                route('podcast.index'),
+                $page->podcast instanceof Podcast
+                    ? [['name' => $page->podcast->name, 'url' => route('podcast.show', $page->podcast)]]
+                    : [],
+            ),
+            $page->routeName === 'archive.index' && $page->archiveItems instanceof LengthAwarePaginator => CollectionListing::paginated(
+                'Archive',
+                $page->canonicalUrl(route('archive.index')),
+                $page->archiveItems,
+                static fn (array $item): array => ['name' => $item['title'], 'url' => $item['url']],
+            ),
+            default => null,
+        };
     }
 }

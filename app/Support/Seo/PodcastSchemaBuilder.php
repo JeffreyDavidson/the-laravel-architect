@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Seo;
 
+use App\Data\StructuredDataPage;
 use App\Models\Episode;
 use App\Models\Podcast;
 use Illuminate\Support\Facades\Date;
@@ -12,12 +13,12 @@ final class PodcastSchemaBuilder
 {
     /**
      * @param  list<array<string, mixed>>  $schemas
-     * @param  array<string, mixed>  $pageData
      */
-    public function add(array &$schemas, array $pageData, string $routeName, string $authorUrl): void
+    public function add(array &$schemas, StructuredDataPage $page, string $authorUrl): void
     {
-        $podcast = $this->podcast($pageData);
-        $episode = $this->episode($pageData);
+        $routeName = $page->routeName;
+        $podcast = $page->podcast;
+        $episode = $page->episode;
 
         if (! in_array($routeName, ['podcast.show', 'podcast.episode'], true) || ! $podcast instanceof Podcast) {
             return;
@@ -89,25 +90,5 @@ final class PodcastSchemaBuilder
         $remainingSeconds = $seconds % 60;
 
         return "PT{$hours}H{$minutes}M{$remainingSeconds}S";
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function podcast(array $pageData): ?Podcast
-    {
-        $value = $pageData['podcast'] ?? null;
-
-        return $value instanceof Podcast ? $value : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $pageData
-     */
-    private function episode(array $pageData): ?Episode
-    {
-        $value = $pageData['episode'] ?? null;
-
-        return $value instanceof Episode ? $value : null;
     }
 }
