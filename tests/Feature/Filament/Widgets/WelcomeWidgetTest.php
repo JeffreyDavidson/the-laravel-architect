@@ -11,24 +11,21 @@ use Dom\HTMLDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\freezeSecond;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 it('renders the publishing pipeline and attention queue', function () {
-    $user = User::factory()->create();
-
-    foreach ([PublishStatus::Published, PublishStatus::Published, PublishStatus::Draft, PublishStatus::InReview] as $index => $status) {
-        Post::query()->create([
-            'title' => "Post {$index}",
-            'slug' => "post-{$index}",
-            'content' => 'Content',
-            'user_id' => $user->id,
-            'status' => $status,
-            'published_at' => $status === PublishStatus::Published ? now()->subDay() : null,
-        ]);
-    }
+    Post::factory()
+        ->count(2)
+        ->published()
+        ->create();
+    Post::factory()->create();
+    Post::factory()
+        ->inReview()
+        ->create();
 
     ContactInquiry::factory()->create();
 
@@ -49,11 +46,8 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
     actingAs($user);
 
     foreach (PublishStatus::cases() as $postStatus) {
-        Post::query()->create([
+        Post::factory()->create([
             'title' => "Queue result {$postStatus->value}",
-            'slug' => "queue-result-{$postStatus->value}",
-            'content' => 'Content',
-            'user_id' => $user->id,
             'status' => $postStatus,
             'published_at' => match ($postStatus) {
                 PublishStatus::Published => now()->subDay(),
@@ -90,7 +84,7 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
 ]);
 
 it('keeps live and scheduled pipeline counts and destinations consistent across publication dates', function () {
-    $this->freezeSecond();
+    freezeSecond();
     $user = User::factory()->create(['is_admin' => true]);
     actingAs($user);
     foreach ([
@@ -98,7 +92,11 @@ it('keeps live and scheduled pipeline counts and destinations consistent across 
         ['Future published', PublishStatus::Published, now()->addDay()],
         ['No publication date', PublishStatus::Published, null],
     ] as [$title, $status, $date]) {
-        Post::query()->create(['title' => $title, 'content' => 'Content', 'user_id' => $user->id, 'status' => $status, 'published_at' => $date]);
+        Post::factory()->create([
+            'title' => $title,
+            'status' => $status,
+            'published_at' => $date,
+        ]);
     }
 
     $widget = livewire(WelcomeWidget::class);

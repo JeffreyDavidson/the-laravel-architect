@@ -6,21 +6,18 @@ use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('renders the subscriber list for an authorized user', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'subscriber-page-coverage@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
 
     livewire(ListSubscribers::class)
         ->assertOk()

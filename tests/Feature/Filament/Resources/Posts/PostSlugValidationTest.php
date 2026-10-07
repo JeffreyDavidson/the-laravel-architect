@@ -9,13 +9,14 @@ use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('rejects non-normalized post slugs when creating a post', function (string $slug) {
@@ -55,13 +56,7 @@ it('accepts a normalized post slug when creating a post', function () {
 });
 
 it('rejects a non-normalized post slug when editing a post', function () {
-    $post = Post::query()->create([
-        'title' => 'Post title',
-        'slug' => 'post-title',
-        'content' => 'Post content',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create(['slug' => 'post-title']);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['slug' => '../post-title'])
@@ -73,13 +68,7 @@ it('rejects a non-normalized post slug when editing a post', function () {
 });
 
 it('preserves an existing post slug when the title changes', function () {
-    $post = Post::query()->create([
-        'title' => 'Post title',
-        'slug' => 'curated-post-slug',
-        'content' => 'Post content',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create(['slug' => 'curated-post-slug']);
 
     livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['title' => 'Updated post title', 'slug' => 'curated-post-slug'])

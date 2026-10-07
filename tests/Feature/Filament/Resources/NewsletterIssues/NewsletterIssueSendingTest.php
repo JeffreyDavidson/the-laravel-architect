@@ -11,12 +11,14 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(
+    actingAs(
         User::factory()
             ->create(['is_admin' => true]),
     );
@@ -25,14 +27,9 @@ beforeEach(function () {
 /** @param array<string, mixed> $overrides */
 function editableNewsletterIssue(array $overrides = []): NewsletterIssue
 {
-    return NewsletterIssue::query()->create([
-        'title' => 'Issue One',
-        'slug' => 'issue-one',
-        'content' => 'Content.',
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-        ...$overrides,
-    ]);
+    return NewsletterIssue::factory()
+        ->published()
+        ->create($overrides);
 }
 
 it('offers sending only for published issues that have not been sent', function (Closure $createIssue, bool $visible) {
@@ -53,11 +50,7 @@ it('offers sending only for published issues that have not been sent', function 
 ]);
 
 it('queues the issue for active subscribers', function () {
-    Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    Subscriber::factory()->create();
     $issue = editableNewsletterIssue();
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
@@ -67,7 +60,7 @@ it('queues the issue for active subscribers', function () {
     $issue->refresh();
     expect($issue->wasSent())
         ->toBeTrue();
-    $this->assertDatabaseCount('newsletter_deliveries', 1);
+    assertDatabaseCount('newsletter_deliveries', 1);
 });
 
 it('tells the admin nothing was sent when there are no active subscribers', function () {
@@ -124,11 +117,7 @@ it('saves unsaved edits before sending a test email', function () {
 
 it('saves unsaved edits before sending to subscribers', function () {
     Mail::fake();
-    Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    Subscriber::factory()->create(['email' => 'reader@example.com']);
     $issue = editableNewsletterIssue();
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
@@ -152,12 +141,8 @@ it('saves unsaved edits before sending to subscribers', function () {
 
 it('sends nothing when the unsaved edits are invalid', function (string $action) {
     Mail::fake();
-    Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
-    $issue = editableNewsletterIssue();
+    Subscriber::factory()->create();
+    $issue = editableNewsletterIssue(['title' => 'Issue One']);
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
         ->fillForm(['title' => ''])
@@ -170,14 +155,14 @@ it('sends nothing when the unsaved edits are invalid', function (string $action)
         ->toBe('Issue One')
         ->and($issue->wasSent())
         ->toBeFalse();
-    $this->assertDatabaseCount('newsletter_deliveries', 0);
+    assertDatabaseCount('newsletter_deliveries', 0);
 })->with(['sendTestEmail', 'sendToSubscribers']);
 
 it('hides the sending actions from a user who is not an administrator', function (string $action) {
     $issue = editableNewsletterIssue();
     $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
 
-    $this->actingAs(User::factory()->create(['is_admin' => false]));
+    actingAs(User::factory()->create(['is_admin' => false]));
 
     $page->assertActionHidden($action);
 })->with(['sendTestEmail', 'sendToSubscribers']);

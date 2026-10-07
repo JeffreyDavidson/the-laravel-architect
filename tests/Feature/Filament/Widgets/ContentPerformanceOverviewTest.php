@@ -17,6 +17,7 @@ use App\Models\Video;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -24,62 +25,29 @@ pest()->use(RefreshDatabase::class);
 it('summarizes published content and audience data for administrators', function () {
     $administrator = User::factory()->create(['is_admin' => true]);
 
-    Post::query()->create([
-        'title' => 'Published post',
-        'slug' => 'published-post',
-        'content' => 'Content',
-        'user_id' => $administrator->id,
-        'status' => 'published',
-        'published_at' => now(),
-    ]);
-    Post::query()->create([
-        'title' => 'Draft post',
-        'slug' => 'draft-post',
-        'content' => 'Content',
-        'user_id' => $administrator->id,
-        'status' => 'draft',
-    ]);
-    $episode = Episode::query()->create([
-        'title' => 'Published episode',
-        'slug' => 'published-episode',
-        'description' => 'Description',
-        'status' => 'published',
-        'published_at' => now(),
-    ]);
-    NewsletterIssue::query()->create([
-        'title' => 'Published issue',
-        'slug' => 'published-issue',
-        'content' => 'Content',
-        'status' => 'published',
-        'published_at' => now(),
-    ]);
-    Subscriber::query()->create(['email' => 'active@example.test', 'verified_at' => now()]);
-    Subscriber::query()->create(['email' => 'pending@example.test']);
-    Subscriber::query()->create([
-        'email' => 'unsubscribed@example.test',
-        'unsubscribed_at' => now(),
-    ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Active podcast',
-        'slug' => 'active-podcast',
-        'description' => 'Description',
-        'is_active' => true,
-    ]);
-    $episode->update(['podcast_id' => $podcast->id]);
-    Podcast::query()->create([
-        'name' => 'Archived podcast',
-        'slug' => 'archived-podcast',
-        'description' => 'Description',
-        'is_active' => false,
-    ]);
-    Video::query()->create([
-        'youtube_id' => 'video-1',
-        'title' => 'Video',
-        'slug' => 'video',
-        'view_count' => 1234,
-    ]);
+    Post::factory()
+        ->published()
+        ->create();
+    Post::factory()->create();
+    Episode::factory()
+        ->published()
+        ->create();
+    NewsletterIssue::factory()
+        ->published()
+        ->create();
+    Subscriber::factory()->create();
+    Subscriber::factory()
+        ->pending()
+        ->create();
+    Subscriber::factory()
+        ->unsubscribed()
+        ->create();
+    Podcast::factory()
+        ->inactive()
+        ->create();
+    Video::factory()->create(['view_count' => 1234]);
 
-    $this->actingAs($administrator);
+    actingAs($administrator);
 
     $widget = new class extends ContentPerformanceOverview
     {

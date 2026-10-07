@@ -7,12 +7,13 @@ use App\Models\NewsletterIssue;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('creates a newsletter issue through the Filament form', function () {
@@ -34,12 +35,7 @@ it('creates a newsletter issue through the Filament form', function () {
 });
 
 it('updates a newsletter issue through the Filament form', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Original issue',
-        'slug' => 'original-issue',
-        'content' => 'Original content.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $issue = NewsletterIssue::factory()->create();
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
         ->fillForm([
@@ -73,12 +69,7 @@ it('rejects slugs reserved by static newsletter routes', function (string $slug)
 })->with(['confirmed', 'rss']);
 
 it('rejects a reserved slug when updating a newsletter issue', function (string $slug) {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Original issue',
-        'slug' => 'original-issue',
-        'content' => 'Original content.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $issue = NewsletterIssue::factory()->create(['slug' => 'original-issue']);
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
         ->fillForm(['slug' => $slug])
@@ -93,14 +84,9 @@ it('locks the publish date of a sent issue so delivered links keep working', fun
     $publishedAt = now()
         ->subDay()
         ->startOfMinute();
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Sent issue',
-        'slug' => 'sent-issue',
-        'content' => 'Content.',
-        'status' => PublishStatus::Published,
-        'published_at' => $publishedAt,
-        'sent_at' => now(),
-    ]);
+    $issue = NewsletterIssue::factory()
+        ->sent()
+        ->create(['published_at' => $publishedAt]);
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
         ->assertFormFieldDisabled('published_at')
@@ -113,12 +99,7 @@ it('locks the publish date of a sent issue so delivered links keep working', fun
 });
 
 it('keeps the publish date editable on an issue that has not been sent', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Unsent issue',
-        'slug' => 'unsent-issue',
-        'content' => 'Content.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $issue = NewsletterIssue::factory()->create();
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
         ->assertFormFieldEnabled('published_at');

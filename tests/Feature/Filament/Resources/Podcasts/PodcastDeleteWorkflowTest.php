@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -9,13 +8,14 @@ use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('permanently deletes a trashed podcast and its episodes through the authenticated resource', function () {
@@ -23,20 +23,10 @@ it('permanently deletes a trashed podcast and its episodes through the authentic
     Storage::disk('public')->put('podcasts/delete-cover.jpg', 'cover');
     Storage::disk('public')->put('episodes/delete-image.jpg', 'image');
 
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast delete coverage',
-        'slug' => 'podcast-delete-coverage',
-        'description' => 'Podcast description.',
-        'cover_image_path' => 'podcasts/delete-cover.jpg',
-    ]);
-    $episode = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Episode delete coverage',
-        'slug' => 'episode-delete-coverage',
-        'description' => 'Episode description.',
-        'featured_image_path' => 'episodes/delete-image.jpg',
-        'status' => PublishStatus::Draft,
-    ]);
+    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/delete-cover.jpg']);
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create(['featured_image_path' => 'episodes/delete-image.jpg']);
 
     $podcast->delete();
 

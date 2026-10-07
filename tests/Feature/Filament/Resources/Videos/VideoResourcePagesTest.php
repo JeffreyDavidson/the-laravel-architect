@@ -5,20 +5,19 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('renders the video edit page for an authorized user', function () {
-    $video = Video::query()->create([
-        'youtube_id' => 'abc123',
-        'title' => 'Video page coverage',
-        'slug' => 'video-page-coverage',
-    ]);
+    $video = Video::factory()->create();
 
-    $this->get(VideoResource::getUrl('edit', ['record' => $video]))
+    get(VideoResource::getUrl('edit', ['record' => $video]))
         ->assertOk();
 });

@@ -8,12 +8,13 @@ use App\Models\ContactInquiry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('renders inquiry details for an authorized administrator', function () {

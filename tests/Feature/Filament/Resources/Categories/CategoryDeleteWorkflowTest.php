@@ -6,20 +6,17 @@ use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes a category through the edit page', function () {
-    $category = Category::query()->create([
-        'name' => 'Category delete coverage',
-        'slug' => 'category-delete-coverage',
-        'description' => 'Category description',
-    ]);
+    $category = Category::factory()->create();
 
     livewire(EditCategory::class, ['record' => $category->getRouteKey()])
         ->callAction(DeleteAction::class);

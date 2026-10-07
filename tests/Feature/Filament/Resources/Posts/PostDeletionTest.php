@@ -1,33 +1,26 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
     Storage::fake('public');
 });
 
 it('permanently deletes a trashed post and its featured image through the Filament action', function () {
     Storage::disk('public')->put('posts/featured.png', 'image');
 
-    $post = Post::query()->create([
-        'title' => 'Post to delete',
-        'slug' => 'post-to-delete',
-        'content' => 'Post content.',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-        'featured_image_path' => 'posts/featured.png',
-    ]);
+    $post = Post::factory()->create(['featured_image_path' => 'posts/featured.png']);
 
     $post->delete();
 

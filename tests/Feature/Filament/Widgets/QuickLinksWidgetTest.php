@@ -9,6 +9,8 @@ use App\Filament\Widgets\QuickLinksWidget;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -26,12 +28,12 @@ it('renders shortcuts to common content actions', function () {
 });
 
 it('renders with the dashboard instead of loading afterwards', function () {
-    $this->actingAs(
+    actingAs(
         User::factory()
             ->create(['is_admin' => true]),
     );
 
-    $this->get(Dashboard::getUrl())
+    get(Dashboard::getUrl())
         ->assertOk()
         ->assertSee('Write post');
 });

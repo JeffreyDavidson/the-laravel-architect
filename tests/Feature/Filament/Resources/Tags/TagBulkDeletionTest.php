@@ -7,19 +7,19 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes selected tags through the table bulk action', function () {
-    $tags = collect([
-        Tag::query()->create(['name' => 'First tag', 'slug' => 'first-tag']),
-        Tag::query()->create(['name' => 'Second tag', 'slug' => 'second-tag']),
-    ]);
+    $tags = Tag::factory()
+        ->count(2)
+        ->create();
 
     livewire(ListTags::class)
         ->selectTableRecords($tags)

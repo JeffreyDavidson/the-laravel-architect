@@ -7,6 +7,7 @@ use Filament\Actions\ForceDeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -15,18 +16,13 @@ beforeEach(function () {
     Storage::fake('public');
 
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('permanently deletes a trashed project through the resource action and removes its featured image', function () {
     Storage::disk('public')->put('projects/project.png', 'image');
 
-    $project = Project::query()->create([
-        'title' => 'Project to delete',
-        'slug' => 'project-to-delete',
-        'description' => 'A project that should be deleted.',
-        'featured_image_path' => 'projects/project.png',
-    ]);
+    $project = Project::factory()->create(['featured_image_path' => 'projects/project.png']);
 
     $project->delete();
 

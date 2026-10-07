@@ -7,7 +7,6 @@ use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
-use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -27,30 +26,9 @@ beforeEach(function () {
 });
 
 dataset('publishable edit pages', [
-    'post' => [EditPost::class, fn (): Model => Post::query()->create([
-        'title' => 'Scheduled post',
-        'slug' => 'scheduled-post',
-        'content' => 'Content.',
-        'user_id' => auth()->id(),
-        'status' => PublishStatus::Draft,
-    ])],
-    'episode' => [EditEpisode::class, function (): Model {
-        $podcast = Podcast::query()->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.']);
-
-        return Episode::query()->create([
-            'podcast_id' => $podcast->id,
-            'title' => 'Scheduled episode',
-            'slug' => 'scheduled-episode',
-            'description' => 'Description.',
-            'status' => PublishStatus::Draft,
-        ]);
-    }],
-    'newsletter issue' => [EditNewsletterIssue::class, fn (): Model => NewsletterIssue::query()->create([
-        'title' => 'Scheduled issue',
-        'slug' => 'scheduled-issue',
-        'content' => 'Content.',
-        'status' => PublishStatus::Draft,
-    ])],
+    'post' => [EditPost::class, fn (): Post => Post::factory()->create()],
+    'episode' => [EditEpisode::class, fn (): Episode => Episode::factory()->create()],
+    'newsletter issue' => [EditNewsletterIssue::class, fn (): NewsletterIssue => NewsletterIssue::factory()->create()],
 ]);
 
 dataset('eastern publish dates', [

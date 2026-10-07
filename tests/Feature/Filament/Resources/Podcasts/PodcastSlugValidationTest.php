@@ -6,13 +6,14 @@ use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     $user = User::factory()->create(['is_admin' => true]);
-    $this->actingAs($user);
+    actingAs($user);
 });
 
 it('rejects non-normalized podcast slugs when creating a podcast', function (string $slug) {
@@ -50,11 +51,7 @@ it('accepts a normalized podcast slug when creating a podcast', function () {
 });
 
 it('rejects a non-normalized podcast slug when editing a podcast', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast name',
-        'slug' => 'podcast-name',
-        'description' => 'Podcast description',
-    ]);
+    $podcast = Podcast::factory()->create(['slug' => 'podcast-name']);
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['slug' => '../podcast-name'])
@@ -66,11 +63,7 @@ it('rejects a non-normalized podcast slug when editing a podcast', function () {
 });
 
 it('preserves an existing podcast slug when the name changes', function () {
-    $podcast = Podcast::query()->create([
-        'name' => 'Podcast name',
-        'slug' => 'curated-podcast-slug',
-        'description' => 'Podcast description',
-    ]);
+    $podcast = Podcast::factory()->create(['slug' => 'curated-podcast-slug']);
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['name' => 'Updated podcast name', 'slug' => 'curated-podcast-slug'])

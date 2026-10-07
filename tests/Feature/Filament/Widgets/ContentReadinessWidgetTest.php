@@ -19,10 +19,7 @@ use function Pest\Livewire\livewire;
 pest()->use(RefreshDatabase::class);
 
 it('includes audio-only episodes in the queue until show notes are provided', function () {
-    Episode::query()->create([
-        'title' => 'Needs show notes', 'slug' => 'needs-show-notes', 'description' => 'Description',
-        'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
-    ]);
+    Episode::factory()->create();
 
     livewire(ContentReadinessWidget::class)->assertViewHas('items', function (array $items): bool {
         foreach ($items as $item) {
@@ -36,30 +33,12 @@ it('includes audio-only episodes in the queue until show notes are provided', fu
 });
 
 it('shows the content areas that still need public details', function () {
-    Project::query()->create([
-        'title' => 'Needs content',
-        'slug' => 'needs-content',
-        'description' => 'Description',
-    ]);
-    Project::query()->create([
-        'title' => 'Complete project',
-        'slug' => 'complete-project',
-        'description' => 'Description',
-        'content' => 'A finished case study.',
-        'featured_image_path' => 'projects/complete.webp',
-    ]);
+    Project::factory()->create(['content' => null]);
+    Project::factory()->create(['featured_image_path' => 'projects/complete.webp']);
 
-    Podcast::query()->create([
-        'name' => 'Needs links',
-        'slug' => 'needs-links',
-        'description' => 'Description',
-    ]);
+    Podcast::factory()->create();
 
-    Episode::query()->create([
-        'title' => 'Needs details',
-        'slug' => 'needs-details',
-        'description' => 'Description',
-    ]);
+    Episode::factory()->create(['transistor_url' => null]);
 
     livewire(ContentReadinessWidget::class)
         ->assertSee('Project previews')

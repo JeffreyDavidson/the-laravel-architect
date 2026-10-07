@@ -8,19 +8,20 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertModelExists;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    actingAs(User::factory()->create(['is_admin' => true]));
 });
 
 it('deletes selected subscribers through the table bulk action', function () {
-    $subscribers = collect([
-        Subscriber::query()->create(['email' => 'first-bulk-delete@example.com', 'verified_at' => now()]),
-        Subscriber::query()->create(['email' => 'second-bulk-delete@example.com', 'verified_at' => now()]),
-    ]);
+    $subscribers = Subscriber::factory()
+        ->count(2)
+        ->create();
 
     livewire(ListSubscribers::class)
         ->selectTableRecords($subscribers)
@@ -43,5 +44,5 @@ it('keeps suppressed subscribers on the do-not-email list when bulk deleting', f
         ->callAction(TestAction::make(DeleteBulkAction::class)->table()
             ->bulk());
 
-    $this->assertModelExists($suppressed);
+    assertModelExists($suppressed);
 });
