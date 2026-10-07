@@ -6,12 +6,16 @@ namespace App\Services;
 
 use App\Models\Video;
 
-final class YouTubeVideoStatsSynchronizer
+final readonly class YouTubeStatsSyncWorkflow
 {
+    public function __construct(private YouTubeService $youtube) {}
+
     /**
+     * Refresh the view, like and comment counts of every synced video, fifty at a time.
+     *
      * @return array{videoCount: int, updated: int}
      */
-    public function synchronize(YouTubeService $youtube): array
+    public function synchronize(): array
     {
         $videoCount = Video::query()->count();
 
@@ -37,7 +41,7 @@ final class YouTubeVideoStatsSynchronizer
                 continue;
             }
 
-            $stats = $youtube->getStatsForVideos($videoIds);
+            $stats = $this->youtube->getStatsForVideos($videoIds);
 
             if ($stats === []) {
                 continue;

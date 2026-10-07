@@ -7,10 +7,10 @@ namespace App\Support\Feeds;
 use Carbon\CarbonInterface;
 
 /**
- * Writes an RSS 2.0 document with one channel, one element per line. Every text
+ * Renders an RSS 2.0 document with one channel, one element per line. Every text
  * value is XML-escaped, and a missing publication date falls back to the current time.
  */
-final class RssChannelWriter
+final class RssChannelRenderer
 {
     /**
      * The channel's last build date is the first item's publication date, so pass the
@@ -18,7 +18,7 @@ final class RssChannelWriter
      *
      * @param  array<int, array{title: string, link: string, description: string|null, publishedAt: CarbonInterface|null, category?: string|null}>  $items
      */
-    public function write(string $title, string $link, string $description, string $feedUrl, array $items): string
+    public function render(string $title, string $link, string $description, string $feedUrl, array $items): string
     {
         return implode("\n", [
             '<?xml version="1.0" encoding="UTF-8"?>',

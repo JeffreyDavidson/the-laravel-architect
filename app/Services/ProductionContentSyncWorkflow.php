@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-final readonly class ProductionContentSynchronizer
+final readonly class ProductionContentSyncWorkflow
 {
     public function __construct(
         private PublicContentArchiveImporter $archive,

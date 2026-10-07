@@ -40,7 +40,10 @@ Beyond the resources, the panel has three custom pages:
 - **Media Health** (Operations group) lists the stored images of projects, posts
   and podcasts with their source optimization and responsive-variant status,
   filters by content type and status, and offers a confirmed **Repair variants**
-  action where repair is possible.
+  action where repair is possible. `MediaHealthQuery` reads and filters the
+  images into `MediaHealthRecord` objects, the page formats them as table rows
+  (file size, dimensions, badge colours), and the repair runs through the
+  `RepairImageVariants` action.
 - **Editorial Calendar** (Publish group) shows a month grid of posts and
   episodes by publication date, with a list of items that have no date yet, and
   previous, next and today navigation in the display timezone.

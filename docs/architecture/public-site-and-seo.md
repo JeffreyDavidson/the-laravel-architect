@@ -27,9 +27,18 @@ page's display flags.
 
 Reusable content selection, including related posts, related projects, and
 adjacent-episode navigation, lives in query objects rather than controllers.
-Sitemap and RSS serialization, the newsletter subscription lifecycle, and
-contact message delivery live in focused actions, leaving their HTTP controllers
-responsible for request and response concerns.
+The newsletter subscription lifecycle and contact message delivery live in
+focused actions, because each changes state.
+
+The RSS feeds, the sitemap and robots.txt change nothing, so they are not
+actions. Each splits into three read-only parts: a Query reads the content
+(`RssFeedQuery`, `NewsletterRssFeedQuery`, `SitemapQuery`), a ViewModel turns it
+into plain arrays with URLs and dates (`RssFeedViewModel`,
+`NewsletterRssFeedViewModel`, `SitemapViewModel`, `RobotsTxtViewModel`), and a
+Renderer in `app/Support/Feeds` serialises those arrays without knowing about
+models (`RssChannelRenderer`, `SitemapRenderer`, `RobotsTxtRenderer`). The
+controller passes the ViewModel's data to the Renderer and sets the response
+headers.
 
 Route-model binding uses content slugs, while publication scopes keep drafts and
 future content off public pages, feeds, and the sitemap (see
@@ -106,7 +115,7 @@ existing public links.
 
 - `/newsletter` is a paginated archive of published issues (12 per page,
   out-of-range pages return 404), and `/newsletter/rss` is an RSS 2.0 feed of
-  the 20 newest published issues (`GenerateNewsletterRssFeed`). Individual
+  the 20 newest published issues (`NewsletterRssFeedQuery`). Individual
   issues live at `/newsletter/{slug}` and unpublished ones return 404. The issue
   form rejects a slug that matches a static `/newsletter/*` route (such as `rss`
   or `confirmed`), because those routes are registered first and would make the
@@ -135,7 +144,8 @@ would also drop the route-model binding for its post slug.
 
 ## robots.txt
 
-`/robots.txt` is served by `RobotsController` and `GenerateRobotsTxt`. The route
+`/robots.txt` is served by `RobotsController`, which renders the policy from
+`RobotsTxtViewModel` with `RobotsTxtRenderer`. The route
 removes the `web` middleware group, so the response sets no session or CSRF
 cookies, and it is sent with `Cache-Control: public, max-age=3600` so it behaves
 like a static file at the CDN. Do not add a static `public/robots.txt`, because

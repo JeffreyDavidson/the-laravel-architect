@@ -101,9 +101,11 @@ Preview the resulting responsive image after replacing artwork on an existing po
 
 Two existing server generators produce 1200 × 630 graphics:
 
-- `FeaturedImageGenerator` supplies category-themed post images with programmatic
-  graphics and text; it is not an AI image generator. Its wide output is cropped
-  in the article's 3:2 and 4:3 frames, so inspect it before use.
+- `FeaturedImageGenerator` draws category-themed post images with programmatic
+  graphics and text and returns the PNG bytes; `PostImageGenerationWorkflow`
+  (`posts:generate-images`) stores them. It is not an AI image generator. Its
+  wide output is cropped in the article's 3:2 and 4:3 frames, so inspect it
+  before use.
 - `OgImageGenerator` produces separate social preview graphics. A social preview
   is a different deliverable from the editorial image; inspect the actual SEO
   configuration and resulting share image instead of assuming the hero crop is used.

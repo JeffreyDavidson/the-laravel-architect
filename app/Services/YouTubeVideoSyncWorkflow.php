@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\Video;
 use Illuminate\Support\Str;
 
-final readonly class YouTubeVideoSynchronizer
+final readonly class YouTubeVideoSyncWorkflow
 {
     public function __construct(private YouTubeService $youtube) {}
 

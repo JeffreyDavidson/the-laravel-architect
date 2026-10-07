@@ -6,17 +6,18 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Post;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Format;
 use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Geometry\Factories\LineFactory;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Typography\FontFactory;
-use RuntimeException;
-use UnexpectedValueException;
 
+/**
+ * Draws a post's category-themed featured image and returns it as PNG bytes. It never
+ * writes files; PostImageGenerationWorkflow stores the result.
+ */
 class FeaturedImageGenerator
 {
     private readonly ImageManager $manager;
@@ -138,12 +139,6 @@ class FeaturedImageGenerator
 
     public function generate(Post $post): string
     {
-        $slug = $post->getAttribute('slug');
-
-        if (! is_string($slug) || $slug === '' || Str::slug($slug) !== $slug) {
-            throw new UnexpectedValueException('Post slug must be a non-empty, normalized slug.');
-        }
-
         $category = $post->relationLoaded('category')
             ? $post->getRelation('category')
             : null;
@@ -173,16 +168,8 @@ class FeaturedImageGenerator
         // Draw brand mark (bottom-right)
         $this->drawBrandMark($image, $colors[0]);
 
-        $path = "featured-images/{$slug}.png";
-        $disk = Storage::disk('public');
-
-        if (! $disk->directoryExists('featured-images') && ! $disk->makeDirectory('featured-images')) {
-            throw new RuntimeException('Unable to create the featured image directory.');
-        }
-
-        $image->save($disk->path($path));
-
-        return $path;
+        return $image->encodeUsingFormat(Format::PNG)
+            ->toString();
     }
 
     /** @param array{string, string, string} $colors */

@@ -1,12 +1,12 @@
 <?php
 
-use App\Actions\GenerateNewsletterRssFeed;
 use App\Models\NewsletterIssue;
+use App\Queries\NewsletterRssFeedQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
-it('generates a newest-first feed bounded to twenty published issues', function () {
+it('returns the twenty newest published issues, newest first', function () {
     foreach (range(1, 21) as $position) {
         NewsletterIssue::factory()
             ->published()
@@ -16,11 +16,14 @@ it('generates a newest-first feed bounded to twenty published issues', function 
             ]);
     }
 
-    $xml = app(GenerateNewsletterRssFeed::class)->handle();
+    $titles = app(NewsletterRssFeedQuery::class)
+        ->get()
+        ->pluck('title');
 
-    expect($xml)
-        ->toContain('<title>Newsletter issue 1</title>')
-        ->not->toContain('<title>Newsletter issue 21</title>')
-        ->and(substr_count($xml, '<item>'))
-        ->toBe(20);
+    expect($titles)
+        ->toHaveCount(20)
+        ->first()
+        ->toBe('Newsletter issue 1')
+        ->and($titles)
+        ->not->toContain('Newsletter issue 21');
 });
