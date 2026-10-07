@@ -1,10 +1,5 @@
 <?php
 
-use App\Data\CalendarEntry;
-use App\Enums\CalendarEntryType;
-use App\Enums\PublishStatus;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
 use App\Queries\EditorialCalendarQuery;
@@ -13,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 pest()->use(RefreshDatabase::class);
 
-it('returns dated posts and episodes in the range followed by undated content', function () {
+it('returns posts then episodes dated in the range or undated, each in publication order', function () {
     $undatedPost = Post::factory()->create(['published_at' => null]);
     $episode = Episode::factory()
         ->scheduled()
@@ -27,32 +22,18 @@ it('returns dated posts and episodes in the range followed by undated content', 
 
     $entries = app(EditorialCalendarQuery::class)->get(Carbon::parse('2026-08-30'), Carbon::parse('2026-10-03'));
 
-    expect($entries->all())->toEqual([
-        new CalendarEntry(
-            date: '2026-09-18',
-            title: $post->title,
-            type: CalendarEntryType::Post,
-            status: PublishStatus::InReview,
-            url: PostResource::getUrl('edit', ['record' => $post]),
-        ),
-        new CalendarEntry(
-            date: '2026-09-22',
-            title: $episode->title,
-            type: CalendarEntryType::Episode,
-            status: PublishStatus::Scheduled,
-            url: EpisodeResource::getUrl('edit', ['record' => $episode]),
-        ),
-        new CalendarEntry(
-            date: null,
-            title: $undatedPost->title,
-            type: CalendarEntryType::Post,
-            status: PublishStatus::Draft,
-            url: PostResource::getUrl('edit', ['record' => $undatedPost]),
-        ),
+    $records = $entries
+        ->map(fn (Post|Episode $record): string => $record::class.':'.$record->id)
+        ->all();
+
+    expect($records)->toBe([
+        Post::class.':'.$undatedPost->id,
+        Post::class.':'.$post->id,
+        Episode::class.':'.$episode->id,
     ]);
 });
 
-it('bounds the range and dates entries in the display timezone', function () {
+it('bounds the range by days in the display timezone', function () {
     config(['app.display_timezone' => 'America/New_York']);
     Post::factory()->create([
         'title' => 'Evening post',
@@ -68,8 +49,8 @@ it('bounds the range and dates entries in the display timezone', function () {
         Carbon::parse('2026-10-05', 'America/New_York'),
     );
 
-    $datesByTitle = $entries->pluck('date', 'title')
+    $titles = $entries->pluck('title')
         ->all();
 
-    expect($datesByTitle)->toBe(['Evening post' => '2026-10-05']);
+    expect($titles)->toBe(['Evening post']);
 });

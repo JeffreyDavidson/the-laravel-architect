@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Data\CalendarEntry;
+use App\Enums\CalendarEntryType;
 use App\Enums\NavigationGroup;
+use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\Posts\PostResource;
+use App\Models\Episode;
+use App\Models\Post;
 use App\Queries\EditorialCalendarQuery;
 use App\Support\DisplayTimezone;
 use BackedEnum;
@@ -102,7 +107,11 @@ final class EditorialCalendar extends Page
         $gridEnd = $month->copy()
             ->endOfMonth()
             ->endOfWeek(Carbon::SATURDAY);
-        $entries = app(EditorialCalendarQuery::class)->get($gridStart, $gridEnd);
+        $entries = app(EditorialCalendarQuery::class)
+            ->get($gridStart, $gridEnd)
+            ->map(fn (Post|Episode $record): CalendarEntry => $this->entry($record))
+            ->sortBy(fn (CalendarEntry $entry): string => $entry->date ?? '9999-12-31')
+            ->values();
         /** @var Collection<int, CalendarDay> $days */
         $days = collect();
 
@@ -129,6 +138,21 @@ final class EditorialCalendar extends Page
                 ->mapWithKeys(fn (int $count, string|int $status): array => [(string) $status => $count])
                 ->all(),
         ];
+    }
+
+    /** The record as the calendar shows it: its publication day in the display timezone and its edit link. */
+    private function entry(Post|Episode $record): CalendarEntry
+    {
+        return new CalendarEntry(
+            date: DisplayTimezone::convert($record->publishedAt())
+                ?->toDateString(),
+            title: $record->title,
+            type: $record instanceof Post ? CalendarEntryType::Post : CalendarEntryType::Episode,
+            status: $record->publishStatus(),
+            url: $record instanceof Post
+                ? PostResource::getUrl('edit', ['record' => $record])
+                : EpisodeResource::getUrl('edit', ['record' => $record]),
+        );
     }
 
     /**
