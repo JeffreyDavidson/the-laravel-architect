@@ -31,7 +31,7 @@ class SlugInput extends TextInput
     public function lockedAfterPublication(): static
     {
         $this
-            ->disabled(fn (?Model $record): bool => $record !== null
+            ->disabled(fn (?Model $record): bool => $record instanceof Model
                 && method_exists($record, 'isSlugLocked')
                 && $record->isSlugLocked())
             ->helperText('URLs stay locked after first publication, even when unpublished.');
