@@ -11,6 +11,8 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ContactInquiriesTable
 {
@@ -18,16 +20,15 @@ class ContactInquiriesTable
     {
         return $table
             ->columns([
+                // Name and email are encrypted at rest, so SQL search can never match them.
                 TextColumn::make('name')
                     ->label('From')
-                    ->searchable()
                     ->limit(32),
                 TextColumn::make('email')
-                    ->searchable()
                     ->limit(36)
                     ->copyable(),
                 TextColumn::make('type')
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereIn('type', self::typesWithLabelMatching($search)))
                     ->formatStateUsing(fn (string $state): string => ContactType::tryFrom($state)?->getLabel() ?? $state),
                 TextColumn::make('status')
                     ->badge(),
@@ -38,8 +39,9 @@ class ContactInquiriesTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(ContactInquiryStatus::labels()),
+                    ->options(ContactInquiryStatus::class),
             ])
+            ->searchPlaceholder('Search by inquiry type')
             ->defaultSort('created_at', 'desc')
             ->recordActions([
                 EditAction::make(),
@@ -52,5 +54,18 @@ class ContactInquiriesTable
             ->emptyStateIcon(Heroicon::OutlinedInbox)
             ->emptyStateHeading('No contact inquiries')
             ->emptyStateDescription('New messages from the public contact form will appear here.');
+    }
+
+    /**
+     * Match the search against the type labels shown in the table, not the stored values.
+     *
+     * @return array<int, string>
+     */
+    private static function typesWithLabelMatching(string $search): array
+    {
+        return collect(ContactType::cases())
+            ->filter(fn (ContactType $type): bool => Str::contains($type->getLabel(), $search, ignoreCase: true))
+            ->map(fn (ContactType $type): string => $type->value)
+            ->all();
     }
 }

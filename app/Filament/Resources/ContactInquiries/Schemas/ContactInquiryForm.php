@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\ContactInquiries\Schemas;
 
+use App\Enums\ContactBudget;
 use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
 use App\Models\ContactInquiry;
@@ -26,13 +29,12 @@ class ContactInquiryForm
                         TextInput::make('email')
                             ->disabled()
                             ->dehydrated(false),
-                        TextInput::make('type')
-                            ->formatStateUsing(fn (?string $state): ?string => $state === null
-                                ? null
-                                : (ContactType::tryFrom($state)?->getLabel() ?? $state))
+                        Select::make('type')
+                            ->options(ContactType::class)
                             ->disabled()
                             ->dehydrated(false),
-                        TextInput::make('budget')
+                        Select::make('budget')
+                            ->options(ContactBudget::class)
                             ->disabled()
                             ->dehydrated(false)
                             ->placeholder('Not provided'),
@@ -65,7 +67,7 @@ class ContactInquiryForm
                 Section::make('Follow-up')
                     ->schema([
                         Select::make('status')
-                            ->options(ContactInquiryStatus::labels())
+                            ->options(ContactInquiryStatus::class)
                             ->required(),
                         Textarea::make('notes')
                             ->label('Private notes')

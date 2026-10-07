@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum ContactType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ContactType: string implements HasLabel
 {
     case Freelance = 'freelance';
     case Consulting = 'consulting';

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum ContactBudget: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ContactBudget: string implements HasLabel
 {
     case Small = 'small';
     case Medium = 'medium';
