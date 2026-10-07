@@ -210,6 +210,25 @@ it('restores every episode trashed with its podcast when the delete spans severa
         ->toBeTrue();
 });
 
+it('keeps a podcast and its episodes when an episode refuses to be deleted', function (string $method) {
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create();
+    Episode::deleting(fn (): bool => false);
+
+    expect(fn (): ?bool => $method === 'forceDelete'
+        ? $podcast->forceDelete()
+        : $podcast->delete())
+        ->toThrow(RuntimeException::class, 'Podcast deletion was cancelled because an episode could not be deleted.')
+        ->and(Podcast::query()->whereKey($podcast->id)
+            ->exists())
+        ->toBeTrue()
+        ->and(Episode::query()->whereKey($episode->id)
+            ->exists())
+        ->toBeTrue();
+})->with(['trash' => 'delete', 'force delete' => 'forceDelete']);
+
 it('permanently deletes every episode when a podcast is force deleted', function () {
     $episode = PublishableFixtures::ready('episode');
     $podcast = $episode->getAttribute('podcast');

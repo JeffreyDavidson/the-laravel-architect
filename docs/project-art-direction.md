@@ -170,7 +170,7 @@ For conceptual imagery, use this prompt structure:
 - [Image upload optimizer](../app/Services/ImageUploadOptimizer.php)
 - [Responsive image widths and quality](../app/Services/ResponsiveImageVariants.php)
 - [Project observer](../app/Observers/ProjectObserver.php)
-- [Image lifecycle](../app/Services/ResponsiveImageLifecycle.php)
+- [Media lifecycle](../app/Services/StoredMediaLifecycle.php)
 
 For article illustrations and their different crop requirements, use
 [editorial design](editorial-design.md).

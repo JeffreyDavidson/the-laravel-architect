@@ -6,28 +6,28 @@ namespace App\Observers;
 
 use App\Models\Post;
 use App\Services\OgImageCache;
-use App\Services\ResponsiveImageLifecycle;
+use App\Services\StoredMediaLifecycle;
 
 final readonly class PostObserver
 {
     public function __construct(
         private OgImageCache $ogImageCache,
-        private ResponsiveImageLifecycle $lifecycle,
+        private StoredMediaLifecycle $media,
     ) {}
 
     public function created(Post $post): void
     {
-        $this->lifecycle->created($post, 'featured_image_path', 'post');
+        $this->media->created($post, 'featured_image_path', 'post');
     }
 
     public function updated(Post $post): void
     {
-        $this->lifecycle->updated($post, 'featured_image_path', 'post');
+        $this->media->updated($post, 'featured_image_path', 'post');
     }
 
     public function forceDeleted(Post $post): void
     {
-        $this->lifecycle->deleted($post, 'featured_image_path');
+        $this->media->forceDeleted($post, 'featured_image_path', 'post');
 
         $postKey = $post->getKey();
 
