@@ -9,6 +9,7 @@ use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
@@ -86,9 +87,11 @@ class EpisodesTable
                 ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
-                ForceDeleteBulkAction::make(),
-                RestoreBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
             ])
             ->defaultSort('episode_number', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)

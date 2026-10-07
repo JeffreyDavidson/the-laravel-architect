@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\NewsletterIssues;
 
 use App\Enums\NavigationGroup;
+use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\NewsletterIssues\Pages\CreateNewsletterIssue;
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
@@ -16,12 +17,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
 class NewsletterIssueResource extends Resource
 {
+    use ResolvesTrashedRecords;
+
     #[\Override]
     protected static ?string $model = NewsletterIssue::class;
 
@@ -36,12 +37,6 @@ class NewsletterIssueResource extends Resource
 
     #[\Override]
     protected static ?string $recordTitleAttribute = 'title';
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([SoftDeletingScope::class]);
-    }
 
     public static function form(Schema $schema): Schema
     {

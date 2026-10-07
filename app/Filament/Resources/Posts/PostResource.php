@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Posts;
 
 use App\Enums\NavigationGroup;
 use App\Enums\PublishStatus;
+use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
@@ -15,13 +16,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
 class PostResource extends Resource
 {
+    use ResolvesTrashedRecords;
+
     #[\Override]
     protected static ?string $model = Post::class;
 
@@ -58,12 +59,6 @@ class PostResource extends Resource
         $reviewCount = Cache::remember('filament.navigation.posts-review-count', now()->addMinutes(5), fn (): int => static::getModel()::where('status', PublishStatus::InReview)->count());
 
         return $reviewCount > 0 ? 'info' : 'gray';
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 
     public static function form(Schema $schema): Schema
