@@ -34,7 +34,8 @@ enum SubscriberStatus: string implements HasColor, HasIcon, HasLabel
         match ($this) {
             self::Active => $query->active(),
             self::Pending => $query->whereNull('verified_at')
-                ->whereNull('unsubscribed_at'),
+                ->whereNull('unsubscribed_at')
+                ->whereNull('suppressed_at'),
             self::Unsubscribed => $query->whereNotNull('unsubscribed_at')
                 ->whereNull('suppressed_at'),
             self::Suppressed => $query->whereNotNull('suppressed_at'),
