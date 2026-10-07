@@ -56,3 +56,14 @@ it('turns only a Transistor share URL into its embed URL', function (?string $ur
     'extra path' => ['https://share.transistor.fm/s/428dcd6b/extra', null],
     'query string' => ['https://share.transistor.fm/s/428dcd6b?autoplay=1', null],
 ]);
+
+it('has media only with a Transistor share URL or a YouTube link', function (array $attributes, bool $hasMedia) {
+    /** @var array<string, mixed> $attributes */
+    expect(new Episode($attributes)->hasMedia())->toBe($hasMedia);
+})->with([
+    'Transistor share URL' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], true],
+    'YouTube link' => [['youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk'], true],
+    'Transistor URL that is not a share URL' => [['transistor_url' => 'https://example.com/s/428dcd6b'], false],
+    'blank YouTube link' => [['youtube_url' => ' '], false],
+    'nothing' => [[], false],
+]);

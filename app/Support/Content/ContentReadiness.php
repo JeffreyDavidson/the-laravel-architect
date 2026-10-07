@@ -9,18 +9,30 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Queries\ContentReadinessQuery;
 use Illuminate\Database\Eloquent\Model;
 
-final readonly class ContentReadiness
+/**
+ * The per-record readiness checklist. ContentReadinessQuery holds the SQL form of
+ * the same checks; ContentReadinessQueryTest proves the two agree.
+ *
+ * @see ContentReadinessQuery
+ */
+final class ContentReadiness
 {
-    public function __construct(private Post|Project|Podcast|Episode|NewsletterIssue|Video $content) {}
+    /** @var array<string, array{label: string, complete: bool}>|null */
+    private ?array $checks = null;
+
+    public function __construct(private readonly Post|Project|Podcast|Episode|NewsletterIssue|Video $content) {}
 
     /**
+     * Computed once per instance, so create a new instance after changing the record.
+     *
      * @return array<string, array{label: string, complete: bool}>
      */
     public function checks(): array
     {
-        return match (true) {
+        return $this->checks ??= match (true) {
             $this->content instanceof Post => $this->postChecks($this->content),
             $this->content instanceof Project => $this->projectChecks($this->content),
             $this->content instanceof Podcast => $this->podcastChecks($this->content),
@@ -150,7 +162,7 @@ final readonly class ContentReadiness
             ],
             'tech_stack' => [
                 'label' => 'Tech stack',
-                'complete' => $this->hasTechStack($project),
+                'complete' => $project->technologies() !== [],
             ],
             'tags' => [
                 'label' => 'Tags',
@@ -207,8 +219,7 @@ final readonly class ContentReadiness
             ],
             'episode_media' => [
                 'label' => 'Episode media',
-                'complete' => $episode->transistorEmbedUrl() !== null
-                    || filled($episode->youtube_url),
+                'complete' => $episode->hasMedia(),
             ],
             'show_notes' => [
                 'label' => 'Show notes',
@@ -281,13 +292,6 @@ final readonly class ContentReadiness
                 'complete' => $video->synced_at !== null,
             ],
         ];
-    }
-
-    private function hasTechStack(Project $project): bool
-    {
-        $techStack = $project->tech_stack;
-
-        return is_array($techStack) && count(array_filter($techStack, fn (mixed $item): bool => is_string($item) && filled($item))) > 0;
     }
 
     private function hasTags(Post|Project|Episode $content): bool

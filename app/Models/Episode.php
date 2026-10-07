@@ -76,6 +76,16 @@ class Episode extends Model implements Publishable
         return "https://share.transistor.fm/e/{$matches[1]}";
     }
 
+    /**
+     * Whether the episode has something to play: a valid Transistor share URL
+     * or a YouTube link. ContentReadinessQuery mirrors this rule in SQL.
+     */
+    public function hasMedia(): bool
+    {
+        return $this->transistorEmbedUrl() !== null
+            || filled($this->youtube_url);
+    }
+
     /** @return BelongsTo<Podcast, $this> */
     public function podcast(): BelongsTo
     {

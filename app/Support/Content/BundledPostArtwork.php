@@ -26,6 +26,12 @@ final class BundledPostArtwork
         return array_key_exists($slug, self::IMAGES);
     }
 
+    /** @return list<string> The slugs of the posts that have bundled artwork. */
+    public function slugs(): array
+    {
+        return array_keys(self::IMAGES);
+    }
+
     /** @return array{small: string, medium: string, large: string}|null */
     public function urls(string $slug): ?array
     {
