@@ -11,14 +11,14 @@ covers(PreviewUrlGenerator::class);
 
 pest()->use(RefreshDatabase::class);
 
-it('returns the public page of live content', function (string $type, string $route) {
+it('returns the public page of live content', function (string $type, string $path) {
     $content = PublishableFixtures::ready($type);
     $content->publish();
 
     $url = app(PreviewUrlGenerator::class)->publicUrl($content);
 
     expect($url)
-        ->toStartWith(url($route));
+        ->toBe(url($path));
 })->with([
     'post' => ['post', '/blog/ready-post'],
     'project' => ['project', '/projects/ready-project'],

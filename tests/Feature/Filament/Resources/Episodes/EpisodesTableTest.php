@@ -21,7 +21,7 @@ it('links the view on site action to the public episode URL', function () {
     $episode->publish();
 
     livewire(ListEpisodes::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), route('podcast.episode', [$episode->podcast, $episode]))
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), route('podcast.episode', ['podcast' => 'show', 'episode' => 'ready-episode']))
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($episode));
 });
 
