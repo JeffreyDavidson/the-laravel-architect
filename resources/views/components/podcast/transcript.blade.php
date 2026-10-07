@@ -33,7 +33,7 @@
                         x-on:input="search"
                         placeholder="Search transcript"
                         autocomplete="off"
-                        class="dark:border-surface-border dark:bg-surface-control focus:border-brand-600 focus:ring-brand-600/10 min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 dark:text-gray-100"
+                        class="dark:border-surface-border dark:bg-surface-control focus:border-brand-600 focus:ring-brand-600/10 min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none placeholder:text-gray-500 focus:ring-2 dark:text-gray-100 dark:placeholder:text-gray-400"
                     />
                     <p
                         data-transcript-status

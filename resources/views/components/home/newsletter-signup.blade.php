@@ -59,7 +59,7 @@
             x-bind:aria-invalid="ariaInvalid"
             x-bind:aria-describedby="describedBy"
             x-ref="email"
-            class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 focus:border-brand-600 focus:ring-brand-600 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-[border-color,box-shadow] placeholder:text-gray-400 focus:ring-2 focus:outline-hidden sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-500"
+            class="border-brand-200 dark:border-brand-700/50 dark:bg-brand-800 focus:border-brand-600 focus:ring-brand-600 min-w-0 flex-1 rounded-lg border bg-white px-4 py-3 text-base text-gray-900 shadow-sm transition-[border-color,box-shadow] placeholder:text-gray-500 focus:ring-2 focus:outline-hidden sm:text-sm dark:text-white dark:shadow-none dark:placeholder:text-gray-400"
         />
         <x-button type="submit" x-bind:aria-disabled="busy" class="rounded-lg text-base font-semibold sm:text-sm">
             Subscribe

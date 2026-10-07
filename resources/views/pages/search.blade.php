@@ -21,7 +21,7 @@
                             maxlength="120"
                             autofocus
                             placeholder="Search writing, projects, podcasts, and videos"
-                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-xl border border-gray-300 bg-white py-3.5 pr-28 pl-12 text-base text-gray-900 placeholder-gray-500 focus:ring-2 focus:outline-none dark:text-gray-100"
+                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-xl border border-gray-300 bg-white py-3.5 pr-28 pl-12 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-400"
                         />
                         <button
                             type="submit"

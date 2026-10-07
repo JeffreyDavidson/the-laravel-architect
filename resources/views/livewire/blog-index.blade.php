@@ -33,7 +33,7 @@
                     value="{{ $query }}"
                     maxlength="120"
                     placeholder="Search the archive"
-                    class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-16 pl-10 text-base text-gray-900 placeholder-gray-500 focus:ring-1 focus:outline-none dark:text-gray-100"
+                    class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-16 pl-10 text-base text-gray-900 placeholder:text-gray-500 focus:ring-1 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-400"
                 />
                 @if ($query !== '')
                     <a
