@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\Feeds\RssChannelWriter;
+use App\Support\Feeds\RssChannelRenderer;
 use Illuminate\Support\Carbon;
 
 use function Pest\Laravel\travelTo;
@@ -8,8 +8,8 @@ use function Pest\Laravel\travelTo;
 it('writes an escaped channel with one element per line and dates from the newest item', function () {
     travelTo('2026-10-07 12:00:00');
 
-    $xml = new RssChannelWriter()
-        ->write(
+    $xml = new RssChannelRenderer()
+        ->render(
             title: 'Site & <Co>',
             link: 'https://example.test/?a=1&b=2',
             description: 'Notes on <code>',
@@ -64,8 +64,8 @@ it('writes an escaped channel with one element per line and dates from the newes
 it('falls back to the current time for the build date of an empty channel', function () {
     travelTo('2026-10-07 12:00:00');
 
-    $xml = new RssChannelWriter()
-        ->write(title: 'Empty', link: 'https://example.test', description: 'Nothing yet', feedUrl: 'https://example.test/rss', items: []);
+    $xml = new RssChannelRenderer()
+        ->render(title: 'Empty', link: 'https://example.test', description: 'Nothing yet', feedUrl: 'https://example.test/rss', items: []);
 
     expect($xml)
         ->toContain('<lastBuildDate>Wed, 07 Oct 2026 12:00:00 +0000</lastBuildDate>')
