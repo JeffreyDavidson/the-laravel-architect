@@ -40,6 +40,11 @@ integrations.
 Repeated page markup lives in Blade components rather than being pasted per
 page:
 
+- `blog-card` is the one post card. Its `variant` picks the layout: `list` (the
+  default blog row), `editorial`, `featured` and `compact` (the homepage's
+  latest writing) or `related` (under an article). The older `editorial` flag
+  still selects the editorial layout, and extra attributes such as reveal hooks
+  land on the card's `<article>`.
 - `podcast-cover` renders a podcast's cover artwork, or its `placeholder` slot
   when the podcast has none.
 - `podcast.equalizer` draws the animated equalizer bars, as the hero `badge` or

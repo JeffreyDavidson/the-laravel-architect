@@ -174,78 +174,24 @@
                 <div class="grid gap-6">
                     {{-- Featured post --}}
                     @if ($featuredPost)
-                        <article
-                            data-reveal
-                            class="blog-featured group hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease]"
-                        >
-                            <a
-                                href="{{ route('blog.show', $featuredPost) }}"
-                                class="grid md:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]"
-                            >
-                                <x-post-artwork
-                                    :post="$featuredPost"
-                                    sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
-                                    class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block min-h-60 overflow-hidden md:min-h-[27rem]"
-                                />
-                                <div class="flex flex-col justify-center p-7 sm:p-9">
-                                    @if ($featuredPost->category)
-                                        <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $featuredPost->category->name }}</span>
-                                    @endif
-                                    <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-4 text-2xl font-semibold text-gray-900 transition-colors md:text-3xl dark:text-white">
-                                        {{ $featuredPost->title }}
-                                    </h3>
-                                    <p class="line-clamp-3 max-w-3xl text-base text-gray-600 dark:text-gray-400">
-                                        {{ $featuredPost->excerpt }}
-                                    </p>
-                                    <div class="mt-5 flex items-center gap-3 text-xs text-gray-500">
-                                        <x-display-date :date="$featuredPost->published_at" />
-                                        <span>·</span>
-                                        <span
-                                            >{{ \App\Presenters\PostPresenter::from($featuredPost)->readingTime() }} min
-                                            read</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </article>
+                        <x-blog-card
+                            :post="$featuredPost"
+                            variant="featured"
+                            data-reveal=""
+                            class="data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease]"
+                        />
                     @endif
 
                     {{-- Remaining posts --}}
                     @if ($latestPosts->count() > 1)
                         <div class="grid gap-6 md:grid-cols-2">
                             @foreach ($latestPosts->skip(1) as $post)
-                                <article
-                                    data-reveal
-                                    class="group hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200 data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease]"
-                                >
-                                    <a
-                                        href="{{ route('blog.show', $post) }}"
-                                        class="[&>div]:p-4 md:[&>div]:p-6 grid h-full grid-cols-[minmax(6rem,0.65fr)_minmax(0,1.35fr)] md:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.3fr)]"
-                                    >
-                                        <x-post-artwork
-                                            :post="$post"
-                                            sizes="(min-width: 640px) 280px, calc(100vw - 2rem)"
-                                            class="[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block overflow-hidden"
-                                        />
-                                        <div class="p-6">
-                                            @if ($post->category)
-                                                <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase">{{ $post->category->name }}</span>
-                                            @endif
-                                            <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-3 text-lg font-semibold text-gray-900 transition-colors dark:text-white">
-                                                {{ $post->title }}
-                                            </h3>
-                                            <p class="line-clamp-2 hidden text-sm text-gray-600 md:block dark:text-gray-400">
-                                                {{ $post->excerpt }}
-                                            </p>
-                                            <div class="mt-4 flex items-center gap-3 text-xs text-gray-500">
-                                                <x-display-date :date="$post->published_at" />
-                                                <span>·</span>
-                                                <span
-                                                    >{{ \App\Presenters\PostPresenter::from($post)->readingTime() }} min
-                                                    read</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </article>
+                                <x-blog-card
+                                    :post="$post"
+                                    variant="compact"
+                                    data-reveal=""
+                                    class="data-[reveal=pending]:translate-y-3 data-[reveal=pending]:opacity-0 motion-safe:data-[reveal]:transition-[opacity,transform,translate] motion-safe:data-[reveal]:duration-450 motion-safe:data-[reveal]:ease-[ease]"
+                                />
                             @endforeach
                         </div>
                     @endif
