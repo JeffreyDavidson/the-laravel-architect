@@ -48,18 +48,18 @@
                                 <div class="space-y-1.5">
                                     @foreach ($day['entries'] as $entry)
                                         <a
-                                            href="{{ $entry['url'] }}"
+                                            href="{{ $entry->url }}"
                                             wire:navigate
                                             class="group hover:border-primary-500 hover:ring-primary-500 block rounded-lg border border-gray-200 bg-white p-2 shadow-xs transition hover:ring-1 dark:border-white/10 dark:bg-white/5"
                                         >
                                             <div class="flex items-center justify-between gap-1 text-[10px] font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                                                <span>{{ $entry['type'] }}</span>
-                                                <x-filament::badge :color="$entry['statusColor']">
-                                                    {{ $entry['statusLabel'] }}
+                                                <span>{{ $entry->type->getLabel() }}</span>
+                                                <x-filament::badge :color="$entry->status->getColor()">
+                                                    {{ $entry->status->label() }}
                                                 </x-filament::badge>
                                             </div>
                                             <p class="group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-1 line-clamp-2 text-xs font-medium text-gray-950 dark:text-white">
-                                                {{ $entry['title'] }}
+                                                {{ $entry->title }}
                                             </p>
                                         </a>
                                     @endforeach
@@ -79,20 +79,20 @@
                 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($unscheduled as $entry)
                         <a
-                            href="{{ $entry['url'] }}"
+                            href="{{ $entry->url }}"
                             wire:navigate
                             class="group hover:border-primary-500 hover:ring-primary-500 rounded-lg border border-gray-200 bg-white p-3 shadow-xs transition hover:ring-1 dark:border-white/10 dark:bg-white/5"
                         >
                             <div class="flex items-center justify-between gap-3">
                                 <span class="text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                                    {{ $entry['type'] }}
+                                    {{ $entry->type->getLabel() }}
                                 </span>
-                                <x-filament::badge :color="$entry['statusColor']">
-                                    {{ $entry['statusLabel'] }}
+                                <x-filament::badge :color="$entry->status->getColor()">
+                                    {{ $entry->status->label() }}
                                 </x-filament::badge>
                             </div>
                             <p class="group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-2 font-medium text-gray-950 dark:text-white">
-                                {{ $entry['title'] }}
+                                {{ $entry->title }}
                             </p>
                         </a>
                     @endforeach
