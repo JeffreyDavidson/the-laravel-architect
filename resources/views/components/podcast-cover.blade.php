@@ -1,3 +1,4 @@
+{{-- A podcast's cover artwork. When the podcast has no cover, the optional placeholder slot renders instead. --}}
 @props([
     'podcast',
     'alt' => null,
@@ -5,6 +6,7 @@
     'width',
     'height',
     'priority' => false,
+    'placeholder' => null,
 ])
 
 @php($cover = \App\Presenters\PodcastPresenter::from($podcast)->cover())
@@ -28,4 +30,6 @@
             {{ $attributes }}
         />
     </picture>
+@else
+    {{ $placeholder }}
 @endif

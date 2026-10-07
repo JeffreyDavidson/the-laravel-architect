@@ -35,6 +35,19 @@ Shared CSS retains fonts, theme tokens, animation keyframes, and browser
 integration rules; Prism and the Filament admin theme remain separate
 integrations.
 
+## Shared Blade components
+
+Repeated page markup lives in Blade components rather than being pasted per
+page:
+
+- `podcast-cover` renders a podcast's cover artwork, or its `placeholder` slot
+  when the podcast has none.
+- `podcast.equalizer` draws the animated equalizer bars, as the hero `badge` or
+  the hover-revealed episode `row`.
+- `sidebar-card` is the bordered card with a small uppercase heading used by the
+  episode sidebar and the featured guest.
+- `svg-icon` holds shared icons such as the podcast microphone.
+
 ## Site layout
 
 The site layout (`components/layouts/site.blade.php`) is a full-height column

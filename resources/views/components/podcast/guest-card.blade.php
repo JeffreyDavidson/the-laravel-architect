@@ -1,8 +1,7 @@
 @props(['episode'])
 
 @if ($episode->guest_name)
-    <div class="dark:border-surface-border dark:bg-surface-control mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-        <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">Featured Guest</h3>
+    <x-sidebar-card title="Featured Guest" class="mb-10 p-6">
         <div class="flex items-start gap-4">
             <div class="text-archive-link flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[var(--archive-link-alpha-08)] text-xl font-bold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)] dark:text-[var(--podcast-color)]">
                 {{ substr($episode->guest_name, 0, 1) }}
@@ -25,5 +24,5 @@
                 @endif
             </div>
         </div>
-    </div>
+    </x-sidebar-card>
 @endif

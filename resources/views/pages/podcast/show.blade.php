@@ -18,20 +18,23 @@
                 <div class="relative z-10 flex flex-col items-center gap-10 md:flex-row">
                     {{-- Artwork --}}
                     <div class="relative flex-shrink-0">
-                        @if ($podcast->cover_image_url)
-                            <x-podcast-cover
-                                :podcast="$podcast"
-                                sizes="224px"
-                                width="224"
-                                height="224"
-                                priority
-                                class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56"
-                            />
-                        @else
-                            <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56">
-                                <svg class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                            </div>
-                        @endif
+                        <x-podcast-cover
+                            :podcast="$podcast"
+                            sizes="224px"
+                            width="224"
+                            height="224"
+                            priority
+                            class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56"
+                        >
+                            <x-slot:placeholder>
+                                <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56">
+                                    <x-svg-icon
+                                        name="microphone"
+                                        class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]"
+                                    />
+                                </div>
+                            </x-slot:placeholder>
+                        </x-podcast-cover>
                     </div>
 
                     {{-- Info --}}
@@ -51,12 +54,7 @@
                             @endif
 
                             {{-- Mini equalizer --}}
-                            <div class="flex h-4 items-end gap-[2px]">
-                                <span class="h-full w-[3px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.7s] motion-reduce:animate-none"></span>
-                                <span class="h-full w-[3px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.5s] motion-reduce:animate-none"></span>
-                                <span class="h-full w-[3px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.8s] motion-reduce:animate-none"></span>
-                                <span class="h-full w-[3px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.6s] motion-reduce:animate-none"></span>
-                            </div>
+                            <x-podcast.equalizer />
                         </div>
 
                         <h1 class="mb-4 text-4xl leading-tight font-extrabold text-gray-900 md:text-5xl dark:text-white">
@@ -254,12 +252,7 @@
                                 </div>
 
                                 {{-- Mini equalizer on hover --}}
-                                <div class="hidden h-5 items-end gap-[2px] opacity-0 transition-opacity group-hover:opacity-60 md:flex">
-                                    <span class="h-full w-[2px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.6s] motion-reduce:animate-none"></span>
-                                    <span class="h-full w-[2px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.8s] motion-reduce:animate-none"></span>
-                                    <span class="h-full w-[2px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.5s] motion-reduce:animate-none"></span>
-                                    <span class="h-full w-[2px] origin-bottom animate-[podcast-equalize_var(--dur)_ease-in-out_infinite_alternate] rounded-full bg-[var(--podcast-color)] [--dur:0.7s] motion-reduce:animate-none"></span>
-                                </div>
+                                <x-podcast.equalizer variant="row" />
 
                                 <svg class="h-5 w-5 flex-shrink-0 text-gray-600 transition-transform group-hover:translate-x-1 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                             </a>
@@ -270,7 +263,10 @@
                 @else
                     <div class="dark:border-surface-border rounded-2xl border border-dashed border-gray-200 py-20 text-center">
                         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
-                            <svg class="text-archive-link h-8 w-8 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
+                            <x-svg-icon
+                                name="microphone"
+                                class="text-archive-link h-8 w-8 dark:text-[var(--podcast-color)]"
+                            />
                         </div>
                         <p class="mb-2 text-lg font-medium text-gray-600 dark:text-gray-400">No episodes yet</p>
                         <p class="text-sm text-gray-500">First episodes are in the works. Check back soon!</p>

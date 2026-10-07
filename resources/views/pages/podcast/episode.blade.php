@@ -24,20 +24,23 @@
                 <div class="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
                     {{-- Podcast artwork --}}
                     <div class="relative flex-shrink-0">
-                        @if ($podcastPresenter->coverImageUrl())
-                            <x-podcast-cover
-                                :podcast="$podcast"
-                                sizes="224px"
-                                width="224"
-                                height="224"
-                                priority
-                                class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56"
-                            />
-                        @else
-                            <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56">
-                                <svg class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                            </div>
-                        @endif
+                        <x-podcast-cover
+                            :podcast="$podcast"
+                            sizes="224px"
+                            width="224"
+                            height="224"
+                            priority
+                            class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 lg:h-56 lg:w-56"
+                        >
+                            <x-slot:placeholder>
+                                <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm lg:h-56 lg:w-56">
+                                    <x-svg-icon
+                                        name="microphone"
+                                        class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]"
+                                    />
+                                </div>
+                            </x-slot:placeholder>
+                        </x-podcast-cover>
                     </div>
 
                     {{-- Episode info --}}
@@ -77,18 +80,21 @@
                             href="{{ route('podcast.show', $podcast) }}"
                             class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         >
-                            @if ($podcastPresenter->coverImageUrl())
-                                <x-podcast-cover
-                                    :podcast="$podcast"
-                                    alt=""
-                                    sizes="20px"
-                                    width="20"
-                                    height="20"
-                                    class="h-5 w-5 rounded object-cover"
-                                />
-                            @else
-                                <svg class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                            @endif
+                            <x-podcast-cover
+                                :podcast="$podcast"
+                                alt=""
+                                sizes="20px"
+                                width="20"
+                                height="20"
+                                class="h-5 w-5 rounded object-cover"
+                            >
+                                <x-slot:placeholder>
+                                    <x-svg-icon
+                                        name="microphone"
+                                        class="text-archive-link h-4 w-4 dark:text-[var(--podcast-color)]"
+                                    />
+                                </x-slot:placeholder>
+                            </x-podcast-cover>
                             {{ $podcast->name }}
                         </a>
                     </div>
@@ -231,25 +237,25 @@
                     <div class="flex-shrink-0 lg:w-80">
                         <div class="space-y-6 lg:sticky lg:top-8">
                             {{-- About This Podcast --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    About This Podcast
-                                </h3>
+                            <x-sidebar-card title="About This Podcast" class="p-5">
                                 <a href="{{ route('podcast.show', $podcast) }}" class="group block">
                                     <div class="mb-3 flex items-center gap-3">
-                                        @if ($podcastPresenter->coverImageUrl())
-                                            <x-podcast-cover
-                                                :podcast="$podcast"
-                                                sizes="48px"
-                                                width="48"
-                                                height="48"
-                                                class="h-12 w-12 rounded-lg object-cover"
-                                            />
-                                        @else
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
-                                                <svg class="text-archive-link h-6 w-6 dark:text-[var(--podcast-color)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" /></svg>
-                                            </div>
-                                        @endif
+                                        <x-podcast-cover
+                                            :podcast="$podcast"
+                                            sizes="48px"
+                                            width="48"
+                                            height="48"
+                                            class="h-12 w-12 rounded-lg object-cover"
+                                        >
+                                            <x-slot:placeholder>
+                                                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--podcast-color)_6%,transparent)]">
+                                                    <x-svg-icon
+                                                        name="microphone"
+                                                        class="text-archive-link h-6 w-6 dark:text-[var(--podcast-color)]"
+                                                    />
+                                                </div>
+                                            </x-slot:placeholder>
+                                        </x-podcast-cover>
                                         <div class="min-w-0">
                                             <p class="truncate text-sm font-semibold transition-opacity group-hover:opacity-80">
                                                 {{ $podcast->name }}
@@ -261,13 +267,10 @@
                                 <p class="text-xs leading-relaxed text-gray-500">
                                     {{ Str::limit($podcast->description, 150) }}
                                 </p>
-                            </div>
+                            </x-sidebar-card>
 
                             {{-- Episode Details --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    Episode Details
-                                </h3>
+                            <x-sidebar-card title="Episode Details" class="p-5">
                                 <dl class="space-y-3 text-sm">
                                     <div class="flex justify-between">
                                         <dt class="text-gray-500">Episode</dt>
@@ -308,13 +311,10 @@
                                         </div>
                                     @endif
                                 </dl>
-                            </div>
+                            </x-sidebar-card>
 
                             {{-- Share Episode --}}
-                            <div class="dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 bg-white p-5">
-                                <h3 class="mb-4 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    Share Episode
-                                </h3>
+                            <x-sidebar-card title="Share Episode" class="p-5">
                                 <div class="flex gap-2">
                                     <a
                                         href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}"
@@ -342,7 +342,7 @@
                                         class="dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     />
                                 </div>
-                            </div>
+                            </x-sidebar-card>
                         </div>
                     </div>
                 </div>
