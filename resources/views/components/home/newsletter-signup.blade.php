@@ -13,11 +13,9 @@
         A weekly-ish newsletter with practical tips, tutorials, and thoughts on building better Laravel apps. No spam,
         unsubscribe anytime.
     </p>
-    @if (session('newsletter_success'))
-        <x-home.newsletter-banner x-bind:hidden="hasMessage">
-            {{ session('newsletter_success') }}
-        </x-home.newsletter-banner>
-    @endif
+    @session('newsletter_success')
+        <x-home.newsletter-banner x-bind:hidden="hasMessage">{{ $value }}</x-home.newsletter-banner>
+    @endsession
     @error('email')
         <x-home.newsletter-banner type="error" x-bind:hidden="hasMessage">{{ $message }}</x-home.newsletter-banner>
     @enderror

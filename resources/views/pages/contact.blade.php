@@ -28,15 +28,15 @@
                     timeline you have in mind. I’ll reply within 24 to 48 hours.
                 </p>
 
-                @if (session('success'))
+                @session('success')
                     <div
                         class="mb-6 rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400"
                         role="status"
                         aria-live="polite"
                     >
-                        {{ session('success') }}
+                        {{ $value }}
                     </div>
-                @endif
+                @endsession
 
                 @php($firstErrorField = $errors->keys()[0] ?? null)
 
