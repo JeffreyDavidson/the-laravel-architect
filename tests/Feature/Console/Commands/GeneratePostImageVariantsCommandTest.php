@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PublishStatus;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,17 +14,17 @@ it('backfills responsive variants for existing post images', function () {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('post.png', 1280, 72);
     Storage::disk('public')->put('posts/post.png', $image->getContent());
+    $category = Category::factory()->create();
     $author = User::factory()->create();
 
-    Post::withoutEvents(fn () => Post::query()->create([
-        'title' => 'Post',
-        'slug' => 'post',
-        'content' => 'Content',
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now(),
-        'featured_image_path' => 'posts/post.png',
-    ]));
+    Post::withoutEvents(fn () => Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->published()
+        ->create([
+            'slug' => 'post',
+            'featured_image_path' => 'posts/post.png',
+        ]));
 
     $this->artisanCommand('posts:generate-image-variants')
         ->expectsOutputToContain('Generated responsive images for 1 post.')

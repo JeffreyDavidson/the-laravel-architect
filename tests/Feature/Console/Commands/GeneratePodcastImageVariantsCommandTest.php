@@ -13,10 +13,8 @@ it('backfills responsive variants for existing podcast cover images', function (
     $image = UploadedFile::fake()->image('podcast.png', 1280, 72);
     Storage::disk('public')->put('podcasts/podcast.png', $image->getContent());
 
-    Podcast::withoutEvents(fn () => Podcast::query()->create([
-        'name' => 'Podcast',
+    Podcast::withoutEvents(fn () => Podcast::factory()->create([
         'slug' => 'podcast',
-        'description' => 'Description',
         'cover_image_path' => 'podcasts/podcast.png',
     ]));
 

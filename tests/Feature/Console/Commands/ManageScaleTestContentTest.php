@@ -1,7 +1,13 @@
 <?php
 
+use App\Models\Post;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 pest()->use(RefreshDatabase::class);
 
@@ -14,11 +20,11 @@ it('seeds repeatable published scale-test content', function () {
     $secondSeed->assertSuccessful();
     $secondSeed->run();
 
-    $this->assertDatabaseCount('podcasts', 1);
-    $this->assertDatabaseCount('episodes', 300);
-    $this->assertDatabaseCount('posts', 100);
-    $this->assertDatabaseCount('projects', 50);
-    $this->assertDatabaseHas('users', ['email' => 'scale-test-author@example.invalid']);
+    assertDatabaseCount('podcasts', 1);
+    assertDatabaseCount('episodes', 300);
+    assertDatabaseCount('posts', 100);
+    assertDatabaseCount('projects', 50);
+    assertDatabaseHas('users', ['email' => 'scale-test-author@example.invalid']);
 
     $publishedEpisodes = DB::table('episodes');
     $publishedEpisodes = $publishedEpisodes->where('status', 'published');
@@ -32,10 +38,10 @@ it('leaves synthetic content out of the default database seeder', function () {
     $databaseSeeder->assertSuccessful();
     $databaseSeeder->run();
 
-    $this->assertDatabaseMissing('podcasts', ['slug' => 'scale-test-podcast']);
-    $this->assertDatabaseMissing('episodes', ['slug' => 'scale-test-episode-001']);
-    $this->assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
-    $this->assertDatabaseMissing('projects', ['slug' => 'scale-test-project-001']);
+    assertDatabaseMissing('podcasts', ['slug' => 'scale-test-podcast']);
+    assertDatabaseMissing('episodes', ['slug' => 'scale-test-episode-001']);
+    assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
+    assertDatabaseMissing('projects', ['slug' => 'scale-test-project-001']);
 });
 
 it('clears only synthetic records and retains shared owners that still have real content', function () {
@@ -51,39 +57,25 @@ it('clears only synthetic records and retains shared owners that still have real
     $categoryQuery = $categoryQuery->where('slug', 'scale-test-category');
     $categoryId = $categoryQuery->value('id');
 
-    $now = now();
-    DB::table('posts')->insert([
-        'title' => 'A real local draft',
+    Post::factory()->create([
         'slug' => 'a-real-local-draft',
-        'content' => 'Keep this record.',
         'category_id' => $categoryId,
         'user_id' => $authorId,
-        'status' => 'draft',
-        'created_at' => $now,
-        'updated_at' => $now,
     ]);
-
-    DB::table('projects')->insert([
-        'title' => 'A real local project',
-        'slug' => 'a-real-local-project',
-        'description' => 'Keep this record.',
-        'status' => 'draft',
-        'created_at' => $now,
-        'updated_at' => $now,
-    ]);
+    Project::factory()->create(['slug' => 'a-real-local-project']);
 
     $clear = $this->artisanCommand('content:scale-test', ['action' => 'clear']);
     $clear->assertSuccessful();
     $clear->run();
 
-    $this->assertDatabaseMissing('episodes', ['slug' => 'scale-test-episode-001']);
-    $this->assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
-    $this->assertDatabaseMissing('projects', ['slug' => 'scale-test-project-001']);
-    $this->assertDatabaseMissing('podcasts', ['slug' => 'scale-test-podcast']);
-    $this->assertDatabaseHas('posts', ['slug' => 'a-real-local-draft']);
-    $this->assertDatabaseHas('projects', ['slug' => 'a-real-local-project']);
-    $this->assertDatabaseHas('categories', ['slug' => 'scale-test-category']);
-    $this->assertDatabaseHas('users', ['email' => 'scale-test-author@example.invalid']);
+    assertDatabaseMissing('episodes', ['slug' => 'scale-test-episode-001']);
+    assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
+    assertDatabaseMissing('projects', ['slug' => 'scale-test-project-001']);
+    assertDatabaseMissing('podcasts', ['slug' => 'scale-test-podcast']);
+    assertDatabaseHas('posts', ['slug' => 'a-real-local-draft']);
+    assertDatabaseHas('projects', ['slug' => 'a-real-local-project']);
+    assertDatabaseHas('categories', ['slug' => 'scale-test-category']);
+    assertDatabaseHas('users', ['email' => 'scale-test-author@example.invalid']);
 });
 
 it('rejects scale content writes on production hosts and production environments without staging permission', function () {
@@ -102,7 +94,7 @@ it('rejects scale content writes on production hosts and production environments
     $unapprovedStagingSeed->assertFailed();
     $unapprovedStagingSeed->run();
 
-    $this->assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
+    assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
 });
 
 it('allows scale content on the exact staging host only when explicitly enabled', function () {
@@ -113,8 +105,8 @@ it('allows scale content on the exact staging host only when explicitly enabled'
     $stagingSeed->assertSuccessful();
     $stagingSeed->run();
 
-    $this->assertDatabaseCount('posts', 100);
-    $this->assertDatabaseCount('projects', 50);
+    assertDatabaseCount('posts', 100);
+    assertDatabaseCount('projects', 50);
 });
 
 it('rejects unsupported actions before changing content', function () {
@@ -123,5 +115,5 @@ it('rejects unsupported actions before changing content', function () {
     $invalidAction->assertFailed();
     $invalidAction->run();
 
-    $this->assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
+    assertDatabaseMissing('posts', ['slug' => 'scale-test-post-001']);
 });

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use JMac\Testing\Double;
 
+use function Pest\Laravel\travelTo;
+
 pest()->use(RefreshDatabase::class);
 
 it('creates new videos and forwards the requested limit', function () {
@@ -49,14 +51,11 @@ it('creates new videos and forwards the requested limit', function () {
 });
 
 it('updates an existing video without replacing its publishing fields', function () {
-    $this->travelTo('2026-08-19 10:30:00');
+    travelTo('2026-08-19 10:30:00');
 
-    $video = Video::query()->create([
+    $video = Video::factory()->create([
         'youtube_id' => 'existing-video',
-        'title' => 'Old Title',
         'slug' => 'curated-slug',
-        'description' => 'Old description',
-        'view_count' => 10,
         'published_at' => '2026-08-01 09:00:00',
         'is_featured' => true,
     ]);
@@ -172,11 +171,7 @@ it('creates stable unique slugs for colliding and empty titles', function () {
 });
 
 it('fails without changing videos when YouTube is unavailable', function () {
-    $video = Video::query()->create([
-        'youtube_id' => 'existing-video',
-        'title' => 'Existing Title',
-        'slug' => 'existing-title',
-    ]);
+    $video = Video::factory()->create(['title' => 'Existing Title']);
 
     $youtube = Double::for(YouTubeService::class);
     $youtube->expects('getChannelVideos')

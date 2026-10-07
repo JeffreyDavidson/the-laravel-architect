@@ -3,6 +3,8 @@
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\assertModelExists;
+
 pest()->use(RefreshDatabase::class);
 
 it('previews expired inquiries without deleting them', function () {
@@ -12,7 +14,7 @@ it('previews expired inquiries without deleting them', function () {
     $this->artisanCommand('model:prune', ['--model' => ContactInquiry::class, '--pretend' => true])
         ->assertSuccessful();
 
-    $this->assertModelExists($inquiry);
+    assertModelExists($inquiry);
 });
 
 it('prunes inquiries older than the configured retention period', function () {

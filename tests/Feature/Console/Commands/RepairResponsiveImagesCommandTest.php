@@ -1,10 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
+use App\Models\Category;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use App\Services\ResponsiveImageVariants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -29,27 +28,22 @@ it('repairs unhealthy responsive variants across every supported media type', fu
     Storage::disk('public')->put('posts/post.png', $postImage);
     Storage::disk('public')->put('podcasts/podcast.png', $podcastImage);
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/project.png',
-    ]));
-    Post::withoutEvents(fn () => Post::query()->create([
-        'title' => 'Post',
-        'slug' => 'post',
-        'content' => 'Content',
-        'user_id' => User::factory()->create()
-            ->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now(),
-        'featured_image_path' => 'posts/post.png',
-    ]));
-    Podcast::withoutEvents(fn () => Podcast::query()->create([
-        'name' => 'Podcast',
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/project.png',
+        ]));
+    $category = Category::factory()->create();
+    Post::withoutEvents(fn () => Post::factory()
+        ->for($category)
+        ->published()
+        ->create([
+            'slug' => 'post',
+            'featured_image_path' => 'posts/post.png',
+        ]));
+    Podcast::withoutEvents(fn () => Podcast::factory()->create([
         'slug' => 'podcast',
-        'description' => 'Description',
         'cover_image_path' => 'podcasts/podcast.png',
     ]));
     app(ResponsiveImageVariants::class)->generate('podcasts/podcast.png');
@@ -87,23 +81,20 @@ it('repairs remaining media types before reporting a failure', function () {
     Storage::disk('public')->put('projects/project.png', 'unsupported');
     Storage::disk('public')->put('posts/post.png', $postImage);
 
-    Project::withoutEvents(fn () => Project::query()->create([
-        'title' => 'Project',
-        'slug' => 'project',
-        'description' => 'Description',
-        'status' => PublishStatus::Published,
-        'featured_image_path' => 'projects/project.png',
-    ]));
-    Post::withoutEvents(fn () => Post::query()->create([
-        'title' => 'Post',
-        'slug' => 'post',
-        'content' => 'Content',
-        'user_id' => User::factory()->create()
-            ->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now(),
-        'featured_image_path' => 'posts/post.png',
-    ]));
+    Project::withoutEvents(fn () => Project::factory()
+        ->published()
+        ->create([
+            'slug' => 'project',
+            'featured_image_path' => 'projects/project.png',
+        ]));
+    $category = Category::factory()->create();
+    Post::withoutEvents(fn () => Post::factory()
+        ->for($category)
+        ->published()
+        ->create([
+            'slug' => 'post',
+            'featured_image_path' => 'posts/post.png',
+        ]));
 
     $this->artisanCommand('media:repair-responsive-images')
         ->expectsOutputToContain('Generated responsive images for 1 post.')
