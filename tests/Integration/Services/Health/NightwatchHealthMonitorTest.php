@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\Monitoring\Health\NightwatchHealthMonitor;
+use App\Services\Health\NightwatchHealthMonitor;
 use JMac\Testing\Double;
 use Laravel\Nightwatch\Contracts\Ingest;
 use Laravel\Nightwatch\Core;

@@ -8,8 +8,8 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Subscriber;
 use App\Models\User;
-use App\Support\Content\Archives\PublicContentArchiveExporter;
-use App\Support\Content\Archives\PublicContentArchiveImporter;
+use App\Services\ContentArchive\PublicContentArchiveExporter;
+use App\Services\ContentArchive\PublicContentArchiveImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 

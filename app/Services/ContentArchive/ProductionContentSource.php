@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Content\Archives;
+namespace App\Services\ContentArchive;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;

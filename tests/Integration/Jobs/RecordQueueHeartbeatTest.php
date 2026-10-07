@@ -1,7 +1,7 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
-use App\Support\Monitoring\Health\RuntimeHealthMonitor;
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Cache;
 
 use function Pest\Laravel\travelTo;

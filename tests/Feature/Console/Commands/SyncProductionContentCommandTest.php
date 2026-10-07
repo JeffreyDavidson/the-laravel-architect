@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Post;
-use App\Support\Content\Archives\ProductionContentSource;
+use App\Services\ContentArchive\ProductionContentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

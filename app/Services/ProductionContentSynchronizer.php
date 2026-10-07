@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Support\Content\Archives\ProductionContentSource;
-use App\Support\Content\Archives\PublicContentArchiveImporter;
+use App\Services\ContentArchive\ProductionContentSource;
+use App\Services\ContentArchive\PublicContentArchiveImporter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
