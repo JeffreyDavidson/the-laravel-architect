@@ -14,7 +14,17 @@ class ImageUploadOptimizer
 
     public const int MAX_FILE_SIZE_KB = 10240;
 
-    public const string UPLOAD_HELPER_TEXT = 'Images are converted to WebP and resized to a maximum of 1600 px per side. Maximum upload size: 10 MB.';
+    /**
+     * GD holds a decoded image at about 4 bytes per pixel. Measured through a decode, scale and
+     * WebP encode, a 40 megapixel image peaks at about 170 MB, which one admin upload can afford
+     * on the shared 1 GB server. Without a cap, a 10 MB upload can declare far more pixels and
+     * expand to several hundred megabytes, exhausting PHP's memory limit or the server.
+     */
+    public const int MAX_PIXELS = 40_000_000;
+
+    public const string UPLOAD_HELPER_TEXT = 'Images are converted to WebP and resized to a maximum of 1600 px per side. Maximum upload size: 10 MB and 40 megapixels.';
+
+    public const string PIXEL_LIMIT_MESSAGE = 'This image is too large to process. Images can be at most 40 megapixels (8000 × 5000 px, for example). Resize it and upload it again.';
 
     private const int QUALITY = 82;
 
@@ -41,8 +51,31 @@ class ImageUploadOptimizer
         return Storage::disk($diskName)->put($path, $contents, 'public') ? $path : null;
     }
 
+    /**
+     * Whether the image header declares more than MAX_PIXELS. The image's width() and height()
+     * come from getimagesizefromstring(), which reads the header without decoding any pixels.
+     * Contents that are not a readable image are left to the upload's image validation.
+     */
+    public function exceedsPixelLimit(string $contents): bool
+    {
+        try {
+            $image = Image::fromBytes($contents);
+
+            return $image->width() * $image->height() > self::MAX_PIXELS;
+        } catch (ImageException) {
+            return false;
+        }
+    }
+
+    /**
+     * Convert the image to WebP within MAX_DIMENSION. Returns null when it cannot be decoded, or
+     * when it declares more than MAX_PIXELS, which is refused before any pixels are decoded.
+     */
     public function optimize(string $contents): ?string
     {
+        if ($this->exceedsPixelLimit($contents)) {
+            return null;
+        }
 
         try {
             $image = Image::fromBytes($contents);
