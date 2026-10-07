@@ -33,7 +33,7 @@
                     value="{{ $query }}"
                     maxlength="120"
                     placeholder="Search the archive"
-                    class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-16 pl-10 text-base text-gray-900 placeholder-gray-500 focus:ring-1 focus:outline-none dark:text-gray-100"
+                    class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-lg border border-gray-300 bg-white py-2.5 pr-16 pl-10 text-base text-gray-900 placeholder:text-gray-500 focus:ring-1 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-400"
                 />
                 @if ($query !== '')
                     <a
@@ -111,7 +111,7 @@
                             <a
                                 href="{{ route('blog.index') }}"
                                 wire:click.prevent="clearFilters"
-                                class="hover:border-brand-500 hover:text-brand-600 focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-brand-950 mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100"
+                                class="hover:border-brand-500 hover:text-brand-action focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-brand-950 dark:hover:text-brand-600 mt-5 inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-base font-medium text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100"
                             >
                                 Show all articles
                             </a>

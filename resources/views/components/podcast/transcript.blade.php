@@ -33,7 +33,7 @@
                         x-on:input="search"
                         placeholder="Search transcript"
                         autocomplete="off"
-                        class="dark:border-surface-border dark:bg-surface-control focus:border-brand-600 focus:ring-brand-600/10 min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 dark:text-gray-100"
+                        class="dark:border-surface-border dark:bg-surface-control focus:border-brand-600 focus:ring-brand-600/10 min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none placeholder:text-gray-500 focus:ring-2 dark:text-gray-100 dark:placeholder:text-gray-400"
                     />
                     <p
                         data-transcript-status
@@ -49,7 +49,7 @@
                 :content="$content"
                 data-transcript-content
                 x-ref="content"
-                class="prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-600 dark:prose-p:text-gray-600 dark:prose-p:text-gray-400 [--tw-prose-code:var(--accent-pink)] [--tw-prose-links:var(--podcast-color)]"
+                class="prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-headings:font-extrabold prose-a:no-underline dark:prose-a:text-brand-600 hover:prose-a:underline prose-code:font-mono prose-pre:bg-gray-50 dark:prose-pre:bg-surface-control prose-pre:border prose-pre:border-gray-200 dark:prose-li:text-gray-400 dark:prose-p:text-gray-400 [--tw-prose-code:var(--accent-pink)] [--tw-prose-links:var(--podcast-color)]"
             />
         </div>
     </details>

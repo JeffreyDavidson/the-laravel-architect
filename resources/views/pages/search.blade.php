@@ -21,7 +21,7 @@
                             maxlength="120"
                             autofocus
                             placeholder="Search writing, projects, podcasts, and videos"
-                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-xl border border-gray-300 bg-white py-3.5 pr-28 pl-12 text-base text-gray-900 placeholder-gray-500 focus:ring-2 focus:outline-none dark:text-gray-100"
+                            class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-xl border border-gray-300 bg-white py-3.5 pr-28 pl-12 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-400"
                         />
                         <button
                             type="submit"
@@ -98,7 +98,7 @@
                                                             <span class="sr-only">(opens in a new tab)</span>
                                                         @endif
                                                     </div>
-                                                    <h3 class="group-hover:text-brand-600 mt-2 text-xl font-semibold text-gray-900 transition-colors dark:text-white">
+                                                    <h3 class="group-hover:text-archive-link mt-2 text-xl font-semibold text-gray-900 transition-colors dark:text-white">
                                                         {!! $item['highlightedTitle'] !!}
                                                     </h3>
                                                     @if ($item['highlightedDescription'])

@@ -32,7 +32,7 @@
                         decoding="async"
                         class="h-10 w-10 rounded-full"
                     />
-                    <span class="group-hover:text-brand-600 flex items-baseline gap-1 text-gray-900 transition-colors dark:text-white">
+                    <span class="group-hover:text-brand-action dark:group-hover:text-brand-600 flex items-baseline gap-1 text-gray-900 transition-colors dark:text-white">
                         <span class="text-meta font-semibold tracking-widest uppercase">The</span>
                         <span class="font-empera text-xl tracking-wide">Laravel</span>
                         <span class="text-meta font-semibold tracking-widest uppercase">Architect</span>
@@ -60,14 +60,14 @@
                     href="https://laravel.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:text-brand-600 text-gray-600 transition-colors dark:text-gray-400"
+                    class="hover:text-brand-action text-gray-600 transition-colors dark:text-gray-400"
                 >Laravel</a>
                 &
                 <a
                     href="https://filamentphp.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:text-brand-600 text-gray-600 transition-colors dark:text-gray-400"
+                    class="hover:text-brand-action text-gray-600 transition-colors dark:text-gray-400"
                     >Filament</a
                 >.
             </p>

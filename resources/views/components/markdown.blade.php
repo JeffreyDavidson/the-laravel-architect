@@ -21,6 +21,6 @@
     }
 @endphp
 
-<div {{ $attributes->class('prose prose-lg max-w-none dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-brand-600 prose-strong:text-gray-900 dark:prose-strong:text-white') }}>
+<div {{ $attributes->class('prose prose-lg max-w-none dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-brand-action prose-strong:text-gray-900 dark:prose-strong:text-white') }}>
     {!! Str::markdown($content, $options, $extensions) !!}
 </div>

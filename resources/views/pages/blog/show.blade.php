@@ -31,7 +31,7 @@
             <div class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-base text-gray-600 sm:text-sm dark:text-gray-400">
                 <a
                     href="{{ route('about') }}"
-                    class="hover:text-brand-600 dark:hover:text-brand-300 font-medium text-gray-900 dark:text-gray-200"
+                    class="hover:text-brand-action dark:hover:text-brand-300 font-medium text-gray-900 dark:text-gray-200"
                 >{{ $post->author->name ?? 'Jeffrey Davidson' }}</a>
                 @if ($post->published_at)
                     <span aria-hidden="true">·</span>
@@ -59,7 +59,7 @@
         </template>
 
         <template data-article-toc-template>
-            <a class="hover:border-brand-600 hover:text-brand-600 aria-[current=true]:border-brand-600 aria-[current=true]:text-brand-600 dark:hover:border-brand-400 dark:hover:text-brand-200 dark:aria-[current=true]:border-brand-400 dark:aria-[current=true]:text-brand-200 block border-l border-[var(--border-gray)] py-[0.4rem] pl-[0.9rem] text-[0.8125rem] leading-[1.35] text-gray-500 transition-[border-color,color] duration-160 ease-[ease] motion-reduce:transition-none dark:border-[var(--brand-alpha-25)] dark:text-gray-400"></a>
+            <a class="hover:border-brand-600 hover:text-brand-action aria-[current=true]:border-brand-600 aria-[current=true]:text-brand-action dark:hover:border-brand-400 dark:hover:text-brand-200 dark:aria-[current=true]:border-brand-400 dark:aria-[current=true]:text-brand-200 block border-l border-[var(--border-gray)] py-[0.4rem] pl-[0.9rem] text-[0.8125rem] leading-[1.35] text-gray-500 transition-[border-color,color] duration-160 ease-[ease] motion-reduce:transition-none dark:border-[var(--brand-alpha-25)] dark:text-gray-400"></a>
         </template>
 
         <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[13rem_minmax(0,70ch)] lg:gap-16 lg:px-8 lg:py-20">
@@ -152,7 +152,7 @@
                                         @if ($related->category)
                                             <span class="text-brand-600 dark:text-brand-300 font-mono text-sm font-semibold tracking-wide uppercase">{{ $related->category->name }}</span>
                                         @endif
-                                        <h3 class="group-hover:text-brand-600 dark:group-hover:text-brand-300 mt-2 text-xl font-semibold tracking-tight text-gray-950 transition-colors dark:text-white">
+                                        <h3 class="group-hover:text-brand-action dark:group-hover:text-brand-300 mt-2 text-xl font-semibold tracking-tight text-gray-950 transition-colors dark:text-white">
                                             {{ $related->title }}
                                         </h3>
                                         <p class="mt-3 line-clamp-2 text-base text-pretty text-gray-600 dark:text-gray-400">

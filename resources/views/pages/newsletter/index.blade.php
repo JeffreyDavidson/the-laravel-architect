@@ -59,7 +59,7 @@
                             <h3 class="mt-3 text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
                                 <a
                                     href="{{ route('newsletter.issue', $issue) }}"
-                                    class="hover:text-brand-600 dark:hover:text-brand-300 focus-visible:outline-brand-500 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
+                                    class="hover:text-brand-action dark:hover:text-brand-300 focus-visible:outline-brand-500 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                                 >
                                     {{ $issue->title }}
                                 </a>

@@ -88,7 +88,7 @@
                                 <a
                                     href="{{ $item['url'] }}"
                                     @if ($item['external']) target="_blank" rel="noopener noreferrer" @endif
-                                    class="hover:text-brand-600 dark:hover:text-brand-300 focus-visible:outline-brand-500 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
+                                    class="hover:text-brand-action dark:hover:text-brand-300 focus-visible:outline-brand-500 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                                 >
                                     {{ $item['title'] }}
                                     @if ($item['external'])

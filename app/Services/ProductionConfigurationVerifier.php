@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\DeploymentEnvironment;
 use Illuminate\Database\ConfigurationUrlParser;
 use Monolog\Handler\NullHandler;
 
@@ -77,7 +78,7 @@ final class ProductionConfigurationVerifier
             [$this->isConfigured(config('sentry.dsn')), 'SENTRY_LARAVEL_DSN must be configured.'],
             [config('sentry.send_default_pii') === false, 'SENTRY_SEND_DEFAULT_PII must be false.'],
             [config('sentry.max_request_body_size') === 'never', 'SENTRY_MAX_REQUEST_BODY_SIZE must be never.'],
-            [$this->isDeploymentEnvironment(config('app.deployment_environment')), 'TLA_DEPLOYMENT_ENVIRONMENT must be production or staging.'],
+            [DeploymentEnvironment::current() instanceof DeploymentEnvironment, 'TLA_DEPLOYMENT_ENVIRONMENT must be production or staging.'],
             [config('sentry.environment') === config('app.deployment_environment'), 'SENTRY_ENVIRONMENT must match TLA_DEPLOYMENT_ENVIRONMENT.'],
             [$this->isConfigured(config('sentry.release')), 'SENTRY_RELEASE or FORGE_DEPLOY_COMMIT must be configured.'],
             [config('sentry.traces_sample_rate') === 0.0, 'SENTRY_TRACES_SAMPLE_RATE must be 0.0 until tracing is deliberately enabled.'],
@@ -121,11 +122,6 @@ final class ProductionConfigurationVerifier
     private function isConfigured(mixed $value): bool
     {
         return is_string($value) && trim($value) !== '';
-    }
-
-    private function isDeploymentEnvironment(mixed $environment): bool
-    {
-        return is_string($environment) && in_array($environment, ['production', 'staging'], true);
     }
 
     private function usesAsynchronousQueue(mixed $connection): bool

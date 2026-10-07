@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Tests\Support\ImageFixtures;
 
 use function Pest\Livewire\livewire;
 
@@ -57,5 +58,23 @@ it('rejects an oversized image through the Filament project form', function () {
         ->assertHasFormErrors(['featured_image_path']);
 
     expect(Storage::disk('public')->allFiles())
+        ->toBeEmpty();
+});
+
+it('rejects an image above the pixel limit through the Filament project form', function () {
+    livewire(CreateProject::class)
+        ->fillForm([
+            'title' => 'Project',
+            'slug' => 'project',
+            'description' => 'Description',
+            'status' => PublishStatus::Draft,
+            'featured_image_path' => UploadedFile::fake()->createWithContent('huge.png', ImageFixtures::blankPng(5000, 4001)),
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['featured_image_path' => 'This image is too large to process. Images can be at most 20 megapixels (5000 × 4000 px, for example). Resize it and upload it again.']);
+
+    expect(Project::query()->count())
+        ->toBe(0)
+        ->and(Storage::disk('public')->allFiles())
         ->toBeEmpty();
 });
