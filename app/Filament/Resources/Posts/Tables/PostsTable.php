@@ -6,6 +6,7 @@ use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
+use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Post;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -73,14 +74,8 @@ class PostsTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels()),
-                SelectFilter::make('publication')
-                    ->label('Publication')
-                    ->options([
-                        PublishStatus::Published->value => 'Live on the site',
-                        PublishStatus::Scheduled->value => 'Scheduled for later',
-                    ])
-                    ->query(self::filterPublication(...)),
+                    ->options(PublishStatus::class),
+                PublicationFilter::make(),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
                 Filter::make('review_due')
@@ -105,19 +100,5 @@ class PostsTable
             ->emptyStateIcon(Heroicon::OutlinedDocumentText)
             ->emptyStateHeading('No posts yet')
             ->emptyStateDescription('Start a draft when the next Laravel idea is ready to develop.');
-    }
-
-    /**
-     * @param  Builder<Post>  $query
-     * @param  array<string, mixed>  $data
-     * @return Builder<Post>
-     */
-    private static function filterPublication(Builder $query, array $data): Builder
-    {
-        return match ($data['value'] ?? null) {
-            PublishStatus::Published->value => $query->published(),
-            PublishStatus::Scheduled->value => $query->scheduled(),
-            default => $query,
-        };
     }
 }

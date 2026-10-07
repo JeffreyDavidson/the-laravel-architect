@@ -5,7 +5,7 @@ namespace App\Filament\Resources\NewsletterIssues\Tables;
 use App\Enums\PublishStatus;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
-use App\Models\NewsletterIssue;
+use App\Filament\Tables\Filters\PublicationFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -13,7 +13,6 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -45,11 +44,9 @@ class NewsletterIssuesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filter::make('unpublished')
-                    ->label('Not yet published')
-                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels()),
+                    ->options(PublishStatus::class),
+                PublicationFilter::make(),
                 TrashedFilter::make(),
             ])
             ->recordActions([
@@ -67,14 +64,5 @@ class NewsletterIssuesTable
             ->emptyStateIcon(Heroicon::OutlinedNewspaper)
             ->emptyStateHeading('No newsletter issues yet')
             ->emptyStateDescription('Draft the first issue when there is an update worth sending.');
-    }
-
-    /**
-     * @param  Builder<NewsletterIssue>  $query
-     * @return Builder<NewsletterIssue>
-     */
-    private static function filterUnpublished(Builder $query): Builder
-    {
-        return $query->unpublished();
     }
 }

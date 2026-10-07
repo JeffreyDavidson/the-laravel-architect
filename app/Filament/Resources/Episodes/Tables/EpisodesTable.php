@@ -6,6 +6,7 @@ use App\Enums\PublishStatus;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Tables\Columns\ReadinessColumn;
+use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
 use Filament\Actions\Action;
@@ -65,11 +66,12 @@ class EpisodesTable
                     ->sortable(),
             ])
             ->filters([
-                Filter::make('unpublished')
-                    ->label('Not yet published')
-                    ->query(self::filterUnpublished(...)),
                 SelectFilter::make('status')
-                    ->options(PublishStatus::labels(includeInReview: false)),
+                    ->options(collect(PublishStatus::cases())
+                        ->reject(fn (PublishStatus $status): bool => $status === PublishStatus::InReview)
+                        ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->getLabel()])
+                        ->all()),
+                PublicationFilter::make(),
                 Filter::make('missing_transistor_url')
                     ->label('Missing Transistor URL')
                     ->query(fn (Builder $query): Builder => $query->whereIn('episodes.id', Episode::query()
@@ -97,14 +99,5 @@ class EpisodesTable
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)
             ->emptyStateHeading('No episodes yet')
             ->emptyStateDescription('Create an episode when its Transistor link, show notes, or a recording plan is ready.');
-    }
-
-    /**
-     * @param  Builder<Episode>  $query
-     * @return Builder<Episode>
-     */
-    private static function filterUnpublished(Builder $query): Builder
-    {
-        return $query->unpublished();
     }
 }
