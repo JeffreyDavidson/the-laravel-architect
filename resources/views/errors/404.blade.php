@@ -17,13 +17,14 @@
                 </p>
 
                 <div class="mt-10 flex flex-wrap gap-4">
-                    <a
-                        href="{{ route('home') }}"
-                        class="bg-brand-600 hover:bg-brand-500 inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition-colors"
+                    <x-button
+                        :href="route('home')"
+                        variant="brand-soft"
+                        class="inline-flex items-center gap-2 px-6 py-3 transition-colors"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                         Go Home
-                    </a>
+                    </x-button>
                     <a
                         href="{{ route('blog.index') }}"
                         class="dark:border-surface-border inline-flex items-center gap-2 rounded-lg border border-gray-200 px-6 py-3 font-semibold text-gray-700 transition-colors hover:border-gray-400 dark:text-gray-300 dark:hover:border-gray-600"

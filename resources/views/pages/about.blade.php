@@ -300,28 +300,18 @@
     </div>
 
     {{-- CTA --}}
-    <div class="dark:border-brand-700 dark:bg-surface-page relative overflow-hidden border-t border-gray-200 bg-gray-50">
-        {{-- Floating orbs --}}
-        <div class="hidden"></div>
+    <x-contact-cta
+        variant="availability"
+        heading="Want to work together?"
+        :href="route('contact.create')"
+        button-label="Contact Me"
+    >
+        <x-slot:decoration>
+            {{-- Floating orbs --}}
+            <div class="hidden"></div>
+        </x-slot:decoration>
 
-        <div class="relative mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
-            <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold tracking-widest text-green-800 uppercase dark:text-green-400">
-                <span class="relative flex h-2 w-2">
-                    <span class="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-                </span>
-                Available for Projects
-            </div>
-            <h2 class="mb-4 text-3xl font-extrabold md:text-4xl">
-                <span>Want to work together?</span>
-            </h2>
-            <p class="mx-auto mb-8 max-w-xl text-lg text-gray-600 dark:text-gray-400">
-                I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's
-                talk about what you're building.
-            </p>
-            <x-button href="{{ route('contact.create') }}" class="px-8 py-3.5 text-lg">
-                Contact Me
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-            </x-button>
-        </div>
-    </div>
+        I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about
+        what you're building.
+    </x-contact-cta>
 </x-layouts.site>

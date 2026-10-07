@@ -44,12 +44,9 @@
                             variant="compact"
                         />
                     </div>
-                    <button
-                        type="submit"
-                        class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 inline-flex h-11 items-center rounded-lg px-5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
-                    >
+                    <x-button type="submit" variant="brand" class="inline-flex h-11 items-center">
                         Filter projects
-                    </button>
+                    </x-button>
                     @if ($hasFilters)
                         <a
                             href="{{ route('projects.index') }}"
@@ -110,26 +107,13 @@
         </div>
     </div>
 
-    <section
-        aria-labelledby="projects-contact-heading"
-        class="dark:border-brand-800 dark:bg-brand-900/30 border-t border-gray-200 bg-gray-50 py-10 sm:py-14"
+    <x-contact-cta
+        heading="What are you working on?"
+        heading-id="projects-contact-heading"
+        :href="route('contact.create')"
+        button-label="Discuss a Project"
+        class="border-t"
     >
-        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-            <div>
-                <h2
-                    id="projects-contact-heading"
-                    class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl dark:text-white"
-                >
-                    What are you working on?
-                </h2>
-                <p class="mt-3 text-base leading-7 text-gray-600 dark:text-gray-400">
-                    Tell me what you’re building, what needs to change, or where you’re stuck.
-                </p>
-            </div>
-            <a
-                href="{{ route('contact.create') }}"
-                class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 w-fit shrink-0 rounded-lg px-5 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
-            >Discuss a Project</a>
-        </div>
-    </section>
+        Tell me what you’re building, what needs to change, or where you’re stuck.
+    </x-contact-cta>
 </x-layouts.site>

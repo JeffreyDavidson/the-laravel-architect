@@ -37,12 +37,13 @@
                         placeholder="Any year"
                     />
                 </div>
-                <button
+                <x-button
                     type="submit"
-                    class="bg-brand-600 hover:bg-brand-500 focus-visible:outline-brand-500 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2"
+                    variant="brand-soft"
+                    class="focus-visible:outline-brand-500 inline-flex min-h-11 items-center justify-center px-5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                     Apply filters
-                </button>
+                </x-button>
             </form>
 
             <div class="mt-10 flex flex-wrap items-end justify-between gap-4">

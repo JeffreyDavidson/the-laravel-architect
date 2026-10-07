@@ -146,28 +146,15 @@
         </section>
     @endif
 
-    <section
-        aria-labelledby="project-contact-heading"
-        class="dark:border-brand-800 dark:bg-brand-900/30 border-y border-gray-200 bg-gray-50 py-10 sm:py-14"
+    <x-contact-cta
+        heading="Have a similar challenge?"
+        heading-id="project-contact-heading"
+        :href="route('contact.create', ['project' => $project->slug])"
+        button-label="Discuss a similar project"
+        class="border-y"
     >
-        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-            <div>
-                <h2
-                    id="project-contact-heading"
-                    class="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl dark:text-white"
-                >
-                    Have a similar challenge?
-                </h2>
-                <p class="mt-3 text-base leading-7 text-gray-600 dark:text-gray-400">
-                    Tell me what you’re building, what needs to change, or where you’re stuck.
-                </p>
-            </div>
-            <a
-                href="{{ route('contact.create', ['project' => $project->slug]) }}"
-                class="focus-visible:outline-brand-500 bg-brand-600 hover:bg-brand-700 w-fit shrink-0 rounded-lg px-5 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
-            >Discuss a similar project</a>
-        </div>
-    </section>
+        Tell me what you’re building, what needs to change, or where you’re stuck.
+    </x-contact-cta>
 
     @if ($otherProjects->isNotEmpty())
         <section aria-labelledby="related-projects-heading" class="py-12 sm:py-16">

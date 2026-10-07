@@ -22,12 +22,13 @@
                         placeholder="Search writing, projects, podcasts, and videos"
                         class="focus:border-brand-600 focus:ring-brand-600 dark:border-brand-700 dark:bg-brand-950 w-full rounded-xl border border-gray-300 bg-white py-3.5 pr-28 pl-12 text-base text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-400"
                     />
-                    <button
+                    <x-button
                         type="submit"
-                        class="bg-brand-600 hover:bg-brand-500 absolute top-1/2 right-2 -translate-y-1/2 rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                        variant="brand-soft"
+                        class="absolute top-1/2 right-2 -translate-y-1/2 px-4 py-2 text-sm"
                     >
                         Search
-                    </button>
+                    </x-button>
                 </div>
                 <div class="mt-4 max-w-xs">
                     <label for="search-type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
