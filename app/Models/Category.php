@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
+use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
@@ -12,6 +14,9 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 #[Sluggable(from: 'name')]
 class Category extends Model
 {
+    /** @use HasFactory<CategoryFactory> */
+    use HasFactory;
+
     use TracksActivity;
 
     /** @return HasMany<Post, $this> */
