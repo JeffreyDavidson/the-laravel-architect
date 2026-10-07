@@ -9,6 +9,15 @@ Commands and procedures for running the site live in
 [Operations](operations.md); this section describes how the application is
 built.
 
+Class names follow one vocabulary. An action (an imperative verb with
+`handle()`) makes one state change. A query only reads. A renderer or generator
+returns output from the data it is given and never queries or writes: the feed,
+sitemap and robots.txt renderers in `app/Support/Feeds`, `FeaturedImageGenerator`
+and `OgImageGenerator`. A `…Workflow` service runs one long operation over many
+records with constructor-injected collaborators and returns a report. An
+integration service such as `YouTubeService` wraps an external system, and a job
+is an async unit that calls an action or service.
+
 ## Sections
 
 - [Public site and SEO](architecture/public-site-and-seo.md): ViewModels, SEO
