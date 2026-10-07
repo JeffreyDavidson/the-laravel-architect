@@ -19,10 +19,7 @@
                     class="dark:border-brand-800 mb-10 flex flex-col gap-4 border-y border-gray-200 py-6 sm:flex-row sm:items-end"
                 >
                     <div class="w-full sm:max-w-xs">
-                        <label
-                            for="project-technology"
-                            class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                        >Technology</label>
+                        <x-form.label for="project-technology">Technology</x-form.label>
                         <x-form.select
                             id="project-technology"
                             name="technology"
@@ -33,8 +30,7 @@
                         />
                     </div>
                     <div class="w-full sm:max-w-xs">
-                        <label for="project-tag" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >Topic</label>
+                        <x-form.label for="project-tag">Topic</x-form.label>
                         <x-form.select
                             id="project-tag"
                             name="tag"

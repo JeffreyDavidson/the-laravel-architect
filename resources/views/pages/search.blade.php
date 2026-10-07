@@ -31,9 +31,7 @@
                     </x-button>
                 </div>
                 <div class="mt-4 max-w-xs">
-                    <label for="search-type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Filter by content type
-                    </label>
+                    <x-form.label for="search-type">Filter by content type</x-form.label>
                     <x-form.select
                         id="search-type"
                         name="type"

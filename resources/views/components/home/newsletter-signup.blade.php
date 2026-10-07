@@ -40,9 +40,7 @@
         class="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
     >
         @csrf
-        <div class="absolute -top-[9999px] -left-[9999px]" aria-hidden="true">
-            <input type="text" name="website" tabindex="-1" autocomplete="off" value="" />
-        </div>
+        <x-form.honeypot />
         <label for="newsletter-email" class="sr-only">Email address</label>
         <input
             id="newsletter-email"
