@@ -15,7 +15,7 @@ final class GenerateSitemap
 {
     public function handle(): string
     {
-        $posts = Post::published()
+        $posts = Post::query()->published()
             ->select(['id', 'slug', 'category_id', 'published_at', 'updated_at'])
             ->with('tags')
             ->latest('published_at')
@@ -30,7 +30,8 @@ final class GenerateSitemap
             ->active()
             ->with('publishedEpisodes:id,podcast_id,slug,updated_at')
             ->get();
-        $projects = Project::published()->get(['id', 'slug', 'updated_at']);
+        $projects = Project::query()->published()
+            ->get(['id', 'slug', 'updated_at']);
         $issues = NewsletterIssue::query()->published()
             ->get(['id', 'slug', 'updated_at']);
         $podcastModels = [];

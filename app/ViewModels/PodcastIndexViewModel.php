@@ -16,7 +16,7 @@ class PodcastIndexViewModel
     public function data(): array
     {
         return [
-            'podcast' => Podcast::active()
+            'podcast' => Podcast::query()->active()
                 ->withCount('publishedEpisodes')
                 ->orderBy('sort_order')
                 ->first(),

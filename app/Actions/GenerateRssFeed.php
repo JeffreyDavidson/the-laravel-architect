@@ -8,7 +8,7 @@ final class GenerateRssFeed
 {
     public function handle(): string
     {
-        $posts = Post::published()
+        $posts = Post::query()->published()
             ->latest('published_at')
             ->latest('id')
             ->with('category')

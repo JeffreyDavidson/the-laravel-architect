@@ -26,7 +26,7 @@ final class PostImageGenerationWorkflow
         $processed = 0;
         $failed = false;
 
-        $query = Post::with('category')
+        $query = Post::query()->with('category')
             ->where(function (Builder $query) use ($force): void {
                 $query->whereNull('featured_image_path');
 
