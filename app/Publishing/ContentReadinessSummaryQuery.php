@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Queries;
+namespace App\Publishing;
 
 use App\Enums\ContentReadinessArea;
 use App\Models\Episode;
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 final readonly class ContentReadinessSummaryQuery
 {
-    public function __construct(private ContentReadinessQuery $readiness) {}
+    public function __construct(private ContentReadinessCriteria $readiness) {}
 
     public function count(ContentReadinessArea $area): int
     {

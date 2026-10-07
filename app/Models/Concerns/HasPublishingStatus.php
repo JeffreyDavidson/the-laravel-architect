@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\Concerns;
 
 use App\Enums\PublishStatus;
-use App\Support\Content\ContentReadiness;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -51,13 +50,9 @@ trait HasPublishingStatus
     }
 
     /**
-     * @return list<string>
+     * The publish state change only: it does not check readiness. Domain code
+     * publishes through the PublishContent action, which enforces it.
      */
-    public function publishingIssues(): array
-    {
-        return new ContentReadiness($this)->publishingIssues();
-    }
-
     public function publish(): void
     {
         $configuration = static::publishingStatusConfiguration();

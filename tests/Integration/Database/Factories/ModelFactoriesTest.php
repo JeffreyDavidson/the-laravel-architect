@@ -11,6 +11,7 @@ use App\Models\Project;
 use App\Models\SocialProfile;
 use App\Models\Tag;
 use App\Models\Video;
+use App\Publishing\ContentReadiness;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -116,7 +117,7 @@ it('creates publishable content as a ready draft outside the published scope', f
     expect($record->status)->toBe(PublishStatus::Draft)
         ->and($published)
         ->toBeFalse()
-        ->and($record->publishingIssues())
+        ->and(new ContentReadiness($record)->publishingIssues())
         ->toBeEmpty();
 })->with('default publishable records');
 

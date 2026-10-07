@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\ContentReadinessStatus;
+use App\Enums\ReadinessCheck;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -7,8 +9,9 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Video;
-use App\Support\Content\ContentReadiness;
+use App\Publishing\ContentReadiness;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\PublishableFixtures;
 
 pest()->use(RefreshDatabase::class);
 
@@ -16,7 +19,7 @@ it('counts only a Transistor share link or a YouTube link as episode media', fun
     /** @var array<string, mixed> $attributes */
     $episode = new Episode($attributes);
 
-    expect(new ContentReadiness($episode)->checkComplete('episode_media'))->toBe($complete);
+    expect(new ContentReadiness($episode)->isComplete(ReadinessCheck::EpisodeMedia))->toBe($complete);
 })->with([
     'Transistor share link' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], true],
     'YouTube link' => [['youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk'], true],
@@ -38,12 +41,12 @@ it('reports actionable missing details for every supported content type', functi
         $readiness = new ContentReadiness($record);
 
         expect($readiness->isReady())->toBeFalse()
-            ->and($readiness->label())
-            ->toBe('Needs attention')
-            ->and($readiness->progress())
-            ->toContain(' complete')
-            ->and($readiness->missingSummary())
-            ->toStartWith('Missing: ');
+            ->and($readiness->status())
+            ->toBe(ContentReadinessStatus::NeedsAttention)
+            ->and($readiness->checks())
+            ->not->toBeEmpty()
+            ->and($readiness->missing())
+            ->not->toBeEmpty();
     }
 });
 
@@ -94,12 +97,12 @@ it('reports the missing public project details', function () {
     $readiness = new ContentReadiness($project);
 
     expect($readiness->isReady())->toBeFalse()
-        ->and($readiness->label())
-        ->toBe('Needs attention')
-        ->and($readiness->progress())
-        ->toBe('1/6 complete')
-        ->and($readiness->missingSummary())
-        ->toBe('Missing: Case study, Featured image, Project link, Tech stack, Tags');
+        ->and($readiness->status())
+        ->toBe(ContentReadinessStatus::NeedsAttention)
+        ->and($readiness->checks())
+        ->toHaveCount(6)
+        ->and($readiness->missing())
+        ->toBe([ReadinessCheck::CaseStudy, ReadinessCheck::FeaturedImage, ReadinessCheck::ProjectLink, ReadinessCheck::TechStack, ReadinessCheck::Tags]);
 });
 
 it('reports a project as ready when all public details are present', function () {
@@ -114,18 +117,18 @@ it('reports a project as ready when all public details are present', function ()
     $readiness = new ContentReadiness($project);
 
     expect($readiness->isReady())->toBeTrue()
-        ->and($readiness->label())
-        ->toBe('Ready')
-        ->and($readiness->progress())
-        ->toBe('6/6 complete')
-        ->and($readiness->missingSummary())
-        ->toBe('All public details are complete.');
+        ->and($readiness->status())
+        ->toBe(ContentReadinessStatus::Ready)
+        ->and($readiness->checks())
+        ->toBe([ReadinessCheck::Description, ReadinessCheck::CaseStudy, ReadinessCheck::FeaturedImage, ReadinessCheck::ProjectLink, ReadinessCheck::TechStack, ReadinessCheck::Tags])
+        ->and($readiness->missing())
+        ->toBeEmpty();
 });
 
 it('counts a Transistor episode URL as episode media', function () {
     $episode = new Episode(['transistor_url' => 'https://share.transistor.fm/s/428dcd6b']);
 
-    expect(new ContentReadiness($episode)->checkComplete('episode_media'))
+    expect(new ContentReadiness($episode)->isComplete(ReadinessCheck::EpisodeMedia))
         ->toBeTrue();
 });
 
@@ -136,11 +139,39 @@ it('counts bundled artwork as a post featured image', function (string $slug, bo
         'content' => 'Content.',
     ]);
 
-    $checks = new ContentReadiness($post)->checks();
+    $hasFeaturedImage = new ContentReadiness($post)->isComplete(ReadinessCheck::FeaturedImage);
 
-    expect($checks['featured_image']['complete'])
+    expect($hasFeaturedImage)
         ->toBe($complete);
 })->with([
     'a post with bundled artwork' => ['hello-world-why-im-starting-this-blog', true],
     'a post without artwork' => ['a-brand-new-post', false],
 ]);
+
+it('reports no publishing issues when the required details are present', function (string $type) {
+    $record = PublishableFixtures::ready($type);
+
+    expect(new ContentReadiness($record)->publishingIssues())
+        ->toBeEmpty();
+})->with(['post', 'project', 'episode', 'newsletter issue']);
+
+it('lists only the missing required details as publishing issues', function (string $type, array $issues) {
+    $record = PublishableFixtures::ready($type, PublishableFixtures::withoutRequiredDetails($type));
+
+    expect(new ContentReadiness($record)->publishingIssues())
+        ->toBe($issues);
+})->with([
+    'post' => ['post', [ReadinessCheck::Content, ReadinessCheck::Excerpt, ReadinessCheck::Category]],
+    'project' => ['project', [ReadinessCheck::Description, ReadinessCheck::CaseStudy]],
+    'episode' => ['episode', [ReadinessCheck::Podcast, ReadinessCheck::Description, ReadinessCheck::EpisodeMedia]],
+    'newsletter issue' => ['newsletter issue', [ReadinessCheck::Content]],
+]);
+
+it('does not block publishing on advisory readiness checks', function () {
+    $post = PublishableFixtures::ready('post');
+
+    expect($post->getAttribute('featured_image_path'))
+        ->toBeNull()
+        ->and(new ContentReadiness($post)->publishingIssues())
+        ->toBeEmpty();
+});

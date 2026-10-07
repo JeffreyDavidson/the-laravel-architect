@@ -48,20 +48,20 @@ enum ContentReadinessArea: string implements HasDescription, HasLabel
     }
 
     /**
-     * The ContentReadiness check keys this row covers.
+     * The readiness checks this row covers.
      *
-     * @return non-empty-list<string>
+     * @return non-empty-list<ReadinessCheck>
      */
     public function checks(): array
     {
         return match ($this) {
-            self::ProjectPreviews => ['featured_image'],
-            self::ProjectStories => ['case_study'],
-            self::PodcastLinks => ['subscribe_link'],
-            self::EpisodeDetails => ['episode_media', 'show_notes'],
-            self::PostContent => ['excerpt', 'featured_image', 'seo_description'],
-            self::NewsletterIssues => ['excerpt', 'seo_description'],
-            self::VideoMetadata => ['description', 'thumbnail', 'duration', 'synced'],
+            self::ProjectPreviews => [ReadinessCheck::FeaturedImage],
+            self::ProjectStories => [ReadinessCheck::CaseStudy],
+            self::PodcastLinks => [ReadinessCheck::SubscribeLink],
+            self::EpisodeDetails => [ReadinessCheck::EpisodeMedia, ReadinessCheck::ShowNotes],
+            self::PostContent => [ReadinessCheck::Excerpt, ReadinessCheck::FeaturedImage, ReadinessCheck::SeoDescription],
+            self::NewsletterIssues => [ReadinessCheck::Excerpt, ReadinessCheck::SeoDescription],
+            self::VideoMetadata => [ReadinessCheck::Description, ReadinessCheck::Thumbnail, ReadinessCheck::Duration, ReadinessCheck::Synced],
         };
     }
 }

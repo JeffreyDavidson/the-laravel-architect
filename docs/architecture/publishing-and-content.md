@@ -29,17 +29,19 @@ Posts, projects, episodes and newsletter issues implement
 
 - `isPublished()` means live now.
 - `isScheduled()` means set to go live at a future date.
-- `publishingIssues()` lists the missing required details from
-  `ContentReadiness`: post: content, excerpt, category; project: description,
-  case study; episode: podcast, description, media; newsletter issue: content.
-  The rest of the readiness checklist is advisory.
+- `publish()` and `unpublish()` are the state changes only; they do not check
+  readiness.
 
 Content goes live only through the `PublishContentAction` /
-`UnpublishContentAction` header actions on each edit page.
+`UnpublishContentAction` header actions on each edit page. The publish button
+saves the form and calls the `App\Actions\PublishContent` action, the only
+domain code that calls `publish()`.
 
-- Publishing is refused while required details are missing. It keeps an
-  existing publish date (a future date makes it Scheduled) and otherwise uses
-  now.
+- `PublishContent` refuses content while a required detail is missing by
+  throwing `App\Exceptions\ContentNotReadyToPublish`, which carries the missing
+  checks (`$issues`); the button shows them in a "… is not ready to publish"
+  notification. Otherwise it keeps an existing publish date (a future date
+  makes it Scheduled) and otherwise uses now.
 - Unpublishing returns content to Draft and keeps its date and slug.
 - `PublishStatusSelect` offers only pre-publication statuses and shows a live or
   scheduled status locked, so saving the form cannot change it.
@@ -49,6 +51,29 @@ Content goes live only through the `PublishContentAction` /
 - A newsletter issue's publish date is locked once the issue has been sent, so
   the links in delivered emails keep working. Publishing and sending a
   newsletter issue remain separate steps (see [Newsletter](newsletter.md)).
+
+## Readiness
+
+The publishing and readiness rules live in `app/Publishing`, separate from the
+models, Filament and HTTP (enforced by
+`tests/Architecture/PublishingArchitectureTest.php`).
+
+- `ContentReadiness` is the per-record checklist for posts, projects, podcasts,
+  episodes, newsletter issues and videos. Each item is an
+  `App\Enums\ReadinessCheck` case, whose label is the text people see. Its
+  `publishingIssues()` returns the required-to-publish checks still missing:
+  post: content, excerpt, category; project: description, case study; episode:
+  podcast, description, media; newsletter issue: content. The rest of the
+  checklist is advisory.
+- `ContentReadinessCriteria` applies the same checks to a query builder in SQL,
+  so lists and counts filter without loading records;
+  `ContentReadinessCriteriaTest` proves the PHP and SQL verdicts agree.
+  `ProjectReadinessCriteria` applies the projects table's readiness filter
+  (`ProjectReadinessFilter`, values `ready`, `needs_image`, `needs_case_study`,
+  `needs_details`), and `ContentReadinessSummaryQuery` counts the dashboard's
+  "Needs finishing" rows (`ContentReadinessArea`).
+- The admin `ReadinessColumn` formats the verdict for display ("4/6 complete ·
+  Missing: Featured image, Tags").
 
 ## Dates and the display timezone
 

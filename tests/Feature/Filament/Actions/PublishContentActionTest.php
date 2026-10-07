@@ -3,6 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Models\User;
 use App\Support\DisplayTimezone;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\Support\PublishableFixtures;
@@ -40,14 +41,16 @@ it('refuses to publish content that is missing required details', function (stri
 
     livewire(PublishableFixtures::editPage($type), ['record' => $record->getRouteKey()])
         ->callAction('publish')
-        ->assertNotified(Str::headline(class_basename($record)).' is not ready to publish');
+        ->assertNotified(Notification::make()
+            ->danger()
+            ->title(Str::headline(class_basename($record)).' is not ready to publish')
+            ->body($issue)
+            ->persistent());
 
     $record->refresh();
 
     expect($record->getAttribute('status'))
-        ->toBe(PublishStatus::Draft)
-        ->and($record->publishingIssues())
-        ->toContain($issue);
+        ->toBe(PublishStatus::Draft);
 })->with([
     'post without excerpt' => ['post', 'excerpt', 'Excerpt'],
     'project without case study' => ['project', 'content', 'Case study'],
