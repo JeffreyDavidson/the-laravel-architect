@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Post;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 
-final class PostImageGenerationWorkflow
+final readonly class PostImageGenerationWorkflow
 {
+    public function __construct(
+        private FeaturedImageGenerator $generator,
+        private ResponsiveImageVariants $images,
+    ) {}
+
     /**
      * Generate featured images for posts without one. Forcing also regenerates images this
      * workflow generated before (under featured-images/), but never replaces an uploaded
      * image, because replacing it deletes the upload and its variants.
      *
-     * @param  callable(Post): string  $generate
-     * @param  callable(string): bool  $generateVariants
-     * @param  callable(string): void  $report
+     * @param  Closure(string): void  $report
      * @return array{processed: int, failed: bool}
      */
-    public function generate(
-        bool $force,
-        callable $generate,
-        callable $generateVariants,
-        callable $report,
-    ): array {
+    public function generate(bool $force, Closure $report): array
+    {
         $processed = 0;
         $failed = false;
 
@@ -37,12 +37,12 @@ final class PostImageGenerationWorkflow
                 }
             });
 
-        $query->eachById(function (Post $post) use ($generate, $generateVariants, $report, &$processed, &$failed): ?bool {
+        $query->eachById(function (Post $post) use ($report, &$processed, &$failed): ?bool {
             $processed++;
-            $filename = $generate($post);
+            $filename = $this->generator->generate($post);
             $post->update(['featured_image_path' => $filename]);
 
-            if (! $post->wasChanged('featured_image_path') && ! $generateVariants($filename)) {
+            if (! $post->wasChanged('featured_image_path') && ! $this->images->generate($filename)) {
                 $report('Responsive post image regeneration failed.');
                 $failed = true;
 
