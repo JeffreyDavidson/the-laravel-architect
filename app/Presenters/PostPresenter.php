@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Presenters;
 
 use App\Data\ResponsiveImage;
+use App\Enums\BundledPostArtwork;
 use App\Models\Post;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
 use App\Services\ResponsiveImageVariants;
-use App\Support\Content\BundledPostArtwork;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Foundation\Vite;
 
 final readonly class PostPresenter
 {
@@ -17,9 +18,9 @@ final readonly class PostPresenter
 
     public function __construct(
         private Post $post,
-        private BundledPostArtwork $bundledArtwork,
         private ResponsiveImageVariants $images,
         private UrlGenerator $urls,
+        private Vite $vite,
     ) {}
 
     public static function from(Post $post): self
@@ -61,7 +62,7 @@ final readonly class PostPresenter
     public function artwork(): ?ResponsiveImage
     {
         $uploadedUrl = $this->featuredImageUrl();
-        $bundledUrls = $this->bundledArtwork->urls($this->post->slug);
+        $bundledUrls = $this->bundledArtworkUrls();
         $src = $uploadedUrl ?? $bundledUrls['large'] ?? null;
 
         if ($src === null) {
@@ -85,7 +86,27 @@ final readonly class PostPresenter
     public function shareImageUrl(): string
     {
         return $this->featuredImageUrl()
-            ?? $this->bundledArtwork->urls($this->post->slug)['large']
+            ?? $this->bundledArtworkUrls()['large']
             ?? $this->urls->route('og-image', $this->post);
+    }
+
+    /**
+     * The bundled launch artwork's sizes for a post whose slug has some, or null.
+     *
+     * @return array{small: string, medium: string, large: string}|null
+     */
+    private function bundledArtworkUrls(): ?array
+    {
+        $image = BundledPostArtwork::tryFrom($this->post->slug)?->imageName();
+
+        if ($image === null) {
+            return null;
+        }
+
+        return [
+            'small' => $this->vite->asset("resources/images/{$image}-384.webp"),
+            'medium' => $this->vite->asset("resources/images/{$image}-768.webp"),
+            'large' => $this->vite->asset("resources/images/{$image}-1280.webp"),
+        ];
     }
 }
