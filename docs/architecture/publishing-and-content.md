@@ -166,7 +166,9 @@ Episode durations are stored in seconds (`episodes.duration_seconds`; the old
 
 Public episode playback is a Transistor player for an episode with a valid
 `transistor_url` share link (`https://share.transistor.fm/s/{id}`, shown as the
-`/e/{id}` embed); YouTube is separate. The custom audio player, hosted and
+`/e/{id}` embed: `Episode::transistorEpisodeId()` reads the ID and
+`EpisodePresenter::transistorEmbedUrl()` builds the player URL); YouTube is
+separate. The custom audio player, hosted and
 uploaded audio, and the Spotify and Apple embeds are retired:
 
 - the admin form no longer offers those fields;

@@ -2,11 +2,16 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 arch('keeps models independent of application services')
     ->expect('App\Models')
     ->not->toUse('App\Services');
+
+arch('keeps stored-file URLs out of models')
+    ->expect('App\Models')
+    ->not->toUse(Storage::class);
 
 it('keeps route binding concerns outside Eloquent models', function () {
     $directory = app_path('Models');

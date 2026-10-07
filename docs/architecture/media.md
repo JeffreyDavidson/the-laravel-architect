@@ -28,8 +28,10 @@ Episode artwork keeps only its original upload: episode pages do not render a
 `srcset`, so episodes have no responsive variants by design.
 
 Bundled podcast cover fallbacks provide 128px, 320px, and 512px Vite-managed
-variants for smaller episode artwork. The presenters in `app/Presenters` choose
-between an upload and its bundled fallback and build each `srcset` (see
+variants for smaller episode artwork. Models store only the file paths; the
+presenters in `app/Presenters` build every image URL (an upload's through
+`ResponsiveImageVariants::url()`, bundled artwork through Vite), choose between an
+upload and its bundled fallback, and build each `srcset` (see
 [Public site and SEO](public-site-and-seo.md#pages-and-viewmodels)).
 
 Posts without a featured image can get generated artwork under

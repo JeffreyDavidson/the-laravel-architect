@@ -13,9 +13,20 @@ episode, and project detail pages. Signed previews reuse the same ViewModels
 through their `previewData()` methods.
 
 Presenters in `app/Presenters` format one model for display and never query.
+Models expose stored paths and IDs only; presenters own every URL built from
+them and the media display. Each presenter takes its collaborators
+(`ResponsiveImageVariants`, Vite, the URL generator) through its constructor and
+is built with `XPresenter::from($model)`. They build the stored-image URLs
+(`PostPresenter::featuredImageUrl()`, `ProjectPresenter::featuredImageUrl()`,
+`PodcastPresenter::coverImageUrl()`), the YouTube links
+(`VideoPresenter::youtubeUrl()` and `embedUrl()`), the Transistor player
+(`EpisodePresenter::transistorEmbedUrl()` from `Episode::transistorEpisodeId()`),
+the signed newsletter links (`SubscriberPresenter`), and each publishable
+item's `publicUrl()`, `previewUrl()` and `publicOrPreviewUrl()` (Post, Project,
+Episode and NewsletterIssue presenters, sharing `LinksToPublicPageOrPreview`).
 They own the image fallbacks: `PostPresenter::artwork()` and
-`shareImageUrl()` (uploaded image, bundled launch artwork, then the generated
-OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
+`shareImageUrl()` (uploaded image, the bundled launch artwork named by the
+`BundledPostArtwork` enum, then the generated OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
 (uploaded cover, then the bundled artwork in `config/podcasts.php`), and
 `ProjectPresenter::featuredImage()`. The image methods return an
 `App\Data\ResponsiveImage` (`src` plus an optional WebP `srcset`) that the
