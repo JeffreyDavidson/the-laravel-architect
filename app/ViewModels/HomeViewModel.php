@@ -13,9 +13,9 @@ use App\Queries\SocialProfilesQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final class HomeViewModel
+final readonly class HomeViewModel
 {
-    public function __construct(private readonly SocialProfilesQuery $socialProfilesQuery) {}
+    public function __construct(private SocialProfilesQuery $socialProfilesQuery) {}
 
     /**
      * @return array{

@@ -9,11 +9,11 @@ use App\Models\Post;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 
-final class OgImageCache
+final readonly class OgImageCache
 {
     private const string RENDERER_VERSION = 'v1';
 
-    public function __construct(private readonly OgImageGenerator $generator) {}
+    public function __construct(private OgImageGenerator $generator) {}
 
     public function generate(Post $post): string
     {

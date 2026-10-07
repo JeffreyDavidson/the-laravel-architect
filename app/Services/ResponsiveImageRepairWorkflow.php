@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 final readonly class ResponsiveImageRepairWorkflow
 {
     public function __construct(
-        private readonly ResponsiveImageVariants $images,
-        private readonly ResponsiveImageWorkflow $workflow,
+        private ResponsiveImageVariants $images,
+        private ResponsiveImageWorkflow $workflow,
     ) {}
 
     /**

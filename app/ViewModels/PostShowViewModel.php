@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final class PostShowViewModel
+final readonly class PostShowViewModel
 {
     public function __construct(
-        private readonly RelatedPostsQuery $relatedPostsQuery,
+        private RelatedPostsQuery $relatedPostsQuery,
     ) {}
 
     /**
