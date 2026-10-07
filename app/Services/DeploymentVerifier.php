@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\DeploymentEnvironment;
 use App\Support\Monitoring\Health\NightwatchHealthMonitor;
 use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use Illuminate\Database\Migrations\Migrator;
@@ -94,6 +95,6 @@ final readonly class DeploymentVerifier
 
     private function usesProductionMonitoring(): bool
     {
-        return config('app.deployment_environment') === 'production';
+        return DeploymentEnvironment::current() === DeploymentEnvironment::Production;
     }
 }

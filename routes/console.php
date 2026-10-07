@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\DeploymentEnvironment;
 use App\Jobs\RecordQueueHeartbeat;
 use App\Models\ContactInquiry;
 use App\Models\Subscriber;
@@ -12,7 +13,7 @@ use Laravel\Nightwatch\Console\Sample;
  * production's small server and runs with APP_ENV=production, so `environments()` cannot
  * tell them apart; TLA_DEPLOYMENT_ENVIRONMENT (app.deployment_environment) can.
  */
-$isProductionDeployment = fn (): bool => config('app.deployment_environment') === 'production';
+$isProductionDeployment = fn (): bool => DeploymentEnvironment::current() === DeploymentEnvironment::Production;
 
 Schedule::call(function (RuntimeHealthMonitor $runtimeHealthMonitor): void {
     $runtimeHealthMonitor->recordSchedulerHeartbeat();

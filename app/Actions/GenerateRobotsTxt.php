@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Enums\DeploymentEnvironment;
+
 final class GenerateRobotsTxt
 {
     /**
@@ -14,7 +16,7 @@ final class GenerateRobotsTxt
      */
     public function handle(): string
     {
-        if (config('app.deployment_environment') !== 'production') {
+        if (DeploymentEnvironment::current() !== DeploymentEnvironment::Production) {
             return "User-agent: *\nDisallow: /\n";
         }
 
