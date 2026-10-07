@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\NewsletterIssues\Tables;
 
 use App\Enums\PublishStatus;
+use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\NewsletterIssue;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -55,13 +54,7 @@ class NewsletterIssuesTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('view_on_site')
-                    ->label('View on site')
-                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (NewsletterIssue $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
-                        ? route('newsletter.issue', $record)
-                        : $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

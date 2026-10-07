@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\Episodes\Tables;
 
 use App\Enums\PublishStatus;
+use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
-use App\Support\Content\PreviewUrlGenerator;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -83,11 +83,7 @@ class EpisodesTable
                     ->label('Edit')
                     ->icon(Heroicon::OutlinedPencilSquare)
                     ->url(fn (Episode $record): string => EpisodeResource::getUrl('edit', ['record' => $record])),
-                Action::make('preview')
-                    ->label('Preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Episode $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

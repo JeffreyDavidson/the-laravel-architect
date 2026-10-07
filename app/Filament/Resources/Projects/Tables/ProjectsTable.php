@@ -3,11 +3,9 @@
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectReadinessFilter;
+use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
-use App\Models\Project;
 use App\Queries\ProjectReadinessQuery;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -80,11 +78,7 @@ class ProjectsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('preview')
-                    ->label('Preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(fn (Project $record, PreviewUrlGenerator $previewUrlGenerator): string => $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

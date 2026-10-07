@@ -4,10 +4,9 @@ namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
+use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Models\Post;
-use App\Support\Content\PreviewUrlGenerator;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -93,13 +92,7 @@ class PostsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('view_on_site')
-                    ->label('View on site')
-                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (Post $record, PreviewUrlGenerator $previewUrlGenerator): string => $record->isPublished()
-                        ? route('blog.show', $record)
-                        : $previewUrlGenerator->for($record))
-                    ->openUrlInNewTab(),
+                ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

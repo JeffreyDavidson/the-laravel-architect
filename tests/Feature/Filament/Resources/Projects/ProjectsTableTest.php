@@ -13,12 +13,22 @@ use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-it('links the preview action to a signed preview of the project', function () {
+beforeEach(fn () => actingAs(User::factory()->create(['is_admin' => true])));
+
+it('links the view on site action to the public project URL', function () {
+    $project = PublishableFixtures::ready('project');
+    $project->publish();
+
+    livewire(ListProjects::class)
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), route('projects.show', $project))
+        ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($project));
+});
+
+it('links the view on site action to a signed preview for a draft project', function () {
     freezeSecond();
-    actingAs(User::factory()->create(['is_admin' => true]));
     $project = PublishableFixtures::ready('project');
 
     livewire(ListProjects::class)
-        ->assertActionHasUrl(TestAction::make('preview')->table($project), app(PreviewUrlGenerator::class)->for($project))
-        ->assertActionShouldOpenUrlInNewTab(TestAction::make('preview')->table($project));
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), app(PreviewUrlGenerator::class)->for($project))
+        ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($project));
 });
