@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class ImageUploadOptimizer
+final class ImageUploadOptimizer
 {
     public const int MAX_DIMENSION = 1600;
 

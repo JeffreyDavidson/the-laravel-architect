@@ -8,7 +8,7 @@ use App\Filament\Resources\Posts\PostResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListPosts extends ListRecords
+final class ListPosts extends ListRecords
 {
     #[\Override]
     protected static string $resource = PostResource::class;

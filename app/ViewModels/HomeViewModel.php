@@ -13,7 +13,7 @@ use App\Queries\SocialProfilesQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class HomeViewModel
+final class HomeViewModel
 {
     public function __construct(private readonly SocialProfilesQuery $socialProfilesQuery) {}
 

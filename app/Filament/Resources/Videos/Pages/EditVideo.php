@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Videos\Pages;
 use App\Filament\Resources\Videos\VideoResource;
 use Filament\Resources\Pages\EditRecord;
 
-class EditVideo extends EditRecord
+final class EditVideo extends EditRecord
 {
     #[\Override]
     protected static string $resource = VideoResource::class;

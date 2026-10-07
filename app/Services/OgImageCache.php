@@ -9,7 +9,7 @@ use App\Models\Post;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 
-class OgImageCache
+final class OgImageCache
 {
     private const string RENDERER_VERSION = 'v1';
 

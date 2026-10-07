@@ -7,7 +7,7 @@ namespace App\ViewModels;
 use App\Models\Subscriber;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class NewsletterUnsubscriptionViewModel
+final class NewsletterUnsubscriptionViewModel
 {
     /** @return array{actionUrl: string, subscriber: Subscriber, seoSource: SEOData} */
     public function data(Subscriber $subscriber, string $actionUrl): array

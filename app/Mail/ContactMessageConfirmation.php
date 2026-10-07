@@ -16,7 +16,7 @@ use Illuminate\Mail\Mailables\Headers;
  * visitor-supplied, so the subject and body are fixed and never echo the inquiry;
  * otherwise anyone could use the form to send their own text to any address.
  */
-class ContactMessageConfirmation extends Mailable
+final class ContactMessageConfirmation extends Mailable
 {
     public function __construct(public readonly ContactInquiry $inquiry) {}
 

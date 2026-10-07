@@ -44,7 +44,7 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PostObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
-class Post extends Model implements Publishable
+final class Post extends Model implements Publishable
 {
     use DeletesOwnedContent;
 

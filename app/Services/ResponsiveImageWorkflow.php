@@ -7,7 +7,7 @@ namespace App\Services;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 
-class ResponsiveImageWorkflow
+final class ResponsiveImageWorkflow
 {
     /**
      * @param  class-string<Model>  $modelClass

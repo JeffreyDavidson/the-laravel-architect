@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
  * The field a slug is derived from, such as a title or name. On create it fills a blank
  * `slug` field when the editor leaves this field; an existing or hand-written slug is kept.
  */
-class SlugSourceInput extends TextInput
+final class SlugSourceInput extends TextInput
 {
     protected function setUp(): void
     {

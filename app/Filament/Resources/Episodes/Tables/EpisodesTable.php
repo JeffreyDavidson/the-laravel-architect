@@ -24,7 +24,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class EpisodesTable
+final class EpisodesTable
 {
     public static function configure(Table $table): Table
     {

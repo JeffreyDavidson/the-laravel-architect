@@ -13,7 +13,7 @@ use Illuminate\Console\Command;
 
 #[Signature('content:scale-test {action : seed or clear generated scale-test records} {--staging : Permit the exact staging hostname when APP_ENV is production}')]
 #[Description('Seed or remove synthetic scale-test content in a non-production environment')]
-class ManageScaleTestContent extends Command
+final class ManageScaleTestContent extends Command
 {
     public function handle(ScaleTestContentWorkflow $workflow, PublicContentImportGuard $guard): int
     {

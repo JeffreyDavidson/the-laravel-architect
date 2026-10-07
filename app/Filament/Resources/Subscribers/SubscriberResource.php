@@ -14,7 +14,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class SubscriberResource extends Resource
+final class SubscriberResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Subscriber::class;

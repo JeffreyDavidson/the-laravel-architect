@@ -9,7 +9,7 @@ use App\ViewModels\PodcastIndexViewModel;
 use App\ViewModels\PodcastShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PodcastController
+final class PodcastController
 {
     public function index(PodcastIndexViewModel $podcastIndexViewModel): View
     {

@@ -25,7 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 
-class PostsTable
+final class PostsTable
 {
     public static function configure(Table $table): Table
     {

@@ -24,7 +24,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use RalphJSmit\Filament\SEO\SEO;
 
-class PostForm
+final class PostForm
 {
     public static function configure(Schema $schema): Schema
     {

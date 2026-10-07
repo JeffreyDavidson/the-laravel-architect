@@ -20,7 +20,7 @@ use Illuminate\Support\Str;
  * job from emailing the same subscriber twice; test emails carry none, so an
  * editor can resend one after changing the issue.
  */
-class NewsletterIssueMail extends Mailable
+final class NewsletterIssueMail extends Mailable
 {
     public function __construct(
         public readonly NewsletterIssue $issue,

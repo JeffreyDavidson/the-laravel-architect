@@ -19,7 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class ProjectResource extends Resource
+final class ProjectResource extends Resource
 {
     use ResolvesTrashedRecords;
 

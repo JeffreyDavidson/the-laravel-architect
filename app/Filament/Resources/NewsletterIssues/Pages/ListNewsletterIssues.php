@@ -8,7 +8,7 @@ use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListNewsletterIssues extends ListRecords
+final class ListNewsletterIssues extends ListRecords
 {
     #[\Override]
     protected static string $resource = NewsletterIssueResource::class;

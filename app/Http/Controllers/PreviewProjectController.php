@@ -8,7 +8,7 @@ use App\Models\Project;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PreviewProjectController
+final class PreviewProjectController
 {
     public function __invoke(Project $project, ProjectShowViewModel $viewModel): View
     {

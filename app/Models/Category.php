@@ -14,7 +14,7 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 
 #[Fillable('name', 'slug', 'description')]
 #[Sluggable(from: 'name')]
-class Category extends Model
+final class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;

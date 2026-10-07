@@ -11,7 +11,7 @@ use App\ViewModels\PostIndexViewModel;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PostController
+final class PostController
 {
     public function index(
         BlogIndexRequest $request,

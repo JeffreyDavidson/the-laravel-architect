@@ -11,7 +11,7 @@ use App\Models\Subscriber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
-class NewsletterSubscriptionController
+final class NewsletterSubscriptionController
 {
     public function store(
         SubscribeNewsletterRequest $request,

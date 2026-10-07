@@ -12,7 +12,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
-class SocialProfilesTable
+final class SocialProfilesTable
 {
     public static function configure(Table $table): Table
     {

@@ -10,7 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class VideoForm
+final class VideoForm
 {
     public static function configure(Schema $schema): Schema
     {

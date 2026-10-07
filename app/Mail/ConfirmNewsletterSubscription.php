@@ -12,7 +12,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmNewsletterSubscription extends Mailable implements ShouldBeEncrypted, ShouldQueue
+final class ConfirmNewsletterSubscription extends Mailable implements ShouldBeEncrypted, ShouldQueue
 {
     use Queueable, SerializesModels;
 

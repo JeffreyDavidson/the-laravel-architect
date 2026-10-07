@@ -6,7 +6,7 @@ namespace App\ViewModels;
 
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class UsesViewModel
+final class UsesViewModel
 {
     /**
      * Each section feeds the mobile jump links (shortLabel), the sidebar jump links (label) and its

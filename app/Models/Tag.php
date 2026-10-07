@@ -9,7 +9,7 @@ use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Tags\Tag as SpatieTag;
 
-class Tag extends SpatieTag
+final class Tag extends SpatieTag
 {
     /** @use HasFactory<TagFactory> */
     use HasFactory;
@@ -18,7 +18,7 @@ class Tag extends SpatieTag
 
     public static function bootHasSlug(): void
     {
-        static::creating(function (SpatieTag $model): void {
+        self::creating(function (SpatieTag $model): void {
             foreach ($model->getTranslatedLocales('name') as $locale) {
                 if (! is_string($locale)) {
                     continue;

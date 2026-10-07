@@ -10,7 +10,7 @@ use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class ProjectController
+final class ProjectController
 {
     public function index(Request $request, ProjectIndexViewModel $projectIndexViewModel): View
     {

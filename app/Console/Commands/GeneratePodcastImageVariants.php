@@ -14,7 +14,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('podcasts:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing podcast cover images')]
-class GeneratePodcastImageVariants extends Command implements Isolatable
+final class GeneratePodcastImageVariants extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

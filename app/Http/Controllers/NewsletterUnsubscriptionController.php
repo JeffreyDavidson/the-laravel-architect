@@ -9,7 +9,7 @@ use App\ViewModels\NewsletterUnsubscriptionViewModel;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class NewsletterUnsubscriptionController
+final class NewsletterUnsubscriptionController
 {
     public function create(Request $request, Subscriber $subscriber, NewsletterUnsubscriptionViewModel $viewModel): View
     {

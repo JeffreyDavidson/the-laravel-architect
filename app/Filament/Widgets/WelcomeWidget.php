@@ -10,7 +10,7 @@ use App\Models\ContactInquiry;
 use App\Models\Post;
 use Filament\Widgets\Widget;
 
-class WelcomeWidget extends Widget
+final class WelcomeWidget extends Widget
 {
     #[\Override]
     protected string $view = 'filament.widgets.welcome-widget';

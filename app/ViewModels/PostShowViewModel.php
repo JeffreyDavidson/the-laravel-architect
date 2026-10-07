@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PostShowViewModel
+final class PostShowViewModel
 {
     public function __construct(
         private readonly RelatedPostsQuery $relatedPostsQuery,

@@ -12,7 +12,7 @@ use App\Queries\RelatedProjectsQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ProjectShowViewModel
+final class ProjectShowViewModel
 {
     public function __construct(
         private readonly RelatedProjectsQuery $relatedProjectsQuery,

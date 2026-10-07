@@ -6,7 +6,7 @@ namespace App\ViewModels;
 
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PrivacyViewModel
+final class PrivacyViewModel
 {
     /** @return array{seoSource: SEOData} */
     public function data(): array

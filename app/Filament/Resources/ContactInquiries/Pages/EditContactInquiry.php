@@ -13,7 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
 
-class EditContactInquiry extends EditRecord
+final class EditContactInquiry extends EditRecord
 {
     #[\Override]
     protected static string $resource = ContactInquiryResource::class;

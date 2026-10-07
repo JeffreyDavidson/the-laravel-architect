@@ -10,7 +10,7 @@ use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class BlogTagViewModel
+final class BlogTagViewModel
 {
     /**
      * @return array{

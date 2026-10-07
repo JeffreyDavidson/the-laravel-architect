@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
 /**
  * @phpstan-type Activity array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}
  */
-class RecentActivityWidget extends Widget
+final class RecentActivityWidget extends Widget
 {
     /**
      * Each content model with the label and admin resource used for its activity rows.

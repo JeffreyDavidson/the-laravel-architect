@@ -9,7 +9,7 @@ use App\ViewModels\NewsletterIndexViewModel;
 use App\ViewModels\NewsletterIssueViewModel;
 use Illuminate\Contracts\View\View;
 
-class NewsletterIssueController
+final class NewsletterIssueController
 {
     public function index(NewsletterIndexViewModel $viewModel): View
     {

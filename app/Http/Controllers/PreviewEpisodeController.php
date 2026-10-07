@@ -9,7 +9,7 @@ use App\Models\Podcast;
 use App\ViewModels\EpisodeShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PreviewEpisodeController
+final class PreviewEpisodeController
 {
     public function __invoke(Episode $episode, EpisodeShowViewModel $viewModel): View
     {

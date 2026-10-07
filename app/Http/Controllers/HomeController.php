@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\ViewModels\HomeViewModel;
 use Illuminate\Contracts\View\View;
 
-class HomeController
+final class HomeController
 {
     public function __invoke(HomeViewModel $homeViewModel): View
     {

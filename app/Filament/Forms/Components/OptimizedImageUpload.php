@@ -11,7 +11,7 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Http\UploadedFile;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class OptimizedImageUpload extends FileUpload
+final class OptimizedImageUpload extends FileUpload
 {
     protected function setUp(): void
     {

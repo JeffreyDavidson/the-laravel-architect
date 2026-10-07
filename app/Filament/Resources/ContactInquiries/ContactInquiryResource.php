@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
-class ContactInquiryResource extends Resource
+final class ContactInquiryResource extends Resource
 {
     #[\Override]
     protected static ?string $model = ContactInquiry::class;
@@ -52,7 +52,7 @@ class ContactInquiryResource extends Resource
         $count = Cache::remember(
             'contact-inquiries-new-count',
             now()->addMinutes(5),
-            fn (): int => static::getModel()::query()->where('status', ContactInquiryStatus::New)
+            fn (): int => self::getModel()::query()->where('status', ContactInquiryStatus::New)
                 ->count(),
         );
 

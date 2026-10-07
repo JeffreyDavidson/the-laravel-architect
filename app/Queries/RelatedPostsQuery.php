@@ -7,7 +7,7 @@ namespace App\Queries;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 
-class RelatedPostsQuery
+final class RelatedPostsQuery
 {
     /** @return Collection<int, Post> */
     public function get(Post $post, int $limit = 3): Collection

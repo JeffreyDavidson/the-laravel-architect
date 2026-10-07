@@ -14,7 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class SubscribersTable
+final class SubscribersTable
 {
     public static function configure(Table $table): Table
     {

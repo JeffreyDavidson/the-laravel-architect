@@ -8,7 +8,7 @@ use App\Models\Post;
 use App\Services\OgImageCache;
 use App\Services\ResponsiveImageLifecycle;
 
-class PostObserver
+final class PostObserver
 {
     public function __construct(
         private readonly OgImageCache $ogImageCache,

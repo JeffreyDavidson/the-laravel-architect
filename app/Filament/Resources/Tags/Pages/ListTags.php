@@ -8,7 +8,7 @@ use App\Filament\Resources\Tags\TagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListTags extends ListRecords
+final class ListTags extends ListRecords
 {
     #[\Override]
     protected static string $resource = TagResource::class;

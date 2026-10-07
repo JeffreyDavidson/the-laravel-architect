@@ -7,7 +7,7 @@ namespace App\Queries;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Collection;
 
-class RelatedProjectsQuery
+final class RelatedProjectsQuery
 {
     /** @return Collection<int, Project> */
     public function get(Project $project, int $limit = 3): Collection

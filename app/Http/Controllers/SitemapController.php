@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\GenerateSitemap;
 use Illuminate\Http\Response;
 
-class SitemapController
+final class SitemapController
 {
     public function __invoke(GenerateSitemap $generateSitemap): Response
     {

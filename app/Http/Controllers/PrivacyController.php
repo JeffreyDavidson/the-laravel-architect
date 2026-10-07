@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\ViewModels\PrivacyViewModel;
 use Illuminate\Contracts\View\View;
 
-class PrivacyController
+final class PrivacyController
 {
     public function __invoke(PrivacyViewModel $viewModel): View
     {

@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Mail;
 #[MaxExceptions(3)]
 #[Timeout(60)]
 #[Backoff([60, 300, 900])]
-class DeliverNewsletterIssue implements ShouldQueue
+final class DeliverNewsletterIssue implements ShouldQueue
 {
     use Queueable;
 

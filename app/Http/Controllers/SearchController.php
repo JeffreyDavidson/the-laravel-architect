@@ -10,7 +10,7 @@ use App\Queries\SearchQuery;
 use App\ViewModels\SearchViewModel;
 use Illuminate\Contracts\View\View;
 
-class SearchController
+final class SearchController
 {
     public function __invoke(SearchRequest $request, SearchQuery $searchQuery, SearchViewModel $viewModel): View
     {

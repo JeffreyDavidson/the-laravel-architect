@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * content goes live or back to draft through the Publish / Unpublish actions, so a live or
  * scheduled status is shown locked.
  */
-class PublishStatusSelect extends Select
+final class PublishStatusSelect extends Select
 {
     /** @var list<PublishStatus> */
     protected array $selectableStatuses = [PublishStatus::Draft, PublishStatus::InReview];

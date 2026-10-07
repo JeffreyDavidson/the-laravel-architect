@@ -15,7 +15,7 @@ use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use UnitEnum;
 
-class Insights extends Page
+final class Insights extends Page
 {
     #[\Override]
     protected static ?string $title = 'Insights';

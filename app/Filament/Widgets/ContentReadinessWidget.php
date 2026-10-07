@@ -15,7 +15,7 @@ use App\Queries\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Cache;
 
-class ContentReadinessWidget extends Widget
+final class ContentReadinessWidget extends Widget
 {
     private const int CACHE_SECONDS = 60;
 

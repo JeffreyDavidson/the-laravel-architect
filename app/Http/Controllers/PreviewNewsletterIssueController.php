@@ -8,7 +8,7 @@ use App\Models\NewsletterIssue;
 use App\ViewModels\NewsletterIssueViewModel;
 use Illuminate\Contracts\View\View;
 
-class PreviewNewsletterIssueController
+final class PreviewNewsletterIssueController
 {
     public function __invoke(NewsletterIssue $newsletterIssue, NewsletterIssueViewModel $viewModel): View
     {

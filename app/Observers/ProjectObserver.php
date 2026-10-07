@@ -7,7 +7,7 @@ namespace App\Observers;
 use App\Models\Project;
 use App\Services\ResponsiveImageLifecycle;
 
-class ProjectObserver
+final class ProjectObserver
 {
     public function __construct(private readonly ResponsiveImageLifecycle $lifecycle) {}
 

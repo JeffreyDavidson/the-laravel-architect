@@ -20,7 +20,7 @@ use Throwable;
  * Finds files on the public disk that no content references. Trashed content still
  * counts as a reference, so restoring a post or episode never brings back broken media.
  */
-class StoredMediaOrphanWorkflow
+final class StoredMediaOrphanWorkflow
 {
     private const array OWNED_DIRECTORIES = ['projects/', 'posts/', 'podcasts/', 'episodes/images/', 'episodes/audio/'];
 

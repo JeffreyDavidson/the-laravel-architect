@@ -8,7 +8,7 @@ use App\Models\Post;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Contracts\View\View;
 
-class PreviewPostController
+final class PreviewPostController
 {
     public function __invoke(Post $post, PostShowViewModel $viewModel): View
     {

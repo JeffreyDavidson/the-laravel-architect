@@ -22,7 +22,7 @@ use UnexpectedValueException;
 /**
  * @phpstan-import-type SearchResultPage from SearchQuery
  */
-class SearchViewModel
+final class SearchViewModel
 {
     /**
      * @param  array<string, SearchResultPage>  $results  matching models keyed by content type value

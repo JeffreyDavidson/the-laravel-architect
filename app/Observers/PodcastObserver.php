@@ -8,7 +8,7 @@ use App\Models\Episode;
 use App\Models\Podcast;
 use App\Services\ResponsiveImageLifecycle;
 
-class PodcastObserver
+final class PodcastObserver
 {
     public function __construct(private readonly ResponsiveImageLifecycle $lifecycle) {}
 

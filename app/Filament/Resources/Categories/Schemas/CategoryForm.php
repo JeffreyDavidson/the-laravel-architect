@@ -9,7 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class CategoryForm
+final class CategoryForm
 {
     public static function configure(Schema $schema): Schema
     {

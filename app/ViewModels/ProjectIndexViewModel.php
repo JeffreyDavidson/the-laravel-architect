@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Tags\Tag;
 
-class ProjectIndexViewModel
+final class ProjectIndexViewModel
 {
     /**
      * @param  array<string, mixed>  $filters

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable('platform', 'label', 'url', 'is_enabled', 'show_in_footer', 'show_on_contact', 'sort_order')]
-class SocialProfile extends Model
+final class SocialProfile extends Model
 {
     /** @use HasFactory<SocialProfileFactory> */
     use HasFactory;

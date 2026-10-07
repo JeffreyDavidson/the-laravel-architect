@@ -11,7 +11,7 @@ use App\Presenters\PodcastPresenter;
 use App\Queries\EpisodeNavigationQuery;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class EpisodeShowViewModel
+final class EpisodeShowViewModel
 {
     public function __construct(private readonly EpisodeNavigationQuery $episodeNavigationQuery) {}
 

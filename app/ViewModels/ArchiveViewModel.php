@@ -11,7 +11,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ArchiveViewModel
+final class ArchiveViewModel
 {
     /**
      * @param  LengthAwarePaginator<int, ContentListItem>  $items

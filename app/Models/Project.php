@@ -35,7 +35,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property array<int, string>|null $tech_stack
  * @property-read string|null $featured_image_url
  */
-class Project extends Model implements Publishable
+final class Project extends Model implements Publishable
 {
     use DeletesOwnedContent;
     use Featurable;

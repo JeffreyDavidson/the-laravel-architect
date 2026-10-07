@@ -8,7 +8,7 @@ use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class RecordQueueHeartbeat implements ShouldQueue
+final class RecordQueueHeartbeat implements ShouldQueue
 {
     use Queueable;
 

@@ -22,7 +22,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ProjectsTable
+final class ProjectsTable
 {
     public static function configure(Table $table): Table
     {

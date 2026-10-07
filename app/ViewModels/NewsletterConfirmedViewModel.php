@@ -8,7 +8,7 @@ use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class NewsletterConfirmedViewModel
+final class NewsletterConfirmedViewModel
 {
     /** @return array{latestPosts: Collection<int, Post>, seoSource: SEOData} */
     public function data(): array

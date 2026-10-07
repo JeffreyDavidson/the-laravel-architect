@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
-class StoredImageOptimizationWorkflow
+final class StoredImageOptimizationWorkflow
 {
     public function __construct(private readonly ImageUploadOptimizer $optimizer) {}
 

@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\GenerateRobotsTxt;
 use Illuminate\Http\Response;
 
-class RobotsController
+final class RobotsController
 {
     public function __invoke(GenerateRobotsTxt $generateRobotsTxt): Response
     {

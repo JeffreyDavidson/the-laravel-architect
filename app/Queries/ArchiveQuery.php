@@ -20,7 +20,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class ArchiveQuery
+final class ArchiveQuery
 {
     private const int ITEMS_PER_PAGE = 18;
 

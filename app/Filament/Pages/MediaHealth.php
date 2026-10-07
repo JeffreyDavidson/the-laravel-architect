@@ -25,7 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class MediaHealth extends Page implements HasTable
+final class MediaHealth extends Page implements HasTable
 {
     use InteractsWithTable;
 

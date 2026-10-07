@@ -8,7 +8,7 @@ use App\Filament\Resources\Episodes\EpisodeResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListEpisodes extends ListRecords
+final class ListEpisodes extends ListRecords
 {
     #[\Override]
     protected static string $resource = EpisodeResource::class;

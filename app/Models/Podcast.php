@@ -29,7 +29,7 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PodcastObserver::class)]
 #[Sluggable(from: 'name')]
 /** @property-read Collection<int, Episode> $publishedEpisodes */
-class Podcast extends Model
+final class Podcast extends Model
 {
     use DeletesOwnedContent;
 

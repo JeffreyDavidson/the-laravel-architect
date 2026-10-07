@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
-class ContactInquiriesTable
+final class ContactInquiriesTable
 {
     public static function configure(Table $table): Table
     {

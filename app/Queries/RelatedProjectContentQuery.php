@@ -10,7 +10,7 @@ use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class RelatedProjectContentQuery
+final class RelatedProjectContentQuery
 {
     /**
      * @return array{

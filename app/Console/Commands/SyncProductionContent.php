@@ -13,7 +13,7 @@ use Throwable;
 
 #[Signature('content:sync-production {--staging : Permit synchronization on the staging hostname when APP_ENV is production}')]
 #[Description('Replace staging public content and media with the current production versions')]
-class SyncProductionContent extends Command
+final class SyncProductionContent extends Command
 {
     public function handle(PublicContentImportGuard $guard, ProductionContentSynchronizer $synchronizer): int
     {

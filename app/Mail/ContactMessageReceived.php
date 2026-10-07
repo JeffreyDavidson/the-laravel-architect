@@ -15,7 +15,7 @@ use Illuminate\Mail\Mailables\Headers;
  * Notifies the site owner of a contact inquiry. Sent by SendContactInquiryEmails, which
  * records the send so retries never deliver it twice.
  */
-class ContactMessageReceived extends Mailable
+final class ContactMessageReceived extends Mailable
 {
     public function __construct(public readonly ContactInquiry $inquiry) {}
 

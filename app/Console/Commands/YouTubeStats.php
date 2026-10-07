@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 
 #[Signature('youtube:stats')]
 #[Description('Update view/like/comment counts for all synced videos')]
-class YouTubeStats extends Command
+final class YouTubeStats extends Command
 {
     public function handle(YouTubeService $youtube, YouTubeVideoStatsSynchronizer $synchronizer): int
     {

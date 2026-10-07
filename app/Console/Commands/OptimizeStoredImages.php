@@ -12,7 +12,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('media:optimize-images {--dry-run : Report changes without writing files} {--force : Re-optimize existing WebP images}')]
 #[Description('Replace stored content images with optimized WebP files')]
-class OptimizeStoredImages extends Command implements Isolatable
+final class OptimizeStoredImages extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

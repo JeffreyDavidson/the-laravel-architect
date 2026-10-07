@@ -35,7 +35,7 @@ use Throwable;
 #[Timeout(60)]
 #[FailOnTimeout]
 #[Backoff([60, 300, 900])]
-class SendContactInquiryEmails implements ShouldBeEncrypted, ShouldQueue
+final class SendContactInquiryEmails implements ShouldBeEncrypted, ShouldQueue
 {
     use Queueable;
 

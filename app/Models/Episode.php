@@ -36,7 +36,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read string|null $featured_image_url
  * @property-read Podcast|null $podcast
  */
-class Episode extends Model implements Publishable
+final class Episode extends Model implements Publishable
 {
     use DeletesOwnedContent;
 

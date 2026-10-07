@@ -19,7 +19,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Throwable;
 
-class MediaHealthReport
+final class MediaHealthReport
 {
     /** @var array<string, array{model: class-string<Model>, title: string, path: string, label: string}> */
     private const array SOURCES = [

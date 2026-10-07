@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\ViewModels\UsesViewModel;
 use Illuminate\Contracts\View\View;
 
-class UsesController
+final class UsesController
 {
     public function __invoke(UsesViewModel $viewModel): View
     {

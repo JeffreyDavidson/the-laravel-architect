@@ -7,7 +7,7 @@ namespace App\Services\Health;
 use Illuminate\Support\Facades\Cache;
 use RuntimeException;
 
-class RuntimeHealthMonitor
+final class RuntimeHealthMonitor
 {
     public const string QUEUE_HEARTBEAT_KEY = 'health.runtime.queue.last_seen_at';
 

@@ -13,7 +13,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class ContactController
+final class ContactController
 {
     public function create(Request $request, ContactViewModel $viewModel): View
     {

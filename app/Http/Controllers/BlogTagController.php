@@ -8,7 +8,7 @@ use App\Models\Tag;
 use App\ViewModels\BlogTagViewModel;
 use Illuminate\Contracts\View\View;
 
-class BlogTagController
+final class BlogTagController
 {
     public function __invoke(Tag $tag, BlogTagViewModel $blogTagViewModel): View
     {

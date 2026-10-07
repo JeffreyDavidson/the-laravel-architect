@@ -11,8 +11,9 @@ use App\Enums\PublishStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\Exists;
 
-class StoreContactRequest extends FormRequest
+final class StoreContactRequest extends FormRequest
 {
     public function toData(?string $projectTitle = null): ContactMessageData
     {
@@ -37,7 +38,7 @@ class StoreContactRequest extends FormRequest
         return true;
     }
 
-    /** @return array<string, list<string|Enum>> */
+    /** @return array<string, list<string|Enum|Exists>> */
     public function rules(): array
     {
         if ($this->filled('website')) {

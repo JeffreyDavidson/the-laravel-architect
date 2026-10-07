@@ -8,7 +8,7 @@ use App\Filament\Resources\SocialProfiles\SocialProfileResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListSocialProfiles extends ListRecords
+final class ListSocialProfiles extends ListRecords
 {
     #[\Override]
     protected static string $resource = SocialProfileResource::class;

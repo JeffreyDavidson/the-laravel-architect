@@ -8,7 +8,7 @@ use App\Models\Category;
 use App\ViewModels\BlogCategoryViewModel;
 use Illuminate\Contracts\View\View;
 
-class BlogCategoryController
+final class BlogCategoryController
 {
     public function __invoke(Category $category, BlogCategoryViewModel $blogCategoryViewModel): View
     {

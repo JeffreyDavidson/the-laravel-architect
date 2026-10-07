@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Posts\Pages;
 use App\Filament\Resources\Posts\PostResource;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreatePost extends CreateRecord
+final class CreatePost extends CreateRecord
 {
     #[\Override]
     protected static string $resource = PostResource::class;

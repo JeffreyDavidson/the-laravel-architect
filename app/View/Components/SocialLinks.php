@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 use InvalidArgumentException;
 
-class SocialLinks extends Component
+final class SocialLinks extends Component
 {
     /** @var Collection<int, SocialProfile> */
     public Collection $profiles;

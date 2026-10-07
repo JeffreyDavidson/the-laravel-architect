@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('youtube:sync {--limit=50 : Maximum videos to fetch}')]
 #[Description('Sync videos from YouTube channel')]
-class YouTubeSync extends Command
+final class YouTubeSync extends Command
 {
     public function handle(YouTubeVideoSynchronizer $synchronizer): int
     {
