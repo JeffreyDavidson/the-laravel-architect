@@ -9,15 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
 use Symfony\Component\HttpFoundation\Response;
 
+use function Pest\Laravel\post;
+
 pest()->use(RefreshDatabase::class);
 
 function activeSubscriber(): Subscriber
 {
-    return Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    return Subscriber::factory()->create();
 }
 
 /**
@@ -40,7 +38,7 @@ it('unsubscribes with a signed one-click post', function () {
     $url = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
 
-    $this->post($url, ['List-Unsubscribe' => 'One-Click'])
+    post($url, ['List-Unsubscribe' => 'One-Click'])
         ->assertNoContent();
 
     $subscriber->refresh();
@@ -54,7 +52,7 @@ it('accepts a burst of one-click posts from one mail provider address', function
 
     $statuses = [];
     foreach (range(1, 30) as $attempt) {
-        $response = $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+        $response = post($url, ['List-Unsubscribe' => 'One-Click']);
         $statuses[] = $response->status();
     }
 
@@ -66,10 +64,10 @@ it('still limits one-click posts from one address', function () {
     $url = app(UnsubscribeUrlGenerator::class)
         ->for(activeSubscriber());
     foreach (range(1, 120) as $attempt) {
-        $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+        post($url, ['List-Unsubscribe' => 'One-Click']);
     }
 
-    $response = $this->post($url, ['List-Unsubscribe' => 'One-Click']);
+    $response = post($url, ['List-Unsubscribe' => 'One-Click']);
 
     $response->assertTooManyRequests();
 });
@@ -77,7 +75,7 @@ it('still limits one-click posts from one address', function () {
 it('rejects unsigned one-click posts', function () {
     $subscriber = activeSubscriber();
 
-    $this->post(route('newsletter.unsubscribe.oneClick', $subscriber), ['List-Unsubscribe' => 'One-Click'])
+    post(route('newsletter.unsubscribe.oneClick', $subscriber), ['List-Unsubscribe' => 'One-Click'])
         ->assertForbidden();
 
     $subscriber->refresh();

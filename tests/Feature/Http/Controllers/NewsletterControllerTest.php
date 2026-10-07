@@ -8,8 +8,13 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\call;
+use function Pest\Laravel\delete;
 use function Pest\Laravel\followingRedirects;
+use function Pest\Laravel\from;
+use function Pest\Laravel\get;
 use function Pest\Laravel\post;
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\travel;
 
 pest()->use(RefreshDatabase::class);
 
@@ -18,7 +23,7 @@ beforeEach(function () {
 });
 
 it('creates an unverified subscriber and sends a confirmation message', function () {
-    $this->post(route('newsletter.subscribe'), ['email' => 'Reader@Example.com'])
+    post(route('newsletter.subscribe'), ['email' => 'Reader@Example.com'])
         ->assertRedirect()
         ->assertSessionHas('newsletter_success', 'Check your email to confirm your subscription.');
 
@@ -40,11 +45,11 @@ it('creates an unverified subscriber and sends a confirmation message', function
 it('applies the pending email cooldown across different source IP addresses', function () {
     $url = route('newsletter.subscribe');
 
-    $this->call('POST', $url, ['email' => 'reader@example.com'], [], [], [
+    call('POST', $url, ['email' => 'reader@example.com'], [], [], [
         'REMOTE_ADDR' => '192.0.2.10',
     ])->assertRedirect();
 
-    $this->call('POST', $url, ['email' => 'reader@example.com'], [], [], [
+    call('POST', $url, ['email' => 'reader@example.com'], [], [], [
         'REMOTE_ADDR' => '198.51.100.20',
     ])->assertRedirect();
 
@@ -52,7 +57,7 @@ it('applies the pending email cooldown across different source IP addresses', fu
 });
 
 it('silently accepts newsletter honeypot submissions without subscribing', function () {
-    $this->post(route('newsletter.subscribe'), [
+    post(route('newsletter.subscribe'), [
         'website' => 'filled-by-bot',
     ])->assertSessionHas('newsletter_success');
 
@@ -63,12 +68,8 @@ it('silently accepts newsletter honeypot submissions without subscribing', funct
 
 it('shows an explicit confirmation step without changing subscriber state', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
 
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
@@ -78,7 +79,7 @@ it('shows an explicit confirmation step without changing subscriber state', func
 
     $email = $subscriber->email;
 
-    $this->get($url)
+    get($url)
         ->assertOk()
         ->assertSee('Confirm your subscription')
         ->assertSee($email)
@@ -95,31 +96,26 @@ it('shows an explicit confirmation step without changing subscriber state', func
 
 it('keeps the confirmation page out of every cache, including the back-forward cache', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
         ['subscriber' => $subscriber, 'token' => $token],
     );
 
-    $response = $this->get($url);
+    $response = get($url);
 
     $response->assertHeader('Cache-Control', 'no-store, private');
 });
 
 it('renders the confirmation page in its confirming state with a no-script button inside the signed form', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create([
+            'email' => 'reader@example.com',
+            'verification_token_hash' => hash('sha256', $token),
+        ]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
@@ -128,7 +124,7 @@ it('renders the confirmation page in its confirming state with a no-script butto
 
     $escapedUrl = e($url);
 
-    $response = $this->get($url);
+    $response = get($url);
 
     $response->assertOk()
         ->assertSeeHtmlInOrder([
@@ -152,19 +148,15 @@ it('renders the confirmation page in its confirming state with a no-script butto
 
 it('titles the confirmation page tab with the confirming state', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
         ['subscriber' => $subscriber, 'token' => $token],
     );
 
-    $response = $this->get($url);
+    $response = get($url);
 
     $response->assertOk()
         ->assertSeeHtml('<title>Confirming Your Subscription')
@@ -173,13 +165,7 @@ it('titles the confirmation page tab with the confirming state', function () {
 
 it('submits only the confirmation page by itself, never the unsubscribe page', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->create(['verification_token_hash' => hash('sha256', $token)]);
     $confirmUrl = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
@@ -188,8 +174,8 @@ it('submits only the confirmation page by itself, never the unsubscribe page', f
     $unsubscribeUrl = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
 
-    $confirmPage = $this->get($confirmUrl);
-    $unsubscribePage = $this->get($unsubscribeUrl);
+    $confirmPage = get($confirmUrl);
+    $unsubscribePage = get($unsubscribeUrl);
 
     $confirmPage->assertSeeHtml('data-newsletter-confirm');
     $unsubscribePage->assertOk()
@@ -197,35 +183,27 @@ it('submits only the confirmation page by itself, never the unsubscribe page', f
 });
 
 it('limits confirmation link requests to 10 a minute from one address', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', 'valid-token')]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
         ['subscriber' => $subscriber, 'token' => 'valid-token'],
     );
     foreach (range(1, 10) as $attempt) {
-        $this->get($url)
+        get($url)
             ->assertOk();
     }
 
-    $response = $this->get($url);
+    $response = get($url);
 
     $response->assertTooManyRequests();
 });
 
 it('confirms a subscriber with an explicit post to a valid signed link and redirects to the confirmed page', function () {
     $token = 'valid-confirmation-token';
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', $token);
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', $token)]);
 
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
@@ -233,7 +211,7 @@ it('confirms a subscriber with an explicit post to a valid signed link and redir
         ['subscriber' => $subscriber, 'token' => $token],
     );
 
-    $this->post($url)
+    post($url)
         ->assertRedirect(route('newsletter.confirmed'));
 
     $subscriber->refresh();
@@ -246,12 +224,8 @@ it('confirms a subscriber with an explicit post to a valid signed link and redir
 });
 
 it('sends an unusable confirmation link back to the signup form without confirming anyone', function (Closure $link, string $method, string $routeName) {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', 'valid-token')]);
     $url = $link($subscriber, $routeName);
     if (! is_string($url)) {
         throw new RuntimeException('The dataset must build a confirmation URL.');
@@ -298,12 +272,8 @@ it('sends an unusable confirmation link back to the signup form without confirmi
 ]);
 
 it('sends a confirmation link used a second time back to the signup form with its message', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-    ]);
-    $subscriber->verification_token_hash = hash('sha256', 'valid-token');
-    $subscriber->save();
+    $subscriber = Subscriber::factory()->pending()
+        ->create(['verification_token_hash' => hash('sha256', 'valid-token')]);
     $url = URL::temporarySignedRoute(
         'newsletter.confirm',
         now()->addHour(),
@@ -322,17 +292,13 @@ it('sends a confirmation link used a second time back to the signup form with it
 });
 
 it('shows an unsubscribe step without changing subscriber state', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
 
     $url = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
     $email = $subscriber->email;
 
-    $this->get($url)
+    get($url)
         ->assertOk()
         ->assertSee('Unsubscribe from the newsletter')
         ->assertSeeHtml('name="_method" value="DELETE"')
@@ -345,18 +311,14 @@ it('shows an unsubscribe step without changing subscriber state', function () {
 });
 
 it('generates unsubscribe links that keep working after the newsletter is sent', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
     $url = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
 
-    $this->travel(1)
+    travel(1)
         ->year();
 
-    $this->get($url)
+    get($url)
         ->assertOk();
     expect($url)
         ->not
@@ -364,16 +326,12 @@ it('generates unsubscribe links that keep working after the newsletter is sent',
 });
 
 it('unsubscribes with an explicit delete to a valid signed link', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
 
     $url = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
 
-    $this->delete($url)
+    delete($url)
         ->assertRedirect(route('home').'#newsletter-form')
         ->assertSessionHas('newsletter_success', 'You have been unsubscribed.');
 
@@ -384,11 +342,9 @@ it('unsubscribes with an explicit delete to a valid signed link', function () {
 });
 
 it('rejects unsigned unsubscribe requests', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-    ]);
+    $subscriber = Subscriber::factory()->create();
 
-    $this->delete(route('newsletter.unsubscribe.store', $subscriber))
+    delete(route('newsletter.unsubscribe.store', $subscriber))
         ->assertForbidden();
 
     $subscriber->refresh();
@@ -397,9 +353,7 @@ it('rejects unsigned unsubscribe requests', function () {
 });
 
 it('rejects an unsigned unsubscribe link without revealing whether the subscriber exists', function (string $method, string $routeName) {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-    ]);
+    $subscriber = Subscriber::factory()->create();
 
     $existingSubscriber = call($method, route($routeName, $subscriber));
     $missingSubscriber = call($method, route($routeName, $subscriber->id + 1));
@@ -413,30 +367,24 @@ it('rejects an unsigned unsubscribe link without revealing whether the subscribe
 ]);
 
 it('keeps the unsubscribe page out of every cache', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
-    ]);
+    $subscriber = Subscriber::factory()->create();
     $url = app(UnsubscribeUrlGenerator::class)
         ->for($subscriber);
 
-    $response = $this->get($url);
+    $response = get($url);
 
     $response->assertHeader('Cache-Control', 'no-store, private');
 });
 
 it('rejects expired unsubscribe links', function () {
-    $subscriber = Subscriber::query()->create([
-        'email' => 'reader@example.com',
-    ]);
+    $subscriber = Subscriber::factory()->create();
     $url = URL::temporarySignedRoute(
         'newsletter.unsubscribe',
         now()->subMinute(),
         ['subscriber' => $subscriber],
     );
 
-    $this->delete($url)
+    delete($url)
         ->assertForbidden();
 
     $subscriber->refresh();
@@ -457,20 +405,18 @@ it('limits newsletter sign-ups to 5 an hour from one address', function () {
 });
 
 it('does not disclose whether an email is already subscribed', function () {
-    Subscriber::query()->create([
+    Subscriber::factory()->create([
         'email' => 'reader@example.com',
-        'subscribed_at' => now(),
-        'verified_at' => now(),
     ]);
 
-    $this->post(route('newsletter.subscribe'), ['email' => 'reader@example.com'])
+    post(route('newsletter.subscribe'), ['email' => 'reader@example.com'])
         ->assertSessionHas('newsletter_success', 'Check your email to confirm your subscription.');
 
     Mail::assertNothingQueued();
 });
 
 it('sends a subscriber back to the signup form after subscribing', function (string $page) {
-    $this->from(route($page))
+    from(route($page))
         ->post(route('newsletter.subscribe'), ['email' => 'reader@example.com'])
         ->assertRedirect(route($page).'#newsletter-form')
         ->assertSessionHas('newsletter_success');
@@ -480,14 +426,14 @@ it('sends a subscriber back to the signup form after subscribing', function (str
 ]);
 
 it('sends a bot back to the signup form too, without revealing the honeypot', function () {
-    $this->from(route('home'))
+    from(route('home'))
         ->post(route('newsletter.subscribe'), ['email' => 'bot@example.com', 'website' => 'https://spam.example'])
         ->assertRedirect(route('home').'#newsletter-form')
         ->assertSessionHas('newsletter_success');
 });
 
 it('sends a rejected sign-up back to the signup form with its error', function () {
-    $this->from(route('home'))
+    from(route('home'))
         ->post(route('newsletter.subscribe'), ['email' => 'not-an-email'])
         ->assertRedirect(route('home').'#newsletter-form')
         ->assertSessionHasErrors('email')
@@ -495,7 +441,7 @@ it('sends a rejected sign-up back to the signup form with its error', function (
 });
 
 it('renders the signup form with the anchor the redirects point to', function (string $page) {
-    $this->get(route($page))
+    get(route($page))
         ->assertOk()
         ->assertSeeHtml('id="newsletter-form"');
 })->with([
@@ -504,7 +450,7 @@ it('renders the signup form with the anchor the redirects point to', function (s
 ]);
 
 it('answers a script request with the confirmation message and keeps the session untouched', function () {
-    $this->postJson(route('newsletter.subscribe'), ['email' => 'Reader@Example.com'])
+    postJson(route('newsletter.subscribe'), ['email' => 'Reader@Example.com'])
         ->assertOk()
         ->assertExactJson(['message' => 'Check your email to confirm your subscription.'])
         ->assertSessionMissing('newsletter_success');
@@ -517,7 +463,7 @@ it('answers a script request with the confirmation message and keeps the session
 });
 
 it('answers a script request for a rejected address with the validation error', function () {
-    $this->postJson(route('newsletter.subscribe'), ['email' => 'not-an-email'])
+    postJson(route('newsletter.subscribe'), ['email' => 'not-an-email'])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('email');
 
@@ -526,7 +472,7 @@ it('answers a script request for a rejected address with the validation error', 
 });
 
 it('answers a bot that fills the honeypot like a real sign-up, without subscribing anyone', function () {
-    $this->postJson(route('newsletter.subscribe'), ['email' => 'bot@example.com', 'website' => 'https://spam.example'])
+    postJson(route('newsletter.subscribe'), ['email' => 'bot@example.com', 'website' => 'https://spam.example'])
         ->assertOk()
         ->assertExactJson(['message' => 'Check your email to confirm your subscription.']);
 
@@ -536,7 +482,7 @@ it('answers a bot that fills the honeypot like a real sign-up, without subscribi
 });
 
 it('renders the signup form as an Alpine component with its live region', function (string $page) {
-    $this->get(route($page))
+    get(route($page))
         ->assertOk()
         ->assertSeeHtml('x-data="newsletterForm"')
         ->assertSeeHtml('data-newsletter-form')

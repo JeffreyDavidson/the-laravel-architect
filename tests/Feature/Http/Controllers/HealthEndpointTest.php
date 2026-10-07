@@ -5,10 +5,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\getJson;
+
 pest()->use(RefreshDatabase::class);
 
 it('reports that the application and database are healthy', function () {
-    $this->getJson('/up')
+    getJson('/up')
         ->assertOk()
         ->assertExactJson(['status' => 'up']);
 });
@@ -28,7 +30,7 @@ it('reports an unavailable database as unhealthy', function () {
     ]);
     DB::purge('unavailable');
 
-    $response = $this->getJson('/up');
+    $response = getJson('/up');
 
     DB::purge('unavailable');
     config()->set('database.default', $defaultConnection);
@@ -43,7 +45,7 @@ it('reports fresh scheduler and queue heartbeats as healthy when runtime monitor
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    $this->getJson('/up')
+    getJson('/up')
         ->assertOk()
         ->assertExactJson(['status' => 'up']);
 });
@@ -57,7 +59,7 @@ it('reports a stale scheduler heartbeat as unhealthy', function () {
         ->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    $this->getJson('/up')
+    getJson('/up')
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });
@@ -71,7 +73,7 @@ it('reports a stale queue worker heartbeat as unhealthy', function () {
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(6)
         ->getTimestamp());
 
-    $this->getJson('/up')
+    getJson('/up')
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });
@@ -85,7 +87,7 @@ it('reports invalid runtime heartbeat configuration as unhealthy', function () {
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    $this->getJson('/up')
+    getJson('/up')
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });
