@@ -22,22 +22,16 @@
             </div>
         @else
             <div class="tla-dashboard-actions">
+                {{-- The widget shows at most four areas, one badge colour each. --}}
                 @foreach ($items as $index => $item)
-                    <a href="{{ $item['url'] }}" class="tla-dashboard-action">
-                        <span
-                            @class([
-                                'tla-dashboard-action__icon',
-                                'tla-dashboard-action__icon--blue' => $index === 0,
-                                'tla-dashboard-action__icon--pink' => $index === 1,
-                                'tla-dashboard-action__icon--green' => $index === 2,
-                                'tla-dashboard-action__icon--amber' => $index === 3,
-                            ])
-                        >{{ $item['count'] }}</span>
-                        <span>
-                            <strong>{{ $item['label'] }}</strong>
-                            <small>{{ $item['description'] }}</small>
-                        </span>
-                    </a>
+                    <x-filament.dashboard-action
+                        :url="$item['url']"
+                        :label="$item['label']"
+                        :description="$item['description']"
+                        :color="['blue', 'pink', 'green', 'amber'][$index]"
+                    >
+                        {{ $item['count'] }}
+                    </x-filament.dashboard-action>
                 @endforeach
             </div>
         @endif

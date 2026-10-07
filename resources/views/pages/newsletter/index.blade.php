@@ -9,20 +9,13 @@
     </x-slot:head>
 
     <div class="dark:bg-surface-page bg-gray-50">
-        <header class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
-            <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-                <p class="text-brand-600 dark:text-brand-300 font-mono text-sm font-semibold tracking-wide uppercase">
-                    Newsletter
-                </p>
-                <h1 class="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-gray-950 sm:text-5xl dark:text-white">
-                    Notes worth keeping.
-                </h1>
-                <p class="mt-5 max-w-2xl text-lg text-pretty text-gray-600 dark:text-gray-400">
-                    Practical Laravel architecture notes, tutorials, and updates from the work behind The Laravel
-                    Architect.
-                </p>
-            </div>
-        </header>
+        <x-page-header
+            width="6xl"
+            eyebrow="Newsletter"
+            eyebrow-variant="section"
+            title="Notes worth keeping."
+            description="Practical Laravel architecture notes, tutorials, and updates from the work behind The Laravel Architect."
+        />
 
         <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <section aria-labelledby="newsletter-issues-heading">
