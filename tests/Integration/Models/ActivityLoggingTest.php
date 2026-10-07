@@ -5,7 +5,6 @@ use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,13 +28,7 @@ function latestActivityFor(Model $subject): Activity
 }
 
 it('records operational post changes without recording long-form content', function () {
-    $post = Post::query()->create([
-        'title' => 'Activity logging',
-        'content' => 'Original content.',
-        'user_id' => User::factory()
-            ->create()
-            ->getKey(),
-    ]);
+    $post = Post::factory()->create();
     $post->refresh();
     $initialActivityCount = activityCountFor($post);
 
@@ -53,10 +46,7 @@ it('records operational post changes without recording long-form content', funct
 });
 
 it('records operational newsletter issue changes without recording long-form content', function () {
-    $issue = NewsletterIssue::query()->create([
-        'title' => 'Activity logging',
-        'content' => 'Original content.',
-    ]);
+    $issue = NewsletterIssue::factory()->create();
     $issue->refresh();
     $initialActivityCount = activityCountFor($issue);
 
@@ -74,11 +64,7 @@ it('records operational newsletter issue changes without recording long-form con
 });
 
 it('does not record synchronized video statistics', function () {
-    $video = Video::query()->create([
-        'youtube_id' => 'video-id',
-        'title' => 'Laravel Video',
-        'slug' => 'laravel-video',
-    ]);
+    $video = Video::factory()->create();
     $video->refresh();
     $initialActivityCount = activityCountFor($video);
 
@@ -98,42 +84,10 @@ it('records content changes in the application log', function (Model $subject) {
     expect(latestActivityFor($subject)->log_name)
         ->toBe('application');
 })->with([
-    'post' => fn (): Post => Post::query()->create([
-        'title' => 'Logged post',
-        'content' => 'Content.',
-        'user_id' => User::factory()
-            ->create()
-            ->getKey(),
-    ]),
-    'episode' => fn (): Episode => Episode::query()->create([
-        'podcast_id' => Podcast::query()
-            ->create([
-                'name' => 'Logged podcast',
-                'slug' => 'logged-podcast',
-                'description' => 'Description.',
-            ])
-            ->getKey(),
-        'title' => 'Logged episode',
-        'slug' => 'logged-episode',
-        'description' => 'Description.',
-    ]),
-    'podcast' => fn (): Podcast => Podcast::query()->create([
-        'name' => 'Logged podcast',
-        'slug' => 'logged-podcast',
-        'description' => 'Description.',
-    ]),
-    'project' => fn (): Project => Project::query()->create([
-        'title' => 'Logged project',
-        'slug' => 'logged-project',
-        'description' => 'Description.',
-    ]),
-    'newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::query()->create([
-        'title' => 'Logged issue',
-        'content' => 'Content.',
-    ]),
-    'video' => fn (): Video => Video::query()->create([
-        'youtube_id' => 'logged-video',
-        'title' => 'Logged video',
-        'slug' => 'logged-video',
-    ]),
+    'post' => fn (): Post => Post::factory()->create(),
+    'episode' => fn (): Episode => Episode::factory()->create(),
+    'podcast' => fn (): Podcast => Podcast::factory()->create(),
+    'project' => fn (): Project => Project::factory()->create(),
+    'newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::factory()->create(),
+    'video' => fn (): Video => Video::factory()->create(),
 ]);
