@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Tag;
+use App\Services\Health\RuntimeHealthMonitor;
 use App\Services\PublicPageBenchmark;
 use App\Support\DisplayTimezone;
-use App\Support\Monitoring\Health\RuntimeHealthMonitor;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
 use App\Support\Monitoring\Nightwatch\RedactNightwatchException;

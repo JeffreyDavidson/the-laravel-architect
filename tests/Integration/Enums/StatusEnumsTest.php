@@ -55,6 +55,9 @@ it('labels each case as it was previously displayed', function (HasLabel $case, 
     expect($result)
         ->toBe($label);
 })->with([
+    'new inquiry' => [ContactInquiryStatus::New, 'New'],
+    'inquiry in progress' => [ContactInquiryStatus::InProgress, 'In progress'],
+    'resolved inquiry' => [ContactInquiryStatus::Resolved, 'Resolved'],
     'healthy media' => [MediaHealthStatus::Healthy, 'Healthy'],
     'media needing repair' => [MediaHealthStatus::NeedsRepair, 'Needs repair'],
     'media needing re-upload' => [MediaHealthStatus::ReuploadRequired, 'Re-upload required'],

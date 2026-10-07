@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasColor;
@@ -10,18 +12,6 @@ enum ContactInquiryStatus: string implements HasColor, HasLabel
     case New = 'new';
     case InProgress = 'in_progress';
     case Resolved = 'resolved';
-
-    /**
-     * @return array<string, string>
-     */
-    public static function labels(): array
-    {
-        return [
-            self::New->value => 'New',
-            self::InProgress->value => 'In progress',
-            self::Resolved->value => 'Resolved',
-        ];
-    }
 
     public function getColor(): string
     {
@@ -34,6 +24,10 @@ enum ContactInquiryStatus: string implements HasColor, HasLabel
 
     public function getLabel(): string
     {
-        return self::labels()[$this->value];
+        return match ($this) {
+            self::New => 'New',
+            self::InProgress => 'In progress',
+            self::Resolved => 'Resolved',
+        };
     }
 }

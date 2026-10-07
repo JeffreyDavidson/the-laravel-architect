@@ -103,7 +103,7 @@ pending manual review; select and review the new revision before promotion.
 1. Choose a successful `Deploy staging` run for the full SHA on `main` that was
    created after the release PR merged.
 2. Confirm rollback artifacts, migration safety, media requirements and any
-   one-time commands from `operations.md`. Code rollback does not undo database
+   one-time commands from [operations](operations.md). Code rollback does not undo database
    migrations. Prefer forward-compatible migrations and forward fixes.
 3. Dispatch `Promote production` **from main**, providing that staging run ID
    and the full revision. This request is not a substitute for environment
@@ -190,7 +190,7 @@ staging: workflow "Deploy staging" (workflow_run after push CI on main and relea
 promote: workflow promote-production.yml, inputs revision (40-char SHA) + staging_run_id, protected `production` environment
 verify: https://thelaravelarchitect.com/deployment.json (revision), https://thelaravelarchitect.com/up (200)
 smoke_pages: / /blog /podcasts /search /contact /admin/login /sitemap.xml /rss   # expect 200; the podcast index is /podcasts and the feed is /rss, so /podcast and /feed return 404
-deploy_script: Forge keeps a separate copy per site (staging 3366565, production 3044519); keep both identical to the script in docs/operations.md and paste any change into both
+deploy_script: Forge keeps a separate copy per site (staging 3366565, production 3044519); keep both identical to the script in docs/operations/forge-deploy-script.md and paste any change into both
 sync_integration: fast-forward
 backup_gate: php artisan backup:run then php artisan app:verify-backup; run by the production deploy script only when the release has pending migrations. The gate ran successfully in production in release 2026.10.1 (Forge deployment 79150690). A failed backup or verification stops the deploy before it migrates, and the previous release keeps serving
 ```

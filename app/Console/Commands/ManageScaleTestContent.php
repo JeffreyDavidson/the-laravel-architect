@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Enums\ScaleTestContentAction;
+use App\Services\ContentArchive\PublicContentImportGuard;
 use App\Services\ScaleTestContentWorkflow;
-use App\Support\Content\Archives\PublicContentImportGuard;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

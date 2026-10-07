@@ -66,41 +66,57 @@ Search runs one count query per result group for its per-group pagination, and s
 
 To change a budget intentionally, make the change, run the test, and confirm the new count in the failure message is constant for the page (it must not depend on the amount of content). Update the dataset value and this table in the same commit, and explain the new query in the PR. Never raise a budget to absorb an N+1: eager-load the relation instead.
 
-## Deployment safeguards
+## Regression coverage notes
+
+Contact integration tests use the real test database queue and inject failure at the email job insert. They verify that no inquiry or job remains after failure and that a retry creates exactly one inquiry and one job. Job tests cover per-email stamps, retrying only the failed email, cancelled sends, the 23-hour manual-review cutoff and stable idempotency keys.
+
+Publication tests cover past, current, future, and missing dates, including dashboard counts and linked results.
+
+Admin browser tests exercise appearance controls, hit-test the open account menu against underlying content, and check the collapsed create action's alignment and navigation.
+
+## Method-chain check
 
 `php scripts/check-method-chaining.php` requires each chained method call on its own line: a line fails when an `->` continues a method call made earlier on the same line, such as `$query->where()->first()`. Separate accesses such as `$this->save($model->id)`, enum `->value`, property chains, and `->not` are allowed, and merged migrations are not checked. CI runs it across the repository; the pre-push hook runs it on changed PHP files. `tests/Unit/Scripts/CheckMethodChainingTest.php` covers what it flags and allows.
 
-Run `npm run test:deployment` with Node 22 to test the deployment helpers and the actual command entry point. CI and the pre-push hook run the same command. The CLI tests launch a separate Node process with synthetic credentials and replace the HTTP transport; they do not contact Forge or Cloudflare or require secrets.
+## Deployment safeguards
+
+Run `npm run test:deployment` with Node 22 to test the deployment helpers and the actual command entry point. CI and the pre-push hook run the same command. The CLI tests launch a separate Node process with synthetic credentials and replace the HTTP transport; they do not contact Forge or Cloudflare or require secrets. The same suite reads the Forge deploy script from [docs/operations/forge-deploy-script.md](operations/forge-deploy-script.md) and checks its guards and step order, so run it after editing that page.
 
 Staging must use the combined `deploy` operation: it validates the exact Forge target before making requests and requires a different deployment ID even when redeploying the same commit. Regression coverage includes wrong-site rejection, same-revision timeout, and the workflow's use of that guarded entry point. It also covers read-only requests retrying timeouts and HTTP 502-504 up to three attempts, polling continuing through read errors until the deadline, and the Forge trigger being attempted exactly once.
-
-Contact integration tests use the real test database queue and inject failure at the email job insert. They verify that no inquiry or job remains after failure and that a retry creates exactly one inquiry and one job. Job tests cover per-email stamps, retrying only the failed email, cancelled sends, the 23-hour manual-review cutoff and stable idempotency keys. Publication tests cover past, current, future, and missing dates, including dashboard counts and linked results. Admin browser tests exercise appearance controls, hit-test the open account menu against underlying content, and check the collapsed create action's alignment and navigation.
 
 Keep command-level coverage for credential forwarding, GET requests, missing credentials, login redirects, HTTP errors, curl failures, exit codes, and secret-safe output. Helper-only tests cannot catch argument mismatches in the command dispatcher. A successful preflight requires HTTP 200; it does not replace the deployed-revision verification or live staging smoke checks.
 
 ## Local content and scale checks
 
 The default `db:seed` creates the local administrator only. For representative
-public editorial content, use a reviewed public-content archive; the archive
-contains text and metadata but not uploaded media, and importing it replaces
-the target's current public content. For repeatable listing and pagination
-checks, run `php artisan content:scale-test seed`, then remove its prefixed
-records with `php artisan content:scale-test clear`. This creates one podcast,
-300 episodes, 100 posts, and 50 projects without audio or uploaded files.
+public editorial content, use a reviewed public-content archive (see the
+[README](../README.md#local-development)); the archive contains text and
+metadata but not uploaded media, and importing it replaces the target's current
+public content.
+
+For repeatable listing and pagination checks, run
+`php artisan content:scale-test seed`, then remove only its prefixed records
+with `php artisan content:scale-test clear`. This creates one podcast, 300
+episodes, 100 posts, and 50 projects without audio or uploaded files. The
+command is opt-in (not part of `db:seed`) and guarded against production.
 
 Compare the same `/blog`, `/podcasts/scale-test-podcast`, and `/projects`
-requests before and after seeding. The podcast show route exercises its episode
-listing; `/podcasts` is the podcast index. Record response timings, query count
-and duration, and memory use; repeat requests to distinguish first-request cost
-from steady-state behavior.
+requests (and filters) before and after seeding. The podcast show route
+exercises its episode listing; `/podcasts` is the podcast index. Record response
+timings, query count and duration, and memory use; repeat requests to
+distinguish first-request cost from steady-state behavior.
+
 For a repeatable local application-level sample, seed the scale-test content and
 run `php artisan content:benchmark --iterations=5`. The command measures those
 three routes through Laravel's HTTP kernel, reports first-request metrics and
 the average of subsequent requests, and makes no content changes. It is limited
 to `APP_ENV=local`; it does not measure the Herd/PHP-FPM/network overhead or
 production cache behavior.
+
 Use staging only for an approved measurement window, with
 `content:scale-test seed --staging` and `content:scale-test clear --staging`:
 its public pages will show the synthetic published records until cleanup runs.
-Do not add public-page caching until measurements show a material benefit and
-its invalidation behavior has been designed and verified.
+
+Keep caching decisions tied to measured query and response timings. Do not add
+public-page caching until measurements show a material benefit and its
+invalidation behavior has been designed and verified.

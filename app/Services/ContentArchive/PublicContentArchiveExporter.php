@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Content\Archives;
+namespace App\Services\ContentArchive;
 
 use App\Models\Category;
 use App\Models\Episode;
@@ -22,22 +22,6 @@ use Spatie\Tags\Tag;
  */
 class PublicContentArchiveExporter
 {
-    private const int VERSION = 1;
-
-    private const array POST_FIELDS = ['title', 'slug', 'excerpt', 'content', 'featured_image_path', 'published_at'];
-
-    private const array PROJECT_FIELDS = ['title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order'];
-
-    private const array PODCAST_FIELDS = ['name', 'slug', 'description', 'long_description', 'cover_image_path', 'color', 'apple_url', 'spotify_url', 'rss_url', 'youtube_url', 'sort_order'];
-
-    private const array EPISODE_FIELDS = ['title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'transistor_url', 'published_at'];
-
-    private const array NEWSLETTER_ISSUE_FIELDS = ['title', 'slug', 'excerpt', 'content', 'published_at'];
-
-    private const array VIDEO_FIELDS = ['youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at'];
-
-    private const array SEO_FIELDS = ['description', 'title', 'image', 'author', 'robots', 'canonical_url'];
-
     /** @return array<string, mixed> */
     public function export(): array
     {
@@ -48,7 +32,7 @@ class PublicContentArchiveExporter
             ->orderBy('id')
             ->lazy(100)
             ->map(fn (Post $post): array => [
-                ...$this->attributes($post, self::POST_FIELDS),
+                ...$this->attributes($post, PublicContentArchiveSchema::POST_FIELDS),
                 'category_slug' => $post->category?->slug,
                 'tags' => $this->tags($post),
                 'seo' => $this->seo($post),
@@ -63,7 +47,7 @@ class PublicContentArchiveExporter
             ->orderBy('id')
             ->lazy(100)
             ->map(fn (Project $project): array => [
-                ...$this->attributes($project, self::PROJECT_FIELDS),
+                ...$this->attributes($project, PublicContentArchiveSchema::PROJECT_FIELDS),
                 'github_url' => null,
                 'tech_stack' => $project->tech_stack,
                 'tags' => $this->tags($project),
@@ -79,7 +63,7 @@ class PublicContentArchiveExporter
             ->orderBy('id')
             ->lazy(100)
             ->map(fn (Podcast $podcast): array => [
-                ...$this->attributes($podcast, self::PODCAST_FIELDS),
+                ...$this->attributes($podcast, PublicContentArchiveSchema::PODCAST_FIELDS),
                 'seo' => $this->seo($podcast),
             ])
             ->values()
@@ -93,7 +77,7 @@ class PublicContentArchiveExporter
             ->orderBy('id')
             ->lazy(100)
             ->map(fn (Episode $episode): array => [
-                ...$this->attributes($episode, self::EPISODE_FIELDS),
+                ...$this->attributes($episode, PublicContentArchiveSchema::EPISODE_FIELDS),
                 'podcast_slug' => $episode->podcast?->slug,
                 'tags' => $this->tags($episode),
                 'seo' => $this->seo($episode),
@@ -108,14 +92,14 @@ class PublicContentArchiveExporter
             ->orderBy('id')
             ->lazy(100)
             ->map(fn (NewsletterIssue $issue): array => [
-                ...$this->attributes($issue, self::NEWSLETTER_ISSUE_FIELDS),
+                ...$this->attributes($issue, PublicContentArchiveSchema::NEWSLETTER_ISSUE_FIELDS),
                 'seo' => $this->seo($issue),
             ])
             ->values()
             ->all();
 
         return [
-            'version' => self::VERSION,
+            'version' => PublicContentArchiveSchema::VERSION,
             'exported_at' => now()->toAtomString(),
             'categories' => Category::query()
                 ->whereHas('publishedPosts')
@@ -135,9 +119,9 @@ class PublicContentArchiveExporter
                 ->published()
                 ->orderBy('published_at')
                 ->orderBy('id')
-                ->select(self::VIDEO_FIELDS)
+                ->select(PublicContentArchiveSchema::VIDEO_FIELDS)
                 ->lazy(100)
-                ->map(fn (Video $video): array => $this->attributes($video, self::VIDEO_FIELDS))
+                ->map(fn (Video $video): array => $this->attributes($video, PublicContentArchiveSchema::VIDEO_FIELDS))
                 ->values()
                 ->all(),
         ];
@@ -149,24 +133,7 @@ class PublicContentArchiveExporter
      */
     private function attributes(Model $model, array $fields): array
     {
-        return $this->only($model->getAttributes(), $fields);
-    }
-
-    /** @param array<string, mixed> $attributes
-     * @param  list<string>  $fields
-     * @return array<string, mixed>
-     */
-    private function only(array $attributes, array $fields): array
-    {
-        $selected = [];
-
-        foreach ($fields as $field) {
-            if (array_key_exists($field, $attributes)) {
-                $selected[$field] = $attributes[$field];
-            }
-        }
-
-        return $selected;
+        return PublicContentArchiveSchema::only($model->getAttributes(), $fields);
     }
 
     /** @return list<array{name: string, type: string|null}> */
@@ -190,6 +157,6 @@ class PublicContentArchiveExporter
     {
         $seo = $model->seo;
 
-        return $seo !== null && $seo->exists ? $this->attributes($seo, self::SEO_FIELDS) : null;
+        return $seo !== null && $seo->exists ? $this->attributes($seo, PublicContentArchiveSchema::SEO_FIELDS) : null;
     }
 }
