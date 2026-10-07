@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\ImageOptimizationOutcome;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -51,97 +52,100 @@ class StoredImageOptimizationWorkflow
         bool $force,
         Closure $warning,
     ): array {
-        $optimized = 0;
-        $skipped = 0;
-        $failed = 0;
-        $disk = Storage::disk('public');
+        $counts = ['optimized' => 0, 'skipped' => 0, 'failed' => 0];
 
-        $modelClass::query()
+        $records = $modelClass::query()
             ->whereNotNull($pathColumn)
             ->select(['id', $pathColumn])
-            ->eachById(function (Model $model) use ($pathColumn, $directory, $label, $dryRun, $force, $disk, $warning, &$optimized, &$skipped, &$failed): void {
-                $sourcePath = $model->getAttribute($pathColumn);
+            ->lazyById();
 
-                if (! is_string($sourcePath) || blank($sourcePath)) {
-                    $this->fail($model, $label, $warning, $failed);
+        foreach ($records as $record) {
+            $outcome = $this->optimizeRecord($record, $pathColumn, $directory, $dryRun, $force);
 
-                    return;
-                }
+            if ($outcome === ImageOptimizationOutcome::Failed) {
+                $this->warnFailure($record, $label, $warning);
+            }
 
-                if (! $force && str_ends_with(strtolower($sourcePath), '.webp') && $disk->exists($sourcePath)) {
-                    $skipped++;
+            $counts[$outcome->value]++;
+        }
 
-                    return;
-                }
+        return $counts;
+    }
 
-                try {
-                    $contents = $disk->get($sourcePath);
-                } catch (Throwable) {
-                    $this->fail($model, $label, $warning, $failed);
+    /**
+     * Replace one record's stored image with an optimized WebP copy. A new
+     * file is deleted again when it is invalid or its path could not be saved.
+     */
+    private function optimizeRecord(
+        Model $record,
+        string $pathColumn,
+        string $directory,
+        bool $dryRun,
+        bool $force,
+    ): ImageOptimizationOutcome {
+        $disk = Storage::disk('public');
+        $sourcePath = $record->getAttribute($pathColumn);
 
-                    return;
-                }
+        if (! is_string($sourcePath) || blank($sourcePath)) {
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                if (! is_string($contents)) {
-                    $this->fail($model, $label, $warning, $failed);
+        if (! $force && str_ends_with(strtolower($sourcePath), '.webp') && $disk->exists($sourcePath)) {
+            return ImageOptimizationOutcome::Skipped;
+        }
 
-                    return;
-                }
+        try {
+            $contents = $disk->get($sourcePath);
+        } catch (Throwable) {
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                $optimizedContents = $this->optimizer->optimize($contents);
+        if (! is_string($contents)) {
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                if ($optimizedContents === null) {
-                    $this->fail($model, $label, $warning, $failed);
+        $optimizedContents = $this->optimizer->optimize($contents);
 
-                    return;
-                }
+        if ($optimizedContents === null) {
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                if ($dryRun) {
-                    $optimized++;
+        if ($dryRun) {
+            return ImageOptimizationOutcome::Optimized;
+        }
 
-                    return;
-                }
+        try {
+            $newPath = $this->optimizer->storeOptimizedContents($optimizedContents, $directory, 'public');
+        } catch (Throwable) {
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                try {
-                    $newPath = $this->optimizer->storeOptimizedContents($optimizedContents, $directory, 'public');
-                } catch (Throwable) {
-                    $this->fail($model, $label, $warning, $failed);
+        if (! is_string($newPath) || ! $this->isValidOptimizedImage($newPath)) {
+            if (is_string($newPath)) {
+                $disk->delete($newPath);
+            }
 
-                    return;
-                }
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                if (! is_string($newPath) || ! $this->isValidOptimizedImage($newPath)) {
-                    if (is_string($newPath)) {
-                        $disk->delete($newPath);
-                    }
+        try {
+            $record->getConnection()
+                ->transaction(function () use ($record, $pathColumn, $newPath): void {
+                    $record->setAttribute($pathColumn, $newPath);
+                    $record->saveOrFail();
+                });
+        } catch (Throwable) {
+            // After-commit callbacks can fail after the new path is already durable.
+            if ($record->newQuery()
+                ->whereKey($record->getKey())
+                ->value($pathColumn) !== $newPath) {
+                $disk->delete($newPath);
+            }
 
-                    $this->fail($model, $label, $warning, $failed);
+            return ImageOptimizationOutcome::Failed;
+        }
 
-                    return;
-                }
-
-                try {
-                    $model->getConnection()
-                        ->transaction(function () use ($model, $pathColumn, $newPath): void {
-                            $model->setAttribute($pathColumn, $newPath);
-                            $model->saveOrFail();
-                        });
-                } catch (Throwable) {
-                    // After-commit callbacks can fail after the new path is already durable.
-                    if ($model->newQuery()
-                        ->whereKey($model->getKey())
-                        ->value($pathColumn) !== $newPath) {
-                        $disk->delete($newPath);
-                    }
-                    $this->fail($model, $label, $warning, $failed);
-
-                    return;
-                }
-
-                $optimized++;
-            });
-
-        return ['optimized' => $optimized, 'skipped' => $skipped, 'failed' => $failed];
+        return ImageOptimizationOutcome::Optimized;
     }
 
     private function isValidOptimizedImage(string $path): bool
@@ -157,10 +161,9 @@ class StoredImageOptimizationWorkflow
             && $image->height() <= ImageUploadOptimizer::MAX_DIMENSION;
     }
 
-    private function fail(Model $model, string $label, Closure $warning, int &$failed): void
+    private function warnFailure(Model $record, string $label, Closure $warning): void
     {
-        $failed++;
-        $key = $model->getKey();
+        $key = $record->getKey();
 
         if (! is_int($key) && ! is_string($key)) {
             $key = 'unknown';

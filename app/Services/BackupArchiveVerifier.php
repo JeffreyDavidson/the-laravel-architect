@@ -2,19 +2,12 @@
 
 namespace App\Services;
 
+use App\Data\BackupComparisonResult;
 use App\Data\BackupVerificationResult;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Process;
-use Illuminate\Support\Facades\Schema;
-use PDO;
-use PDOException;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use RuntimeException;
 use Spatie\Backup\BackupDestination\Backup;
 use Spatie\Backup\BackupDestination\BackupDestination;
-use SplFileInfo;
 use Throwable;
 use ZipArchive;
 
@@ -23,6 +16,10 @@ use ZipArchive;
  * restoring it into an isolated temporary directory and comparing it with the
  * live database and public media. Reports contain only counts, table names,
  * and pass/fail reasons, never credentials or backed-up content.
+ *
+ * This class owns downloading, decrypting, and reading the archive inside its
+ * work directory. RestoredDatabaseComparison and BackupMediaComparison compare
+ * the restored contents with the live application.
  */
 final class BackupArchiveVerifier
 {
@@ -30,14 +27,7 @@ final class BackupArchiveVerifier
 
     private const string WORK_DIRECTORY_PREFIX = 'tla-backup-verify-';
 
-    private const int SAMPLED_MEDIA_FILES = 5;
-
     private const int READ_CHUNK_BYTES = 1048576;
-
-    private const int RESTORE_TIMEOUT_SECONDS = 600;
-
-    /** Tables whose rows churn constantly and are not meaningful restored state. */
-    private const array TRANSIENT_TABLES = ['cache', 'cache_locks', 'sessions', 'jobs', 'job_batches'];
 
     /** @var list<string> */
     private array $checks = [];
@@ -53,8 +43,11 @@ final class BackupArchiveVerifier
      * pass a private parent so they can prove cleanup of their own run without
      * racing other processes that verify backups in the shared temp directory.
      */
-    public function __construct(?string $workDirectoryParent = null)
-    {
+    public function __construct(
+        ?string $workDirectoryParent = null,
+        private readonly RestoredDatabaseComparison $databaseComparison = new RestoredDatabaseComparison,
+        private readonly BackupMediaComparison $mediaComparison = new BackupMediaComparison,
+    ) {
         $this->workDirectoryParent = $workDirectoryParent ?? sys_get_temp_dir();
     }
 
@@ -139,8 +132,14 @@ final class BackupArchiveVerifier
             return;
         }
 
-        $this->verifyDatabase($dumpPath, "{$workDirectory}/restored.sqlite");
-        $this->verifyMedia($mediaHashes);
+        $this->record($this->databaseComparison->compare($dumpPath, "{$workDirectory}/restored.sqlite"));
+        $this->record($this->mediaComparison->compare($mediaHashes));
+    }
+
+    private function record(BackupComparisonResult $result): void
+    {
+        $this->checks = [...$this->checks, ...$result->checks];
+        $this->failures = [...$this->failures, ...$result->failures];
     }
 
     /**
@@ -150,7 +149,6 @@ final class BackupArchiveVerifier
      */
     private function readEntries(ZipArchive $zip, string $dumpPath): array
     {
-        $mediaRoots = $this->mediaRoots();
         $mediaHashes = [];
         $entryCount = $zip->count();
 
@@ -165,7 +163,7 @@ final class BackupArchiveVerifier
             }
 
             $isDump = str_starts_with($name, self::DUMP_DIRECTORY);
-            $livePath = $this->livePathFor($name, $mediaRoots);
+            $livePath = $this->mediaComparison->livePathFor($name);
 
             if (! $isDump && $livePath === null) {
                 $this->failures[] = "Entry {$entry} is outside the database dump and media directories.";
@@ -242,160 +240,6 @@ final class BackupArchiveVerifier
         return $bytes === $stat['size'] ? hash_final($context) : null;
     }
 
-    private function verifyDatabase(string $dumpPath, string $restoredPath): void
-    {
-        if (! $this->restoreDump($dumpPath, $restoredPath)) {
-            $this->failures[] = 'The database dump could not be restored.';
-
-            return;
-        }
-
-        $restored = new PDO("sqlite:{$restoredPath}");
-        $restored->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $this->verifyIntegrity($restored);
-        $this->verifyMigrations($restored);
-        $this->verifyRowCounts($restored);
-    }
-
-    /**
-     * Restore with the sqlite3 CLI that spatie/laravel-backup uses to create
-     * the dump. Newer sqlite3 versions emit functions such as unistr() that
-     * PHP's bundled SQLite cannot execute. Process output is never reported,
-     * because it can quote backed-up rows.
-     */
-    private function restoreDump(string $dumpPath, string $restoredPath): bool
-    {
-        $dump = fopen($dumpPath, 'rb');
-
-        if ($dump === false) {
-            return false;
-        }
-
-        try {
-            $result = Process::input($dump)
-                ->timeout(self::RESTORE_TIMEOUT_SECONDS)
-                ->run(['sqlite3', '-bail', $restoredPath]);
-        } finally {
-            fclose($dump);
-        }
-
-        return $result->successful();
-    }
-
-    private function verifyIntegrity(PDO $restored): void
-    {
-        $restoredResult = $this->scalar($restored, 'PRAGMA quick_check');
-        $liveResult = DB::scalar('PRAGMA quick_check');
-
-        if ($restoredResult !== 'ok') {
-            $this->failures[] = 'The restored database failed PRAGMA quick_check.';
-        }
-
-        if ($liveResult !== 'ok') {
-            $this->failures[] = 'The live database failed PRAGMA quick_check.';
-        }
-
-        if ($restoredResult === 'ok' && $liveResult === 'ok') {
-            $this->checks[] = 'Restored and live databases passed PRAGMA quick_check.';
-        }
-    }
-
-    private function verifyMigrations(PDO $restored): void
-    {
-        try {
-            $statement = $restored->query('SELECT migration FROM migrations ORDER BY migration');
-            $restoredMigrations = $statement === false
-                ? null
-                : $statement->fetchAll(PDO::FETCH_COLUMN);
-        } catch (PDOException) {
-            $restoredMigrations = null;
-        }
-
-        $liveMigrations = DB::table('migrations')
-            ->orderBy('migration')
-            ->pluck('migration')
-            ->all();
-
-        if ($restoredMigrations !== $liveMigrations) {
-            $this->failures[] = 'The restored migrations do not match the live database.';
-
-            return;
-        }
-
-        $migrationCount = count($liveMigrations);
-        $this->checks[] = "All {$migrationCount} migrations match the live database.";
-    }
-
-    private function verifyRowCounts(PDO $restored): void
-    {
-        $tables = $this->persistentTables();
-        $failuresBefore = count($this->failures);
-
-        foreach ($tables as $table) {
-            $quotedTable = '"'.str_replace('"', '""', $table).'"';
-
-            try {
-                $restoredCount = $this->scalar($restored, "SELECT COUNT(*) FROM {$quotedTable}");
-            } catch (PDOException) {
-                $this->failures[] = "Table {$table} is missing from the restored database.";
-
-                continue;
-            }
-
-            $liveCount = DB::table($table)->count();
-
-            $restoredRows = is_numeric($restoredCount) ? (int) $restoredCount : -1;
-
-            if ($restoredRows !== $liveCount) {
-                $this->failures[] = "Table {$table} has {$restoredRows} restored rows but {$liveCount} live rows.";
-            }
-        }
-
-        if (count($this->failures) === $failuresBefore) {
-            $tableCount = count($tables);
-            $this->checks[] = "Row counts match for {$tableCount} persistent tables.";
-        }
-    }
-
-    /** @param array<string, string> $mediaHashes */
-    private function verifyMedia(array $mediaHashes): void
-    {
-        $liveFiles = $this->liveMediaFiles();
-        $archivedCount = count($mediaHashes);
-        $liveCount = count($liveFiles);
-
-        if ($archivedCount !== $liveCount) {
-            $this->failures[] = "The archive has {$archivedCount} media files but the live media directory has {$liveCount}.";
-
-            return;
-        }
-
-        $sample = $archivedCount === 0
-            ? []
-            : (array) array_rand($mediaHashes, min(self::SAMPLED_MEDIA_FILES, $archivedCount));
-
-        foreach ($sample as $livePath) {
-            if (! is_string($livePath) || ! is_file($livePath) || hash_file('sha256', $livePath) !== $mediaHashes[$livePath]) {
-                $this->failures[] = 'A sampled media file does not match its live copy.';
-
-                return;
-            }
-        }
-
-        $sampleCount = count($sample);
-        $this->checks[] = "All {$archivedCount} media files are present; {$sampleCount} sampled SHA-256 hashes match.";
-    }
-
-    private function scalar(PDO $database, string $sql): mixed
-    {
-        $statement = $database->query($sql);
-
-        return $statement === false
-            ? null
-            : $statement->fetchColumn();
-    }
-
     private function isSafeEntryName(string $name): bool
     {
         if ($name === '' || str_starts_with($name, '/') || str_contains($name, '\\') || str_contains($name, "\0")) {
@@ -403,83 +247,6 @@ final class BackupArchiveVerifier
         }
 
         return ! in_array('..', explode('/', $name), true);
-    }
-
-    /** @param list<string> $mediaRoots */
-    private function livePathFor(string $name, array $mediaRoots): ?string
-    {
-        foreach ($mediaRoots as $root) {
-            $prefix = ltrim($root, '/').'/';
-
-            if (str_starts_with($name, $prefix)) {
-                return "{$root}/".substr($name, strlen($prefix));
-            }
-        }
-
-        return null;
-    }
-
-    /** @return list<string> */
-    private function mediaRoots(): array
-    {
-        $roots = [];
-
-        foreach (config()->array('backup.backup.source.files.include') as $root) {
-            if (is_string($root) && $root !== '') {
-                $roots[] = rtrim($root, '/');
-            }
-        }
-
-        return $roots;
-    }
-
-    /** @return list<string> */
-    private function liveMediaFiles(): array
-    {
-        $files = [];
-
-        foreach ($this->mediaRoots() as $root) {
-            if (! is_dir($root)) {
-                continue;
-            }
-
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS),
-            );
-
-            foreach ($iterator as $file) {
-                if (! $file instanceof SplFileInfo) {
-                    continue;
-                }
-
-                $isRegularFile = $file->isFile();
-                $isLink = $file->isLink();
-
-                if ($isRegularFile && ! $isLink) {
-                    $files[] = $file->getPathname();
-                }
-            }
-        }
-
-        return $files;
-    }
-
-    /** @return list<string> */
-    private function persistentTables(): array
-    {
-        $tables = [];
-
-        foreach (Schema::getTables() as $table) {
-            $name = is_array($table) ? ($table['name'] ?? null) : null;
-
-            if (is_string($name) && ! str_starts_with($name, 'sqlite_') && ! in_array($name, self::TRANSIENT_TABLES, true)) {
-                $tables[] = $name;
-            }
-        }
-
-        sort($tables);
-
-        return $tables;
     }
 
     private function download(Backup $backup, string $path): void
