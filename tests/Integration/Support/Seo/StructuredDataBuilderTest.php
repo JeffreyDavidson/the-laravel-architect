@@ -11,25 +11,32 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\URL;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
 
+// Generated URLs use a fixed origin so the expectations do not depend on APP_URL.
+beforeEach(function () {
+    URL::forceRootUrl('https://example.test');
+    URL::forceScheme('https');
+});
+
 /** @return array<string, mixed> */
 function seoBuilderWebsite(): array
 {
     return [
         '@type' => 'WebSite',
-        '@id' => 'http://localhost#website',
+        '@id' => 'https://example.test#website',
         'name' => 'The Laravel Architect',
-        'url' => 'http://localhost',
+        'url' => 'https://example.test',
         'author' => [
             '@type' => 'Person',
-            '@id' => 'http://localhost/about#person',
+            '@id' => 'https://example.test/about#person',
             'name' => 'Jeffrey Davidson',
-            'url' => 'http://localhost/about',
+            'url' => 'https://example.test/about',
         ],
     ];
 }
@@ -114,7 +121,7 @@ function buildStructuredData(array $pageData, string $routeName): array
 }
 
 it('describes static pages with their page type and breadcrumbs', function (string $routeName, string $type, string $name, string $path, bool $isProfile) {
-    $url = "http://localhost{$path}";
+    $url = "https://example.test{$path}";
     $page = [
         '@type' => $type,
         '@id' => "{$url}#page",
@@ -122,14 +129,14 @@ it('describes static pages with their page type and breadcrumbs', function (stri
         'url' => $url,
         'isPartOf' => [
             '@type' => 'WebSite',
-            '@id' => 'http://localhost#website',
+            '@id' => 'https://example.test#website',
         ],
     ];
 
     if ($isProfile) {
         $page['mainEntity'] = [
             '@type' => 'Person',
-            '@id' => 'http://localhost/about#person',
+            '@id' => 'https://example.test/about#person',
         ];
     }
 
@@ -138,7 +145,7 @@ it('describes static pages with their page type and breadcrumbs', function (stri
     expect($schemas)->toBe([
         seoBuilderWebsite(),
         $page,
-        seoBuilderBreadcrumbs([['Home', 'http://localhost'], [$name, $url]]),
+        seoBuilderBreadcrumbs([['Home', 'https://example.test'], [$name, $url]]),
     ]);
 })->with([
     'about' => ['about', 'ProfilePage', 'About', '/about', true],
@@ -154,12 +161,12 @@ it('describes the home page without breadcrumbs', function () {
         seoBuilderWebsite(),
         [
             '@type' => 'WebPage',
-            '@id' => 'http://localhost#page',
+            '@id' => 'https://example.test#page',
             'name' => 'The Laravel Architect',
-            'url' => 'http://localhost',
+            'url' => 'https://example.test',
             'isPartOf' => [
                 '@type' => 'WebSite',
-                '@id' => 'http://localhost#website',
+                '@id' => 'https://example.test#website',
             ],
         ],
     ]);
@@ -205,11 +212,11 @@ it('lists the first blog page from position one under the canonical url', functi
     expect($schemas)->toBe([
         seoBuilderWebsite(),
         ...seoBuilderCollection('Blog', 'https://canonical.test/blog', [
-            1 => ['First post', 'http://localhost/blog/first-post'],
-            2 => ['Second post', 'http://localhost/blog/second-post'],
+            1 => ['First post', 'https://example.test/blog/first-post'],
+            2 => ['Second post', 'https://example.test/blog/second-post'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
+            ['Home', 'https://example.test'],
             ['Blog', 'https://canonical.test/blog'],
         ]),
     ]);
@@ -229,11 +236,11 @@ it('offsets later blog pages and names a selected category', function () {
     expect($schemas)->toBe([
         seoBuilderWebsite(),
         ...seoBuilderCollection('Testing Articles', 'https://canonical.test/blog?category=testing&page=2', [
-            3 => ['Third post', 'http://localhost/blog/third-post'],
-            4 => ['Fourth post', 'http://localhost/blog/fourth-post'],
+            3 => ['Third post', 'https://example.test/blog/third-post'],
+            4 => ['Fourth post', 'https://example.test/blog/fourth-post'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
+            ['Home', 'https://example.test'],
             ['Blog', 'https://canonical.test/blog?category=testing&page=2'],
         ]),
     ]);
@@ -247,10 +254,10 @@ it('falls back to the route url when the blog index has no canonical url', funct
 
     expect($schemas)->toBe([
         seoBuilderWebsite(),
-        ...seoBuilderCollection('Blog', 'http://localhost/blog', []),
+        ...seoBuilderCollection('Blog', 'https://example.test/blog', []),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Blog', 'http://localhost/blog'],
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
         ]),
     ]);
 });
@@ -273,23 +280,23 @@ it('describes a post as an article with blog breadcrumbs', function () {
         seoBuilderWebsite(),
         [
             '@type' => 'Article',
-            '@id' => 'http://localhost/blog/shipping-laravel#article',
-            'url' => 'http://localhost/blog/shipping-laravel',
+            '@id' => 'https://example.test/blog/shipping-laravel#article',
+            'url' => 'https://example.test/blog/shipping-laravel',
             'headline' => 'Shipping Laravel',
             'datePublished' => '2026-09-01T08:30:00+00:00',
             'dateModified' => '2026-09-02T10:00:00+00:00',
             'author' => [
                 '@type' => 'Person',
-                '@id' => 'http://localhost/about#person',
+                '@id' => 'https://example.test/about#person',
             ],
-            'mainEntityOfPage' => 'http://localhost/blog/shipping-laravel',
+            'mainEntityOfPage' => 'https://example.test/blog/shipping-laravel',
             'description' => 'How it ships.',
-            'image' => 'http://localhost/og-image/shipping-laravel',
+            'image' => 'https://example.test/og-image/shipping-laravel',
         ],
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Blog', 'http://localhost/blog'],
-            ['Shipping Laravel', 'http://localhost/blog/shipping-laravel'],
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
+            ['Shipping Laravel', 'https://example.test/blog/shipping-laravel'],
         ]),
     ]);
 });
@@ -307,11 +314,11 @@ it('offsets a paginated category listing', function () {
     expect($schemas)->toBe([
         seoBuilderWebsite(),
         ...seoBuilderCollection('Testing Articles', 'https://canonical.test/blog/category/testing?page=3', [
-            5 => ['Fifth post', 'http://localhost/blog/fifth-post'],
+            5 => ['Fifth post', 'https://example.test/blog/fifth-post'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Blog', 'http://localhost/blog'],
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
             ['Testing', 'https://canonical.test/blog/category/testing?page=3'],
         ]),
     ]);
@@ -329,13 +336,13 @@ it('offsets a paginated tag listing', function () {
 
     expect($schemas)->toBe([
         seoBuilderWebsite(),
-        ...seoBuilderCollection('Articles Tagged livewire', 'http://localhost/blog/tag/livewire', [
-            3 => ['Third post', 'http://localhost/blog/third-post'],
+        ...seoBuilderCollection('Articles Tagged livewire', 'https://example.test/blog/tag/livewire', [
+            3 => ['Third post', 'https://example.test/blog/third-post'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Blog', 'http://localhost/blog'],
-            ['livewire', 'http://localhost/blog/tag/livewire'],
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
+            ['livewire', 'https://example.test/blog/tag/livewire'],
         ]),
     ]);
 });
@@ -343,8 +350,8 @@ it('offsets a paginated tag listing', function () {
 it('offsets a paginated archive listing', function () {
     $schemas = buildStructuredData([
         'items' => seoBuilderPage([
-            ['title' => 'An episode', 'url' => 'http://localhost/podcasts/show/an-episode'],
-            ['title' => 'A post', 'url' => 'http://localhost/blog/a-post'],
+            ['title' => 'An episode', 'url' => 'https://example.test/podcasts/show/an-episode'],
+            ['title' => 'A post', 'url' => 'https://example.test/blog/a-post'],
         ], 30, 20, 2),
         'seoSource' => new SEOData(canonical_url: 'https://canonical.test/archive?page=2'),
     ], 'archive.index');
@@ -352,11 +359,11 @@ it('offsets a paginated archive listing', function () {
     expect($schemas)->toBe([
         seoBuilderWebsite(),
         ...seoBuilderCollection('Archive', 'https://canonical.test/archive?page=2', [
-            21 => ['An episode', 'http://localhost/podcasts/show/an-episode'],
-            22 => ['A post', 'http://localhost/blog/a-post'],
+            21 => ['An episode', 'https://example.test/podcasts/show/an-episode'],
+            22 => ['A post', 'https://example.test/blog/a-post'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
+            ['Home', 'https://example.test'],
             ['Archive', 'https://canonical.test/archive?page=2'],
         ]),
     ]);
@@ -373,13 +380,13 @@ it('lists every project on the project index', function () {
 
     expect($schemas)->toBe([
         seoBuilderWebsite(),
-        ...seoBuilderCollection('Projects', 'http://localhost/projects', [
-            1 => ['First project', 'http://localhost/projects/first-project'],
-            2 => ['Second project', 'http://localhost/projects/second-project'],
+        ...seoBuilderCollection('Projects', 'https://example.test/projects', [
+            1 => ['First project', 'https://example.test/projects/first-project'],
+            2 => ['Second project', 'https://example.test/projects/second-project'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Projects', 'http://localhost/projects'],
+            ['Home', 'https://example.test'],
+            ['Projects', 'https://example.test/projects'],
         ]),
     ]);
 });
@@ -402,22 +409,22 @@ it('describes a project case study with its technologies and link', function () 
         seoBuilderWebsite(),
         [
             '@type' => 'CreativeWork',
-            '@id' => 'http://localhost/projects/ringside#project',
+            '@id' => 'https://example.test/projects/ringside#project',
             'name' => 'Ringside',
-            'url' => 'http://localhost/projects/ringside',
-            'mainEntityOfPage' => 'http://localhost/projects/ringside',
+            'url' => 'https://example.test/projects/ringside',
+            'mainEntityOfPage' => 'https://example.test/projects/ringside',
             'description' => 'Wrestling promotion software.',
             'author' => [
                 '@type' => 'Person',
-                '@id' => 'http://localhost/about#person',
+                '@id' => 'https://example.test/about#person',
             ],
             'keywords' => 'Laravel, Livewire',
             'sameAs' => ['https://ringside.test'],
         ],
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Projects', 'http://localhost/projects'],
-            ['Ringside', 'http://localhost/projects/ringside'],
+            ['Home', 'https://example.test'],
+            ['Projects', 'https://example.test/projects'],
+            ['Ringside', 'https://example.test/projects/ringside'],
         ]),
     ]);
 });
@@ -432,12 +439,12 @@ it('lists the active podcast on the podcast index', function () {
 
     expect($schemas)->toBe([
         seoBuilderWebsite(),
-        ...seoBuilderCollection('Podcast', 'http://localhost/podcasts', [
-            1 => ['Coffee Chat', 'http://localhost/podcasts/coffee-chat'],
+        ...seoBuilderCollection('Podcast', 'https://example.test/podcasts', [
+            1 => ['Coffee Chat', 'https://example.test/podcasts/coffee-chat'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Podcast', 'http://localhost/podcasts'],
+            ['Home', 'https://example.test'],
+            ['Podcast', 'https://example.test/podcasts'],
         ]),
     ]);
 });
@@ -450,10 +457,10 @@ it('keeps an empty podcast index listing when no podcast is active', function ()
 
     expect($schemas)->toBe([
         seoBuilderWebsite(),
-        ...seoBuilderCollection('Podcast', 'http://localhost/podcasts', []),
+        ...seoBuilderCollection('Podcast', 'https://example.test/podcasts', []),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Podcast', 'http://localhost/podcasts'],
+            ['Home', 'https://example.test'],
+            ['Podcast', 'https://example.test/podcasts'],
         ]),
     ]);
 });
@@ -478,21 +485,21 @@ it('describes a podcast series and offsets its paginated episodes', function () 
         seoBuilderWebsite(),
         [
             '@type' => 'PodcastSeries',
-            '@id' => 'http://localhost/podcasts/coffee-chat#podcast',
+            '@id' => 'https://example.test/podcasts/coffee-chat#podcast',
             'name' => 'Coffee Chat',
-            'url' => 'http://localhost/podcasts/coffee-chat',
+            'url' => 'https://example.test/podcasts/coffee-chat',
             'author' => [
                 '@type' => 'Person',
-                '@id' => 'http://localhost/about#person',
+                '@id' => 'https://example.test/about#person',
             ],
             'description' => 'A weekly chat.',
         ],
         ...seoBuilderCollection('Coffee Chat Episodes', 'https://canonical.test/podcasts/coffee-chat?page=2', [
-            11 => ['Episode eleven', 'http://localhost/podcasts/coffee-chat/episode-eleven'],
+            11 => ['Episode eleven', 'https://example.test/podcasts/coffee-chat/episode-eleven'],
         ]),
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Podcast', 'http://localhost/podcasts'],
+            ['Home', 'https://example.test'],
+            ['Podcast', 'https://example.test/podcasts'],
             ['Coffee Chat', 'https://canonical.test/podcasts/coffee-chat?page=2'],
         ]),
     ]);
@@ -525,23 +532,23 @@ it('describes an episode within its series with three-level breadcrumbs', functi
         seoBuilderWebsite(),
         [
             '@type' => 'PodcastSeries',
-            '@id' => 'http://localhost/podcasts/coffee-chat#podcast',
+            '@id' => 'https://example.test/podcasts/coffee-chat#podcast',
             'name' => 'Coffee Chat',
-            'url' => 'http://localhost/podcasts/coffee-chat',
+            'url' => 'https://example.test/podcasts/coffee-chat',
             'author' => [
                 '@type' => 'Person',
-                '@id' => 'http://localhost/about#person',
+                '@id' => 'https://example.test/about#person',
             ],
         ],
         [
             '@type' => 'PodcastEpisode',
-            '@id' => 'http://localhost/podcasts/coffee-chat/pilot#episode',
+            '@id' => 'https://example.test/podcasts/coffee-chat/pilot#episode',
             'name' => 'Pilot',
-            'url' => 'http://localhost/podcasts/coffee-chat/pilot',
-            'mainEntityOfPage' => 'http://localhost/podcasts/coffee-chat/pilot',
+            'url' => 'https://example.test/podcasts/coffee-chat/pilot',
+            'mainEntityOfPage' => 'https://example.test/podcasts/coffee-chat/pilot',
             'partOfSeries' => [
                 '@type' => 'PodcastSeries',
-                '@id' => 'http://localhost/podcasts/coffee-chat#podcast',
+                '@id' => 'https://example.test/podcasts/coffee-chat#podcast',
             ],
             'description' => 'The first one.',
             'datePublished' => '2026-08-28T12:00:00+00:00',
@@ -549,10 +556,10 @@ it('describes an episode within its series with three-level breadcrumbs', functi
             'duration' => 'PT1H2M5S',
         ],
         seoBuilderBreadcrumbs([
-            ['Home', 'http://localhost'],
-            ['Podcast', 'http://localhost/podcasts'],
-            ['Coffee Chat', 'http://localhost/podcasts/coffee-chat'],
-            ['Pilot', 'http://localhost/podcasts/coffee-chat/pilot'],
+            ['Home', 'https://example.test'],
+            ['Podcast', 'https://example.test/podcasts'],
+            ['Coffee Chat', 'https://example.test/podcasts/coffee-chat'],
+            ['Pilot', 'https://example.test/podcasts/coffee-chat/pilot'],
         ]),
     ]);
 });

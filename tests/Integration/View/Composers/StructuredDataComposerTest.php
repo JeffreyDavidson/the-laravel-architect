@@ -3,6 +3,13 @@
 use App\View\Composers\StructuredDataComposer;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+
+// Generated URLs use a fixed origin so the expectations do not depend on APP_URL.
+beforeEach(function () {
+    URL::forceRootUrl('https://example.test');
+    URL::forceScheme('https');
+});
 
 it('gives the view structured data for the current route', function () {
     $route = Route::getRoutes()
@@ -19,12 +26,12 @@ it('gives the view structured data for the current route', function () {
     expect($view->getData()['structuredData'] ?? null)->toMatchArray([
         1 => [
             '@type' => 'WebPage',
-            '@id' => 'http://localhost/uses#page',
+            '@id' => 'https://example.test/uses#page',
             'name' => 'Uses',
-            'url' => 'http://localhost/uses',
+            'url' => 'https://example.test/uses',
             'isPartOf' => [
                 '@type' => 'WebSite',
-                '@id' => 'http://localhost#website',
+                '@id' => 'https://example.test#website',
             ],
         ],
     ]);
