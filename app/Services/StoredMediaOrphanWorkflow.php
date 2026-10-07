@@ -42,6 +42,16 @@ class StoredMediaOrphanWorkflow
     public function __construct(private readonly ResponsiveImageVariants $images) {}
 
     /**
+     * Report unreferenced files and, when $delete is true, remove the eligible ones.
+     *
+     * Before deleting, every reference is read again once, so a file that content started to
+     * use while the storage scan ran is kept. That one fresh read replaces a full re-scan per
+     * orphan, which ran the reference queries (including the long text columns) once for every
+     * file and grew with the number of orphans. Files uploaded in the last 24 hours are never
+     * deleted, so new uploads stay safe; only an old orphan that content starts to use again
+     * during the delete loop itself could still be removed, as it could between the per-file
+     * re-scan and its delete before.
+     *
      * @return array{
      *     orphaned: int,
      *     orphanedBytes: int,
@@ -86,14 +96,17 @@ class StoredMediaOrphanWorkflow
         $failed = 0;
         $skipped = 0;
 
-        if ($delete) {
+        if ($delete && $files !== []) {
+            $currentReferences = $this->references();
+            $currentContent = $this->contentReferences();
+
             foreach ($files as $index => $file) {
                 try {
                     if (! array_any(self::OWNED_DIRECTORIES, fn (string $directory): bool => str_starts_with($file['path'], $directory))
                         || $disk->lastModified($file['path']) > now()->subDay()
                             ->getTimestamp()
-                        || isset($this->references()['paths'][$file['path']])
-                        || $this->isEmbedded($file['path'], $this->contentReferences())) {
+                        || isset($currentReferences['paths'][$file['path']])
+                        || $this->isEmbedded($file['path'], $currentContent)) {
                         $skipped++;
 
                         continue;
