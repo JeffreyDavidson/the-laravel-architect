@@ -10,16 +10,8 @@ use Illuminate\Support\Facades\DB;
 pest()->use(RefreshDatabase::class);
 
 it('persists every supported post publish status', function () {
-    $author = User::factory()->create();
-
     foreach (PublishStatus::cases() as $status) {
-        $post = Post::query()->create([
-            'title' => "{$status->label()} post",
-            'slug' => "{$status->value}-post",
-            'content' => 'Post content.',
-            'user_id' => $author->id,
-            'status' => $status,
-        ]);
+        $post = Post::factory()->create(['status' => $status]);
 
         expect($post->refresh()
             ->status)->toBe($status);

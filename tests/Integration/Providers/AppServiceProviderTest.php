@@ -31,8 +31,9 @@ it('registers pseudonymous authenticated user details with Nightwatch', function
 });
 
 it('rejects lazy loading outside production', function () {
-    Category::query()->create(['name' => 'Laravel', 'slug' => 'laravel']);
-    Category::query()->create(['name' => 'Architecture', 'slug' => 'architecture']);
+    Category::factory()
+        ->count(2)
+        ->create();
 
     $category = Category::query()
         ->get()

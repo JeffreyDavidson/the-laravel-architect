@@ -1,40 +1,22 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
 it('builds the post detail payload', function () {
-    $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $post = Post::query()->create([
-        'title' => 'Current Post',
-        'slug' => 'current-post',
-        'excerpt' => 'The current post.',
-        'content' => 'Current post content.',
-        'category_id' => $category->id,
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDay(),
-    ]);
-    $relatedPost = Post::query()->create([
-        'title' => 'Related Post',
-        'slug' => 'related-post',
-        'excerpt' => 'A related post.',
-        'content' => 'Related post content.',
-        'category_id' => $category->id,
-        'user_id' => $author->id,
-        'status' => PublishStatus::Published,
-        'published_at' => now()->subDays(2),
-    ]);
+    $category = Category::factory()->create();
+    $post = Post::factory()
+        ->for($category)
+        ->published()
+        ->create(['title' => 'Current Post']);
+    $relatedPost = Post::factory()
+        ->for($category)
+        ->published()
+        ->create();
 
     $data = app(PostShowViewModel::class)
         ->data($post);

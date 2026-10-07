@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Services\StoredMediaOrphanWorkflow;
 use Illuminate\Database\Events\QueryExecuted;
@@ -57,11 +56,8 @@ it('keeps a file that became referenced after the scan and before the delete pha
         }
 
         $referenced = true;
-        Project::withoutEvents(fn () => Project::query()->create([
-            'title' => 'Project',
+        Project::withoutEvents(fn () => Project::factory()->create([
             'slug' => 'project',
-            'description' => 'Description',
-            'status' => PublishStatus::Draft,
             'featured_image_path' => 'projects/orphan-1.png',
         ]));
     });

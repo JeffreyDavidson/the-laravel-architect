@@ -17,10 +17,7 @@ pest()->use(RefreshDatabase::class);
 
 it('builds the public blog index payload', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
+    $category = Category::factory()->create();
     $olderPost = createPostIndexViewModelPost(
         author: $author,
         category: $category,
@@ -65,30 +62,24 @@ it('builds the public blog index payload', function () {
 
 it('filters the paginated archive by title excerpt and translated tag name', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => ['en' => 'Boundaries'],
-        'slug' => ['en' => 'boundaries'],
-    ]);
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create(['name' => 'Boundaries']);
 
     foreach ([
         ['title' => 'Title Match', 'excerpt' => 'Nothing special.'],
         ['title' => 'Unrelated', 'excerpt' => 'Excerpt Match.'],
         ['title' => 'Another Article', 'excerpt' => 'Nothing special.', 'tag' => true],
     ] as $index => $attributes) {
-        $post = Post::query()->create([
-            'title' => $attributes['title'],
-            'slug' => str($attributes['title'])->slug(),
-            'excerpt' => $attributes['excerpt'],
-            'content' => str_repeat('word ', 251),
-            'user_id' => $author->getKey(),
-            'category_id' => $category->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index + 1),
-        ]);
+        $post = Post::factory()
+            ->for($category)
+            ->for($author, 'author')
+            ->published()
+            ->create([
+                'title' => $attributes['title'],
+                'excerpt' => $attributes['excerpt'],
+                'content' => str_repeat('word ', 251),
+                'published_at' => now()->subDays($index + 1),
+            ]);
 
         if ($attributes['tag'] ?? false) {
             $post->attachTag($tag);
@@ -121,15 +112,14 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
             ->title)->toBe($expectedTitle);
     }
 
-    $literal = Post::query()->create([
-        'title' => 'Literal %_ Marker',
-        'slug' => 'literal-marker',
-        'content' => 'A literal search marker.',
-        'user_id' => $author->getKey(),
-        'category_id' => $category->getKey(),
-        'status' => PublishStatus::Published,
-        'published_at' => now(),
-    ]);
+    $literal = Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->published()
+        ->create([
+            'title' => 'Literal %_ Marker',
+            'published_at' => now(),
+        ]);
 
     expect(blogIndexViewModelData(['q' => '%'])['posts']->sole()
         ->is($literal))->toBeTrue()
@@ -169,13 +159,12 @@ function createPostIndexViewModelPost(
     ?DateTimeInterface $publishedAt,
     PublishStatus $status = PublishStatus::Published,
 ): Post {
-    return Post::query()->create([
-        'title' => $title,
-        'slug' => str($title)->slug(),
-        'content' => "{$title} content.",
-        'user_id' => $author->getKey(),
-        'category_id' => $category->getKey(),
-        'status' => $status,
-        'published_at' => $publishedAt,
-    ]);
+    return Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->create([
+            'title' => $title,
+            'status' => $status,
+            'published_at' => $publishedAt,
+        ]);
 }

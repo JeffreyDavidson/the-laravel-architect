@@ -2,6 +2,8 @@
 
 use App\Support\Content\BundledPostArtwork;
 
+use function Pest\Laravel\withVite;
+
 covers(BundledPostArtwork::class);
 
 it('knows which post slugs ship with bundled artwork', function (string $slug, bool $bundled) {
@@ -19,7 +21,7 @@ it('knows which post slugs ship with bundled artwork', function (string $slug, b
 ]);
 
 it('returns small, medium and large urls for a bundled post', function () {
-    $this->withVite();
+    withVite();
 
     $urls = app(BundledPostArtwork::class)->urls('hello-world-why-im-starting-this-blog');
 

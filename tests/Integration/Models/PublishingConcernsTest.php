@@ -2,35 +2,24 @@
 
 use App\Enums\PublishStatus;
 use App\Models\Episode;
-use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\freezeSecond;
+
 pest()->use(RefreshDatabase::class);
 
 it('keeps date-based visibility consistent between model checks and database scopes', function (PublishStatus $status, ?int $seconds, bool $visible, bool $scheduled) {
-    $this->freezeSecond();
+    freezeSecond();
     $publishedAt = $seconds === null ? null : now()->addSeconds($seconds);
-    $post = Post::query()->create([
-        'title' => 'Publication matrix post',
-        'content' => 'Publication boundary coverage.',
-        'user_id' => User::factory()->create()
-            ->getKey(),
+    $post = Post::factory()->create([
         'status' => $status,
         'published_at' => $publishedAt,
     ]);
-    $podcast = Podcast::query()->create([
-        'name' => 'Publication matrix podcast',
-        'description' => 'Publication boundary coverage.',
-    ]);
-    $episode = Episode::query()->create([
-        'title' => 'Publication matrix episode',
-        'description' => 'Publication boundary coverage.',
-        'podcast_id' => $podcast->getKey(),
+    $episode = Episode::factory()->create([
         'status' => $status,
         'published_at' => $publishedAt,
     ]);
@@ -76,12 +65,9 @@ it('does not make a project public merely because it has a scheduled status', fu
 });
 
 it('shares publishing behavior with projects despite their project status enum', function () {
-    $project = Project::query()->create([
-        'title' => 'Published project',
-        'slug' => 'published-project',
-        'description' => 'Project description',
-        'status' => PublishStatus::Published,
-    ]);
+    $project = Project::factory()
+        ->published()
+        ->create();
 
     expect($project->isPublished())->toBeTrue()
         ->and(Project::published()->pluck('id')
@@ -90,18 +76,10 @@ it('shares publishing behavior with projects despite their project status enum',
 });
 
 it('shares featured behavior across projects and videos', function () {
-    $project = Project::query()->create([
-        'title' => 'Featured project',
-        'slug' => 'featured-project',
-        'description' => 'Project description',
-        'is_featured' => true,
-        'status' => PublishStatus::Draft,
-    ]);
-    $video = Video::query()->create([
-        'youtube_id' => 'featured-video',
-        'title' => 'Featured video',
-        'is_featured' => true,
-    ]);
+    $project = Project::factory()
+        ->featured()
+        ->create();
+    $video = Video::factory()->create(['is_featured' => true]);
 
     expect($project->isFeatured())->toBeTrue()
         ->and($video->isFeatured())
@@ -129,15 +107,9 @@ it('shares featured image URL behavior across models', function () {
 });
 
 it('preserves publishing behavior for posts', function () {
-    $author = User::factory()->create();
-    $post = Post::query()->create([
-        'title' => 'Published post',
-        'slug' => 'published-post',
-        'content' => 'Post content',
-        'user_id' => $author->id,
-        'status' => 'published',
-        'published_at' => now()->subMinute(),
-    ]);
+    $post = Post::factory()
+        ->published()
+        ->create();
 
     expect($post->isPublished())->toBeTrue()
         ->and(Post::published()->pluck('id')
@@ -146,11 +118,7 @@ it('preserves publishing behavior for posts', function () {
 });
 
 it('shares date-only publishing behavior with videos', function () {
-    $video = Video::query()->create([
-        'youtube_id' => 'published-video',
-        'title' => 'Published video',
-        'published_at' => now()->subMinute(),
-    ]);
+    $video = Video::factory()->create();
 
     expect($video->isPublished())->toBeTrue()
         ->and(Video::published()->pluck('id')

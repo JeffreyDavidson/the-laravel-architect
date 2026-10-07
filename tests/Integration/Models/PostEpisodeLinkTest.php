@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\Episode;
-use App\Models\Podcast;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -12,26 +10,12 @@ pest()->use(RefreshDatabase::class);
 
 function relatedEpisode(string $slug): Episode
 {
-    return Episode::query()->create([
-        'podcast_id' => Podcast::query()
-            ->firstOrCreate(['slug' => 'show'], ['name' => 'Show', 'description' => 'A show.'])
-            ->getKey(),
-        'title' => "Episode {$slug}",
-        'slug' => $slug,
-        'description' => 'Description.',
-    ]);
+    return Episode::factory()->create(['slug' => $slug]);
 }
 
 function relatingPost(): Post
 {
-    return Post::query()->create([
-        'title' => 'Relating post',
-        'slug' => 'relating-post',
-        'content' => 'Content.',
-        'user_id' => User::factory()
-            ->create()
-            ->getKey(),
-    ]);
+    return Post::factory()->create();
 }
 
 it('relates to every episode it is linked to', function () {

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -30,12 +29,7 @@ function contentWithOwnedData(string $type): Post|Project|Episode|NewsletterIssu
     if ($type === 'podcast') {
         Storage::disk('public')->put('podcasts/cover.png', 'image');
 
-        return Podcast::query()->create([
-            'name' => 'Owned podcast',
-            'slug' => 'owned-podcast',
-            'description' => 'A show.',
-            'cover_image_path' => 'podcasts/cover.png',
-        ]);
+        return Podcast::factory()->create(['cover_image_path' => 'podcasts/cover.png']);
     }
 
     $imagePath = str_replace(' ', '-', $type).'/image.png';
@@ -134,12 +128,7 @@ it('never reuses the slug of trashed content', function () {
     $trashed = PublishableFixtures::ready('post');
     $trashed->delete();
 
-    $post = Post::query()->create([
-        'title' => 'Ready post',
-        'content' => 'Content.',
-        'user_id' => $trashed->getAttribute('user_id'),
-        'status' => PublishStatus::Draft,
-    ]);
+    $post = Post::factory()->create(['title' => 'Ready post']);
 
     expect($post->slug)
         ->not->toBe($trashed->getAttribute('slug'));
@@ -171,13 +160,9 @@ it('restores only the episodes that were trashed with their podcast', function (
         throw new UnexpectedValueException('The episode fixture has no podcast.');
     }
 
-    $trashedEarlier = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Trashed earlier',
-        'slug' => 'trashed-earlier',
-        'description' => 'Description.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $trashedEarlier = Episode::factory()
+        ->for($podcast)
+        ->create();
     travel(-1)->days();
     $trashedEarlier->delete();
     travelBack();
@@ -193,30 +178,19 @@ it('restores only the episodes that were trashed with their podcast', function (
 
 it('restores every episode trashed with its podcast when the delete spans several seconds', function () {
     travelTo('2026-10-01 12:00:00');
-    $podcast = Podcast::query()->create([
-        'name' => 'Slow delete podcast',
-        'slug' => 'slow-delete-podcast',
-        'description' => 'A show.',
-    ]);
-    $trashedEarlier = Episode::query()->create([
-        'podcast_id' => $podcast->id,
-        'title' => 'Trashed earlier',
-        'slug' => 'trashed-earlier',
-        'description' => 'Description.',
-        'status' => PublishStatus::Draft,
-    ]);
+    $podcast = Podcast::factory()->create();
+    $trashedEarlier = Episode::factory()
+        ->for($podcast)
+        ->create();
     $trashedEarlier->delete();
     travel(1)->seconds();
     $episodeIds = [];
 
     foreach (range(1, 3) as $number) {
-        $episodeIds[] = Episode::query()->create([
-            'podcast_id' => $podcast->id,
-            'title' => "Episode {$number}",
-            'slug' => "episode-{$number}",
-            'description' => 'Description.',
-            'status' => PublishStatus::Draft,
-        ])->id;
+        $episodeIds[] = Episode::factory()
+            ->for($podcast)
+            ->create()
+            ->id;
     }
 
     Episode::deleted(function (): void {

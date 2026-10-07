@@ -10,12 +10,7 @@ pest()->use(RefreshDatabase::class);
 
 it('persists every supported episode publish status', function () {
     foreach (PublishStatus::cases() as $status) {
-        $episode = Episode::query()->create([
-            'title' => "{$status->label()} episode",
-            'slug' => "{$status->value}-episode",
-            'description' => 'Episode description.',
-            'status' => $status,
-        ]);
+        $episode = Episode::factory()->create(['status' => $status]);
 
         expect($episode->refresh()
             ->status)->toBe($status);

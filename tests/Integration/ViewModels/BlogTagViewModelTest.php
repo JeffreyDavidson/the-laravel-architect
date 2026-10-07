@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
@@ -12,37 +11,23 @@ pest()->use(RefreshDatabase::class);
 
 it('builds a paginated tag archive payload', function () {
     $author = User::factory()->create();
-    $category = Category::query()->create([
-        'name' => 'Architecture',
-        'slug' => 'architecture',
-    ]);
-    $tag = Tag::query()->create([
-        'name' => 'Boundaries',
-        'slug' => 'boundaries',
-    ]);
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create(['name' => 'Boundaries']);
 
     foreach (range(1, 11) as $index) {
-        $post = Post::query()->create([
-            'title' => "Boundary Article {$index}",
-            'slug' => "boundary-article-{$index}",
-            'content' => 'A maintainable application starts with clear boundaries.',
-            'category_id' => $category->getKey(),
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subDays($index),
-        ]);
+        $post = Post::factory()
+            ->for($category)
+            ->for($author, 'author')
+            ->published()
+            ->create(['published_at' => now()->subDays($index)]);
 
         $post->attachTag($tag);
     }
 
-    $draft = Post::query()->create([
-        'title' => 'Boundary Draft',
-        'slug' => 'boundary-draft',
-        'content' => 'This draft must remain private.',
-        'category_id' => $category->getKey(),
-        'user_id' => $author->getKey(),
-        'status' => PublishStatus::Draft,
-    ]);
+    $draft = Post::factory()
+        ->for($category)
+        ->for($author, 'author')
+        ->create();
     $draft->attachTag($tag);
 
     request()->query->set('page', 2);

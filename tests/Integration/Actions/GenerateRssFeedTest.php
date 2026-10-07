@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\GenerateRssFeed;
-use App\Enums\PublishStatus;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,16 +10,17 @@ pest()->use(RefreshDatabase::class);
 
 it('generates a newest-first feed bounded to twenty published posts', function () {
     $author = User::factory()->create();
+    $category = Category::factory()->create();
 
     foreach (range(1, 21) as $position) {
-        Post::query()->create([
-            'title' => "Feed post {$position}",
-            'slug' => "feed-post-{$position}",
-            'content' => "Feed content {$position}.",
-            'user_id' => $author->getKey(),
-            'status' => PublishStatus::Published,
-            'published_at' => now()->subMinutes($position),
-        ]);
+        Post::factory()
+            ->for($category)
+            ->for($author, 'author')
+            ->published()
+            ->create([
+                'title' => "Feed post {$position}",
+                'published_at' => now()->subMinutes($position),
+            ]);
     }
 
     $xml = app(GenerateRssFeed::class)

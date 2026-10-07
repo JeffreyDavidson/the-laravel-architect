@@ -11,6 +11,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\assertDatabaseCount;
+
 pest()->use(RefreshDatabase::class);
 
 it('rolls back the inquiry when its email job cannot be queued and allows a clean retry', function () {
@@ -26,14 +28,14 @@ it('rolls back the inquiry when its email job cannot be queued and allows a clea
     expect(fn () => app(SendContactMessage::class)->handle($data))
         ->toThrow(RuntimeException::class, 'Synthetic queue failure.');
 
-    $this->assertDatabaseCount('contact_inquiries', 0);
-    $this->assertDatabaseCount('jobs', 0);
+    assertDatabaseCount('contact_inquiries', 0);
+    assertDatabaseCount('jobs', 0);
 
     app(SendContactMessage::class)
         ->handle($data);
 
-    $this->assertDatabaseCount('contact_inquiries', 1);
-    $this->assertDatabaseCount('jobs', 1);
+    assertDatabaseCount('contact_inquiries', 1);
+    assertDatabaseCount('jobs', 1);
 });
 
 it('rejects a separate queue database before saving a contact inquiry', function () {
@@ -46,7 +48,7 @@ it('rejects a separate queue database before saving a contact inquiry', function
     expect(fn () => app(SendContactMessage::class)->handle($data))
         ->toThrow(LogicException::class, 'Contact notifications must share the application database.');
 
-    $this->assertDatabaseCount('contact_inquiries', 0);
+    assertDatabaseCount('contact_inquiries', 0);
 });
 
 it('saves the inquiry and queues one email job that carries no contact details', function () {

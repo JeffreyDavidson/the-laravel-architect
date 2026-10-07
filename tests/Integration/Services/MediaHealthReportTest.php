@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Services\ImageUploadOptimizer;
 use App\Services\MediaHealthReport;
@@ -17,11 +16,8 @@ beforeEach(fn () => Storage::fake('public'));
 
 function mediaHealthProject(string $slug, ?string $path): Project
 {
-    return Project::withoutEvents(fn (): Project => Project::query()->create([
-        'title' => $slug,
+    return Project::withoutEvents(fn (): Project => Project::factory()->create([
         'slug' => $slug,
-        'description' => 'Description',
-        'status' => PublishStatus::Draft,
         'featured_image_path' => $path,
     ]));
 }
