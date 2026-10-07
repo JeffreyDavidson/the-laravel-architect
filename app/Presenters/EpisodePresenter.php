@@ -5,14 +5,39 @@ declare(strict_types=1);
 namespace App\Presenters;
 
 use App\Models\Episode;
+use App\Models\Podcast;
+use App\Presenters\Concerns\LinksToPublicPageOrPreview;
+use Illuminate\Contracts\Routing\UrlGenerator;
 
 final readonly class EpisodePresenter
 {
-    public function __construct(private Episode $episode) {}
+    use LinksToPublicPageOrPreview;
+
+    public function __construct(
+        private Episode $episode,
+        private UrlGenerator $urls,
+    ) {}
 
     public static function from(Episode $episode): self
     {
         return app()->make(self::class, ['episode' => $episode]);
+    }
+
+    /** The episode's page on its show, or null while the episode or its show is not public. */
+    public function publicUrl(): ?string
+    {
+        $podcast = $this->episode->podcast;
+
+        if (! $this->episode->isPublished() || ! $podcast instanceof Podcast || ! $podcast->is_active) {
+            return null;
+        }
+
+        return $this->urls->route('podcast.episode', [$podcast, $this->episode]);
+    }
+
+    public function previewUrl(): string
+    {
+        return $this->signedPreviewUrl($this->urls, 'preview.episode', ['episode' => $this->episode]);
     }
 
     public function code(): string

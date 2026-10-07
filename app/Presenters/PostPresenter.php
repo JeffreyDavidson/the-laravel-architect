@@ -6,12 +6,15 @@ namespace App\Presenters;
 
 use App\Data\ResponsiveImage;
 use App\Models\Post;
+use App\Presenters\Concerns\LinksToPublicPageOrPreview;
 use App\Services\ResponsiveImageVariants;
 use App\Support\Content\BundledPostArtwork;
 use Illuminate\Contracts\Routing\UrlGenerator;
 
 final readonly class PostPresenter
 {
+    use LinksToPublicPageOrPreview;
+
     public function __construct(
         private Post $post,
         private BundledPostArtwork $bundledArtwork,
@@ -22,6 +25,20 @@ final readonly class PostPresenter
     public static function from(Post $post): self
     {
         return app()->make(self::class, ['post' => $post]);
+    }
+
+    public function publicUrl(): ?string
+    {
+        if (! $this->post->isPublished()) {
+            return null;
+        }
+
+        return $this->urls->route('blog.show', $this->post);
+    }
+
+    public function previewUrl(): string
+    {
+        return $this->signedPreviewUrl($this->urls, 'preview.post', ['post' => $this->post]);
     }
 
     public function readingTime(): int

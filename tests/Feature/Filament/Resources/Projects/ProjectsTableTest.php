@@ -2,7 +2,7 @@
 
 use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\User;
-use App\Support\Content\PreviewUrlGenerator;
+use App\Presenters\ProjectPresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
@@ -29,6 +29,6 @@ it('links the view on site action to a signed preview for a draft project', func
     $project = PublishableFixtures::ready('project');
 
     livewire(ListProjects::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), app(PreviewUrlGenerator::class)->for($project))
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), ProjectPresenter::from($project)->previewUrl())
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($project));
 });

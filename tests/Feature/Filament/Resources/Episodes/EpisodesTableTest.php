@@ -3,7 +3,7 @@
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Models\Podcast;
 use App\Models\User;
-use App\Support\Content\PreviewUrlGenerator;
+use App\Presenters\EpisodePresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
@@ -30,7 +30,7 @@ it('links the view on site action to a signed preview for a draft episode', func
     $episode = PublishableFixtures::ready('episode');
 
     livewire(ListEpisodes::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), app(PreviewUrlGenerator::class)->for($episode))
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), EpisodePresenter::from($episode)->previewUrl())
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($episode));
 });
 
@@ -45,5 +45,5 @@ it('links the view on site action to a signed preview when the show is inactive'
     $episode->publish();
 
     livewire(ListEpisodes::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), app(PreviewUrlGenerator::class)->for($episode));
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), EpisodePresenter::from($episode)->previewUrl());
 });

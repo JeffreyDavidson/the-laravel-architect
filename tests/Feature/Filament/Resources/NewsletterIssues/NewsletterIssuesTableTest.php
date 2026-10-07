@@ -3,7 +3,7 @@
 use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use App\Models\User;
-use App\Support\Content\PreviewUrlGenerator;
+use App\Presenters\NewsletterIssuePresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
@@ -32,6 +32,6 @@ it('links the view on site action to a signed preview for a draft', function () 
     $issue = PublishableFixtures::ready('newsletter issue');
 
     livewire(ListNewsletterIssues::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($issue), app(PreviewUrlGenerator::class)->for($issue))
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($issue), NewsletterIssuePresenter::from($issue)->previewUrl())
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($issue));
 });
