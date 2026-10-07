@@ -93,23 +93,14 @@ it('keeps the project readiness filter keys', function () {
         ->toBe(['ready', 'needs_image', 'needs_case_study', 'needs_details']);
 });
 
-it('keeps the media health status strings', function () {
-    $values = array_column(MediaHealthStatus::cases(), 'value');
+it('uses snake_case keys for the status values', function (array $cases, array $values) {
+    $keys = array_column($cases, 'value');
 
-    expect($values)
-        ->toBe(['Healthy', 'Needs repair', 'Re-upload required']);
-});
-
-it('keeps the media source status strings', function () {
-    $values = array_column(MediaSourceStatus::cases(), 'value');
-
-    expect($values)
-        ->toBe(['Optimized', 'Needs optimization', 'Missing', 'Unreadable']);
-});
-
-it('keeps the media variant status strings', function () {
-    $values = array_column(MediaVariantStatus::cases(), 'value');
-
-    expect($values)
-        ->toBe(['Ready', 'Missing', 'Unavailable']);
-});
+    expect($keys)
+        ->toBe($values);
+})->with([
+    'media health' => [MediaHealthStatus::cases(), ['healthy', 'needs_repair', 'reupload_required']],
+    'media source' => [MediaSourceStatus::cases(), ['optimized', 'needs_optimization', 'missing', 'unreadable']],
+    'media variants' => [MediaVariantStatus::cases(), ['ready', 'missing', 'unavailable']],
+    'content readiness' => [ContentReadinessStatus::cases(), ['ready', 'needs_attention']],
+]);

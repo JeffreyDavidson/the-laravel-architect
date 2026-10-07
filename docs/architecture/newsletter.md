@@ -115,7 +115,10 @@ days of their latest request and unsubscribed subscribers 30 days after
 unsubscribing. Resubscribing always requires confirmation again.
 
 The Subscribers admin list shows each subscriber's status (`SubscriberStatus`)
-and filters by it, defaulting to active. Subscribers cannot be created from the
+and filters by it, defaulting to active. `Subscriber::status()` derives the
+badge and the `withStatus()` scope applies the filter with the same precedence
+(suppressed, then unsubscribed, then pending, then active), so a subscriber only
+ever appears under the filter that matches its badge. Subscribers cannot be created from the
 admin and have no edit page (see [Admin panel](admin-panel.md)).
 
 ## Suppression and the Resend webhook

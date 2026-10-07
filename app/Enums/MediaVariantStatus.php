@@ -9,13 +9,17 @@ use Filament\Support\Contracts\HasLabel;
 
 enum MediaVariantStatus: string implements HasColor, HasLabel
 {
-    case Ready = 'Ready';
-    case Missing = 'Missing';
-    case Unavailable = 'Unavailable';
+    case Ready = 'ready';
+    case Missing = 'missing';
+    case Unavailable = 'unavailable';
 
     public function getLabel(): string
     {
-        return $this->value;
+        return match ($this) {
+            self::Ready => 'Ready',
+            self::Missing => 'Missing',
+            self::Unavailable => 'Unavailable',
+        };
     }
 
     public function getColor(): string

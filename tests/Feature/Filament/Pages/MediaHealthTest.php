@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MediaHealthStatus;
 use App\Filament\Pages\MediaHealth;
 use App\Models\Project;
 use App\Models\User;
@@ -61,6 +62,31 @@ it('shows source and responsive variant health for stored images', function () {
         ->assertSee('Needs repair')
         ->assertSee('Ready')
         ->assertSee('Missing');
+});
+
+it('filters stored images by health status and labels each status', function () {
+    $missingImage = Project::withoutEvents(fn (): Project => Project::factory()->create(['slug' => 'missing-image-project']));
+    $needsRepair = Project::withoutEvents(fn (): Project => Project::factory()->create(['slug' => 'needs-repair-project']));
+    $path = app(ImageUploadOptimizer::class)->store(
+        UploadedFile::fake()->image('needs-repair.jpg', 1600, 900),
+        'projects',
+        'public',
+    );
+
+    if (! is_string($path)) {
+        throw new RuntimeException('Expected an optimized image path.');
+    }
+
+    Project::withoutEvents(fn (): bool => $needsRepair->update(['featured_image_path' => $path]));
+    $needsRepairKey = "project:{$needsRepair->id}";
+
+    livewire(MediaHealth::class)
+        ->filterTable('status', MediaHealthStatus::NeedsRepair->value)
+        ->assertCanSeeTableRecords([$needsRepairKey])
+        ->assertCanNotSeeTableRecords(["project:{$missingImage->id}"])
+        ->assertTableColumnFormattedStateSet('source_status', 'Optimized', $needsRepairKey)
+        ->assertTableColumnFormattedStateSet('variants', 'Missing', $needsRepairKey)
+        ->assertTableColumnFormattedStateSet('status', 'Needs repair', $needsRepairKey);
 });
 
 it('repairs missing responsive variants for a stored image', function () {

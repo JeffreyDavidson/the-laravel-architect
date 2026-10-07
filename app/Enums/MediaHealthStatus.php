@@ -9,13 +9,17 @@ use Filament\Support\Contracts\HasLabel;
 
 enum MediaHealthStatus: string implements HasColor, HasLabel
 {
-    case Healthy = 'Healthy';
-    case NeedsRepair = 'Needs repair';
-    case ReuploadRequired = 'Re-upload required';
+    case Healthy = 'healthy';
+    case NeedsRepair = 'needs_repair';
+    case ReuploadRequired = 'reupload_required';
 
     public function getLabel(): string
     {
-        return $this->value;
+        return match ($this) {
+            self::Healthy => 'Healthy',
+            self::NeedsRepair => 'Needs repair',
+            self::ReuploadRequired => 'Re-upload required',
+        };
     }
 
     public function getColor(): string
