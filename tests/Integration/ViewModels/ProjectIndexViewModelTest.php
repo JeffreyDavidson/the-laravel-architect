@@ -4,6 +4,7 @@ use App\Models\Project;
 use App\Models\Tag;
 use App\ViewModels\ProjectIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\Support\StructuredDataExpectations as Schema;
 
 pest()->use(RefreshDatabase::class);
@@ -65,3 +66,36 @@ it('builds the public project index payload', function () {
         ->and($data['pageMeta']->seo->title)
         ->toBe('Projects');
 });
+
+it('selects the offered filter options for the project index', function () {
+    $tag = Tag::factory()->create(['name' => 'Laravel']);
+    $project = Project::factory()
+        ->published()
+        ->create(['tech_stack' => ['Laravel']]);
+    $project->attachTag($tag);
+
+    $data = app(ProjectIndexViewModel::class)
+        ->data('laravel', 'laravel');
+
+    expect($data['projects']->modelKeys())->toBe([$project->getKey()])
+        ->and($data['selectedTechnology'])
+        ->toBe('Laravel')
+        ->and($data['selectedTag'])
+        ->toBe('laravel')
+        ->and($data['hasFilters'])
+        ->toBeTrue();
+});
+
+it('treats a project filter that no published project offers as not found', function (?string $technology, ?string $tag) {
+    Project::factory()
+        ->published()
+        ->create(['tech_stack' => ['Laravel']])
+        ->attachTag(Tag::factory()->create(['name' => 'Laravel']));
+
+    app(ProjectIndexViewModel::class)
+        ->data($technology, $tag);
+})->throws(NotFoundHttpException::class)
+    ->with([
+        'unknown technology' => ['Rust', null],
+        'unknown topic' => [null, 'rust'],
+    ]);
