@@ -1,6 +1,6 @@
 <?php
 
-use App\Mail\ConfirmNewsletterSubscription;
+use App\Mail\NewsletterConfirmationMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +14,7 @@ it('preserves signed query parameters in its plain text confirmation link', func
         'subscriber' => 1,
         'token' => 'confirmation-token',
     ]);
-    $mail = new ConfirmNewsletterSubscription($url);
+    $mail = new NewsletterConfirmationMail($url);
 
     $mail->assertSeeInText($url);
 });
@@ -24,7 +24,7 @@ it('renders a themed html confirmation with the link, a button and the expiry', 
         'subscriber' => 1,
         'token' => 'confirmation-token',
     ]);
-    $mail = new ConfirmNewsletterSubscription($url);
+    $mail = new NewsletterConfirmationMail($url);
 
     $mail->assertHasSubject('Confirm your subscription')
         ->assertSeeInHtml('Confirm your subscription')
@@ -38,7 +38,7 @@ it('renders a themed html confirmation with the link, a button and the expiry', 
 });
 
 it('keeps the html confirmation free of scripts and external stylesheets', function () {
-    $mail = new ConfirmNewsletterSubscription('https://example.test/confirm?expires=1&signature=abc');
+    $mail = new NewsletterConfirmationMail('https://example.test/confirm?expires=1&signature=abc');
 
     $mail->assertDontSeeInHtml('<script', false)
         ->assertDontSeeInHtml('<link', false)
@@ -47,14 +47,14 @@ it('keeps the html confirmation free of scripts and external stylesheets', funct
 
 it('escapes the confirmation link in the html and leaves it intact in the text', function () {
     $url = 'https://example.test/confirm?expires=1&signature=abc"onmouseover="x';
-    $mail = new ConfirmNewsletterSubscription($url);
+    $mail = new NewsletterConfirmationMail($url);
 
     $mail->assertDontSeeInHtml('signature=abc"onmouseover', false)
         ->assertSeeInText($url);
 });
 
 it('encrypts sensitive content in the queued mail payload', function () {
-    $mail = new ConfirmNewsletterSubscription('https://example.test/confirm?expires=123&signature=private-token');
+    $mail = new NewsletterConfirmationMail('https://example.test/confirm?expires=123&signature=private-token');
 
     Mail::to('recipient@example.test')->queue($mail->onConnection('database'));
 

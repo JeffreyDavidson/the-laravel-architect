@@ -21,8 +21,8 @@ inserted in one database transaction.
 
 ## Sending
 
-The job sends the owner notification (`ContactMessageReceived`) and the sender
-confirmation (`ContactMessageConfirmation`) separately. It stamps
+The job sends the owner notification (`ContactInquiryReceivedMail`) and the sender
+confirmation (`ContactConfirmationMail`) separately. It stamps
 `notification_sent_at` / `confirmation_sent_at` only after each succeeds, so a
 retry sends only what is missing (3 tries, 60/300/900-second backoff, one worker
 per inquiry).

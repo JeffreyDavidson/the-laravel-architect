@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\RequestNewsletterSubscription;
-use App\Mail\ConfirmNewsletterSubscription;
+use App\Mail\NewsletterConfirmationMail;
 use App\Models\Subscriber;
 use App\Providers\AppServiceProvider;
 use Illuminate\Contracts\Mail\Mailer;
@@ -39,8 +39,8 @@ it('starts a pending newsletter subscription and queues its confirmation', funct
         ->not->toBeNull();
 
     Mail::assertQueued(
-        ConfirmNewsletterSubscription::class,
-        fn (ConfirmNewsletterSubscription $mail): bool => $mail->hasTo('reader@example.com')
+        NewsletterConfirmationMail::class,
+        fn (NewsletterConfirmationMail $mail): bool => $mail->hasTo('reader@example.com')
             && URL::hasValidSignature(Request::create($mail->confirmationUrl)),
     );
 });
@@ -56,8 +56,8 @@ it('builds the confirmation link on the application URL in production whatever t
         ->handle('reader@example.com');
 
     Mail::assertQueued(
-        ConfirmNewsletterSubscription::class,
-        fn (ConfirmNewsletterSubscription $mail): bool => str_starts_with($mail->confirmationUrl, 'https://thelaravelarchitect.test/newsletter/confirm/'),
+        NewsletterConfirmationMail::class,
+        fn (NewsletterConfirmationMail $mail): bool => str_starts_with($mail->confirmationUrl, 'https://thelaravelarchitect.test/newsletter/confirm/'),
     );
 });
 
@@ -105,7 +105,7 @@ it('restarts confirmation for an unsubscribed reader', function () {
         ->and($subscriber->verification_token_hash)
         ->not->toBeNull();
 
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 1);
 });
 
 it('preserves a pending confirmation link during the email cooldown', function () {
@@ -123,7 +123,7 @@ it('preserves a pending confirmation link during the email cooldown', function (
         ->and(Date::parse($subscriber->subscribed_at)->equalTo($subscribedAt))
         ->toBeTrue();
 
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 1);
 });
 
 it('allows a pending confirmation to be requested again after the cooldown expires', function () {
@@ -139,7 +139,7 @@ it('allows a pending confirmation to be requested again after the cooldown expir
     expect(Subscriber::query()->sole()
         ->verification_token_hash)->not->toBe($tokenHash);
 
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 2);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 2);
 });
 
 it('does not retain the cooldown when queueing the confirmation fails', function () {

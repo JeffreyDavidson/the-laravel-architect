@@ -30,8 +30,7 @@ final class ContactInquiriesTable
                     ->limit(36)
                     ->copyable(),
                 TextColumn::make('type')
-                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereIn('type', self::typesWithLabelMatching($search)))
-                    ->formatStateUsing(fn (string $state): string => ContactType::tryFrom($state)?->getLabel() ?? $state),
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereIn('type', self::typesWithLabelMatching($search))),
                 TextColumn::make('status')
                     ->badge(),
                 TextColumn::make('created_at')

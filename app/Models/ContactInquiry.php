@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ContactInquiryStatus;
+use App\Enums\ContactType;
 use Database\Factories\ContactInquiryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 
+/**
+ * @property ContactType $type
+ */
 #[Fillable('name', 'email', 'type', 'budget', 'message', 'project_title', 'status', 'notes', 'email_attempted_at', 'notification_sent_at', 'confirmation_sent_at')]
 final class ContactInquiry extends Model
 {
@@ -30,6 +34,7 @@ final class ContactInquiry extends Model
         return [
             'name' => 'encrypted',
             'email' => 'encrypted',
+            'type' => ContactType::class,
             'budget' => 'encrypted',
             'message' => 'encrypted',
             'project_title' => 'encrypted',

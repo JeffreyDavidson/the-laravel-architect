@@ -1,6 +1,6 @@
 <?php
 
-use App\Mail\ContactMessageReceived;
+use App\Mail\ContactInquiryReceivedMail;
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -14,7 +14,7 @@ it('renders the inquiry details', function () {
         'message' => 'Confidential message',
     ]);
 
-    $mail = new ContactMessageReceived($inquiry);
+    $mail = new ContactInquiryReceivedMail($inquiry);
 
     $envelope = $mail->envelope();
 
@@ -30,7 +30,7 @@ it('renders the sender\'s input as raw plain text', function () {
         'message' => 'I\'m keen on "Laravel" <3',
         'project_title' => 'Q&A <site>',
     ]);
-    $mail = new ContactMessageReceived($inquiry);
+    $mail = new ContactInquiryReceivedMail($inquiry);
 
     $body = $mail->render();
 
