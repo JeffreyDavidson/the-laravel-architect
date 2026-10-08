@@ -65,6 +65,21 @@ it('keeps a published project selected on the contact page', function () {
         ->assertSeeHtml('name="project" value="'.$project->slug.'"');
 });
 
+it('shows the contact form without a project for an unusable project context', function (array $query) {
+    Project::factory()->create(['slug' => 'draft-project']);
+
+    get(route('contact.create', $query))
+        ->assertOk()
+        ->assertDontSee('Project inquiry')
+        ->assertDontSeeHtml('name="project"');
+})->with([
+    'unknown slug' => [['project' => 'missing-project']],
+    'draft project' => [['project' => 'draft-project']],
+    'array' => [['project' => ['draft-project']]],
+    'over-long' => [['project' => str_repeat('a', 300)]],
+    'blank' => [['project' => '   ']],
+]);
+
 it('rejects a draft project context on contact submissions', function () {
     $project = Project::factory()->create();
 

@@ -8,6 +8,8 @@ use App\Contracts\PageViewModel;
 use App\Data\ContentListItem;
 use App\Data\PageMeta;
 use App\Enums\SearchContentType;
+use App\Models\Video;
+use App\Presenters\VideoPresenter;
 use App\Queries\ArchiveQuery;
 use App\Support\Seo\CollectionListing;
 use App\Support\Seo\JsonLd;
@@ -85,7 +87,7 @@ final readonly class ArchiveViewModel implements PageViewModel
                 SearchContentType::Podcasts => route('podcasts.show', ['podcast' => $item->slug]),
                 SearchContentType::Newsletter => route('newsletter.issue', ['newsletterIssue' => $item->slug]),
                 SearchContentType::Episodes => route('podcasts.episode', ['podcast' => $item->podcastSlug, 'episode' => $item->slug]),
-                SearchContentType::Videos => "https://www.youtube.com/watch?v={$item->youtubeId}",
+                SearchContentType::Videos => VideoPresenter::from(new Video(['youtube_id' => $item->youtubeId]))->youtubeUrl(),
             },
             'external' => $item->type === SearchContentType::Videos,
             'date' => $item->date,

@@ -30,6 +30,7 @@ it('generates an OG image once and serves later requests from private storage', 
     get(route('ogImage', $post))
         ->assertOk()
         ->assertHeader('Content-Type', 'image/png')
+        ->assertHeader('Cache-Control', 'max-age=86400, public')
         ->assertContent('generated-png');
     get(route('ogImage', $post))
         ->assertOk()
