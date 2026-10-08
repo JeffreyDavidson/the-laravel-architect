@@ -16,9 +16,6 @@ final class OgImageController
 
         $png = $cache->generate($post);
 
-        return response($png, 200, [
-            'Content-Type' => 'image/png',
-            'Cache-Control' => 'public, max-age=86400',
-        ]);
+        return response($png, 200, ['Content-Type' => 'image/png']);
     }
 }

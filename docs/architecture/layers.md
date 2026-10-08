@@ -154,16 +154,9 @@ Creating a new base folder under `app/` needs the owner's approval first.
 
 ## Known Gaps
 
-These spots on `develop` (as of 2026-10-08) don't follow the tables yet and
-are scheduled to be fixed. Follow the rule, not the gap, and delete a line here
-when its fix merges.
-
-- `ContactController::create` reads the `project` query value from the raw
-  `Request` instead of a FormRequest.
-- `OgImageController` and `RobotsController` set `Cache-Control` on the
-  response instead of with `cache.headers` on the route.
-- `ArchiveViewModel` builds YouTube watch URLs itself instead of using
-  `VideoPresenter::youtubeUrl()`.
+None on `develop` as of 2026-10-08. When code that doesn't follow the tables
+has to merge, list it here with the fix it needs, and delete the line when the
+fix merges.
 
 The admin `Gate::before` returning `false` for non-administrators is a decision,
 not a gap: Filament allows any ability on a model without a policy unless a
