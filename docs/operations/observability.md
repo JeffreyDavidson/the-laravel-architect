@@ -5,6 +5,16 @@ and Sentry for exception reporting on both sites. Availability is watched by the
 Forge deployment health check and the `Production uptime` workflow. Who owns
 each check is in the [operations index](../operations.md#ownership-of-operational-checks).
 
+## Where it is wired
+
+`App\Providers\MonitoringServiceProvider` registers the Sentry event and
+breadcrumb redaction callbacks and the Nightwatch user resolver and redaction
+callbacks described below. Sampling rates come from `config/sentry.php` and
+`config/nightwatch.php`. The `/up` checks (a migrations-table read and, when
+`RUNTIME_HEALTH_ENABLED` is on, the scheduler and queue heartbeats) run in
+`App\Listeners\CheckApplicationHealthListener`, which Laravel's event discovery
+registers for `DiagnosingHealth`; register it nowhere else, or it runs twice.
+
 ## Environments
 
 Staging verification does not require a Nightwatch agent. Telescope is intended

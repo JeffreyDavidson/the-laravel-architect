@@ -7,8 +7,8 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasLabel;
 
 /**
- * The admin panel's sidebar groups. AdminPanelProvider builds the sidebar in
- * this order, and resources and pages reference a case as their group.
+ * The admin panel's sidebar groups. Resources and pages reference a case as
+ * their $navigationGroup, and Filament shows the groups in case order.
  */
 enum NavigationGroup: string implements HasLabel
 {
