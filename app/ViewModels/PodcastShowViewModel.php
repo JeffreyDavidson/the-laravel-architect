@@ -30,6 +30,7 @@ final class PodcastShowViewModel
             ->paginate(20);
 
         $page = PaginatedPageSeo::forCurrentPage($episodes);
+        abort_if($page->isOutOfRange(), 404);
         $canonicalUrl = $page->url('podcast.show', ['podcast' => $podcast]);
 
         return [

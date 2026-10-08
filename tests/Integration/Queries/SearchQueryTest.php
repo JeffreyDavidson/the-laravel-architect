@@ -122,17 +122,6 @@ it('keeps the other groups on their first page when one group is paged', functio
         ->toBe(2);
 });
 
-it('keeps the search terms and returns to the group heading in page links', function () {
-    seedPagedSearchContent(posts: 13, issues: 0);
-
-    $results = searchWithParameters(['q' => 'paging', 'type' => 'writing'], SearchContentType::Writing);
-    $nextPageUrl = $results['writing']->nextPageUrl();
-
-    expect($nextPageUrl)
-        ->toContain('q=paging', 'type=writing', 'postsPage=2')
-        ->toEndWith('#search-writing');
-});
-
 it('uses a distinct page parameter for every group', function () {
     seedPagedSearchContent(posts: 1, issues: 1);
 

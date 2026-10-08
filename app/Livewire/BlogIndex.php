@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Queries\BlogIndexQuery;
 use App\Support\Seo\StructuredDataBuilder;
 use App\ViewModels\PostIndexViewModel;
 use Illuminate\View\View;
@@ -72,17 +71,13 @@ final class BlogIndex extends Component
         $this->resetPage();
     }
 
-    public function render(BlogIndexQuery $blogIndexQuery, PostIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
+    public function render(PostIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
     {
         if ($this->initialData !== null) {
             return view('livewire.blog-index', $this->initialData);
         }
 
-        $data = $blogIndexViewModel->data(
-            $blogIndexQuery->results($this->search, $this->categorySlug),
-            $this->search,
-            $this->categorySlug,
-        );
+        $data = $blogIndexViewModel->data($this->search, $this->categorySlug);
 
         $this->dispatch(
             'blog-metadata-updated',

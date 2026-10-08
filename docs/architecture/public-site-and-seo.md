@@ -36,8 +36,19 @@ for the subscribe buttons. `EpisodePresenter` formats episode codes, durations
 and YouTube video IDs, and `EpisodeShowViewModel` turns them into the episode
 page's display flags.
 
-Reusable content selection, including related posts, related projects, and
-adjacent-episode navigation, lives in query objects rather than controllers.
+A public page request runs in one direction. The route binds slugs and applies
+middleware, a FormRequest normalises and validates any filters (bad public
+filters return 404), and the controller passes only that validated input and the
+bound models to the page's ViewModel. The ViewModel calls the Queries it needs,
+sets paginator links, returns 404 for an out-of-range page or an unknown filter
+value, builds the SEO metadata, and returns the view data. Queries only read and
+return models, paginators or DTOs: they never abort, read the request or build
+URLs. Architecture tests keep controllers and Livewire components from calling
+Queries and keep HTTP and URLs out of Queries.
+
+Reusable content selection, including the blog index, archive and search
+listings, related posts, related projects, and adjacent-episode navigation,
+lives in query objects that ViewModels call.
 The newsletter subscription lifecycle and contact message delivery live in
 focused actions, because each changes state.
 
@@ -84,7 +95,9 @@ article, podcast, and collection builders behind `StructuredDataBuilder`.
 
 Paginated public archives reject out-of-range pages and use page-specific
 titles, descriptions, canonical and collection URLs, and continuous item
-positions. Dynamic sitemap archives report the latest modification date from
+positions. `PaginatedPageSeo` builds the page-specific metadata and reports
+whether the page is out of range; each listing's ViewModel turns that into the
+404. Dynamic sitemap archives report the latest modification date from
 their public content.
 
 ## Blog archive and search
@@ -131,7 +144,7 @@ existing public links.
   form rejects a slug that matches a static `/newsletter/*` route (such as `rss`
   or `confirmed`), because those routes are registered first and would make the
   issue unreachable.
-- `/archive` (`ArchiveController`, `ArchiveQuery`) is one reverse-chronological
+- `/archive` (`ArchiveController`, `ArchiveViewModel`, `ArchiveQuery`) is one reverse-chronological
   list of published posts, projects, active podcasts, newsletter issues,
   episodes and videos, filtered by `type` and `year` and paginated at 18 per
   page with a 404 for out-of-range pages. Videos link out to YouTube.

@@ -22,9 +22,8 @@ final class SearchQuery
 {
     /**
      * Each group pages independently through its own query parameter (for example
-     * postsPage), keeping the search terms and returning to the group's heading. The page
-     * size comes from `search.per_page`. Groups are keyed by their content type value and
-     * hold the matching published models.
+     * postsPage). The page size comes from `search.per_page`. Groups are keyed by their
+     * content type value and hold the matching published models.
      *
      * @return array<string, SearchResultPage>
      */
@@ -67,7 +66,6 @@ final class SearchQuery
                     ->latest('published_at')
                     ->latest('id'),
                 'postsPage',
-                $type,
             ),
             SearchContentType::Projects => $this->paginate(
                 Project::query()
@@ -78,7 +76,6 @@ final class SearchQuery
                     ->latest('updated_at')
                     ->latest('id'),
                 'projectsPage',
-                $type,
             ),
             SearchContentType::Podcasts => $this->paginate(
                 Podcast::query()
@@ -88,7 +85,6 @@ final class SearchQuery
                     ->orderBy('sort_order')
                     ->orderBy('id'),
                 'podcastsPage',
-                $type,
             ),
             SearchContentType::Newsletter => $this->paginate(
                 NewsletterIssue::query()
@@ -98,7 +94,6 @@ final class SearchQuery
                     ->latest('published_at')
                     ->latest('id'),
                 'newsletterPage',
-                $type,
             ),
             SearchContentType::Episodes => $this->paginate(
                 Episode::query()
@@ -112,7 +107,6 @@ final class SearchQuery
                     ->latest('published_at')
                     ->latest('id'),
                 'episodesPage',
-                $type,
             ),
             SearchContentType::Videos => $this->paginate(
                 Video::query()
@@ -122,7 +116,6 @@ final class SearchQuery
                     ->latest('published_at')
                     ->latest('id'),
                 'videosPage',
-                $type,
             ),
         };
     }
@@ -152,11 +145,8 @@ final class SearchQuery
      * @param  Builder<TModel>  $query
      * @return LengthAwarePaginator<int, TModel>
      */
-    private function paginate(Builder $query, string $pageName, SearchContentType $type): LengthAwarePaginator
+    private function paginate(Builder $query, string $pageName): LengthAwarePaginator
     {
-        return $query
-            ->paginate(config()->integer('search.per_page'), pageName: $pageName)
-            ->withQueryString()
-            ->fragment("search-{$type->value}");
+        return $query->paginate(config()->integer('search.per_page'), pageName: $pageName);
     }
 }

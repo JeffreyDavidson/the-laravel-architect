@@ -14,21 +14,21 @@ final class BlogIndexQuery
 {
     private const int POSTS_PER_PAGE = 12;
 
-    /**
-     * @return array{
-     *     posts: LengthAwarePaginator<int, Post>,
-     *     categories: Collection<int, Category>,
-     *     publishedPostCount: int,
-     *     selectedCategory: Category|null,
-     * }
-     */
-    public function results(string $search, ?string $categorySlug): array
+    public function category(string $slug): ?Category
     {
-        $selectedCategory = $categorySlug !== null && $categorySlug !== ''
-            ? Category::query()->where('slug', $categorySlug)
-                ->firstOrFail()
-            : null;
+        return Category::query()
+            ->where('slug', $slug)
+            ->first();
+    }
 
+    /**
+     * Published posts, newest first, in the category when one is given and matching the search
+     * in the title, excerpt or a tag name when it is not empty.
+     *
+     * @return LengthAwarePaginator<int, Post>
+     */
+    public function posts(string $search, ?Category $category): LengthAwarePaginator
+    {
         $postsQuery = Post::query()
             ->select([
                 'id',
@@ -48,8 +48,8 @@ final class BlogIndexQuery
             ->orderByDesc('published_at')
             ->orderByDesc('id');
 
-        if ($selectedCategory !== null) {
-            $postsQuery->whereBelongsTo($selectedCategory);
+        if ($category instanceof Category) {
+            $postsQuery->whereBelongsTo($category);
         }
 
         if ($search !== '') {
@@ -69,25 +69,21 @@ final class BlogIndexQuery
             });
         }
 
-        $posts = $postsQuery
-            ->paginate(self::POSTS_PER_PAGE)
-            ->withPath(route('blog.index'))
-            ->appends(array_filter([
-                'q' => $search !== '' ? $search : null,
-                'category' => $categorySlug,
-            ], fn (?string $value): bool => $value !== null));
+        return $postsQuery->paginate(self::POSTS_PER_PAGE);
+    }
 
-        return [
-            'posts' => $posts,
-            'categories' => Category::query()
-                ->withCount(['publishedPosts as posts_count'])
-                ->get(),
-            'publishedPostCount' => $selectedCategory === null && $search === ''
-                ? $posts->total()
-                : Post::query()
-                    ->published()
-                    ->count(),
-            'selectedCategory' => $selectedCategory,
-        ];
+    /** @return Collection<int, Category> */
+    public function categories(): Collection
+    {
+        return Category::query()
+            ->withCount(['publishedPosts as posts_count'])
+            ->get();
+    }
+
+    public function publishedPostCount(): int
+    {
+        return Post::query()
+            ->published()
+            ->count();
     }
 }
