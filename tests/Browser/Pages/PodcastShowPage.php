@@ -9,7 +9,7 @@ final class PodcastShowPage
 {
     public static function visit(Podcast $podcast): AwaitableWebpage
     {
-        $page = \visit(route('podcast.show', $podcast, absolute: false))->wait(0);
+        $page = \visit(route('podcasts.show', $podcast, absolute: false))->wait(0);
 
         if (! $page instanceof AwaitableWebpage) {
             throw new \RuntimeException('Expected a browser page.');

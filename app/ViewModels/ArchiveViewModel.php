@@ -82,9 +82,9 @@ final readonly class ArchiveViewModel implements PageViewModel
             'url' => match ($item->type) {
                 SearchContentType::Writing => route('blog.show', ['post' => $item->slug]),
                 SearchContentType::Projects => route('projects.show', ['project' => $item->slug]),
-                SearchContentType::Podcasts => route('podcast.show', ['podcast' => $item->slug]),
+                SearchContentType::Podcasts => route('podcasts.show', ['podcast' => $item->slug]),
                 SearchContentType::Newsletter => route('newsletter.issue', ['newsletterIssue' => $item->slug]),
-                SearchContentType::Episodes => route('podcast.episode', ['podcast' => $item->podcastSlug, 'episode' => $item->slug]),
+                SearchContentType::Episodes => route('podcasts.episode', ['podcast' => $item->podcastSlug, 'episode' => $item->slug]),
                 SearchContentType::Videos => "https://www.youtube.com/watch?v={$item->youtubeId}",
             },
             'external' => $item->type === SearchContentType::Videos,

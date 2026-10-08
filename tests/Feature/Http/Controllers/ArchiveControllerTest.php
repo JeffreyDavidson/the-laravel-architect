@@ -65,7 +65,7 @@ it('browses published public content in one chronological archive', function () 
 
     expect($episodePosition)->toBeLessThan($postPosition)
         ->and($content)
-        ->toContain(route('podcast.episode', [$podcast, $episode]));
+        ->toContain(route('podcasts.episode', [$podcast, $episode]));
 });
 
 it('filters the archive by content type and year', function () {

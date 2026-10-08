@@ -35,7 +35,7 @@ it('builds a page-aware podcast payload', function () {
     $data = app(PodcastShowViewModel::class)
         ->data($podcast);
 
-    $canonicalUrl = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
+    $canonicalUrl = route('podcasts.show', ['podcast' => $podcast, 'page' => 2]);
 
     expect($data)->toHaveKeys(['podcast', 'episodes', 'latestEpisode', 'pageMeta'])
         ->and($data['podcast']->is($podcast))

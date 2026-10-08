@@ -56,7 +56,7 @@ final readonly class SitemapViewModel
             $this->url(route('privacy'), null, 'yearly', '0.3'),
             $this->url(route('uses'), null, 'monthly', '0.6'),
             $this->url(route('blog.index'), $this->latestUpdatedAt($posts), 'weekly', '0.9'),
-            $this->url(route('podcast.index'), $latestPodcastUpdatedAt, 'weekly', '0.8'),
+            $this->url(route('podcasts.index'), $latestPodcastUpdatedAt, 'weekly', '0.8'),
             $this->url(route('projects.index'), $this->latestUpdatedAt($projects), 'monthly', '0.8'),
             $this->url(route('newsletter.index'), $this->latestUpdatedAt($issues), 'weekly', '0.8'),
             $this->url(route('archive.index'), $latestContentUpdatedAt, 'weekly', '0.7'),
@@ -91,10 +91,10 @@ final readonly class SitemapViewModel
                 collect([$podcast])->concat($podcast->publishedEpisodes),
             );
 
-            $urls[] = $this->url(route('podcast.show', $podcast), $updatedAt, 'weekly', '0.7');
+            $urls[] = $this->url(route('podcasts.show', $podcast), $updatedAt, 'weekly', '0.7');
 
             foreach ($podcast->publishedEpisodes as $episode) {
-                $urls[] = $this->url(route('podcast.episode', [$podcast, $episode]), $episode->updated_at, 'monthly', '0.6');
+                $urls[] = $this->url(route('podcasts.episode', [$podcast, $episode]), $episode->updated_at, 'monthly', '0.6');
             }
         }
 

@@ -6,12 +6,12 @@
                 {{-- Breadcrumb --}}
                 <nav aria-label="Breadcrumb" class="relative z-10 mb-8 flex items-center gap-2 text-sm text-gray-500">
                     <a
-                        href="{{ route('podcast.index') }}"
+                        href="{{ route('podcasts.index') }}"
                         class="transition-colors hover:text-gray-900 dark:hover:text-white"
                     >Podcast</a>
                     <svg aria-hidden="true" class="h-3.5 w-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     <a
-                        href="{{ route('podcast.show', $podcast) }}"
+                        href="{{ route('podcasts.show', $podcast) }}"
                         class="transition-colors hover:text-gray-900 dark:hover:text-white"
                     >{{ $podcast->name }}</a>
                     <svg aria-hidden="true" class="h-3.5 w-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -77,7 +77,7 @@
 
                         {{-- Podcast name link --}}
                         <a
-                            href="{{ route('podcast.show', $podcast) }}"
+                            href="{{ route('podcasts.show', $podcast) }}"
                             class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                         >
                             <x-podcast-cover
@@ -238,7 +238,7 @@
                         <div class="space-y-6 lg:sticky lg:top-8">
                             {{-- About This Podcast --}}
                             <x-sidebar-card title="About This Podcast" class="p-5">
-                                <a href="{{ route('podcast.show', $podcast) }}" class="group block">
+                                <a href="{{ route('podcasts.show', $podcast) }}" class="group block">
                                     <div class="mb-3 flex items-center gap-3">
                                         <x-podcast-cover
                                             :podcast="$podcast"
@@ -317,7 +317,7 @@
                             <x-sidebar-card title="Share Episode" class="p-5">
                                 <div class="flex gap-2">
                                     <a
-                                        href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}"
+                                        href="https://twitter.com/intent/tweet?text={{ urlencode($episode->title . ' — ' . $podcast->name) }}&url={{ urlencode(route('podcasts.episode', [$podcast, $episode])) }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on X"
@@ -326,7 +326,7 @@
                                         <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                                     </a>
                                     <a
-                                        href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcast.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}"
+                                        href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(route('podcasts.episode', [$podcast, $episode])) }}&title={{ urlencode($episode->title) }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label="Share {{ $episode->title }} on LinkedIn"
@@ -337,8 +337,8 @@
                                     <x-copy-button
                                         label="Copy episode link"
                                         success="Episode link copied"
-                                        :text="route('podcast.episode', [$podcast, $episode])"
-                                        data-podcast-copy-url="{{ route('podcast.episode', [$podcast, $episode]) }}"
+                                        :text="route('podcasts.episode', [$podcast, $episode])"
+                                        data-podcast-copy-url="{{ route('podcasts.episode', [$podcast, $episode]) }}"
                                         class="dark:border-surface-border flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm text-gray-600 transition-colors hover:-translate-y-0.5 hover:border-gray-600 hover:text-gray-900 motion-reduce:transition-none dark:text-gray-400 dark:hover:text-white"
                                     />
                                 </div>

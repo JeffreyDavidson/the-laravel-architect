@@ -66,6 +66,7 @@ composer check
 - [Portfolio presentation](docs/portfolio-presentation.md)
 - [Project description template](docs/project-description-template.md)
 - [Architecture](docs/architecture.md), with detail pages in `docs/architecture/`
+- [Layers: where code goes](docs/architecture/layers.md)
 - [Testing](docs/testing.md)
 - [Operations and deployment](docs/operations.md), with detail pages and
   runbooks in `docs/operations/`

@@ -37,7 +37,7 @@ final readonly class PodcastShowViewModel implements PageViewModel
 
         $page = PaginatedPageSeo::forCurrentPage($episodes);
         abort_if($page->isOutOfRange(), 404);
-        $canonicalUrl = $page->url('podcast.show', ['podcast' => $podcast]);
+        $canonicalUrl = $page->url('podcasts.show', ['podcast' => $podcast]);
         $podcastPresenter = PodcastPresenter::from($podcast);
 
         return [
@@ -60,11 +60,11 @@ final readonly class PodcastShowViewModel implements PageViewModel
                         $episodes,
                         static fn (Episode $episode): array => [
                             'name' => $episode->title,
-                            'url' => route('podcast.episode', [$podcast, $episode]),
+                            'url' => route('podcasts.episode', [$podcast, $episode]),
                         ],
                     )),
                     $this->site->breadcrumbs([
-                        ['name' => 'Podcast', 'url' => route('podcast.index')],
+                        ['name' => 'Podcast', 'url' => route('podcasts.index')],
                         ['name' => $podcast->name, 'url' => $canonicalUrl],
                     ]),
                 ],
