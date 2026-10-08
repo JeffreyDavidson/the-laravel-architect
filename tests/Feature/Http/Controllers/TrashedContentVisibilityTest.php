@@ -18,7 +18,7 @@ function publicUrl(Model $record): string
     return match (true) {
         $record instanceof Post => route('blog.show', $record),
         $record instanceof Project => route('projects.show', $record),
-        $record instanceof Episode => route('podcast.episode', [$record->podcast, $record]),
+        $record instanceof Episode => route('podcasts.episode', [$record->podcast, $record]),
         $record instanceof NewsletterIssue => route('newsletter.issue', $record),
         default => throw new InvalidArgumentException('Unsupported content type.'),
     };

@@ -36,7 +36,7 @@ Welcome to the **episode**.
 MARKDOWN,
         ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSeeHtml('<h3>Topics Covered</h3>')
         ->assertSeeHtml('<strong>domain boundaries</strong>')
@@ -58,7 +58,7 @@ it('does not render an empty transcript section', function () {
         ->published()
         ->create();
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertDontSee('Read transcript');
 });
@@ -74,11 +74,23 @@ it('shows an episode publish date in the display timezone', function () {
             'published_at' => '2026-10-06 01:00:00',
         ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSee('October 05, 2026')
         ->assertSee('Oct 05, 2026')
         ->assertSeeHtml('datetime="2026-10-05"')
         ->assertDontSeeHtml('datetime="2026-10-06"')
         ->assertSeeHtml('"datePublished":"2026-10-06T01:00:00+00:00"');
+});
+
+it('does not find an episode under a podcast it does not belong to', function () {
+    $podcast = Podcast::factory()->create();
+    $otherPodcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($otherPodcast)
+        ->published()
+        ->create();
+
+    get(route('podcasts.episode', [$podcast, $episode]))
+        ->assertNotFound();
 });

@@ -1,7 +1,7 @@
 @php
     $navigationLinks = [
         ['label' => 'Blog', 'route' => 'blog.index'],
-        ['label' => 'Podcast', 'route' => 'podcast.index'],
+        ['label' => 'Podcast', 'route' => 'podcasts.index'],
         ['label' => 'Projects', 'route' => 'projects.index'],
         ['label' => 'About', 'route' => 'about'],
         ['label' => 'Services', 'route' => 'services'],

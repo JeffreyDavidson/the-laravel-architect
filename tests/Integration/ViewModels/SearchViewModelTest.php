@@ -73,7 +73,7 @@ it('turns each matching model into a search result', function (SearchContentType
     'podcast' => [
         SearchContentType::Podcasts,
         fn (): Podcast => Podcast::factory()->create(['name' => 'Zephyrquill result']),
-        fn (Podcast $podcast): string => route('podcast.show', $podcast),
+        fn (Podcast $podcast): string => route('podcasts.show', $podcast),
         'Podcast',
         false,
         false,
@@ -93,7 +93,7 @@ it('turns each matching model into a search result', function (SearchContentType
         fn (): Episode => Episode::factory()
             ->published()
             ->create(['title' => 'Zephyrquill result']),
-        fn (Episode $episode): string => route('podcast.episode', [$episode->podcast, $episode]),
+        fn (Episode $episode): string => route('podcasts.episode', [$episode->podcast, $episode]),
         'Episode',
         true,
         false,

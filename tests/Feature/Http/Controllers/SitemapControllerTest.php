@@ -72,8 +72,8 @@ it('only includes public content in the sitemap', function () {
         ->assertDontSeeHtml(route('blog.category', $draftOnlyCategory))
         ->assertSeeHtml(route('blog.tag', $publishedTag))
         ->assertDontSeeHtml(route('blog.tag', $scheduledOnlyTag))
-        ->assertSeeHtml(route('podcast.episode', [$podcast, $publishedEpisode]))
-        ->assertDontSeeHtml(route('podcast.episode', [$podcast, $draftEpisode]))
+        ->assertSeeHtml(route('podcasts.episode', [$podcast, $publishedEpisode]))
+        ->assertDontSeeHtml(route('podcasts.episode', [$podcast, $draftEpisode]))
         ->assertDontSeeHtml('<lastmod>');
 });
 
@@ -118,8 +118,8 @@ it('reports the latest published content change for sitemap archives', function 
         [route('blog.category', $category), $postUpdatedAt],
         [route('blog.tag', $tag), $postUpdatedAt],
         [route('projects.index'), $projectUpdatedAt],
-        [route('podcast.index'), $episodeUpdatedAt],
-        [route('podcast.show', $podcast), $episodeUpdatedAt],
+        [route('podcasts.index'), $episodeUpdatedAt],
+        [route('podcasts.show', $podcast), $episodeUpdatedAt],
         [route('home'), $episodeUpdatedAt],
         [route('archive.index'), $episodeUpdatedAt],
     ] as [$url, $updatedAt]) {
