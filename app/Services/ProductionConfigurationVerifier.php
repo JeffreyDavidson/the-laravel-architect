@@ -54,7 +54,6 @@ final class ProductionConfigurationVerifier
             [$this->hasSafeBackupFileSources(config('backup.backup.source.files.include'), config('backup.backup.source.files.exclude')), 'BACKUP_MEDIA_PATH must be an absolute persistent path outside the release directory, and .env must be excluded.'],
             [$this->hasOffServerBackup($backupDisks), 'BACKUP_DISKS must include an off-server disk.'],
             [$this->hasKnownBackupDisks($backupDisks), 'BACKUP_DISKS must reference configured filesystem disks.'],
-            [$this->hasConfiguredNasBackup($backupDisks), 'The nas-backups disk must configure host, username, password, root, port, and host fingerprint.'],
             [$this->hasConfiguredB2Backup($backupDisks), 'The b2-backups disk must configure a private Backblaze S3 endpoint, region, bucket, key ID, and application key.'],
             [$this->isConfigured(config('backup.backup.password')), 'BACKUP_ARCHIVE_PASSWORD must be configured.'],
             [$this->isPositiveInteger(config('health.failed_jobs.retention_hours')), 'QUEUE_FAILED_JOB_RETENTION_HOURS must be at least 1.'],
@@ -204,24 +203,6 @@ final class ProductionConfigurationVerifier
             $disks,
             fn (mixed $disk): bool => is_string($disk) && is_array(config("filesystems.disks.{$disk}")),
         );
-    }
-
-    private function hasConfiguredNasBackup(mixed $disks): bool
-    {
-        if (! is_array($disks) || ! in_array('nas-backups', $disks, true)) {
-            return true;
-        }
-
-        $disk = config('filesystems.disks.nas-backups');
-
-        return is_array($disk)
-            && ($disk['driver'] ?? null) === 'sftp'
-            && $this->isConfigured($disk['host'] ?? null)
-            && $this->isConfigured($disk['username'] ?? null)
-            && $this->isConfigured($disk['password'] ?? null)
-            && $this->isConfigured($disk['root'] ?? null)
-            && $this->isConfigured($disk['hostFingerprint'] ?? null)
-            && $this->isPositiveInteger($disk['port'] ?? null);
     }
 
     private function hasConfiguredB2Backup(mixed $disks): bool
