@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Resend\WebhookSignature;
 
 arch('keeps SEO metadata construction outside controllers')
     ->expect('App\Http\Controllers')
@@ -11,6 +13,16 @@ arch('keeps SEO metadata construction outside controllers')
 arch('leaves reads to view models instead of calling queries from controllers')
     ->expect('App\Http\Controllers')
     ->not->toUse('App\Queries');
+
+arch('leaves signature and token checks to middleware and models')
+    ->expect('App\Http\Controllers')
+    ->not->toUse([
+        Hash::class,
+        WebhookSignature::class,
+        'hash',
+        'hash_equals',
+        'hash_hmac',
+    ]);
 
 $controllerClasses = function (): array {
     $directory = dirname(__DIR__, 2).'/app/Http/Controllers';

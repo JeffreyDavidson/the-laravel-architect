@@ -31,8 +31,7 @@ final class EnsureValidNewsletterConfirmationLink
         if (
             ! $subscriber instanceof Subscriber
             || ! is_string($token)
-            || ! $subscriber->verification_token_hash
-            || ! hash_equals($subscriber->verification_token_hash, hash('sha256', $token))
+            || ! $subscriber->hasConfirmationToken($token)
         ) {
             return self::redirectToSignupForm();
         }

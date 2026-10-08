@@ -18,7 +18,6 @@ final class PodcastEpisodeController
     ): View {
         abort_unless($podcast->is_active, 404);
         abort_unless($episode->isPublished(), 404);
-        abort_unless($episode->podcast_id === $podcast->id, 404);
 
         return view('pages.podcast.episode', $viewModel->data($podcast, $episode));
     }
