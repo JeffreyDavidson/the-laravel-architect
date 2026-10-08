@@ -60,11 +60,11 @@ it('exposes due scheduled episodes only while their podcast is active', function
             'title' => 'Scheduled episode boundary',
             'published_at' => $due,
         ]);
-    $url = route('podcast.episode', [$podcast, $episode]);
+    $url = route('podcasts.episode', [$podcast, $episode]);
 
     get($url)
         ->assertNotFound();
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertDontSee($episode->title);
     get(route('sitemap'))
         ->assertDontSee($url);
@@ -73,7 +73,7 @@ it('exposes due scheduled episodes only while their podcast is active', function
 
     get($url)
         ->assertOk();
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSee($episode->title);
     get(route('sitemap'))

@@ -10,7 +10,7 @@ use App\Filament\Actions\PublishContentAction;
 use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
-use App\Models\Subscriber;
+use App\Queries\AdminMetricsQuery;
 use App\Support\DisplayTimezone;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
@@ -38,18 +38,12 @@ final class EditNewsletterIssue extends EditRecord
             return null;
         }
 
-        $total = $issue
-            ->deliveries()
-            ->count();
-        $delivered = $issue
-            ->deliveries()
-            ->whereNotNull('sent_at')
-            ->count();
+        $deliveries = app(AdminMetricsQuery::class)->newsletterDeliveries($issue);
 
         $sentOn = DisplayTimezone::convert($sentAt)
             ->format('M j, Y');
 
-        return "Sent {$sentOn}. Delivered to {$delivered} of {$total} ".Str::plural('subscriber', $total).'.';
+        return "Sent {$sentOn}. Delivered to {$deliveries->delivered} of {$deliveries->total} ".Str::plural('subscriber', $deliveries->total).'.';
     }
 
     protected function getHeaderActions(): array
@@ -81,10 +75,8 @@ final class EditNewsletterIssue extends EditRecord
                 )
                 ->requiresConfirmation()
                 ->modalHeading('Send this issue to subscribers?')
-                ->modalDescription(function (): string {
-                    $subscribers = Subscriber::query()
-                        ->active()
-                        ->count();
+                ->modalDescription(function (AdminMetricsQuery $metrics): string {
+                    $subscribers = $metrics->activeSubscribers();
 
                     return "This emails the issue to {$subscribers} active ".Str::plural('subscriber', $subscribers).'. It cannot be undone.';
                 })

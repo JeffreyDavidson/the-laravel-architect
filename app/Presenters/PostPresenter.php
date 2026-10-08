@@ -80,27 +80,28 @@ final readonly class PostPresenter
     }
 
     /**
-     * The post's artwork: the uploaded featured image with its WebP variants, then the bundled
-     * launch artwork. Null when the post has neither.
+     * The post's artwork: the uploaded featured image with its own WebP variants (none when they
+     * have not been generated), then the bundled launch artwork. Null when the post has neither.
+     * The srcset always belongs to the same image as the src.
      */
     public function artwork(): ?ResponsiveImage
     {
         $uploadedUrl = $this->featuredImageUrl();
-        $bundledUrls = $this->bundledArtworkUrls();
-        $src = $uploadedUrl ?? $bundledUrls['large'] ?? null;
 
-        if ($src === null) {
+        if ($uploadedUrl !== null) {
+            return new ResponsiveImage($uploadedUrl, $this->images->srcset($this->post->featured_image_path));
+        }
+
+        $bundledUrls = $this->bundledArtworkUrls();
+
+        if ($bundledUrls === null) {
             return null;
         }
 
-        $uploadedSrcset = $uploadedUrl !== null
-            ? $this->images->srcset($this->post->featured_image_path)
-            : null;
-        $bundledSrcset = $bundledUrls !== null
-            ? "{$bundledUrls['small']} 384w, {$bundledUrls['medium']} 768w, {$bundledUrls['large']} 1280w"
-            : null;
-
-        return new ResponsiveImage($src, $uploadedSrcset ?? $bundledSrcset);
+        return new ResponsiveImage(
+            $bundledUrls['large'],
+            "{$bundledUrls['small']} 384w, {$bundledUrls['medium']} 768w, {$bundledUrls['large']} 1280w",
+        );
     }
 
     /**
@@ -111,7 +112,7 @@ final readonly class PostPresenter
     {
         return $this->featuredImageUrl()
             ?? $this->bundledArtworkUrls()['large']
-            ?? $this->urls->route('og-image', $this->post);
+            ?? $this->urls->route('ogImage', $this->post);
     }
 
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Posts;
 
 use App\Enums\NavigationGroup;
-use App\Enums\PublishStatus;
 use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
@@ -13,12 +12,13 @@ use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Filament\Resources\Posts\Schemas\PostForm;
 use App\Filament\Resources\Posts\Tables\PostsTable;
 use App\Models\Post;
+use App\Queries\AdminMetricsQuery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use UnitEnum;
 
 final class PostResource extends Resource
@@ -42,25 +42,21 @@ final class PostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $counts = Cache::remember('filament.navigation.posts-status-counts', now()->addMinutes(5), fn (): array => [
-            'review' => self::getModel()::where('status', PublishStatus::InReview)->count(),
-            'draft' => self::getModel()::where('status', PublishStatus::Draft)->count(),
-        ]);
-        $reviewCount = $counts['review'];
-        $draftCount = $counts['draft'];
+        $metrics = app(AdminMetricsQuery::class);
+        $reviewCount = $metrics->postsInReview();
 
         if ($reviewCount > 0) {
-            return $reviewCount.' to review';
+            return "{$reviewCount} to review";
         }
 
-        return $draftCount > 0 ? $draftCount.' draft'.($draftCount > 1 ? 's' : '') : null;
+        $draftCount = $metrics->draftPosts();
+
+        return $draftCount > 0 ? "{$draftCount} ".Str::plural('draft', $draftCount) : null;
     }
 
     public static function getNavigationBadgeColor(): string
     {
-        $reviewCount = Cache::remember('filament.navigation.posts-review-count', now()->addMinutes(5), fn (): int => self::getModel()::where('status', PublishStatus::InReview)->count());
-
-        return $reviewCount > 0 ? 'info' : 'gray';
+        return app(AdminMetricsQuery::class)->postsInReview() > 0 ? 'info' : 'gray';
     }
 
     public static function form(Schema $schema): Schema

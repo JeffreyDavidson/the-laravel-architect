@@ -1,6 +1,6 @@
 <?php
 
-use App\Mail\ConfirmNewsletterSubscription;
+use App\Mail\NewsletterConfirmationMail;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterIssue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailable;
 pest()->use(RefreshDatabase::class);
 
 dataset('layout mailables', [
-    'newsletter confirmation' => fn (): Mailable => new ConfirmNewsletterSubscription('https://example.test/confirm?signature=abc'),
+    'newsletter confirmation' => fn (): Mailable => new NewsletterConfirmationMail('https://example.test/confirm?signature=abc'),
     'newsletter issue' => fn (): Mailable => new NewsletterIssueMail(
         NewsletterIssue::factory()
             ->published()

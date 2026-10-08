@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectIndexRequest;
 use App\Models\Project;
 use App\ViewModels\ProjectIndexViewModel;
 use App\ViewModels\ProjectShowViewModel;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 final class ProjectController
 {
-    public function index(Request $request, ProjectIndexViewModel $projectIndexViewModel): View
+    public function index(ProjectIndexRequest $request, ProjectIndexViewModel $projectIndexViewModel): View
     {
-        return view('pages.projects.index', $projectIndexViewModel->data([
-            'technology' => $request->string('technology')
-                ->trim()
-                ->toString(),
-            'tag' => $request->string('tag')
-                ->trim()
-                ->toString(),
-        ]));
+        return view('pages.projects.index', $projectIndexViewModel->data(
+            $request->technology(),
+            $request->tag(),
+        ));
     }
 
     public function show(Project $project, ProjectShowViewModel $projectShowViewModel): View

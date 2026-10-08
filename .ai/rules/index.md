@@ -14,10 +14,12 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Filament/** | .ai/rules/filament.md |
 | ** | .ai/rules/general.md |
 | resources/js/** | .ai/rules/js.md |
+| app/Mail/**, app/Notifications/** | .ai/rules/mail.md |
 | database/migrations/** | .ai/rules/migrations.md |
 | app/Models/** | .ai/rules/models.md |
 | app/Observers/** | .ai/rules/observers.md |
 | app/Presenters/** | .ai/rules/presenters.md |
+| app/Providers/**, app/Listeners/** | .ai/rules/providers.md |
 | app/Publishing/** | .ai/rules/publishing.md |
 | app/Queries/** | .ai/rules/queries.md |
 | app/Rules/** | .ai/rules/rules.md |

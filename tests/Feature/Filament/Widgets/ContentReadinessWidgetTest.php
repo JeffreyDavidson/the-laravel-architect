@@ -10,6 +10,7 @@ use App\Filament\Widgets\ContentReadinessWidget;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Project;
+use App\Publishing\ContentReadinessSummaryQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -62,7 +63,7 @@ it('renders a clear completed state when no content needs attention', function (
         ->assertSee('The public-facing content checks are complete.');
 });
 it('keeps the readiness widget query count bounded', function () {
-    Cache::forget('filament.dashboard.content-readiness');
+    Cache::forget(ContentReadinessSummaryQuery::CACHE_KEY);
     DB::enableQueryLog();
 
     livewire(ContentReadinessWidget::class)->assertViewHas('items');

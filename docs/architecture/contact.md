@@ -21,8 +21,8 @@ inserted in one database transaction.
 
 ## Sending
 
-The job sends the owner notification (`ContactMessageReceived`) and the sender
-confirmation (`ContactMessageConfirmation`) separately. It stamps
+The job sends the owner notification (`ContactInquiryReceivedMail`) and the sender
+confirmation (`ContactConfirmationMail`) separately. It stamps
 `notification_sent_at` / `confirmation_sent_at` only after each succeeds, so a
 retry sends only what is missing (3 tries, 60/300/900-second backoff, one worker
 per inquiry).
@@ -35,7 +35,11 @@ carries the full details as raw plain text.
 Each email carries a stable `Resend-Idempotency-Key`. Resend keeps these for 24
 hours, so inquiries older than 23 hours fail for manual review instead of
 resending. The inquiry's admin page shows both send times and offers **Retry
-unsent emails** within that window.
+unsent emails** within that window. The button calls the
+`RetryContactInquiryEmails` action, which queues the job again only after an
+incomplete delivery attempt inside the window and otherwise throws
+`ContactInquiryEmailsCannotBeRetried`, so `SendContactMessage` and this action
+are the only places the job is dispatched.
 
 ## Abuse controls
 

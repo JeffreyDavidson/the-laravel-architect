@@ -5,39 +5,25 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Models\Tag;
-use App\Services\Health\RuntimeHealthMonitor;
+use App\Models\User;
 use App\Services\PublicPageBenchmark;
-use App\Support\DisplayTimezone;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchCacheEvent;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchCommand;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchException;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchOutgoingRequest;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchQuery;
-use App\Support\Monitoring\Nightwatch\RedactNightwatchRequest;
-use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
-use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
-use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use App\View\Components\SocialLinks;
-use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Nightwatch\Facades\Nightwatch;
 use Livewire\Livewire;
 use RalphJSmit\Laravel\SEO\Facades\SEOManager;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Sentry\ClientBuilder;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -46,16 +32,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $application = $this->app;
-        $application->singleton(PublicPageBenchmark::class);
-
-        $application->afterResolving(ClientBuilder::class, function (ClientBuilder $clientBuilder) use ($application): void {
-            $options = $clientBuilder->getOptions();
-            $beforeSend = $application->make(RedactSentryEvent::class);
-            $beforeBreadcrumb = $application->make(RedactSentryBreadcrumb::class);
-            $options->setBeforeSendCallback($beforeSend);
-            $options->setBeforeBreadcrumbCallback($beforeBreadcrumb);
-        });
+        $this->app->singleton(PublicPageBenchmark::class);
     }
 
     /**
@@ -67,8 +44,6 @@ final class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(app()->isProduction());
 
         Blade::components([SocialLinks::class]);
-
-        FilamentTimezone::set(DisplayTimezone::name(...));
 
         SEOManager::SEODataTransformer(function (SEOData $seoData): SEOData {
             $seoData->locale = config()->string('seo.og_locale');
@@ -86,34 +61,27 @@ final class AppServiceProvider extends ServiceProvider
             $handle,
         ));
 
-        $this->configureNightwatch();
-        $this->configureHealthChecks();
+        $this->configureAuthorization();
         $this->configureRateLimiting();
         $this->configureUrls();
     }
 
-    private function configureNightwatch(): void
+    /**
+     * The site has a single administrator role, so one app-wide gate replaces
+     * per-model policies: administrators may perform every ability and everyone
+     * else is denied. Global before-callbacks run for every ability whether or
+     * not a policy method exists, and Filament honors them. Capability limits,
+     * such as subscribers never being created in the panel, live on the
+     * resources, because this gate cannot restrict an administrator.
+     *
+     * Non-administrators get `false`, not `null`: there are no policies, and
+     * Filament allows a resource ability that has no policy unless a
+     * before-callback denies it, so `null` would let non-administrators pass
+     * every resource check behind the panel's access gate.
+     */
+    private function configureAuthorization(): void
     {
-        Nightwatch::user(app(ResolveNightwatchUser::class));
-        Nightwatch::redactCacheEvents(app(RedactNightwatchCacheEvent::class));
-        Nightwatch::redactCommands(app(RedactNightwatchCommand::class));
-        Nightwatch::redactExceptions(app(RedactNightwatchException::class));
-        Nightwatch::redactOutgoingRequests(app(RedactNightwatchOutgoingRequest::class));
-        Nightwatch::redactQueries(app(RedactNightwatchQuery::class));
-        Nightwatch::redactRequests(app(RedactNightwatchRequest::class));
-    }
-
-    private function configureHealthChecks(): void
-    {
-        Event::listen(DiagnosingHealth::class, function (): void {
-            $migrations = DB::table('migrations');
-            $migrations->limit(1);
-            $migrations->exists();
-
-            if (config('health.runtime.enabled') === true) {
-                app(RuntimeHealthMonitor::class)->ensureHealthy();
-            }
-        });
+        Gate::before(fn (User $user): bool => $user->is_admin);
     }
 
     private function configureRateLimiting(): void

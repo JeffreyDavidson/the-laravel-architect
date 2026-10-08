@@ -2,7 +2,6 @@
 
 use App\Services\TurnstileVerifier;
 use Illuminate\Http\Client\Request as ClientRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 covers(TurnstileVerifier::class);
@@ -16,30 +15,24 @@ beforeEach(function (): void {
     Http::preventStrayRequests();
 });
 
-it('rejects a missing, blank, numeric or non-string token without contacting Turnstile', function (mixed $token) {
+it('rejects a blank token without contacting Turnstile', function (string $token) {
     Http::fake();
-    $input = $token === null ? [] : ['cf-turnstile-response' => $token];
-    $request = Request::create(route('contact.store'), 'POST', $input);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify($token, '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
     Http::assertNothingSent();
 })->with([
-    'missing' => [null],
     'empty string' => [''],
     'whitespace only' => ['   '],
-    'number' => [123],
-    'array' => [['unexpected']],
 ]);
 
 it('rejects a missing, blank, numeric or non-string secret key without contacting Turnstile', function (mixed $secret) {
     Http::fake();
     config()->set('services.turnstile.secret_key', $secret);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -52,7 +45,7 @@ it('rejects a missing, blank, numeric or non-string secret key without contactin
     'array' => [['unexpected']],
 ]);
 
-it('submits the form credentials and accepts a case insensitive allowed hostname', function () {
+it('submits the trimmed token with the secret and client IP and accepts a case insensitive allowed hostname', function () {
     Http::fake([
         'challenges.cloudflare.com/*' => Http::response([
             'success' => true,
@@ -60,11 +53,8 @@ it('submits the form credentials and accepts a case insensitive allowed hostname
             'hostname' => 'THELARAVELARCHITECT.com',
         ]),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', [
-        'cf-turnstile-response' => 'test-token',
-    ], server: ['REMOTE_ADDR' => '203.0.113.10']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify(' test-token ', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeTrue();
@@ -87,9 +77,8 @@ it('requires an OK response with a boolean success value', function (mixed $succ
             'hostname' => 'thelaravelarchitect.com',
         ], $status),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -110,9 +99,8 @@ it('rejects a malformed hostname', function () {
             'hostname' => ['thelaravelarchitect.com'],
         ]),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -122,9 +110,8 @@ it('returns false when the verification connection fails', function () {
     Http::fake([
         'challenges.cloudflare.com/*' => Http::failedConnection(),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -132,9 +119,8 @@ it('returns false when the verification connection fails', function () {
 
 it('fails without contacting Turnstile when the expected action is blank', function () {
     Http::fake();
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, '');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', '');
 
     expect($passes)
         ->toBeFalse();
@@ -144,9 +130,8 @@ it('fails without contacting Turnstile when the expected action is blank', funct
 it('fails closed without contacting Turnstile when the verification URL is blank or missing', function (?string $endpoint) {
     Http::fake();
     config()->set('services.turnstile.siteverify_url', $endpoint);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -166,9 +151,8 @@ it('compares hostnames ignoring case, spaces and a trailing dot', function () {
             'hostname' => 'thelaravelarchitect.com.',
         ]),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeTrue();
@@ -183,9 +167,8 @@ it('requires the allowed hostnames to be a list of non-empty strings', function 
             'hostname' => 'thelaravelarchitect.com',
         ]),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeFalse();
@@ -204,9 +187,8 @@ it('ignores non-string entries in the allowed hostnames', function () {
             'hostname' => 'thelaravelarchitect.com',
         ]),
     ]);
-    $request = Request::create(route('contact.store'), 'POST', ['cf-turnstile-response' => 'test-token']);
 
-    $passes = app(TurnstileVerifier::class)->passes($request, 'contact-form');
+    $passes = app(TurnstileVerifier::class)->verify('test-token', '203.0.113.10', 'contact-form');
 
     expect($passes)
         ->toBeTrue();

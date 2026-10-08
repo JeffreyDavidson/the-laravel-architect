@@ -1,6 +1,6 @@
 <?php
 
-use App\Mail\ContactMessageConfirmation;
+use App\Mail\ContactConfirmationMail;
 use App\Models\ContactInquiry;
 
 it('sends a fixed subject and body without echoing the sender\'s input', function (string $name, string $message, string $projectTitle) {
@@ -9,7 +9,7 @@ it('sends a fixed subject and body without echoing the sender\'s input', functio
         'message' => $message,
         'project_title' => $projectTitle,
     ]);
-    $mail = new ContactMessageConfirmation($inquiry);
+    $mail = new ContactConfirmationMail($inquiry);
 
     $envelope = $mail->envelope();
     $body = $mail->render();

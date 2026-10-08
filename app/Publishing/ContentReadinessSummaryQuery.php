@@ -13,6 +13,7 @@ use App\Models\Project;
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Counts the records in each dashboard readiness area that still fail one of the
@@ -20,7 +21,31 @@ use Illuminate\Database\Eloquent\Model;
  */
 final readonly class ContentReadinessSummaryQuery
 {
+    public const string CACHE_KEY = 'content-readiness.outstanding-counts';
+
+    private const int CACHE_SECONDS = 60;
+
     public function __construct(private ContentReadinessCriteria $readiness) {}
+
+    /**
+     * The incomplete record count of every area, keyed by area value. The dashboard reads it
+     * on every load, so the counts are cached for a minute.
+     *
+     * @return array<string, int>
+     */
+    public function outstandingCounts(): array
+    {
+        /** @var array<string, int> $counts */
+        $counts = Cache::remember(
+            self::CACHE_KEY,
+            now()->addSeconds(self::CACHE_SECONDS),
+            fn (): array => collect(ContentReadinessArea::cases())
+                ->mapWithKeys(fn (ContentReadinessArea $area): array => [$area->value => $this->count($area)])
+                ->all(),
+        );
+
+        return $counts;
+    }
 
     public function count(ContentReadinessArea $area): int
     {

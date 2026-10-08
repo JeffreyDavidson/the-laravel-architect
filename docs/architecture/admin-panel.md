@@ -8,11 +8,17 @@ entry (see [Frontend](frontend.md#assets-and-vite)).
 Panel admission requires the native `is_admin` flag, and app-based multi-factor
 authentication is required in production.
 
-Authorization uses one app-wide `Gate::before` callback in `AdminPanelProvider`
+Authorization uses one app-wide `Gate::before` callback in `AppServiceProvider`
 instead of per-model policies: administrators may perform every ability and
 everyone else is denied. A global before-callback runs for every ability whether
 or not a policy method exists, and Filament honors it, so every panel resource
 is covered, including new ones.
+
+The callback returns `false` for non-administrators, not `null`. With no
+policies, Filament allows a resource ability (`canViewAny()`, `canEdit()` and
+the rest) unless a before-callback denies it, so `null` would leave the panel's
+`canAccessPanel()` check as the only barrier. `AppServiceProviderTest` fails if
+any resource ability opens up for a non-administrator.
 
 Because the gate cannot restrict an administrator, capability limits live on the
 resources:
@@ -23,6 +29,24 @@ resources:
 
 Future model-specific rules belong in resources, actions, or dedicated classes
 rather than policies.
+
+## Panel configuration
+
+`AdminPanelProvider` is the only provider that configures Filament (an
+architecture test enforces this). Besides the panel itself it sets the panel
+timezone to the site's display timezone (`app.display_timezone`).
+
+- **Sidebar.** Each resource and page declares its `$navigationGroup` (an
+  `App\Enums\NavigationGroup` case), `$navigationSort` and icon, and that is the
+  only navigation definition. Filament orders the groups by enum case order
+  (Publish, Library, Audience, Operations) after the ungrouped Dashboard, and
+  items within a group by `$navigationSort`. A new resource appears as soon as
+  it declares a group.
+- **Render hooks.** Hook markup lives in Blade views under
+  `resources/views/filament`: the sidebar's "New post" link
+  (`sidebar/new-post-link`), the login kicker (`auth/login-kicker`) and the
+  login theme switcher (`auth/theme-switcher`).
+- **User menu.** "View Site" and a GitHub link to `app.repository_url`.
 
 ## Content resources
 
@@ -52,3 +76,14 @@ Beyond the resources, the panel has three custom pages:
   its edit link.
 - **Insights** (Operations group) hosts the editorial-operations and
   content-performance widgets.
+
+## Dashboard counts
+
+The dashboard widgets, the Posts and Inquiry inbox navigation badges, the
+newsletter send confirmation and the sent-issue delivery summary read their
+counts from `AdminMetricsQuery`, so a badge and a dashboard stat always agree.
+The counts are not cached: each is one aggregate query on a small or indexed
+table. `RecentlyEditedContentQuery` feeds the recent activity list. The content
+readiness counts are the exception: `ContentReadinessSummaryQuery` caches them
+for a minute because they run the full readiness criteria. Widgets only map
+these results to stats, rows and admin URLs.

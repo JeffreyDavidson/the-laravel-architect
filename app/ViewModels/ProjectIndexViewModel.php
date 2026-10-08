@@ -7,21 +7,26 @@ namespace App\ViewModels;
 use App\Contracts\PageViewModel;
 use App\Data\PageMeta;
 use App\Models\Project;
+use App\Queries\ProjectListingQuery;
 use App\Support\Seo\CollectionListing;
 use App\Support\Seo\JsonLd;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Tags\Tag;
 
 final readonly class ProjectIndexViewModel implements PageViewModel
 {
-    public function __construct(private SiteStructuredData $site) {}
+    public function __construct(
+        private ProjectListingQuery $projectListingQuery,
+        private SiteStructuredData $site,
+    ) {}
 
     /**
-     * @param  array<string, mixed>  $filters
+     * The published projects for the validated technology and topic filters. A filter value that
+     * no published project offers is a 404.
+     *
      * @return array{
-     *     projects: EloquentCollection<int, Project>,
+     *     projects: Collection<int, Project>,
      *     technologyOptions: array<string, non-empty-string>,
      *     tagOptions: array<string, string>,
      *     selectedTechnology: string|null,
@@ -30,62 +35,38 @@ final readonly class ProjectIndexViewModel implements PageViewModel
      *     pageMeta: PageMeta,
      * }
      */
-    public function data(array $filters = []): array
+    public function data(?string $technology = null, ?string $tag = null): array
     {
-        $selectedTechnology = $this->normaliseFilter($filters['technology'] ?? null);
-        $selectedTag = $this->normaliseFilter($filters['tag'] ?? null);
-        $allProjects = Project::query()->published()
-            ->with('tags')
-            ->orderBy('sort_order')
-            ->get();
-        $technologies = $this->technologies($allProjects);
-        $tags = $this->tags($allProjects);
+        $listing = $this->projectListingQuery->get($technology, $tag);
 
-        if ($selectedTechnology !== null) {
-            $technologyOption = $technologies->first(
-                fn (string $technology): bool => strcasecmp($technology, $selectedTechnology) === 0,
-            );
-            $selectedTechnology = is_string($technologyOption) ? $technologyOption : null;
+        abort_if($technology !== null && $listing->technology === null, 404);
+        abort_if($tag !== null && ! $listing->tag instanceof Tag, 404);
+
+        $technologyOptions = [];
+
+        foreach ($listing->technologies as $option) {
+            $technologyOptions[$option] = $option;
         }
 
-        if ($selectedTag !== null) {
-            $tagOption = $tags->first(
-                fn (Tag $tag): bool => $tag->slug === $selectedTag,
-            );
-            $selectedTag = $tagOption instanceof Tag ? $tagOption->slug : null;
-        }
+        $tagOptions = [];
 
-        $projects = $allProjects;
-
-        if ($selectedTechnology !== null) {
-            $projects = $projects->filter(
-                fn (Project $project): bool => $this->matchesTechnology($project, $selectedTechnology),
-            )->values();
-        }
-
-        if ($selectedTag !== null) {
-            $projects = $projects->filter(
-                fn (Project $project): bool => $this->matchesTag($project, $selectedTag),
-            )->values();
+        foreach ($listing->tags as $option) {
+            $tagOptions[$option->slug] = $option->name;
         }
 
         return [
-            'projects' => $projects,
-            'technologyOptions' => $technologies
-                ->mapWithKeys(fn (string $technology): array => [$technology => $technology])
-                ->all(),
-            'tagOptions' => $tags
-                ->mapWithKeys(fn (Tag $tag): array => [$tag->slug => $tag->name])
-                ->all(),
-            'selectedTechnology' => $selectedTechnology,
-            'selectedTag' => $selectedTag,
-            'hasFilters' => $selectedTechnology !== null || $selectedTag !== null,
+            'projects' => $listing->projects,
+            'technologyOptions' => $technologyOptions,
+            'tagOptions' => $tagOptions,
+            'selectedTechnology' => $listing->technology,
+            'selectedTag' => $listing->tag?->slug,
+            'hasFilters' => $technology !== null || $tag !== null,
             'pageMeta' => new PageMeta(
                 seo: new SEOData(
                     title: 'Projects',
                     description: 'Explore the products I’ve built, the problems they solve, and the work behind them.',
                 ),
-                structuredData: $this->structuredData($projects),
+                structuredData: $this->structuredData($listing->projects),
             ),
         ];
     }
@@ -93,10 +74,10 @@ final readonly class ProjectIndexViewModel implements PageViewModel
     /**
      * The listed projects as a collection, under the unfiltered projects URL.
      *
-     * @param  EloquentCollection<int, Project>  $projects
+     * @param  Collection<int, Project>  $projects
      * @return list<array<string, mixed>>
      */
-    private function structuredData(EloquentCollection $projects): array
+    private function structuredData(Collection $projects): array
     {
         $url = route('projects.index');
 
@@ -111,75 +92,5 @@ final readonly class ProjectIndexViewModel implements PageViewModel
             )),
             $this->site->breadcrumbs([['name' => 'Projects', 'url' => $url]]),
         ];
-    }
-
-    private function normaliseFilter(mixed $value): ?string
-    {
-        if (! is_string($value)) {
-            return null;
-        }
-
-        $value = trim($value);
-
-        return $value !== '' ? $value : null;
-    }
-
-    /**
-     * @param  EloquentCollection<int, Project>  $projects
-     * @return Collection<int, non-empty-string>
-     */
-    private function technologies(EloquentCollection $projects): Collection
-    {
-        $technologies = [];
-
-        foreach ($projects as $project) {
-            array_push($technologies, ...$project->technologies());
-        }
-
-        return collect($technologies)
-            ->unique(fn (string $technology): string => mb_strtolower($technology))
-            ->sort(SORT_NATURAL | SORT_FLAG_CASE)
-            ->values();
-    }
-
-    /**
-     * @param  EloquentCollection<int, Project>  $projects
-     * @return Collection<int, Tag>
-     */
-    private function tags(EloquentCollection $projects): Collection
-    {
-        $tags = [];
-
-        foreach ($projects as $project) {
-            foreach ($project->tags as $tag) {
-                if ($tag instanceof Tag) {
-                    $tags[] = $tag;
-                }
-            }
-        }
-
-        return collect($tags)
-            ->unique('id')
-            ->sortBy(fn (Tag $tag): string => $tag->name)
-            ->values();
-    }
-
-    private function matchesTechnology(Project $project, string $technology): bool
-    {
-        return array_any(
-            $project->technologies(),
-            fn (string $projectTechnology): bool => strcasecmp($projectTechnology, $technology) === 0,
-        );
-    }
-
-    private function matchesTag(Project $project, string $slug): bool
-    {
-        foreach ($project->tags as $tag) {
-            if ($tag instanceof Tag && $tag->slug === $slug) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

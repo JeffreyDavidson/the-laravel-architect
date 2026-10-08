@@ -1,6 +1,6 @@
 <?php
 
-use App\Notifications\BackupDeliveryTest;
+use App\Notifications\BackupDeliveryTestNotification;
 use Illuminate\Support\Facades\Notification;
 
 it('sends an on-demand backup notification delivery test', function () {
@@ -11,5 +11,5 @@ it('sends an on-demand backup notification delivery test', function () {
         ->expectsOutput('Backup notification delivery test sent.')
         ->assertSuccessful();
 
-    Notification::assertSentOnDemand(BackupDeliveryTest::class);
+    Notification::assertSentOnDemand(BackupDeliveryTestNotification::class);
 });

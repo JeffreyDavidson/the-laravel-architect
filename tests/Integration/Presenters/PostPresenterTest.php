@@ -40,6 +40,23 @@ it('uses the uploaded featured image with its responsive variants', function () 
         ->toContain('post-640.webp 640w');
 });
 
+it('uses an upload without responsive variants on its own instead of the bundled artwork srcset', function () {
+    withVite();
+    Storage::fake('public');
+    $image = UploadedFile::fake()->image('post.png', 1400, 700);
+    Storage::disk('public')->put('posts/post.png', $image->getContent());
+    $post = new Post([
+        'slug' => 'hello-world-why-im-starting-this-blog',
+        'featured_image_path' => 'posts/post.png',
+    ]);
+
+    $artwork = PostPresenter::from($post)->artwork();
+
+    expect($artwork?->src)->toBe(Storage::disk('public')->url('posts/post.png'))
+        ->and($artwork?->srcset)
+        ->toBeNull();
+});
+
 it('uses the bundled launch artwork for a post without an upload', function () {
     withVite();
     $small = Vite::asset('resources/images/post-hello-world-384.webp');

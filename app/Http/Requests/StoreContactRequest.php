@@ -103,7 +103,7 @@ final class StoreContactRequest extends FormRequest
                 $action = config('services.turnstile.contact_action');
                 $turnstile = validator(
                     [self::TURNSTILE_FIELD => $this->input(self::TURNSTILE_FIELD)],
-                    [self::TURNSTILE_FIELD => [new PassesTurnstile($turnstileVerifier, $this, is_string($action) ? $action : '')]],
+                    [self::TURNSTILE_FIELD => [new PassesTurnstile($turnstileVerifier, $this->ip(), is_string($action) ? $action : '')]],
                 );
 
                 $errors->merge($turnstile->errors());

@@ -24,27 +24,27 @@ it('controls public podcast visibility through the active toggle', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    get(route('podcast.index'))
+    get(route('podcasts.index'))
         ->assertOk()
         ->assertDontSee($podcast->name);
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertNotFound();
     get('/sitemap.xml')
         ->assertOk()
-        ->assertDontSeeHtml(route('podcast.show', $podcast));
+        ->assertDontSeeHtml(route('podcasts.show', $podcast));
 
     livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['is_active' => true])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    get(route('podcast.index'))
+    get(route('podcasts.index'))
         ->assertOk()
         ->assertSee($podcast->name);
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSee($podcast->name);
     get('/sitemap.xml')
         ->assertOk()
-        ->assertSeeHtml(route('podcast.show', $podcast));
+        ->assertSeeHtml(route('podcasts.show', $podcast));
 });

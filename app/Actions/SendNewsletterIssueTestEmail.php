@@ -6,10 +6,12 @@ namespace App\Actions;
 
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterIssue;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailer;
 
-final class SendNewsletterIssueTestEmail
+final readonly class SendNewsletterIssueTestEmail
 {
+    public function __construct(private Mailer $mailer) {}
+
     /**
      * Email the issue to the site owner without recording a delivery.
      *
@@ -19,7 +21,9 @@ final class SendNewsletterIssueTestEmail
     {
         $recipient = config()->string('mail.contact_to');
 
-        Mail::to($recipient)->send(new NewsletterIssueMail($issue));
+        $this->mailer
+            ->to($recipient)
+            ->send(new NewsletterIssueMail($issue));
 
         return $recipient;
     }

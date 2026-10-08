@@ -103,6 +103,20 @@ it('explains when valid project filters have no matching projects', function () 
         ->assertDontSee('Vue project');
 });
 
+it('returns not found for project filters that are malformed or not offered', function (array $filters) {
+    Project::factory()->published()
+        ->create(['tech_stack' => ['Laravel']])
+        ->attachTag(Tag::factory()->create(['name' => 'Laravel']));
+
+    get(route('projects.index', $filters))
+        ->assertNotFound();
+})->with([
+    'unknown technology' => [['technology' => 'Rust']],
+    'unknown topic' => [['tag' => 'rust']],
+    'technology list' => [['technology' => ['Laravel']]],
+    'overlong topic' => [['tag' => str_repeat('a', 121)]],
+]);
+
 it('uses responsive uploaded images in either project group', function (bool $featured) {
     Storage::fake('public');
     $image = UploadedFile::fake()->image('showcase.png', 1280, 720);
@@ -217,7 +231,7 @@ it('shows published writing and podcast episodes connected by project tags', fun
         ->assertSee('Listen next')
         ->assertSee('Connected episode')
         ->assertSeeHtml(route('blog.show', $post))
-        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
+        ->assertSeeHtml(route('podcasts.episode', [$podcast, $episode]));
 });
 
 it('loads only the related projects displayed on a project page', function () {

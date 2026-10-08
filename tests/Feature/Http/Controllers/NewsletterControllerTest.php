@@ -1,6 +1,6 @@
 <?php
 
-use App\Mail\ConfirmNewsletterSubscription;
+use App\Mail\NewsletterConfirmationMail;
 use App\Models\Subscriber;
 use App\Presenters\SubscriberPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,7 +39,7 @@ it('creates an unverified subscriber and sends a confirmation message', function
         ->not
         ->toBeNull();
 
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 1);
 });
 
 it('applies the pending email cooldown across different source IP addresses', function () {
@@ -53,7 +53,7 @@ it('applies the pending email cooldown across different source IP addresses', fu
         'REMOTE_ADDR' => '198.51.100.20',
     ])->assertRedirect();
 
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 1);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 1);
 });
 
 it('silently accepts newsletter honeypot submissions without subscribing', function () {
@@ -401,7 +401,7 @@ it('limits newsletter sign-ups to 5 an hour from one address', function () {
     $response = post(route('newsletter.subscribe'), ['email' => 'reader6@example.com']);
 
     $response->assertTooManyRequests();
-    Mail::assertQueued(ConfirmNewsletterSubscription::class, 5);
+    Mail::assertQueued(NewsletterConfirmationMail::class, 5);
 });
 
 it('does not disclose whether an email is already subscribed', function () {
@@ -459,7 +459,7 @@ it('answers a script request with the confirmation message and keeps the session
 
     expect($subscriber->email)
         ->toBe('reader@example.com');
-    Mail::assertQueued(ConfirmNewsletterSubscription::class);
+    Mail::assertQueued(NewsletterConfirmationMail::class);
 });
 
 it('answers a script request for a rejected address with the validation error', function () {

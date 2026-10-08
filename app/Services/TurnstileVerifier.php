@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 final class TurnstileVerifier
 {
-    public function passes(Request $request, string $expectedAction): bool
+    /** Ask Cloudflare whether the visitor's token is valid for the expected action and an allowed hostname. */
+    public function verify(string $token, ?string $clientIp, string $expectedAction): bool
     {
-        $input = $request->input('cf-turnstile-response');
-        $token = is_string($input)
-            ? trim($input)
-            : '';
+        $token = trim($token);
         $secret = config('services.turnstile.secret_key');
         $endpoint = config('services.turnstile.siteverify_url');
 
@@ -37,7 +34,7 @@ final class TurnstileVerifier
                 ->post($endpoint, [
                     'secret' => $secret,
                     'response' => $token,
-                    'remoteip' => $request->ip(),
+                    'remoteip' => $clientIp,
                 ]);
         } catch (Throwable $exception) {
             Log::warning('Turnstile verification request failed.', [

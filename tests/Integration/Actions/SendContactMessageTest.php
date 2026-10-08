@@ -66,7 +66,7 @@ it('saves the inquiry and queues one email job that carries no contact details',
     expect($inquiry)
         ->name->toBe('Jane Doe')
         ->email->toBe('jane@example.com')
-        ->type->toBe('consulting')
+        ->type->toBe(ContactType::Consulting)
         ->budget->toBe('medium')
         ->message->toBe('Can you help with an audit?')
         ->project_title->toBe('The Laravel Architect')
