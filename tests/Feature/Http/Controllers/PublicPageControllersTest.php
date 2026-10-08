@@ -14,7 +14,6 @@ use App\Presenters\VideoPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
 
@@ -152,16 +151,6 @@ function configuredString(mixed $value): string
 
     return (string) $value;
 }
-
-beforeEach(function () {
-    Http::fake([
-        'www.googleapis.com/youtube/v3/channels*' => Http::response([
-            'items' => [
-                ['statistics' => ['subscriberCount' => 1234]],
-            ],
-        ]),
-    ]);
-});
 
 it('renders the core public pages', function (string $uri, string $copy) {
     get($uri)

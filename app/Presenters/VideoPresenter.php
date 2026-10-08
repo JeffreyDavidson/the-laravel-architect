@@ -21,12 +21,6 @@ final readonly class VideoPresenter
         return "https://www.youtube.com/watch?v={$this->video->youtube_id}";
     }
 
-    /** The video's embeddable player URL. */
-    public function embedUrl(): string
-    {
-        return "https://www.youtube.com/embed/{$this->video->youtube_id}";
-    }
-
     public function duration(): ?string
     {
         if (! $this->video->duration) {

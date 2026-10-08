@@ -22,11 +22,13 @@ final readonly class ProjectIndexViewModel implements PageViewModel
     ) {}
 
     /**
-     * The published projects for the validated technology and topic filters. A filter value that
-     * no published project offers is a 404.
+     * The published projects for the validated technology and topic filters, also split into the
+     * featured group and the rest. A filter value that no published project offers is a 404.
      *
      * @return array{
      *     projects: Collection<int, Project>,
+     *     featuredProjects: Collection<int, Project>,
+     *     otherProjects: Collection<int, Project>,
      *     technologyOptions: array<string, non-empty-string>,
      *     tagOptions: array<string, string>,
      *     selectedTechnology: string|null,
@@ -56,6 +58,8 @@ final readonly class ProjectIndexViewModel implements PageViewModel
 
         return [
             'projects' => $listing->projects,
+            'featuredProjects' => $listing->projects->filter(static fn (Project $project): bool => $project->isFeatured()),
+            'otherProjects' => $listing->projects->reject(static fn (Project $project): bool => $project->isFeatured()),
             'technologyOptions' => $technologyOptions,
             'tagOptions' => $tagOptions,
             'selectedTechnology' => $listing->technology,

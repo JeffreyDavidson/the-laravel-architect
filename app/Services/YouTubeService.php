@@ -7,12 +7,9 @@ namespace App\Services;
 use App\Data\YouTubeVideoData;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Throwable;
-use UnexpectedValueException;
 
 /**
  * @phpstan-type VideoStats array{view_count: int, like_count: int, comment_count: int}
@@ -32,47 +29,6 @@ class YouTubeService
 
         $this->apiKey = is_string($apiKey) ? $apiKey : '';
         $this->channelId = is_string($channelId) ? $channelId : '';
-    }
-
-    public static function subscriberCount(): int
-    {
-        $cacheKey = 'youtube.subscriber_count';
-
-        $cachedCount = Cache::get($cacheKey);
-
-        if (is_numeric($cachedCount)) {
-            return (int) $cachedCount;
-        }
-
-        try {
-            $apiKey = config('services.youtube.api_key');
-            $channelId = config('services.youtube.channel_id');
-
-            $response = self::request('https://www.googleapis.com/youtube/v3/channels', [
-                'key' => $apiKey,
-                'id' => $channelId,
-                'part' => 'statistics',
-            ]);
-
-            $subscriberCount = $response->json('items.0.statistics.subscriberCount');
-
-            if (! is_numeric($subscriberCount)) {
-                throw new UnexpectedValueException('YouTube returned no subscriber count.');
-            }
-
-            $count = (int) $subscriberCount;
-
-            Cache::put($cacheKey, $count, now()->addHours(6));
-            Cache::put("{$cacheKey}.last_known", $count, now()->addDays(30));
-
-            return $count;
-        } catch (Throwable $exception) {
-            Log::warning('Unable to refresh the YouTube subscriber count.', [
-                'exception' => $exception::class,
-            ]);
-
-            return self::integer(Cache::get("{$cacheKey}.last_known", 0));
-        }
     }
 
     /** @return list<YouTubeVideoData> */

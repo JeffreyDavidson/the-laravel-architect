@@ -18,8 +18,8 @@ them and the media display. Each presenter takes its collaborators
 (`ResponsiveImageVariants`, Vite, the URL generator) through its constructor and
 is built with `XPresenter::from($model)`. They build the stored-image URLs
 (`PostPresenter::featuredImageUrl()`, `ProjectPresenter::featuredImageUrl()`,
-`PodcastPresenter::coverImageUrl()`), the YouTube links
-(`VideoPresenter::youtubeUrl()` and `embedUrl()`), the Transistor player
+`PodcastPresenter::coverImageUrl()`), the YouTube link
+(`VideoPresenter::youtubeUrl()`), the Transistor player
 (`EpisodePresenter::transistorEmbedUrl()` from `Episode::transistorEpisodeId()`),
 the signed newsletter links (`SubscriberPresenter`), and each publishable
 item's `publicUrl()`, `previewUrl()` and `publicOrPreviewUrl()` (Post, Project,

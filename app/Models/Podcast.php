@@ -58,14 +58,6 @@ final class Podcast extends Model
             ->published();
     }
 
-    public function latestEpisode(): ?Episode
-    {
-        return $this
-            ->publishedEpisodes()
-            ->latest('published_at')
-            ->first();
-    }
-
     /** @param Builder<Podcast> $query */
     #[Scope]
     protected function active(Builder $query): void
