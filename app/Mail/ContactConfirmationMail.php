@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Mail\Concerns\FingerprintsIdempotencyKeys;
 use App\Models\ContactInquiry;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -16,8 +17,10 @@ use Illuminate\Mail\Mailables\Headers;
  * visitor-supplied, so the subject and body are fixed and never echo the inquiry;
  * otherwise anyone could use the form to send their own text to any address.
  */
-final class ContactMessageConfirmation extends Mailable
+final class ContactConfirmationMail extends Mailable
 {
+    use FingerprintsIdempotencyKeys;
+
     public function __construct(public readonly ContactInquiry $inquiry) {}
 
     public function envelope(): Envelope
@@ -32,14 +35,8 @@ final class ContactMessageConfirmation extends Mailable
 
     public function headers(): Headers
     {
-        $fingerprint = hash('sha256', implode('|', [
-            config()->string('app.url'),
-            $this->inquiry->id,
-            $this->inquiry->created_at?->toISOString(),
-        ]));
-
         return new Headers(text: [
-            'Resend-Idempotency-Key' => "tla-contact-{$fingerprint}-confirmation",
+            'Resend-Idempotency-Key' => "tla-contact-{$this->idempotencyFingerprint($this->inquiry->id, $this->inquiry->created_at)}-confirmation",
         ]);
     }
 }

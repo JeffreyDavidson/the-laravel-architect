@@ -16,3 +16,6 @@ A model's own JSON-LD node is display formatting of that model, so it lives on i
 
 ## Inject collaborators and build presenters through from()
 Presenters take the model and every collaborator (`ResponsiveImageVariants`, `Illuminate\Foundation\Vite`, the `Illuminate\Contracts\Routing\UrlGenerator` contract) through the constructor. Each presenter has one static `from(Model $model)` factory, and it is the only place that touches the container: `app()->make(self::class, ['post' => $post])`, so a collaborator can be added without changing a caller. Callers always use `XPresenter::from($model)`. Do not call `app()`, `route()`, or the `Storage`, `Vite` or `URL` facades inside presenter methods; stored-file URLs come from `ResponsiveImageVariants::url()`, and `PresenterArchitectureTest` forbids those three facades. The one remaining global read is `PodcastPresenter` reading `config('podcasts.fallback_artwork')` in a single private helper.
+
+## Format a record for email on its presenter
+When an email shows one record, its presenter formats it for the mailable: `NewsletterIssuePresenter::emailBodyHtml()`, `emailBodyText()` and `emailPreheader()` render the issue Markdown and make relative links absolute with `app.url` from the injected `Illuminate\Config\Repository`. The mailable only assembles the envelope, headers and content (see `.ai/rules/mail.md`).

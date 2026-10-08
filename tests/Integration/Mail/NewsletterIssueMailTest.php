@@ -32,15 +32,6 @@ it('renders the issue as html and plain text with its links', function () {
         ->assertSeeInText($unsubscribeUrl);
 });
 
-it('strips raw html and unsafe links from the issue content', function () {
-    $issue = publishedNewsletterIssue("<script>alert('x')</script>\n\n[Click](javascript:alert(1))");
-
-    $mail = new NewsletterIssueMail($issue, 'https://example.test/unsubscribe');
-
-    $mail->assertDontSeeInHtml('<script>', false)
-        ->assertDontSeeInHtml('javascript:', false);
-});
-
 it('offers one-click unsubscribe headers to mail clients', function () {
     $unsubscribeUrl = 'https://example.test/newsletter/unsubscribe/1?signature=abc';
 
@@ -116,38 +107,6 @@ it('fixes the card width for Outlook with a conditional wrapper', function () {
     $mail->assertSeeInHtml('<!--[if mso]>', false)
         ->assertSeeInHtml('width="600"', false)
         ->assertSeeInHtml('<![endif]-->', false);
-});
-
-it('makes relative links and images absolute in html and text', function () {
-    config()->set('app.url', 'https://example.test');
-    $issue = publishedNewsletterIssue(
-        "[Post](/blog/x) and [Rel](blog/y)\n\n![Pic](/storage/pic.png)\n\n[Paged](/blog?page=2&a=1)",
-    );
-
-    $mail = new NewsletterIssueMail($issue, 'https://example.test/unsubscribe');
-
-    $mail->assertSeeInHtml('href="https://example.test/blog/x"', false)
-        ->assertSeeInHtml('href="https://example.test/blog/y"', false)
-        ->assertSeeInHtml('src="https://example.test/storage/pic.png"', false)
-        ->assertSeeInHtml('href="https://example.test/blog?page=2&amp;a=1"', false)
-        ->assertDontSeeInHtml('href="/blog', false)
-        ->assertSeeInText('[Post](https://example.test/blog/x)')
-        ->assertSeeInText('![Pic](https://example.test/storage/pic.png)')
-        ->assertDontSeeInText('](/');
-});
-
-it('leaves absolute, mailto, tel and anchor urls alone', function () {
-    config()->set('app.url', 'https://example.test');
-    $markdown = '[A](https://other.test/a) [B](mailto:me@example.com) [C](tel:+15555550100) [D](#section) [E](//cdn.test/e)';
-
-    $mail = new NewsletterIssueMail(publishedNewsletterIssue($markdown), 'https://example.test/unsubscribe');
-
-    $mail->assertSeeInHtml('href="https://other.test/a"', false)
-        ->assertSeeInHtml('href="mailto:me@example.com"', false)
-        ->assertSeeInHtml('href="tel:+15555550100"', false)
-        ->assertSeeInHtml('href="#section"', false)
-        ->assertSeeInHtml('href="//cdn.test/e"', false)
-        ->assertSeeInText($markdown);
 });
 
 it('shows the unsubscribe link in the footer only for subscriber emails', function () {

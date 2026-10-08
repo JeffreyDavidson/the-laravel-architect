@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Mail\Concerns\FingerprintsIdempotencyKeys;
 use App\Models\ContactInquiry;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
@@ -13,17 +14,20 @@ use Illuminate\Mail\Mailables\Headers;
 
 /**
  * Notifies the site owner of a contact inquiry. Sent by SendContactInquiryEmails, which
- * records the send so retries never deliver it twice.
+ * records the send so retries never deliver it twice. The subject and body show the
+ * inquiry type's stored value.
  */
-final class ContactMessageReceived extends Mailable
+final class ContactInquiryReceivedMail extends Mailable
 {
+    use FingerprintsIdempotencyKeys;
+
     public function __construct(public readonly ContactInquiry $inquiry) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
             replyTo: [new Address($this->inquiry->email, $this->inquiry->name)],
-            subject: "Contact Form: {$this->inquiry->type} - {$this->inquiry->name}",
+            subject: "Contact Form: {$this->inquiry->type->value} - {$this->inquiry->name}",
         );
     }
 
@@ -34,7 +38,7 @@ final class ContactMessageReceived extends Mailable
             with: [
                 'senderName' => $this->inquiry->name,
                 'senderEmail' => $this->inquiry->email,
-                'contactType' => $this->inquiry->type,
+                'contactType' => $this->inquiry->type->value,
                 'budget' => $this->inquiry->budget,
                 'contactMessage' => $this->inquiry->message,
                 'projectTitle' => $this->inquiry->project_title,
@@ -44,14 +48,8 @@ final class ContactMessageReceived extends Mailable
 
     public function headers(): Headers
     {
-        $fingerprint = hash('sha256', implode('|', [
-            config()->string('app.url'),
-            $this->inquiry->id,
-            $this->inquiry->created_at?->toISOString(),
-        ]));
-
         return new Headers(text: [
-            'Resend-Idempotency-Key' => "tla-contact-{$fingerprint}-notification",
+            'Resend-Idempotency-Key' => "tla-contact-{$this->idempotencyFingerprint($this->inquiry->id, $this->inquiry->created_at)}-notification",
         ]);
     }
 }

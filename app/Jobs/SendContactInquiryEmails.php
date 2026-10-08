@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
+use App\Mail\ContactConfirmationMail;
+use App\Mail\ContactInquiryReceivedMail;
 use App\Models\ContactInquiry;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Contracts\Mail\Mailer;
@@ -70,11 +70,11 @@ final class SendContactInquiryEmails implements ShouldBeEncrypted, ShouldQueue
         $inquiry->update(['email_attempted_at' => now()]);
 
         if ($inquiry->notification_sent_at === null) {
-            $this->send($mailer, $inquiry, config()->string('mail.contact_to'), new ContactMessageReceived($inquiry), 'notification_sent_at');
+            $this->send($mailer, $inquiry, config()->string('mail.contact_to'), new ContactInquiryReceivedMail($inquiry), 'notification_sent_at');
         }
 
         if ($inquiry->confirmation_sent_at === null) {
-            $this->send($mailer, $inquiry, $inquiry->email, new ContactMessageConfirmation($inquiry), 'confirmation_sent_at');
+            $this->send($mailer, $inquiry, $inquiry->email, new ContactConfirmationMail($inquiry), 'confirmation_sent_at');
         }
 
         if ($inquiry->notification_sent_at === null || $inquiry->confirmation_sent_at === null) {

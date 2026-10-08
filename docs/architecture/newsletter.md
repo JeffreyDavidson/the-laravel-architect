@@ -31,7 +31,8 @@ The `newsletter` limiter allows five sign-ups an hour per IP address.
 
 ## Confirmation email
 
-The newsletter confirmation email is multipart:
+The newsletter confirmation email (`NewsletterConfirmationMail`, queued and
+encrypted) is multipart:
 
 - a themed HTML version (`mail/newsletter-confirmation`, built on the shared
   `x-mail.layout` component with inline styles, the site's brand colors, the
@@ -177,8 +178,9 @@ and are deleted with their subscriber or issue.
 
 ## The issue email
 
-The email renders the issue Markdown with the public site's safety settings as
-HTML and includes the raw Markdown as plain text. It is built on the shared
+`NewsletterIssueMail` renders the issue Markdown with the public site's safety
+settings as HTML and includes the raw Markdown as plain text; both bodies and the
+preheader come from `NewsletterIssuePresenter`. It is built on the shared
 themed `x-mail.layout`: dark-mode styles, a preheader from the issue excerpt or
 title, an Outlook-only 600px table wrapper, and the unsubscribe link in the
 layout footer. Relative link and image URLs in both parts are made absolute with

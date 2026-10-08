@@ -7,7 +7,7 @@ namespace App\Notifications;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-final class BackupDeliveryTest extends Notification
+final class BackupDeliveryTestNotification extends Notification
 {
     /** @return array<int, string> */
     public function via(object $notifiable): array

@@ -1,8 +1,8 @@
 <?php
 
 use App\Jobs\SendContactInquiryEmails;
-use App\Mail\ContactMessageConfirmation;
-use App\Mail\ContactMessageReceived;
+use App\Mail\ContactConfirmationMail;
+use App\Mail\ContactInquiryReceivedMail;
 use App\Models\ContactInquiry;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -166,13 +166,13 @@ it('stores the job on the database queue with retry and timeout settings', funct
 it('gives each email a stable provider idempotency key', function () {
     $inquiry = ContactInquiry::factory()->create();
 
-    $notification = new ContactMessageReceived($inquiry)
+    $notification = new ContactInquiryReceivedMail($inquiry)
         ->headers()
         ->text;
-    $confirmation = new ContactMessageConfirmation($inquiry)
+    $confirmation = new ContactConfirmationMail($inquiry)
         ->headers()
         ->text;
-    $notificationAgain = new ContactMessageReceived($inquiry->refresh())
+    $notificationAgain = new ContactInquiryReceivedMail($inquiry->refresh())
         ->headers()
         ->text;
 

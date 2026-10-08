@@ -10,6 +10,7 @@ use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use App\Presenters\SubscriberPresenter;
 use DateTimeInterface;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Attributes\Backoff;
@@ -17,7 +18,6 @@ use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\MaxExceptions;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Middleware\RateLimited;
-use Illuminate\Support\Facades\Mail;
 
 /**
  * Sends one newsletter delivery, dropping it instead when the issue is no longer
@@ -49,7 +49,7 @@ final class DeliverNewsletterIssue implements ShouldQueue
         return now()->addDay();
     }
 
-    public function handle(): void
+    public function handle(Mailer $mailer): void
     {
         $delivery = $this->delivery;
 
@@ -72,7 +72,8 @@ final class DeliverNewsletterIssue implements ShouldQueue
             return;
         }
 
-        Mail::to($subscriber->email)
+        $mailer
+            ->to($subscriber->email)
             ->send(new NewsletterIssueMail(
                 $issue,
                 SubscriberPresenter::from($subscriber)->unsubscribeUrl(),

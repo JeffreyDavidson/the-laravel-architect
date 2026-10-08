@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 arch('keeps storage, mail and HTTP calls out of observers')
     ->expect('App\Observers')
-    ->not->toUse([Storage::class, Mail::class, Http::class]);
+    ->not->toUse([Storage::class, Mail::class, Mailer::class, Http::class]);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Notifications\BackupDeliveryTest;
+use App\Notifications\BackupDeliveryTestNotification;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -25,7 +25,7 @@ final class TestBackupNotification extends Command
         }
 
         Notification::route('mail', $recipient)
-            ->notify(new BackupDeliveryTest);
+            ->notify(new BackupDeliveryTestNotification);
 
         $this->info('Backup notification delivery test sent.');
 

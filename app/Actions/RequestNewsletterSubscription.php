@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Mail\ConfirmNewsletterSubscription;
+use App\Mail\NewsletterConfirmationMail;
 use App\Models\Subscriber;
 use App\Presenters\SubscriberPresenter;
 use Illuminate\Contracts\Mail\Mailer;
@@ -61,7 +61,7 @@ final readonly class RequestNewsletterSubscription
 
             try {
                 $this->mailer->to($subscriber->email)
-                    ->queue(new ConfirmNewsletterSubscription(SubscriberPresenter::from($subscriber)->confirmationUrl($token)));
+                    ->queue(new NewsletterConfirmationMail(SubscriberPresenter::from($subscriber)->confirmationUrl($token)));
             } catch (Throwable $exception) {
                 Cache::forget($cooldownKey);
 
