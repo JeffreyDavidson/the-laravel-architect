@@ -14,7 +14,6 @@ use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
-use App\Presenters\PostPresenter;
 use Carbon\CarbonInterface;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -29,7 +28,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
@@ -130,22 +128,6 @@ final class Post extends Model implements Publishable
     public function episodes(): BelongsToMany
     {
         return $this->belongsToMany(Episode::class);
-    }
-
-    /**
-     * Temporary: the image URL comes from the presenter until page ViewModels own SEO
-     * (architecture plan C2), when models drop HasSEO and this method goes.
-     */
-    public function getDynamicSEOData(): SEOData
-    {
-        return new SEOData(
-            title: $this->title,
-            description: $this->excerpt,
-            image: PostPresenter::from($this)->featuredImageUrl(),
-            published_time: $this->published_at,
-            modified_time: $this->updated_at,
-            type: 'article',
-        );
     }
 
     public function getActivitylogOptions(): LogOptions

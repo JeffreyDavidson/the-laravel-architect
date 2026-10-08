@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('podcast_id', 'title', 'slug', 'episode_number', 'season_number', 'description', 'show_notes', 'transcript', 'featured_image_path', 'youtube_url', 'duration_seconds', 'guest_name', 'guest_title', 'guest_url', 'status', 'published_at', 'transistor_url')]
@@ -90,17 +89,6 @@ final class Episode extends Model implements Publishable
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
-    }
-
-    public function getDynamicSEOData(): SEOData
-    {
-        $podcast = $this->getRelationValue('podcast');
-        $podcastName = $podcast instanceof Podcast ? $podcast->name : 'Podcast';
-
-        return new SEOData(
-            title: $this->title.' — '.$podcastName,
-            description: $this->description,
-        );
     }
 
     public function getActivitylogOptions(): LogOptions

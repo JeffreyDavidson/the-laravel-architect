@@ -14,7 +14,6 @@ use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
-use App\Presenters\ProjectPresenter;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -23,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
@@ -83,19 +81,6 @@ final class Project extends Model implements Publishable
         }
 
         return $technologies;
-    }
-
-    /**
-     * Temporary: the image URL comes from the presenter until page ViewModels own SEO
-     * (architecture plan C2), when models drop HasSEO and this method goes.
-     */
-    public function getDynamicSEOData(): SEOData
-    {
-        return new SEOData(
-            title: $this->title,
-            description: $this->description,
-            image: ProjectPresenter::from($this)->featuredImageUrl(),
-        );
     }
 
     public function getActivitylogOptions(): LogOptions
