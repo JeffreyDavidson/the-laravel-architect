@@ -50,9 +50,6 @@
         <server name="BACKUP_ARCHIVE_PASSWORD" value=""/>
         <server name="BACKUP_B2_KEY_ID" value=""/>
         <server name="BACKUP_B2_APPLICATION_KEY" value=""/>
-        <server name="BACKUP_SFTP_HOST" value=""/>
-        <server name="BACKUP_SFTP_USERNAME" value=""/>
-        <server name="BACKUP_SFTP_PASSWORD" value=""/>
         <server name="AWS_ACCESS_KEY_ID" value=""/>
         <server name="AWS_SECRET_ACCESS_KEY" value=""/>
         <ini name="memory_limit" value="512M"/>
@@ -82,9 +79,6 @@
         <env name="BACKUP_ARCHIVE_PASSWORD" value="" force="true"/>
         <env name="BACKUP_B2_KEY_ID" value="" force="true"/>
         <env name="BACKUP_B2_APPLICATION_KEY" value="" force="true"/>
-        <env name="BACKUP_SFTP_HOST" value="" force="true"/>
-        <env name="BACKUP_SFTP_USERNAME" value="" force="true"/>
-        <env name="BACKUP_SFTP_PASSWORD" value="" force="true"/>
         <env name="AWS_ACCESS_KEY_ID" value="" force="true"/>
         <env name="AWS_SECRET_ACCESS_KEY" value="" force="true"/>
     </php>

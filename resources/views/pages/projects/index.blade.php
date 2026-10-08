@@ -67,21 +67,21 @@
                     </p>
                 @endif
             @else
-                @if ($projects->where('is_featured', true)->isNotEmpty())
+                @if ($featuredProjects->isNotEmpty())
                     <section aria-labelledby="featured-projects-heading">
                         <h2 id="featured-projects-heading" class="sr-only">Featured projects</h2>
                         <div class="dark:divide-brand-800 dark:border-brand-800 divide-y divide-gray-200 border-y border-gray-200">
-                            @foreach ($projects->where('is_featured', true) as $project)
+                            @foreach ($featuredProjects as $project)
                                 <x-projects.index-entry :project="$project" :priority="$loop->first" />
                             @endforeach
                         </div>
                     </section>
                 @endif
 
-                @if ($projects->where('is_featured', false)->isNotEmpty())
+                @if ($otherProjects->isNotEmpty())
                     <section
                         aria-labelledby="more-projects-heading"
-                        @class(['mt-12 sm:mt-16' => $projects->where('is_featured', true)->isNotEmpty()])
+                        @class(['mt-12 sm:mt-16' => $featuredProjects->isNotEmpty()])
                     >
                         <h2
                             id="more-projects-heading"
@@ -90,10 +90,10 @@
                             More projects
                         </h2>
                         <div class="dark:divide-brand-800 dark:border-brand-800 divide-y divide-gray-200 border-y border-gray-200">
-                            @foreach ($projects->where('is_featured', false) as $project)
+                            @foreach ($otherProjects as $project)
                                 <x-projects.index-entry
                                     :project="$project"
-                                    :priority="$loop->first && $projects->where('is_featured', true)->isEmpty()"
+                                    :priority="$loop->first && $featuredProjects->isEmpty()"
                                 />
                             @endforeach
                         </div>

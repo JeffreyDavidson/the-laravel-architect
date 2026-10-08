@@ -117,7 +117,7 @@
                     </div>
 
                     {{-- Flip hint --}}
-                    <div class="about-flip-hint mt-4 flex items-center justify-center gap-2 md:absolute md:bottom-[-36px] md:left-1/2 md:-translate-x-1/2 md:whitespace-nowrap">
+                    <div class="mt-4 flex items-center justify-center gap-2 md:absolute md:bottom-[-36px] md:left-1/2 md:-translate-x-1/2 md:whitespace-nowrap">
                         <svg class="h-4 w-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                         </svg>
@@ -301,11 +301,6 @@
         :href="route('contact.create')"
         button-label="Contact Me"
     >
-        <x-slot:decoration>
-            {{-- Floating orbs --}}
-            <div class="hidden"></div>
-        </x-slot:decoration>
-
         I'm available for freelance Laravel development, consulting, and legacy modernization projects. Let's talk about
         what you're building.
     </x-contact-cta>

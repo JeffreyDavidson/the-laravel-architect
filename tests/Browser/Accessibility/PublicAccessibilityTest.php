@@ -5,7 +5,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Tests\Browser\Components\NewsletterForm;
 use Tests\Browser\Pages\BlogPostPage;
 use Tests\Browser\Pages\HomePage;
@@ -15,16 +14,6 @@ use Tests\Browser\Pages\ProjectIndexPage;
 use function Pest\Laravel\withVite;
 
 pest()->use(RefreshDatabase::class);
-
-beforeEach(function () {
-    Http::fake([
-        'www.googleapis.com/youtube/v3/channels*' => Http::response([
-            'items' => [
-                ['statistics' => ['subscriberCount' => 1234]],
-            ],
-        ]),
-    ]);
-});
 
 it('provides a keyboard entry point and a programmatic newsletter label', function () {
     $page = HomePage::visit();

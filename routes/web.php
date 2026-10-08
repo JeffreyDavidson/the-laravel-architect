@@ -106,6 +106,7 @@ Route::get('/rss', RssFeedController::class)
 // Served like a static file (no session cookies, publicly cacheable) so the CDN keeps it.
 Route::get('/robots.txt', RobotsController::class)
     ->withoutMiddleware('web')
+    ->middleware('cache.headers:public;max_age=3600')
     ->name('robots');
 // Server-to-server: no session, cookies or forgery token; the Resend signature is the credential.
 // The limiter runs first, so requests with a bad signature still count against it.
@@ -134,6 +135,7 @@ Route::get('/og-image/{post:slug}', OgImageController::class)
         ShareErrorsFromSession::class,
         PreventRequestForgery::class,
     ])
+    ->middleware('cache.headers:public;max_age=86400')
     ->name('ogImage');
 
 // Podcasts

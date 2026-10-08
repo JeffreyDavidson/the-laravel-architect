@@ -53,10 +53,12 @@ class PublicContentArchiveImporter
     }
 
     /**
+     * The archive's validated media paths, unique and sorted. Every archived media file is an image.
+     *
      * @param  array<string, mixed>  $archive
      * @return list<string>
      */
-    public function mediaPaths(array $archive, bool $imagesOnly = false): array
+    public function mediaPaths(array $archive): array
     {
         $records = $this->validator->validate($archive, PublicContentArchiveSchema::VERSION);
 
@@ -64,7 +66,7 @@ class PublicContentArchiveImporter
 
         foreach (['posts', 'projects', 'podcasts', 'episodes'] as $type) {
             foreach ($records[$type] as $attributes) {
-                foreach ($imagesOnly ? ['featured_image_path', 'cover_image_path'] : ['featured_image_path', 'cover_image_path'] as $field) {
+                foreach (['featured_image_path', 'cover_image_path'] as $field) {
                     if (filled($attributes[$field] ?? null)) {
                         $paths[] = $this->validator->validateMediaPath($attributes[$field]);
                     }
@@ -76,15 +78,6 @@ class PublicContentArchiveImporter
         sort($paths);
 
         return $paths;
-    }
-
-    /**
-     * @param  array<string, mixed>  $archive
-     * @return list<string>
-     */
-    public function imagePaths(array $archive): array
-    {
-        return $this->mediaPaths($archive, imagesOnly: true);
     }
 
     /** @return array<string, mixed> */

@@ -7,12 +7,9 @@ namespace App\Services;
 use App\Data\YouTubeVideoData;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Throwable;
-use UnexpectedValueException;
 
 /**
  * @phpstan-type VideoStats array{view_count: int, like_count: int, comment_count: int}
@@ -34,47 +31,6 @@ class YouTubeService
         $this->channelId = is_string($channelId) ? $channelId : '';
     }
 
-    public static function subscriberCount(): int
-    {
-        $cacheKey = 'youtube.subscriber_count';
-
-        $cachedCount = Cache::get($cacheKey);
-
-        if (is_numeric($cachedCount)) {
-            return (int) $cachedCount;
-        }
-
-        try {
-            $apiKey = config('services.youtube.api_key');
-            $channelId = config('services.youtube.channel_id');
-
-            $response = self::request('https://www.googleapis.com/youtube/v3/channels', [
-                'key' => $apiKey,
-                'id' => $channelId,
-                'part' => 'statistics',
-            ]);
-
-            $subscriberCount = $response->json('items.0.statistics.subscriberCount');
-
-            if (! is_numeric($subscriberCount)) {
-                throw new UnexpectedValueException('YouTube returned no subscriber count.');
-            }
-
-            $count = (int) $subscriberCount;
-
-            Cache::put($cacheKey, $count, now()->addHours(6));
-            Cache::put("{$cacheKey}.last_known", $count, now()->addDays(30));
-
-            return $count;
-        } catch (Throwable $exception) {
-            Log::warning('Unable to refresh the YouTube subscriber count.', [
-                'exception' => $exception::class,
-            ]);
-
-            return self::integer(Cache::get("{$cacheKey}.last_known", 0));
-        }
-    }
-
     /** @return list<YouTubeVideoData> */
     public function getChannelVideos(int $maxResults = 50): array
     {
@@ -86,7 +42,7 @@ class YouTubeService
         $pageToken = null;
 
         do {
-            $response = self::request("{$this->baseUrl}/search", array_filter([
+            $response = $this->request("{$this->baseUrl}/search", array_filter([
                 'key' => $this->apiKey,
                 'channelId' => $this->channelId,
                 'part' => 'snippet',
@@ -126,7 +82,7 @@ class YouTubeService
      */
     public function getVideoDetails(array $videoIds): array
     {
-        $response = self::request("{$this->baseUrl}/videos", [
+        $response = $this->request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'snippet,contentDetails,statistics',
@@ -152,9 +108,9 @@ class YouTubeService
                         ?? data_get($item, 'snippet.thumbnails.default.url'),
                 ),
                 duration: $this->nullableString(data_get($item, 'contentDetails.duration')),
-                viewCount: self::integer(data_get($item, 'statistics.viewCount', 0)),
-                likeCount: self::integer(data_get($item, 'statistics.likeCount', 0)),
-                commentCount: self::integer(data_get($item, 'statistics.commentCount', 0)),
+                viewCount: $this->integer(data_get($item, 'statistics.viewCount', 0)),
+                likeCount: $this->integer(data_get($item, 'statistics.likeCount', 0)),
+                commentCount: $this->integer(data_get($item, 'statistics.commentCount', 0)),
                 publishedAt: $this->nullableString(data_get($item, 'snippet.publishedAt')),
             );
         }
@@ -168,7 +124,7 @@ class YouTubeService
      */
     public function getStatsForVideos(array $videoIds): array
     {
-        $response = self::request("{$this->baseUrl}/videos", [
+        $response = $this->request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'statistics',
@@ -184,9 +140,9 @@ class YouTubeService
             }
 
             $stats[$videoId] = [
-                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
-                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
-                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
+                'view_count' => $this->integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => $this->integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => $this->integer(data_get($item, 'statistics.commentCount', 0)),
             ];
         }
 
@@ -230,22 +186,24 @@ class YouTubeService
         return is_string($value) ? $value : null;
     }
 
-    private static function integer(mixed $value): int
+    private function integer(mixed $value): int
     {
         return is_numeric($value) ? (int) $value : 0;
     }
 
     /** @param array<string, mixed> $query */
-    private static function request(string $url, array $query): Response
+    private function request(string $url, array $query): Response
     {
         try {
-            return self::client()->get($url, $query);
+            return $this
+                ->client()
+                ->get($url, $query);
         } catch (Throwable) {
             throw new RuntimeException('The YouTube request failed.');
         }
     }
 
-    private static function client(): PendingRequest
+    private function client(): PendingRequest
     {
         return Http::connectTimeout(2)
             ->timeout(5)

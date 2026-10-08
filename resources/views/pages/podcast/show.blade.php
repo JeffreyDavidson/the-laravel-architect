@@ -1,8 +1,5 @@
 <x-layouts.site :page-meta="$pageMeta">
-    <div
-        class="podcast-detail"
-        style="--podcast-color: {{ \App\Presenters\PodcastPresenter::from($podcast)->displayColor() }};"
-    >
+    <div style="--podcast-color: {{ \App\Presenters\PodcastPresenter::from($podcast)->displayColor() }};">
         {{-- ===== PODCAST HERO ===== --}}
         <x-page-header>
             {{-- Breadcrumb --}}
