@@ -1,42 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Models\Episode;
 use App\Models\Post;
 use App\Models\Project;
+use App\Presenters\ProjectPresenter;
 use App\Queries\RelatedProjectContentQuery;
 use App\Queries\RelatedProjectsQuery;
+use App\ViewModels\Concerns\AppliesStoredSeo;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class ProjectShowViewModel
+final readonly class ProjectShowViewModel implements PageViewModel
 {
+    use AppliesStoredSeo;
+
     public function __construct(
-        private readonly RelatedProjectsQuery $relatedProjectsQuery,
-        private readonly RelatedProjectContentQuery $relatedProjectContentQuery,
+        private RelatedProjectsQuery $relatedProjectsQuery,
+        private RelatedProjectContentQuery $relatedProjectContentQuery,
+        private SiteStructuredData $site,
     ) {}
 
     /**
+     * The project case study, keeping any SEO fields saved in the admin.
+     *
      * @return array{
      *     project: Project,
      *     otherProjects: Collection<int, Project>,
      *     relatedPosts: Collection<int, Post>,
      *     relatedEpisodes: Collection<int, Episode>,
-     *     seoSource: Project,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(Project $project): array
     {
-        $project->load('tags');
-        $relatedContent = $this->relatedProjectContentQuery->get($project);
+        $presenter = ProjectPresenter::from($project);
 
         return [
-            'project' => $project,
-            'otherProjects' => $this->relatedProjectsQuery->get($project),
-            'relatedPosts' => $relatedContent['posts'],
-            'relatedEpisodes' => $relatedContent['episodes'],
-            'seoSource' => $project,
+            ...$this->pageData($project),
+            'pageMeta' => new PageMeta(
+                seo: $this->withStoredSeo($project, new SEOData(
+                    title: $project->title,
+                    description: $project->description,
+                    image: $presenter->featuredImageUrl(),
+                )),
+                structuredData: [
+                    $presenter->creativeWorkSchema($this->site->authorReference()),
+                    $this->site->breadcrumbs([
+                        ['name' => 'Projects', 'url' => route('projects.index')],
+                        ['name' => $project->title, 'url' => route('projects.show', $project)],
+                    ]),
+                ],
+            ),
         ];
     }
 
@@ -46,18 +66,39 @@ class ProjectShowViewModel
      *     otherProjects: Collection<int, Project>,
      *     relatedPosts: Collection<int, Post>,
      *     relatedEpisodes: Collection<int, Episode>,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function previewData(Project $project): array
     {
-        $data = $this->data($project);
-        $data['seoSource'] = new SEOData(
-            title: $project->title.' — Preview',
-            description: $project->description,
-            robots: 'noindex, nofollow',
-        );
+        return [
+            ...$this->pageData($project),
+            'pageMeta' => new PageMeta(new SEOData(
+                title: $project->title.' — Preview',
+                description: $project->description,
+                robots: 'noindex, nofollow',
+            )),
+        ];
+    }
 
-        return $data;
+    /**
+     * @return array{
+     *     project: Project,
+     *     otherProjects: Collection<int, Project>,
+     *     relatedPosts: Collection<int, Post>,
+     *     relatedEpisodes: Collection<int, Episode>,
+     * }
+     */
+    private function pageData(Project $project): array
+    {
+        $project->load('tags');
+        $relatedContent = $this->relatedProjectContentQuery->get($project);
+
+        return [
+            'project' => $project,
+            'otherProjects' => $this->relatedProjectsQuery->get($project),
+            'relatedPosts' => $relatedContent['posts'],
+            'relatedEpisodes' => $relatedContent['episodes'],
+        ];
     }
 }

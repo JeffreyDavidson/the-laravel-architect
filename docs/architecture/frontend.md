@@ -107,6 +107,8 @@ enable `livewire.csp_safe` globally. Rebuild frontend assets after Livewire
 upgrades.
 
 The controller supplies the initial blog payload to the component once;
-subsequent component updates refresh title, canonical URL, social metadata,
+subsequent component updates call the same `PostIndexViewModel` (and through it
+`BlogIndexQuery`), which keeps pagination links on `/blog` with the filters,
+and refresh title, canonical URL, social metadata,
 robots, and JSON-LD together. Pagination retains real links for visitors without
 JavaScript.

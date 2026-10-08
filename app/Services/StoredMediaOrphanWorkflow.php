@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Episode;
@@ -18,7 +20,7 @@ use Throwable;
  * Finds files on the public disk that no content references. Trashed content still
  * counts as a reference, so restoring a post or episode never brings back broken media.
  */
-class StoredMediaOrphanWorkflow
+final readonly class StoredMediaOrphanWorkflow
 {
     private const array OWNED_DIRECTORIES = ['projects/', 'posts/', 'podcasts/', 'episodes/images/', 'episodes/audio/'];
 
@@ -39,7 +41,7 @@ class StoredMediaOrphanWorkflow
         [Episode::class, 'featured_image_path'],
     ];
 
-    public function __construct(private readonly ResponsiveImageVariants $images) {}
+    public function __construct(private ResponsiveImageVariants $images) {}
 
     /**
      * Report unreferenced files and, when $delete is true, remove the eligible ones.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Contracts\Publishable;
@@ -18,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('title', 'slug', 'excerpt', 'content', 'status', 'published_at', 'sent_at')]
@@ -29,7 +30,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property Carbon|null $published_at
  * @property Carbon|null $sent_at
  */
-class NewsletterIssue extends Model implements Publishable
+final class NewsletterIssue extends Model implements Publishable
 {
     use DeletesOwnedContent;
 
@@ -61,14 +62,6 @@ class NewsletterIssue extends Model implements Publishable
     public function wasSent(): bool
     {
         return $this->sent_at !== null;
-    }
-
-    public function getDynamicSEOData(): SEOData
-    {
-        return new SEOData(
-            title: $this->title,
-            description: $this->excerpt,
-        );
     }
 
     public function getActivitylogOptions(): LogOptions

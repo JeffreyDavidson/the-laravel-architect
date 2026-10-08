@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class AboutViewModel
+final readonly class AboutViewModel implements PageViewModel
 {
+    public function __construct(private SiteStructuredData $site) {}
+
     /**
      * @return array{
      *     timeline: list<array{year: string, title: string, desc: string}>,
      *     stats: list<array{label: string, value: string}>,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(): array
     {
+        $url = route('about');
+
         return [
             'timeline' => [
                 ['year' => '~2008', 'title' => 'Started writing PHP', 'desc' => 'Self-taught, building things for fun'],
@@ -34,9 +40,15 @@ class AboutViewModel
                 ['label' => 'Works', 'value' => 'Remote'],
                 ['label' => 'Call Me When', 'value' => 'It\'s Broken'],
             ],
-            'seoSource' => new SEOData(
-                title: 'About',
-                description: 'Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.',
+            'pageMeta' => new PageMeta(
+                seo: new SEOData(
+                    title: 'About',
+                    description: 'Meet Jeffrey Davidson — 15+ years of PHP experience, Laravel architect, podcaster, and dad. Building clean, maintainable applications and sharing the journey.',
+                ),
+                structuredData: [
+                    $this->site->page('ProfilePage', 'About', $url, mainEntity: $this->site->authorReference()),
+                    $this->site->breadcrumbs([['name' => 'About', 'url' => $url]]),
+                ],
             ),
         ];
     }

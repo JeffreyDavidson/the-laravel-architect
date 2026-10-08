@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * Permalink slug field: required, lowercase kebab-case and unique for the form's model
  * (Filament ignores the record being edited).
  */
-class SlugInput extends TextInput
+final class SlugInput extends TextInput
 {
     /** Lowercase letters and numbers separated by single hyphens. */
     public const string PATTERN = '/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/';

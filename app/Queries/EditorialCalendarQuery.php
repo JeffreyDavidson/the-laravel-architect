@@ -1,14 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Queries;
 
-use App\Data\CalendarEntry;
-use App\Enums\CalendarEntryType;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
-use App\Support\DisplayTimezone;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -16,10 +13,11 @@ use Illuminate\Support\Collection;
 final class EditorialCalendarQuery
 {
     /**
-     * Posts and episodes published between the given display-timezone days, plus undated content,
-     * ordered by publication date with undated entries last.
+     * Posts and episodes published between the given display-timezone days, plus undated content:
+     * the posts first, then the episodes, each ordered by publication date and ID. The caller places
+     * them on display days and links them to the admin.
      *
-     * @return Collection<int, CalendarEntry>
+     * @return Collection<int, Post|Episode>
      */
     public function get(CarbonInterface $from, CarbonInterface $until): Collection
     {
@@ -32,25 +30,15 @@ final class EditorialCalendarQuery
                 ->utc(),
         ];
 
+        /** @var Collection<int, Post|Episode> $posts */
         $posts = $this->datedWithinOrUndated(Post::query(), $range)
             ->get()
-            ->map(fn (Post $post): CalendarEntry => $this->entry(
-                record: $post,
-                type: CalendarEntryType::Post,
-                url: PostResource::getUrl('edit', ['record' => $post]),
-            ));
+            ->toBase();
 
-        $episodes = $this->datedWithinOrUndated(Episode::query(), $range)
-            ->get()
-            ->map(fn (Episode $episode): CalendarEntry => $this->entry(
-                record: $episode,
-                type: CalendarEntryType::Episode,
-                url: EpisodeResource::getUrl('edit', ['record' => $episode]),
-            ));
-
-        return $posts->concat($episodes)
-            ->sortBy(fn (CalendarEntry $entry): string => $entry->date ?? '9999-12-31')
-            ->values();
+        return $posts->concat(
+            $this->datedWithinOrUndated(Episode::query(), $range)
+                ->get(),
+        );
     }
 
     /**
@@ -69,17 +57,5 @@ final class EditorialCalendarQuery
                 ->orWhereNull('published_at'))
             ->orderBy('published_at')
             ->orderBy('id');
-    }
-
-    private function entry(Post|Episode $record, CalendarEntryType $type, string $url): CalendarEntry
-    {
-        return new CalendarEntry(
-            date: DisplayTimezone::convert($record->publishedAt())
-                ?->toDateString(),
-            title: $record->title,
-            type: $type,
-            status: $record->publishStatus(),
-            url: $url,
-        );
     }
 }

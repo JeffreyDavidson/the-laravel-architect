@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Actions\GenerateSitemap;
+use App\Support\Feeds\SitemapRenderer;
+use App\ViewModels\SitemapViewModel;
 use Illuminate\Http\Response;
 
-class SitemapController
+final class SitemapController
 {
-    public function __invoke(GenerateSitemap $generateSitemap): Response
+    public function __invoke(SitemapViewModel $viewModel, SitemapRenderer $renderer): Response
     {
-        return response($generateSitemap->handle(), 200, [
+        return response($renderer->render(...$viewModel->data()), 200, [
             'Content-Type' => 'application/xml',
         ]);
     }

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * content goes live or back to draft through the Publish / Unpublish actions, so a live or
  * scheduled status is shown locked.
  */
-class PublishStatusSelect extends Select
+final class PublishStatusSelect extends Select
 {
     /** @var list<PublishStatus> */
     protected array $selectableStatuses = [PublishStatus::Draft, PublishStatus::InReview];
@@ -50,7 +50,7 @@ class PublishStatusSelect extends Select
             : $this->selectableStatuses;
 
         return collect($statuses)
-            ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->label()])
+            ->mapWithKeys(fn (PublishStatus $status): array => [$status->value => $status->getLabel()])
             ->all();
     }
 

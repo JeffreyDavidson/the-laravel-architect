@@ -24,11 +24,6 @@ enum PublishStatus: string implements HasColor, HasLabel
         };
     }
 
-    public function label(): string
-    {
-        return $this->getLabel();
-    }
-
     public function getLabel(): string
     {
         return match ($this) {

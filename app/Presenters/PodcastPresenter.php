@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presenters;
 
 use App\Data\ResponsiveImage;
 use App\Models\Podcast;
 use App\Services\ResponsiveImageVariants;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Vite;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Foundation\Vite;
 
 /**
  * Presents a podcast's cover artwork and accent colour. The cover is the uploaded image, or the
@@ -19,25 +21,67 @@ final readonly class PodcastPresenter
     public function __construct(
         private Podcast $podcast,
         private ResponsiveImageVariants $images,
+        private UrlGenerator $urls,
+        private Vite $vite,
     ) {}
 
     public static function from(Podcast $podcast): self
     {
-        return new self($podcast, app(ResponsiveImageVariants::class));
+        return app()->make(self::class, ['podcast' => $podcast]);
+    }
+
+    /**
+     * The show as a schema.org PodcastSeries, with its description and cover when it has them.
+     *
+     * @param  array{'@type': string, '@id': string}  $author  A reference to the site's author.
+     * @return array<string, mixed>
+     */
+    public function seriesSchema(array $author): array
+    {
+        $podcastUrl = $this->urls->route('podcast.show', $this->podcast);
+        $schema = [
+            '@type' => 'PodcastSeries',
+            '@id' => "{$podcastUrl}#podcast",
+            'name' => $this->podcast->name,
+            'url' => $podcastUrl,
+            'author' => $author,
+        ];
+
+        if ($this->podcast->description) {
+            $schema['description'] = $this->podcast->description;
+        }
+
+        $coverImageUrl = $this->coverImageUrl();
+
+        if ($coverImageUrl) {
+            $schema['image'] = $coverImageUrl;
+        }
+
+        return $schema;
+    }
+
+    /**
+     * A reference to the show's PodcastSeries, for the episodes that are part of it.
+     *
+     * @return array{'@type': string, '@id': string}
+     */
+    public function seriesReference(): array
+    {
+        return [
+            '@type' => 'PodcastSeries',
+            '@id' => $this->urls->route('podcast.show', $this->podcast).'#podcast',
+        ];
     }
 
     public function coverImageUrl(): ?string
     {
         if ($this->podcast->cover_image_path) {
-            return Storage::disk('public')
-                ->url(
-                    $this->podcast->cover_image_path,
-                );
+            return $this->images->url($this->podcast->cover_image_path);
         }
 
         $resources = $this->fallbackArtworkResources();
 
-        return $resources ? Vite::asset($resources[512]) : null;
+        return $resources ? $this->vite->asset($resources[512]) : null;
     }
 
     /** The cover with the uploaded image's WebP variants, or the bundled artwork's sizes. */
@@ -105,7 +149,7 @@ final readonly class PodcastPresenter
         $srcset = [];
 
         foreach ($resources as $width => $resource) {
-            $srcset[] = Vite::asset($resource)." {$width}w";
+            $srcset[] = "{$this->vite->asset($resource)} {$width}w";
         }
 
         return implode(', ', $srcset);

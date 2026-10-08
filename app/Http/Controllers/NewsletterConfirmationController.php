@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\ConfirmNewsletterSubscription;
@@ -9,7 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class NewsletterConfirmationController
+final class NewsletterConfirmationController
 {
     public function create(Request $request, Subscriber $subscriber, NewsletterConfirmationViewModel $viewModel): View
     {

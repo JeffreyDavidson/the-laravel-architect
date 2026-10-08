@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Image\ImageException;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
-class ResponsiveImageVariants
+final class ResponsiveImageVariants
 {
     public function generate(string $originalPath): bool
     {
@@ -109,6 +111,12 @@ class ResponsiveImageVariants
         }
 
         return true;
+    }
+
+    /** The public URL of a stored original or variant on the public media disk. */
+    public function url(string $path): string
+    {
+        return Storage::disk('public')->url($path);
     }
 
     public function srcset(?string $originalPath): ?string

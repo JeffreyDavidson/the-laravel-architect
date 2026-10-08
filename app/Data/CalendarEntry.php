@@ -8,7 +8,8 @@ use App\Enums\CalendarEntryType;
 use App\Enums\PublishStatus;
 
 /**
- * A post or episode placed on the editorial calendar. A null date means the content is unscheduled.
+ * A post or episode as the editorial calendar shows it: its publication day in the display timezone
+ * and its admin edit link. A null date means the content is unscheduled.
  */
 final readonly class CalendarEntry
 {

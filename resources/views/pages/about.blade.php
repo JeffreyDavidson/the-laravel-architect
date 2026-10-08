@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     {{-- Hero --}}
     <div class="dark:border-brand-700 dark:bg-surface-page relative overflow-hidden border-b border-gray-200 bg-white">
         <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">

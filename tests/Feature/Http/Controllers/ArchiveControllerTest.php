@@ -115,6 +115,17 @@ it('returns not found for an out-of-range archive page', function () {
         ->assertNotFound();
 });
 
+it('keeps the archive filters in page links', function () {
+    foreach (range(1, 19) as $day) {
+        Post::factory()->published()
+            ->create(['published_at' => now()->subDays($day)]);
+    }
+
+    get(route('archive.index', ['type' => 'writing']))
+        ->assertOk()
+        ->assertSeeHtml('href="'.e(route('archive.index', ['type' => 'writing', 'page' => 2])).'"');
+});
+
 it('rejects invalid archive filters', function (array $filters) {
     get(route('archive.index', $filters))
         ->assertNotFound();

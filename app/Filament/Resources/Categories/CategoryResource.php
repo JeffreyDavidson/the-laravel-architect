@@ -18,7 +18,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class CategoryResource extends Resource
+final class CategoryResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Category::class;

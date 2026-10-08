@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * Filters publishable content by whether it is live, scheduled or not yet published,
  * using the model's published / scheduled / unpublished query scopes.
  */
-class PublicationFilter extends SelectFilter
+final class PublicationFilter extends SelectFilter
 {
     public static function getDefaultName(): string
     {

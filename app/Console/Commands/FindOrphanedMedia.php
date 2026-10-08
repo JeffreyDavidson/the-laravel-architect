@@ -12,7 +12,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('media:find-orphans {--delete : Delete unreferenced files older than 24 hours within managed media directories}')]
 #[Description('Find unreferenced files on the public media disk')]
-class FindOrphanedMedia extends Command implements Isolatable
+final class FindOrphanedMedia extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;

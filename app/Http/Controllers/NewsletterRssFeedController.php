@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Actions\GenerateNewsletterRssFeed;
+use App\Support\Feeds\RssChannelRenderer;
+use App\ViewModels\NewsletterRssFeedViewModel;
 use Illuminate\Http\Response;
 
-class NewsletterRssFeedController
+final class NewsletterRssFeedController
 {
-    public function __invoke(GenerateNewsletterRssFeed $generateNewsletterRssFeed): Response
+    public function __invoke(NewsletterRssFeedViewModel $viewModel, RssChannelRenderer $renderer): Response
     {
-        return response($generateNewsletterRssFeed->handle())
+        return response($renderer->render(...$viewModel->data()))
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }

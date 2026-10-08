@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Episodes\Tables;
 
 use App\Enums\PublishStatus;
@@ -22,7 +24,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class EpisodesTable
+final class EpisodesTable
 {
     public static function configure(Table $table): Table
     {
@@ -53,7 +55,7 @@ class EpisodesTable
                     ->toggleable(),
                 IconColumn::make('transistor')
                     ->label('Transistor')
-                    ->state(fn (Episode $record): bool => $record->transistorEmbedUrl() !== null)
+                    ->state(fn (Episode $record): bool => $record->transistorEpisodeId() !== null)
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')

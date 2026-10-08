@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\SubscriberStatus;
 use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 
 use function Pest\Laravel\freezeTime;
 
@@ -79,3 +81,54 @@ it('never treats a suppressed reader as active or prunes it', function () {
         ->and($anyPrunable)
         ->toBeFalse();
 });
+
+it('reports suppression before unsubscribing and unsubscribing before confirmation', function (?string $verifiedAt, ?string $unsubscribedAt, ?string $suppressedAt, SubscriberStatus $expected) {
+    $subscriber = new Subscriber([
+        'verified_at' => $verifiedAt,
+        'unsubscribed_at' => $unsubscribedAt,
+        'suppressed_at' => $suppressedAt,
+    ]);
+
+    $status = $subscriber->status();
+
+    expect($status)
+        ->toBe($expected);
+})->with([
+    'confirmed' => ['2026-09-01', null, null, SubscriberStatus::Active],
+    'never confirmed' => [null, null, null, SubscriberStatus::Pending],
+    'confirmed then unsubscribed' => ['2026-09-01', '2026-09-10', null, SubscriberStatus::Unsubscribed],
+    'unsubscribed before confirming' => [null, '2026-09-10', null, SubscriberStatus::Unsubscribed],
+    'suppressed after unsubscribing' => ['2026-09-01', '2026-09-10', '2026-09-10', SubscriberStatus::Suppressed],
+    'suppressed before confirming' => [null, null, '2026-09-10', SubscriberStatus::Suppressed],
+    'suppressed without unsubscribing' => ['2026-09-01', null, '2026-09-10', SubscriberStatus::Suppressed],
+]);
+
+it('narrows a query to exactly the subscribers that report each status', function (SubscriberStatus $status) {
+    $dates = [null, '2026-09-10'];
+    $combinations = array_map(
+        fn (array $combination): array => [
+            'verified_at' => $combination[0],
+            'unsubscribed_at' => $combination[1],
+            'suppressed_at' => $combination[2],
+        ],
+        Arr::crossJoin($dates, $dates, $dates),
+    );
+    $subscribers = array_map(
+        fn (array $attributes): Subscriber => Subscriber::factory()->create($attributes),
+        $combinations,
+    );
+    $expected = collect($subscribers)
+        ->filter(fn (Subscriber $subscriber): bool => $subscriber->status() === $status)
+        ->pluck('id')
+        ->values()
+        ->all();
+
+    $ids = Subscriber::query()
+        ->withStatus($status)
+        ->pluck('id')
+        ->all();
+
+    expect($ids)
+        ->toBe($expected)
+        ->not->toBeEmpty();
+})->with(SubscriberStatus::cases());

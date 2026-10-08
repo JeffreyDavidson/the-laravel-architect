@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\ContentArchive;
 
 use App\Models\Episode;
@@ -11,7 +13,7 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Spatie\Tags\Tag;
 
-class PublicContentArchiveRelations
+final class PublicContentArchiveRelations
 {
     /** @param list<array{name: string, type?: string|null}> $tags */
     public function syncTags(Post|Project|Episode $model, array $tags): void

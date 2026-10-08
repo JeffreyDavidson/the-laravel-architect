@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presenters;
 
 use App\Models\Video;
@@ -10,7 +12,19 @@ final readonly class VideoPresenter
 
     public static function from(Video $video): self
     {
-        return new self($video);
+        return app()->make(self::class, ['video' => $video]);
+    }
+
+    /** The video's watch page on YouTube. */
+    public function youtubeUrl(): string
+    {
+        return "https://www.youtube.com/watch?v={$this->video->youtube_id}";
+    }
+
+    /** The video's embeddable player URL. */
+    public function embedUrl(): string
+    {
+        return "https://www.youtube.com/embed/{$this->video->youtube_id}";
     }
 
     public function duration(): ?string

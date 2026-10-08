@@ -14,7 +14,7 @@ use Throwable;
 
 #[Signature('content:import-public {path : Absolute path to a JSON archive} {--staging : Permit an import on the staging hostname when APP_ENV is production}')]
 #[Description('Import a public-content archive into staging or another non-production environment')]
-class ImportPublicContent extends Command
+final class ImportPublicContent extends Command
 {
     public function handle(PublicContentArchiveImporter $archive, PublicContentImportGuard $guard): int
     {

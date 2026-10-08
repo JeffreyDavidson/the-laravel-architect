@@ -8,6 +8,9 @@ use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Video;
 use App\Presenters\PodcastPresenter;
+use App\Presenters\PostPresenter;
+use App\Presenters\ProjectPresenter;
+use App\Presenters\VideoPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Date;
@@ -267,7 +270,7 @@ it('shares one wide article image in social cards and structured data', function
     'uploaded featured image' => [
         'uploaded-image-article',
         'posts/article.png',
-        fn (Post $post): ?string => $post->featured_image_url,
+        fn (Post $post): ?string => PostPresenter::from($post)->featuredImageUrl(),
     ],
     'bundled artwork' => [
         'hello-world-why-im-starting-this-blog',
@@ -1032,14 +1035,14 @@ it('serves responsive project images while retaining the original fallback', fun
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('architecture-640.webp')
         ->assertSeeHtml('architecture-1280.webp')
-        ->assertSeeHtml(configuredString($project->featured_image_url));
+        ->assertSeeHtml(configuredString(ProjectPresenter::from($project)->featuredImageUrl()));
 
     get(route('projects.show', $project))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('aspect-video')
         ->assertSeeHtml('fetchpriority="high"')
-        ->assertSeeHtml(configuredString($project->featured_image_url));
+        ->assertSeeHtml(configuredString(ProjectPresenter::from($project)->featuredImageUrl()));
 });
 
 it('serves responsive post images while retaining the original fallback', function () {
@@ -1058,7 +1061,7 @@ it('serves responsive post images while retaining the original fallback', functi
         ->assertSeeHtml('sizes="(min-width: 1280px) 1216px, calc(100vw - 2rem)"')
         ->assertSeeHtml('aspect-[3/2]')
         ->assertSeeHtml('fetchpriority="high"')
-        ->assertSeeHtml(configuredString($post->featured_image_url));
+        ->assertSeeHtml(configuredString(PostPresenter::from($post)->featuredImageUrl()));
 });
 
 it('serves responsive podcast cover images while retaining the original fallback', function () {
@@ -1075,12 +1078,12 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertSeeHtml('podcast-1280.webp')
         ->assertSeeHtml('sizes="288px"')
         ->assertSeeHtml('fetchpriority="high"')
-        ->assertSeeHtml(configuredString($podcast->cover_image_url));
+        ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
 
     get(route('podcast.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('sizes="224px"')
-        ->assertSeeHtml(configuredString($podcast->cover_image_url));
+        ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
 });
 
 it('shares the podcast cover in social cards', function (?string $coverImagePath, string $slug) {
@@ -1090,7 +1093,7 @@ it('shares the podcast cover in social cards', function (?string $coverImagePath
         'slug' => $slug,
         'cover_image_path' => $coverImagePath,
     ]);
-    $coverImageUrl = configuredString($podcast->cover_image_url);
+    $coverImageUrl = configuredString(PodcastPresenter::from($podcast)->coverImageUrl());
 
     get(route('podcast.show', $podcast))
         ->assertOk()
@@ -1121,7 +1124,7 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
         ->assertOk()
         ->assertSeeHtml('srcset="'.$cover?->srcset.'"')
         ->assertSeeHtml('sizes="224px"')
-        ->assertSeeHtml(configuredString($podcast->cover_image_url));
+        ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
 });
 
 it('shows synced published YouTube videos without stale launch content', function () {
@@ -1131,7 +1134,7 @@ it('shows synced published YouTube videos without stale launch content', functio
     get(route('home'))
         ->assertOk()
         ->assertSee($publishedVideo->title)
-        ->assertSee($publishedVideo->youtube_url)
+        ->assertSee(VideoPresenter::from($publishedVideo)->youtubeUrl())
         ->assertDontSee($futureVideo->title)
         ->assertDontSee('Launching March 2')
         ->assertDontSee('Coming to the Channel')

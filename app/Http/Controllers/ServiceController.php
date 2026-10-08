@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\ViewModels\ServiceViewModel;
 use Illuminate\Contracts\View\View;
 
-class ServiceController
+final class ServiceController
 {
     public function __invoke(ServiceViewModel $viewModel): View
     {

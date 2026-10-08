@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Actions\GenerateRssFeed;
+use App\Support\Feeds\RssChannelRenderer;
+use App\ViewModels\RssFeedViewModel;
 use Illuminate\Http\Response;
 
-class RssFeedController
+final class RssFeedController
 {
-    public function __invoke(GenerateRssFeed $generateRssFeed): Response
+    public function __invoke(RssFeedViewModel $viewModel, RssChannelRenderer $renderer): Response
     {
-        return response($generateRssFeed->handle())
+        return response($renderer->render(...$viewModel->data()))
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }

@@ -2,7 +2,7 @@
 
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
-use App\Support\Newsletter\UnsubscribeUrlGenerator;
+use App\Presenters\SubscriberPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -171,8 +171,8 @@ it('submits only the confirmation page by itself, never the unsubscribe page', f
         now()->addHour(),
         ['subscriber' => $subscriber, 'token' => $token],
     );
-    $unsubscribeUrl = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $unsubscribeUrl = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
 
     $confirmPage = get($confirmUrl);
     $unsubscribePage = get($unsubscribeUrl);
@@ -294,8 +294,8 @@ it('sends a confirmation link used a second time back to the signup form with it
 it('shows an unsubscribe step without changing subscriber state', function () {
     $subscriber = Subscriber::factory()->create();
 
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $url = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
     $email = $subscriber->email;
 
     get($url)
@@ -312,8 +312,8 @@ it('shows an unsubscribe step without changing subscriber state', function () {
 
 it('generates unsubscribe links that keep working after the newsletter is sent', function () {
     $subscriber = Subscriber::factory()->create();
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $url = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
 
     travel(1)
         ->year();
@@ -328,8 +328,8 @@ it('generates unsubscribe links that keep working after the newsletter is sent',
 it('unsubscribes with an explicit delete to a valid signed link', function () {
     $subscriber = Subscriber::factory()->create();
 
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $url = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
 
     delete($url)
         ->assertRedirect(route('home').'#newsletter-form')
@@ -368,8 +368,8 @@ it('rejects an unsigned unsubscribe link without revealing whether the subscribe
 
 it('keeps the unsubscribe page out of every cache', function () {
     $subscriber = Subscriber::factory()->create();
-    $url = app(UnsubscribeUrlGenerator::class)
-        ->for($subscriber);
+    $url = SubscriberPresenter::from($subscriber)
+        ->unsubscribeUrl();
 
     $response = get($url);
 

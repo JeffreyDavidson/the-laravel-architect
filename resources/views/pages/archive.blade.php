@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <div class="dark:bg-surface-page bg-gray-50">
         <x-page-header
             width="6xl"

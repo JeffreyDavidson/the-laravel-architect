@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Enums\SearchContentType;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -9,6 +13,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Presenters\VideoPresenter;
 use App\Queries\SearchQuery;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -17,25 +22,33 @@ use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use UnexpectedValueException;
 
-/**
- * @phpstan-import-type SearchResultPage from SearchQuery
- */
-class SearchViewModel
+final readonly class SearchViewModel implements PageViewModel
 {
+    public function __construct(private SearchQuery $searchQuery) {}
+
     /**
-     * @param  array<string, SearchResultPage>  $results  matching models keyed by content type value
+     * The search page for the validated query and type. Each group's page links keep the search
+     * terms and return to the group's heading.
+     *
      * @return array{
      *     query: string,
      *     results: array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, date: CarbonInterface|null, label: string, external: bool}>>,
      *     resultCount: int,
      *     typeOptions: array<string, string>,
      *     selectedType: string|null,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
-    public function data(array $results, ?string $query, ?SearchContentType $selectedType = null): array
+    public function data(?string $query, ?SearchContentType $selectedType = null): array
     {
         $query = trim($query ?? '');
+
+        $results = $this->searchQuery->get($query, $selectedType);
+
+        foreach ($results as $type => $group) {
+            $group->withQueryString()
+                ->fragment("search-{$type}");
+        }
 
         $results = array_map(
             fn (LengthAwarePaginator $group): LengthAwarePaginator => $group->through(fn (Model $model): array => $this->result($model)),
@@ -48,7 +61,7 @@ class SearchViewModel
             'resultCount' => array_sum(array_map(fn (LengthAwarePaginator $group): int => $group->total(), $results)),
             'typeOptions' => SearchContentType::labels(),
             'selectedType' => $selectedType?->value,
-            'seoSource' => new SEOData(
+            'pageMeta' => new PageMeta(new SEOData(
                 title: $query === '' ? 'Search' : 'Search results',
                 description: $query === ''
                     ? 'Search the writing, projects, podcasts, episodes, and videos from The Laravel Architect.'
@@ -56,7 +69,7 @@ class SearchViewModel
                 url: route('search'),
                 robots: 'noindex, follow',
                 canonical_url: route('search'),
-            ),
+            )),
         ];
     }
 
@@ -74,7 +87,7 @@ class SearchViewModel
             $model instanceof Podcast => [$model->name, $model->description, route('podcast.show', $model), null, 'Podcast'],
             $model instanceof NewsletterIssue => [$model->title, $model->excerpt, route('newsletter.issue', $model), $model->publishedAt(), 'Newsletter'],
             $model instanceof Episode => [$model->title, $model->description, $this->episodeUrl($model), $model->publishedAt(), 'Episode'],
-            $model instanceof Video => [$model->title, $model->description, $model->youtube_url, null, 'YouTube video'],
+            $model instanceof Video => [$model->title, $model->description, VideoPresenter::from($model)->youtubeUrl(), null, 'YouTube video'],
             default => throw new UnexpectedValueException('Unsupported search result model.'),
         };
 

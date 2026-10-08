@@ -3,9 +3,22 @@
 The Laravel Architect is a Laravel application with server-rendered Blade pages
 for the public site, a Filament admin panel at `/admin`, and SQLite for storage.
 Controllers stay thin: page data comes from ViewModels, reusable content
-selection from query objects, and multi-step work from actions. Commands and
-procedures for running the site live in [Operations](operations.md); this
-section describes how the application is built.
+selection from query objects that only ViewModels call, multi-step work from actions, and validation
+that queries the database or calls a service from rule classes in `app/Rules`.
+Publishing and readiness rules live in `app/Publishing`, and actions refuse
+work by throwing named exceptions from `app/Exceptions`.
+Commands and procedures for running the site live in
+[Operations](operations.md); this section describes how the application is
+built.
+
+Class names follow one vocabulary. An action (an imperative verb with
+`handle()`) makes one state change. A query only reads. A renderer or generator
+returns output from the data it is given and never queries or writes: the feed,
+sitemap and robots.txt renderers in `app/Support/Feeds`, `FeaturedImageGenerator`
+and `OgImageGenerator`. A `…Workflow` service runs one long operation over many
+records with constructor-injected collaborators and returns a report. An
+integration service such as `YouTubeService` wraps an external system, and a job
+is an async unit that calls an action or service.
 
 ## Sections
 

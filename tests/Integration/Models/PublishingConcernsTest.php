@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\freezeSecond;
 
@@ -90,20 +89,6 @@ it('shares featured behavior across projects and videos', function () {
         ->and(Video::featured()->pluck('id')
             ->all())
         ->toBe([$video->id]);
-});
-
-it('shares featured image URL behavior across models', function () {
-    Storage::fake('public');
-
-    $post = new Post(['featured_image_path' => 'posts/image.png']);
-    $project = new Project(['featured_image_path' => 'projects/image.png']);
-    $episode = new Episode(['featured_image_path' => 'episodes/image.png']);
-
-    expect($post->featured_image_url)->toBe(Storage::disk('public')->url('posts/image.png'))
-        ->and($project->featured_image_url)
-        ->toBe(Storage::disk('public')->url('projects/image.png'))
-        ->and($episode->featured_image_url)
-        ->toBe(Storage::disk('public')->url('episodes/image.png'));
 });
 
 it('preserves publishing behavior for posts', function () {

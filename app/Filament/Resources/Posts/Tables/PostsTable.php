@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PublishStatus;
@@ -23,7 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 
-class PostsTable
+final class PostsTable
 {
     public static function configure(Table $table): Table
     {

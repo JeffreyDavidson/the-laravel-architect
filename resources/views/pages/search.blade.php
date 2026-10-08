@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <div class="dark:bg-surface-page min-h-[60vh] bg-gray-50">
         <x-page-header width="4xl" compact eyebrow="Search the archive">
             <x-slot:title class="mt-4 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-white">

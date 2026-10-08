@@ -1,17 +1,18 @@
 <?php
 
+use App\Data\PageMeta;
 use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use App\Presenters\PostPresenter;
-use App\Queries\BlogIndexQuery;
 use App\ViewModels\PostIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tests\Support\StructuredDataExpectations as Schema;
 
 pest()->use(RefreshDatabase::class);
 
@@ -40,7 +41,7 @@ it('builds the public blog index payload', function () {
 
     $data = blogIndexViewModelData();
 
-    expect($data)->toHaveKeys(['posts', 'categories', 'seoSource'])
+    expect($data)->toHaveKeys(['posts', 'categories', 'pageMeta'])
         ->and($data['posts']->getCollection()
             ->modelKeys())
         ->toBe([
@@ -56,7 +57,7 @@ it('builds the public blog index payload', function () {
         ->toBe(2)
         ->and($data['posts']->total())
         ->toBe(2)
-        ->and($data['seoSource']->title)
+        ->and($data['pageMeta']->seo->title)
         ->toBe('Blog');
 });
 
@@ -97,9 +98,9 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         ->toContain('word')
         ->and(PostPresenter::from($data['posts']->sole())->readingTime())
         ->toBe(2)
-        ->and($data['seoSource']->robots)
+        ->and($data['pageMeta']->seo->robots)
         ->toBe('noindex, follow')
-        ->and($data['seoSource']->canonical_url)
+        ->and($data['pageMeta']->seo->canonical_url)
         ->toBe(route('blog.index'));
 
     foreach ([
@@ -128,6 +129,78 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         ->toBeTrue();
 });
 
+it('lists the first blog page from position one under the canonical url', function () {
+    Schema::useFixedOrigin();
+    $author = User::factory()->create();
+    $category = Category::factory()->create();
+    createPostIndexViewModelPost($author, $category, 'First post', now()->subDay(), slug: 'first-post');
+    createPostIndexViewModelPost($author, $category, 'Second post', now()->subDays(2), slug: 'second-post');
+
+    $data = blogIndexViewModelData();
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        ...Schema::collection('Blog', 'https://example.test/blog', [
+            1 => ['First post', 'https://example.test/blog/first-post'],
+            2 => ['Second post', 'https://example.test/blog/second-post'],
+        ]),
+        Schema::breadcrumbs([
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
+        ]),
+    ]);
+});
+
+it('offsets later blog pages and names a selected category under its archive url', function () {
+    Schema::useFixedOrigin();
+    $author = User::factory()->create();
+    $category = Category::factory()->create(['name' => 'Testing', 'slug' => 'testing']);
+
+    foreach (range(1, 13) as $day) {
+        createPostIndexViewModelPost($author, $category, "Post {$day}", now()->subDays($day), slug: "post-{$day}");
+    }
+
+    request()->query->set('page', 2);
+
+    $data = blogIndexViewModelData(['category' => 'testing']);
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        ...Schema::collection('Testing Articles', 'https://example.test/blog/category/testing', [
+            13 => ['Post 13', 'https://example.test/blog/post-13'],
+        ]),
+        Schema::breadcrumbs([
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog/category/testing'],
+        ]),
+    ]);
+});
+
+it('keeps the listing name under the blog url on a search', function () {
+    Schema::useFixedOrigin();
+    $author = User::factory()->create();
+    $category = Category::factory()->create();
+    createPostIndexViewModelPost($author, $category, 'Searched post', now()->subDay(), slug: 'searched-post');
+
+    $data = blogIndexViewModelData(['q' => 'searched']);
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        ...Schema::collection('Blog', 'https://example.test/blog', [
+            1 => ['Searched post', 'https://example.test/blog/searched-post'],
+        ]),
+        Schema::breadcrumbs([
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
+        ]),
+    ]);
+});
+
+it('rejects an unknown category', function () {
+    expect(fn (): array => blogIndexViewModelData(['category' => 'missing-category']))
+        ->toThrow(NotFoundHttpException::class);
+});
+
 /**
  * @param  array{q?: string, category?: string}  $filters
  * @return array{
@@ -137,7 +210,7 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
  *     query: string,
  *     categorySlug: string|null,
  *     selectedCategory: Category|null,
- *     seoSource: SEOData,
+ *     pageMeta: PageMeta,
  * }
  */
 function blogIndexViewModelData(array $filters = []): array
@@ -145,11 +218,7 @@ function blogIndexViewModelData(array $filters = []): array
     $query = trim($filters['q'] ?? '');
     $categorySlug = $filters['category'] ?? null;
 
-    return app(PostIndexViewModel::class)->data(
-        app(BlogIndexQuery::class)->results($query, $categorySlug),
-        $query,
-        $categorySlug,
-    );
+    return app(PostIndexViewModel::class)->data($query, $categorySlug);
 }
 
 function createPostIndexViewModelPost(
@@ -158,6 +227,7 @@ function createPostIndexViewModelPost(
     string $title,
     ?DateTimeInterface $publishedAt,
     PublishStatus $status = PublishStatus::Published,
+    ?string $slug = null,
 ): Post {
     return Post::factory()
         ->for($category)
@@ -166,5 +236,6 @@ function createPostIndexViewModelPost(
             'title' => $title,
             'status' => $status,
             'published_at' => $publishedAt,
+            ...$slug === null ? [] : ['slug' => $slug],
         ]);
 }

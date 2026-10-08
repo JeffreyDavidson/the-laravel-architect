@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Concerns\TracksActivity;
@@ -12,7 +14,7 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 
 #[Fillable('name', 'slug', 'description')]
 #[Sluggable(from: 'name')]
-class Category extends Model
+final class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;

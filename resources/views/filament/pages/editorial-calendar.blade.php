@@ -55,7 +55,7 @@
                                             <div class="flex items-center justify-between gap-1 text-[10px] font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400">
                                                 <span>{{ $entry->type->getLabel() }}</span>
                                                 <x-filament::badge :color="$entry->status->getColor()">
-                                                    {{ $entry->status->label() }}
+                                                    {{ $entry->status->getLabel() }}
                                                 </x-filament::badge>
                                             </div>
                                             <p class="group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-1 line-clamp-2 text-xs font-medium text-gray-950 dark:text-white">
@@ -88,7 +88,7 @@
                                     {{ $entry->type->getLabel() }}
                                 </span>
                                 <x-filament::badge :color="$entry->status->getColor()">
-                                    {{ $entry->status->label() }}
+                                    {{ $entry->status->getLabel() }}
                                 </x-filament::badge>
                             </div>
                             <p class="group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-2 font-medium text-gray-950 dark:text-white">

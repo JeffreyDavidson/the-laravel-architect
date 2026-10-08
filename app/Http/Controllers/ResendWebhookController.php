@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\HandleResendWebhook;
@@ -13,7 +15,7 @@ use Resend\WebhookSignature;
  * without a session or forgery token, so the signature is the only credential.
  * Payloads and addresses are never logged.
  */
-class ResendWebhookController
+final class ResendWebhookController
 {
     public function __invoke(Request $request, HandleResendWebhook $handleResendWebhook): Response
     {

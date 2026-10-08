@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\SubscriberStatus;
 use App\Enums\SuppressionReason;
 use Carbon\CarbonInterface;
 use Database\Factories\SubscriberFactory;
@@ -26,10 +27,11 @@ use Illuminate\Support\Facades\Date;
  * @property SuppressionReason|null $suppression_reason
  *
  * @method static Builder<static> active()
+ * @method static Builder<static> withStatus(SubscriberStatus $status)
  */
 #[Fillable('email', 'subscribed_at', 'verified_at', 'unsubscribed_at', 'suppressed_at', 'suppression_reason')]
 #[Hidden('verification_token_hash')]
-class Subscriber extends Model
+final class Subscriber extends Model
 {
     /** @use HasFactory<SubscriberFactory> */
     use HasFactory, Prunable;
@@ -45,9 +47,22 @@ class Subscriber extends Model
 
     public function isActive(): bool
     {
-        return $this->verified_at !== null
-            && $this->unsubscribed_at === null
-            && $this->suppressed_at === null;
+        return $this->status() === SubscriberStatus::Active;
+    }
+
+    /**
+     * Suppression outranks unsubscribing, which outranks confirmation. The
+     * withStatus() scope applies the same precedence, so every subscriber
+     * appears under exactly the filter that matches its badge.
+     */
+    public function status(): SubscriberStatus
+    {
+        return match (true) {
+            $this->suppressed_at !== null => SubscriberStatus::Suppressed,
+            $this->unsubscribed_at !== null => SubscriberStatus::Unsubscribed,
+            $this->verified_at === null => SubscriberStatus::Pending,
+            default => SubscriberStatus::Active,
+        };
     }
 
     /**
@@ -89,6 +104,28 @@ class Subscriber extends Model
             ->whereNotNull('verified_at')
             ->whereNull('unsubscribed_at')
             ->whereNull('suppressed_at');
+    }
+
+    /**
+     * Mirrors status(): each case adds the conditions that rule out the
+     * higher-precedence statuses before its own.
+     *
+     * @param  Builder<Subscriber>  $query
+     */
+    #[Scope]
+    protected function withStatus(Builder $query, SubscriberStatus $status): void
+    {
+        match ($status) {
+            SubscriberStatus::Suppressed => $query->whereNotNull('suppressed_at'),
+            SubscriberStatus::Unsubscribed => $query
+                ->whereNull('suppressed_at')
+                ->whereNotNull('unsubscribed_at'),
+            SubscriberStatus::Pending => $query
+                ->whereNull('suppressed_at')
+                ->whereNull('unsubscribed_at')
+                ->whereNull('verified_at'),
+            SubscriberStatus::Active => $query->active(),
+        };
     }
 
     protected function casts(): array

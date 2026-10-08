@@ -5,6 +5,5 @@
     :action-url="$actionUrl"
     button-label="Unsubscribe"
     method="DELETE"
-    :seo-source="$seoSource ?? null"
-    :structured-data="$structuredData ?? []"
+    :page-meta="$pageMeta"
 />

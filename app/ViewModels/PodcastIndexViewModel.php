@@ -1,28 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Models\Podcast;
+use App\Support\Seo\CollectionListing;
+use App\Support\Seo\JsonLd;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class PodcastIndexViewModel
+final readonly class PodcastIndexViewModel implements PageViewModel
 {
+    public function __construct(private SiteStructuredData $site) {}
+
     /**
      * @return array{
      *     podcast: Podcast|null,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(): array
     {
+        $podcast = Podcast::query()->active()
+            ->withCount('publishedEpisodes')
+            ->orderBy('sort_order')
+            ->first();
+        $url = route('podcast.index');
+
         return [
-            'podcast' => Podcast::query()->active()
-                ->withCount('publishedEpisodes')
-                ->orderBy('sort_order')
-                ->first(),
-            'seoSource' => new SEOData(
-                title: 'Podcast',
-                description: 'Coffee with The Laravel Architect from Jeffrey Davidson — deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.',
+            'podcast' => $podcast,
+            'pageMeta' => new PageMeta(
+                seo: new SEOData(
+                    title: 'Podcast',
+                    description: 'Coffee with The Laravel Architect from Jeffrey Davidson — deep dives into Laravel, PHP, architecture patterns, and the craft of building modern web applications.',
+                ),
+                structuredData: [
+                    ...JsonLd::collectionPage(new CollectionListing(
+                        'Podcast',
+                        $url,
+                        $podcast instanceof Podcast
+                            ? [['name' => $podcast->name, 'url' => route('podcast.show', $podcast)]]
+                            : [],
+                    )),
+                    $this->site->breadcrumbs([['name' => 'Podcast', 'url' => $url]]),
+                ],
             ),
         ];
     }

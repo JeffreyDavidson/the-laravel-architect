@@ -17,7 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class VideoResource extends Resource
+final class VideoResource extends Resource
 {
     #[\Override]
     protected static ?string $model = Video::class;

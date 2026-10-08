@@ -4,6 +4,7 @@ use App\Models\Project;
 use App\Models\Video;
 use App\ViewModels\HomeViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\StructuredDataExpectations as Schema;
 
 pest()->use(RefreshDatabase::class);
 
@@ -32,7 +33,7 @@ it('builds the bounded public homepage payload', function () {
         'youtubeProfileUrl',
         'publishedPostCount',
         'publishedProjectCount',
-        'seoSource',
+        'pageMeta',
     ])
         ->and($data['latestPosts'])
         ->toBeEmpty()
@@ -50,6 +51,18 @@ it('builds the bounded public homepage payload', function () {
         ->toBe(0)
         ->and($data['publishedProjectCount'])
         ->toBe(5);
+});
+
+it('describes the home page without breadcrumbs', function () {
+    Schema::useFixedOrigin();
+
+    $data = app(HomeViewModel::class)
+        ->data();
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        Schema::page('WebPage', 'The Laravel Architect', 'https://example.test'),
+    ]);
 });
 
 function createHomeViewModelProject(int $sortOrder): void

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\SocialProfiles;
 
 use App\Enums\NavigationGroup;
@@ -15,11 +17,10 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
-class SocialProfileResource extends Resource
+final class SocialProfileResource extends Resource
 {
     #[\Override]
     protected static ?string $model = SocialProfile::class;
@@ -43,10 +44,10 @@ class SocialProfileResource extends Resource
         return SocialProfilesTable::configure($table);
     }
 
-    public static function getRecordTitle(?Model $record): string|Htmlable|null
+    public static function getRecordTitle(?Model $record): string
     {
         if (! $record instanceof SocialProfile) {
-            return static::getModelLabel();
+            return self::getModelLabel();
         }
 
         $platformValue = $record->getAttribute('platform');
@@ -55,7 +56,7 @@ class SocialProfileResource extends Resource
             is_string($platformValue) => SocialPlatform::tryFrom($platformValue),
             default => null,
         };
-        $platformLabel = $platform?->getLabel() ?? static::getModelLabel();
+        $platformLabel = $platform?->getLabel() ?? self::getModelLabel();
 
         return $platformLabel.(filled($record->label) ? ' — '.$record->label : '');
     }

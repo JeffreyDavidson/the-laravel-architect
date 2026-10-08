@@ -13,7 +13,7 @@ use Throwable;
 
 #[Signature('content:export-public {path : Absolute path for the JSON archive}')]
 #[Description('Export only currently public The Laravel Architect content')]
-class ExportPublicContent extends Command
+final class ExportPublicContent extends Command
 {
     public function handle(PublicContentArchiveExporter $archive): int
     {

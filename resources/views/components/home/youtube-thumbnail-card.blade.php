@@ -1,8 +1,9 @@
 @props(['video'])
-@php($duration = \App\Presenters\VideoPresenter::from($video)->duration())
+@php($presenter = \App\Presenters\VideoPresenter::from($video))
+@php($duration = $presenter->duration())
 
 <a
-    href="{{ $video->youtube_url }}"
+    href="{{ $presenter->youtubeUrl() }}"
     target="_blank"
     rel="noopener noreferrer"
     {{ $attributes->class('block overflow-hidden rounded-xl border border-[var(--youtube-card-border)] bg-[var(--youtube-card-bg)] transition-[border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 hover:border-[var(--error-alpha-30)]') }}

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * scheduled content must keep a date: its status is locked on the form, so clearing the
  * date would take it offline while it still shows as published.
  */
-class PublishDatePicker extends DateTimePicker
+final class PublishDatePicker extends DateTimePicker
 {
     protected function setUp(): void
     {

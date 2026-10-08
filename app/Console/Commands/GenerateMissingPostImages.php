@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\FeaturedImageGenerator;
 use App\Services\PostImageGenerationWorkflow;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('posts:generate-images {--force : Also regenerate previously generated images (uploaded images are kept)}')]
 #[Description('Generate missing featured images for posts')]
-class GenerateMissingPostImages extends Command
+final class GenerateMissingPostImages extends Command
 {
-    public function handle(
-        FeaturedImageGenerator $generator,
-        PostImageGenerationWorkflow $workflow,
-        ResponsiveImageVariants $images,
-    ): int {
+    public function handle(PostImageGenerationWorkflow $workflow): int
+    {
         ['processed' => $processed, 'failed' => $failed] = $workflow->generate(
             (bool) $this->option('force'),
-            $generator->generate(...),
-            $images->generate(...),
             function (string $message): void {
                 if (str_starts_with($message, 'Responsive')) {
                     $this->error($message);

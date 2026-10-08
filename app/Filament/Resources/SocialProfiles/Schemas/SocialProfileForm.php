@@ -12,7 +12,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
-class SocialProfileForm
+final class SocialProfileForm
 {
     public static function configure(Schema $schema): Schema
     {

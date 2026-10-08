@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
+use App\Actions\RepairImageVariants;
+use App\Data\MediaHealthRecord;
 use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
@@ -10,7 +14,7 @@ use App\Enums\NavigationGroup;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
-use App\Services\MediaHealthReport;
+use App\Queries\MediaHealthQuery;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -21,9 +25,10 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Number;
 use UnitEnum;
 
-class MediaHealth extends Page implements HasTable
+final class MediaHealth extends Page implements HasTable
 {
     use InteractsWithTable;
 
@@ -48,16 +53,20 @@ class MediaHealth extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->records(function (MediaHealthReport $report, ?string $search, array $filters): array {
-                $records = collect($report->records($this->filterValue($filters, 'type'), $search));
-
+            ->records(function (MediaHealthQuery $query, ?string $search, array $filters): array {
+                $type = $this->filterValue($filters, 'type');
                 $status = $this->filterValue($filters, 'status');
+                $typeFilter = $type === null ? null : MediaHealthType::tryFrom($type);
+                $statusFilter = $status === null ? null : MediaHealthStatus::tryFrom($status);
 
-                if ($status !== null) {
-                    $records = $records->filter(fn (array $record): bool => $record['status'] === $status);
+                // A filter value that is not a known option matches nothing.
+                if (($type !== null && ! $typeFilter instanceof MediaHealthType) || ($status !== null && ! $statusFilter instanceof MediaHealthStatus)) {
+                    return [];
                 }
 
-                return $records->all();
+                return collect($query->get($typeFilter, $search, $statusFilter))
+                    ->mapWithKeys(fn (MediaHealthRecord $record): array => [$record->key() => $this->row($record)])
+                    ->all();
             })
             ->columns([
                 TextColumn::make('type')
@@ -74,12 +83,15 @@ class MediaHealth extends Page implements HasTable
                 TextColumn::make('source_status')
                     ->label('Source')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (string $state): string => MediaSourceStatus::tryFrom($state)?->getColor() ?? 'danger'),
                 TextColumn::make('variants')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaVariantStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (string $state): string => MediaVariantStatus::tryFrom($state)?->getColor() ?? 'warning'),
                 TextColumn::make('status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => MediaHealthStatus::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (array $record): string => $this->recordString($record, 'status_color')),
             ])
             ->filters([
@@ -96,11 +108,10 @@ class MediaHealth extends Page implements HasTable
                     ->authorize('update')
                     ->requiresConfirmation()
                     ->visible(fn (array $record): bool => $this->recordBool($record, 'repairable'))
-                    ->action(function (array $record, MediaHealthReport $report): void {
-                        if (! $report->repair(
-                            $this->recordString($record, 'type_key'),
-                            $this->recordString($record, 'record_key'),
-                        )) {
+                    ->action(function (array $record, RepairImageVariants $repairImageVariants): void {
+                        $type = MediaHealthType::tryFrom($this->recordString($record, 'type_key'));
+
+                        if (! $type instanceof MediaHealthType || ! $repairImageVariants->handle($type, $this->recordString($record, 'record_key'))) {
                             Notification::make()
                                 ->title('Repair failed')
                                 ->danger()
@@ -124,6 +135,33 @@ class MediaHealth extends Page implements HasTable
             ->paginated(false)
             ->emptyStateHeading('No stored images')
             ->emptyStateDescription('Images added to projects, posts, and podcasts will appear here.');
+    }
+
+    /**
+     * Format one record as a table row, keeping the enum values for the badge columns.
+     *
+     * @return array{type: string, type_key: string, record_key: string, title: string, filename: string, dimensions: string, file_size: string, source_status: string, variants: string, status: string, status_color: string, repairable: bool}
+     */
+    private function row(MediaHealthRecord $record): array
+    {
+        return [
+            'type' => $record->type->getLabel(),
+            'type_key' => $record->type->value,
+            'record_key' => $record->recordKey,
+            'title' => $record->title,
+            'filename' => $record->filename ?? '—',
+            'dimensions' => $record->width === null || $record->height === null
+                ? '—'
+                : "{$record->width} × {$record->height}",
+            'file_size' => $record->fileSize === null
+                ? '—'
+                : Number::fileSize($record->fileSize),
+            'source_status' => $record->sourceStatus->value,
+            'variants' => $record->variantStatus->value,
+            'status' => $record->status->value,
+            'status_color' => $record->status->getColor(),
+            'repairable' => $record->repairable,
+        ];
     }
 
     private function recordString(mixed $record, string $key): string

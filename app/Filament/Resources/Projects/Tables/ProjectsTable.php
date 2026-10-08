@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectReadinessFilter;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
-use App\Queries\ProjectReadinessQuery;
+use App\Publishing\ProjectReadinessCriteria;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -20,7 +22,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ProjectsTable
+final class ProjectsTable
 {
     public static function configure(Table $table): Table
     {
@@ -71,8 +73,8 @@ class ProjectsTable
             ->filters([
                 SelectFilter::make('readiness')
                     ->options(ProjectReadinessFilter::class)
-                    ->query(function (Builder $query, array $data, ProjectReadinessQuery $readinessQuery): void {
-                        $readinessQuery->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
+                    ->query(function (Builder $query, array $data, ProjectReadinessCriteria $readinessCriteria): void {
+                        $readinessCriteria->apply($query, is_string($data['value'] ?? null) ? $data['value'] : null);
                     }),
                 TrashedFilter::make(),
             ])

@@ -9,34 +9,6 @@ pest()->use(RefreshDatabase::class);
 
 dataset('dated publishable types', ['post', 'episode', 'newsletter issue']);
 
-it('reports no publishing issues when the required details are present', function (string $type) {
-    $record = PublishableFixtures::ready($type);
-
-    expect($record->publishingIssues())
-        ->toBeEmpty();
-})->with(['post', 'project', 'episode', 'newsletter issue']);
-
-it('lists only the missing required details as publishing issues', function (string $type, array $issues) {
-    $record = PublishableFixtures::ready($type, PublishableFixtures::withoutRequiredDetails($type));
-
-    expect($record->publishingIssues())
-        ->toBe($issues);
-})->with([
-    'post' => ['post', ['Content', 'Excerpt', 'Category']],
-    'project' => ['project', ['Description', 'Case study']],
-    'episode' => ['episode', ['Podcast', 'Description', 'Episode media']],
-    'newsletter issue' => ['newsletter issue', ['Content']],
-]);
-
-it('does not block publishing on advisory readiness checks', function () {
-    $post = PublishableFixtures::ready('post');
-
-    expect($post->getAttribute('featured_image_path'))
-        ->toBeNull()
-        ->and($post->publishingIssues())
-        ->toBeEmpty();
-});
-
 it('publishes immediately when no publish date is set', function (string $type) {
     $record = PublishableFixtures::ready($type);
 

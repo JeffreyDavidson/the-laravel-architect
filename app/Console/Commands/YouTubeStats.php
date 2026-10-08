@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\YouTubeService;
-use App\Services\YouTubeVideoStatsSynchronizer;
+use App\Services\YouTubeStatsSyncWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('youtube:stats')]
 #[Description('Update view/like/comment counts for all synced videos')]
-class YouTubeStats extends Command
+final class YouTubeStats extends Command
 {
-    public function handle(YouTubeService $youtube, YouTubeVideoStatsSynchronizer $synchronizer): int
+    public function handle(YouTubeStatsSyncWorkflow $workflow): int
     {
         try {
-            ['videoCount' => $videoCount, 'updated' => $updated] = $synchronizer->synchronize($youtube);
+            ['videoCount' => $videoCount, 'updated' => $updated] = $workflow->synchronize();
         } catch (\RuntimeException $e) {
             $this->error($e->getMessage());
 

@@ -95,15 +95,17 @@ post observer. Eligible widths are 640 and 1280px; smaller sources are not upsca
 
 Some existing post slugs have bundled artwork with 384/768/1280px variants.
 Uploaded artwork supplies the image source when present; bundled artwork serves
-the established fallback cases. The slug-to-artwork list lives in `App\Support\Content\BundledPostArtwork`, which the post artwork component and the admin readiness check both use, so a post with bundled artwork is not reported as missing a featured image. A post with neither source has no artwork element.
+the established fallback cases. The slug-to-artwork list is the `App\Enums\BundledPostArtwork` enum: `PostPresenter` builds the artwork URLs from it for the post artwork component, and the admin readiness check uses it too, so a post with bundled artwork is not reported as missing a featured image. A post with neither source has no artwork element.
 Use Filament for new content rather than adding more slug-specific template cases.
 Preview the resulting responsive image after replacing artwork on an existing post.
 
 Two existing server generators produce 1200 × 630 graphics:
 
-- `FeaturedImageGenerator` supplies category-themed post images with programmatic
-  graphics and text; it is not an AI image generator. Its wide output is cropped
-  in the article's 3:2 and 4:3 frames, so inspect it before use.
+- `FeaturedImageGenerator` draws category-themed post images with programmatic
+  graphics and text and returns the PNG bytes; `PostImageGenerationWorkflow`
+  (`posts:generate-images`) stores them. It is not an AI image generator. Its
+  wide output is cropped in the article's 3:2 and 4:3 frames, so inspect it
+  before use.
 - `OgImageGenerator` produces separate social preview graphics. A social preview
   is a different deliverable from the editorial image; inspect the actual SEO
   configuration and resulting share image instead of assuming the hero crop is used.
@@ -231,7 +233,7 @@ Suggested artwork prompt structure:
 
 - [Article template](../resources/views/pages/blog/show.blade.php)
 - [Blog cards](../resources/views/components/blog-card.blade.php)
-- [Featured artwork and fallbacks](../resources/views/components/post-artwork.blade.php) and the [bundled artwork list](../app/Support/Content/BundledPostArtwork.php)
+- [Featured artwork and fallbacks](../resources/views/components/post-artwork.blade.php) and the [bundled artwork list](../app/Enums/BundledPostArtwork.php)
 - [Markdown rendering](../resources/views/components/markdown.blade.php)
 - [Article navigation and code controls](../resources/js/pages/blog.js)
 - [Post form](../app/Filament/Resources/Posts/Schemas/PostForm.php)

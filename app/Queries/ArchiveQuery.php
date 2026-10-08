@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Queries;
 
 use App\Data\ContentListItem;
@@ -18,7 +20,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class ArchiveQuery
+final class ArchiveQuery
 {
     private const int ITEMS_PER_PAGE = 18;
 
@@ -49,8 +51,7 @@ class ArchiveQuery
         }
 
         /** @var LengthAwarePaginator<int, object{ id: int, type: string, title: string, summary: string|null, slug: string, podcast_slug: string|null, youtube_id: string|null, sort_date: string }> $items */
-        $items = $query->paginate(self::ITEMS_PER_PAGE)
-            ->withQueryString();
+        $items = $query->paginate(self::ITEMS_PER_PAGE);
 
         return $items->through(fn (object $item): ContentListItem => $this->record($item));
     }

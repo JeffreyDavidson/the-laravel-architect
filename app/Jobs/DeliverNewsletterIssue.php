@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
-use App\Support\Newsletter\UnsubscribeUrlGenerator;
+use App\Presenters\SubscriberPresenter;
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -30,7 +32,7 @@ use Illuminate\Support\Facades\Mail;
 #[MaxExceptions(3)]
 #[Timeout(60)]
 #[Backoff([60, 300, 900])]
-class DeliverNewsletterIssue implements ShouldQueue
+final class DeliverNewsletterIssue implements ShouldQueue
 {
     use Queueable;
 
@@ -47,7 +49,7 @@ class DeliverNewsletterIssue implements ShouldQueue
         return now()->addDay();
     }
 
-    public function handle(UnsubscribeUrlGenerator $unsubscribeUrlGenerator): void
+    public function handle(): void
     {
         $delivery = $this->delivery;
 
@@ -73,7 +75,7 @@ class DeliverNewsletterIssue implements ShouldQueue
         Mail::to($subscriber->email)
             ->send(new NewsletterIssueMail(
                 $issue,
-                $unsubscribeUrlGenerator->for($subscriber),
+                SubscriberPresenter::from($subscriber)->unsubscribeUrl(),
                 $delivery,
             ));
 

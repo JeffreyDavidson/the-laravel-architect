@@ -2,7 +2,6 @@
 
 use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Page-aware SEO for a listing of the given size, viewed at the given page with 10 items per page.
@@ -36,11 +35,17 @@ it('numbers the metadata and canonical URL of a later page', function () {
         ->toBe(route('archive.index', ['type' => 'writing', 'page' => 2]));
 });
 
-it('serves the first page of an empty listing', function () {
-    expect(paginatedPageSeo(total: 0, page: 1)->title('Archive'))->toBe('Archive');
+it('keeps the first page of an empty listing in range', function () {
+    $page = paginatedPageSeo(total: 0, page: 1);
+
+    expect($page->isOutOfRange())->toBeFalse()
+        ->and($page->title('Archive'))
+        ->toBe('Archive');
 });
 
-it('rejects a page past the last one', function () {
-    expect(fn (): PaginatedPageSeo => paginatedPageSeo(total: 25, page: 4))
-        ->toThrow(NotFoundHttpException::class);
-});
+it('reports whether the current page is past the last one', function (int $page, bool $outOfRange) {
+    expect(paginatedPageSeo(total: 25, page: $page)->isOutOfRange())->toBe($outOfRange);
+})->with([
+    'last page' => [3, false],
+    'past the last page' => [4, true],
+]);

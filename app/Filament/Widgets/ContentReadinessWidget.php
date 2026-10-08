@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets;
 
 use App\Enums\ContentReadinessArea;
@@ -9,11 +11,11 @@ use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
-use App\Queries\ContentReadinessSummaryQuery;
+use App\Publishing\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Cache;
 
-class ContentReadinessWidget extends Widget
+final class ContentReadinessWidget extends Widget
 {
     private const int CACHE_SECONDS = 60;
 

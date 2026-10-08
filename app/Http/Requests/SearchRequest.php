@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class SearchRequest extends FormRequest
+final class SearchRequest extends FormRequest
 {
     public function authorize(): bool
     {

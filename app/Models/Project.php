@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Contracts\Publishable;
@@ -7,11 +9,9 @@ use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
-use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
-use App\Models\Concerns\ManagesStoredMedia;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
 use Database\Factories\ProjectFactory;
@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable('title', 'slug', 'description', 'content', 'featured_image_path', 'url', 'github_url', 'tech_stack', 'is_featured', 'sort_order', 'status')]
@@ -31,9 +30,8 @@ use Spatie\Activitylog\Support\LogOptions;
 #[PublishingStatus(publishedAt: null)]
 /**
  * @property array<int, string>|null $tech_stack
- * @property-read string|null $featured_image_url
  */
-class Project extends Model implements Publishable
+final class Project extends Model implements Publishable
 {
     use DeletesOwnedContent;
     use Featurable;
@@ -41,12 +39,10 @@ class Project extends Model implements Publishable
     /** @use HasFactory<ProjectFactory> */
     use HasFactory;
 
-    use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
     use LocksSlugAfterPublication;
-    use ManagesStoredMedia;
     use SoftDeletes;
     use TracksActivity;
 
@@ -62,7 +58,7 @@ class Project extends Model implements Publishable
 
     /**
      * The tech stack with surrounding whitespace removed and blank or non-string
-     * entries dropped. ContentReadinessQuery mirrors this rule in SQL.
+     * entries dropped. ContentReadinessCriteria mirrors this rule in SQL.
      *
      * @return list<non-empty-string>
      */
@@ -87,15 +83,6 @@ class Project extends Model implements Publishable
         return $technologies;
     }
 
-    public function getDynamicSEOData(): SEOData
-    {
-        return new SEOData(
-            title: $this->title,
-            description: $this->description,
-            image: $this->featured_image_url,
-        );
-    }
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -113,11 +100,6 @@ class Project extends Model implements Publishable
             ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    protected function storedMediaAttributes(): array
-    {
-        return ['featured_image_path'];
     }
 
     /** @return list<PublishStatus> */

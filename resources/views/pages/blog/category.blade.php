@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <x-blog.taxonomy-archive
         eyebrow="Filed under"
         :title="$category->name"

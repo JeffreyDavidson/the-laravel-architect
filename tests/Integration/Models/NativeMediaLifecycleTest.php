@@ -81,6 +81,23 @@ it('deletes the previous file when native media is replaced', function () {
     Storage::disk('public')->assertExists('projects/new.png');
 });
 
+it('deletes the previous original when post, podcast or episode media is replaced', function (string $model, string $column, string $directory) {
+    /** @var class-string<Post|Podcast|Episode> $model */
+    Storage::disk('public')->put("{$directory}/old.png", 'old');
+    Storage::disk('public')->put("{$directory}/new.png", 'new');
+    $record = $model::factory()
+        ->create([$column => "{$directory}/old.png"]);
+
+    $record->update([$column => "{$directory}/new.png"]);
+
+    Storage::disk('public')->assertMissing("{$directory}/old.png");
+    Storage::disk('public')->assertExists("{$directory}/new.png");
+})->with([
+    'post' => [Post::class, 'featured_image_path', 'posts'],
+    'podcast' => [Podcast::class, 'cover_image_path', 'podcasts'],
+    'episode' => [Episode::class, 'featured_image_path', 'episodes/images'],
+]);
+
 it('keeps native media when unrelated attributes change', function () {
     Storage::disk('public')->put('projects/image.png', 'image');
 
@@ -122,6 +139,29 @@ it('preserves original images and responsive variants when replacement rolls bac
         'projects/original.png',
         'projects/responsive/original-640.webp',
         'projects/responsive/original-1280.webp',
+    ]);
+});
+
+it('generates responsive variants for new media only after the transaction commits', function () {
+    $image = UploadedFile::fake()->image('project.png', 1280, 8)
+        ->getContent();
+    Storage::disk('public')->put('projects/kept.png', $image);
+    Storage::disk('public')->put('projects/discarded.png', $image);
+
+    DB::beginTransaction();
+    Project::factory()->create(['featured_image_path' => 'projects/discarded.png']);
+    DB::rollBack();
+    DB::beginTransaction();
+    Project::factory()->create(['featured_image_path' => 'projects/kept.png']);
+    DB::commit();
+
+    Storage::disk('public')->assertMissing([
+        'projects/responsive/discarded-640.webp',
+        'projects/responsive/discarded-1280.webp',
+    ]);
+    Storage::disk('public')->assertExists([
+        'projects/responsive/kept-640.webp',
+        'projects/responsive/kept-1280.webp',
     ]);
 });
 

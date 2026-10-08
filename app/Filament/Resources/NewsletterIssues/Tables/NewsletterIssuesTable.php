@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\NewsletterIssues\Tables;
 
 use App\Enums\PublishStatus;
@@ -18,7 +20,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class NewsletterIssuesTable
+final class NewsletterIssuesTable
 {
     public static function configure(Table $table): Table
     {

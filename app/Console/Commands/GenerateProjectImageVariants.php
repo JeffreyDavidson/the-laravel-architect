@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\Project;
-use App\Services\ResponsiveImageVariants;
 use App\Services\ResponsiveImageWorkflow;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -14,7 +13,7 @@ use Illuminate\Contracts\Console\Isolatable;
 
 #[Signature('projects:generate-image-variants {--force : Regenerate variants that already pass verification}')]
 #[Description('Generate responsive WebP variants for existing project images')]
-class GenerateProjectImageVariants extends Command implements Isolatable
+final class GenerateProjectImageVariants extends Command implements Isolatable
 {
     #[\Override]
     protected $isolated = true;
@@ -22,14 +21,13 @@ class GenerateProjectImageVariants extends Command implements Isolatable
     #[\Override]
     protected $isolatedExitCode = self::FAILURE;
 
-    public function handle(ResponsiveImageVariants $images, ResponsiveImageWorkflow $workflow): int
+    public function handle(ResponsiveImageWorkflow $workflow): int
     {
         ['generated' => $generated, 'skipped' => $skipped, 'failed' => $failed] = $workflow->generate(
             Project::class,
             'featured_image_path',
             'project',
             (bool) $this->option('force'),
-            $images,
             function (string $message): void {
                 $this->warn($message);
             },

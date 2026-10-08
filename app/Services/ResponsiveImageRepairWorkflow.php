@@ -11,10 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final readonly class ResponsiveImageRepairWorkflow
 {
-    public function __construct(
-        private readonly ResponsiveImageVariants $images,
-        private readonly ResponsiveImageWorkflow $workflow,
-    ) {}
+    public function __construct(private ResponsiveImageWorkflow $workflow) {}
 
     /**
      * @return array{
@@ -34,7 +31,6 @@ final readonly class ResponsiveImageRepairWorkflow
                 $resource['column'],
                 $resource['label'],
                 $force,
-                $this->images,
                 function (string $warning) use (&$warnings): void {
                     $warnings[] = $warning;
                 },
@@ -47,7 +43,6 @@ final readonly class ResponsiveImageRepairWorkflow
             $verification[$resource['label']] = $this->workflow->verify(
                 $resource['class'],
                 $resource['column'],
-                $this->images,
             );
         }
 

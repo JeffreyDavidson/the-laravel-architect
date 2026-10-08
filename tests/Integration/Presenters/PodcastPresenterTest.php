@@ -61,6 +61,17 @@ it('uses bundled artwork for a known podcast without an upload', function (strin
     ['embracing-cloudy-days', 'podcast-cloudy-logo'],
 ]);
 
+it('uses optimized fallback artwork as the cover URL for known podcasts', function (string $slug, string $expected) {
+    $podcast = new Podcast(['slug' => $slug]);
+
+    expect(PodcastPresenter::from($podcast)->coverImageUrl())->toBe(Vite::asset($expected))
+        ->and(base_path($expected))
+        ->toBeFile();
+})->with([
+    ['coffee-with-the-laravel-architect', 'resources/images/podcast-coffee-logo-512.webp'],
+    ['embracing-cloudy-days', 'resources/images/podcast-cloudy-logo-512.webp'],
+]);
+
 it('has no cover for an unknown podcast without an upload', function () {
     $presenter = PodcastPresenter::from(new Podcast(['slug' => 'architecture-sessions']));
 

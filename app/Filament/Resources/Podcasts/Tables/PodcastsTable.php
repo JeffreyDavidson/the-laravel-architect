@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Podcasts\Tables;
 
 use App\Filament\Tables\Columns\ReadinessColumn;
@@ -16,7 +18,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class PodcastsTable
+final class PodcastsTable
 {
     public static function configure(Table $table): Table
     {

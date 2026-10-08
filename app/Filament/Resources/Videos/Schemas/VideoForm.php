@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Videos\Schemas;
 
 use App\Models\Video;
@@ -8,7 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class VideoForm
+final class VideoForm
 {
     public static function configure(Schema $schema): Schema
     {

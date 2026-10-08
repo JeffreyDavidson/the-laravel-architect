@@ -14,7 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class SubscribersTable
+final class SubscribersTable
 {
     public static function configure(Table $table): Table
     {
@@ -34,7 +34,7 @@ class SubscribersTable
                     ->label('Unsubscribed')
                     ->placeholder('—'),
                 TextColumn::make('status')
-                    ->state(fn (Subscriber $record): SubscriberStatus => SubscriberStatus::for($record))
+                    ->state(fn (Subscriber $record): SubscriberStatus => $record->status())
                     ->badge(),
             ])
             ->defaultSort('subscribed_at', 'desc')
@@ -43,17 +43,7 @@ class SubscribersTable
                     ->options(SubscriberStatus::class)
                     ->default(SubscriberStatus::Active)
                     ->query(function (Builder $query, array $data): void {
-                        $status = $data['value'] ?? null;
-
-                        if (is_string($status)) {
-                            $status = SubscriberStatus::tryFrom($status);
-                        }
-
-                        if (! $status instanceof SubscriberStatus) {
-                            return;
-                        }
-
-                        $status->scope($query);
+                        self::applyStatusFilter($query, $data);
                     }),
             ])
             ->checkIfRecordIsSelectableUsing(
@@ -68,5 +58,24 @@ class SubscribersTable
             ->emptyStateIcon(Heroicon::OutlinedEnvelope)
             ->emptyStateHeading('No subscribers yet')
             ->emptyStateDescription('Confirmed newsletter subscribers will appear here.');
+    }
+
+    /**
+     * @param  Builder<Subscriber>  $query
+     * @param  array<mixed>  $data
+     */
+    private static function applyStatusFilter(Builder $query, array $data): void
+    {
+        $status = $data['value'] ?? null;
+
+        if (is_string($status)) {
+            $status = SubscriberStatus::tryFrom($status);
+        }
+
+        if (! $status instanceof SubscriberStatus) {
+            return;
+        }
+
+        $query->withStatus($status);
     }
 }

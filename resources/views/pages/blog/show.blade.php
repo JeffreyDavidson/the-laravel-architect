@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <x-slot:head>
         @vite('resources/css/prism.css')
     </x-slot:head>

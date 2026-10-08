@@ -9,9 +9,7 @@
 <div {{ $attributes->class(['mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between']) }}>
     <div class="max-w-2xl">
         @if ($eyebrow)
-            <p class="text-brand-600 dark:text-brand-300 mb-3 font-mono text-sm font-medium tracking-wide uppercase">
-                {{ $eyebrow }}
-            </p>
+            <x-eyebrow variant="heading" class="mb-3">{{ $eyebrow }}</x-eyebrow>
         @endif
 
         <h2 class="text-3xl font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl dark:text-white">

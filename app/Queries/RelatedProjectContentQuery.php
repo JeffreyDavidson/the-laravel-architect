@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Queries;
 
 use App\Models\Episode;
@@ -8,7 +10,7 @@ use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class RelatedProjectContentQuery
+final class RelatedProjectContentQuery
 {
     /**
      * @return array{

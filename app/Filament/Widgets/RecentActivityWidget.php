@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets;
 
 use App\Enums\PublishStatus;
@@ -19,7 +21,7 @@ use Illuminate\Support\Collection;
 /**
  * @phpstan-type Activity array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}
  */
-class RecentActivityWidget extends Widget
+final class RecentActivityWidget extends Widget
 {
     /**
      * Each content model with the label and admin resource used for its activity rows.
@@ -91,7 +93,7 @@ class RecentActivityWidget extends Widget
         return [
             'kind' => $kind,
             'label' => $label,
-            'status' => $status->label(),
+            'status' => $status->getLabel(),
             'time' => $updatedAt?->diffForHumans() ?? 'Unknown',
             'timestamp' => $updatedAt,
             'url' => $url,

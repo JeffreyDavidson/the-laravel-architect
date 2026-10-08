@@ -9,7 +9,6 @@ use App\Models\Concerns\HasPublicationDate;
 use App\Models\Concerns\TracksActivity;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -19,7 +18,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /** @property Carbon|null $synced_at */
 #[Fillable('youtube_id', 'title', 'slug', 'description', 'thumbnail_url', 'duration', 'view_count', 'like_count', 'comment_count', 'is_featured', 'published_at', 'synced_at')]
 #[Sluggable(from: 'title')]
-class Video extends Model
+final class Video extends Model
 {
     use Featurable;
 
@@ -60,17 +59,5 @@ class Video extends Model
             ])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    /** @return Attribute<string, never> */
-    protected function youtubeUrl(): Attribute
-    {
-        return Attribute::make(get: fn (): string => "https://www.youtube.com/watch?v={$this->youtube_id}");
-    }
-
-    /** @return Attribute<string, never> */
-    protected function embedUrl(): Attribute
-    {
-        return Attribute::make(get: fn (): string => "https://www.youtube.com/embed/{$this->youtube_id}");
     }
 }

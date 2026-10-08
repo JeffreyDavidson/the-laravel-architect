@@ -89,7 +89,9 @@ the response does not reveal whether the subscriber exists.
 ## Unsubscribing
 
 Subscriber-specific signed unsubscribe links use the same explicit form pattern
-and are included in every newsletter. `UnsubscribeUrlGenerator` owns them.
+and are included in every newsletter. `SubscriberPresenter::unsubscribeUrl()`
+builds them, and `SubscriberPresenter::confirmationUrl()` builds the signed
+confirmation link.
 
 - Unsubscribe links are permanent signed URLs, because a newsletter can be read
   long after it is sent.
@@ -115,7 +117,10 @@ days of their latest request and unsubscribed subscribers 30 days after
 unsubscribing. Resubscribing always requires confirmation again.
 
 The Subscribers admin list shows each subscriber's status (`SubscriberStatus`)
-and filters by it, defaulting to active. Subscribers cannot be created from the
+and filters by it, defaulting to active. `Subscriber::status()` derives the
+badge and the `withStatus()` scope applies the filter with the same precedence
+(suppressed, then unsubscribed, then pending, then active), so a subscriber only
+ever appears under the filter that matches its badge. Subscribers cannot be created from the
 admin and have no edit page (see [Admin panel](admin-panel.md)).
 
 ## Suppression and the Resend webhook
@@ -141,7 +146,8 @@ are stored and the email matches the screen; invalid form data stops the action
 before anything is sent. A test email to the site owner records no delivery and
 omits unsubscribe headers.
 
-`SendNewsletterIssue` refuses unpublished or already-sent issues. Otherwise, in
+`SendNewsletterIssue` refuses unpublished or already-sent issues by throwing
+`App\Exceptions\NewsletterIssueCannotBeSent`. Otherwise, in
 one transaction, it creates one `newsletter_deliveries` row per active
 subscriber, marks the issue sent, and enqueues one `DeliverNewsletterIssue` job
 per delivery on the application database queue, so a failure leaves nothing

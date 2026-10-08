@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('app:verify-production')]
 #[Description('Verify that required production settings are safely configured')]
-class VerifyProductionConfiguration extends Command
+final class VerifyProductionConfiguration extends Command
 {
     public function handle(ProductionConfigurationVerifier $verifier): int
     {

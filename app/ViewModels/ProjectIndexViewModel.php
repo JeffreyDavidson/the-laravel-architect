@@ -1,15 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Models\Project;
+use App\Support\Seo\CollectionListing;
+use App\Support\Seo\JsonLd;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\Tags\Tag;
 
-class ProjectIndexViewModel
+final readonly class ProjectIndexViewModel implements PageViewModel
 {
+    public function __construct(private SiteStructuredData $site) {}
+
     /**
      * @param  array<string, mixed>  $filters
      * @return array{
@@ -19,7 +27,7 @@ class ProjectIndexViewModel
      *     selectedTechnology: string|null,
      *     selectedTag: string|null,
      *     hasFilters: bool,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(array $filters = []): array
@@ -72,10 +80,36 @@ class ProjectIndexViewModel
             'selectedTechnology' => $selectedTechnology,
             'selectedTag' => $selectedTag,
             'hasFilters' => $selectedTechnology !== null || $selectedTag !== null,
-            'seoSource' => new SEOData(
-                title: 'Projects',
-                description: 'Explore the products I’ve built, the problems they solve, and the work behind them.',
+            'pageMeta' => new PageMeta(
+                seo: new SEOData(
+                    title: 'Projects',
+                    description: 'Explore the products I’ve built, the problems they solve, and the work behind them.',
+                ),
+                structuredData: $this->structuredData($projects),
             ),
+        ];
+    }
+
+    /**
+     * The listed projects as a collection, under the unfiltered projects URL.
+     *
+     * @param  EloquentCollection<int, Project>  $projects
+     * @return list<array<string, mixed>>
+     */
+    private function structuredData(EloquentCollection $projects): array
+    {
+        $url = route('projects.index');
+
+        return [
+            ...JsonLd::collectionPage(new CollectionListing(
+                'Projects',
+                $url,
+                array_values(array_map(
+                    static fn (Project $project): array => ['name' => $project->title, 'url' => route('projects.show', $project)],
+                    $projects->all(),
+                )),
+            )),
+            $this->site->breadcrumbs([['name' => 'Projects', 'url' => $url]]),
         ];
     }
 

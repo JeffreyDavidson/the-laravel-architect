@@ -14,19 +14,6 @@ it('formats an episode code when its optional episode number is missing', functi
     expect(EpisodePresenter::from($episode)->code())->toBe('S02E00');
 });
 
-it('generates SEO data when its podcast is missing', function () {
-    $episode = new Episode([
-        'title' => 'Orphaned Episode',
-        'description' => 'An episode without an available podcast.',
-    ]);
-
-    $seo = $episode->getDynamicSEOData();
-
-    expect($seo->title)->toBe('Orphaned Episode — Podcast')
-        ->and($seo->description)
-        ->toBe('An episode without an available podcast.');
-});
-
 it('knows whether it is publicly published', function (?PublishStatus $status, ?Carbon $publishedAt, bool $expected) {
     $episode = new Episode([
         'status' => $status,
@@ -41,14 +28,14 @@ it('knows whether it is publicly published', function (?PublishStatus $status, ?
     [PublishStatus::Draft, fn (): Carbon => now()->subMinute(), false],
 ]);
 
-it('turns only a Transistor share URL into its embed URL', function (?string $url, ?string $embedUrl) {
+it('reads the episode ID from only a Transistor share URL', function (?string $url, ?string $episodeId) {
     $episode = new Episode(['transistor_url' => $url]);
 
-    expect($episode->transistorEmbedUrl())
-        ->toBe($embedUrl);
+    expect($episode->transistorEpisodeId())
+        ->toBe($episodeId);
 })->with([
-    'share URL' => ['https://share.transistor.fm/s/428dcd6b', 'https://share.transistor.fm/e/428dcd6b'],
-    'share URL with trailing slash' => ['https://share.transistor.fm/s/428dcd6b/', 'https://share.transistor.fm/e/428dcd6b'],
+    'share URL' => ['https://share.transistor.fm/s/428dcd6b', '428dcd6b'],
+    'share URL with trailing slash' => ['https://share.transistor.fm/s/428dcd6b/', '428dcd6b'],
     'missing' => [null, null],
     'insecure' => ['http://share.transistor.fm/s/428dcd6b', null],
     'other host' => ['https://example.com/s/428dcd6b', null],

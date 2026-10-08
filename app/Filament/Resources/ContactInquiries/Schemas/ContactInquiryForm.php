@@ -15,7 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ContactInquiryForm
+final class ContactInquiryForm
 {
     public static function configure(Schema $schema): Schema
     {

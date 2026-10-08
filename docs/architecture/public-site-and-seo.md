@@ -13,9 +13,20 @@ episode, and project detail pages. Signed previews reuse the same ViewModels
 through their `previewData()` methods.
 
 Presenters in `app/Presenters` format one model for display and never query.
+Models expose stored paths and IDs only; presenters own every URL built from
+them and the media display. Each presenter takes its collaborators
+(`ResponsiveImageVariants`, Vite, the URL generator) through its constructor and
+is built with `XPresenter::from($model)`. They build the stored-image URLs
+(`PostPresenter::featuredImageUrl()`, `ProjectPresenter::featuredImageUrl()`,
+`PodcastPresenter::coverImageUrl()`), the YouTube links
+(`VideoPresenter::youtubeUrl()` and `embedUrl()`), the Transistor player
+(`EpisodePresenter::transistorEmbedUrl()` from `Episode::transistorEpisodeId()`),
+the signed newsletter links (`SubscriberPresenter`), and each publishable
+item's `publicUrl()`, `previewUrl()` and `publicOrPreviewUrl()` (Post, Project,
+Episode and NewsletterIssue presenters, sharing `LinksToPublicPageOrPreview`).
 They own the image fallbacks: `PostPresenter::artwork()` and
-`shareImageUrl()` (uploaded image, bundled launch artwork, then the generated
-OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
+`shareImageUrl()` (uploaded image, the bundled launch artwork named by the
+`BundledPostArtwork` enum, then the generated OG card for sharing), `PodcastPresenter::cover()` and `displayColor()`
 (uploaded cover, then the bundled artwork in `config/podcasts.php`), and
 `ProjectPresenter::featuredImage()`. The image methods return an
 `App\Data\ResponsiveImage` (`src` plus an optional WebP `srcset`) that the
@@ -25,11 +36,31 @@ for the subscribe buttons. `EpisodePresenter` formats episode codes, durations
 and YouTube video IDs, and `EpisodeShowViewModel` turns them into the episode
 page's display flags.
 
-Reusable content selection, including related posts, related projects, and
-adjacent-episode navigation, lives in query objects rather than controllers.
-Sitemap and RSS serialization, the newsletter subscription lifecycle, and
-contact message delivery live in focused actions, leaving their HTTP controllers
-responsible for request and response concerns.
+A public page request runs in one direction. The route binds slugs and applies
+middleware, a FormRequest normalises and validates any filters (bad public
+filters return 404), and the controller passes only that validated input and the
+bound models to the page's ViewModel. The ViewModel calls the Queries it needs,
+sets paginator links, returns 404 for an out-of-range page or an unknown filter
+value, builds the SEO metadata, and returns the view data. Queries only read and
+return models, paginators or DTOs: they never abort, read the request or build
+URLs. Architecture tests keep controllers and Livewire components from calling
+Queries and keep HTTP and URLs out of Queries.
+
+Reusable content selection, including the blog index, archive and search
+listings, related posts, related projects, and adjacent-episode navigation,
+lives in query objects that ViewModels call.
+The newsletter subscription lifecycle and contact message delivery live in
+focused actions, because each changes state.
+
+The RSS feeds, the sitemap and robots.txt change nothing, so they are not
+actions. Each splits into three read-only parts: a Query reads the content
+(`RssFeedQuery`, `NewsletterRssFeedQuery`, `SitemapQuery`), a ViewModel turns it
+into plain arrays with URLs and dates (`RssFeedViewModel`,
+`NewsletterRssFeedViewModel`, `SitemapViewModel`, `RobotsTxtViewModel`), and a
+Renderer in `app/Support/Feeds` serialises those arrays without knowing about
+models (`RssChannelRenderer`, `SitemapRenderer`, `RobotsTxtRenderer`). The
+controller passes the ViewModel's data to the Renderer and sets the response
+headers.
 
 Route-model binding uses content slugs, while publication scopes keep drafts and
 future content off public pages, feeds, and the sitemap (see
@@ -37,9 +68,29 @@ future content off public pages, feeds, and the sitemap (see
 
 ## SEO metadata
 
-Pages provide page-specific `SEOData` or an SEO-enabled content model to the
-shared layout, which renders titles, descriptions, canonical links, social
-metadata, and robots directives.
+Every page ViewModel implements `App\Contracts\PageViewModel`: its `data()` (and
+`previewData()` for previewable pages) returns the page's `App\Data\PageMeta`
+under the `pageMeta` key. `PageMeta` holds the page's `SEOData` and its own
+JSON-LD nodes. ViewModels stay stateless and return typed arrays, so the key is
+documented in each array shape, which PHPStan checks, and
+`tests/Architecture/ViewModelArchitectureTest.php` checks that every page
+ViewModel implements the contract and documents the key. The site layout
+(`components/layouts/site`) takes the `PageMeta` as its only SEO input: it
+renders the tags with laravel-seo's `seo($pageMeta->seo)` and the JSON-LD
+through `SiteStructuredData::graph()`. Previews return a `noindex, nofollow`
+`PageMeta` with no page nodes, and the 404 page builds its own `PageMeta` in the
+view.
+
+Content models keep laravel-seo's `HasSEO`: its `seo` relation holds the SEO
+fields an editor saves in the admin (the Filament SEO section), and deleting
+the content removes the row. Models no longer implement `getDynamicSEOData()`.
+The post, project, episode and newsletter issue ViewModels build the page's own
+`SEOData` (title, description, image from the presenter, dates and type) and
+pass it through `Concerns\AppliesStoredSeo`, which fills each field the page
+leaves null from the saved row, the same precedence laravel-seo's
+`SEO::prepareForUsage()` gives a model's dynamic SEO. The page's values win, so
+the saved description, image, robots and canonical URL apply when the page has
+none, while the title always comes from the content.
 
 - Blog posts share as articles with publication times and one wide image (the
   uploaded featured image, the bundled launch artwork, or the generated
@@ -55,16 +106,35 @@ metadata, and robots directives.
 
 ## Structured data
 
-The shared JSON-LD graph uses named Laravel routes for canonical site, author,
-static-page, article, podcast, episode, project case-study, collection,
-item-list, and breadcrumb entities. Structured-data generation is separated into
-article, podcast, and collection builders behind `StructuredDataBuilder`.
+Each page's JSON-LD graph is the site-wide WebSite entity (with its author, the
+Person on the About page), followed by the nodes the page ViewModel put in its
+`PageMeta`. Every page, including the 404 page, gets the WebSite entity.
+
+- `App\ViewModels\SiteStructuredData` owns the site-wide entity and the
+  references pages use: `graph()`, `authorReference()`, `page()` for the fixed
+  pages (home, about, contact, privacy, uses) and `breadcrumbs()`, which starts
+  every trail at Home. The layout injects it, and the `BlogIndex` component uses
+  it for the graph it sends with `blog-metadata-updated`.
+- Presenters describe their one model: `PostPresenter::articleSchema()`,
+  `ProjectPresenter::creativeWorkSchema()`, `PodcastPresenter::seriesSchema()`
+  and `seriesReference()`, and `EpisodePresenter::episodeSchema()`. They take
+  the author reference from the ViewModel and build URLs with their injected URL
+  generator.
+- Page ViewModels decide which nodes their page has and in what order, and
+  build the listings: the collection name, its canonical URL and the items, with
+  `CollectionListing::paginated()` continuing item positions across pages.
+- `app/Support/Seo` keeps only generic shapes that take plain names and URLs:
+  `JsonLd::breadcrumbList()`, `JsonLd::collectionPage()` (a CollectionPage and
+  its ItemList), `JsonLd::isoDuration()`, `CollectionListing` and
+  `PaginatedPageSeo`. They never import models, presenters or the request.
 
 ## Archives and pagination
 
 Paginated public archives reject out-of-range pages and use page-specific
 titles, descriptions, canonical and collection URLs, and continuous item
-positions. Dynamic sitemap archives report the latest modification date from
+positions. `PaginatedPageSeo` builds the page-specific metadata and reports
+whether the page is out of range; each listing's ViewModel turns that into the
+404. Dynamic sitemap archives report the latest modification date from
 their public content.
 
 ## Blog archive and search
@@ -106,18 +176,19 @@ existing public links.
 
 - `/newsletter` is a paginated archive of published issues (12 per page,
   out-of-range pages return 404), and `/newsletter/rss` is an RSS 2.0 feed of
-  the 20 newest published issues (`GenerateNewsletterRssFeed`). Individual
+  the 20 newest published issues (`NewsletterRssFeedQuery`). Individual
   issues live at `/newsletter/{slug}` and unpublished ones return 404. The issue
   form rejects a slug that matches a static `/newsletter/*` route (such as `rss`
   or `confirmed`), because those routes are registered first and would make the
   issue unreachable.
-- `/archive` (`ArchiveController`, `ArchiveQuery`) is one reverse-chronological
+- `/archive` (`ArchiveController`, `ArchiveViewModel`, `ArchiveQuery`) is one reverse-chronological
   list of published posts, projects, active podcasts, newsletter issues,
   episodes and videos, filtered by `type` and `year` and paginated at 18 per
   page with a 404 for out-of-range pages. Videos link out to YouTube.
 - Admin "Preview" actions open signed `/preview/*` routes (`preview.post`,
   `preview.project`, `preview.episode`, `preview.newsletter-issue`), generated by
-  `PreviewUrlGenerator` as temporary signed URLs valid for two hours. They render
+  each content presenter's `previewUrl()` (the `LinksToPublicPageOrPreview`
+  concern) as temporary signed URLs valid for two hours. They render
   the unpublished item through the same ViewModels' `previewData()`, titled as a
   preview with `noindex, nofollow`, and a missing or invalid signature is
   rejected.
@@ -135,7 +206,8 @@ would also drop the route-model binding for its post slug.
 
 ## robots.txt
 
-`/robots.txt` is served by `RobotsController` and `GenerateRobotsTxt`. The route
+`/robots.txt` is served by `RobotsController`, which renders the policy from
+`RobotsTxtViewModel` with `RobotsTxtRenderer`. The route
 removes the `web` middleware group, so the response sets no session or CSRF
 cookies, and it is sent with `Cache-Control: public, max-age=3600` so it behaves
 like a static file at the CDN. Do not add a static `public/robots.txt`, because

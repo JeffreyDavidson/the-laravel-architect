@@ -20,17 +20,16 @@ use Filament\Actions\RestoreAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use UnexpectedValueException;
 
-class EditNewsletterIssue extends EditRecord
+final class EditNewsletterIssue extends EditRecord
 {
     #[\Override]
     protected static string $resource = NewsletterIssueResource::class;
 
     #[\Override]
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): ?string
     {
         $issue = $this->issue();
         $sentAt = $issue->getAttribute('sent_at');

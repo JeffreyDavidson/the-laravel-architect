@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class BlogIndexRequest extends FormRequest
+final class BlogIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

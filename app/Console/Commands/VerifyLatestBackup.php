@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('app:verify-backup')]
 #[Description('Restore the newest backup archive in isolation and verify it against the live database and media')]
-class VerifyLatestBackup extends Command
+final class VerifyLatestBackup extends Command
 {
     public function handle(BackupArchiveVerifier $verifier): int
     {

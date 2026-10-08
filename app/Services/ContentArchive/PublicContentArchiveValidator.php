@@ -6,7 +6,7 @@ namespace App\Services\ContentArchive;
 
 use InvalidArgumentException;
 
-class PublicContentArchiveValidator
+final class PublicContentArchiveValidator
 {
     /**
      * @param  array<string, mixed>  $archive

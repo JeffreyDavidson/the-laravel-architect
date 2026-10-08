@@ -1,14 +1,18 @@
+{{--
+    Every page passes its App\Data\PageMeta (from its PageViewModel): the SEO tags come from its SEOData,
+    and the JSON-LD graph is the site-wide entities followed by the page's own nodes.
+--}}
 @props([
-    'seoSource' => null,
-    'structuredData' => [],
+    'pageMeta',
     'canonical' => true,
 ])
 
 @use('RalphJSmit\Laravel\SEO\Tags\CanonicalTag')
+@inject('siteStructuredData', 'App\ViewModels\SiteStructuredData')
 
 @php
     $content = $slot->toHtml();
-    $seoTags = seo($seoSource ?? null);
+    $seoTags = seo($pageMeta->seo);
 
     // An error page has no URL of its own to point search engines at.
     if (! $canonical) {
@@ -43,7 +47,7 @@
     <meta name="theme-color" content="transparent" />
     <link rel="alternate" type="application/rss+xml" title="The Laravel Architect" href="/rss" />
     {!! $seoTags !!}
-    <x-json-ld :schemas="$structuredData" />
+    <x-json-ld :schemas="$siteStructuredData->graph($pageMeta)" />
     @if (request()->routeIs('blog.index'))
         @livewireStyles
     @endif

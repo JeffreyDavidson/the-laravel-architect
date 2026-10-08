@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ArchiveIndexRequest extends FormRequest
+final class ArchiveIndexRequest extends FormRequest
 {
     public function authorize(): bool
     {

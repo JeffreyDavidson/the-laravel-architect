@@ -1,33 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Models\NewsletterIssue;
+use App\ViewModels\Concerns\AppliesStoredSeo;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-class NewsletterIssueViewModel
+final class NewsletterIssueViewModel implements PageViewModel
 {
+    use AppliesStoredSeo;
+
     /**
-     * @return array{issue: NewsletterIssue, seoSource: NewsletterIssue}
+     * The issue page, keeping any SEO fields saved in the admin.
+     *
+     * @return array{issue: NewsletterIssue, pageMeta: PageMeta}
      */
     public function data(NewsletterIssue $issue): array
     {
         return [
             'issue' => $issue,
-            'seoSource' => $issue,
+            'pageMeta' => new PageMeta($this->withStoredSeo($issue, new SEOData(
+                title: $issue->title,
+                description: $issue->excerpt,
+            ))),
         ];
     }
 
-    /** @return array{issue: NewsletterIssue, seoSource: SEOData} */
+    /** @return array{issue: NewsletterIssue, pageMeta: PageMeta} */
     public function previewData(NewsletterIssue $issue): array
     {
-        $data = $this->data($issue);
-        $data['seoSource'] = new SEOData(
-            title: $issue->title.' — Preview',
-            description: $issue->excerpt,
-            robots: 'noindex, nofollow',
-        );
-
-        return $data;
+        return [
+            'issue' => $issue,
+            'pageMeta' => new PageMeta(new SEOData(
+                title: $issue->title.' — Preview',
+                description: $issue->excerpt,
+                robots: 'noindex, nofollow',
+            )),
+        ];
     }
 }
