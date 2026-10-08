@@ -4,72 +4,70 @@
         style="--podcast-color: {{ \App\Presenters\PodcastPresenter::from($podcast)->displayColor() }};"
     >
         {{-- ===== PODCAST HERO ===== --}}
-        <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">
-            <div class="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-                {{-- Breadcrumb --}}
-                <a
-                    href="{{ route('podcast.index') }}"
-                    class="relative z-10 mb-8 inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                    <svg aria-hidden="true" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                    Podcast
-                </a>
+        <x-page-header>
+            {{-- Breadcrumb --}}
+            <a
+                href="{{ route('podcast.index') }}"
+                class="relative z-10 mb-8 inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            >
+                <svg aria-hidden="true" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                Podcast
+            </a>
 
-                <div class="relative z-10 flex flex-col items-center gap-10 md:flex-row">
-                    {{-- Artwork --}}
-                    <div class="relative flex-shrink-0">
-                        <x-podcast-cover
-                            :podcast="$podcast"
-                            sizes="224px"
-                            width="224"
-                            height="224"
-                            priority
-                            class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56"
-                        >
-                            <x-slot:placeholder>
-                                <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56">
-                                    <x-svg-icon
-                                        name="microphone"
-                                        class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]"
-                                    />
-                                </div>
-                            </x-slot:placeholder>
-                        </x-podcast-cover>
+            <div class="relative z-10 flex flex-col items-center gap-10 md:flex-row">
+                {{-- Artwork --}}
+                <div class="relative flex-shrink-0">
+                    <x-podcast-cover
+                        :podcast="$podcast"
+                        sizes="224px"
+                        width="224"
+                        height="224"
+                        priority
+                        class="relative h-48 w-48 rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-56 md:w-56"
+                    >
+                        <x-slot:placeholder>
+                            <div class="dark:border-surface-border dark:bg-surface-raised relative flex h-48 w-48 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 shadow-sm md:h-56 md:w-56">
+                                <x-svg-icon
+                                    name="microphone"
+                                    class="text-archive-link h-20 w-20 dark:text-[var(--podcast-color)]"
+                                />
+                            </div>
+                        </x-slot:placeholder>
+                    </x-podcast-cover>
+                </div>
+
+                {{-- Info --}}
+                <div class="flex-1 text-center md:text-left">
+                    {{-- Badge --}}
+                    <div class="mb-4 flex items-center justify-center gap-3 md:justify-start">
+                        @if ($episodes->count())
+                            <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
+                                <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                                {{ $episodes->total() }} {{ Str::plural('Episode', $episodes->total()) }}
+                            </span>
+                        @else
+                            <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
+                                <span class="h-1.5 w-1.5 rounded-full bg-[var(--podcast-color)]"></span>
+                                Coming Soon
+                            </span>
+                        @endif
+
+                        {{-- Mini equalizer --}}
+                        <x-podcast.equalizer />
                     </div>
 
-                    {{-- Info --}}
-                    <div class="flex-1 text-center md:text-left">
-                        {{-- Badge --}}
-                        <div class="mb-4 flex items-center justify-center gap-3 md:justify-start">
-                            @if ($episodes->count())
-                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
-                                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
-                                    {{ $episodes->total() }} {{ Str::plural('Episode', $episodes->total()) }}
-                                </span>
-                            @else
-                                <span class="text-archive-link inline-flex items-center gap-1.5 rounded-full bg-[var(--archive-link-alpha-08)] px-3 py-1 text-xs font-semibold tracking-wide uppercase dark:bg-[color-mix(in_srgb,var(--podcast-color)_8%,transparent)]">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-[var(--podcast-color)]"></span>
-                                    Coming Soon
-                                </span>
-                            @endif
+                    <h1 class="mb-4 text-4xl leading-tight font-extrabold text-gray-900 md:text-5xl dark:text-white">
+                        {{ $podcast->name }}
+                    </h1>
+                    <p class="mb-8 max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+                        {{ $podcast->description }}
+                    </p>
 
-                            {{-- Mini equalizer --}}
-                            <x-podcast.equalizer />
-                        </div>
-
-                        <h1 class="mb-4 text-4xl leading-tight font-extrabold text-gray-900 md:text-5xl dark:text-white">
-                            {{ $podcast->name }}
-                        </h1>
-                        <p class="mb-8 max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                            {{ $podcast->description }}
-                        </p>
-
-                        {{-- Subscribe buttons --}}
-                        <x-podcast.platform-links :podcast="$podcast" />
-                    </div>
+                    {{-- Subscribe buttons --}}
+                    <x-podcast.platform-links :podcast="$podcast" />
                 </div>
             </div>
-        </section>
+        </x-page-header>
 
         {{-- ===== ABOUT ===== --}}
         @if ($podcast->long_description)

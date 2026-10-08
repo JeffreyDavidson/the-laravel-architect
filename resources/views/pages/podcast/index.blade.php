@@ -1,7 +1,7 @@
 <x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
     <x-hero-section>
         <div class="grid gap-8 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-10">
-            <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Audio / 03</p>
+            <x-eyebrow>Audio / 03</x-eyebrow>
             <div>
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 md:text-6xl dark:text-white">
                     Coffee, code, and the decisions between them.
@@ -40,7 +40,7 @@
                     </x-podcast-cover>
 
                     <div>
-                        <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Current show</p>
+                        <x-eyebrow>Current show</x-eyebrow>
                         <h2 class="group-hover:text-brand-600 mt-4 text-3xl font-semibold text-gray-900 transition-colors md:text-5xl dark:text-white">
                             {{ $podcast->name }}
                         </h2>
@@ -66,7 +66,7 @@
 
                 <section aria-labelledby="podcast-format-heading" class="mt-20">
                     <div class="dark:border-surface-border mb-8 grid gap-3 border-b border-gray-200 pb-5 md:grid-cols-[10rem_1fr]">
-                        <p class="text-brand-600 tracking-label font-mono text-xs uppercase">Format</p>
+                        <x-eyebrow>Format</x-eyebrow>
                         <h2 id="podcast-format-heading" class="text-2xl font-semibold text-gray-900 dark:text-white">
                             What you will hear
                         </h2>
