@@ -84,7 +84,7 @@ final readonly class SearchViewModel implements PageViewModel
         [$title, $description, $url, $date, $label] = match (true) {
             $model instanceof Post => [$model->title, $model->excerpt, route('blog.show', $model), $model->publishedAt(), 'Article'],
             $model instanceof Project => [$model->title, $model->description, route('projects.show', $model), null, 'Project'],
-            $model instanceof Podcast => [$model->name, $model->description, route('podcast.show', $model), null, 'Podcast'],
+            $model instanceof Podcast => [$model->name, $model->description, route('podcasts.show', $model), null, 'Podcast'],
             $model instanceof NewsletterIssue => [$model->title, $model->excerpt, route('newsletter.issue', $model), $model->publishedAt(), 'Newsletter'],
             $model instanceof Episode => [$model->title, $model->description, $this->episodeUrl($model), $model->publishedAt(), 'Episode'],
             $model instanceof Video => [$model->title, $model->description, VideoPresenter::from($model)->youtubeUrl(), null, 'YouTube video'],
@@ -109,6 +109,6 @@ final readonly class SearchViewModel implements PageViewModel
             throw new UnexpectedValueException('Search result episode is missing its podcast.');
         }
 
-        return route('podcast.episode', [$podcast, $episode]);
+        return route('podcasts.episode', [$podcast, $episode]);
     }
 }

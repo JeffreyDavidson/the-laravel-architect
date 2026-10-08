@@ -216,7 +216,7 @@
 
                 <div class="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                     <a
-                        href="{{ route('podcast.index') }}"
+                        href="{{ route('podcasts.index') }}"
                         class="group focus-visible:outline-brand-500 dark:border-brand-700 dark:bg-surface-elevated grid items-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
                     >
                         @if ($podcast)

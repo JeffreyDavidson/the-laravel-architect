@@ -112,7 +112,7 @@ final readonly class PostPresenter
     {
         return $this->featuredImageUrl()
             ?? $this->bundledArtworkUrls()['large']
-            ?? $this->urls->route('og-image', $this->post);
+            ?? $this->urls->route('ogImage', $this->post);
     }
 
     /**

@@ -34,7 +34,7 @@ final readonly class EpisodePresenter
             return null;
         }
 
-        return $this->urls->route('podcast.episode', [$podcast, $this->episode]);
+        return $this->urls->route('podcasts.episode', [$podcast, $this->episode]);
     }
 
     public function previewUrl(): string
@@ -50,7 +50,7 @@ final readonly class EpisodePresenter
      */
     public function episodeSchema(Podcast $podcast): array
     {
-        $episodeUrl = $this->urls->route('podcast.episode', [$podcast, $this->episode]);
+        $episodeUrl = $this->urls->route('podcasts.episode', [$podcast, $this->episode]);
         $schema = [
             '@type' => 'PodcastEpisode',
             '@id' => "{$episodeUrl}#episode",

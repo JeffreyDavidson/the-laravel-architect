@@ -27,11 +27,11 @@ it('generates an OG image once and serves later requests from private storage', 
         ->returns('generated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertOk()
         ->assertHeader('Content-Type', 'image/png')
         ->assertContent('generated-png');
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertOk()
         ->assertContent('generated-png');
 
@@ -50,12 +50,12 @@ it('regenerates an OG image when rendered post data changes', function () {
         ->returns('first-png', 'updated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertContent('first-png');
 
     $post->update(['title' => 'Updated title']);
 
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertContent('updated-png');
 });
 
@@ -68,14 +68,14 @@ it('regenerates an OG image when its category name changes', function () {
         ->returns('first-png', 'updated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertContent('first-png');
 
     $post->category()
         ->firstOrFail()
         ->update(['name' => 'Updated category']);
 
-    get(route('og-image', $post))
+    get(route('ogImage', $post))
         ->assertContent('updated-png');
 });
 
@@ -88,7 +88,7 @@ it('serves OG images to crawlers without starting a session or setting cookies',
         ->returns('generated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    $response = get(route('og-image', $post));
+    $response = get(route('ogImage', $post));
 
     $response
         ->assertOk()
@@ -105,7 +105,7 @@ it('returns not found without a session for a post that is not published', funct
         ->create();
     $post->update(['status' => PublishStatus::Draft]);
 
-    $response = get(route('og-image', $post));
+    $response = get(route('ogImage', $post));
 
     $response
         ->assertNotFound()

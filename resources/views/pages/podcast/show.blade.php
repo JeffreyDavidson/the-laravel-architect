@@ -7,7 +7,7 @@
         <x-page-header>
             {{-- Breadcrumb --}}
             <a
-                href="{{ route('podcast.index') }}"
+                href="{{ route('podcasts.index') }}"
                 class="relative z-10 mb-8 inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             >
                 <svg aria-hidden="true" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
@@ -94,7 +94,7 @@
             <section class="dark:border-surface-border border-b border-gray-200">
                 <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
                     <a
-                        href="{{ route('podcast.episode', [$podcast, $latestEpisode]) }}"
+                        href="{{ route('podcasts.episode', [$podcast, $latestEpisode]) }}"
                         class="group hover:border-brand-600/50 dark:border-surface-border dark:bg-surface-control block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-colors"
                     >
                         {{-- Top accent --}}
@@ -164,7 +164,7 @@
                     <div class="space-y-2">
                         @foreach ($episodes as $episode)
                             <a
-                                href="{{ route('podcast.episode', [$podcast, $episode]) }}"
+                                href="{{ route('podcasts.episode', [$podcast, $episode]) }}"
                                 class="group dark:border-surface-border dark:bg-surface-control/50 flex items-center gap-5 rounded-xl border border-gray-200 bg-white p-4 transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-[var(--white-02)] motion-reduce:transition-none md:p-5 dark:hover:bg-[var(--white-02)]"
                             >
                                 {{-- Episode number / play icon --}}
