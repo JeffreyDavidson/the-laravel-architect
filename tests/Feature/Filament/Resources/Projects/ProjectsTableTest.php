@@ -1,8 +1,9 @@
 <?php
 
 use App\Filament\Resources\Projects\Pages\ListProjects;
+use App\Models\Project;
 use App\Models\User;
-use App\Support\Content\PreviewUrlGenerator;
+use App\Presenters\ProjectPresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\PublishableFixtures;
@@ -27,8 +28,11 @@ it('links the view on site action to the public project URL', function () {
 it('links the view on site action to a signed preview for a draft project', function () {
     freezeSecond();
     $project = PublishableFixtures::ready('project');
+    if (! $project instanceof Project) {
+        throw new RuntimeException('Expected the fixture to create a Project.');
+    }
 
     livewire(ListProjects::class)
-        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), app(PreviewUrlGenerator::class)->for($project))
+        ->assertActionHasUrl(TestAction::make('view_on_site')->table($project), ProjectPresenter::from($project)->previewUrl())
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($project));
 });

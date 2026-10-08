@@ -55,7 +55,7 @@ final class EpisodesTable
                     ->toggleable(),
                 IconColumn::make('transistor')
                     ->label('Transistor')
-                    ->state(fn (Episode $record): bool => $record->transistorEmbedUrl() !== null)
+                    ->state(fn (Episode $record): bool => $record->transistorEpisodeId() !== null)
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')

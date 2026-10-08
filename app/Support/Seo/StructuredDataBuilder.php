@@ -11,6 +11,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
+use App\Presenters\ProjectPresenter;
 use Illuminate\Http\Request;
 
 final readonly class StructuredDataBuilder
@@ -131,8 +132,10 @@ final readonly class StructuredDataBuilder
             ],
         ];
 
-        if ($project->featured_image_url) {
-            $projectCaseStudy['image'] = $project->featured_image_url;
+        $featuredImageUrl = ProjectPresenter::from($project)->featuredImageUrl();
+
+        if ($featuredImageUrl) {
+            $projectCaseStudy['image'] = $featuredImageUrl;
         }
 
         if (is_array($project->tech_stack)) {

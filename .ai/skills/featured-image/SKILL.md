@@ -82,7 +82,7 @@ php artisan tinker --execute '$path = app(App\Services\ImageUploadOptimizer::cla
 The post observer generates the 640 and 1280px variants. Then open a signed preview (works for drafts, expires in 2 hours):
 
 ```bash
-php artisan tinker --execute 'echo app(App\Support\Content\PreviewUrlGenerator::class)->for(App\Models\Post::findOrFail(ID));'
+php artisan tinker --execute 'echo App\Presenters\PostPresenter::from(App\Models\Post::findOrFail(ID))->previewUrl();'
 ```
 
 Check the article hero and a blog card.

@@ -24,7 +24,7 @@ Read `docs/voice.md` and follow it (no em dashes, real or composite examples onl
 Ask before creating local models. With approval, create a local Draft with tinker (`status` = `PublishStatus::Draft`, no `published_at`, an existing `user_id` and `category_id`, `attachTags`), then open a signed preview. Previews work for drafts and expire after 2 hours.
 
 ```bash
-php artisan tinker --execute 'echo app(App\Support\Content\PreviewUrlGenerator::class)->for(App\Models\Post::findOrFail(ID));'
+php artisan tinker --execute 'echo App\Presenters\PostPresenter::from(App\Models\Post::findOrFail(ID))->previewUrl();'
 ```
 
 Soft-delete the local draft afterwards if the user wants it gone (`->delete()`; force delete removes files).

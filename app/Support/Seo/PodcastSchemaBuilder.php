@@ -7,6 +7,7 @@ namespace App\Support\Seo;
 use App\Data\StructuredDataPage;
 use App\Models\Episode;
 use App\Models\Podcast;
+use App\Presenters\PodcastPresenter;
 use Illuminate\Support\Facades\Date;
 
 final class PodcastSchemaBuilder
@@ -40,8 +41,10 @@ final class PodcastSchemaBuilder
             $podcastSeries['description'] = $podcast->description;
         }
 
-        if ($podcast->cover_image_url) {
-            $podcastSeries['image'] = $podcast->cover_image_url;
+        $coverImageUrl = PodcastPresenter::from($podcast)->coverImageUrl();
+
+        if ($coverImageUrl) {
+            $podcastSeries['image'] = $coverImageUrl;
         }
 
         $schemas[] = $podcastSeries;

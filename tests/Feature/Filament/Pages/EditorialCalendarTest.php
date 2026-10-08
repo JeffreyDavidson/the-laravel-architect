@@ -2,6 +2,8 @@
 
 use App\Data\CalendarEntry;
 use App\Filament\Pages\EditorialCalendar;
+use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
 use App\Models\User;
@@ -45,6 +47,24 @@ it('shows scheduled and review content in its publication month', function () {
         ->assertSee('In Review')
         ->assertSee($episode->title)
         ->assertSee('Scheduled');
+});
+
+it('links entries to their edit pages and lists posts before episodes on the same day', function () {
+    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    $post = Post::factory()
+        ->inReview()
+        ->create(['published_at' => '2026-09-18 09:00:00']);
+    $episode = Episode::factory()
+        ->scheduled()
+        ->create(['published_at' => '2026-09-18 08:00:00']);
+    $unscheduledPost = Post::factory()->create(['published_at' => null]);
+
+    livewire(EditorialCalendar::class)
+        ->assertSeeHtmlInOrder([
+            e(PostResource::getUrl('edit', ['record' => $post])),
+            e(EpisodeResource::getUrl('edit', ['record' => $episode])),
+            e(PostResource::getUrl('edit', ['record' => $unscheduledPost])),
+        ]);
 });
 
 it('places content on its publication day in the display timezone', function () {

@@ -37,7 +37,7 @@ final readonly class EpisodeShowViewModel
         $navigation = $this->episodeNavigationQuery->get($podcast, $episode);
         $episodePresenter = EpisodePresenter::from($episode);
         // The Transistor player is the only podcast player (YouTube is handled by the page).
-        $embedUrl = $episode->transistorEmbedUrl();
+        $embedUrl = $episodePresenter->transistorEmbedUrl();
         // With no player, video, show notes or transcript, the description stands in for the episode.
         $showDescriptionFallback = ! $embedUrl
             && ! $episode->show_notes

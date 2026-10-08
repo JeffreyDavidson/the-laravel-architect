@@ -89,7 +89,9 @@ the response does not reveal whether the subscriber exists.
 ## Unsubscribing
 
 Subscriber-specific signed unsubscribe links use the same explicit form pattern
-and are included in every newsletter. `UnsubscribeUrlGenerator` owns them.
+and are included in every newsletter. `SubscriberPresenter::unsubscribeUrl()`
+builds them, and `SubscriberPresenter::confirmationUrl()` builds the signed
+confirmation link.
 
 - Unsubscribe links are permanent signed URLs, because a newsletter can be read
   long after it is sent.

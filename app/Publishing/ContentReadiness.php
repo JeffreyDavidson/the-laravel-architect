@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Publishing;
 
+use App\Enums\BundledPostArtwork;
 use App\Enums\ContentReadinessStatus;
 use App\Enums\ReadinessCheck;
 use App\Models\Episode;
@@ -12,7 +13,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Support\Content\BundledPostArtwork;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -111,7 +111,7 @@ final class ContentReadiness
         return [
             ReadinessCheck::Content->value => filled($post->content),
             ReadinessCheck::Excerpt->value => filled($post->excerpt),
-            ReadinessCheck::FeaturedImage->value => filled($post->featured_image_path) || app(BundledPostArtwork::class)->exists($post->slug),
+            ReadinessCheck::FeaturedImage->value => filled($post->featured_image_path) || BundledPostArtwork::tryFrom($post->slug) !== null,
             ReadinessCheck::Category->value => $post->category_id !== null,
             ReadinessCheck::Tags->value => $this->hasTags($post),
             ReadinessCheck::SeoDescription->value => $this->hasSeoDescription($post),

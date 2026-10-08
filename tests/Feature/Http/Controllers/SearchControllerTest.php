@@ -6,6 +6,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
+use App\Presenters\VideoPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -60,7 +61,7 @@ it('searches published content across every public content type', function () {
         ->assertSeeHtml(route('podcast.show', $podcast))
         ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]))
         ->assertSeeHtml(
-            $video->youtube_url,
+            VideoPresenter::from($video)->youtubeUrl(),
         )
         ->assertDontSee('Private Laravel Search Notes')
         ->assertSeeHtml('<meta name="robots" content="noindex, follow">');

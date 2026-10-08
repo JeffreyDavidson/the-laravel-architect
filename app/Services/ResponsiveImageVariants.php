@@ -113,6 +113,12 @@ final class ResponsiveImageVariants
         return true;
     }
 
+    /** The public URL of a stored original or variant on the public media disk. */
+    public function url(string $path): string
+    {
+        return Storage::disk('public')->url($path);
+    }
+
     public function srcset(?string $originalPath): ?string
     {
         if (blank($originalPath)) {

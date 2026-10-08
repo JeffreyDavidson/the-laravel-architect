@@ -6,6 +6,7 @@ namespace App\ViewModels;
 
 use App\Models\Episode;
 use App\Models\Podcast;
+use App\Presenters\PodcastPresenter;
 use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -38,7 +39,7 @@ final class PodcastShowViewModel
             'seoSource' => new SEOData(
                 title: $page->title($podcast->name),
                 description: $page->description($podcast->description),
-                image: $podcast->cover_image_url,
+                image: PodcastPresenter::from($podcast)->coverImageUrl(),
                 url: $canonicalUrl,
                 canonical_url: $canonicalUrl,
             ),

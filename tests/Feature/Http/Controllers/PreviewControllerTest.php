@@ -4,7 +4,10 @@ use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
 use App\Models\Project;
-use App\Support\Content\PreviewUrlGenerator;
+use App\Presenters\EpisodePresenter;
+use App\Presenters\NewsletterIssuePresenter;
+use App\Presenters\PostPresenter;
+use App\Presenters\ProjectPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 use Tests\Support\PublishableFixtures;
@@ -19,21 +22,19 @@ it('renders signed previews for unpublished content', function () {
     $episode = Episode::factory()->create();
     $issue = NewsletterIssue::factory()->create();
 
-    $previewUrlGenerator = app(PreviewUrlGenerator::class);
-
-    get($previewUrlGenerator->for($post))
+    get(PostPresenter::from($post)->previewUrl())
         ->assertOk()
         ->assertSee($post->title)
         ->assertSee('Preview mode')
         ->assertSee('noindex, nofollow');
-    get($previewUrlGenerator->for($project))
+    get(ProjectPresenter::from($project)->previewUrl())
         ->assertOk()
         ->assertSee($project->title);
-    get($previewUrlGenerator->for($episode))
+    get(EpisodePresenter::from($episode)->previewUrl())
         ->assertOk()
         ->assertSee($episode->title)
         ->assertSee('Draft preview');
-    get($previewUrlGenerator->for($issue))
+    get(NewsletterIssuePresenter::from($issue)->previewUrl())
         ->assertOk()
         ->assertSee($issue->title);
 });

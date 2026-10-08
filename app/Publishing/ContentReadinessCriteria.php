@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Publishing;
 
+use App\Enums\BundledPostArtwork;
 use App\Enums\ReadinessCheck;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -11,7 +12,6 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Support\Content\BundledPostArtwork;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,8 +27,6 @@ use InvalidArgumentException;
  */
 final readonly class ContentReadinessCriteria
 {
-    public function __construct(private BundledPostArtwork $bundledPostArtwork) {}
-
     /**
      * Keep the records that pass every readiness check for their content type.
      *
@@ -99,7 +97,7 @@ final readonly class ContentReadinessCriteria
                 ReadinessCheck::Content->value => $this->filled('content'),
                 ReadinessCheck::Excerpt->value => $this->filled('excerpt'),
                 ReadinessCheck::FeaturedImage->value => fn (Builder $query): Builder => $query->whereRaw($this->filledSql('featured_image_path'))
-                    ->orWhereIn('slug', $this->bundledPostArtwork->slugs()),
+                    ->orWhereIn('slug', BundledPostArtwork::slugs()),
                 ReadinessCheck::Category->value => fn (Builder $query): Builder => $query->whereNotNull('category_id'),
                 ReadinessCheck::Tags->value => $this->hasTags(...),
                 ReadinessCheck::SeoDescription->value => $this->hasSeoDescription('excerpt'),
@@ -201,7 +199,7 @@ final readonly class ContentReadinessCriteria
     }
 
     /**
-     * SQL for Episode::transistorEmbedUrl() !== null: the 30-character prefix
+     * SQL for Episode::transistorEpisodeId() !== null: the 30-character prefix
      * https://share.transistor.fm/s/ followed by a letters-and-digits ID and at
      * most one trailing slash. GLOB is case-sensitive, like the PHP pattern.
      *

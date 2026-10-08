@@ -6,9 +6,9 @@ namespace App\Actions;
 
 use App\Mail\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
+use App\Presenters\SubscriberPresenter;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -59,15 +59,9 @@ final readonly class RequestNewsletterSubscription
             $subscriber->verification_token_hash = hash('sha256', $token);
             $subscriber->save();
 
-            $confirmationUrl = URL::temporarySignedRoute(
-                'newsletter.confirm',
-                now()->addDay(),
-                ['subscriber' => $subscriber, 'token' => $token],
-            );
-
             try {
                 $this->mailer->to($subscriber->email)
-                    ->queue(new ConfirmNewsletterSubscription($confirmationUrl));
+                    ->queue(new ConfirmNewsletterSubscription(SubscriberPresenter::from($subscriber)->confirmationUrl($token)));
             } catch (Throwable $exception) {
                 Cache::forget($cooldownKey);
 

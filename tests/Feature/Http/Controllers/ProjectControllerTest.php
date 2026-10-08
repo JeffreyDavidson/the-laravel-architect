@@ -5,6 +5,7 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Tag;
+use App\Presenters\ProjectPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -115,7 +116,7 @@ it('uses responsive uploaded images in either project group', function (bool $fe
 
     $response = get(route('projects.index'));
 
-    $imageUrl = $project->featured_image_url;
+    $imageUrl = ProjectPresenter::from($project)->featuredImageUrl();
     if ($imageUrl === null) {
         throw new RuntimeException('Expected the uploaded project image URL.');
     }
@@ -249,7 +250,7 @@ it('shares a project featured image in social cards', function () {
     Storage::fake('public', ['url' => config('filesystems.disks.public.url')]);
     $project = Project::factory()->published()
         ->create(['featured_image_path' => 'projects/showcase.png']);
-    $imageUrl = $project->featured_image_url;
+    $imageUrl = ProjectPresenter::from($project)->featuredImageUrl();
     if ($imageUrl === null) {
         throw new RuntimeException('Expected the uploaded project image URL.');
     }

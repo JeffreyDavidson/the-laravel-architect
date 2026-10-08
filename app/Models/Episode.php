@@ -8,7 +8,6 @@ use App\Contracts\Publishable;
 use App\Enums\PublishStatus;
 use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
-use App\Models\Concerns\HasFeaturedImage;
 use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\LocksSlugAfterPublication;
@@ -35,7 +34,6 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property PublishStatus $status
  * @property Carbon|null $published_at
  * @property Carbon|null $updated_at
- * @property-read string|null $featured_image_url
  * @property-read Podcast|null $podcast
  */
 final class Episode extends Model implements Publishable
@@ -45,7 +43,6 @@ final class Episode extends Model implements Publishable
     /** @use HasFactory<EpisodeFactory> */
     use HasFactory;
 
-    use HasFeaturedImage;
     use HasPublishingStatus;
     use HasSEO;
     use HasTagsUntilForceDeleted;
@@ -64,10 +61,10 @@ final class Episode extends Model implements Publishable
     }
 
     /**
-     * The Transistor player URL for a valid episode share URL
+     * The Transistor episode ID from a valid share URL
      * (https://share.transistor.fm/s/{id}), or null for anything else.
      */
-    public function transistorEmbedUrl(): ?string
+    public function transistorEpisodeId(): ?string
     {
         $url = $this->getAttribute('transistor_url');
         $matches = [];
@@ -76,7 +73,7 @@ final class Episode extends Model implements Publishable
             return null;
         }
 
-        return "https://share.transistor.fm/e/{$matches[1]}";
+        return $matches[1];
     }
 
     /**
@@ -85,7 +82,7 @@ final class Episode extends Model implements Publishable
      */
     public function hasMedia(): bool
     {
-        return $this->transistorEmbedUrl() !== null
+        return $this->transistorEpisodeId() !== null
             || filled($this->youtube_url);
     }
 

@@ -8,7 +8,7 @@ use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
-use App\Support\Newsletter\UnsubscribeUrlGenerator;
+use App\Presenters\SubscriberPresenter;
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -49,7 +49,7 @@ final class DeliverNewsletterIssue implements ShouldQueue
         return now()->addDay();
     }
 
-    public function handle(UnsubscribeUrlGenerator $unsubscribeUrlGenerator): void
+    public function handle(): void
     {
         $delivery = $this->delivery;
 
@@ -75,7 +75,7 @@ final class DeliverNewsletterIssue implements ShouldQueue
         Mail::to($subscriber->email)
             ->send(new NewsletterIssueMail(
                 $issue,
-                $unsubscribeUrlGenerator->for($subscriber),
+                SubscriberPresenter::from($subscriber)->unsubscribeUrl(),
                 $delivery,
             ));
 
