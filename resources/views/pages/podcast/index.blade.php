@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <x-hero-section>
         <div class="grid gap-8 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-10">
             <x-eyebrow>Audio / 03</x-eyebrow>

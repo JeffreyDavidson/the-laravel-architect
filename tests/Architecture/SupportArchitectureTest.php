@@ -1,22 +1,21 @@
 <?php
 
-use App\Support\Seo\StructuredDataBuilder;
 use Illuminate\Http\Request;
 
 arch('keeps models out of the feed renderers')
     ->expect('App\Support\Feeds')
     ->not->toUse('App\Models');
 
-/*
- * StructuredDataBuilder still reads the current route from the request. It is ignored until the
- * page ViewModels build their own structured data and the builder leaves app/Support.
- */
-arch('keeps HTTP aborts and the request out of support classes')
+arch('keeps support classes free of the application layers, the request and HTTP aborts')
     ->expect('App\Support')
     ->not->toUse([
+        'App\Models',
+        'App\Presenters',
+        'App\ViewModels',
+        'App\Http',
+        'App\Filament',
         Request::class,
         'abort',
         'abort_if',
         'abort_unless',
-    ])
-    ->ignoring(StructuredDataBuilder::class);
+    ]);

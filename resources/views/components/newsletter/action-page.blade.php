@@ -6,8 +6,7 @@
     'buttonLabel',
     'method' => 'POST',
     'pendingLabel' => null,
-    'seoSource' => null,
-    'structuredData' => [],
+    'pageMeta',
 ])
 
 {{--
@@ -15,7 +14,7 @@
     (see resources/js/pages/newsletter-confirm.js). The button sits in a noscript block for visitors without
     JavaScript; with it, the component reveals a second copy only if submitting fails or stalls.
 --}}
-<x-layouts.site :seo-source="$seoSource" :structured-data="$structuredData">
+<x-layouts.site :page-meta="$pageMeta">
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt :command="$command" />

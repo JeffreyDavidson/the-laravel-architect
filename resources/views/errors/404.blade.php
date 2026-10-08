@@ -1,8 +1,8 @@
+@use('App\Data\PageMeta')
 @use('RalphJSmit\Laravel\SEO\Support\SEOData')
 
 <x-layouts.site
-    :seo-source="new SEOData(title: 'Page not found', robots: 'noindex, nofollow')"
-    :structured-data="$structuredData ?? []"
+    :page-meta="new PageMeta(new SEOData(title: 'Page not found', robots: 'noindex, nofollow'))"
     :canonical="false"
 >
     <div class="dark:bg-surface-page flex min-h-[80vh] items-center bg-white">

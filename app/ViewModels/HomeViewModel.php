@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Enums\SocialPlatform;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -13,9 +15,12 @@ use App\Queries\SocialProfilesQuery;
 use Illuminate\Database\Eloquent\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final readonly class HomeViewModel
+final readonly class HomeViewModel implements PageViewModel
 {
-    public function __construct(private SocialProfilesQuery $socialProfilesQuery) {}
+    public function __construct(
+        private SocialProfilesQuery $socialProfilesQuery,
+        private SiteStructuredData $site,
+    ) {}
 
     /**
      * @return array{
@@ -27,7 +32,7 @@ final readonly class HomeViewModel
      *     youtubeProfileUrl: string|null,
      *     publishedPostCount: int,
      *     publishedProjectCount: int,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(): array
@@ -58,9 +63,13 @@ final readonly class HomeViewModel
                 ->count(),
             'publishedProjectCount' => Project::query()->published()
                 ->count(),
-            'seoSource' => new SEOData(
-                title: 'The Laravel Architect — Jeffrey Davidson',
-                description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
+            'pageMeta' => new PageMeta(
+                seo: new SEOData(
+                    title: 'The Laravel Architect — Jeffrey Davidson',
+                    description: 'Blog, portfolio, and insights from Jeffrey Davidson — Laravel developer, content creator, and software architect based in Florida.',
+                ),
+                // The home page is the site's root, so it has no breadcrumb trail.
+                structuredData: [$this->site->page('WebPage', 'The Laravel Architect', route('home'))],
             ),
         ];
     }

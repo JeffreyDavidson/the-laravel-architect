@@ -39,6 +39,47 @@ final readonly class ProjectPresenter
         return $this->signedPreviewUrl($this->urls, 'preview.project', ['project' => $this->project]);
     }
 
+    /**
+     * The project as a schema.org CreativeWork case study. Repository links stay private, so only
+     * the public website link appears, as sameAs.
+     *
+     * @param  array{'@type': string, '@id': string}  $author  A reference to the site's author.
+     * @return array<string, mixed>
+     */
+    public function creativeWorkSchema(array $author): array
+    {
+        $projectUrl = $this->urls->route('projects.show', $this->project);
+        $schema = [
+            '@type' => 'CreativeWork',
+            '@id' => "{$projectUrl}#project",
+            'name' => $this->project->title,
+            'url' => $projectUrl,
+            'mainEntityOfPage' => $projectUrl,
+            'description' => $this->project->description,
+            'author' => $author,
+        ];
+
+        $featuredImageUrl = $this->featuredImageUrl();
+
+        if ($featuredImageUrl) {
+            $schema['image'] = $featuredImageUrl;
+        }
+
+        $technologyNames = is_array($this->project->tech_stack)
+            ? array_values(array_filter($this->project->tech_stack, is_string(...)))
+            : [];
+
+        if ($technologyNames !== []) {
+            $schema['keywords'] = implode(', ', $technologyNames);
+        }
+
+        if ($this->project->url) {
+            $schema['sameAs'] = [$this->project->url];
+        }
+
+        return $schema;
+    }
+
     /** The uploaded featured image's URL, or null when the project has none. */
     public function featuredImageUrl(): ?string
     {

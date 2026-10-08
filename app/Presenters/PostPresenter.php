@@ -42,6 +42,30 @@ final readonly class PostPresenter
         return $this->signedPreviewUrl($this->urls, 'preview.post', ['post' => $this->post]);
     }
 
+    /**
+     * The post as a schema.org Article, sharing the same wide image as its social cards.
+     *
+     * @param  array{'@type': string, '@id': string}  $author  A reference to the site's author.
+     * @return array<string, mixed>
+     */
+    public function articleSchema(array $author): array
+    {
+        $postUrl = $this->urls->route('blog.show', $this->post);
+
+        return [
+            '@type' => 'Article',
+            '@id' => "{$postUrl}#article",
+            'url' => $postUrl,
+            'headline' => $this->post->title,
+            'datePublished' => $this->post->published_at?->toIso8601String(),
+            'dateModified' => $this->post->updated_at?->toIso8601String(),
+            'author' => $author,
+            'mainEntityOfPage' => $postUrl,
+            'description' => $this->post->excerpt ?? '',
+            'image' => $this->shareImageUrl(),
+        ];
+    }
+
     public function readingTime(): int
     {
         return max(1, (int) ceil(str_word_count(strip_tags($this->post->content)) / 250));

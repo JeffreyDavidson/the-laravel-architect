@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <div class="podcast-detail" style="--podcast-color: {{ $podcastPresenter->displayColor() }};">
         {{-- ===== EPISODE HERO ===== --}}
         <section class="dark:border-surface-border dark:bg-surface-page border-b border-gray-200 bg-white">

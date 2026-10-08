@@ -6,6 +6,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\ViewModels\BlogTagViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\StructuredDataExpectations as Schema;
 
 pest()->use(RefreshDatabase::class);
 
@@ -37,7 +38,7 @@ it('builds a paginated tag archive payload', function () {
 
     $canonicalUrl = route('blog.tag', ['tag' => $tag, 'page' => 2]);
 
-    expect($data)->toHaveKeys(['tag', 'posts', 'seoSource'])
+    expect($data)->toHaveKeys(['tag', 'posts', 'pageMeta'])
         ->and($data['tag']->is($tag))
         ->toBeTrue()
         ->and($data['posts']->currentPage())
@@ -50,14 +51,43 @@ it('builds a paginated tag archive payload', function () {
         ->and($data['posts']->sole()
             ->relationLoaded('author'))
         ->toBeTrue()
-        ->and($data['seoSource']->title)
+        ->and($data['pageMeta']->seo->title)
         ->toBe('Articles Tagged Boundaries — Page 2')
-        ->and($data['seoSource']->description)
+        ->and($data['pageMeta']->seo->description)
         ->toBe(
             'Articles tagged with Boundaries on The Laravel Architect. Page 2 of 2.',
         )
-        ->and($data['seoSource']->url)
+        ->and($data['pageMeta']->seo->url)
         ->toBe($canonicalUrl)
-        ->and($data['seoSource']->canonical_url)
+        ->and($data['pageMeta']->seo->canonical_url)
         ->toBe($canonicalUrl);
+});
+
+it('offsets a paginated tag listing', function () {
+    Schema::useFixedOrigin();
+    $tag = Tag::factory()->create(['name' => 'livewire']);
+
+    foreach (range(1, 11) as $day) {
+        Post::factory()
+            ->published()
+            ->create(['title' => "Post {$day}", 'slug' => "post-{$day}", 'published_at' => now()->subDays($day)])
+            ->attachTag($tag);
+    }
+
+    request()->query->set('page', 2);
+
+    $data = app(BlogTagViewModel::class)
+        ->data($tag);
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        ...Schema::collection('Articles Tagged livewire', 'https://example.test/blog/tag/livewire?page=2', [
+            11 => ['Post 11', 'https://example.test/blog/post-11'],
+        ]),
+        Schema::breadcrumbs([
+            ['Home', 'https://example.test'],
+            ['Blog', 'https://example.test/blog'],
+            ['livewire', 'https://example.test/blog/tag/livewire?page=2'],
+        ]),
+    ]);
 });
