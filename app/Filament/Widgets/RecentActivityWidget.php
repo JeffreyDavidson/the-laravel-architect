@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Posts\PostResource;
@@ -13,9 +12,9 @@ use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
 use App\Models\Project;
+use App\Queries\RecentlyEditedContentQuery;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,16 +22,6 @@ use Illuminate\Support\Collection;
  */
 final class RecentActivityWidget extends Widget
 {
-    /**
-     * Each content model with the label and admin resource used for its activity rows.
-     */
-    private const array SOURCES = [
-        Post::class => ['Post', PostResource::class],
-        Episode::class => ['Episode', EpisodeResource::class],
-        NewsletterIssue::class => ['Newsletter', NewsletterIssueResource::class],
-        Project::class => ['Project', ProjectResource::class],
-    ];
-
     #[\Override]
     protected string $view = 'filament.widgets.recent-activity-widget';
 
@@ -47,56 +36,37 @@ final class RecentActivityWidget extends Widget
      */
     protected function getViewData(): array
     {
-        /** @var Collection<int, Activity> $activities */
-        $activities = collect();
-
-        foreach (self::SOURCES as $model => [$kind, $resource]) {
-            $activities = $activities->concat($this->recentActivities($model::query(), $kind, $resource));
-        }
-
         return [
-            'activities' => $activities->sortByDesc('timestamp')
-                ->take(5)
-                ->values(),
+            'activities' => app(RecentlyEditedContentQuery::class)
+                ->get(5)
+                ->map(fn (Post|Episode|NewsletterIssue|Project $record): array => $this->activity($record)),
         ];
     }
 
     /**
-     * @param  Builder<Post>|Builder<Episode>|Builder<NewsletterIssue>|Builder<Project>  $query
-     * @param  class-string<PostResource|EpisodeResource|NewsletterIssueResource|ProjectResource>  $resource
-     * @return Collection<int, Activity>
-     */
-    private function recentActivities(Builder $query, string $kind, string $resource): Collection
-    {
-        return $query->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->map(fn (Post|Episode|NewsletterIssue|Project $record): array => $this->activity(
-                kind: $kind,
-                label: $record->title,
-                status: $record->publishStatus(),
-                updatedAt: $record->updated_at,
-                url: $resource::getUrl('edit', ['record' => $record]),
-            ));
-    }
-
-    /**
+     * Map a record to its activity row, labelled and linked to the record's admin resource.
+     *
      * @return Activity
      */
-    private function activity(
-        string $kind,
-        string $label,
-        PublishStatus $status,
-        ?Carbon $updatedAt,
-        string $url,
-    ): array {
+    private function activity(Post|Episode|NewsletterIssue|Project $record): array
+    {
+        [$kind, $resource] = match (true) {
+            $record instanceof Post => ['Post', PostResource::class],
+            $record instanceof Episode => ['Episode', EpisodeResource::class],
+            $record instanceof NewsletterIssue => ['Newsletter', NewsletterIssueResource::class],
+            $record instanceof Project => ['Project', ProjectResource::class],
+        };
+        $updatedAt = $record->updated_at;
+
         return [
             'kind' => $kind,
-            'label' => $label,
-            'status' => $status->getLabel(),
+            'label' => $record->title,
+            'status' => $record
+                ->publishStatus()
+                ->getLabel(),
             'time' => $updatedAt?->diffForHumans() ?? 'Unknown',
             'timestamp' => $updatedAt,
-            'url' => $url,
+            'url' => $resource::getUrl('edit', ['record' => $record]),
         ];
     }
 }

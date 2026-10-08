@@ -14,8 +14,8 @@ use App\Models\Post;
 use App\Models\Subscriber;
 use App\Models\User;
 use App\Models\Video;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\RenderedStats;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -49,43 +49,15 @@ it('summarizes published content and audience data for administrators', function
 
     actingAs($administrator);
 
-    $widget = new class extends ContentPerformanceOverview
-    {
-        /** @return list<Stat> */
-        public function stats(): array
-        {
-            return $this->getStats();
-        }
-    };
-    $stats = $widget->stats();
+    $widget = livewire(ContentPerformanceOverview::class);
 
-    expect($stats)->toHaveCount(6)
-        ->and($stats[0]->getValue())
-        ->toBe(1)
-        ->and($stats[1]->getValue())
-        ->toBe(1)
-        ->and($stats[2]->getValue())
-        ->toBe(1)
-        ->and($stats[3]->getValue())
-        ->toBe(1)
-        ->and($stats[4]->getValue())
-        ->toBe(1)
-        ->and($stats[5]->getValue())
-        ->toBe('1,234');
-
-    livewire(ContentPerformanceOverview::class)
-        ->assertSee('Content performance')
-        ->assertSee('Published posts')
-        ->assertSee('Published episodes')
-        ->assertSee('Newsletter subscribers')
-        ->assertSee('Published issues')
-        ->assertSee('Active podcasts')
-        ->assertSee('YouTube views')
-        ->assertSee('1,234')
-        ->assertSeeHtml('href="'.PostResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.EpisodeResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.NewsletterIssueResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.PodcastResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.SubscriberResource::getUrl('index').'"')
-        ->assertSeeHtml('href="'.VideoResource::getUrl('index').'"');
+    $widget->assertSee('Content performance');
+    expect(RenderedStats::from($widget->html()))->toBe([
+        'Published posts' => ['value' => '1', 'url' => PostResource::getUrl('index')],
+        'Published episodes' => ['value' => '1', 'url' => EpisodeResource::getUrl('index')],
+        'Newsletter subscribers' => ['value' => '1', 'url' => SubscriberResource::getUrl('index')],
+        'Published issues' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index')],
+        'Active podcasts' => ['value' => '1', 'url' => PodcastResource::getUrl('index')],
+        'YouTube views' => ['value' => '1,234', 'url' => VideoResource::getUrl('index')],
+    ]);
 });

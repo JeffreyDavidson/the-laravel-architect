@@ -13,12 +13,9 @@ use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Publishing\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Cache;
 
 final class ContentReadinessWidget extends Widget
 {
-    private const int CACHE_SECONDS = 60;
-
     #[\Override]
     protected string $view = 'filament.widgets.content-readiness-widget';
 
@@ -33,26 +30,11 @@ final class ContentReadinessWidget extends Widget
      */
     protected function getViewData(): array
     {
-        /** @var array{items: list<array{label: string, description: string, count: int, url: string}>, outstandingCount: int} $cached */
-        $cached = Cache::remember(
-            'filament.dashboard.content-readiness',
-            now()->addSeconds(self::CACHE_SECONDS),
-            fn (): array => $this->buildViewData(),
-        );
-
-        return $cached;
-    }
-
-    /**
-     * @return array{items: list<array{label: string, description: string, count: int, url: string}>, outstandingCount: int}
-     */
-    private function buildViewData(): array
-    {
-        $summary = app(ContentReadinessSummaryQuery::class);
+        $counts = app(ContentReadinessSummaryQuery::class)->outstandingCounts();
         $items = [];
 
         foreach (ContentReadinessArea::cases() as $area) {
-            $count = $summary->count($area);
+            $count = $counts[$area->value] ?? 0;
 
             if ($count === 0) {
                 continue;

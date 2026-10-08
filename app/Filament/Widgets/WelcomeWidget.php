@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Enums\ContactInquiryStatus;
-use App\Enums\PublishStatus;
-use App\Models\ContactInquiry;
-use App\Models\Post;
+use App\Queries\AdminMetricsQuery;
 use Filament\Widgets\Widget;
 
 final class WelcomeWidget extends Widget
@@ -33,18 +30,15 @@ final class WelcomeWidget extends Widget
      */
     protected function getViewData(): array
     {
+        $metrics = app(AdminMetricsQuery::class);
+
         return [
-            'posts' => Post::query()->count(),
-            'publishedPosts' => Post::query()->published()
-                ->count(),
-            'draftPosts' => Post::query()->where('status', PublishStatus::Draft)
-                ->count(),
-            'inReviewPosts' => Post::query()->where('status', PublishStatus::InReview)
-                ->count(),
-            'scheduledPosts' => Post::query()->scheduled()
-                ->count(),
-            'newInquiries' => ContactInquiry::query()->where('status', ContactInquiryStatus::New)
-                ->count(),
+            'posts' => $metrics->totalPosts(),
+            'publishedPosts' => $metrics->publishedPosts(),
+            'draftPosts' => $metrics->draftPosts(),
+            'inReviewPosts' => $metrics->postsInReview(),
+            'scheduledPosts' => $metrics->scheduledPosts(),
+            'newInquiries' => $metrics->newContactInquiries(),
         ];
     }
 }
