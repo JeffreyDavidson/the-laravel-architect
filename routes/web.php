@@ -31,6 +31,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
 use App\Http\Middleware\EnsureValidNewsletterConfirmationLink;
+use App\Http\Middleware\VerifyResendWebhookSignature;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -69,7 +70,7 @@ Route::get('/newsletter/confirmed', NewsletterConfirmedController::class)->name(
 Route::get('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'create'])
     ->middleware(['signed', 'throttle:newsletter-unsubscribe', 'cache.headers:no_store;private'])
     ->name('newsletter.unsubscribe');
-Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterSubscriptionController::class, 'destroy'])
+Route::delete('/newsletter/unsubscribe/{subscriber}', [NewsletterUnsubscriptionController::class, 'store'])
     ->middleware(['signed', 'throttle:newsletter-unsubscribe'])
     ->name('newsletter.unsubscribe.store');
 Route::post('/newsletter/unsubscribe/{subscriber}', NewsletterOneClickUnsubscriptionController::class)
@@ -94,7 +95,7 @@ Route::middleware('signed')
         Route::get('/posts/{post:slug}', PreviewPostController::class)->name('preview.post');
         Route::get('/projects/{project:slug}', PreviewProjectController::class)->name('preview.project');
         Route::get('/episodes/{episode:slug}', PreviewEpisodeController::class)->name('preview.episode');
-        Route::get('/newsletter/{newsletterIssue:slug}', PreviewNewsletterIssueController::class)->name('preview.newsletter-issue');
+        Route::get('/newsletter/{newsletterIssue:slug}', PreviewNewsletterIssueController::class)->name('preview.newsletterIssue');
     });
 
 // RSS & Sitemap
@@ -107,9 +108,10 @@ Route::get('/robots.txt', RobotsController::class)
     ->withoutMiddleware('web')
     ->name('robots');
 // Server-to-server: no session, cookies or forgery token; the Resend signature is the credential.
+// The limiter runs first, so requests with a bad signature still count against it.
 Route::post('/webhooks/resend', ResendWebhookController::class)
     ->withoutMiddleware('web')
-    ->middleware('throttle:resend-webhook')
+    ->middleware(['throttle:resend-webhook', VerifyResendWebhookSignature::class])
     ->name('webhooks.resend');
 Route::get('/sitemap.xml', SitemapController::class)
     ->withoutMiddleware('web')
@@ -132,12 +134,16 @@ Route::get('/og-image/{post:slug}', OgImageController::class)
         ShareErrorsFromSession::class,
         PreventRequestForgery::class,
     ])
-    ->name('og-image');
+    ->name('ogImage');
 
 // Podcasts
-Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcast.index');
-Route::get('/podcasts/{podcast:slug}', [PodcastController::class, 'show'])->name('podcast.show');
-Route::get('/podcasts/{podcast:slug}/{episode:slug}', PodcastEpisodeController::class)->name('podcast.episode');
+Route::get('/podcasts', [PodcastController::class, 'index'])->name('podcasts.index');
+Route::get('/podcasts/{podcast:slug}', [PodcastController::class, 'show'])->name('podcasts.show');
+// Scoped binding: the episode is looked up among the podcast's own episodes, so a
+// pair that does not belong together is a 404.
+Route::get('/podcasts/{podcast:slug}/{episode:slug}', PodcastEpisodeController::class)
+    ->scopeBindings()
+    ->name('podcasts.episode');
 
 // Projects
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');

@@ -27,7 +27,7 @@ final readonly class PodcastIndexViewModel implements PageViewModel
             ->withCount('publishedEpisodes')
             ->orderBy('sort_order')
             ->first();
-        $url = route('podcast.index');
+        $url = route('podcasts.index');
 
         return [
             'podcast' => $podcast,
@@ -41,7 +41,7 @@ final readonly class PodcastIndexViewModel implements PageViewModel
                         'Podcast',
                         $url,
                         $podcast instanceof Podcast
-                            ? [['name' => $podcast->name, 'url' => route('podcast.show', $podcast)]]
+                            ? [['name' => $podcast->name, 'url' => route('podcasts.show', $podcast)]]
                             : [],
                     )),
                     $this->site->breadcrumbs([['name' => 'Podcast', 'url' => $url]]),

@@ -280,7 +280,7 @@ it('shares one wide article image in social cards and structured data', function
     'no artwork' => [
         'article-without-artwork',
         null,
-        fn (Post $post): string => route('og-image', $post),
+        fn (Post $post): string => route('ogImage', $post),
     ],
 ]);
 
@@ -415,7 +415,7 @@ it('renders canonical structured data for podcasts and episodes', function () {
             'duration_seconds' => 3725,
         ]);
 
-    $content = get(route('podcast.episode', [$podcast, $episode]))
+    $content = get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->getContent();
 
@@ -426,9 +426,9 @@ it('renders canonical structured data for podcasts and episodes', function () {
 
     expect($podcastSeries)
         ->toMatchArray([
-            '@id' => route('podcast.show', $podcast).'#podcast',
+            '@id' => route('podcasts.show', $podcast).'#podcast',
             'name' => $podcast->name,
-            'url' => route('podcast.show', $podcast),
+            'url' => route('podcasts.show', $podcast),
             'author' => [
                 '@type' => 'Person',
                 '@id' => route('about').'#person',
@@ -436,15 +436,15 @@ it('renders canonical structured data for podcasts and episodes', function () {
         ])
         ->and($podcastEpisode)
         ->toMatchArray([
-            '@id' => route('podcast.episode', [$podcast, $episode]).'#episode',
+            '@id' => route('podcasts.episode', [$podcast, $episode]).'#episode',
             'name' => $episode->title,
-            'url' => route('podcast.episode', [$podcast, $episode]),
+            'url' => route('podcasts.episode', [$podcast, $episode]),
             'episodeNumber' => 12,
             'duration' => 'PT1H2M5S',
             'datePublished' => Date::parse($episode->published_at)->toIso8601String(),
             'partOfSeries' => [
                 '@type' => 'PodcastSeries',
-                '@id' => route('podcast.show', $podcast).'#podcast',
+                '@id' => route('podcasts.show', $podcast).'#podcast',
             ],
         ])
         ->and($podcastEpisode)
@@ -503,7 +503,7 @@ it('renders canonical structured data for public content collections', function 
         [route('blog.category', $category), 'Architecture Articles', $post->title, route('blog.show', $post)],
         [route('blog.tag', $tag), 'Articles Tagged Boundaries', $post->title, route('blog.show', $post)],
         [route('projects.index'), 'Projects', $project->title, route('projects.show', $project)],
-        [route('podcast.index'), 'Podcast', $podcast->name, route('podcast.show', $podcast)],
+        [route('podcasts.index'), 'Podcast', $podcast->name, route('podcasts.show', $podcast)],
     ];
 
     foreach ($collections as [$url, $name, $itemName, $itemUrl]) {
@@ -634,7 +634,7 @@ it('uses page-specific metadata for paginated podcast archives', function () {
             ]);
     }
 
-    $url = route('podcast.show', ['podcast' => $podcast, 'page' => 2]);
+    $url = route('podcasts.show', ['podcast' => $podcast, 'page' => 2]);
     $content = get($url)
         ->assertOk()
         ->assertSeeHtml('<title>Architecture Sessions — Page 2 — Jeffrey Davidson</title>')
@@ -666,7 +666,7 @@ it('uses page-specific metadata for paginated podcast archives', function () {
             '@type' => 'ListItem',
             'position' => 21,
             'name' => 'Architecture Session 21',
-            'item' => route('podcast.episode', [$podcast, 'architecture-session-21']),
+            'item' => route('podcasts.episode', [$podcast, 'architecture-session-21']),
         ])
         ->and(structuredDataListItem($breadcrumbList['itemListElement'] ?? null, 2))
         ->toMatchArray([
@@ -682,7 +682,7 @@ it('returns not found for out-of-range podcast archive pages', function () {
         ->published()
         ->create();
 
-    get(route('podcast.show', ['podcast' => $podcast, 'page' => 2]))
+    get(route('podcasts.show', ['podcast' => $podcast, 'page' => 2]))
         ->assertNotFound();
 });
 
@@ -696,7 +696,7 @@ it('keeps one main landmark on public index pages', function (string $routeName)
         ->toBe(1);
 })->with([
     'projects' => 'projects.index',
-    'podcasts' => 'podcast.index',
+    'podcasts' => 'podcasts.index',
     'newsletter' => 'newsletter.index',
     'archive' => 'archive.index',
 ]);
@@ -825,7 +825,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSeeHtml('x-data="siteHeader"')
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
-    get(route('podcast.index'))
+    get(route('podcasts.index'))
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
@@ -915,7 +915,7 @@ it('renders accessible podcast episode embeds and external links', function () {
             'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSeeHtml('Play Designing Laravel Applications on YouTube')
         ->assertSeeHtml('title="Designing Laravel Applications on YouTube"')
@@ -931,7 +931,7 @@ it('renders accessible podcast episode embeds and external links', function () {
         ->assertDontSeeHtml('<style>')
         ->assertDontSeeHtml('onclick=');
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('style="--podcast-color: #2563eb;"')
         ->assertSeeHtml('[--dur:0.7s]')
@@ -942,7 +942,7 @@ it('renders accessible podcast episode embeds and external links', function () {
 it('falls back to a safe podcast color when stored presentation data is invalid', function () {
     $podcast = Podcast::factory()->create(['color' => 'url(https://example.com/image.png)']);
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('style="--podcast-color: #6366f1;"')
         ->assertDontSeeHtml('url(https://example.com/image.png)');
@@ -1071,7 +1071,7 @@ it('serves responsive podcast cover images while retaining the original fallback
 
     $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/podcast.png']);
 
-    get(route('podcast.index'))
+    get(route('podcasts.index'))
         ->assertOk()
         ->assertSeeHtml('type="image/webp"')
         ->assertSeeHtml('podcast-640.webp')
@@ -1080,7 +1080,7 @@ it('serves responsive podcast cover images while retaining the original fallback
         ->assertSeeHtml('fetchpriority="high"')
         ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('sizes="224px"')
         ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
@@ -1095,7 +1095,7 @@ it('shares the podcast cover in social cards', function (?string $coverImagePath
     ]);
     $coverImageUrl = configuredString(PodcastPresenter::from($podcast)->coverImageUrl());
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml("<meta property=\"og:image\" content=\"{$coverImageUrl}\">")
         ->assertSeeHtml('<meta name="twitter:card" content="summary_large_image">')
@@ -1108,7 +1108,7 @@ it('shares the podcast cover in social cards', function (?string $coverImagePath
 it('shares the site image for a podcast without a cover', function () {
     $podcast = Podcast::factory()->create();
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('<meta property="og:image" content="'.secure_url('/images/logo-color-black-bg.png').'">')
         ->assertSeeHtml('<meta name="twitter:card" content="summary">');
@@ -1120,7 +1120,7 @@ it('serves responsive optimized fallback artwork for known podcasts', function (
     $podcast = Podcast::factory()->create(['slug' => 'coffee-with-the-laravel-architect']);
     $cover = PodcastPresenter::from($podcast)->cover();
 
-    get(route('podcast.show', $podcast))
+    get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSeeHtml('srcset="'.$cover?->srcset.'"')
         ->assertSeeHtml('sizes="224px"')
@@ -1162,8 +1162,8 @@ it('hides inactive podcasts from public podcast surfaces', function () {
         ->assertDontSee($inactivePodcast->name)
         ->assertDontSeeHtml('toHaveCount</span>(<span class="syn-variable">2</span>');
 
-    get(route('podcast.show', $inactivePodcast))
+    get(route('podcasts.show', $inactivePodcast))
         ->assertNotFound();
-    get(route('podcast.episode', [$inactivePodcast, $episode]))
+    get(route('podcasts.episode', [$inactivePodcast, $episode]))
         ->assertNotFound();
 });

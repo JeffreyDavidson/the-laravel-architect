@@ -231,7 +231,7 @@ it('shows published writing and podcast episodes connected by project tags', fun
         ->assertSee('Listen next')
         ->assertSee('Connected episode')
         ->assertSeeHtml(route('blog.show', $post))
-        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
+        ->assertSeeHtml(route('podcasts.episode', [$podcast, $episode]));
 });
 
 it('loads only the related projects displayed on a project page', function () {

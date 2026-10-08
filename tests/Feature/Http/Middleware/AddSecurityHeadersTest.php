@@ -122,8 +122,8 @@ function privateResponse(string $case): TestResponse
 {
     return match ($case) {
         'admin login' => get(Filament::getPanel('admin')->getLoginUrl() ?? ''),
-        'signed preview' => get(URL::signedRoute('preview.newsletter-issue', draftPreviewIssue())),
-        'unsigned preview' => get(route('preview.newsletter-issue', draftPreviewIssue())),
+        'signed preview' => get(URL::signedRoute('preview.newsletterIssue', draftPreviewIssue())),
+        'unsigned preview' => get(route('preview.newsletterIssue', draftPreviewIssue())),
         'missing page' => get('/this-page-does-not-exist'),
         'server error' => (function (): TestResponse {
             Route::get('/security-headers-server-error', fn () => throw new RuntimeException('Boom.'));

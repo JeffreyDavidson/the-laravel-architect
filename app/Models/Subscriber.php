@@ -45,6 +45,19 @@ final class Subscriber extends Model
         return $this->suppressed_at !== null;
     }
 
+    /**
+     * Whether the token is this subscriber's current confirmation token. Only
+     * its SHA-256 hash is stored, and the hashes are compared in constant time.
+     */
+    public function hasConfirmationToken(string $token): bool
+    {
+        if (! $this->verification_token_hash) {
+            return false;
+        }
+
+        return hash_equals($this->verification_token_hash, hash('sha256', $token));
+    }
+
     public function isActive(): bool
     {
         return $this->status() === SubscriberStatus::Active;
