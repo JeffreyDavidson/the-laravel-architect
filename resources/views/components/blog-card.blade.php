@@ -103,7 +103,7 @@
                 'sizes' => '(min-width: 1024px) 720px, calc(100vw - 2rem)',
                 'artwork' => '[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block min-h-60 overflow-hidden md:min-h-[27rem]',
                 'body' => 'flex flex-col justify-center p-7 sm:p-9',
-                'category' => 'text-brand-400 text-xs font-semibold tracking-wide uppercase',
+                'eyebrow' => 'category',
                 'title' => 'group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-4 text-2xl font-semibold text-gray-900 transition-colors md:text-3xl dark:text-white',
                 'excerpt' => 'line-clamp-3 max-w-3xl text-base text-gray-600 dark:text-gray-400',
                 'meta' => 'mt-5 flex items-center gap-3 text-xs text-gray-500',
@@ -114,7 +114,7 @@
                 'sizes' => '(min-width: 640px) 280px, calc(100vw - 2rem)',
                 'artwork' => '[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block overflow-hidden',
                 'body' => 'p-6',
-                'category' => 'text-brand-400 text-xs font-semibold tracking-wide uppercase',
+                'eyebrow' => 'category',
                 'title' => 'group-hover:text-brand-action dark:group-hover:text-brand-400 mt-2 mb-3 text-lg font-semibold text-gray-900 transition-colors dark:text-white',
                 'excerpt' => 'line-clamp-2 hidden text-sm text-gray-600 md:block dark:text-gray-400',
                 'meta' => 'mt-4 flex items-center gap-3 text-xs text-gray-500',
@@ -125,7 +125,7 @@
                 'sizes' => '(min-width: 768px) 560px, calc(100vw - 2rem)',
                 'artwork' => 'dark:bg-brand-900 aspect-[3/2] bg-gray-100',
                 'body' => 'p-6',
-                'category' => 'text-brand-600 dark:text-brand-300 font-mono text-sm font-semibold tracking-wide uppercase',
+                'eyebrow' => 'section',
                 'title' => 'group-hover:text-brand-action dark:group-hover:text-brand-300 mt-2 text-xl font-semibold tracking-tight text-gray-950 transition-colors dark:text-white',
                 'excerpt' => 'mt-3 line-clamp-2 text-base text-pretty text-gray-600 dark:text-gray-400',
                 'meta' => 'mt-5 text-sm text-gray-500 dark:text-gray-400',
@@ -138,7 +138,7 @@
             <x-post-artwork :post="$post" :sizes="$card['sizes']" @class([$card['artwork']]) />
             <div @class([$card['body']])>
                 @if ($post->category)
-                    <span @class([$card['category']])>{{ $post->category->name }}</span>
+                    <x-eyebrow as="span" :variant="$card['eyebrow']">{{ $post->category->name }}</x-eyebrow>
                 @endif
                 <h3 @class([$card['title']])>{{ $post->title }}</h3>
                 <p @class([$card['excerpt']])>{{ $post->excerpt }}</p>
