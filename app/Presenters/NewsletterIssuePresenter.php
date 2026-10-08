@@ -33,6 +33,6 @@ final readonly class NewsletterIssuePresenter
 
     public function previewUrl(): string
     {
-        return $this->signedPreviewUrl($this->urls, 'preview.newsletter-issue', ['newsletterIssue' => $this->issue]);
+        return $this->signedPreviewUrl($this->urls, 'preview.newsletterIssue', ['newsletterIssue' => $this->issue]);
     }
 }

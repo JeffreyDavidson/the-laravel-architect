@@ -28,10 +28,10 @@ it('publishes an episode through Filament and exposes it publicly', function () 
 
     expect($episode->status)->toBe(PublishStatus::Published);
 
-    get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertOk();
     get('/sitemap.xml')
-        ->assertSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+        ->assertSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });
 
 it('hides an episode again when Filament unpublishes it', function () {
@@ -47,10 +47,10 @@ it('hides an episode again when Filament unpublishes it', function () {
 
     expect($episode->status)->toBe(PublishStatus::Draft);
 
-    get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
     get('/sitemap.xml')
-        ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+        ->assertDontSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });
 
 it('keeps an episode hidden while its published date is scheduled in the future', function () {
@@ -68,8 +68,8 @@ it('keeps an episode hidden while its published date is scheduled in the future'
         ->and(Date::parse($episode->published_at)->isFuture())
         ->toBeTrue();
 
-    get(route('podcast.episode', [$episode->podcast, $episode]))
+    get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
     get('/sitemap.xml')
-        ->assertDontSeeHtml(route('podcast.episode', [$episode->podcast, $episode]));
+        ->assertDontSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });

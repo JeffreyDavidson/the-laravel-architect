@@ -53,6 +53,22 @@ it('hides its verification token hash from serialization', function () {
         ->not->toHaveKey('verification_token_hash');
 });
 
+it('matches only its current confirmation token', function (?string $storedToken, string $presentedToken, bool $expected) {
+    $subscriber = new Subscriber;
+    $subscriber->verification_token_hash = $storedToken === null
+        ? null
+        : hash('sha256', $storedToken);
+
+    expect($subscriber->hasConfirmationToken($presentedToken))
+        ->toBe($expected);
+})->with([
+    'current token' => ['secret-token', 'secret-token', true],
+    'different token' => ['secret-token', 'other-token', false],
+    'the stored hash itself' => ['secret-token', hash('sha256', 'secret-token'), false],
+    'no token stored' => [null, 'secret-token', false],
+    'no token stored and an empty token' => [null, '', false],
+]);
+
 it('never treats a suppressed reader as active or prunes it', function () {
     freezeTime();
     $suppressed = Subscriber::factory()

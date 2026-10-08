@@ -21,7 +21,7 @@
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
             @if ($podcast)
                 <a
-                    href="{{ route('podcast.show', $podcast) }}"
+                    href="{{ route('podcasts.show', $podcast) }}"
                     class="group focus-visible:outline-brand-400 dark:border-surface-border grid gap-10 border-y border-gray-200 py-10 focus-visible:outline-2 focus-visible:outline-offset-4 md:grid-cols-[18rem_minmax(0,1fr)] md:items-center md:py-14"
                 >
                     <x-podcast-cover

@@ -58,8 +58,8 @@ it('searches published content across every public content type', function () {
         ->assertSeeHtml('>Laravel</mark> Search on YouTube')
         ->assertSeeHtml(route('blog.show', $post))
         ->assertSeeHtml(route('projects.show', $project))
-        ->assertSeeHtml(route('podcast.show', $podcast))
-        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]))
+        ->assertSeeHtml(route('podcasts.show', $podcast))
+        ->assertSeeHtml(route('podcasts.episode', [$podcast, $episode]))
         ->assertSeeHtml(
             VideoPresenter::from($video)->youtubeUrl(),
         )
@@ -171,7 +171,7 @@ it('finds episodes by transcript content', function () {
         ->assertSee(
             $episode->title,
         )
-        ->assertSeeHtml(route('podcast.episode', [$podcast, $episode]));
+        ->assertSeeHtml(route('podcasts.episode', [$podcast, $episode]));
 });
 
 it('shows each group total and a link to the next page of a long group', function () {

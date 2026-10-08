@@ -44,7 +44,7 @@ final readonly class EpisodeShowViewModel implements PageViewModel
     public function data(Podcast $podcast, Episode $episode): array
     {
         $data = $this->pageData($podcast, $episode);
-        $podcastUrl = route('podcast.show', $podcast);
+        $podcastUrl = route('podcasts.show', $podcast);
 
         return [
             ...$data,
@@ -57,9 +57,9 @@ final readonly class EpisodeShowViewModel implements PageViewModel
                     $data['podcastPresenter']->seriesSchema($this->site->authorReference()),
                     $data['episodePresenter']->episodeSchema($podcast),
                     $this->site->breadcrumbs([
-                        ['name' => 'Podcast', 'url' => route('podcast.index')],
+                        ['name' => 'Podcast', 'url' => route('podcasts.index')],
                         ['name' => $podcast->name, 'url' => $podcastUrl],
-                        ['name' => $episode->title, 'url' => route('podcast.episode', [$podcast, $episode])],
+                        ['name' => $episode->title, 'url' => route('podcasts.episode', [$podcast, $episode])],
                     ]),
                 ],
             ),
