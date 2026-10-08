@@ -500,8 +500,23 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1);
 
-    $page->click('.fi-user-menu-trigger')
-        ->assertSee('Sign out')
+    // Pest retries a chained click in one-second attempts until the browser timeout. When the machine is slow, a click
+    // can land and still be retried: that toggles the account menu shut again or clicks a link that has already gone.
+    // Click these controls once, with Playwright's own waiting, and let the polled assertions wait for the result.
+    $clickOnce = function (string $selector) use ($page): void {
+        $page->page()
+            ->locator($selector)
+            ->click();
+    };
+
+    // Choosing a theme closes the menu with a fade, and a click on the trigger during the fade closes it instead
+    // of reopening it. aria-expanded turns false when the fade has finished.
+    $waitForUserMenuToClose = function () use ($page): void {
+        $page->assertAttribute('.fi-user-menu-trigger', 'aria-expanded', 'false');
+    };
+
+    $clickOnce('.fi-user-menu-trigger');
+    $page->assertSee('Sign out')
         ->assertScript(<<<'JS'
             (() => {
                 const menu = [...document.querySelectorAll('.fi-dropdown-panel')].find(element => element.textContent.includes('Sign out') && element.getBoundingClientRect().height > 0);
@@ -510,18 +525,20 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
                 return [0.25, 0.5, 0.75].every(fraction => menu.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height * fraction)));
             })()
             JS);
-    $page->click(".fi-dropdown-panel button[aria-label='Enable dark theme']")
-        ->assertScript("document.documentElement.classList.contains('dark')");
-    $page->click('.fi-user-menu-trigger')
-        ->click(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']")
-        ->click('.fi-user-menu-trigger')
-        ->click('.fi-dropdown-panel a[href$="/admin/profile"]')
-        ->assertPathIs('/admin/profile')
+    $clickOnce(".fi-dropdown-panel button[aria-label='Enable dark theme']");
+    $page->assertScript("document.documentElement.classList.contains('dark')");
+    $waitForUserMenuToClose();
+    $clickOnce('.fi-user-menu-trigger');
+    $clickOnce(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']");
+    $waitForUserMenuToClose();
+    $clickOnce('.fi-user-menu-trigger');
+    $clickOnce('.fi-dropdown-panel a[href$="/admin/profile"]');
+    $page->assertPathIs('/admin/profile')
         ->assertPresent('.fi-sidebar')
         ->assertPresent('.fi-user-menu-trigger');
 
     if ($device === 'desktop') {
-        $page->click('.fi-sidebar-item-btn[href$="/admin"]');
+        $clickOnce('.fi-sidebar-item-btn[href$="/admin"]');
     } else {
         $adminUrl = str_replace('/admin/profile', '/admin', $page->url());
         $page->page()
@@ -531,20 +548,22 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
     $page->assertPathIs('/admin');
 
     if ($device === 'desktop') {
-        $page->click('.fi-topbar-close-collapse-sidebar-btn')
-            ->assertScript(<<<'JS'
-                (() => {
-                    const button = document.querySelector('.tla-sidebar-primary');
-                    const icon = button.querySelector('.tla-sidebar-primary__icon');
-                    const buttonBox = button.getBoundingClientRect();
-                    const iconBox = icon.getBoundingClientRect();
-                    const centered = Math.abs(buttonBox.x + buttonBox.width / 2 - iconBox.x - iconBox.width / 2) < 1 && Math.abs(buttonBox.y + buttonBox.height / 2 - iconBox.y - iconBox.height / 2) < 1;
-                    return !document.querySelector('.fi-sidebar').classList.contains('fi-sidebar-open') && centered && buttonBox.width < 60 && getComputedStyle(button.querySelector('.tla-sidebar-primary__label')).display === 'none';
-                })()
-                JS);
-        $page->click('.tla-sidebar-primary');
+        $clickOnce('.fi-topbar-close-collapse-sidebar-btn');
+        $page->assertScript(<<<'JS'
+            (() => {
+                const button = document.querySelector('.tla-sidebar-primary');
+                const icon = button.querySelector('.tla-sidebar-primary__icon');
+                const buttonBox = button.getBoundingClientRect();
+                const iconBox = icon.getBoundingClientRect();
+                const centered = Math.abs(buttonBox.x + buttonBox.width / 2 - iconBox.x - iconBox.width / 2) < 1 && Math.abs(buttonBox.y + buttonBox.height / 2 - iconBox.y - iconBox.height / 2) < 1;
+                return !document.querySelector('.fi-sidebar').classList.contains('fi-sidebar-open') && centered && buttonBox.width < 60 && getComputedStyle(button.querySelector('.tla-sidebar-primary__label')).display === 'none';
+            })()
+            JS);
+        $clickOnce('.tla-sidebar-primary');
     } else {
-        $page->click('Write post');
+        $page->page()
+            ->getByRole('link', ['name' => 'Write post'])
+            ->click();
     }
 
     $page
