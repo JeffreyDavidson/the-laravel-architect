@@ -3,12 +3,13 @@
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
 use App\ViewModels\ContactViewModel;
+use Tests\Support\StructuredDataExpectations as Schema;
 
 it('provides the existing page SEO metadata', function () {
     $data = app(ContactViewModel::class)
         ->data();
 
-    expect($data)->toHaveKeys(['contactTypeOptions', 'contactBudgetOptions', 'defaultContactType', 'seoSource'])
+    expect($data)->toHaveKeys(['contactTypeOptions', 'contactBudgetOptions', 'defaultContactType', 'pageMeta'])
         ->and($data['contactTypeOptions'])
         ->toBe([
             ContactType::Freelance->value => 'Freelance Project',
@@ -28,8 +29,21 @@ it('provides the existing page SEO metadata', function () {
         ->toBe(ContactType::Freelance->value)
         ->and($data['selectedProject'])
         ->toBeNull()
-        ->and($data['seoSource']->title)
+        ->and($data['pageMeta']->seo->title)
         ->toBe('Contact')
-        ->and($data['seoSource']->description)
+        ->and($data['pageMeta']->seo->description)
         ->toBe('Get in touch with Jeffrey Davidson for freelance Laravel development, consulting, legacy modernization, or just to say hello.');
+});
+
+it('describes the contact page with breadcrumbs', function () {
+    Schema::useFixedOrigin();
+
+    $data = app(ContactViewModel::class)
+        ->data();
+
+    expect(Schema::graph($data['pageMeta']))->toBe([
+        Schema::website(),
+        Schema::page('ContactPage', 'Contact', 'https://example.test/contact'),
+        Schema::breadcrumbs([['Home', 'https://example.test'], ['Contact', 'https://example.test/contact']]),
+    ]);
 });

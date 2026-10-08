@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Support\Seo\StructuredDataBuilder;
 use App\ViewModels\PostIndexViewModel;
+use App\ViewModels\SiteStructuredData;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -71,21 +71,22 @@ final class BlogIndex extends Component
         $this->resetPage();
     }
 
-    public function render(PostIndexViewModel $blogIndexViewModel, StructuredDataBuilder $structuredDataBuilder): View
+    public function render(PostIndexViewModel $blogIndexViewModel, SiteStructuredData $siteStructuredData): View
     {
         if ($this->initialData !== null) {
             return view('livewire.blog-index', $this->initialData);
         }
 
         $data = $blogIndexViewModel->data($this->search, $this->categorySlug);
+        $pageMeta = $data['pageMeta'];
 
         $this->dispatch(
             'blog-metadata-updated',
-            title: ($data['seoSource']->title ?? '').config()->string('seo.title.suffix'),
-            description: $data['seoSource']->description,
-            canonicalUrl: $data['seoSource']->canonical_url,
-            robots: $data['seoSource']->robots,
-            structuredData: $structuredDataBuilder->build($data, 'blog.index'),
+            title: ($pageMeta->seo->title ?? '').config()->string('seo.title.suffix'),
+            description: $pageMeta->seo->description,
+            canonicalUrl: $pageMeta->seo->canonical_url,
+            robots: $pageMeta->seo->robots,
+            structuredData: $siteStructuredData->graph($pageMeta),
         );
 
         return view('livewire.blog-index', $data);

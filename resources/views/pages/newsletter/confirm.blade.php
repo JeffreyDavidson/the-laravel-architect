@@ -5,6 +5,5 @@
     :action-url="$actionUrl"
     button-label="Confirm subscription"
     pending-label="Confirming your subscription…"
-    :seo-source="$seoSource ?? null"
-    :structured-data="$structuredData ?? []"
+    :page-meta="$pageMeta"
 />

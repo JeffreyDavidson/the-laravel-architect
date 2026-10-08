@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use App\Enums\SearchContentType;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -20,7 +22,7 @@ use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use UnexpectedValueException;
 
-final readonly class SearchViewModel
+final readonly class SearchViewModel implements PageViewModel
 {
     public function __construct(private SearchQuery $searchQuery) {}
 
@@ -34,7 +36,7 @@ final readonly class SearchViewModel
      *     resultCount: int,
      *     typeOptions: array<string, string>,
      *     selectedType: string|null,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(?string $query, ?SearchContentType $selectedType = null): array
@@ -59,7 +61,7 @@ final readonly class SearchViewModel
             'resultCount' => array_sum(array_map(fn (LengthAwarePaginator $group): int => $group->total(), $results)),
             'typeOptions' => SearchContentType::labels(),
             'selectedType' => $selectedType?->value,
-            'seoSource' => new SEOData(
+            'pageMeta' => new PageMeta(new SEOData(
                 title: $query === '' ? 'Search' : 'Search results',
                 description: $query === ''
                     ? 'Search the writing, projects, podcasts, episodes, and videos from The Laravel Architect.'
@@ -67,7 +69,7 @@ final readonly class SearchViewModel
                 url: route('search'),
                 robots: 'noindex, follow',
                 canonical_url: route('search'),
-            ),
+            )),
         ];
     }
 

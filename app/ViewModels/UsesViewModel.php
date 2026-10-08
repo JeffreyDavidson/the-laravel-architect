@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
+use App\Contracts\PageViewModel;
+use App\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final class UsesViewModel
+final readonly class UsesViewModel implements PageViewModel
 {
+    public function __construct(private SiteStructuredData $site) {}
+
     /**
      * Each section feeds the mobile jump links (shortLabel), the sidebar jump links (label) and its
      * own heading. Tool sections list linked items; the site technology section is a grid.
@@ -23,16 +27,24 @@ final class UsesViewModel
      *         siteTechnology: bool,
      *         items: list<array{icon: string, name: string, desc: string, tag?: string, url?: string}>,
      *     }>,
-     *     seoSource: SEOData,
+     *     pageMeta: PageMeta,
      * }
      */
     public function data(): array
     {
+        $url = route('uses');
+
         return [
             'sections' => $this->sections(),
-            'seoSource' => new SEOData(
-                title: 'Uses',
-                description: 'The tools, hardware, and software Jeffrey Davidson uses for Laravel development, content creation, and everyday work.',
+            'pageMeta' => new PageMeta(
+                seo: new SEOData(
+                    title: 'Uses',
+                    description: 'The tools, hardware, and software Jeffrey Davidson uses for Laravel development, content creation, and everyday work.',
+                ),
+                structuredData: [
+                    $this->site->page('WebPage', 'Uses', $url),
+                    $this->site->breadcrumbs([['name' => 'Uses', 'url' => $url]]),
+                ],
             ),
         ];
     }

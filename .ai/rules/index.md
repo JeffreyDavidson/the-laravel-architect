@@ -22,6 +22,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Queries/** | .ai/rules/queries.md |
 | app/Rules/** | .ai/rules/rules.md |
 | app/Services/** | .ai/rules/services.md |
+| app/Support/** | .ai/rules/support.md |
 | tests/** | .ai/rules/tests.md |
 | app/ViewModels/** | .ai/rules/view-models.md |
 | resources/views/** | .ai/rules/views.md |

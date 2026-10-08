@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     <div data-project-index>
         <header class="pt-12 pb-10 sm:pt-20 sm:pb-14">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -209,6 +209,10 @@ final class ContentReadiness
             ->exists();
     }
 
+    /**
+     * An SEO description saved for the record, or the column its page uses as the description
+     * when none is saved (the same columns ContentReadinessCriteria checks).
+     */
     private function hasSeoDescription(Post|Project|Podcast|Episode|NewsletterIssue $content): bool
     {
         $seo = $content->relationLoaded('seo') ? $content->getRelation('seo') : $content->seo;
@@ -217,8 +221,8 @@ final class ContentReadiness
             return true;
         }
 
-        $seoData = $content->getDynamicSEOData();
-
-        return filled($seoData->description);
+        return filled($content instanceof Post || $content instanceof NewsletterIssue
+            ? $content->excerpt
+            : $content->description);
     }
 }

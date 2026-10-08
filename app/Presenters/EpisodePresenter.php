@@ -7,7 +7,9 @@ namespace App\Presenters;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
+use App\Support\Seo\JsonLd;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Support\Carbon;
 
 final readonly class EpisodePresenter
 {
@@ -38,6 +40,45 @@ final readonly class EpisodePresenter
     public function previewUrl(): string
     {
         return $this->signedPreviewUrl($this->urls, 'preview.episode', ['episode' => $this->episode]);
+    }
+
+    /**
+     * The episode as a schema.org PodcastEpisode on its show's page, part of the show's series.
+     *
+     * @param  Podcast  $podcast  The show the episode belongs to.
+     * @return array<string, mixed>
+     */
+    public function episodeSchema(Podcast $podcast): array
+    {
+        $episodeUrl = $this->urls->route('podcast.episode', [$podcast, $this->episode]);
+        $schema = [
+            '@type' => 'PodcastEpisode',
+            '@id' => "{$episodeUrl}#episode",
+            'name' => $this->episode->title,
+            'url' => $episodeUrl,
+            'mainEntityOfPage' => $episodeUrl,
+            'partOfSeries' => PodcastPresenter::from($podcast)->seriesReference(),
+        ];
+
+        if ($this->episode->description) {
+            $schema['description'] = $this->episode->description;
+        }
+
+        $publishedAt = $this->episode->publishedAt();
+
+        if ($publishedAt instanceof Carbon) {
+            $schema['datePublished'] = $publishedAt->toIso8601String();
+        }
+
+        if ($this->episode->episode_number !== null) {
+            $schema['episodeNumber'] = $this->episode->episode_number;
+        }
+
+        if ($this->episode->duration_seconds) {
+            $schema['duration'] = JsonLd::isoDuration($this->episode->duration_seconds);
+        }
+
+        return $schema;
     }
 
     public function code(): string

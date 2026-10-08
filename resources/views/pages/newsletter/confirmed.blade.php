@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null">
+<x-layouts.site :page-meta="$pageMeta">
     <x-page-section>
         <div class="mx-auto max-w-xl text-center">
             <x-terminal-prompt command="newsletter:confirmed" />

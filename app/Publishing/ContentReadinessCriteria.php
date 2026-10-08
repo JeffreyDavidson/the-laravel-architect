@@ -164,8 +164,8 @@ final readonly class ContentReadinessCriteria
     }
 
     /**
-     * An SEO description set on the record's SEO row, or the model column that
-     * getDynamicSEOData() falls back to.
+     * An SEO description set on the record's SEO row, or the model column its page uses
+     * as the description when none is saved.
      *
      * @param  literal-string  $fallbackColumn
      */

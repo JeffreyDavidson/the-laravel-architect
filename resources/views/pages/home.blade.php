@@ -1,4 +1,4 @@
-<x-layouts.site :seo-source="$seoSource ?? null" :structured-data="$structuredData ?? []">
+<x-layouts.site :page-meta="$pageMeta">
     {{-- The reveal and count-up animations cover the whole page, so their component wraps every section. --}}
     <div data-home-reveal x-data="homeReveal">
         {{-- ===== HERO ===== --}}

@@ -18,7 +18,6 @@ use App\Support\Monitoring\Nightwatch\ResolveNightwatchUser;
 use App\Support\Monitoring\Sentry\RedactSentryBreadcrumb;
 use App\Support\Monitoring\Sentry\RedactSentryEvent;
 use App\View\Components\SocialLinks;
-use App\View\Composers\StructuredDataComposer;
 use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +32,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nightwatch\Facades\Nightwatch;
 use Livewire\Livewire;
@@ -92,11 +90,6 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureHealthChecks();
         $this->configureRateLimiting();
         $this->configureUrls();
-
-        View::composer([
-            'errors.404',
-            'pages.*',
-        ], StructuredDataComposer::class);
     }
 
     private function configureNightwatch(): void
