@@ -151,38 +151,6 @@ it('rejects an unsafe Nightwatch request sample rate', function (mixed $sampleRa
     'malformed' => '0.1',
 ]);
 
-it('accepts a fully configured NAS backup disk', function () {
-    config()->set([
-        'backup.backup.destination.disks' => ['local', 'nas-backups'],
-        'filesystems.disks.nas-backups' => [
-            'driver' => 'sftp',
-            'host' => 'nas.internal.test',
-            'username' => 'backup-user',
-            'password' => 'secret-password',
-            'port' => 22,
-            'root' => '/backups',
-            'hostFingerprint' => 'SHA256:test-fingerprint',
-        ],
-    ]);
-
-    $this->artisanCommand('app:verify-production')
-        ->expectsOutput('Production configuration is ready.')
-        ->assertSuccessful();
-});
-
-it('rejects an incomplete NAS backup disk without exposing credentials', function () {
-    config()->set([
-        'backup.backup.destination.disks' => ['local', 'nas-backups'],
-        'filesystems.disks.nas-backups.password' => 'secret-password',
-        'filesystems.disks.nas-backups.hostFingerprint' => null,
-    ]);
-
-    $this->artisanCommand('app:verify-production')
-        ->expectsOutputToContain('The nas-backups disk must configure host, username, password, root, port, and host fingerprint.')
-        ->doesntExpectOutput('secret-password')
-        ->assertFailed();
-});
-
 it('accepts a fully configured Backblaze backup disk', function () {
     config()->set([
         'backup.backup.destination.disks' => ['local', 'b2-backups'],

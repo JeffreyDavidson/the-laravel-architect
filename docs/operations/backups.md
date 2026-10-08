@@ -13,9 +13,9 @@ media directory (`BACKUP_MEDIA_PATH`). Source code is recovered from GitHub, and
 
 Production uses `b2-backups` as its sole scheduled backup destination, confirmed
 and retained by operator decision on 2026-09-19. Backup creation and monitoring
-must cover that same destination. Local and NAS copies are not required by the
-current policy; adding another destination requires a separate operational
-decision. This leaves B2 as the only off-server backup destination, so preserve
+must cover that same destination. Local copies are not required by the current
+policy, and the NAS destination was removed on 2026-10-08; adding another
+destination requires a separate operational decision. This leaves B2 as the only off-server backup destination, so preserve
 archive encryption, failure notifications, and regular restore validation.
 
 Backblaze B2 provides an encrypted off-server copy through its S3-compatible

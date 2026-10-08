@@ -53,9 +53,6 @@ it('never exposes real credentials to tests', function (string $key) {
     'backup.backup.password',
     'filesystems.disks.b2-backups.key',
     'filesystems.disks.b2-backups.secret',
-    'filesystems.disks.nas-backups.host',
-    'filesystems.disks.nas-backups.username',
-    'filesystems.disks.nas-backups.password',
     'filesystems.disks.s3.key',
     'filesystems.disks.s3.secret',
 ]);
