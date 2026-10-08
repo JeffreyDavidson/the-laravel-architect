@@ -2,7 +2,7 @@
 
 use App\Rules\PassesTurnstile;
 use App\Services\TurnstileVerifier;
-use Illuminate\Http\Request;
+use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,16 +18,14 @@ beforeEach(function (): void {
 });
 
 /**
- * Validate the request's Turnstile token with the rule, as the contact form does.
+ * Validate the submitted Turnstile token with the rule, as the contact form does.
  *
  * @param  array<string, mixed>  $input
  */
 function validateTurnstile(array $input): Illuminate\Validation\Validator
 {
-    $request = Request::create(route('contact.store'), 'POST', $input);
-
     return Validator::make($input, [
-        'cf-turnstile-response' => [new PassesTurnstile(app(TurnstileVerifier::class), $request, 'contact-form')],
+        'cf-turnstile-response' => [new PassesTurnstile(app(TurnstileVerifier::class), '203.0.113.10', 'contact-form')],
     ]);
 }
 
@@ -44,6 +42,8 @@ it('accepts a token Turnstile verifies for the expected action', function () {
 
     expect($validator->passes())
         ->toBeTrue();
+    Http::assertSent(fn (ClientRequest $request): bool => $request['response'] === 'valid-token'
+        && $request['remoteip'] === '203.0.113.10');
 });
 
 it('rejects a token Turnstile does not verify', function () {
@@ -58,7 +58,7 @@ it('rejects a token Turnstile does not verify', function () {
         ->toBe(['Please verify that you are human and try again.']);
 });
 
-it('rejects a missing or blank token without contacting Turnstile', function (array $input) {
+it('rejects a missing, blank or non-string token without contacting Turnstile', function (array $input) {
     /** @var array<string, mixed> $input */
     Http::fake();
 
@@ -71,4 +71,7 @@ it('rejects a missing or blank token without contacting Turnstile', function (ar
 })->with([
     'missing' => [[]],
     'blank' => [['cf-turnstile-response' => '']],
+    'whitespace only' => [['cf-turnstile-response' => '   ']],
+    'number' => [['cf-turnstile-response' => 123]],
+    'array' => [['cf-turnstile-response' => ['unexpected']]],
 ]);
