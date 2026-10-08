@@ -514,11 +514,6 @@
         }
     }
 
-@keyframes marqueeScroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-25%); }
-    }
-
 @keyframes article-reading-progress {
     to {
         transform: scaleX(1);

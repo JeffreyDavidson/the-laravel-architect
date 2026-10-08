@@ -98,7 +98,7 @@
     @php
         $card = match ($variant) {
             'featured' => [
-                'article' => 'blog-featured group hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200',
+                'article' => 'group hover:border-brand-600/40 dark:border-brand-800/50 dark:bg-brand-900/60 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors duration-200',
                 'link' => 'grid md:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]',
                 'sizes' => '(min-width: 1024px) 720px, calc(100vw - 2rem)',
                 'artwork' => '[&_img]:h-full [&_img]:w-full [&_img]:object-cover bg-surface-media block min-h-60 overflow-hidden md:min-h-[27rem]',
