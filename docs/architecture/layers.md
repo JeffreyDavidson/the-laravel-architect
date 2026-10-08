@@ -82,12 +82,12 @@ when neither fits, and put it in `app/View/Composers`.
 | Layer | Does | Never does | Enforced by |
 | --- | --- | --- | --- |
 | **Action**<br>`app/Actions`, imperative verb (`PublishContent`, `SendContactMessage`), public `handle()` | One state change: owns its transaction and business guards, may call other Actions or dispatch Jobs, throws a named exception from `app/Exceptions` when a rule fails | `__invoke`, HTTP or Filament classes, read-only work (that's a Query plus a Renderer), unbounded loops over whole tables | `tests/Architecture/ActionArchitectureTest.php` |
-| **Workflow service**<br>`app/Services`, `…Workflow` | One long operation over many records (`YouTubeVideoSyncWorkflow`, `ResponsiveImageRepairWorkflow`), constructor-injected collaborators, returns a report for the command to print | Taking collaborators as callables; `Synchronizer`, `Manager` or `Processor` names | No arch test (`.ai/rules/services.md`) |
-| **Integration service**<br>`app/Services`, `…Service`, `…Verifier`, `…Monitor` | Wraps an external system or runtime check (`YouTubeService`, `TurnstileVerifier`, `DeploymentVerifier`, `Health\RuntimeHealthMonitor`) | Business decisions | No arch test (`.ai/rules/services.md`) |
+| **Workflow service**<br>`app/Services`, `…Workflow` | One long operation over many records (`YouTubeVideoSyncWorkflow`, `ResponsiveImageRepairWorkflow`), constructor-injected collaborators, returns a report for the command to print | Taking collaborators as callables; `Synchronizer`, `Manager` or `Processor` names | `tests/Architecture/ServiceArchitectureTest.php` (`.ai/rules/services.md`) |
+| **Integration service**<br>`app/Services`, `…Service`, `…Verifier`, `…Monitor` | Wraps an external system or runtime check (`YouTubeService`, `TurnstileVerifier`, `DeploymentVerifier`, `Health\RuntimeHealthMonitor`) | Business decisions | `tests/Architecture/ServiceArchitectureTest.php` (`.ai/rules/services.md`) |
 | **Other services**<br>`app/Services` | Shared technical work with state or I/O: `StoredMediaLifecycle`, `ResponsiveImageVariants`, `OgImageCache`, the `ContentArchive` importer and exporter | Page data or HTTP | `tests/Architecture/ConventionsArchitectureTest.php` only |
 | **Renderer / Generator**<br>`app/Support/Feeds/…Renderer`; `app/Services/…Generator` when it needs a model | Pure output from the data it's given: RSS, sitemap and robots.txt strings, OG and featured-image PNG bytes | Queries, writing files or rows (the caller stores the result) | `tests/Architecture/SupportArchitectureTest.php` (no models in `Support\Feeds`) |
-| **Job**<br>`app/Jobs`, imperative verb (`DeliverNewsletterIssue`) | Async, retryable unit: carries an id or one model, reloads it, re-checks guards, sends or calls an Action or Service, owns retry and idempotency | Business logic beyond retry and idempotency. Actions (or the scheduler in `routes/console.php`) dispatch jobs, not Filament or controllers | No arch test (`.ai/rules/services.md`) |
-| **Mail / Notification**<br>`app/Mail`, `app/Notifications` | Message content via `envelope()` and `content()` | Deciding whether to send (the Action or Job decides) | No arch test |
+| **Job**<br>`app/Jobs`, imperative verb (`DeliverNewsletterIssue`) | Async, retryable unit: carries an id or one model, reloads it, re-checks guards, sends or calls an Action or Service, owns retry and idempotency | Business logic beyond retry and idempotency. Actions (or the scheduler in `routes/console.php`) dispatch jobs, not Filament or controllers | `tests/Architecture/JobArchitectureTest.php` (`.ai/rules/services.md`) |
+| **Mail / Notification**<br>`app/Mail`, `app/Notifications` | Message content via `envelope()` and `content()` | Deciding whether to send (the Action or Job decides) | `tests/Architecture/MailArchitectureTest.php` (`.ai/rules/mail.md`) |
 
 ## The Domain
 
@@ -107,8 +107,8 @@ when neither fits, and put it in `app/View/Composers`.
 | Layer | Does | Never does | Enforced by |
 | --- | --- | --- | --- |
 | **Support**<br>`app/Support`, subfolders by technical concern (`Feeds`, `Monitoring`, `Seo`) | Portable building blocks: serialisers, formatters, technical value objects (`PaginatedPageSeo`, `JsonLd`), typed config accessors (`DisplayTimezone`), package callbacks | Models, Presenters, ViewModels, `App\Http`, Filament, the Request, `abort*`, business rules, I/O as its purpose | `tests/Architecture/SupportArchitectureTest.php` |
-| **Filament**<br>`app/Filament`, one folder per resource | Layout, labels, visibility, `->authorize()`, notifications, calling Actions (`PublishContentAction` → `PublishContent`) and Rules, mapping Query results into stats, rows and links | Writes beyond one model call (use an Action), repeated or non-trivial queries (use a Query), domain rules | No arch test (`.ai/rules/filament.md`) |
-| **Provider**<br>`app/Providers` | Container bindings, rate limiters, framework and package configuration | Page or business logic | No arch test |
+| **Filament**<br>`app/Filament`, one folder per resource | Layout, labels, visibility, `->authorize()`, notifications, calling Actions (`PublishContentAction` → `PublishContent`) and Rules, mapping Query results into stats, rows and links | Writes beyond one model call (use an Action), repeated or non-trivial queries (use a Query), domain rules | `tests/Architecture/FilamentArchitectureTest.php` (`.ai/rules/filament.md`) |
+| **Provider**<br>`app/Providers` | Container bindings, rate limiters, framework and package configuration | Page or business logic | `tests/Architecture/ProviderArchitectureTest.php` (`.ai/rules/providers.md`) |
 
 ## Where Does a New Class Go?
 
@@ -154,27 +154,20 @@ Creating a new base folder under `app/` needs the owner's approval first.
 
 ## Known Gaps
 
-These spots on `develop` (as of 2026-10-07) don't follow the tables yet and
+These spots on `develop` (as of 2026-10-08) don't follow the tables yet and
 are scheduled to be fixed. Follow the rule, not the gap, and delete a line here
 when its fix merges.
 
-- `ResendWebhookController` verifies the Resend signature itself instead of in
-  middleware.
-- `ProjectController::index` and `ContactController::create` read the raw
-  `Request` without a FormRequest.
-- `PodcastEpisodeController` checks episode ownership by hand instead of
-  `scopeBindings()`.
-- `EditContactInquiry` dispatches `SendContactInquiryEmails` directly instead of
-  through an Action, and the dashboard widgets and navigation badges run their
-  own counts instead of a shared Query.
-- `Gate::before` lives in the Filament panel provider and denies every
-  non-admin ability instead of returning `null`.
-- Mail is sent both through the `Mail` facade and an injected `Mailer`, and
-  mailable names mix `…Mail` with none (`App\Mail\ConfirmNewsletterSubscription`
-  shares its name with an Action). Route names mix kebab-case
-  (`preview.newsletter-issue`) and camelCase (`newsletter.unsubscribe.oneClick`).
+- `ContactController::create` reads the `project` query value from the raw
+  `Request` instead of a FormRequest.
 - `OgImageController` and `RobotsController` set `Cache-Control` on the
   response instead of with `cache.headers` on the route.
+- `ArchiveViewModel` builds YouTube watch URLs itself instead of using
+  `VideoPresenter::youtubeUrl()`.
+
+The admin `Gate::before` returning `false` for non-administrators is a decision,
+not a gap: Filament allows any ability on a model without a policy unless a
+before-callback denies it (`.ai/rules/providers.md`).
 
 ## Related
 
