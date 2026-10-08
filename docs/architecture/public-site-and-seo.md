@@ -68,9 +68,29 @@ future content off public pages, feeds, and the sitemap (see
 
 ## SEO metadata
 
-Pages provide page-specific `SEOData` or an SEO-enabled content model to the
-shared layout, which renders titles, descriptions, canonical links, social
-metadata, and robots directives.
+Every page ViewModel implements `App\Contracts\PageViewModel`: its `data()` (and
+`previewData()` for previewable pages) returns the page's `App\Data\PageMeta`
+under the `pageMeta` key. `PageMeta` holds the page's `SEOData` and its own
+JSON-LD nodes. ViewModels stay stateless and return typed arrays, so the key is
+documented in each array shape, which PHPStan checks, and
+`tests/Architecture/ViewModelArchitectureTest.php` checks that every page
+ViewModel implements the contract and documents the key. The site layout
+(`components/layouts/site`) takes the `PageMeta` as its only SEO input: it
+renders the tags with laravel-seo's `seo($pageMeta->seo)` and the JSON-LD
+through `SiteStructuredData::graph()`. Previews return a `noindex, nofollow`
+`PageMeta` with no page nodes, and the 404 page builds its own `PageMeta` in the
+view.
+
+Content models keep laravel-seo's `HasSEO`: its `seo` relation holds the SEO
+fields an editor saves in the admin (the Filament SEO section), and deleting
+the content removes the row. Models no longer implement `getDynamicSEOData()`.
+The post, project, episode and newsletter issue ViewModels build the page's own
+`SEOData` (title, description, image from the presenter, dates and type) and
+pass it through `Concerns\AppliesStoredSeo`, which fills each field the page
+leaves null from the saved row, the same precedence laravel-seo's
+`SEO::prepareForUsage()` gives a model's dynamic SEO. The page's values win, so
+the saved description, image, robots and canonical URL apply when the page has
+none, while the title always comes from the content.
 
 - Blog posts share as articles with publication times and one wide image (the
   uploaded featured image, the bundled launch artwork, or the generated
@@ -86,10 +106,27 @@ metadata, and robots directives.
 
 ## Structured data
 
-The shared JSON-LD graph uses named Laravel routes for canonical site, author,
-static-page, article, podcast, episode, project case-study, collection,
-item-list, and breadcrumb entities. Structured-data generation is separated into
-article, podcast, and collection builders behind `StructuredDataBuilder`.
+Each page's JSON-LD graph is the site-wide WebSite entity (with its author, the
+Person on the About page), followed by the nodes the page ViewModel put in its
+`PageMeta`. Every page, including the 404 page, gets the WebSite entity.
+
+- `App\ViewModels\SiteStructuredData` owns the site-wide entity and the
+  references pages use: `graph()`, `authorReference()`, `page()` for the fixed
+  pages (home, about, contact, privacy, uses) and `breadcrumbs()`, which starts
+  every trail at Home. The layout injects it, and the `BlogIndex` component uses
+  it for the graph it sends with `blog-metadata-updated`.
+- Presenters describe their one model: `PostPresenter::articleSchema()`,
+  `ProjectPresenter::creativeWorkSchema()`, `PodcastPresenter::seriesSchema()`
+  and `seriesReference()`, and `EpisodePresenter::episodeSchema()`. They take
+  the author reference from the ViewModel and build URLs with their injected URL
+  generator.
+- Page ViewModels decide which nodes their page has and in what order, and
+  build the listings: the collection name, its canonical URL and the items, with
+  `CollectionListing::paginated()` continuing item positions across pages.
+- `app/Support/Seo` keeps only generic shapes that take plain names and URLs:
+  `JsonLd::breadcrumbList()`, `JsonLd::collectionPage()` (a CollectionPage and
+  its ItemList), `JsonLd::isoDuration()`, `CollectionListing` and
+  `PaginatedPageSeo`. They never import models, presenters or the request.
 
 ## Archives and pagination
 
