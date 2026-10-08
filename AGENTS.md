@@ -60,7 +60,7 @@
 # Deployment
 
 - Production deployment uses Laravel Forge.
-- Read `docs/operations.md` before production work.
+- Read `docs/operations.md` and the page in `docs/operations/` for the task before production work.
 - Follow the confirmation requirements for production mutations.
 - Use the deployment verifier before and after releases.
 
@@ -69,9 +69,10 @@
 # Documentation
 
 - Keep `README.md` concise and repository-oriented.
-- Put architecture details in `docs/architecture.md`.
+- Put architecture details in `docs/architecture.md` (the index) and its feature pages in `docs/architecture/`.
+- Read `docs/architecture/layers.md` before creating a class: it says which layer new code belongs in, what each layer never does, and which architecture test enforces it.
 - Put testing guidance in `docs/testing.md`.
-- Put deployment and operational procedures in `docs/operations.md`.
+- Put deployment and operational procedures in `docs/operations.md` (the index) and its pages and runbooks in `docs/operations/`.
 - Update the relevant documentation when behavior or operational workflows change.
 
 === .ai/local-development rules ===
