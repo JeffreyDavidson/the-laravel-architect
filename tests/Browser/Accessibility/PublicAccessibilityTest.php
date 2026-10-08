@@ -145,7 +145,7 @@ it('opens the transcript at a deep-linked section', function () {
     [$podcast, $episode] = transcriptEpisode();
     withVite();
 
-    $page = $this->browserPage(route('podcast.episode', [$podcast, $episode]).'#transcript-boundaries-in-practice', 'desktop');
+    $page = $this->browserPage(route('podcasts.episode', [$podcast, $episode]).'#transcript-boundaries-in-practice', 'desktop');
 
     $page->assertScript('document.querySelector("[data-transcript]").open === true')
         ->assertNoJavaScriptErrors();
@@ -304,7 +304,7 @@ it('keeps the podcast coming soon badge readable in dark mode', function () {
     withVite();
     $podcast = Podcast::factory()->create();
 
-    $page = $this->browserPageWithTheme(route('podcast.show', $podcast, false), 'desktop', 'dark');
+    $page = $this->browserPageWithTheme(route('podcasts.show', $podcast, false), 'desktop', 'dark');
 
     $page->assertScript(meetsTextContrast('[...document.querySelectorAll("span")].find((span) => span.textContent.trim() === "Coming Soon")'))
         ->assertNoJavaScriptErrors();

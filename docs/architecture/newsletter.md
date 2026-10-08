@@ -14,7 +14,8 @@ Alpine component (`newsletterForm`, registered from
 and submits in place:
 
 - it posts with `Accept: application/json`;
-- `NewsletterSubscriptionController::store` answers `{message}` (or a 422 with
+- `NewsletterSubscriptionController::store` (whose `SubscribeNewsletterRequest`
+  lower-cases the address before validating it) answers `{message}` (or a 422 with
   the validation error, or 429 from the rate limit);
 - the component shows the matching banner in the block's live region, clearing
   the field on success and keeping it on error;
@@ -54,9 +55,10 @@ Newsletter subscriptions use a signed, expiring double-opt-in link whose page
 confirms only through a POST of its confirmation form, so link scanners that
 just fetch the page change nothing.
 
-- Confirmation routes check the URL signature and compare the presented token
-  against a non-mass-assignable SHA-256 hash in
-  `EnsureValidNewsletterConfirmationLink`.
+- Confirmation routes check the URL signature in
+  `EnsureValidNewsletterConfirmationLink`, which asks
+  `Subscriber::hasConfirmationToken()` to compare the presented token against a
+  non-mass-assignable SHA-256 hash in constant time.
 - The page is rendered in its "Confirming your subscription…" state from the
   first paint. In a browser the `newsletterConfirm` Alpine component
   (`resources/js/pages/newsletter-confirm.js`) submits that form as soon as the
@@ -93,6 +95,11 @@ and are included in every newsletter. `SubscriberPresenter::unsubscribeUrl()`
 builds them, and `SubscriberPresenter::confirmationUrl()` builds the signed
 confirmation link.
 
+- `NewsletterUnsubscriptionController` owns the page flow: `create` shows the
+  page (`GET`, `newsletter.unsubscribe`) and `store` handles its form (`DELETE`,
+  `newsletter.unsubscribe.store`). `NewsletterOneClickUnsubscriptionController`
+  answers the one-click `POST` (`newsletter.unsubscribe.oneClick`); both
+  unsubscribe through `UnsubscribeFromNewsletter`.
 - Unsubscribe links are permanent signed URLs, because a newsletter can be read
   long after it is sent.
 - The unsubscribe page also shows the email and a CSRF token, so it is sent with
@@ -132,8 +139,11 @@ newsletter, so a small do-not-email list of those addresses is kept. Suppressed
 subscribers cannot be selected for bulk delete, so the do-not-email list cannot
 be erased from the admin.
 
-A signed Resend webhook (`POST /webhooks/resend`, `ResendWebhookController` and
-`HandleResendWebhook`, outside the web middleware group and rate limited)
+A signed Resend webhook (`POST /webhooks/resend`, outside the web middleware
+group and rate limited before anything else runs; the
+`VerifyResendWebhookSignature` middleware checks the svix signature and
+timestamp, then `ResendWebhookController` decodes the body for
+`HandleResendWebhook`)
 suppresses the recipients of permanent bounces, spam complaints and Resend's own
 suppressions. Its setup and protections are in the
 [webhook runbook](../operations/runbooks/resend-webhook.md).

@@ -20,8 +20,14 @@ records with constructor-injected collaborators and returns a report. An
 integration service such as `YouTubeService` wraps an external system, and a job
 is an async unit that calls an action or service.
 
+Before adding a class, read [Layers](architecture/layers.md): what each layer
+does and never does, its folder and naming, the architecture test that enforces
+it, and a checklist for deciding where new code goes.
+
 ## Sections
 
+- [Layers](architecture/layers.md): where code goes, the request lifecycle and
+  the checklist for new classes.
 - [Public site and SEO](architecture/public-site-and-seo.md): ViewModels, SEO
   metadata and JSON-LD, archives and blog search, projects, social profiles,
   previews, feeds, the sitemap and `robots.txt`.

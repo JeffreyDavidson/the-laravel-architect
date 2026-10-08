@@ -1,7 +1,7 @@
 @props(['episode'])
 
 <a
-    href="{{ route('podcast.episode', [$episode->podcast, $episode]) }}"
+    href="{{ route('podcasts.episode', [$episode->podcast, $episode]) }}"
     class="group focus-visible:outline-brand-500 dark:border-brand-800 flex h-full min-w-0 flex-col border-t border-gray-200 py-6 focus-visible:outline-2 focus-visible:outline-offset-4"
 >
     <div class="flex items-center justify-between gap-3 text-xs text-gray-500 dark:text-gray-400">
