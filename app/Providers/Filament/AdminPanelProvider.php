@@ -4,23 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
-use App\Enums\NavigationGroup as AdminNavigationGroup;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\EditorialCalendar;
-use App\Filament\Pages\Insights;
-use App\Filament\Pages\MediaHealth;
-use App\Filament\Resources\Categories\CategoryResource;
-use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
-use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Projects\ProjectResource;
-use App\Filament\Resources\SocialProfiles\SocialProfileResource;
-use App\Filament\Resources\Subscribers\SubscriberResource;
-use App\Filament\Resources\Tags\TagResource;
-use App\Filament\Resources\Videos\VideoResource;
-use App\Models\User;
+use App\Support\DisplayTimezone;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
@@ -29,38 +15,30 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Vite;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 final class AdminPanelProvider extends PanelProvider
 {
-    /**
-     * The panel has a single administrator role, so one app-wide gate replaces
-     * per-model policies: administrators may perform every ability and everyone
-     * else is denied. Global before-callbacks run for every ability whether or
-     * not a policy method exists, and Filament honors them. Capability limits,
-     * such as subscribers never being created in the panel, live on the
-     * resources, because this gate cannot restrict an administrator.
-     */
+    /** Panel dates and times display in the site's timezone, not the UTC the database stores. */
     public function boot(): void
     {
-        Gate::before(fn (User $user): bool => $user->is_admin);
+        FilamentTimezone::set(DisplayTimezone::name(...));
     }
 
     public function panel(Panel $panel): Panel
@@ -99,38 +77,6 @@ final class AdminPanelProvider extends PanelProvider
             ->font('IBM Plex Sans', provider: LocalFontProvider::class)
             ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => $builder
-                ->items([
-                    ...Dashboard::getNavigationItems(),
-                ])
-                ->groups([
-                    NavigationGroup::fromEnum(AdminNavigationGroup::Publish)
-                        ->items([
-                            ...EditorialCalendar::getNavigationItems(),
-                            ...PostResource::getNavigationItems(),
-                            ...PodcastResource::getNavigationItems(),
-                            ...EpisodeResource::getNavigationItems(),
-                            ...NewsletterIssueResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::fromEnum(AdminNavigationGroup::Library)
-                        ->items([
-                            ...ProjectResource::getNavigationItems(),
-                            ...CategoryResource::getNavigationItems(),
-                            ...TagResource::getNavigationItems(),
-                            ...VideoResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::fromEnum(AdminNavigationGroup::Audience)
-                        ->items([
-                            ...SocialProfileResource::getNavigationItems(),
-                            ...SubscriberResource::getNavigationItems(),
-                            ...ContactInquiryResource::getNavigationItems(),
-                        ]),
-                    NavigationGroup::fromEnum(AdminNavigationGroup::Operations)
-                        ->items([
-                            ...Insights::getNavigationItems(),
-                            ...MediaHealth::getNavigationItems(),
-                        ]),
-                ]))
             ->userMenuItems([
                 MenuItem::make()
                     ->label('View Site')
@@ -138,28 +84,20 @@ final class AdminPanelProvider extends PanelProvider
                     ->icon(Heroicon::OutlinedGlobeAlt),
                 MenuItem::make()
                     ->label('GitHub')
-                    ->url('https://github.com/JeffreyDavidson/the-laravel-architect', shouldOpenInNewTab: true)
+                    ->url(config()->string('app.repository_url'), shouldOpenInNewTab: true)
                     ->icon(Heroicon::OutlinedCodeBracket),
             ])
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
-                fn (): HtmlString => new HtmlString(sprintf(
-                    '<a class="tla-sidebar-primary" href="%s" aria-label="New post" title="New post"><span class="tla-sidebar-primary__icon" aria-hidden="true">+</span><span class="tla-sidebar-primary__label">New post</span></a>',
-                    e(PostResource::getUrl('create')),
-                )),
+                fn (): View => view('filament.sidebar.new-post-link', ['url' => PostResource::getUrl('create')]),
             )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
-                fn (): HtmlString => new HtmlString('
-                    <div class="tla-auth-kicker" aria-hidden="true">
-                        <span class="tla-auth-kicker__dot"></span>
-                        Private studio access
-                    </div>
-                '),
+                fn (): View => view('filament.auth.login-kicker'),
             )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-                fn (): HtmlString => new HtmlString(view('filament.auth.theme-switcher')->render()),
+                fn (): View => view('filament.auth.theme-switcher'),
             )
             ->renderHook(
                 PanelsRenderHook::SCRIPTS_AFTER,

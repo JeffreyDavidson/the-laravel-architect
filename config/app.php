@@ -58,6 +58,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Source Repository URL
+    |--------------------------------------------------------------------------
+    |
+    | The public GitHub repository for this site, linked from the admin
+    | panel's user menu.
+    |
+    */
+
+    'repository_url' => 'https://github.com/JeffreyDavidson/the-laravel-architect',
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
