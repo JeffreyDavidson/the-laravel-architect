@@ -6,12 +6,12 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use App\Presenters\PostPresenter;
-use App\Queries\BlogIndexQuery;
 use App\ViewModels\PostIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 pest()->use(RefreshDatabase::class);
 
@@ -128,6 +128,11 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
         ->toBeTrue();
 });
 
+it('rejects an unknown category', function () {
+    expect(fn (): array => blogIndexViewModelData(['category' => 'missing-category']))
+        ->toThrow(NotFoundHttpException::class);
+});
+
 /**
  * @param  array{q?: string, category?: string}  $filters
  * @return array{
@@ -145,11 +150,7 @@ function blogIndexViewModelData(array $filters = []): array
     $query = trim($filters['q'] ?? '');
     $categorySlug = $filters['category'] ?? null;
 
-    return app(PostIndexViewModel::class)->data(
-        app(BlogIndexQuery::class)->results($query, $categorySlug),
-        $query,
-        $categorySlug,
-    );
+    return app(PostIndexViewModel::class)->data($query, $categorySlug);
 }
 
 function createPostIndexViewModelPost(

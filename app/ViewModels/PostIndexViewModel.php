@@ -6,20 +6,21 @@ namespace App\ViewModels;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Queries\BlogIndexQuery;
 use App\Support\Seo\PaginatedPageSeo;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
-final class PostIndexViewModel
+final readonly class PostIndexViewModel
 {
+    public function __construct(private BlogIndexQuery $blogIndexQuery) {}
+
     /**
-     * @param  array{
-     *     posts: LengthAwarePaginator<int, Post>,
-     *     categories: Collection<int, Category>,
-     *     publishedPostCount: int,
-     *     selectedCategory: Category|null,
-     * }  $results
+     * The blog index for the validated search and category, shared by the page and the BlogIndex
+     * component. An unknown category or a page past the last one is a 404. Page links always point
+     * at the blog index, also when Livewire renders them, and keep the search and category.
+     *
      * @return array{
      *     posts: LengthAwarePaginator<int, Post>,
      *     categories: Collection<int, Category>,
@@ -30,14 +31,27 @@ final class PostIndexViewModel
      *     seoSource: SEOData,
      * }
      */
-    public function data(array $results, string $query, ?string $categorySlug): array
+    public function data(string $query, ?string $categorySlug): array
     {
-        $posts = $results['posts'];
-        $categories = $results['categories'];
-        $publishedPostCount = $results['publishedPostCount'];
-        $selectedCategory = $results['selectedCategory'];
+        $selectedCategory = $categorySlug !== null && $categorySlug !== ''
+            ? $this->blogIndexQuery->category($categorySlug) ?? abort(404)
+            : null;
+
+        $posts = $this->blogIndexQuery->posts($query, $selectedCategory)
+            ->withPath(route('blog.index'))
+            ->appends(array_filter([
+                'q' => $query !== '' ? $query : null,
+                'category' => $categorySlug,
+            ], fn (?string $value): bool => $value !== null));
 
         $page = PaginatedPageSeo::forCurrentPage($posts);
+        abort_if($page->isOutOfRange(), 404);
+
+        $categories = $this->blogIndexQuery->categories();
+        $publishedPostCount = ! $selectedCategory instanceof Category && $query === ''
+            ? $posts->total()
+            : $this->blogIndexQuery->publishedPostCount();
+
         $categoryUrl = $selectedCategory ? route('blog.category', $selectedCategory) : null;
         $canonicalUrl = $categoryUrl ?? $page->url('blog.index');
         $searchCanonicalUrl = $categoryUrl ?? route('blog.index');

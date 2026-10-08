@@ -8,6 +8,10 @@ arch('keeps SEO metadata construction outside controllers')
     ->expect('App\Http\Controllers')
     ->not->toUse(SEOData::class);
 
+arch('leaves reads to view models instead of calling queries from controllers')
+    ->expect('App\Http\Controllers')
+    ->not->toUse('App\Queries');
+
 $controllerClasses = function (): array {
     $directory = dirname(__DIR__, 2).'/app/Http/Controllers';
 

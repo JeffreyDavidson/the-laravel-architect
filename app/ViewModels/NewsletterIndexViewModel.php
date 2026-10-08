@@ -25,6 +25,7 @@ final class NewsletterIndexViewModel
             ->paginate(self::ISSUES_PER_PAGE);
 
         $page = PaginatedPageSeo::forCurrentPage($issues);
+        abort_if($page->isOutOfRange(), 404);
         $url = $page->url('newsletter.index');
 
         return [

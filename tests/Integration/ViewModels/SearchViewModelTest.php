@@ -7,11 +7,11 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Queries\SearchQuery;
 use App\ViewModels\SearchViewModel;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 
 pest()->use(RefreshDatabase::class);
 
@@ -23,7 +23,7 @@ pest()->use(RefreshDatabase::class);
 function firstSearchViewModelResult(string $query, SearchContentType $type): array
 {
     $data = app(SearchViewModel::class)
-        ->data(app(SearchQuery::class)->get($query, $type), $query, $type);
+        ->data($query, $type);
     $result = $data['results'][$type->value]->items()[0] ?? null;
 
     if ($result === null) {
@@ -133,4 +133,19 @@ it('leaves out the description of a result without one', function () {
     $result = firstSearchViewModelResult('Zephyrquill', SearchContentType::Videos);
 
     expect($result['description'])->toBeNull();
+});
+
+it('keeps the search terms and returns to the group heading in page links', function () {
+    foreach (range(1, 13) as $number) {
+        Post::factory()
+            ->published()
+            ->create(['title' => "Paging post {$number}"]);
+    }
+    app()->instance('request', Request::create(route('search', ['q' => 'paging', 'type' => 'writing'])));
+
+    $data = app(SearchViewModel::class)->data('paging', SearchContentType::Writing);
+
+    expect($data['results']['writing']->nextPageUrl())
+        ->toContain('q=paging', 'type=writing', 'postsPage=2')
+        ->toEndWith('#search-writing');
 });

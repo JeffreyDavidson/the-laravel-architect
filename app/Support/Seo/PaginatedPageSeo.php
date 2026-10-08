@@ -18,8 +18,8 @@ final readonly class PaginatedPageSeo
     ) {}
 
     /**
-     * Read the listing's current page, aborting with a 404 when it is past the last page so an
-     * empty page is never served or indexed. An empty listing still has a first page.
+     * Read the listing's current page. The caller checks isOutOfRange() and answers a page past
+     * the last one with a 404, so an empty page is never served or indexed.
      *
      * @template TItem
      *
@@ -27,9 +27,13 @@ final readonly class PaginatedPageSeo
      */
     public static function forCurrentPage(LengthAwarePaginator $paginator): self
     {
-        abort_if($paginator->currentPage() > $paginator->lastPage(), 404);
-
         return new self($paginator->currentPage(), $paginator->lastPage());
+    }
+
+    /** Whether the current page is past the last page. An empty listing still has a first page. */
+    public function isOutOfRange(): bool
+    {
+        return $this->currentPage > $this->lastPage;
     }
 
     /**

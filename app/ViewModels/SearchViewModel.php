@@ -20,13 +20,14 @@ use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use UnexpectedValueException;
 
-/**
- * @phpstan-import-type SearchResultPage from SearchQuery
- */
-final class SearchViewModel
+final readonly class SearchViewModel
 {
+    public function __construct(private SearchQuery $searchQuery) {}
+
     /**
-     * @param  array<string, SearchResultPage>  $results  matching models keyed by content type value
+     * The search page for the validated query and type. Each group's page links keep the search
+     * terms and return to the group's heading.
+     *
      * @return array{
      *     query: string,
      *     results: array<string, LengthAwarePaginator<int, array{title: string, description: string|null, url: string, date: CarbonInterface|null, label: string, external: bool}>>,
@@ -36,9 +37,16 @@ final class SearchViewModel
      *     seoSource: SEOData,
      * }
      */
-    public function data(array $results, ?string $query, ?SearchContentType $selectedType = null): array
+    public function data(?string $query, ?SearchContentType $selectedType = null): array
     {
         $query = trim($query ?? '');
+
+        $results = $this->searchQuery->get($query, $selectedType);
+
+        foreach ($results as $type => $group) {
+            $group->withQueryString()
+                ->fragment("search-{$type}");
+        }
 
         $results = array_map(
             fn (LengthAwarePaginator $group): LengthAwarePaginator => $group->through(fn (Model $model): array => $this->result($model)),

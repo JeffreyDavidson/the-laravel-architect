@@ -51,8 +51,7 @@ final class ArchiveQuery
         }
 
         /** @var LengthAwarePaginator<int, object{ id: int, type: string, title: string, summary: string|null, slug: string, podcast_slug: string|null, youtube_id: string|null, sort_date: string }> $items */
-        $items = $query->paginate(self::ITEMS_PER_PAGE)
-            ->withQueryString();
+        $items = $query->paginate(self::ITEMS_PER_PAGE);
 
         return $items->through(fn (object $item): ContentListItem => $this->record($item));
     }

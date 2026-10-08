@@ -29,6 +29,7 @@ final class BlogTagViewModel
             ->paginate(10);
 
         $page = PaginatedPageSeo::forCurrentPage($posts);
+        abort_if($page->isOutOfRange(), 404);
         $canonicalUrl = $page->url('blog.tag', ['tag' => $tag]);
 
         return [

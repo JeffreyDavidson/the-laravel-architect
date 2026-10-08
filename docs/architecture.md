@@ -3,7 +3,7 @@
 The Laravel Architect is a Laravel application with server-rendered Blade pages
 for the public site, a Filament admin panel at `/admin`, and SQLite for storage.
 Controllers stay thin: page data comes from ViewModels, reusable content
-selection from query objects, multi-step work from actions, and validation
+selection from query objects that only ViewModels call, multi-step work from actions, and validation
 that queries the database or calls a service from rule classes in `app/Rules`.
 Publishing and readiness rules live in `app/Publishing`, and actions refuse
 work by throwing named exceptions from `app/Exceptions`.

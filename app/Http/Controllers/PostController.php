@@ -6,26 +6,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BlogIndexRequest;
 use App\Models\Post;
-use App\Queries\BlogIndexQuery;
 use App\ViewModels\PostIndexViewModel;
 use App\ViewModels\PostShowViewModel;
 use Illuminate\Contracts\View\View;
 
 final class PostController
 {
-    public function index(
-        BlogIndexRequest $request,
-        BlogIndexQuery $blogIndexQuery,
-        PostIndexViewModel $blogIndexViewModel,
-    ): View {
+    public function index(BlogIndexRequest $request, PostIndexViewModel $blogIndexViewModel): View
+    {
         $filters = $request->validated();
-        $query = is_string($filters['q'] ?? null) ? $filters['q'] : '';
-        $categorySlug = is_string($filters['category'] ?? null) ? $filters['category'] : null;
 
         $data = $blogIndexViewModel->data(
-            $blogIndexQuery->results($query, $categorySlug),
-            $query,
-            $categorySlug,
+            is_string($filters['q'] ?? null) ? $filters['q'] : '',
+            is_string($filters['category'] ?? null) ? $filters['category'] : null,
         );
 
         return view('pages.blog.index', [...$data, 'initialData' => $data]);
