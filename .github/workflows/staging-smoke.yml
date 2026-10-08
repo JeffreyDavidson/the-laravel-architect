@@ -62,6 +62,8 @@ jobs:
           key: playwright-chromium-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
 
       # apt-get update once hung for 14 minutes in CI, so each attempt is capped and retried once.
+      # Killing the timed-out attempt leaves the sudo apt-get it spawned running and holding the dpkg
+      # lock, so the retry stops any leftover apt/dpkg processes and waits (bounded) for the lock.
       # A cache hit skips the browser download and only installs the system packages.
       - name: Install Playwright browser
         timeout-minutes: 6
@@ -80,6 +82,14 @@ jobs:
             fi
 
             echo "::warning::Playwright install attempt $attempt failed or timed out."
+
+            # The bracketed patterns stop pkill from matching its own sudo command line.
+            sudo pkill -KILL -f '[a]pt-get|[d]pkg' || true
+
+            for _ in $(seq 30); do
+              sudo fuser -s /var/lib/dpkg/lock-frontend || break
+              sleep 1
+            done
           done
 
           exit 1
