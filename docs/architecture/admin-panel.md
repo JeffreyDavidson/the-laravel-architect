@@ -76,3 +76,14 @@ Beyond the resources, the panel has three custom pages:
   its edit link.
 - **Insights** (Operations group) hosts the editorial-operations and
   content-performance widgets.
+
+## Dashboard counts
+
+The dashboard widgets, the Posts and Inquiry inbox navigation badges, the
+newsletter send confirmation and the sent-issue delivery summary read their
+counts from `AdminMetricsQuery`, so a badge and a dashboard stat always agree.
+The counts are not cached: each is one aggregate query on a small or indexed
+table. `RecentlyEditedContentQuery` feeds the recent activity list. The content
+readiness counts are the exception: `ContentReadinessSummaryQuery` caches them
+for a minute because they run the full readiness criteria. Widgets only map
+these results to stats, rows and admin URLs.

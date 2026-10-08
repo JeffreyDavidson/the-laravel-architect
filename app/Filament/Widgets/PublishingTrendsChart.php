@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Models\Episode;
-use App\Models\NewsletterIssue;
-use App\Models\Post;
+use App\Queries\AdminMetricsQuery;
 use App\Support\DisplayTimezone;
-use DateTimeInterface;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
-class PublishingTrendsChart extends ChartWidget
+final class PublishingTrendsChart extends ChartWidget
 {
     #[\Override]
     protected static ?int $sort = 2;
@@ -41,12 +37,13 @@ class PublishingTrendsChart extends ChartWidget
                 ->subMonths($monthsAgo),
             range(5, 0),
         );
+        $published = app(AdminMetricsQuery::class)->publishedPerMonth($months);
 
         return [
             'datasets' => [
-                ['label' => 'Posts', 'data' => $this->monthlyCounts(Post::query()->published(), $months)],
-                ['label' => 'Episodes', 'data' => $this->monthlyCounts(Episode::query()->published(), $months)],
-                ['label' => 'Newsletter issues', 'data' => $this->monthlyCounts(NewsletterIssue::query()->published(), $months)],
+                ['label' => 'Posts', 'data' => $published['posts']],
+                ['label' => 'Episodes', 'data' => $published['episodes']],
+                ['label' => 'Newsletter issues', 'data' => $published['newsletterIssues']],
             ],
             'labels' => array_map(fn (Carbon $month): string => $month->format('M Y'), $months),
         ];
@@ -55,36 +52,5 @@ class PublishingTrendsChart extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
-    }
-
-    /**
-     * Count the query's records per display-timezone month, starting from the first month.
-     *
-     * @param  Builder<Post>|Builder<Episode>|Builder<NewsletterIssue>  $query
-     * @param  list<Carbon>  $months
-     * @return list<int>
-     */
-    private function monthlyCounts(Builder $query, array $months): array
-    {
-        $counts = array_fill_keys(array_map(fn (Carbon $month): string => $month->format('Y-m'), $months), 0);
-        $start = ($months[0] ?? null)
-            ?->copy()
-            ->utc();
-
-        foreach ($query->where('published_at', '>=', $start)
-            ->pluck('published_at') as $publishedAt) {
-            if (! is_string($publishedAt) && ! $publishedAt instanceof DateTimeInterface) {
-                continue;
-            }
-
-            $monthKey = DisplayTimezone::convert(Carbon::parse($publishedAt))
-                ->format('Y-m');
-
-            if (array_key_exists($monthKey, $counts)) {
-                $counts[$monthKey]++;
-            }
-        }
-
-        return array_values($counts);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Js;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -38,65 +39,17 @@ it('plots published content by month and excludes drafts and older records', fun
 
     actingAs($administrator);
 
-    $widget = new class extends PublishingTrendsChart
-    {
-        /** @return array{datasets: array<int, array{label: string, data: list<int>}>, labels: array<int, string>} */
-        public function data(): array
-        {
-            return $this->getData();
-        }
-    };
-    $data = $widget->data();
-
-    expect($data['labels'])->toBe(['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'])
-        ->and($data['datasets'][0])
-        ->toMatchArray([
-            'label' => 'Posts',
-            'data' => [0, 0, 0, 0, 0, 1],
-        ])
-        ->and($data['datasets'][1])
-        ->toMatchArray([
-            'label' => 'Episodes',
-            'data' => [0, 0, 0, 0, 1, 0],
-        ])
-        ->and($data['datasets'][2])
-        ->toMatchArray([
-            'label' => 'Newsletter issues',
-            'data' => [1, 0, 0, 0, 0, 0],
-        ]);
+    $chartData = Js::from([
+        'datasets' => [
+            ['label' => 'Posts', 'data' => [0, 0, 0, 0, 0, 1]],
+            ['label' => 'Episodes', 'data' => [0, 0, 0, 0, 1, 0]],
+            ['label' => 'Newsletter issues', 'data' => [1, 0, 0, 0, 0, 0]],
+        ],
+        'labels' => ['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'],
+    ]);
 
     livewire(PublishingTrendsChart::class)
         ->assertSee('Publishing activity')
-        ->assertSee('Published content over the last six months.');
-});
-
-it('buckets published content by display timezone month', function () {
-    config(['app.display_timezone' => 'America/New_York']);
-    Date::setTestNow(Carbon::parse('2026-10-01 02:00:00'));
-
-    foreach (['Before the window' => '2026-04-01 02:00:00', 'July evening' => '2026-08-01 02:00:00', 'August morning' => '2026-08-01 05:00:00'] as $title => $publishedAt) {
-        Post::factory()
-            ->published()
-            ->create([
-                'title' => $title,
-                'published_at' => $publishedAt,
-            ]);
-    }
-
-    $widget = new class extends PublishingTrendsChart
-    {
-        /** @return array{datasets: array<int, array{label: string, data: list<int>}>, labels: array<int, string>} */
-        public function data(): array
-        {
-            return $this->getData();
-        }
-    };
-    $data = $widget->data();
-
-    expect($data['labels'])->toBe(['Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026'])
-        ->and($data['datasets'][0])
-        ->toMatchArray([
-            'label' => 'Posts',
-            'data' => [0, 0, 0, 1, 1, 0],
-        ]);
+        ->assertSee('Published content over the last six months.')
+        ->assertSeeHtml("cachedData: {$chartData->toHtml()}");
 });

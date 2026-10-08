@@ -167,6 +167,20 @@ it('hides the sending actions from a user who is not an administrator', function
     $page->assertActionHidden($action);
 })->with(['sendTestEmail', 'sendToSubscribers']);
 
+it('tells the admin how many active subscribers the send will reach', function () {
+    Subscriber::factory()
+        ->count(2)
+        ->create();
+    Subscriber::factory()
+        ->pending()
+        ->create();
+    $issue = editableNewsletterIssue();
+
+    livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->mountAction('sendToSubscribers')
+        ->assertMountedActionModalSee('This emails the issue to 2 active subscribers. It cannot be undone.');
+});
+
 it('shows delivery progress after sending', function () {
     $issue = editableNewsletterIssue(['sent_at' => now()]);
     $issueId = $issue->getKey();

@@ -35,7 +35,11 @@ carries the full details as raw plain text.
 Each email carries a stable `Resend-Idempotency-Key`. Resend keeps these for 24
 hours, so inquiries older than 23 hours fail for manual review instead of
 resending. The inquiry's admin page shows both send times and offers **Retry
-unsent emails** within that window.
+unsent emails** within that window. The button calls the
+`RetryContactInquiryEmails` action, which queues the job again only after an
+incomplete delivery attempt inside the window and otherwise throws
+`ContactInquiryEmailsCannotBeRetried`, so `SendContactMessage` and this action
+are the only places the job is dispatched.
 
 ## Abuse controls
 

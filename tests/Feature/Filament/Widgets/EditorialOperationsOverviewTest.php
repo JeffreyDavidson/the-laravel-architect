@@ -1,6 +1,12 @@
 <?php
 
 use App\Enums\ContactInquiryStatus;
+use App\Enums\PublicationState;
+use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
+use App\Filament\Resources\Episodes\EpisodeResource;
+use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use App\Filament\Resources\Posts\PostResource;
+use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Widgets\EditorialOperationsOverview;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
@@ -9,12 +15,13 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Subscriber;
 use App\Models\User;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\RenderedStats;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\freezeSecond;
 use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -33,28 +40,16 @@ it('summarizes first-party editorial work and links', function () {
     NewsletterIssue::factory()->create();
     Subscriber::factory()->create();
 
-    $widget = new class extends EditorialOperationsOverview
-    {
-        /** @return list<Stat> */
-        public function stats(): array
-        {
-            return $this->getStats();
-        }
-    };
+    $html = livewire(EditorialOperationsOverview::class)->html();
 
-    $stats = $widget->stats();
-
-    expect($stats[0]->getValue())->toBe(1)
-        ->and($stats[1]->getValue())
-        ->toBe(1)
-        ->and($stats[2]->getValue())
-        ->toBe(1)
-        ->and($stats[3]->getValue())
-        ->toBe(0)
-        ->and($stats[4]->getValue())
-        ->toBe(1)
-        ->and($stats[5]->getValue())
-        ->toBe(1);
+    expect(RenderedStats::from($html))->toBe([
+        'New inquiries' => ['value' => '1', 'url' => ContactInquiryResource::getUrl('index')],
+        'Posts in review' => ['value' => '1', 'url' => PostResource::getUrl('index')],
+        'Scheduled posts' => ['value' => '1', 'url' => PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Scheduled->value]]])],
+        'Episode queue' => ['value' => '0', 'url' => EpisodeResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
+        'Newsletter queue' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
+        'Active subscribers' => ['value' => '1', 'url' => SubscriberResource::getUrl('index')],
+    ]);
 });
 
 it('excludes already live scheduled content from unpublished operational queues', function () {
@@ -70,24 +65,16 @@ it('excludes already live scheduled content from unpublished operational queues'
             ->scheduled()
             ->create(['title' => "Queue issue {$index}", 'published_at' => $date]);
     }
-    $widget = new class extends EditorialOperationsOverview
-    {
-        /** @return list<Stat> */
-        public function stats(): array
-        {
-            return $this->getStats();
-        }
-    };
 
-    $stats = $widget->stats();
+    $stats = RenderedStats::from(livewire(EditorialOperationsOverview::class)->html());
 
-    expect($stats[3]->getValue())->toBe(2)
-        ->and($stats[4]->getValue())
-        ->toBe(2);
+    expect($stats['Episode queue']['value'])->toBe('2')
+        ->and($stats['Newsletter queue']['value'])
+        ->toBe('2');
 
-    foreach ([3 => 'episode', 4 => 'issue'] as $index => $type) {
-        $url = $stats[$index]->getUrl();
-        if (! is_string($url) || $url === '') {
+    foreach (['Episode queue' => 'episode', 'Newsletter queue' => 'issue'] as $label => $type) {
+        $url = $stats[$label]['url'];
+        if ($url === null || $url === '') {
             throw new RuntimeException("Missing {$type} queue URL.");
         }
 
