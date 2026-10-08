@@ -1,5 +1,5 @@
 <x-layouts.site :page-meta="$pageMeta">
-    <div class="blog-index dark:bg-surface-page bg-gray-50">
+    <div class="dark:bg-surface-page bg-gray-50">
         <x-page-header compact>
             <x-slot:title
                 id="blog-heading"
