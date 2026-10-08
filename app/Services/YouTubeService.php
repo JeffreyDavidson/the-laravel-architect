@@ -42,7 +42,7 @@ class YouTubeService
         $pageToken = null;
 
         do {
-            $response = self::request("{$this->baseUrl}/search", array_filter([
+            $response = $this->request("{$this->baseUrl}/search", array_filter([
                 'key' => $this->apiKey,
                 'channelId' => $this->channelId,
                 'part' => 'snippet',
@@ -82,7 +82,7 @@ class YouTubeService
      */
     public function getVideoDetails(array $videoIds): array
     {
-        $response = self::request("{$this->baseUrl}/videos", [
+        $response = $this->request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'snippet,contentDetails,statistics',
@@ -108,9 +108,9 @@ class YouTubeService
                         ?? data_get($item, 'snippet.thumbnails.default.url'),
                 ),
                 duration: $this->nullableString(data_get($item, 'contentDetails.duration')),
-                viewCount: self::integer(data_get($item, 'statistics.viewCount', 0)),
-                likeCount: self::integer(data_get($item, 'statistics.likeCount', 0)),
-                commentCount: self::integer(data_get($item, 'statistics.commentCount', 0)),
+                viewCount: $this->integer(data_get($item, 'statistics.viewCount', 0)),
+                likeCount: $this->integer(data_get($item, 'statistics.likeCount', 0)),
+                commentCount: $this->integer(data_get($item, 'statistics.commentCount', 0)),
                 publishedAt: $this->nullableString(data_get($item, 'snippet.publishedAt')),
             );
         }
@@ -124,7 +124,7 @@ class YouTubeService
      */
     public function getStatsForVideos(array $videoIds): array
     {
-        $response = self::request("{$this->baseUrl}/videos", [
+        $response = $this->request("{$this->baseUrl}/videos", [
             'key' => $this->apiKey,
             'id' => implode(',', $videoIds),
             'part' => 'statistics',
@@ -140,9 +140,9 @@ class YouTubeService
             }
 
             $stats[$videoId] = [
-                'view_count' => self::integer(data_get($item, 'statistics.viewCount', 0)),
-                'like_count' => self::integer(data_get($item, 'statistics.likeCount', 0)),
-                'comment_count' => self::integer(data_get($item, 'statistics.commentCount', 0)),
+                'view_count' => $this->integer(data_get($item, 'statistics.viewCount', 0)),
+                'like_count' => $this->integer(data_get($item, 'statistics.likeCount', 0)),
+                'comment_count' => $this->integer(data_get($item, 'statistics.commentCount', 0)),
             ];
         }
 
@@ -186,22 +186,24 @@ class YouTubeService
         return is_string($value) ? $value : null;
     }
 
-    private static function integer(mixed $value): int
+    private function integer(mixed $value): int
     {
         return is_numeric($value) ? (int) $value : 0;
     }
 
     /** @param array<string, mixed> $query */
-    private static function request(string $url, array $query): Response
+    private function request(string $url, array $query): Response
     {
         try {
-            return self::client()->get($url, $query);
+            return $this
+                ->client()
+                ->get($url, $query);
         } catch (Throwable) {
             throw new RuntimeException('The YouTube request failed.');
         }
     }
 
-    private static function client(): PendingRequest
+    private function client(): PendingRequest
     {
         return Http::connectTimeout(2)
             ->timeout(5)
