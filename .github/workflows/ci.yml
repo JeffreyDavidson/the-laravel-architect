@@ -117,8 +117,39 @@ jobs:
       - name: Check frontend formatting
         run: npm run format:check
 
+      - name: Read Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright-core'].version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browser
+        id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+
+      # apt-get update once hung for 14 minutes in CI, so each attempt is capped and retried once.
+      # A cache hit skips the browser download and only installs the system packages.
       - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 6
+        env:
+          PLAYWRIGHT_CACHE_HIT: ${{ steps.playwright-cache.outputs.cache-hit }}
+        run: |
+          if [ "$PLAYWRIGHT_CACHE_HIT" = 'true' ]; then
+            set -- install-deps chromium
+          else
+            set -- install --with-deps chromium
+          fi
+
+          for attempt in 1 2; do
+            if timeout --kill-after=15s 150s npx playwright "$@"; then
+              exit 0
+            fi
+
+            echo "::warning::Playwright install attempt $attempt failed or timed out."
+          done
+
+          exit 1
 
       - name: Run non-browser tests in parallel
         run: composer test

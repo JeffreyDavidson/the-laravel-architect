@@ -17,6 +17,8 @@ Browser page objects own page URLs and page-level navigation; components own reu
 
 The PHP suites are registered in `phpunit.xml` and executed through Pest. Pest Browser uses the repository's Playwright package and Chromium installation.
 
+CI and the staging and production smoke workflows cache the Playwright browser download in `~/.cache/ms-playwright`, keyed on the `playwright-core` version in `package-lock.json`. A cache miss runs `npx playwright install --with-deps chromium`; a cache hit runs only `npx playwright install-deps chromium` for the system packages. Each attempt is capped at 150 seconds and retried once, inside a six-minute step timeout, because `apt-get update` once hung for 14 minutes and used up the whole job.
+
 ## Test data
 
 Every model has a factory in `database/factories`. Create records with `Model::factory()` and a named state (for example `Post::factory()->published()->create()`) instead of `Model::query()->create([...])`, and pass only the attributes the test depends on. Publishable factories default to a draft that has every required-to-publish detail (`ContentReadiness::publishingIssues()` is empty); `published()` is live since yesterday and `scheduled()` goes live tomorrow. Factories leave slugs to the `#[Sluggable]` attribute, leave image paths empty so nothing touches storage, and create required parents through their own factories (use `for($parent)` or `recycle($parent)` to share one). `Integration/Database/Factories/ModelFactoriesTest.php` checks every factory state against the schema.
