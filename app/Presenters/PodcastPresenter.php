@@ -38,7 +38,7 @@ final readonly class PodcastPresenter
      */
     public function seriesSchema(array $author): array
     {
-        $podcastUrl = $this->urls->route('podcast.show', $this->podcast);
+        $podcastUrl = $this->urls->route('podcasts.show', $this->podcast);
         $schema = [
             '@type' => 'PodcastSeries',
             '@id' => "{$podcastUrl}#podcast",
@@ -69,7 +69,7 @@ final readonly class PodcastPresenter
     {
         return [
             '@type' => 'PodcastSeries',
-            '@id' => $this->urls->route('podcast.show', $this->podcast).'#podcast',
+            '@id' => $this->urls->route('podcasts.show', $this->podcast).'#podcast',
         ];
     }
 

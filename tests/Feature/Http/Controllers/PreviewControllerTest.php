@@ -54,7 +54,7 @@ it('shows a rejected preview URL the branded forbidden page', function () {
         'title' => 'Private Draft',
     ]);
 
-    $response = get(route('preview.newsletter-issue', $issue));
+    $response = get(route('preview.newsletterIssue', $issue));
 
     $response->assertForbidden()
         ->assertSeeText('The Laravel Architect')
@@ -79,5 +79,5 @@ dataset('preview routes', [
     'post' => ['post', 'preview.post'],
     'project' => ['project', 'preview.project'],
     'episode' => ['episode', 'preview.episode'],
-    'newsletter issue' => ['newsletter issue', 'preview.newsletter-issue'],
+    'newsletter issue' => ['newsletter issue', 'preview.newsletterIssue'],
 ]);

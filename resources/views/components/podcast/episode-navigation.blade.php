@@ -5,7 +5,7 @@
         @if ($previous)
             @php($previousPresenter = \App\Presenters\EpisodePresenter::from($previous))
             <a
-                href="{{ route('podcast.episode', [$podcast, $previous]) }}"
+                href="{{ route('podcasts.episode', [$podcast, $previous]) }}"
                 class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center gap-3">
@@ -29,7 +29,7 @@
         @if ($next)
             @php($nextPresenter = \App\Presenters\EpisodePresenter::from($next))
             <a
-                href="{{ route('podcast.episode', [$podcast, $next]) }}"
+                href="{{ route('podcasts.episode', [$podcast, $next]) }}"
                 class="group dark:border-surface-border dark:bg-surface-control rounded-2xl border border-gray-200 p-5 text-right transition-[border-color,background-color] duration-300 hover:border-[var(--white-10)] hover:bg-white dark:hover:border-[var(--white-10)]"
             >
                 <div class="flex items-center justify-end gap-3">

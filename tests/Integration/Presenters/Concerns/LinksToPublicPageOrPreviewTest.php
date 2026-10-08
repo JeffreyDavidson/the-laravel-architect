@@ -88,7 +88,7 @@ it('signs a preview link that expires after two hours', function (string $type, 
     'post' => ['post', 'preview.post', 'post'],
     'project' => ['project', 'preview.project', 'project'],
     'episode' => ['episode', 'preview.episode', 'episode'],
-    'newsletter issue' => ['newsletter issue', 'preview.newsletter-issue', 'newsletterIssue'],
+    'newsletter issue' => ['newsletter issue', 'preview.newsletterIssue', 'newsletterIssue'],
 ]);
 
 it('falls back to a signed preview when there is no public page', function () {

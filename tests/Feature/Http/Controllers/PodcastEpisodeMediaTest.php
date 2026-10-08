@@ -32,7 +32,7 @@ it('renders the Transistor player for a valid share URL', function () {
         'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
     ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSeeHtml('src="https://share.transistor.fm/e/428dcd6b"')
         ->assertSeeHtml('title="Episode media coverage podcast player"');
@@ -41,7 +41,7 @@ it('renders the Transistor player for a valid share URL', function () {
 it('renders no audio player or Spotify and Apple embed', function () {
     [$podcast, $episode] = createPublicEpisode();
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertDontSeeHtml('<audio')
         ->assertDontSeeHtml('data-audio-player')
@@ -55,7 +55,7 @@ it('renders no player when the Transistor URL is not a share URL', function () {
         'transistor_url' => 'https://example.com/s/428dcd6b',
     ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertDontSeeHtml('share.transistor.fm')
         ->assertDontSeeHtml('<iframe');
@@ -66,7 +66,7 @@ it('keeps the YouTube link when an episode has one', function () {
         'youtube_url' => 'https://www.youtube.com/watch?v=abcdefghijk',
     ]);
 
-    get(route('podcast.episode', [$podcast, $episode]))
+    get(route('podcasts.episode', [$podcast, $episode]))
         ->assertOk()
         ->assertSee('YouTube');
 });

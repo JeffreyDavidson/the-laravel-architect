@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\RequestNewsletterSubscription;
-use App\Actions\UnsubscribeFromNewsletter;
 use App\Http\Requests\SubscribeNewsletterRequest;
-use App\Models\Subscriber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
@@ -23,7 +21,6 @@ final class NewsletterSubscriptionController
             $requestNewsletterSubscription->handle(
                 $request->safe()
                     ->string('email')
-                    ->lower()
                     ->toString(),
             );
         }
@@ -35,16 +32,5 @@ final class NewsletterSubscriptionController
         return back()
             ->withFragment('newsletter-form')
             ->with('newsletter_success', $message);
-    }
-
-    public function destroy(
-        Subscriber $subscriber,
-        UnsubscribeFromNewsletter $unsubscribeFromNewsletter,
-    ): RedirectResponse {
-        $unsubscribeFromNewsletter->handle($subscriber);
-
-        return redirect()->route('home')
-            ->withFragment('newsletter-form')
-            ->with('newsletter_success', 'You have been unsubscribed.');
     }
 }
