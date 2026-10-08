@@ -34,7 +34,7 @@ final readonly class ProductionContentSyncWorkflow
 
             $this->source->copyMedia($mediaPaths);
 
-            foreach ($this->archive->imagePaths($contents) as $path) {
+            foreach ($mediaPaths as $path) {
                 if (! $this->images->generate($path)) {
                     throw new RuntimeException('Responsive image regeneration failed during content synchronization.');
                 }

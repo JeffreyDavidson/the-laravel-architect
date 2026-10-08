@@ -24,9 +24,8 @@ final readonly class StoredMediaLifecycle
     /**
      * Generate the responsive variants for a new record's media after it commits.
      *
-     * @param  ?string  $variantLabel  The content label used in the retry hint ("post" for
-     *                                 posts:generate-image-variants), or null when the
-     *                                 attribute has no responsive variants.
+     * @param  ?string  $variantLabel  The content label used in the failure warning ("post"),
+     *                                 or null when the attribute has no responsive variants.
      */
     public function created(Model $model, string $attribute, ?string $variantLabel = null): void
     {
@@ -109,7 +108,7 @@ final readonly class StoredMediaLifecycle
             return;
         }
 
-        Log::warning("Responsive {$variantLabel} image generation failed. Run {$variantLabel}s:generate-image-variants to retry.");
+        Log::warning("Responsive {$variantLabel} image generation failed. Run media:repair-responsive-images to retry.");
     }
 
     private function afterCommit(Model $model, Closure $callback): void
