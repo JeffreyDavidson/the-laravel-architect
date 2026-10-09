@@ -6,7 +6,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\Posts\PostResource;
-use App\Support\DisplayTimezone;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
@@ -32,6 +31,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 
 final class AdminPanelProvider extends PanelProvider
 {

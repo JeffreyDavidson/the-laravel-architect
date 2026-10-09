@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Posts\Tables;
 
-use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
@@ -24,6 +23,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 final class PostsTable
 {

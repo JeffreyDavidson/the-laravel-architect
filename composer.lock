@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2561b35719f4cfe7dd27998b2bbddf7d",
+    "content-hash": "01b0428f617954ccc225a59ca9d94e7c",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2574,22 +2574,25 @@
         },
         {
             "name": "jeffreydavidson/creator-kit",
-            "version": "v0.1.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:JeffreyDavidson/creator-kit.git",
-                "reference": "2f91603d546b143886c7d12e1c44a858770aae5f"
+                "reference": "e3cfd2c548c5659c15da1eb162d971ff127205c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/2f91603d546b143886c7d12e1c44a858770aae5f",
-                "reference": "2f91603d546b143886c7d12e1c44a858770aae5f",
+                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/e3cfd2c548c5659c15da1eb162d971ff127205c7",
+                "reference": "e3cfd2c548c5659c15da1eb162d971ff127205c7",
                 "shasum": ""
             },
             "require": {
+                "filament/filament": "^5.7",
                 "laravel/framework": "^13.26",
                 "league/commonmark": "^2.10",
-                "php": "^8.5"
+                "php": "^8.5",
+                "ralphjsmit/laravel-filament-seo": "^2.2",
+                "ralphjsmit/laravel-seo": "^1.8"
             },
             "require-dev": {
                 "driftingly/rector-laravel": "^2.6",
@@ -2600,6 +2603,7 @@
                 "pestphp/pest": "^5.1",
                 "pestphp/pest-plugin-arch": "^5.0",
                 "pestphp/pest-plugin-laravel": "^5.0",
+                "pestphp/pest-plugin-livewire": "^5.0",
                 "pestphp/pest-plugin-phpstan": "^5.0",
                 "pestphp/pest-plugin-rector": "^5.0",
                 "pestphp/pest-plugin-type-coverage": "^5.0",
@@ -2684,10 +2688,10 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.1.0",
+                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.4.0",
                 "issues": "https://github.com/JeffreyDavidson/creator-kit/issues"
             },
-            "time": "2026-10-09T02:34:47+00:00"
+            "time": "2026-10-09T13:57:51+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

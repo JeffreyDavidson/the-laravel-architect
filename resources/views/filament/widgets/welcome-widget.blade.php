@@ -27,7 +27,7 @@
 
                 <div class="tla-dashboard-pipeline__steps">
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \App\Enums\PublishStatus::Draft->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \JeffreyDavidson\CreatorKit\Enums\PublishStatus::Draft->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--draft"
                     >
                         <span>Draft</span>
@@ -36,7 +36,7 @@
                     </a>
 
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \App\Enums\PublishStatus::InReview->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \JeffreyDavidson\CreatorKit\Enums\PublishStatus::InReview->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--review"
                     >
                         <span>Review</span>
@@ -45,7 +45,7 @@
                     </a>
 
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \App\Enums\PublicationState::Scheduled->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \JeffreyDavidson\CreatorKit\Enums\PublicationState::Scheduled->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--scheduled"
                     >
                         <span>Scheduled</span>
@@ -54,7 +54,7 @@
                     </a>
 
                     <a
-                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \App\Enums\PublicationState::Live->value]]]) }}"
+                        href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['publication' => ['value' => \JeffreyDavidson\CreatorKit\Enums\PublicationState::Live->value]]]) }}"
                         class="tla-dashboard-pipeline__step tla-dashboard-pipeline__step--published"
                     >
                         <span>Published</span>
@@ -74,7 +74,7 @@
                     <div class="tla-dashboard-attention__items">
                         @if ($inReviewPosts > 0)
                             <a
-                                href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \App\Enums\PublishStatus::InReview->value]]]) }}"
+                                href="{{ \App\Filament\Resources\Posts\PostResource::getUrl('index', ['filters' => ['status' => ['value' => \JeffreyDavidson\CreatorKit\Enums\PublishStatus::InReview->value]]]) }}"
                                 class="tla-dashboard-attention__item tla-dashboard-attention__item--review"
                             >
                                 <strong>{{ $inReviewPosts }}</strong>

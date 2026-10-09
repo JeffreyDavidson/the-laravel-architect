@@ -12,13 +12,13 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Video;
-use App\Support\DisplayTimezone;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 
 final class ArchiveQuery
 {

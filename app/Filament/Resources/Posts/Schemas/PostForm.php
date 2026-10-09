@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
-use App\Filament\Forms\Components\PublishDatePicker;
-use App\Filament\Forms\Components\PublishStatusSelect;
-use App\Filament\Forms\Components\SlugInput;
 use App\Filament\Forms\Components\SlugSourceInput;
 use App\Models\Category;
 use App\Models\Post;
@@ -22,6 +19,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 use RalphJSmit\Filament\SEO\SEO;
 
 final class PostForm

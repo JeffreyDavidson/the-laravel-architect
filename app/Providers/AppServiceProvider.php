@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\Tag;
 use App\Models\User;
+use App\Publishing\ContentPublishingReadiness;
 use App\Services\PublicPageBenchmark;
 use App\View\Components\SocialLinks;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use JeffreyDavidson\CreatorKit\Contracts\PublishingReadiness;
 use Livewire\Livewire;
 use RalphJSmit\Laravel\SEO\Facades\SEOManager;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -33,6 +35,7 @@ final class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(PublicPageBenchmark::class);
+        $this->app->bind(PublishingReadiness::class, ContentPublishingReadiness::class);
     }
 
     /**

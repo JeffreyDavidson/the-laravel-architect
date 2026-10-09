@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Tables\Filters;
 
-use App\Enums\PublicationState;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use JeffreyDavidson\CreatorKit\Enums\PublicationState;
 
 /**
  * Filters publishable content by whether it is live, scheduled or not yet published,

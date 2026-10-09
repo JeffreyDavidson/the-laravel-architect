@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 it('formats an episode code when its optional episode number is missing', function () {
     $episode = new Episode([

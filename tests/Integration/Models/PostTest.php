@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Presenters\PostPresenter;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 it('calculates reading time from post content', function () {
     $post = new Post([

@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Contracts\Publishable;
-use App\Enums\PublishStatus;
 use App\Enums\SourceReviewStatus;
-use App\Models\Attributes\PublishingStatus;
 use App\Models\Concerns\DeletesOwnedContent;
-use App\Models\Concerns\HasPublishingStatus;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
-use App\Models\Concerns\LocksSlugAfterPublication;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
 use Carbon\CarbonInterface;
@@ -26,6 +21,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Contracts\Publishable;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
+use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
+use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\Activitylog\Support\LogOptions;

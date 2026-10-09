@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\PublishStatus;
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\PublishableFixtures;
 
 pest()->use(RefreshDatabase::class);

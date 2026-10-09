@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\PublishStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\travel;

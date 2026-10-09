@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Podcasts\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
-use App\Filament\Forms\Components\SlugInput;
 use App\Filament\Forms\Components\SlugSourceInput;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Textarea;
@@ -13,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 use RalphJSmit\Filament\SEO\SEO;
 
 final class PodcastForm

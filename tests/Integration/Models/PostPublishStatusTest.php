@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 pest()->use(RefreshDatabase::class);
 

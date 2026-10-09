@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 /**
  * @extends Factory<Project>

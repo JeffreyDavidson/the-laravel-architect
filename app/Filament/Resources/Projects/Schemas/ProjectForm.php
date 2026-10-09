@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Projects\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
-use App\Filament\Forms\Components\PublishStatusSelect;
-use App\Filament\Forms\Components\SlugInput;
 use App\Filament\Forms\Components\SlugSourceInput;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -16,6 +14,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 use RalphJSmit\Filament\SEO\SEO;
 
 final class ProjectForm

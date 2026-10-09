@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\ImageFixtures;
 
 use function Pest\Laravel\actingAs;

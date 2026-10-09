@@ -7,9 +7,9 @@ use App\Enums\MediaHealthType;
 use App\Enums\MediaSourceStatus;
 use App\Enums\MediaVariantStatus;
 use App\Enums\ProjectReadinessFilter;
-use App\Enums\PublishStatus;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 covers(
     ContactInquiryStatus::class,
