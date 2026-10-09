@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\Categories\Pages\CreateCategory;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\Pages\CreateCategory;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

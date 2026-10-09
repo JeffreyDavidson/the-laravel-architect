@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Episodes\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
-use App\Filament\Forms\Components\SlugSourceInput;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -17,6 +16,7 @@ use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugSourceInput;
 
 final class EpisodeForm
 {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Filament\Forms\Components\OptimizedImageUpload;
-use App\Filament\Forms\Components\SlugSourceInput;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Actions\Action;
@@ -23,6 +22,7 @@ use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugSourceInput;
 
 final class PostForm
 {
