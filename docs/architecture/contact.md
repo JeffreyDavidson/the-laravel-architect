@@ -50,7 +50,7 @@ Turnstile verification calls.
 
 `StoreContactRequest` owns the bot checks. A filled hidden `website` field skips
 validation and returns the normal success message without saving anything.
-Otherwise the `App\Rules\PassesTurnstile` rule runs only after every other
+Otherwise the `PassesTurnstile` rule from `jeffreydavidson/creator-kit` runs only after every other
 field is valid; a failure returns to the form with the input except the spent
 token. The form's Turnstile loader is an Alpine component (see
 [Frontend](frontend.md#alpine-components)).

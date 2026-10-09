@@ -44,6 +44,7 @@ jobs:
               with:
                   composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
                   composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+                  composer-auth: ${{ secrets.COMPOSER_AUTH }}
             - name: Check Forge runner connectivity
               run: >-
                   curl --silent --show-error --connect-timeout 10 --max-time 15

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Support\Feeds\SitemapRenderer;
 use App\ViewModels\SitemapViewModel;
 use Illuminate\Http\Response;
+use JeffreyDavidson\CreatorKit\Support\Feeds\SitemapRenderer;
 
 final class SitemapController
 {

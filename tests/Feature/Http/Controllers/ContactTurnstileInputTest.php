@@ -10,10 +10,10 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
     config()->set([
-        'services.turnstile.secret_key' => 'test-secret',
-        'services.turnstile.siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-        'services.turnstile.contact_action' => 'contact-form',
-        'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com'],
+        'creator-kit.turnstile.secret_key' => 'test-secret',
+        'creator-kit.turnstile.siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        'creator-kit.turnstile.contact_action' => 'contact-form',
+        'creator-kit.turnstile.allowed_hostnames' => ['thelaravelarchitect.com'],
     ]);
     Http::fake();
 });

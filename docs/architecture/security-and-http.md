@@ -7,7 +7,9 @@ safeguards that differ between production and other environments.
 
 Application responses set a constrained Content Security Policy plus
 cross-origin isolation, clickjacking, transport-security, MIME-sniffing,
-referrer, and browser-feature policy headers globally.
+referrer, and browser-feature policy headers globally. The middleware is
+`AddSecurityHeaders` from `jeffreydavidson/creator-kit`; TLA's third-party embed
+hosts are listed in `config/creator-kit.php` (`security_headers.csp`).
 
 - Public scripts use a per-request nonce instead of `unsafe-inline` or
   `unsafe-eval`; the Filament admin path retains those allowances for framework

@@ -6,10 +6,9 @@ namespace App\Presenters;
 
 use App\Models\NewsletterIssue;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
-use App\Support\Markdown\TrimLinkDestinationsExtension;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Support\Markdown\MarkdownRenderer;
 
 final readonly class NewsletterIssuePresenter
 {
@@ -19,6 +18,7 @@ final readonly class NewsletterIssuePresenter
         private NewsletterIssue $issue,
         private UrlGenerator $urls,
         private Config $config,
+        private MarkdownRenderer $markdown,
     ) {}
 
     public static function from(NewsletterIssue $issue): self
@@ -46,10 +46,7 @@ final readonly class NewsletterIssuePresenter
      */
     public function emailBodyHtml(): string
     {
-        return $this->absoluteHtmlUrls(Str::markdown($this->issue->content, [
-            'html_input' => 'strip',
-            'allow_unsafe_links' => false,
-        ], [new TrimLinkDestinationsExtension]));
+        return $this->absoluteHtmlUrls($this->markdown->safe($this->issue->content));
     }
 
     /** The issue body for an email's plain-text part: the raw Markdown. */

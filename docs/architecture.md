@@ -14,7 +14,7 @@ built.
 Class names follow one vocabulary. An action (an imperative verb with
 `handle()`) makes one state change. A query only reads. A renderer or generator
 returns output from the data it is given and never queries or writes: the feed,
-sitemap and robots.txt renderers in `app/Support/Feeds`, `FeaturedImageGenerator`
+sitemap and robots.txt renderers from `jeffreydavidson/creator-kit`, `FeaturedImageGenerator`
 and `OgImageGenerator`. A `…Workflow` service runs one long operation over many
 records with constructor-injected collaborators and returns a report. An
 integration service such as `YouTubeService` wraps an external system, and a job
