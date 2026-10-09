@@ -6,13 +6,13 @@ namespace App\Filament\Widgets;
 
 use App\Enums\ContentReadinessArea;
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Publishing\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 
 final class ContentReadinessWidget extends Widget
 {

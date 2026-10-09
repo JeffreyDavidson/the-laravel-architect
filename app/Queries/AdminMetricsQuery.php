@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Queries;
 
-use App\Data\NewsletterDeliveryCounts;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -123,21 +122,6 @@ final readonly class AdminMetricsQuery
         return (int) Video::query()->sum('view_count');
     }
 
-    /** The issue's deliveries and how many of them were sent, in one aggregate query. */
-    public function newsletterDeliveries(NewsletterIssue $issue): NewsletterDeliveryCounts
-    {
-        $counts = $issue
-            ->deliveries()
-            ->toBase()
-            ->selectRaw('count(*) as total, count(sent_at) as delivered')
-            ->first();
-
-        return new NewsletterDeliveryCounts(
-            total: $this->aggregate($counts->total ?? 0),
-            delivered: $this->aggregate($counts->delivered ?? 0),
-        );
-    }
-
     /**
      * Published posts, episodes and newsletter issues per display-timezone month. The months
      * are the starts of consecutive display-timezone months, oldest first, and each list holds
@@ -153,12 +137,6 @@ final readonly class AdminMetricsQuery
             'episodes' => $this->monthlyCounts(Episode::query()->published(), $months),
             'newsletterIssues' => $this->monthlyCounts(NewsletterIssue::query()->published(), $months),
         ];
-    }
-
-    /** A raw aggregate column as an int; database drivers return it as an int or a numeric string. */
-    private function aggregate(mixed $value): int
-    {
-        return is_numeric($value) ? (int) $value : 0;
     }
 
     /**

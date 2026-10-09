@@ -1,12 +1,12 @@
 <?php
 
-use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use App\Models\NewsletterIssue;
 use App\Models\User;
 use App\Presenters\NewsletterIssuePresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;
@@ -39,3 +39,35 @@ it('links the view on site action to a signed preview for a draft', function () 
         ->assertActionHasUrl(TestAction::make('view_on_site')->table($issue), NewsletterIssuePresenter::from($issue)->previewUrl())
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('view_on_site')->table($issue));
 });
+
+it('lists issues under tabs by publication state', function (string $tab, array $expected) {
+    /** @var list<string> $expected */
+    freezeSecond();
+    $issues = collect([
+        'live' => ['published_at' => now()->subDay()],
+        'scheduled' => ['published_at' => now()->addDay()],
+        'draft' => ['published_at' => null],
+    ])->map(function (array $attributes, string $key): NewsletterIssue {
+        $issue = PublishableFixtures::ready('newsletter issue', ['slug' => "{$key}-issue", ...$attributes]);
+
+        if (! $issue instanceof NewsletterIssue) {
+            throw new RuntimeException('Expected a newsletter issue.');
+        }
+
+        if ($key !== 'draft') {
+            $issue->publish();
+        }
+
+        return $issue;
+    });
+
+    livewire(ListNewsletterIssues::class, ['activeTab' => $tab])
+        ->assertCanSeeTableRecords($issues->only($expected))
+        ->assertCanNotSeeTableRecords($issues->except($expected));
+})->with([
+    'all' => ['all', ['live', 'scheduled', 'draft']],
+    'drafts' => ['drafts', ['draft']],
+    'scheduled' => ['scheduled', ['scheduled']],
+    'published' => ['published', ['live']],
+    'unpublished' => ['unpublished', ['scheduled', 'draft']],
+]);

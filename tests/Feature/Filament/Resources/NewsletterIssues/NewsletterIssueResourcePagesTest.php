@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

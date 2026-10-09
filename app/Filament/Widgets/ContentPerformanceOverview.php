@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Queries\AdminMetricsQuery;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Number;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 
 final class ContentPerformanceOverview extends StatsOverviewWidget
 {

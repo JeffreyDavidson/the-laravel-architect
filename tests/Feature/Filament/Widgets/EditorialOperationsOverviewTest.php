@@ -2,9 +2,7 @@
 
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Widgets\EditorialOperationsOverview;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
@@ -16,6 +14,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 use JeffreyDavidson\CreatorKit\Enums\PublicationState;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 use Tests\Support\RenderedStats;
 
 use function Pest\Laravel\actingAs;
@@ -47,7 +47,7 @@ it('summarizes first-party editorial work and links', function () {
         'Posts in review' => ['value' => '1', 'url' => PostResource::getUrl('index')],
         'Scheduled posts' => ['value' => '1', 'url' => PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Scheduled->value]]])],
         'Episode queue' => ['value' => '0', 'url' => EpisodeResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
-        'Newsletter queue' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
+        'Newsletter queue' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index', ['tab' => 'unpublished'])],
         'Active subscribers' => ['value' => '1', 'url' => SubscriberResource::getUrl('index')],
     ]);
 });

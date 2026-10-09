@@ -1,12 +1,12 @@
 <?php
 
-use App\Filament\Resources\Subscribers\Pages\ListSubscribers;
 use App\Models\Subscriber;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\SubscriberStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\Pages\ListSubscribers;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
