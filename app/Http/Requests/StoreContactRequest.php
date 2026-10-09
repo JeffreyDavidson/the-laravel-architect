@@ -10,8 +10,6 @@ use App\Enums\ContactType;
 use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Queries\PublishedProjectQuery;
-use App\Rules\PassesTurnstile;
-use App\Services\TurnstileVerifier;
 use Closure;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,6 +19,8 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use JeffreyDavidson\CreatorKit\Rules\PassesTurnstile;
+use JeffreyDavidson\CreatorKit\Services\TurnstileVerifier;
 
 final class StoreContactRequest extends FormRequest
 {
@@ -100,7 +100,7 @@ final class StoreContactRequest extends FormRequest
                     return;
                 }
 
-                $action = config('services.turnstile.contact_action');
+                $action = config('creator-kit.turnstile.contact_action');
                 $turnstile = validator(
                     [self::TURNSTILE_FIELD => $this->input(self::TURNSTILE_FIELD)],
                     [self::TURNSTILE_FIELD => [new PassesTurnstile($turnstileVerifier, $this->ip(), is_string($action) ? $action : '')]],

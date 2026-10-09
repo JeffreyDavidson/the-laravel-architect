@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Support\Feeds\RobotsTxtRenderer;
 use App\ViewModels\RobotsTxtViewModel;
 use Illuminate\Http\Response;
+use JeffreyDavidson\CreatorKit\Support\Feeds\RobotsTxtRenderer;
 
 final class RobotsController
 {

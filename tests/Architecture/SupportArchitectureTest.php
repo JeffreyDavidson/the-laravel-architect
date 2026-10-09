@@ -2,10 +2,6 @@
 
 use Illuminate\Http\Request;
 
-arch('keeps models out of the feed renderers')
-    ->expect('App\Support\Feeds')
-    ->not->toUse('App\Models');
-
 arch('keeps support classes free of the application layers, the request and HTTP aborts')
     ->expect('App\Support')
     ->not->toUse([

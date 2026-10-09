@@ -41,15 +41,4 @@ return [
         'channel_id' => env('YOUTUBE_CHANNEL_ID', 'UC42H30o7l5QvvCzC86dSu_A'),
     ],
 
-    'turnstile' => [
-        'site_key' => env('TURNSTILE_SITE_KEY'),
-        'secret_key' => env('TURNSTILE_SECRET_KEY'),
-        'siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-        'contact_action' => env('TURNSTILE_CONTACT_ACTION', 'contact-form'),
-        'allowed_hostnames' => array_values(array_filter(array_map(
-            'trim',
-            explode(',', (string) env('TURNSTILE_ALLOWED_HOSTNAMES', '')),
-        ))),
-    ],
-
 ];

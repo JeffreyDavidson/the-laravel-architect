@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Support\Feeds\RssChannelRenderer;
 use App\ViewModels\RssFeedViewModel;
 use Illuminate\Http\Response;
+use JeffreyDavidson\CreatorKit\Support\Feeds\RssChannelRenderer;
 
 final class RssFeedController
 {

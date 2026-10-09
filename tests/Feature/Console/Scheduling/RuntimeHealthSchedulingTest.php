@@ -1,10 +1,10 @@
 <?php
 
 use App\Jobs\RecordQueueHeartbeat;
-use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
+use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 
 use function Pest\Laravel\travelTo;
 

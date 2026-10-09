@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3c01caaaab23170ba28dd516ee40b88",
+    "content-hash": "2561b35719f4cfe7dd27998b2bbddf7d",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2571,6 +2571,123 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.1.1"
             },
             "time": "2025-03-19T14:43:43+00:00"
+        },
+        {
+            "name": "jeffreydavidson/creator-kit",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:JeffreyDavidson/creator-kit.git",
+                "reference": "2f91603d546b143886c7d12e1c44a858770aae5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/2f91603d546b143886c7d12e1c44a858770aae5f",
+                "reference": "2f91603d546b143886c7d12e1c44a858770aae5f",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^13.26",
+                "league/commonmark": "^2.10",
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "driftingly/rector-laravel": "^2.6",
+                "larastan/larastan": "^3.10",
+                "laravel/nightwatch": "^1.30",
+                "laravel/pint": "^1.30.5",
+                "orchestra/testbench": "^11.3",
+                "pestphp/pest": "^5.1",
+                "pestphp/pest-plugin-arch": "^5.0",
+                "pestphp/pest-plugin-laravel": "^5.0",
+                "pestphp/pest-plugin-phpstan": "^5.0",
+                "pestphp/pest-plugin-rector": "^5.0",
+                "pestphp/pest-plugin-type-coverage": "^5.0",
+                "phpstan/extension-installer": "^1.4",
+                "rector/rector": "^2.6",
+                "sentry/sentry-laravel": "^4.27"
+            },
+            "suggest": {
+                "laravel/nightwatch": "Redacted Nightwatch telemetry (wired automatically when installed).",
+                "sentry/sentry-laravel": "Redacted Sentry events and breadcrumbs (wired automatically when installed)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JeffreyDavidson\\CreatorKit\\CreatorKitServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JeffreyDavidson\\CreatorKit\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "JeffreyDavidson\\CreatorKit\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "lint": [
+                    "vendor/bin/pint"
+                ],
+                "test:lint": [
+                    "vendor/bin/pint --test"
+                ],
+                "rector": [
+                    "vendor/bin/rector process --no-progress-bar"
+                ],
+                "rector:pest": [
+                    "vendor/bin/rector process --config=rector-pest.php --no-progress-bar"
+                ],
+                "test:rector": [
+                    "vendor/bin/rector process --dry-run --no-progress-bar"
+                ],
+                "test:rector:pest": [
+                    "vendor/bin/rector process --config=rector-pest.php --dry-run --no-progress-bar"
+                ],
+                "test:types": [
+                    "vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=table"
+                ],
+                "test:types:pest": [
+                    "vendor/bin/phpstan analyse --configuration=phpstan-pest.neon --memory-limit=1G --no-progress --error-format=table"
+                ],
+                "test": [
+                    "vendor/bin/pest --fail-on-risky"
+                ],
+                "test:architecture": [
+                    "vendor/bin/pest --testsuite=Architecture --fail-on-risky"
+                ],
+                "test:type-coverage": [
+                    "php -d memory_limit=2G vendor/bin/pest --type-coverage --min=100 --compact"
+                ],
+                "check": [
+                    "@composer validate --strict --no-check-publish",
+                    "@composer audit",
+                    "@test:lint",
+                    "php scripts/check-method-chaining.php",
+                    "@test:types",
+                    "@test:types:pest",
+                    "@test:rector",
+                    "@test:rector:pest",
+                    "@test",
+                    "@test:type-coverage"
+                ]
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Shared plumbing for The Laravel Architect and Mouse28: security headers, monitoring, Turnstile, feeds and Markdown.",
+            "keywords": [
+                "laravel"
+            ],
+            "support": {
+                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.1.0",
+                "issues": "https://github.com/JeffreyDavidson/creator-kit/issues"
+            },
+            "time": "2026-10-09T02:34:47+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
