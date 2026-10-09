@@ -5,12 +5,12 @@ use App\Filament\Pages\MediaHealth;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\ImageUploadOptimizer;
-use App\Services\ResponsiveImageVariants;
 use Filament\Actions\Testing\TestAction;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\withoutMiddleware;

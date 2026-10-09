@@ -6,7 +6,7 @@ namespace App\Actions;
 
 use App\Enums\MediaHealthType;
 use App\Queries\MediaHealthQuery;
-use App\Services\ResponsiveImageVariants;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 final readonly class RepairImageVariants
 {

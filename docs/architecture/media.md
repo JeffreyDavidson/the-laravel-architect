@@ -18,8 +18,11 @@ Every remaining upload is an image; episode audio uploads are retired (see
 
 Project and post featured images and podcast cover images retain their original
 upload as the canonical fallback and generate WebP variants for responsive
-public rendering at the widths listed in `config/media.php` (`responsive_widths`,
-640px and 1280px by default). Replacing or deleting an uploaded image also
+public rendering at the widths listed in `config/creator-kit.php`
+(`media.responsive_widths`, 640px and 1280px). The variant services, the
+media lifecycle and the `media:*` commands come from `jeffreydavidson/creator-kit`;
+`media.responsive_images` lists the columns the commands cover (project, post,
+podcast, in that order). Replacing or deleting an uploaded image also
 removes its variants. Variants are generated synchronously, in the saving
 request, once its database transaction commits (queueing them is a possible
 follow-up that depends on the production server's capacity).
@@ -54,7 +57,7 @@ Posts without a featured image can get generated artwork under
 
 ## Cleanup
 
-`App\Services\StoredMediaLifecycle` owns every stored-media file change. The
+creator-kit's `StoredMediaLifecycle` owns every stored-media file change. The
 post, project, podcast and episode observers call it for their media attribute,
 passing a variant label only when that attribute has responsive variants:
 

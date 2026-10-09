@@ -6,9 +6,9 @@ namespace App\Presenters;
 
 use App\Data\ResponsiveImage;
 use App\Models\Podcast;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Foundation\Vite;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 /**
  * Presents a podcast's cover artwork and accent colour. The cover is the uploaded image, or the

@@ -6,7 +6,7 @@ namespace App\Observers;
 
 use App\Models\Post;
 use App\Services\OgImageCache;
-use App\Services\StoredMediaLifecycle;
+use JeffreyDavidson\CreatorKit\Services\Media\StoredMediaLifecycle;
 
 final readonly class PostObserver
 {

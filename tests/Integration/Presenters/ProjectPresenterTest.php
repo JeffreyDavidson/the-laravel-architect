@@ -2,9 +2,9 @@
 
 use App\Models\Project;
 use App\Presenters\ProjectPresenter;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 covers(ProjectPresenter::class);
 

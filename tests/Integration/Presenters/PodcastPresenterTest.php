@@ -2,10 +2,10 @@
 
 use App\Models\Podcast;
 use App\Presenters\PodcastPresenter;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 use function Pest\Laravel\withVite;
 

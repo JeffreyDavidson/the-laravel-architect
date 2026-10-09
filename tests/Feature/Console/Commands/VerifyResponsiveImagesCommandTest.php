@@ -2,10 +2,10 @@
 
 use App\Models\Podcast;
 use App\Models\Project;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 pest()->use(RefreshDatabase::class);
 

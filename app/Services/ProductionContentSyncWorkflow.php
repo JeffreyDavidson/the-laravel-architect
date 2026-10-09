@@ -8,6 +8,7 @@ use App\Services\ContentArchive\ProductionContentSource;
 use App\Services\ContentArchive\PublicContentArchiveImporter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 use RuntimeException;
 
 final readonly class ProductionContentSyncWorkflow
