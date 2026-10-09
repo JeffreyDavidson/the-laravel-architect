@@ -5,6 +5,11 @@ things it never does. This page is the map for people and AI agents adding code.
 Read it before you create a class, then read the matching file in `.ai/rules`
 (see [the rules index](../../.ai/rules/index.md)) for the details.
 
+Since 2026-10-08 the security headers, Turnstile, runtime health, monitoring
+redaction, feed renderers and Markdown renderer live in the private
+`jeffreydavidson/creator-kit` package; where this page names them as examples,
+they now come from the package rather than `app/`.
+
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest
 `arch()` tests in `tests/Architecture`. Where a layer has no test yet, the
 "Enforced by" column says so: the rule still applies, but nothing catches a slip.

@@ -7,6 +7,9 @@ inputs:
     composer-password:
         required: true
         description: Private Composer repository password
+    composer-auth:
+        required: true
+        description: Composer auth JSON with read access to private GitHub packages (creator-kit)
 runs:
     using: composite
     steps:
@@ -23,6 +26,7 @@ runs:
           env:
               COMPOSER_USERNAME: ${{ inputs.composer-username }}
               COMPOSER_PASSWORD: ${{ inputs.composer-password }}
+              COMPOSER_AUTH: ${{ inputs.composer-auth }}
           run: |
               composer config --global --auth http-basic.satis.filamentexamples.com "$COMPOSER_USERNAME" "$COMPOSER_PASSWORD"
               composer install --no-interaction --prefer-dist --no-progress

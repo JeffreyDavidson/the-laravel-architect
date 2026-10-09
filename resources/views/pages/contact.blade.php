@@ -131,13 +131,13 @@
                         />
                     </div>
 
-                    @if (config('services.turnstile.site_key'))
+                    @if (config('creator-kit.turnstile.site_key'))
                         <div>
                             <div
                                 data-turnstile-widget
                                 x-ref="widget"
-                                data-sitekey="{{ config('services.turnstile.site_key') }}"
-                                data-action="{{ config('services.turnstile.contact_action') }}"
+                                data-sitekey="{{ config('creator-kit.turnstile.site_key') }}"
+                                data-action="{{ config('creator-kit.turnstile.contact_action') }}"
                             ></div>
                             <noscript>
                                 <p class="text-sm text-red-600 dark:text-red-400" role="alert" aria-live="assertive">

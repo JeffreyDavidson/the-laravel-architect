@@ -57,7 +57,7 @@ actions. Each splits into three read-only parts: a Query reads the content
 (`RssFeedQuery`, `NewsletterRssFeedQuery`, `SitemapQuery`), a ViewModel turns it
 into plain arrays with URLs and dates (`RssFeedViewModel`,
 `NewsletterRssFeedViewModel`, `SitemapViewModel`, `RobotsTxtViewModel`), and a
-Renderer in `app/Support/Feeds` serialises those arrays without knowing about
+Renderer from `jeffreydavidson/creator-kit` (`JeffreyDavidson\CreatorKit\Support\Feeds`) serialises those arrays without knowing about
 models (`RssChannelRenderer`, `SitemapRenderer`, `RobotsTxtRenderer`). The
 controller passes the ViewModel's data to the Renderer and sets the response
 headers.

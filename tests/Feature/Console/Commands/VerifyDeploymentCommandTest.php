@@ -2,13 +2,13 @@
 
 use App\Models\Project;
 use App\Services\Health\NightwatchHealthMonitor;
-use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 use JMac\Testing\Double;
 
 pest()->use(RefreshDatabase::class);
@@ -21,7 +21,7 @@ beforeEach(function () {
             'driver' => 'local',
             'root' => storage_path('framework/testing/disks/deployment-backups'),
         ],
-        'health.runtime.max_age_seconds' => 300,
+        'creator-kit.health.runtime.max_age_seconds' => 300,
         'app.deployment_environment' => 'production',
         'nightwatch.deployment' => 'expected-commit',
     ]);

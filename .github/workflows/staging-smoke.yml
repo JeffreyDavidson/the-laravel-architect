@@ -39,6 +39,8 @@ jobs:
         run: composer config --global --auth http-basic.satis.filamentexamples.com "$FILAMENTEXAMPLES_COMPOSER_USERNAME" "$FILAMENTEXAMPLES_COMPOSER_PASSWORD"
 
       - name: Install PHP dependencies
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Setup Node

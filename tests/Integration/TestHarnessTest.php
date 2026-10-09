@@ -45,8 +45,8 @@ it('never exposes real credentials to tests', function (string $key) {
         ->toBeTrue();
 })->with([
     'services.resend.key',
-    'services.turnstile.site_key',
-    'services.turnstile.secret_key',
+    'creator-kit.turnstile.site_key',
+    'creator-kit.turnstile.secret_key',
     'services.youtube.api_key',
     'sentry.dsn',
     'nightwatch.token',
