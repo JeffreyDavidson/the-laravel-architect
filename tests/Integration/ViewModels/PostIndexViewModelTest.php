@@ -1,6 +1,5 @@
 <?php
 
-use App\Data\PageMeta;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
@@ -10,6 +9,7 @@ use App\ViewModels\PostIndexViewModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\Support\StructuredDataExpectations as Schema;

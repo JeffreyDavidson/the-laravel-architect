@@ -10,7 +10,9 @@ redaction, feed renderers and Markdown renderer live in the private
 `jeffreydavidson/creator-kit` package, and since 2026-10-09 so does the
 publishing core (`PublishStatus`, the publishing concerns, `PublishContent`,
 `ContentNotReadyToPublish`, the publish actions and form components, and
-`DisplayTimezone`); where this page names them as examples, they now come from
+`DisplayTimezone`), and the SEO building blocks (`PageViewModel`, `PageMeta`,
+`AppliesStoredSeo`, `JsonLd`, `CollectionListing`, `PaginatedPageSeo`,
+`TextSearch`, `SeoSection`); where this page names them as examples, they now come from
 the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest

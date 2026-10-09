@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Data\PageMeta;
-use App\Support\Seo\JsonLd;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
+use JeffreyDavidson\CreatorKit\Support\Seo\JsonLd;
 
 /**
  * The site-wide JSON-LD: the WebSite entity (with its author) at the start of every page's

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Models\NewsletterIssue;
-use App\ViewModels\Concerns\AppliesStoredSeo;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
+use JeffreyDavidson\CreatorKit\ViewModels\Concerns\AppliesStoredSeo;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final class NewsletterIssueViewModel implements PageViewModel

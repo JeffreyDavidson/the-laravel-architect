@@ -7,9 +7,9 @@ namespace App\Presenters;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
-use App\Support\Seo\JsonLd;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Support\Seo\JsonLd;
 
 final readonly class EpisodePresenter
 {
