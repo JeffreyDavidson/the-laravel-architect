@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\ContactInquiry;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -22,6 +23,19 @@ return [
             'max_age_seconds' => (int) env('RUNTIME_HEALTH_MAX_AGE', 300),
 
         ],
+
+    ],
+
+    'contact' => [
+
+        // The app's contact inquiry model; the package refuses to run without it.
+        'model' => ContactInquiry::class,
+
+        // Who gets the new-inquiry email (the same address as mail.contact_to).
+        'notify' => [env('MAIL_CONTACT_TO', env('MAIL_FROM_ADDRESS', 'hello@example.com'))],
+
+        // Days before model:prune deletes an inquiry; null keeps them.
+        'retention_days' => (int) env('CONTACT_INQUIRY_RETENTION_DAYS', 180),
 
     ],
 

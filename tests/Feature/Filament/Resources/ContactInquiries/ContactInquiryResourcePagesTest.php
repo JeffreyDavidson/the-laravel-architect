@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\ContactBudget;
-use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
@@ -10,6 +9,7 @@ use App\Models\ContactInquiry;
 use App\Models\User;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\SendContactMessage;
 use App\Http\Requests\CreateContactRequest;
 use App\Http\Requests\StoreContactRequest;
 use App\ViewModels\ContactViewModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use JeffreyDavidson\CreatorKit\Actions\SendContactMessage;
 
 final class ContactController
 {
@@ -20,7 +20,9 @@ final class ContactController
 
     public function store(StoreContactRequest $request, SendContactMessage $sendContactMessage): RedirectResponse
     {
-        $sendContactMessage->handle($request->toData());
+        $sendContactMessage->handle($request
+            ->toData()
+            ->toAttributes());
 
         return back()->with('success', StoreContactRequest::SENT_MESSAGE);
     }

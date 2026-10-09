@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
 use App\Models\ContactInquiry;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 
 /**
  * @extends Factory<ContactInquiry>

@@ -1,11 +1,11 @@
 <?php
 
-use App\Actions\RetryContactInquiryEmails;
-use App\Exceptions\ContactInquiryEmailsCannotBeRetried;
-use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Actions\RetryContactInquiryEmails;
+use JeffreyDavidson\CreatorKit\Exceptions\ContactInquiryEmailsCannotBeRetried;
+use JeffreyDavidson\CreatorKit\Jobs\SendContactInquiryEmails;
 
 use function Pest\Laravel\assertDatabaseCount;
 

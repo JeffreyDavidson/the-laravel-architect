@@ -1,6 +1,6 @@
 <?php
 
-use App\Jobs\SendContactInquiryEmails;
+use App\Jobs\SendContactInquiryEmails as ForwardingSendContactInquiryEmails;
 use App\Mail\ContactConfirmationMail;
 use App\Mail\ContactInquiryReceivedMail;
 use App\Models\ContactInquiry;
@@ -11,19 +11,22 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\AssertableJsonString;
+use JeffreyDavidson\CreatorKit\Contracts\ContactMails;
+use JeffreyDavidson\CreatorKit\Jobs\SendContactInquiryEmails;
 
 pest()->use(RefreshDatabase::class);
 
 beforeEach(function (): void {
-    config()->set('mail.contact_to', 'owner@example.com');
+    config()->set('creator-kit.contact.notify', ['owner@example.com']);
     Event::fake([MessageSent::class]);
 });
 
 function sendContactInquiryEmails(ContactInquiry $inquiry): void
 {
     new SendContactInquiryEmails($inquiry->id)
-        ->handle(app(Mailer::class));
+        ->handle(app(Mailer::class), app(ContactMails::class));
 }
 
 it('records each successful send and does not resend on a later run', function () {
@@ -112,7 +115,7 @@ it('does not record cancelled emails as sent', function () {
 
 it('ignores an inquiry that no longer exists', function () {
     new SendContactInquiryEmails(999)
-        ->handle(app(Mailer::class));
+        ->handle(app(Mailer::class), app(ContactMails::class));
 
     Event::assertNotDispatched(MessageSent::class);
 });
@@ -122,7 +125,7 @@ it('requires manual review instead of resending an inquiry older than 23 hours',
     $job = new SendContactInquiryEmails($inquiry->id)
         ->withFakeQueueInteractions();
 
-    $job->handle(app(Mailer::class));
+    $job->handle(app(Mailer::class), app(ContactMails::class));
 
     $job->assertFailedWith(new RuntimeException('Contact delivery requires manual review after 23 hours.'));
     Event::assertNotDispatched(MessageSent::class);
@@ -136,7 +139,7 @@ it('releases the job while another worker holds the inquiry lock', function () {
         ->withFakeQueueInteractions();
 
     try {
-        $job->middleware()[0]->handle($job, fn (SendContactInquiryEmails $job) => $job->handle(app(Mailer::class)));
+        $job->middleware()[0]->handle($job, fn (SendContactInquiryEmails $job) => $job->handle(app(Mailer::class), app(ContactMails::class)));
 
         $job->assertReleased(60);
         $inquiry->refresh();
@@ -180,4 +183,12 @@ it('gives each email a stable provider idempotency key', function () {
         ->toBe($notificationAgain)
         ->and($notification)
         ->not->toBe($confirmation);
+});
+
+it('forwards a job queued before the move to the package job', function () {
+    Queue::fake();
+
+    new ForwardingSendContactInquiryEmails(42)->handle();
+
+    Queue::assertPushed(SendContactInquiryEmails::class, fn (SendContactInquiryEmails $job): bool => $job->contactInquiryId === 42);
 });
