@@ -110,7 +110,9 @@ final class AdminPanelProvider extends PanelProvider
             )
             ->plugin(CreatorKitPlugin::make()
                 ->categories(Category::class, NavigationGroup::Library, 2)
-                ->socialProfiles(SocialProfile::class, SocialPlatform::class, NavigationGroup::Audience, 1))
+                ->socialProfiles(SocialProfile::class, SocialPlatform::class, NavigationGroup::Audience, 1)
+                ->subscribers(NavigationGroup::Audience, 7)
+                ->newsletterIssues(NavigationGroup::Publish, 5))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

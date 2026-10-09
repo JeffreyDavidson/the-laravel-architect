@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\SourceReviewStatus;
-use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Post;
@@ -24,6 +23,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Actions\ViewOnSiteAction;
 
 final class PostsTable
 {

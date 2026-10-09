@@ -1,10 +1,8 @@
 <?php
 
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\ContentPerformanceOverview;
 use App\Models\Episode;
@@ -15,6 +13,8 @@ use App\Models\Subscriber;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 use Tests\Support\RenderedStats;
 
 use function Pest\Laravel\actingAs;

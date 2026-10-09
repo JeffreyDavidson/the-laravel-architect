@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
-use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -44,7 +43,6 @@ it('filters content by publication state', function (string $type, string $page,
 })->with([
     'post' => ['post', ListPosts::class],
     'episode' => ['episode', ListEpisodes::class],
-    'newsletter issue' => ['newsletter issue', ListNewsletterIssues::class],
 ])->with([
     'live' => [PublicationState::Live, ['live']],
     'scheduled' => [PublicationState::Scheduled, ['scheduled']],

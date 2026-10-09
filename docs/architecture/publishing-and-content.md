@@ -20,7 +20,14 @@ scopes:
 
 These scopes do not rewrite stored editorial statuses. Pipeline publication
 links use the publication filter, while the separate status filter retains its
-literal editorial meaning.
+literal editorial meaning. The newsletter issue list comes from creator-kit and
+uses tabs instead (All, Drafts, Scheduled, Published and Unpublished, with
+counts); the dashboard's newsletter queue links to the Unpublished tab.
+
+The Subscribers and Newsletter issues admin screens, and the "View on site"
+action on posts, projects, episodes and issues, come from creator-kit
+(`CreatorKitPlugin` in `AdminPanelProvider`). `App\Services\ContentUrls`, bound to
+the package's `ContentUrls`, tells the action each record's presenter URL.
 
 ## Publishing and unpublishing
 
@@ -110,7 +117,7 @@ This is separate from the editorial approval fields (`reviewed_by`,
 Admin forms generate an initial slug but preserve it when titles change, and
 explicit slug edits retain uniqueness validation. Tag slugs are translatable
 JSON, so `App\Rules\UniqueTagSlug` checks them in the current locale, and
-`App\Rules\NotReservedNewsletterSlug` rejects newsletter issue slugs taken by
+creator-kit's `NotReservedNewsletterSlug` rejects newsletter issue slugs taken by
 static `/newsletter/*` routes such as `rss` and `confirmed`.
 
 Slugs of posts, projects, episodes and newsletter issues lock once their content

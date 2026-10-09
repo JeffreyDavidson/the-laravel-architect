@@ -6,14 +6,14 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Posts\PostResource;
-use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Queries\AdminMetricsQuery;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use JeffreyDavidson\CreatorKit\Enums\PublicationState;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 
 final class EditorialOperationsOverview extends StatsOverviewWidget
 {
@@ -59,7 +59,7 @@ final class EditorialOperationsOverview extends StatsOverviewWidget
                 ->description('Unpublished issues')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
-                ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])),
+                ->url(NewsletterIssueResource::getUrl('index', ['tab' => 'unpublished'])),
             Stat::make('Active subscribers', $metrics->activeSubscribers())
                 ->description('Confirmed audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
