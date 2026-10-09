@@ -9,7 +9,7 @@
         'allow_unsafe_links' => false,
     ];
 
-    $extensions = [];
+    $extensions = [new App\Support\Markdown\TrimLinkDestinationsExtension];
 
     if ($headingIds) {
         $options['heading_permalink'] = [
