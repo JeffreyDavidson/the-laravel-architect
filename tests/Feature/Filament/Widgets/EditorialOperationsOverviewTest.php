@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Widgets\EditorialOperationsOverview;
@@ -14,6 +13,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 use JeffreyDavidson\CreatorKit\Enums\PublicationState;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 use Tests\Support\RenderedStats;

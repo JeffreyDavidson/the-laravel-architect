@@ -79,7 +79,7 @@ Beyond the resources, the panel has three custom pages:
 
 ## Dashboard counts
 
-The dashboard widgets, the Posts and Inquiry inbox navigation badges, the
+The dashboard widgets, the Posts and Contact Inquiries navigation badges, the
 newsletter send confirmation and the sent-issue delivery summary read their
 counts from `AdminMetricsQuery`, so a badge and a dashboard stat always agree.
 The counts are not cached: each is one aggregate query on a small or indexed
