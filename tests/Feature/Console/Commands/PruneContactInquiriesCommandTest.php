@@ -8,7 +8,7 @@ use function Pest\Laravel\assertModelExists;
 pest()->use(RefreshDatabase::class);
 
 it('previews expired inquiries without deleting them', function () {
-    config()->set('contact.retention_days', 180);
+    config()->set('creator-kit.contact.retention_days', 180);
     $inquiry = ContactInquiry::factory()->create(['created_at' => now()->subDays(181)]);
 
     $this->artisanCommand('model:prune', ['--model' => ContactInquiry::class, '--pretend' => true])
@@ -18,7 +18,7 @@ it('previews expired inquiries without deleting them', function () {
 });
 
 it('prunes inquiries older than the configured retention period', function () {
-    config()->set('contact.retention_days', 180);
+    config()->set('creator-kit.contact.retention_days', 180);
 
     $oldInquiry = ContactInquiry::factory()->create(['created_at' => now()->subDays(181)]);
     $recentInquiry = ContactInquiry::factory()->create(['created_at' => now()->subDays(179)]);

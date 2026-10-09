@@ -1,15 +1,15 @@
 <?php
 
-use App\Actions\SendContactMessage;
 use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
-use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
-use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Actions\SendContactMessage;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
+use JeffreyDavidson\CreatorKit\Jobs\SendContactInquiryEmails;
 
 use function Pest\Laravel\assertDatabaseCount;
 
@@ -25,14 +25,14 @@ it('rolls back the inquiry when its email job cannot be queued and allows a clea
     });
     $data = new ContactMessageData('Jane Doe', 'jane@example.com', ContactType::Consulting, null, 'Audit request.');
 
-    expect(fn () => app(SendContactMessage::class)->handle($data))
+    expect(fn () => app(SendContactMessage::class)->handle($data->toAttributes()))
         ->toThrow(RuntimeException::class, 'Synthetic queue failure.');
 
     assertDatabaseCount('contact_inquiries', 0);
     assertDatabaseCount('jobs', 0);
 
     app(SendContactMessage::class)
-        ->handle($data);
+        ->handle($data->toAttributes());
 
     assertDatabaseCount('contact_inquiries', 1);
     assertDatabaseCount('jobs', 1);
@@ -45,7 +45,7 @@ it('rejects a separate queue database before saving a contact inquiry', function
     ]);
     $data = new ContactMessageData('Jane Doe', 'jane@example.com', ContactType::Consulting, null, 'Audit request.');
 
-    expect(fn () => app(SendContactMessage::class)->handle($data))
+    expect(fn () => app(SendContactMessage::class)->handle($data->toAttributes()))
         ->toThrow(LogicException::class, 'Contact notifications must share the application database.');
 
     assertDatabaseCount('contact_inquiries', 0);
@@ -60,7 +60,7 @@ it('saves the inquiry and queues one email job that carries no contact details',
             budget: ContactBudget::Medium,
             message: 'Can you help with an audit?',
             projectTitle: 'The Laravel Architect',
-        ));
+        )->toAttributes());
 
     $inquiry = ContactInquiry::query()->sole();
     expect($inquiry)

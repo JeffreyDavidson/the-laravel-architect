@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ContactInquiryStatus;
 use App\Enums\ContentReadinessStatus;
 use App\Enums\MediaHealthStatus;
 use App\Enums\MediaHealthType;
@@ -9,6 +8,7 @@ use App\Enums\MediaVariantStatus;
 use App\Enums\ProjectReadinessFilter;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 covers(

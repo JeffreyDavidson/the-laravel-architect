@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ContactInquiryStatus;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
 use App\Models\NewsletterDelivery;
@@ -13,6 +12,7 @@ use App\Queries\AdminMetricsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 
 use function Pest\Laravel\freezeSecond;
 

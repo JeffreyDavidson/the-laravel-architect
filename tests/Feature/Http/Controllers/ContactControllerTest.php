@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\SocialPlatform;
-use App\Jobs\SendContactInquiryEmails;
 use App\Models\ContactInquiry;
 use App\Models\Project;
 use App\Models\SocialProfile;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
+use JeffreyDavidson\CreatorKit\Jobs\SendContactInquiryEmails;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Support\SocialProfileFixtures;
 
