@@ -14,7 +14,8 @@ publishing core (`PublishStatus`, the publishing concerns, `PublishContent`,
 `AppliesStoredSeo`, `JsonLd`, `CollectionListing`, `PaginatedPageSeo`,
 `TextSearch`, `SeoSection`) and the responsive-image services and `media:*`
 commands (`ResponsiveImageVariants`, `StoredMediaLifecycle`, the image
-workflows); where this page names them as examples, they now come from
+workflows), and the Categories and Social Profiles admin screens with
+`SlugSourceInput` (registered through `CreatorKitPlugin` in `AdminPanelProvider`); where this page names them as examples, they now come from
 the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest

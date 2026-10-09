@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Enums\NavigationGroup;
+use App\Enums\SocialPlatform;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\Posts\PostResource;
+use App\Models\Category;
+use App\Models\SocialProfile;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
@@ -31,6 +35,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use JeffreyDavidson\CreatorKit\Filament\CreatorKitPlugin;
 use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 
 final class AdminPanelProvider extends PanelProvider
@@ -103,6 +108,9 @@ final class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::SCRIPTS_AFTER,
                 fn (Vite $vite): HtmlString => $vite('resources/js/filament/admin.js'),
             )
+            ->plugin(CreatorKitPlugin::make()
+                ->categories(Category::class, NavigationGroup::Library, 2)
+                ->socialProfiles(SocialProfile::class, SocialPlatform::class, NavigationGroup::Audience, 1))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

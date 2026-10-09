@@ -1,11 +1,11 @@
 <?php
 
 use App\Enums\SocialPlatform;
-use App\Filament\Resources\SocialProfiles\Pages\CreateSocialProfile;
-use App\Filament\Resources\SocialProfiles\Pages\EditSocialProfile;
 use App\Models\SocialProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\Pages\CreateSocialProfile;
+use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\Pages\EditSocialProfile;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

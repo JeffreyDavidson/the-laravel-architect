@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\Categories\CategoryResource;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\CategoryResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

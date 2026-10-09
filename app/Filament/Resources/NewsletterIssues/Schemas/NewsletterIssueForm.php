@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\NewsletterIssues\Schemas;
 
-use App\Filament\Forms\Components\SlugSourceInput;
 use App\Models\NewsletterIssue;
 use App\Rules\NotReservedNewsletterSlug;
 use Filament\Forms\Components\MarkdownEditor;
@@ -15,6 +14,7 @@ use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugSourceInput;
 
 final class NewsletterIssueForm
 {
