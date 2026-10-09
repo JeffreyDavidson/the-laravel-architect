@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\PublishStatus;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 final class ScaleTestContentWorkflow
 {

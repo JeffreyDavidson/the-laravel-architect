@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 /**
  * @extends Factory<Post>

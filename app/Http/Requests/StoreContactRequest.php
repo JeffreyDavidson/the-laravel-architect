@@ -7,7 +7,6 @@ namespace App\Http\Requests;
 use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Queries\PublishedProjectQuery;
 use Closure;
@@ -19,6 +18,7 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Rules\PassesTurnstile;
 use JeffreyDavidson\CreatorKit\Services\TurnstileVerifier;
 

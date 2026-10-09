@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Data;
 
 use App\Enums\CalendarEntryType;
-use App\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 /**
  * A post or episode as the editorial calendar shows it: its publication day in the display timezone

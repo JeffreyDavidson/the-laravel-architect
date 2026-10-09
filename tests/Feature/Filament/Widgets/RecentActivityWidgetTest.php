@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Livewire\livewire;
 

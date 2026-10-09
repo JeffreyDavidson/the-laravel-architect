@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Projects\Pages;
 
-use App\Filament\Actions\PublishContentAction;
-use App\Filament\Actions\UnpublishContentAction;
 use App\Filament\Resources\Projects\ProjectResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
+use JeffreyDavidson\CreatorKit\Filament\Actions\PublishContentAction;
+use JeffreyDavidson\CreatorKit\Filament\Actions\UnpublishContentAction;
 
 final class EditProject extends EditRecord
 {

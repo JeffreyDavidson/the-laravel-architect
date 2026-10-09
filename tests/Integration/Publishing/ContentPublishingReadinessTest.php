@@ -1,10 +1,9 @@
 <?php
 
-use App\Actions\PublishContent;
-use App\Enums\PublishStatus;
-use App\Enums\ReadinessCheck;
-use App\Exceptions\ContentNotReadyToPublish;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Actions\PublishContent;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Exceptions\ContentNotReadyToPublish;
 use Tests\Support\PublishableFixtures;
 
 pest()->use(RefreshDatabase::class);
@@ -53,8 +52,8 @@ it('refuses to publish content that is missing required details and lists them',
         ->and($record->getAttribute('status'))
         ->toBe(PublishStatus::Draft);
 })->with([
-    'post' => ['post', [ReadinessCheck::Content, ReadinessCheck::Excerpt, ReadinessCheck::Category], 'Post is not ready to publish. Missing: Content, Excerpt, Category.'],
-    'project' => ['project', [ReadinessCheck::Description, ReadinessCheck::CaseStudy], 'Project is not ready to publish. Missing: Description, Case study.'],
-    'episode' => ['episode', [ReadinessCheck::Podcast, ReadinessCheck::Description, ReadinessCheck::EpisodeMedia], 'Episode is not ready to publish. Missing: Podcast, Description, Episode media.'],
-    'newsletter issue' => ['newsletter issue', [ReadinessCheck::Content], 'Newsletter Issue is not ready to publish. Missing: Content.'],
+    'post' => ['post', ['Content', 'Excerpt', 'Category'], 'Post is not ready to publish. Missing: Content, Excerpt, Category.'],
+    'project' => ['project', ['Description', 'Case study'], 'Project is not ready to publish. Missing: Description, Case study.'],
+    'episode' => ['episode', ['Podcast', 'Description', 'Episode media'], 'Episode is not ready to publish. Missing: Podcast, Description, Episode media.'],
+    'newsletter issue' => ['newsletter issue', ['Content'], 'Newsletter Issue is not ready to publish. Missing: Content.'],
 ]);

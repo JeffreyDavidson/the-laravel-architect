@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -12,6 +11,7 @@ use App\Services\ContentArchive\PublicContentArchiveExporter;
 use App\Services\ContentArchive\PublicContentArchiveImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\travelTo;
 

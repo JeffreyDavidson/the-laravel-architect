@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use App\Jobs\DeliverNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
@@ -10,6 +9,7 @@ use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;

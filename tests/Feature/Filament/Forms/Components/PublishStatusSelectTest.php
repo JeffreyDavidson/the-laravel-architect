@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\NewsletterIssues\Pages\CreateNewsletterIssue;
 use App\Filament\Resources\Posts\Pages\CreatePost;
@@ -8,6 +7,7 @@ use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

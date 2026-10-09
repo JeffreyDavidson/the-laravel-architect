@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

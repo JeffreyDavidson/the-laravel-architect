@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Episodes\Tables;
 
-use App\Enums\PublishStatus;
 use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Filament\Tables\Filters\PublicationFilter;
@@ -23,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 final class EpisodesTable
 {
