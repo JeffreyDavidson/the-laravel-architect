@@ -47,7 +47,7 @@ it('summarizes first-party editorial work and links', function () {
         'Posts in review' => ['value' => '1', 'url' => PostResource::getUrl('index')],
         'Scheduled posts' => ['value' => '1', 'url' => PostResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Scheduled->value]]])],
         'Episode queue' => ['value' => '0', 'url' => EpisodeResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
-        'Newsletter queue' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])],
+        'Newsletter queue' => ['value' => '1', 'url' => NewsletterIssueResource::getUrl('index', ['tab' => 'unpublished'])],
         'Active subscribers' => ['value' => '1', 'url' => SubscriberResource::getUrl('index')],
     ]);
 });

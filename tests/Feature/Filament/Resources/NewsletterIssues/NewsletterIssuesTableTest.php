@@ -50,6 +50,10 @@ it('lists issues under tabs by publication state', function (string $tab, array 
     ])->map(function (array $attributes, string $key): NewsletterIssue {
         $issue = PublishableFixtures::ready('newsletter issue', ['slug' => "{$key}-issue", ...$attributes]);
 
+        if (! $issue instanceof NewsletterIssue) {
+            throw new RuntimeException('Expected a newsletter issue.');
+        }
+
         if ($key !== 'draft') {
             $issue->publish();
         }
@@ -65,4 +69,5 @@ it('lists issues under tabs by publication state', function (string $tab, array 
     'drafts' => ['drafts', ['draft']],
     'scheduled' => ['scheduled', ['scheduled']],
     'published' => ['published', ['live']],
+    'unpublished' => ['unpublished', ['scheduled', 'draft']],
 ]);

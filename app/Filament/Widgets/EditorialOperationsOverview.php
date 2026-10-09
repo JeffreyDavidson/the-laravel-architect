@@ -59,7 +59,7 @@ final class EditorialOperationsOverview extends StatsOverviewWidget
                 ->description('Unpublished issues')
                 ->descriptionIcon(Heroicon::OutlinedNewspaper)
                 ->color('gray')
-                ->url(NewsletterIssueResource::getUrl('index', ['filters' => ['publication' => ['value' => PublicationState::Unpublished->value]]])),
+                ->url(NewsletterIssueResource::getUrl('index', ['tab' => 'unpublished'])),
             Stat::make('Active subscribers', $metrics->activeSubscribers())
                 ->description('Confirmed audience')
                 ->descriptionIcon(Heroicon::OutlinedEnvelope)
