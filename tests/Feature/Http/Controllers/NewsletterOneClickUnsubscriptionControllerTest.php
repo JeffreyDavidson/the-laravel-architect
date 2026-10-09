@@ -1,12 +1,12 @@
 <?php
 
 use App\Models\Subscriber;
-use App\Presenters\SubscriberPresenter;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
+use JeffreyDavidson\CreatorKit\Presenters\SubscriberPresenter;
 use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\post;
@@ -83,23 +83,23 @@ it('rejects unsigned one-click posts', function () {
         ->toBeTrue();
 });
 
-it('accepts one-click posts from mail providers without a forgery token', function () {
-    $url = SubscriberPresenter::from(activeSubscriber())
-        ->unsubscribeUrl();
-    $request = Request::create($url, 'POST', ['List-Unsubscribe' => 'One-Click']);
-    $request->setLaravelSession(app('session.store'));
+it('accepts one-click posts from mail providers without a forgery token', function (string $routeName, bool $checksForgery) {
+    $router = app('router');
+    $route = $router
+        ->getRoutes()
+        ->getByName($routeName);
 
-    $next = fn (): Response => response()->noContent();
-
-    $response = enforcedForgeryMiddleware()
-        ->handle($request, $next);
-
-    if (! $response instanceof Response) {
-        throw new RuntimeException('The middleware must return an HTTP response.');
+    if ($route === null) {
+        throw new RuntimeException("Route [{$routeName}] is not registered.");
     }
-    expect($response->getStatusCode())
-        ->toBe(204);
-});
+
+    expect(in_array(PreventRequestForgery::class, $router->gatherRouteMiddleware($route), true))
+        ->toBe($checksForgery);
+})->with([
+    'one-click unsubscribe skips it' => ['newsletter.unsubscribe.oneClick', false],
+    'the unsubscribe form keeps it' => ['newsletter.unsubscribe.store', true],
+    'signing up keeps it' => ['newsletter.subscribe', true],
+]);
 
 it('keeps forgery protection on other newsletter posts', function () {
     $request = Request::create(route('newsletter.subscribe'), 'POST', ['email' => 'reader@example.com']);

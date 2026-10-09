@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Tag;
 use App\Models\User;
 use App\Publishing\ContentPublishingReadiness;
+use App\Services\NewsletterEmails;
 use App\Services\PublicPageBenchmark;
 use App\View\Components\SocialLinks;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use JeffreyDavidson\CreatorKit\Contracts\NewsletterMails;
 use JeffreyDavidson\CreatorKit\Contracts\PublishingReadiness;
 use Livewire\Livewire;
 use RalphJSmit\Laravel\SEO\Facades\SEOManager;
@@ -36,6 +38,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(PublicPageBenchmark::class);
         $this->app->bind(PublishingReadiness::class, ContentPublishingReadiness::class);
+        $this->app->bind(NewsletterMails::class, NewsletterEmails::class);
     }
 
     /**

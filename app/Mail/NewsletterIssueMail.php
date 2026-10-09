@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use App\Mail\Concerns\FingerprintsIdempotencyKeys;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Presenters\NewsletterIssuePresenter;
@@ -12,6 +11,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
+use JeffreyDavidson\CreatorKit\Support\Mail\IdempotencyFingerprint;
 
 /**
  * A newsletter issue for one recipient. Delivery jobs send it immediately,
@@ -25,8 +25,6 @@ use Illuminate\Mail\Mailables\Headers;
  */
 final class NewsletterIssueMail extends Mailable
 {
-    use FingerprintsIdempotencyKeys;
-
     public function __construct(
         public readonly NewsletterIssue $issue,
         public readonly ?string $unsubscribeUrl = null,
@@ -48,7 +46,9 @@ final class NewsletterIssueMail extends Mailable
         }
 
         if ($this->delivery instanceof NewsletterDelivery) {
-            $text['Resend-Idempotency-Key'] = "tla-newsletter-delivery-{$this->idempotencyFingerprint($this->delivery->id, $this->delivery->created_at)}";
+            $fingerprint = IdempotencyFingerprint::for($this->delivery->id, $this->delivery->created_at);
+
+            $text['Resend-Idempotency-Key'] = "tla-newsletter-delivery-{$fingerprint}";
         }
 
         return new Headers(text: $text);

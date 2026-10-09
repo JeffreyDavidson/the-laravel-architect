@@ -10,14 +10,15 @@ use Database\Factories\NewsletterIssueFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Contracts\NewsletterIssue as NewsletterIssueContract;
 use JeffreyDavidson\CreatorKit\Contracts\Publishable;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
+use JeffreyDavidson\CreatorKit\Models\Concerns\SendsAsNewsletter;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\Activitylog\Support\LogOptions;
@@ -30,7 +31,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property Carbon|null $published_at
  * @property Carbon|null $sent_at
  */
-final class NewsletterIssue extends Model implements Publishable
+final class NewsletterIssue extends Model implements NewsletterIssueContract, Publishable
 {
     use DeletesOwnedContent;
 
@@ -40,6 +41,7 @@ final class NewsletterIssue extends Model implements Publishable
     use HasPublishingStatus;
     use HasSEO;
     use LocksSlugAfterPublication;
+    use SendsAsNewsletter;
     use SoftDeletes;
     use TracksActivity;
 
@@ -51,17 +53,6 @@ final class NewsletterIssue extends Model implements Publishable
             'published_at' => 'datetime',
             'sent_at' => 'datetime',
         ];
-    }
-
-    /** @return HasMany<NewsletterDelivery, $this> */
-    public function deliveries(): HasMany
-    {
-        return $this->hasMany(NewsletterDelivery::class);
-    }
-
-    public function wasSent(): bool
-    {
-        return $this->sent_at !== null;
     }
 
     public function getActivitylogOptions(): LogOptions

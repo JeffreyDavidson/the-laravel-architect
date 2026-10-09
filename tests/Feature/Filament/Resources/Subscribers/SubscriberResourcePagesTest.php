@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\SubscriberStatus;
 use App\Filament\Resources\Subscribers\Pages\ListSubscribers;
 use App\Filament\Resources\Subscribers\SubscriberResource;
 use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use JeffreyDavidson\CreatorKit\Enums\SubscriberStatus;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

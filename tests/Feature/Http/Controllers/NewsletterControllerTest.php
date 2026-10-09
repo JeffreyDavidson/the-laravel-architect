@@ -2,10 +2,10 @@
 
 use App\Mail\NewsletterConfirmationMail;
 use App\Models\Subscriber;
-use App\Presenters\SubscriberPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use JeffreyDavidson\CreatorKit\Presenters\SubscriberPresenter;
 
 use function Pest\Laravel\call;
 use function Pest\Laravel\delete;

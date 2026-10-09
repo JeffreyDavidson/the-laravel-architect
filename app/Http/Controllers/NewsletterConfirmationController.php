@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
 use App\ViewModels\NewsletterConfirmationViewModel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use JeffreyDavidson\CreatorKit\Actions\ConfirmNewsletterSubscription;
 
 final class NewsletterConfirmationController
 {

@@ -3,6 +3,7 @@
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
@@ -119,4 +120,19 @@ it('shows the unsubscribe link in the footer only for subscriber emails', functi
     new NewsletterIssueMail($issue)
         ->assertDontSeeInHtml('>Unsubscribe</a>', false)
         ->assertSeeInHtml('This is a test email');
+});
+
+it('keeps the delivery idempotency key stable across releases', function () {
+    config()->set('app.url', 'https://thelaravelarchitect.com');
+    $delivery = NewsletterDelivery::factory()->make([
+        'id' => 42,
+        'created_at' => CarbonImmutable::parse('2026-01-02 03:04:05', 'UTC'),
+    ]);
+
+    $headers = new NewsletterIssueMail(publishedNewsletterIssue(), 'https://example.test/unsubscribe', $delivery)
+        ->headers()
+        ->text;
+
+    expect($headers['Resend-Idempotency-Key'] ?? null)
+        ->toBe('tla-newsletter-delivery-e17ecfcb94fd504a0ffcfb303b666f895edbd85ce08eb366b103f64e94f8992c');
 });
