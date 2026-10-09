@@ -18,7 +18,7 @@ pest()->use(RefreshDatabase::class);
 it('includes the newsletter archive and only public newsletter issues', function () {
     $published = NewsletterIssue::factory()->published()
         ->create();
-    $draft = NewsletterIssue::factory()->create();
+    $draft = NewsletterIssue::factory()->create(['slug' => 'excluded-draft-issue']);
 
     get(route('sitemap'))
         ->assertSeeHtml(route('newsletter.index'))
@@ -30,15 +30,18 @@ it('only includes public content in the sitemap', function () {
     $publishedPost = Post::factory()->published()
         ->create();
 
-    $draftOnlyCategory = Category::factory()->create();
+    $draftOnlyCategory = Category::factory()->create(['name' => 'Excluded draft-only category']);
     $scheduledPost = Post::factory()->for($draftOnlyCategory)
         ->published()
-        ->create(['published_at' => now()->addDay()]);
+        ->create([
+            'slug' => 'excluded-scheduled-post',
+            'published_at' => now()->addDay(),
+        ]);
 
     $publishedProject = Project::factory()->published()
         ->create();
 
-    $draftProject = Project::factory()->create();
+    $draftProject = Project::factory()->create(['slug' => 'excluded-draft-project']);
 
     $podcast = Podcast::factory()->create();
 
@@ -47,10 +50,10 @@ it('only includes public content in the sitemap', function () {
         ->create();
 
     $draftEpisode = Episode::factory()->for($podcast)
-        ->create();
+        ->create(['slug' => 'excluded-draft-episode']);
 
     $publishedTag = Tag::factory()->create();
-    $scheduledOnlyTag = Tag::factory()->create();
+    $scheduledOnlyTag = Tag::factory()->create(['name' => 'Excluded scheduled-only tag']);
     $publishedPost->attachTag($publishedTag);
     $scheduledPost->attachTag($scheduledOnlyTag);
 
