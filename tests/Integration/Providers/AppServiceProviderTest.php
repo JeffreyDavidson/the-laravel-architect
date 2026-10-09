@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Posts\PostResource;
@@ -28,6 +27,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\CategoryResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\SocialProfileResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;

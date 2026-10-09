@@ -87,7 +87,7 @@
 
                         @if ($newInquiries > 0)
                             <a
-                                href="{{ \App\Filament\Resources\ContactInquiries\ContactInquiryResource::getUrl('index') }}"
+                                href="{{ \JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource::getUrl('index') }}"
                                 class="tla-dashboard-attention__item tla-dashboard-attention__item--inquiries"
                             >
                                 <strong>{{ $newInquiries }}</strong>

@@ -15,7 +15,11 @@ Turnstile). TLA keeps `ContactInquiry`, `StoreContactRequest`, the controller,
 the form and its mailables; `App\Services\ContactEmails` hands the mailables to
 the package, and `config/creator-kit.php` (`contact`) names the model, the notify
 address and the retention days. `App\Jobs\SendContactInquiryEmails` only forwards
-jobs queued before the move to the package job.
+jobs queued before the move to the package job. The Contact Inquiries admin
+screens also come from creator-kit (`CreatorKitPlugin::contactInquiries()` in
+`AdminPanelProvider`, with TLA's budget and project title as read-only details);
+opening a new inquiry marks it In progress, and the list has Mark resolved and
+Reply actions.
 
 ## Saving and queueing
 

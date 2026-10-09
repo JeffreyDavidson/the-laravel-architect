@@ -1,10 +1,10 @@
 <?php
 
-use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
 use App\Models\ContactInquiry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
 use JeffreyDavidson\CreatorKit\Jobs\SendContactInquiryEmails;
 
 use function Pest\Laravel\actingAs;

@@ -2,14 +2,14 @@
 
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
-use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
-use App\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
-use App\Filament\Resources\ContactInquiries\Pages\ListContactInquiries;
 use App\Models\ContactInquiry;
 use App\Models\User;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\Pages\EditContactInquiry;
+use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\Pages\ListContactInquiries;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
