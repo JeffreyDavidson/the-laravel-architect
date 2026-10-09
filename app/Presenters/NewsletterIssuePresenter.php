@@ -6,6 +6,7 @@ namespace App\Presenters;
 
 use App\Models\NewsletterIssue;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
+use App\Support\Markdown\TrimLinkDestinationsExtension;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Str;
@@ -48,7 +49,7 @@ final readonly class NewsletterIssuePresenter
         return $this->absoluteHtmlUrls(Str::markdown($this->issue->content, [
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
-        ]));
+        ], [new TrimLinkDestinationsExtension]));
     }
 
     /** The issue body for an email's plain-text part: the raw Markdown. */
@@ -80,7 +81,7 @@ final readonly class NewsletterIssuePresenter
     private function absoluteMarkdownUrls(string $markdown): string
     {
         return preg_replace_callback(
-            '/(\]\(\s*<?)([^)\s>]+)/',
+            '/(\]\(\s*<?)\s*([^)\s>]+)(?:\s+(?=>))?/',
             fn (array $match): string => "{$match[1]}{$this->absoluteUrl($match[2])}",
             $markdown,
         ) ?? $markdown;

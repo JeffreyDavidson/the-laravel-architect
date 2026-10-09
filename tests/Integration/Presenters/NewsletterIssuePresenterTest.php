@@ -40,6 +40,20 @@ it('makes relative links and images absolute in the email body', function () {
         ->not->toContain('](/');
 });
 
+it('trims spaces inside angle-bracket link destinations in the email body', function () {
+    config()->set('app.url', 'https://example.test');
+    $presenter = newsletterIssuePresenter("[Post](< /blog/z >)\n\n![Pic](< /storage/pic.png >)");
+
+    $html = $presenter->emailBodyHtml();
+    $text = $presenter->emailBodyText();
+
+    expect($html)
+        ->toContain('href="https://example.test/blog/z"', 'src="https://example.test/storage/pic.png"')
+        ->not->toContain('%20')
+        ->and($text)
+        ->toContain('[Post](<https://example.test/blog/z>)', '![Pic](<https://example.test/storage/pic.png>)');
+});
+
 it('leaves absolute, mailto, tel and anchor urls alone in the email body', function () {
     config()->set('app.url', 'https://example.test');
     $markdown = '[A](https://other.test/a) [B](mailto:me@example.com) [C](tel:+15555550100) [D](#section) [E](//cdn.test/e)';
