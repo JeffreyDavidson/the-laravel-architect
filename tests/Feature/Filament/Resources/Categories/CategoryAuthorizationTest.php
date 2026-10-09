@@ -1,12 +1,12 @@
 <?php
 
-use App\Filament\Resources\Categories\CategoryResource;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\CategoryResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
