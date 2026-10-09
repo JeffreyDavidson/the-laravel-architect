@@ -7,8 +7,8 @@ namespace App\Presenters;
 use App\Data\ResponsiveImage;
 use App\Models\Project;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 final readonly class ProjectPresenter
 {

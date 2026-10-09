@@ -168,9 +168,9 @@ For conceptual imagery, use this prompt structure:
 - [Shared project frame and image sizing](../resources/views/components/projects/artwork.blade.php)
 - [Project detail layout](../resources/views/pages/projects/show.blade.php)
 - [Image upload optimizer](../app/Services/ImageUploadOptimizer.php)
-- [Responsive image widths and quality](../app/Services/ResponsiveImageVariants.php)
+- Responsive image widths and quality: creator-kit's `ResponsiveImageVariants` (widths in `config/creator-kit.php`)
 - [Project observer](../app/Observers/ProjectObserver.php)
-- [Media lifecycle](../app/Services/StoredMediaLifecycle.php)
+- Media lifecycle: creator-kit's `StoredMediaLifecycle`
 
 For article illustrations and their different crop requirements, use
 [editorial design](editorial-design.md).

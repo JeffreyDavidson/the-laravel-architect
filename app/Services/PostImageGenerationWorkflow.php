@@ -9,6 +9,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 use RuntimeException;
 use UnexpectedValueException;
 

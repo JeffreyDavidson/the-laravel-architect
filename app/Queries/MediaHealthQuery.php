@@ -13,12 +13,12 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Services\ImageUploadOptimizer;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 use Throwable;
 
 /**

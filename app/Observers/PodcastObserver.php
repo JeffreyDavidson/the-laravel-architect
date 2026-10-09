@@ -6,9 +6,9 @@ namespace App\Observers;
 
 use App\Models\Episode;
 use App\Models\Podcast;
-use App\Services\StoredMediaLifecycle;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use JeffreyDavidson\CreatorKit\Services\Media\StoredMediaLifecycle;
 use RuntimeException;
 
 /**

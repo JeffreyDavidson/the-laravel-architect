@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Models\Podcast;
+use App\Models\Post;
+use App\Models\Project;
+
 return [
 
     'health' => [
@@ -14,6 +18,26 @@ return [
              */
             'max_age_seconds' => (int) env('RUNTIME_HEALTH_MAX_AGE', 300),
 
+        ],
+
+    ],
+
+    'media' => [
+
+        /*
+         * The widths, in pixels, of the responsive WebP variants generated for every stored
+         * image. Keep it ascending.
+         */
+        'responsive_widths' => [640, 1280],
+
+        /*
+         * The image columns the media:repair-responsive-images and media:verify-responsive-images
+         * commands cover, in the order they report them.
+         */
+        'responsive_images' => [
+            ['model' => Project::class, 'column' => 'featured_image_path', 'label' => 'project'],
+            ['model' => Post::class, 'column' => 'featured_image_path', 'label' => 'post'],
+            ['model' => Podcast::class, 'column' => 'cover_image_path', 'label' => 'podcast'],
         ],
 
     ],
