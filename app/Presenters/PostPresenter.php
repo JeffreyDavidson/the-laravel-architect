@@ -8,9 +8,9 @@ use App\Data\ResponsiveImage;
 use App\Enums\BundledPostArtwork;
 use App\Models\Post;
 use App\Presenters\Concerns\LinksToPublicPageOrPreview;
-use App\Services\ResponsiveImageVariants;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Foundation\Vite;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 
 final readonly class PostPresenter
 {

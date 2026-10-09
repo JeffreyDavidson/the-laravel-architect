@@ -15,8 +15,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
-use RalphJSmit\Filament\SEO\SEO;
 
 final class EpisodeForm
 {
@@ -105,11 +105,7 @@ final class EpisodeForm
                         PublishDatePicker::make('published_at'),
                     ])->columns(3),
 
-                Section::make('SEO')
-                    ->schema([
-                        SEO::make(),
-                    ])
-                    ->collapsed(),
+                SeoSection::make(),
             ]);
     }
 }

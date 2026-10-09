@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Services\Media\ResponsiveImageVariants;
 use RalphJSmit\Laravel\SEO\Models\SEO;
 use Throwable;
 

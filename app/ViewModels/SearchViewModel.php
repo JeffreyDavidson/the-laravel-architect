@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Enums\SearchContentType;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -19,6 +17,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use UnexpectedValueException;
 

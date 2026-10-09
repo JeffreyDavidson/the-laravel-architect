@@ -1,5 +1,5 @@
 {{--
-    Every page passes its App\Data\PageMeta (from its PageViewModel): the SEO tags come from its SEOData,
+    Every page passes its JeffreyDavidson\CreatorKit\Data\PageMeta (from its PageViewModel): the SEO tags come from its SEOData,
     and the JSON-LD graph is the site-wide entities followed by the page's own nodes.
 --}}
 @props([

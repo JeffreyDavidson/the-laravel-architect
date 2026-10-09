@@ -14,6 +14,7 @@ use App\Models\Video;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use JeffreyDavidson\CreatorKit\Support\Search\TextSearch;
 
 /**
  * @phpstan-type SearchResultPage LengthAwarePaginator<int, Post>|LengthAwarePaginator<int, Project>|LengthAwarePaginator<int, Podcast>|LengthAwarePaginator<int, NewsletterIssue>|LengthAwarePaginator<int, Episode>|LengthAwarePaginator<int, Video>
@@ -35,11 +36,10 @@ final class SearchQuery
             return [];
         }
 
-        $like = '%'.addcslashes($query, '\\%_').'%';
         $results = [];
 
         foreach ($type instanceof SearchContentType ? [$type] : SearchContentType::cases() as $searchType) {
-            $results[$searchType->value] = $this->search($searchType, $like);
+            $results[$searchType->value] = $this->search($searchType, $query);
         }
 
         return $results;
@@ -48,21 +48,23 @@ final class SearchQuery
     /**
      * @return SearchResultPage
      */
-    private function search(SearchContentType $type, string $like): LengthAwarePaginator
+    private function search(SearchContentType $type, string $term): LengthAwarePaginator
     {
         return match ($type) {
             SearchContentType::Writing => $this->paginate(
                 Post::query()
                     ->select(['id', 'title', 'slug', 'excerpt', 'published_at'])
                     ->published()
-                    ->where(fn (Builder $postsQuery): Builder => $this
-                        ->whereAnyLike($postsQuery, ['title', 'excerpt', 'content'], $like)
-                        ->orWhereHas('tags', function (Builder $tagQuery) use ($like): void {
+                    ->where(function (Builder $postsQuery) use ($term): void {
+                        TextSearch::constrain($postsQuery, ['title', 'excerpt', 'content'], $term);
+                        $postsQuery->orWhereHas('tags', function (Builder $tagQuery) use ($term): void {
+                            $escapedTerm = addcslashes($term, '\\%_');
                             $tagQuery->whereRaw(
                                 "json_extract(\"tags\".\"name\", ?) LIKE ? ESCAPE '\\'",
-                                ['$.'.app()->getLocale(), $like],
+                                ['$.'.app()->getLocale(), "%{$escapedTerm}%"],
                             );
-                        }))
+                        });
+                    })
                     ->latest('published_at')
                     ->latest('id'),
                 'postsPage',
@@ -71,7 +73,7 @@ final class SearchQuery
                 Project::query()
                     ->select(['id', 'title', 'slug', 'description', 'sort_order', 'updated_at'])
                     ->published()
-                    ->where(fn (Builder $projectsQuery): Builder => $this->whereAnyLike($projectsQuery, ['title', 'description', 'content'], $like))
+                    ->where(fn (Builder $projectsQuery) => TextSearch::constrain($projectsQuery, ['title', 'description', 'content'], $term))
                     ->orderBy('sort_order')
                     ->latest('updated_at')
                     ->latest('id'),
@@ -81,7 +83,7 @@ final class SearchQuery
                 Podcast::query()
                     ->select(['id', 'name', 'slug', 'description', 'long_description', 'sort_order'])
                     ->active()
-                    ->where(fn (Builder $podcastsQuery): Builder => $this->whereAnyLike($podcastsQuery, ['name', 'description', 'long_description'], $like))
+                    ->where(fn (Builder $podcastsQuery) => TextSearch::constrain($podcastsQuery, ['name', 'description', 'long_description'], $term))
                     ->orderBy('sort_order')
                     ->orderBy('id'),
                 'podcastsPage',
@@ -90,7 +92,7 @@ final class SearchQuery
                 NewsletterIssue::query()
                     ->select(['id', 'title', 'slug', 'excerpt', 'content', 'published_at'])
                     ->published()
-                    ->where(fn (Builder $issuesQuery): Builder => $this->whereAnyLike($issuesQuery, ['title', 'excerpt', 'content'], $like))
+                    ->where(fn (Builder $issuesQuery) => TextSearch::constrain($issuesQuery, ['title', 'excerpt', 'content'], $term))
                     ->latest('published_at')
                     ->latest('id'),
                 'newsletterPage',
@@ -103,7 +105,7 @@ final class SearchQuery
                         $podcastQuery->active();
                     })
                     ->with('podcast:id,slug')
-                    ->where(fn (Builder $episodesQuery): Builder => $this->whereAnyLike($episodesQuery, ['title', 'description', 'show_notes', 'transcript', 'guest_name'], $like))
+                    ->where(fn (Builder $episodesQuery) => TextSearch::constrain($episodesQuery, ['title', 'description', 'show_notes', 'transcript', 'guest_name'], $term))
                     ->latest('published_at')
                     ->latest('id'),
                 'episodesPage',
@@ -112,31 +114,12 @@ final class SearchQuery
                 Video::query()
                     ->select(['id', 'youtube_id', 'title', 'slug', 'description', 'published_at'])
                     ->published()
-                    ->where(fn (Builder $videosQuery): Builder => $this->whereAnyLike($videosQuery, ['title', 'description'], $like))
+                    ->where(fn (Builder $videosQuery) => TextSearch::constrain($videosQuery, ['title', 'description'], $term))
                     ->latest('published_at')
                     ->latest('id'),
                 'videosPage',
             ),
         };
-    }
-
-    /**
-     * Match the escaped pattern against any of the columns. Laravel's whereAny() does not
-     * add the ESCAPE clause that SQLite needs for the backslash-escaped wildcards.
-     *
-     * @template TModel of Model
-     *
-     * @param  Builder<TModel>  $query
-     * @param  list<literal-string>  $columns
-     * @return Builder<TModel>
-     */
-    private function whereAnyLike(Builder $query, array $columns, string $like): Builder
-    {
-        foreach ($columns as $column) {
-            $query->orWhereRaw("{$column} LIKE ? ESCAPE '\\'", [$like]);
-        }
-
-        return $query;
     }
 
     /**

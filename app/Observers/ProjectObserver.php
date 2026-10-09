@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Project;
-use App\Services\StoredMediaLifecycle;
+use JeffreyDavidson\CreatorKit\Services\Media\StoredMediaLifecycle;
 
 final readonly class ProjectObserver
 {

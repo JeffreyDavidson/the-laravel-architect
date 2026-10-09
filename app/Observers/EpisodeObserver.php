@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Episode;
-use App\Services\StoredMediaLifecycle;
+use JeffreyDavidson\CreatorKit\Services\Media\StoredMediaLifecycle;
 
 /**
  * Episode artwork keeps only its original upload: episode pages do not render a srcset,

@@ -1,12 +1,12 @@
 <?php
 
-use App\Contracts\PageViewModel;
 use App\ViewModels\NewsletterRssFeedViewModel;
 use App\ViewModels\RobotsTxtViewModel;
 use App\ViewModels\RssFeedViewModel;
 use App\ViewModels\SitemapViewModel;
 use App\ViewModels\SiteStructuredData;
 use Illuminate\Support\Facades\File;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
 
 /*
  * The feed ViewModels shape RSS, sitemap and robots.txt output rather than an HTML page, and

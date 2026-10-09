@@ -12,8 +12,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
-use RalphJSmit\Filament\SEO\SEO;
 
 final class PodcastForm
 {
@@ -68,11 +68,7 @@ final class PodcastForm
                             ->default(0),
                     ])->columns(2),
 
-                Section::make('SEO')
-                    ->schema([
-                        SEO::make(),
-                    ])
-                    ->collapsed(),
+                SeoSection::make(),
             ]);
     }
 }

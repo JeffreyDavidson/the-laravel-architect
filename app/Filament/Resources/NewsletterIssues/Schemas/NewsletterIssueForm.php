@@ -13,8 +13,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
-use RalphJSmit\Filament\SEO\SEO;
 
 final class NewsletterIssueForm
 {
@@ -49,11 +49,7 @@ final class NewsletterIssueForm
                                 : null),
                     ])
                     ->columns(2),
-                Section::make('SEO')
-                    ->schema([
-                        SEO::make(),
-                    ])
-                    ->collapsed(),
+                SeoSection::make(),
             ]);
     }
 }

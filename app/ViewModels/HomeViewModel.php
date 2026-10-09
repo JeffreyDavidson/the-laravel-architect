@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Enums\SocialPlatform;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -13,6 +11,8 @@ use App\Models\Project;
 use App\Models\Video;
 use App\Queries\SocialProfilesQuery;
 use Illuminate\Database\Eloquent\Collection;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final readonly class HomeViewModel implements PageViewModel

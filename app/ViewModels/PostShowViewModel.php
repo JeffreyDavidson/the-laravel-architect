@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Models\Post;
 use App\Presenters\PostPresenter;
 use App\Queries\RelatedPostsQuery;
-use App\ViewModels\Concerns\AppliesStoredSeo;
 use Illuminate\Database\Eloquent\Collection;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
+use JeffreyDavidson\CreatorKit\ViewModels\Concerns\AppliesStoredSeo;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final readonly class PostShowViewModel implements PageViewModel

@@ -240,6 +240,6 @@ Suggested artwork prompt structure:
 - [Episode template](../resources/views/pages/podcast/episode.blade.php)
 - [Transcript component](../resources/views/components/podcast/transcript.blade.php)
 - [Upload processing](../app/Services/ImageUploadOptimizer.php)
-- [Responsive variants](../app/Services/ResponsiveImageVariants.php)
+- Responsive variants: creator-kit's `ResponsiveImageVariants` (widths in `config/creator-kit.php`)
 
 For portfolio images, use [project art direction](project-art-direction.md).

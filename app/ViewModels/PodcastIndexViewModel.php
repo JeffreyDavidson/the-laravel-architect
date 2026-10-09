@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Models\Podcast;
-use App\Support\Seo\CollectionListing;
-use App\Support\Seo\JsonLd;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
+use JeffreyDavidson\CreatorKit\Support\Seo\CollectionListing;
+use JeffreyDavidson\CreatorKit\Support\Seo\JsonLd;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final readonly class PodcastIndexViewModel implements PageViewModel
