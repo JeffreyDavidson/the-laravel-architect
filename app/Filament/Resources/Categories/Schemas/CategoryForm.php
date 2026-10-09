@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Categories\Schemas;
 
-use App\Filament\Forms\Components\SlugInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 
 final class CategoryForm
 {

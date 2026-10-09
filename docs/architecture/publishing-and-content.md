@@ -34,12 +34,14 @@ Posts, projects, episodes and newsletter issues implement
 
 Content goes live only through the `PublishContentAction` /
 `UnpublishContentAction` header actions on each edit page. The publish button
-saves the form and calls the `App\Actions\PublishContent` action, the only
-domain code that calls `publish()`.
+saves the form and calls creator-kit's `PublishContent` action, the only
+domain code that calls `publish()`. The publishing status, concerns, actions and
+form components below come from `jeffreydavidson/creator-kit`; TLA keeps its
+readiness rules and plugs them in through `App\Publishing\ContentPublishingReadiness`.
 
 - `PublishContent` refuses content while a required detail is missing by
-  throwing `App\Exceptions\ContentNotReadyToPublish`, which carries the missing
-  checks (`$issues`); the button shows them in a "… is not ready to publish"
+  throwing the package's `ContentNotReadyToPublish`, which carries the missing
+  checks' labels (`$issues`); the button shows them in a "… is not ready to publish"
   notification. Otherwise it keeps an existing publish date (a future date
   makes it Scheduled) and otherwise uses now.
 - Unpublishing returns content to Draft and keeps its date and slug.
@@ -79,7 +81,7 @@ models, Filament and HTTP (enforced by
 
 The application, database and publication comparisons stay in UTC, while people
 work in the display timezone `app.display_timezone` (env `APP_DISPLAY_TIMEZONE`,
-default `America/New_York`, read through `App\Support\DisplayTimezone`).
+default `America/New_York`, read through creator-kit's `DisplayTimezone`).
 
 - It is Filament's default timezone, so the shared `PublishDatePicker` and admin
   date columns enter and show times in it.

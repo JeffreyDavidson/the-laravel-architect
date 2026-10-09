@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\artisan;
 

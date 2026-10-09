@@ -7,8 +7,11 @@ Read it before you create a class, then read the matching file in `.ai/rules`
 
 Since 2026-10-08 the security headers, Turnstile, runtime health, monitoring
 redaction, feed renderers and Markdown renderer live in the private
-`jeffreydavidson/creator-kit` package; where this page names them as examples,
-they now come from the package rather than `app/`.
+`jeffreydavidson/creator-kit` package, and since 2026-10-09 so does the
+publishing core (`PublishStatus`, the publishing concerns, `PublishContent`,
+`ContentNotReadyToPublish`, the publish actions and form components, and
+`DisplayTimezone`); where this page names them as examples, they now come from
+the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest
 `arch()` tests in `tests/Architecture`. Where a layer has no test yet, the

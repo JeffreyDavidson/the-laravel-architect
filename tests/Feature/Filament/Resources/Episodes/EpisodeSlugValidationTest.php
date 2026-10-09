@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

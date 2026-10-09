@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Post;
 use App\Services\OgImageCache;
 use App\Services\OgImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JMac\Testing\Double;
 use JMac\Testing\Matching\Argument;
 

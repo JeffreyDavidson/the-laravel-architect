@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Tags\Schemas;
 
-use App\Filament\Forms\Components\SlugInput;
 use App\Filament\Forms\Components\SlugSourceInput;
 use App\Models\Tag;
 use App\Rules\UniqueTagSlug;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 
 final class TagForm
 {

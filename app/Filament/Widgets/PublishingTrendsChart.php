@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Widgets;
 
 use App\Queries\AdminMetricsQuery;
-use App\Support\DisplayTimezone;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 
 final class PublishingTrendsChart extends ChartWidget
 {

@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\freezeSecond;
 use function Pest\Laravel\get;

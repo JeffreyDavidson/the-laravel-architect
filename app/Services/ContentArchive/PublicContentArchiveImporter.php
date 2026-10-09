@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\ContentArchive;
 
-use App\Enums\PublishStatus;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -18,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 class PublicContentArchiveImporter
 {

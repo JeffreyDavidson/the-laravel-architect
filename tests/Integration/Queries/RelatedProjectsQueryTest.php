@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Models\Project;
 use App\Queries\RelatedProjectsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 pest()->use(RefreshDatabase::class);
 

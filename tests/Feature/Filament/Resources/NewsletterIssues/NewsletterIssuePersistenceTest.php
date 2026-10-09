@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\CreateNewsletterIssue;
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use App\Models\NewsletterIssue;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

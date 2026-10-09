@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\PublishStatus;
 use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use App\Models\NewsletterIssue;
 use App\Models\User;
 use App\Presenters\NewsletterIssuePresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;
