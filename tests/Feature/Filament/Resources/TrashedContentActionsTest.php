@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
-use App\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Filament\Resources\Podcasts\Pages\ListPodcasts;
 use App\Filament\Resources\Posts\Pages\ListPosts;
@@ -16,6 +15,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

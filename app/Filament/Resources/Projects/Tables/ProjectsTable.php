@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\ProjectReadinessFilter;
-use App\Filament\Actions\ViewOnSiteAction;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Publishing\ProjectReadinessCriteria;
 use Filament\Actions\BulkActionGroup;
@@ -21,6 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffreyDavidson\CreatorKit\Filament\Actions\ViewOnSiteAction;
 
 final class ProjectsTable
 {

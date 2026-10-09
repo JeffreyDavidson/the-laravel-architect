@@ -1,7 +1,7 @@
 <?php
 
-use App\Rules\NotReservedNewsletterSlug;
 use Illuminate\Support\Facades\Validator;
+use JeffreyDavidson\CreatorKit\Rules\NotReservedNewsletterSlug;
 
 covers(NotReservedNewsletterSlug::class);
 

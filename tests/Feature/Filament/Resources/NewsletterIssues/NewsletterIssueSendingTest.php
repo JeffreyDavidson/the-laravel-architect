@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -9,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use JeffreyDavidson\CreatorKit\Jobs\DeliverNewsletterIssue;
 
 use function Pest\Laravel\actingAs;

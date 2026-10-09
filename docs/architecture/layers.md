@@ -17,7 +17,8 @@ commands (`ResponsiveImageVariants`, `StoredMediaLifecycle`, the image
 workflows), and the Categories and Social Profiles admin screens with
 `SlugSourceInput` (registered through `CreatorKitPlugin` in `AdminPanelProvider`),
 the newsletter's actions, job, middleware, controllers, enums, presenter
-and routes, and the contact form's actions, job, spam checks and status enum; where this page names them as examples, they now come from
+and routes, the contact form's actions, job, spam checks and status enum, and the
+Subscribers and Newsletter issues admin screens with View on site; where this page names them as examples, they now come from
 the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest

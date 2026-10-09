@@ -2,12 +2,12 @@
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Widgets\QuickLinksWidget;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

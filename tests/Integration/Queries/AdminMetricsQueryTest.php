@@ -2,7 +2,6 @@
 
 use App\Models\ContactInquiry;
 use App\Models\Episode;
-use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
@@ -134,40 +133,6 @@ it('totals the synced YouTube views', function () {
     Video::factory()->create(['view_count' => 34]);
 
     expect(app(AdminMetricsQuery::class)->youTubeViews())->toBe(1234);
-});
-
-it('counts an issue\'s deliveries and how many were sent', function () {
-    $issue = NewsletterIssue::factory()
-        ->sent()
-        ->create();
-    $issueId = $issue->getKey();
-    NewsletterDelivery::factory()
-        ->sent()
-        ->create(['newsletter_issue_id' => $issueId]);
-    NewsletterDelivery::factory()
-        ->count(2)
-        ->create(['newsletter_issue_id' => $issueId]);
-    NewsletterDelivery::factory()
-        ->sent()
-        ->create();
-
-    $deliveries = app(AdminMetricsQuery::class)->newsletterDeliveries($issue);
-
-    expect($deliveries->total)->toBe(3)
-        ->and($deliveries->delivered)
-        ->toBe(1);
-});
-
-it('reports no deliveries for an issue that was never sent', function () {
-    $issue = NewsletterIssue::factory()
-        ->published()
-        ->create();
-
-    $deliveries = app(AdminMetricsQuery::class)->newsletterDeliveries($issue);
-
-    expect($deliveries->total)->toBe(0)
-        ->and($deliveries->delivered)
-        ->toBe(0);
 });
 
 it('counts published content per month and ignores drafts and earlier months', function () {
