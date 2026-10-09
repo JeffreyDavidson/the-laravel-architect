@@ -21,8 +21,8 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishDatePicker;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
-use RalphJSmit\Filament\SEO\SEO;
 
 final class PostForm
 {
@@ -108,11 +108,7 @@ final class PostForm
                     ->collapsible()
                     ->collapsed(fn (?Post $record): bool => blank($record?->getAttribute('source_url'))),
 
-                Section::make('SEO')
-                    ->schema([
-                        SEO::make(),
-                    ])
-                    ->collapsed(),
+                SeoSection::make(),
             ]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Tests\Support;
 
-use App\Data\PageMeta;
 use App\ViewModels\SiteStructuredData;
 use Illuminate\Support\Facades\URL;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 
 /**
  * Expected JSON-LD nodes for the structured data tests. Generated URLs use the fixed origin

@@ -1,4 +1,4 @@
-@use('App\Data\PageMeta')
+@use('JeffreyDavidson\CreatorKit\Data\PageMeta')
 @use('RalphJSmit\Laravel\SEO\Support\SEOData')
 
 <x-layouts.site

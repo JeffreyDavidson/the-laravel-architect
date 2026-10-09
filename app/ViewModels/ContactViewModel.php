@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\ViewModels;
 
-use App\Contracts\PageViewModel;
-use App\Data\PageMeta;
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
 use App\Models\Project;
 use App\Queries\PublishedProjectQuery;
+use JeffreyDavidson\CreatorKit\Contracts\PageViewModel;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 final readonly class ContactViewModel implements PageViewModel

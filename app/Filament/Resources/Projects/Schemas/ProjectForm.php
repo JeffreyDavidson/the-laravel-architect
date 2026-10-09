@@ -15,8 +15,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
-use RalphJSmit\Filament\SEO\SEO;
 
 final class ProjectForm
 {
@@ -72,11 +72,7 @@ final class ProjectForm
                             ->withoutReview(),
                     ])->columns(2),
 
-                Section::make('SEO')
-                    ->schema([
-                        SEO::make(),
-                    ])
-                    ->collapsed(),
+                SeoSection::make(),
             ]);
     }
 }

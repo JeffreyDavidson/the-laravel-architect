@@ -74,8 +74,8 @@ resource name (`podcasts.episode` for `/podcasts/…`, `projects.show`,
 
 ## SEO metadata
 
-Every page ViewModel implements `App\Contracts\PageViewModel`: its `data()` (and
-`previewData()` for previewable pages) returns the page's `App\Data\PageMeta`
+Every page ViewModel implements `JeffreyDavidson\CreatorKit\Contracts\PageViewModel`: its `data()` (and
+`previewData()` for previewable pages) returns the page's `JeffreyDavidson\CreatorKit\Data\PageMeta`
 under the `pageMeta` key. `PageMeta` holds the page's `SEOData` and its own
 JSON-LD nodes. ViewModels stay stateless and return typed arrays, so the key is
 documented in each array shape, which PHPStan checks, and
@@ -92,7 +92,7 @@ fields an editor saves in the admin (the Filament SEO section), and deleting
 the content removes the row. Models no longer implement `getDynamicSEOData()`.
 The post, project, episode and newsletter issue ViewModels build the page's own
 `SEOData` (title, description, image from the presenter, dates and type) and
-pass it through `Concerns\AppliesStoredSeo`, which fills each field the page
+pass it through creator-kit's `AppliesStoredSeo`, which fills each field the page
 leaves null from the saved row, the same precedence laravel-seo's
 `SEO::prepareForUsage()` gives a model's dynamic SEO. The page's values win, so
 the saved description, image, robots and canonical URL apply when the page has
@@ -129,7 +129,7 @@ Person on the About page), followed by the nodes the page ViewModel put in its
 - Page ViewModels decide which nodes their page has and in what order, and
   build the listings: the collection name, its canonical URL and the items, with
   `CollectionListing::paginated()` continuing item positions across pages.
-- `app/Support/Seo` keeps only generic shapes that take plain names and URLs:
+- creator-kit's `Support\Seo` provides the generic shapes that take plain names and URLs:
   `JsonLd::breadcrumbList()`, `JsonLd::collectionPage()` (a CollectionPage and
   its ItemList), `JsonLd::isoDuration()`, `CollectionListing` and
   `PaginatedPageSeo`. They never import models, presenters or the request.

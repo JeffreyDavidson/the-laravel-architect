@@ -1,6 +1,5 @@
 <?php
 
-use App\Data\PageMeta;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Podcast;
@@ -19,6 +18,7 @@ use App\ViewModels\SearchViewModel;
 use App\ViewModels\ServiceViewModel;
 use App\ViewModels\SiteStructuredData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Data\PageMeta;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Tests\Support\StructuredDataExpectations as Schema;
 
