@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ContactInquiryStatus;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
@@ -15,6 +14,7 @@ use App\Models\Post;
 use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 use JeffreyDavidson\CreatorKit\Enums\PublicationState;
 use Tests\Support\RenderedStats;
 

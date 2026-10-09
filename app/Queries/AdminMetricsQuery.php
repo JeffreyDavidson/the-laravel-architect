@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Queries;
 
 use App\Data\NewsletterDeliveryCounts;
-use App\Enums\ContactInquiryStatus;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -17,6 +16,7 @@ use Carbon\CarbonInterface;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 

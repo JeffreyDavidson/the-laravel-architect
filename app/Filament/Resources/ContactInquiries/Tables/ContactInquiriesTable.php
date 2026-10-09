@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\ContactInquiries\Tables;
 
-use App\Enums\ContactInquiryStatus;
 use App\Enums\ContactType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -15,6 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 
 final class ContactInquiriesTable
 {

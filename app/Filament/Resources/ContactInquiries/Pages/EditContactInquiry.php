@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\ContactInquiries\Pages;
 
-use App\Actions\RetryContactInquiryEmails;
-use App\Exceptions\ContactInquiryEmailsCannotBeRetried;
 use App\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use App\Models\ContactInquiry;
 use Filament\Actions\Action;
@@ -13,6 +11,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
+use JeffreyDavidson\CreatorKit\Actions\RetryContactInquiryEmails;
+use JeffreyDavidson\CreatorKit\Exceptions\ContactInquiryEmailsCannotBeRetried;
 
 final class EditContactInquiry extends EditRecord
 {
@@ -26,7 +26,7 @@ final class EditContactInquiry extends EditRecord
                 ->label('Retry unsent emails')
                 ->icon(Heroicon::OutlinedArrowPath)
                 ->authorize('update')
-                ->visible(fn (ContactInquiry $record, RetryContactInquiryEmails $retryEmails): bool => $retryEmails->hasUnsentEmails($record))
+                ->visible(fn (ContactInquiry $record): bool => $record->hasUnsentEmails())
                 ->disabled(fn (ContactInquiry $record): bool => ! $record->canRetryEmails())
                 ->tooltip('Retries are available for 23 hours after submission. Older inquiries need a manual check with the mail provider.')
                 ->requiresConfirmation()

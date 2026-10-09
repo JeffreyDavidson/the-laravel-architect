@@ -89,6 +89,14 @@ queue connection changes (see [Contact](../architecture/contact.md)).
   emails** within 23 hours. After that, check the mail provider before
   contacting the sender manually.
 
+### Removing the contact job forwarder
+
+Release 2026.10.28 moved the contact-email job into creator-kit and left
+`App\Jobs\SendContactInquiryEmails` as a forwarder for jobs queued or failed
+before the move. Once `php artisan queue:failed` on production lists no
+`App\Jobs\SendContactInquiryEmails` and no deploy before that release is still
+draining, delete the class and its forwarder test in a normal PR.
+
 ## After deploying
 
 Run the deployment verifier from the active site's `current` directory with the

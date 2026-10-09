@@ -6,6 +6,17 @@ not a guarantee of exactly-once delivery by an external mail provider. The
 queue worker requirements are in
 [Deploying](../operations/deploying.md#queue-worker).
 
+Since 2026-10-09 the contact rules come from `jeffreydavidson/creator-kit`:
+`SendContactMessage`, `RetryContactInquiryEmails`,
+`ContactInquiryEmailsCannotBeRetried`, the `SendContactInquiryEmails` job, the
+`ContactInquiryStatus` enum, the `IsContactInquiry` model concern (encryption,
+retry window, pruning) and the `ChecksForSpam` form-request concern (honeypot and
+Turnstile). TLA keeps `ContactInquiry`, `StoreContactRequest`, the controller,
+the form and its mailables; `App\Services\ContactEmails` hands the mailables to
+the package, and `config/creator-kit.php` (`contact`) names the model, the notify
+address and the retention days. `App\Jobs\SendContactInquiryEmails` only forwards
+jobs queued before the move to the package job.
+
 ## Saving and queueing
 
 Contact inquiries and their one encrypted `SendContactInquiryEmails` job are
