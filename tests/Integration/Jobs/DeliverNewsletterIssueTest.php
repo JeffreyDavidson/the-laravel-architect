@@ -1,6 +1,5 @@
 <?php
 
-use App\Jobs\DeliverNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\Subscriber;
@@ -9,6 +8,7 @@ use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Jobs\DeliverNewsletterIssue;
 
 use function Pest\Laravel\assertModelMissing;
 

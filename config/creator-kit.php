@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Models\NewsletterDelivery;
+use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Subscriber;
 
 return [
 
@@ -39,6 +42,23 @@ return [
             ['model' => Post::class, 'column' => 'featured_image_path', 'label' => 'post'],
             ['model' => Podcast::class, 'column' => 'cover_image_path', 'label' => 'podcast'],
         ],
+
+    ],
+
+    'newsletter' => [
+
+        // The app's newsletter models; the package refuses to run without them.
+        'models' => [
+            'subscriber' => Subscriber::class,
+            'issue' => NewsletterIssue::class,
+            'delivery' => NewsletterDelivery::class,
+        ],
+
+        // Where an unusable confirmation link sends the reader.
+        'signup_form' => ['route' => 'home', 'fragment' => 'newsletter-form', 'error_bag' => 'default'],
+
+        // An editor's test send goes to these addresses (the same address as mail.contact_to).
+        'test_recipients' => [env('MAIL_CONTACT_TO', env('MAIL_FROM_ADDRESS', 'hello@example.com'))],
 
     ],
 

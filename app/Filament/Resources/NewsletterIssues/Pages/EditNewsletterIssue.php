@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\NewsletterIssues\Pages;
 
-use App\Actions\SendNewsletterIssue;
-use App\Actions\SendNewsletterIssueTestEmail;
 use App\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use App\Models\NewsletterIssue;
 use App\Queries\AdminMetricsQuery;
@@ -18,6 +16,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Actions\SendNewsletterIssue;
+use JeffreyDavidson\CreatorKit\Actions\SendNewsletterIssueTestEmail;
 use JeffreyDavidson\CreatorKit\Filament\Actions\PublishContentAction;
 use JeffreyDavidson\CreatorKit\Filament\Actions\UnpublishContentAction;
 use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
@@ -59,10 +59,10 @@ final class EditNewsletterIssue extends EditRecord
                 ->action(function (SendNewsletterIssueTestEmail $sendNewsletterIssueTestEmail): void {
                     $this->saveBeforeSending();
                     $issue = $this->issue();
-                    $recipient = $sendNewsletterIssueTestEmail->handle($issue);
+                    $recipients = implode(', ', $sendNewsletterIssueTestEmail->handle($issue));
 
                     Notification::make()
-                        ->title("Test email sent to {$recipient}")
+                        ->title("Test email sent to {$recipients}")
                         ->success()
                         ->send();
                 }),

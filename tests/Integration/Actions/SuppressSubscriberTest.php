@@ -1,9 +1,9 @@
 <?php
 
-use App\Actions\SuppressSubscriber;
-use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Actions\SuppressSubscriber;
+use JeffreyDavidson\CreatorKit\Enums\SuppressionReason;
 
 use function Pest\Laravel\freezeTime;
 use function Pest\Laravel\travel;

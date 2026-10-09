@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\UnsubscribeFromNewsletter;
 use App\Models\Subscriber;
 use App\ViewModels\NewsletterUnsubscriptionViewModel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use JeffreyDavidson\CreatorKit\Actions\UnsubscribeFromNewsletter;
 
 /**
  * The signed unsubscribe page and the form it submits. One-click requests from

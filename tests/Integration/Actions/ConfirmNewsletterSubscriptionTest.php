@@ -1,8 +1,8 @@
 <?php
 
-use App\Actions\ConfirmNewsletterSubscription;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Actions\ConfirmNewsletterSubscription;
 
 pest()->use(RefreshDatabase::class);
 

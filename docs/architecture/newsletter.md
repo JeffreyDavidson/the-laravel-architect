@@ -6,6 +6,16 @@ back through a Resend webhook. The operator steps are in the
 [send runbook](../operations/runbooks/newsletter-send.md) and the
 [webhook runbook](../operations/runbooks/resend-webhook.md).
 
+Since 2026-10-09 the newsletter's rules come from `jeffreydavidson/creator-kit`:
+the subscriber, issue and delivery model concerns, the subscription, send and
+suppression actions, `DeliverNewsletterIssue`, the confirmation-link and Resend
+signature middleware, the one-click and webhook controllers, the status enums,
+`SubscriberPresenter`, and the routes (`NewsletterRoutes::register()` in
+`routes/web.php`). TLA keeps its models, page controllers, views and emails;
+`App\Services\NewsletterEmails` hands the emails to the package, and
+`config/creator-kit.php` (`newsletter`) names the models, the signup form and the
+test-send recipient.
+
 ## Signing up
 
 The signup block has the anchor `newsletter-form`. With JavaScript, it is an
@@ -107,7 +117,8 @@ confirmation link.
   `Cache-Control: no-store, private` too.
 - Each email carries `List-Unsubscribe` and `List-Unsubscribe-Post` headers. Mail
   providers' RFC 8058 one-click requests post to the same signed URL, which is
-  exempt from request-forgery tokens because the signature authorizes it.
+  exempt from request-forgery tokens because the signature authorizes it (the
+  route itself drops the check; there is no global exception).
 - The unsubscribe page, its form and the one-click POST use the
   `newsletter-unsubscribe` limiter (120 a minute per IP address), separate from
   confirmation, because mail providers send one-click unsubscribes from a few
@@ -158,7 +169,7 @@ before anything is sent. A test email to the site owner records no delivery and
 omits unsubscribe headers.
 
 `SendNewsletterIssue` refuses unpublished or already-sent issues by throwing
-`App\Exceptions\NewsletterIssueCannotBeSent`. Otherwise, in
+creator-kit's `NewsletterIssueCannotBeSent`. Otherwise, in
 one transaction, it creates one `newsletter_deliveries` row per active
 subscriber, marks the issue sent, and enqueues one `DeliverNewsletterIssue` job
 per delivery on the application database queue, so a failure leaves nothing

@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
-use App\Jobs\DeliverNewsletterIssue;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -10,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Jobs\DeliverNewsletterIssue;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -78,7 +78,7 @@ it('tells the admin nothing was sent when there are no active subscribers', func
 
 it('sends a test email to the site owner', function () {
     Mail::fake();
-    config()->set('mail.contact_to', 'owner@example.com');
+    config()->set('creator-kit.newsletter.test_recipients', ['owner@example.com']);
     $issue = editableNewsletterIssue(['status' => PublishStatus::Draft]);
 
     livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])

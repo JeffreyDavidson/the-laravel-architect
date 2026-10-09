@@ -15,7 +15,9 @@ publishing core (`PublishStatus`, the publishing concerns, `PublishContent`,
 `TextSearch`, `SeoSection`) and the responsive-image services and `media:*`
 commands (`ResponsiveImageVariants`, `StoredMediaLifecycle`, the image
 workflows), and the Categories and Social Profiles admin screens with
-`SlugSourceInput` (registered through `CreatorKitPlugin` in `AdminPanelProvider`); where this page names them as examples, they now come from
+`SlugSourceInput` (registered through `CreatorKitPlugin` in `AdminPanelProvider`),
+and the newsletter's actions, job, middleware, controllers, enums, presenter
+and routes; where this page names them as examples, they now come from
 the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest

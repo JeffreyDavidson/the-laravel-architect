@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\SubscriberStatus;
-use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use JeffreyDavidson\CreatorKit\Enums\SubscriberStatus;
+use JeffreyDavidson\CreatorKit\Enums\SuppressionReason;
 
 use function Pest\Laravel\freezeTime;
 

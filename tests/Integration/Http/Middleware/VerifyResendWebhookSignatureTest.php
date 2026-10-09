@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\VerifyResendWebhookSignature;
 use Illuminate\Http\Request;
+use JeffreyDavidson\CreatorKit\Http\Middleware\VerifyResendWebhookSignature;
 use Symfony\Component\HttpFoundation\Response;
 
 covers(VerifyResendWebhookSignature::class);

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\RequestNewsletterSubscription;
 use App\Http\Requests\SubscribeNewsletterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use JeffreyDavidson\CreatorKit\Actions\RequestNewsletterSubscription;
 
 final class NewsletterSubscriptionController
 {
