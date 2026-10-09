@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use App\Mail\Concerns\FingerprintsIdempotencyKeys;
 use App\Models\ContactInquiry;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
+use JeffreyDavidson\CreatorKit\Support\Mail\IdempotencyFingerprint;
 
 /**
  * Notifies the site owner of a contact inquiry. Sent by SendContactInquiryEmails, which
@@ -19,8 +19,6 @@ use Illuminate\Mail\Mailables\Headers;
  */
 final class ContactInquiryReceivedMail extends Mailable
 {
-    use FingerprintsIdempotencyKeys;
-
     public function __construct(public readonly ContactInquiry $inquiry) {}
 
     public function envelope(): Envelope
@@ -48,8 +46,10 @@ final class ContactInquiryReceivedMail extends Mailable
 
     public function headers(): Headers
     {
+        $fingerprint = IdempotencyFingerprint::for($this->inquiry->id, $this->inquiry->created_at);
+
         return new Headers(text: [
-            'Resend-Idempotency-Key' => "tla-contact-{$this->idempotencyFingerprint($this->inquiry->id, $this->inquiry->created_at)}-notification",
+            'Resend-Idempotency-Key' => "tla-contact-{$fingerprint}-notification",
         ]);
     }
 }

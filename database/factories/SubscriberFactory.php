@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Enums\SuppressionReason;
 use App\Models\Subscriber;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Date;
+use JeffreyDavidson\CreatorKit\Enums\SuppressionReason;
 
 /**
  * @extends Factory<Subscriber>

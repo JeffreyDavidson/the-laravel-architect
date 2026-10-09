@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\ResendWebhookController;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
+use JeffreyDavidson\CreatorKit\Http\Controllers\ResendWebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\call;

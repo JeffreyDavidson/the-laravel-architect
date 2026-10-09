@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Subscribers\Tables;
 
-use App\Enums\SubscriberStatus;
 use App\Models\Subscriber;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -13,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffreyDavidson\CreatorKit\Enums\SubscriberStatus;
 
 final class SubscribersTable
 {

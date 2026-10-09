@@ -18,9 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(AddSecurityHeaders::class);
-        // One-click unsubscribe posts come from mail providers without a
-        // forgery token; the signed URL authorizes them instead.
-        $middleware->preventRequestForgery(except: ['newsletter/unsubscribe/*']);
         // Check signed links before loading their models, so an unsigned link is
         // rejected the same way whether or not its draft or subscriber exists.
         $middleware->prependToPriorityList(before: SubstituteBindings::class, prepend: ValidateSignature::class);

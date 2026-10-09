@@ -1,6 +1,5 @@
 <?php
 
-use App\Actions\RequestNewsletterSubscription;
 use App\Mail\NewsletterConfirmationMail;
 use App\Models\Subscriber;
 use App\Providers\AppServiceProvider;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use JeffreyDavidson\CreatorKit\Actions\RequestNewsletterSubscription;
 use JMac\Testing\Double;
 
 use function Pest\Laravel\travel;

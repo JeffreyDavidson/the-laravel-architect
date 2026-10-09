@@ -1,12 +1,12 @@
 <?php
 
-use App\Actions\SendNewsletterIssue;
-use App\Exceptions\NewsletterIssueCannotBeSent;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Actions\SendNewsletterIssue;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Exceptions\NewsletterIssueCannotBeSent;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;

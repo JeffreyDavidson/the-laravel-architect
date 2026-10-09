@@ -1,8 +1,8 @@
 <?php
 
-use App\Actions\UnsubscribeFromNewsletter;
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Actions\UnsubscribeFromNewsletter;
 
 pest()->use(RefreshDatabase::class);
 
