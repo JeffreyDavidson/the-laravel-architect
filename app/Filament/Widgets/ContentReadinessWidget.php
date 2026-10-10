@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Widgets;
 
 use App\Enums\ContentReadinessArea;
-use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Publishing\ContentReadinessSummaryQuery;
 use Filament\Widgets\Widget;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 final class ContentReadinessWidget extends Widget
 {

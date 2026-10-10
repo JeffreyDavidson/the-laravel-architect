@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Models\ContactInquiry;
 use App\Models\Post;
@@ -9,6 +8,7 @@ use Dom\HTMLDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\freezeSecond;

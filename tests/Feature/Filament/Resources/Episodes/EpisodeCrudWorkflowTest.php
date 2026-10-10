@@ -1,13 +1,13 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\CreateEpisode;
-use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\CreateEpisode;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

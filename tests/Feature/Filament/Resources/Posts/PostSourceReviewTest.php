@@ -1,10 +1,10 @@
 <?php
 
-use App\Filament\Resources\Posts\Pages\EditPost;
-use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\ListPosts;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

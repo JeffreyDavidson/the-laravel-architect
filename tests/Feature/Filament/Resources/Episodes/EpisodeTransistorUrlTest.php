@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\EditEpisode;
-use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

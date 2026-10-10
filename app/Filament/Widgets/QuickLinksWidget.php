@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\Widget;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 final class QuickLinksWidget extends Widget
 {

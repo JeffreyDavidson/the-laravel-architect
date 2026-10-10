@@ -1,13 +1,13 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\Podcasts\Pages\CreatePodcast;
-use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Tags\Pages\CreateTag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\CreateEpisode;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\CreateNewsletterIssue;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\CreatePost;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

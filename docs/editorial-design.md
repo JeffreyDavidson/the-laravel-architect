@@ -236,7 +236,7 @@ Suggested artwork prompt structure:
 - [Featured artwork and fallbacks](../resources/views/components/post-artwork.blade.php) and the [bundled artwork list](../app/Enums/BundledPostArtwork.php)
 - [Markdown rendering](../resources/views/components/markdown.blade.php)
 - [Article navigation and code controls](../resources/js/pages/blog.js)
-- [Post form](../app/Filament/Resources/Posts/Schemas/PostForm.php)
+- Post form: `PostForm` in `jeffreydavidson/creator-kit`, configured by `->posts(...)` in the [admin panel provider](../app/Providers/Filament/AdminPanelProvider.php)
 - [Episode template](../resources/views/pages/podcast/episode.blade.php)
 - [Transcript component](../resources/views/components/podcast/transcript.blade.php)
 - [Upload processing](../app/Services/ImageUploadOptimizer.php)

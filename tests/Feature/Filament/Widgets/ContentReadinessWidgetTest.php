@@ -1,8 +1,6 @@
 <?php
 
-use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Videos\VideoResource;
 use App\Filament\Widgets\ContentReadinessWidget;
@@ -13,7 +11,9 @@ use App\Publishing\ContentReadinessSummaryQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Livewire\livewire;
 

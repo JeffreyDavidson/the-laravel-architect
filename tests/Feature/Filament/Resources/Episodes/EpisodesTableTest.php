@@ -1,12 +1,13 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use App\Presenters\EpisodePresenter;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;
@@ -53,4 +54,14 @@ it('links the view on site action to a signed preview when the show is inactive'
 
     livewire(ListEpisodes::class)
         ->assertActionHasUrl(TestAction::make('view_on_site')->table($episode), EpisodePresenter::from($episode)->previewUrl());
+});
+
+it('offers view on site on the episode edit page', function () {
+    freezeSecond();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $episode = Episode::factory()->create();
+
+    livewire(EditEpisode::class, ['record' => $episode->getRouteKey()])
+        ->assertActionVisible('view_on_site')
+        ->assertActionHasUrl('view_on_site', EpisodePresenter::from($episode)->publicOrPreviewUrl());
 });

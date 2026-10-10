@@ -12,7 +12,6 @@ use App\Enums\MediaSourceStatus;
 use App\Enums\MediaVariantStatus;
 use App\Enums\NavigationGroup;
 use App\Filament\Resources\Podcasts\PodcastResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Queries\MediaHealthQuery;
 use BackedEnum;
@@ -26,6 +25,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Number;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 use UnitEnum;
 
 final class MediaHealth extends Page implements HasTable

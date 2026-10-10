@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -15,7 +13,9 @@ use App\Queries\RecentlyEditedContentQuery;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 /**
  * @phpstan-type Activity array{kind: string, label: string, status: string, time: string, timestamp: Carbon|null, url: string}

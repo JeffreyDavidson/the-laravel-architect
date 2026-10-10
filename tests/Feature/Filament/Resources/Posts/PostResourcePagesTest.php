@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
