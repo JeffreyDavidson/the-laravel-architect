@@ -6,9 +6,9 @@ namespace App\Services;
 
 use App\Enums\DeploymentEnvironment;
 use App\Services\Health\NightwatchHealthMonitor;
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Process;
-use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 
 final readonly class DeploymentVerifier
 {

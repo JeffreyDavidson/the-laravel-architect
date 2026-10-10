@@ -1,9 +1,9 @@
 <?php
 
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 
 use function Pest\Laravel\getJson;
 
@@ -82,7 +82,7 @@ it('reports invalid runtime heartbeat configuration as unhealthy', function () {
     config()->set([
         'app.debug' => false,
         'health.runtime.enabled' => true,
-        'creator-kit.health.runtime.max_age_seconds' => 30,
+        'health.runtime.max_age_seconds' => 30,
     ]);
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());

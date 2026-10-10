@@ -10,8 +10,8 @@ Since 2026-10-09 the contact rules come from `jeffreydavidson/creator-kit`:
 `SendContactMessage`, `RetryContactInquiryEmails`,
 `ContactInquiryEmailsCannotBeRetried`, the `SendContactInquiryEmails` job, the
 `ContactInquiryStatus` enum, the `IsContactInquiry` model concern (encryption,
-retry window, pruning) and the `ChecksForSpam` form-request concern (honeypot and
-Turnstile). TLA keeps `ContactInquiry`, `StoreContactRequest`, the controller,
+retry window, pruning). TLA keeps `ContactInquiry`, `StoreContactRequest`, its
+`ChecksForSpam` concern (honeypot and Turnstile), the controller,
 the form and its mailables; `App\Services\ContactEmails` hands the mailables to
 the package, and `config/creator-kit.php` (`contact`) names the model, the notify
 address and the retention days. `App\Jobs\SendContactInquiryEmails` only forwards
@@ -65,7 +65,7 @@ Turnstile verification calls.
 
 `StoreContactRequest` owns the bot checks. A filled hidden `website` field skips
 validation and returns the normal success message without saving anything.
-Otherwise the `PassesTurnstile` rule from `jeffreydavidson/creator-kit` runs only after every other
+Otherwise the `PassesTurnstile` rule runs only after every other
 field is valid; a failure returns to the form with the input except the spent
 token. The form's Turnstile loader is an Alpine component (see
 [Frontend](frontend.md#alpine-components)).

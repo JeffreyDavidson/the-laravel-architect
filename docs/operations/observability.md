@@ -7,10 +7,9 @@ each check is in the [operations index](../operations.md#ownership-of-operationa
 
 ## Where it is wired
 
-The `jeffreydavidson/creator-kit` package's auto-discovered provider registers
-the Sentry event and breadcrumb redaction callbacks and the Nightwatch user
-resolver and redaction callbacks described below (`creator-kit.monitoring.redact`
-turns them off). Sampling rates come from `config/sentry.php` and
+`App\Providers\MonitoringServiceProvider` registers the Sentry event and
+breadcrumb redaction callbacks and the Nightwatch user resolver and redaction
+callbacks described below; the classes are in `app/Support/Monitoring`. Sampling rates come from `config/sentry.php` and
 `config/nightwatch.php`. The `/up` checks (a migrations-table read and, when
 `RUNTIME_HEALTH_ENABLED` is on, the scheduler and queue heartbeats) run in
 `App\Listeners\CheckApplicationHealthListener`, which Laravel's event discovery

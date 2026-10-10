@@ -5,9 +5,10 @@ things it never does. This page is the map for people and AI agents adding code.
 Read it before you create a class, then read the matching file in `.ai/rules`
 (see [the rules index](../../.ai/rules/index.md)) for the details.
 
-Since 2026-10-08 the security headers, Turnstile, runtime health, monitoring
-redaction, feed renderers and Markdown renderer live in the private
-`jeffreydavidson/creator-kit` package, and since 2026-10-09 so does the
+Since 2026-10-08 the feed renderers and Markdown renderer live in the private
+`jeffreydavidson/creator-kit` package (the security headers, Turnstile, runtime
+health and monitoring redaction moved there too, and came back into `App\` on
+2026-10-10: the package holds content features only), and since 2026-10-09 so does the
 publishing core (`PublishStatus`, the publishing concerns, `PublishContent`,
 `ContentNotReadyToPublish`, the publish actions and form components, and
 `DisplayTimezone`), and the SEO building blocks (`PageViewModel`, `PageMeta`,

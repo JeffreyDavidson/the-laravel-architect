@@ -4,8 +4,8 @@ use App\Enums\DeploymentEnvironment;
 use App\Jobs\RecordQueueHeartbeat;
 use App\Models\ContactInquiry;
 use App\Models\Subscriber;
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Support\Facades\Schedule;
-use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 use Laravel\Nightwatch\Console\Sample;
 
 /*
