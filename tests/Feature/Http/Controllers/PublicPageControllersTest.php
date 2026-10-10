@@ -693,7 +693,9 @@ it('keeps one main landmark on public index pages', function (string $routeName)
 it('renders only the site icon links', function () {
     $response = get(route('home'));
 
-    $response->assertSeeHtml('<link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-companion-32.png" />')
+    $response->assertSeeHtml('<link rel="icon" type="image/png" sizes="32x32" href="/images/elephant-small-32.png" />')
+        ->assertSeeHtml('<link rel="icon" type="image/png" sizes="16x16" href="/images/elephant-small-16.png" />')
+        ->assertSeeHtml('<link rel="apple-touch-icon" sizes="180x180" href="/images/elephant-companion-180.png" />')
         ->assertDontSeeHtml('rel="shortcut icon"');
 });
 
@@ -947,6 +949,7 @@ it('keeps the admin panel behind authentication', function () {
     get('/admin/login')
         ->assertOk()
         ->assertSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
+        ->assertSeeHtml('<link rel="icon" href="/images/elephant-small-32.png" />')
         ->assertSee('Appearance')
         ->assertSee('Enable light theme')
         ->assertSee('Enable dark theme')
