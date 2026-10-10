@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\Featurable;
-use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\ProjectObserver;
 use Database\Factories\ProjectFactory;
@@ -19,6 +18,7 @@ use JeffreyDavidson\CreatorKit\Contracts\Publishable;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
+use JeffreyDavidson\CreatorKit\Models\Concerns\HasTagsUntilForceDeleted;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
