@@ -29,6 +29,7 @@ it('renders a safe branded page without database access or compiled assets', fun
     TestResponse::fromBaseResponse($response)
         ->assertStatus($status)
         ->assertSeeText('The Laravel Architect')
+        ->assertSeeHtml('<link rel="icon" type="image/png" href="/images/elephant-small-32.png" />')
         ->assertSeeText($heading)
         ->assertSeeText('Try again')
         ->assertSeeHtml('href="/"')
