@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Middleware\AddSecurityHeaders;
 use App\Models\NewsletterIssue;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
@@ -169,4 +172,66 @@ it('leaves public pages cacheable and indexable', function () {
         ->assertOk()
         ->assertHeaderMissing('X-Robots-Tag')
         ->assertHeader('Cache-Control', 'no-cache, private');
+});
+
+it('adds configured hosts after the built-in sources', function () {
+    Config::set('security-headers.csp.script_src', ['https://scripts.example.test']);
+    Config::set('security-headers.csp.connect_src', ['https://api.example.test']);
+    Config::set('security-headers.csp.img_src', ['https://images.example.test']);
+    Config::set('security-headers.csp.media_src', ['https://media.example.test']);
+
+    $policy = requiredHeader(get(route('home'))->headers->get('Content-Security-Policy'));
+
+    expect($policy)
+        ->toContain("connect-src 'self' https://challenges.cloudflare.com https://api.example.test;")
+        ->toContain("img-src 'self' data: blob: https: https://images.example.test;")
+        ->toContain("media-src 'self' blob: https: https://media.example.test;")
+        ->toContain('https://challenges.cloudflare.com https://scripts.example.test;');
+});
+
+it('drops config entries that are not non-empty strings', function () {
+    Config::set('security-headers.csp.frame_src', ['', '  ', 42, null, 'https://ok.example.test']);
+    Config::set('security-headers.csp.media_src', 'https://not-a-list.example.test');
+
+    $policy = requiredHeader(get(route('home'))->headers->get('Content-Security-Policy'));
+
+    expect($policy)
+        ->toContain('frame-src https://challenges.cloudflare.com https://ok.example.test;')
+        ->toContain("media-src 'self' blob: https:;")
+        ->not->toContain('not-a-list');
+});
+
+it('reads the admin paths from config', function () {
+    Config::set('security-headers.admin_paths', ['/privacy/']);
+
+    $policy = requiredHeader(get(route('privacy'))->headers->get('Content-Security-Policy'));
+
+    expect($policy)->toContain("'unsafe-inline' 'unsafe-eval'")
+        ->not->toContain("'nonce-");
+});
+
+it('never treats every page as admin when an admin path is the root', function () {
+    Config::set('security-headers.admin_paths', ['/', '']);
+
+    get(route('home'))->assertHeaderMissing('X-Robots-Tag');
+});
+
+it('reads transport security from config and can turn it off', function () {
+    Config::set('security-headers.hsts', 'max-age=60');
+    get('https://the-laravel-architect.test/privacy')->assertHeader('Strict-Transport-Security', 'max-age=60');
+
+    Config::set('security-headers.hsts', '');
+    get('https://the-laravel-architect.test/privacy')->assertHeaderMissing('Strict-Transport-Security');
+});
+
+it('keeps headers a response already set', function () {
+    $response = new Response('Embeddable');
+    $response->headers->set('Content-Security-Policy', "frame-ancestors 'none'");
+    $response->headers->set('X-Frame-Options', 'DENY');
+
+    AddSecurityHeaders::apply($response, Request::create('/'));
+
+    expect($response->headers->get('Content-Security-Policy'))->toBe("frame-ancestors 'none'")
+        ->and($response->headers->get('X-Frame-Options'))
+        ->toBe('DENY');
 });

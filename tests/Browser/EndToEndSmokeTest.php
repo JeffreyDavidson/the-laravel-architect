@@ -699,7 +699,7 @@ it('shows the confirming state from the first paint and never the confirm prompt
 });
 
 it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
-    config()->set('creator-kit.turnstile.site_key', 'test-site-key');
+    config()->set('services.turnstile.site_key', 'test-site-key');
     withVite();
 
     $page = $this->browserPage('/contact', 'desktop');

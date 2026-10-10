@@ -36,6 +36,21 @@ return [
         ],
     ],
 
+    /*
+     * Cloudflare Turnstile. Verification fails closed: with no secret key or no allowed
+     * hostnames, every token is rejected.
+     */
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret_key' => env('TURNSTILE_SECRET_KEY'),
+        'siteverify_url' => env('TURNSTILE_SITEVERIFY_URL', 'https://challenges.cloudflare.com/turnstile/v0/siteverify'),
+        'allowed_hostnames' => array_values(array_filter(array_map(
+            trim(...),
+            explode(',', (string) env('TURNSTILE_ALLOWED_HOSTNAMES', '')),
+        ))),
+        'contact_action' => env('TURNSTILE_CONTACT_ACTION', 'contact-form'),
+    ],
+
     'youtube' => [
         'api_key' => env('YOUTUBE_API_KEY'),
         'channel_id' => env('YOUTUBE_CHANNEL_ID', 'UC42H30o7l5QvvCzC86dSu_A'),
