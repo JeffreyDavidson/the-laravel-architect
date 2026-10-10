@@ -2,8 +2,6 @@
 
 namespace Tests\Support;
 
-use App\Filament\Resources\Episodes\Pages\EditEpisode;
-use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Models\Category;
 use App\Models\Episode;
@@ -14,7 +12,9 @@ use App\Models\Project;
 use App\Models\User;
 use InvalidArgumentException;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
 
 class PublishableFixtures
 {

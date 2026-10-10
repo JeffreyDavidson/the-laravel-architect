@@ -1,12 +1,12 @@
 <?php
 
-use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Models\Category;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\Pages\CreateCategory;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\Pages\EditCategory;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\CreatePost;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

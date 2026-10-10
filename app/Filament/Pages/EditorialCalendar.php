@@ -7,8 +7,6 @@ namespace App\Filament\Pages;
 use App\Data\CalendarEntry;
 use App\Enums\CalendarEntryType;
 use App\Enums\NavigationGroup;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
 use App\Queries\EditorialCalendarQuery;
@@ -18,6 +16,8 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 use UnitEnum;
 

@@ -1,9 +1,7 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Filament\Resources\Podcasts\Pages\EditPodcast;
 use App\Filament\Resources\Podcasts\Pages\ListPodcasts;
-use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
@@ -15,7 +13,9 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\ListNewsletterIssues;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\ListPosts;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

@@ -1,6 +1,5 @@
 <?php
 
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -10,6 +9,7 @@ use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Laravel\actingAs;
 

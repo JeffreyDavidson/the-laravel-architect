@@ -2,9 +2,7 @@
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Insights;
-use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Filament\Resources\Podcasts\PodcastResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
@@ -24,7 +22,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Vite;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\CategoryResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\SocialProfileResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 

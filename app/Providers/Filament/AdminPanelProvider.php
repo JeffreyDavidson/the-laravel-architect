@@ -8,14 +8,18 @@ use App\Enums\ContactBudget;
 use App\Enums\ContactType;
 use App\Enums\NavigationGroup;
 use App\Enums\SocialPlatform;
+use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Category;
+use App\Models\Episode;
+use App\Models\Post;
 use App\Models\SocialProfile;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -29,10 +33,13 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Vite;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -40,6 +47,9 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use JeffreyDavidson\CreatorKit\Filament\CreatorKitPlugin;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeScreenOptions;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostScreenOptions;
 use JeffreyDavidson\CreatorKit\Support\Time\DisplayTimezone;
 
 final class AdminPanelProvider extends PanelProvider
@@ -128,7 +138,38 @@ final class AdminPanelProvider extends PanelProvider
                         ->disabled()
                         ->dehydrated(false)
                         ->placeholder('General inquiry'),
-                ]))
+                ])
+                ->posts(Post::class, NavigationGroup::Publish, 1, PostScreenOptions::make()
+                    ->category(Category::class)
+                    ->relatedEpisodes()
+                    ->imageField(fn (): OptimizedImageUpload => OptimizedImageUpload::make('featured_image_path')
+                        ->disk('public')
+                        ->directory('posts'))
+                    ->tagsField(fn (): SpatieTagsInput => SpatieTagsInput::make('tags'))
+                    ->authorsField(fn (): Hidden => Hidden::make('user_id')
+                        ->default(fn () => auth()->id()))
+                    ->extraColumns(fn (): array => [
+                        ImageColumn::make('featured_image_path')
+                            ->label('Image')
+                            ->disk('public')
+                            ->circular()
+                            ->defaultImageUrl(fn (): string => app(Vite::class)->asset('resources/images/admin-post-placeholder.svg')),
+                        TextColumn::make('author.name')
+                            ->label('Author')
+                            ->sortable()
+                            ->toggleable(isToggledHiddenByDefault: true),
+                    ])
+                    ->modifyQuery(fn (Builder $query): Builder => $query->withCount('tags'))
+                    ->reviewIntervalDays(fn (): int => config()->integer('content.post_review_interval_days'))
+                    ->navigationBadge()
+                    ->emptyStateDescription('Start a draft when the next Laravel idea is ready to develop.'))
+                ->episodes(Episode::class, NavigationGroup::Publish, 4, EpisodeScreenOptions::make()
+                    ->podcast()
+                    ->imageField(fn (): OptimizedImageUpload => OptimizedImageUpload::make('featured_image_path')
+                        ->disk('public')
+                        ->directory('episodes/images'))
+                    ->tagsField(fn (): SpatieTagsInput => SpatieTagsInput::make('tags'))
+                    ->modifyQuery(fn (Builder $query): Builder => $query->withCount('tags'))))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

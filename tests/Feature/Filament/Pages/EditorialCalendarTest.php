@@ -2,8 +2,6 @@
 
 use App\Data\CalendarEntry;
 use App\Filament\Pages\EditorialCalendar;
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\Episode;
 use App\Models\Post;
 use App\Models\User;
@@ -11,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

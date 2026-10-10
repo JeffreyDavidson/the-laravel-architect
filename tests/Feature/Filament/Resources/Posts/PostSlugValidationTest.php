@@ -1,13 +1,13 @@
 <?php
 
-use App\Filament\Resources\Posts\Pages\CreatePost;
-use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\CreatePost;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

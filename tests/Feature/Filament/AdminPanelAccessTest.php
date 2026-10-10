@@ -1,13 +1,13 @@
 <?php
 
 use App\Filament\Pages\MediaHealth;
-use App\Filament\Resources\Posts\Pages\EditPost;
-use App\Filament\Resources\Posts\PostResource;
 use App\Models\User;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;
