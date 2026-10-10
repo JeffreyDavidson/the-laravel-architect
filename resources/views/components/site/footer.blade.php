@@ -23,19 +23,7 @@
         <div class="mb-8 flex flex-col justify-between gap-6 lg:mb-14 lg:flex-row lg:gap-10">
             <div class="max-w-sm">
                 <a href="{{ route('home') }}" class="group mb-3 flex items-center gap-3">
-                    <img
-                        src="/images/elephant-companion-128.webp"
-                        alt=""
-                        width="40"
-                        height="40"
-                        loading="lazy"
-                        decoding="async"
-                        class="size-10 shrink-0 object-contain"
-                    />
-                    <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 text-meta tracking-micro font-mono font-medium uppercase transition-colors">The Laravel</span>
-                        <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
-                    </span>
+                    <x-site.logo size="sm" />
                 </a>
                 <p class="mb-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                     Building elegant web applications with Laravel. Writing about code, architecture, and the developer
