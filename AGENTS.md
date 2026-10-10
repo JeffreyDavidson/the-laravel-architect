@@ -10,6 +10,18 @@
 
 - The local application directory is `/Users/jeffreydavidson/Herd/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
 
+## Meta Repo
+
+Plans, the status list, brand work, and source artwork for The Laravel Architect live in the private `the-laravel-architect-meta` repository, checked out at `~/Projects/the-laravel-architect-meta`, not in this repository. This replaces the global `tasks/todo.md`, `_plans/status.md`, and `branding/` locations for this project.
+
+- Write the plan for a piece of work to `cycles/YYYY-MM-DD-short-name/summary.md` there, keep its progress notes current, and finish with the review section in the same file.
+- Keep the status list at `status.md` there.
+- Keep brand rounds under `brand/` and source artwork under `artwork/` there.
+- Follow that repository's `README.md`: commit straight to `main` and push at the end of a task.
+- If the checkout is missing, say so and ask; do not fall back to creating `tasks/`, `_plans/`, `branding/`, or `artwork/` here.
+
+This repository holds only what describes the application as it is today.
+
 ## Agent guidelines
 
 - The generated Laravel Boost block at the end of this file is rewritten by `php artisan boost:install` on every install. Put project-specific guidelines in `.ai/guidelines/*.md` instead of editing that block, and never write the block's opening tag anywhere else in this file. Boost's built-in deployment guideline is excluded in `config/boost.php` because production deploys with Forge.
