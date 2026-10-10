@@ -1,7 +1,5 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\ListEpisodes;
-use App\Filament\Resources\Posts\Pages\ListPosts;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
@@ -9,6 +7,8 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublicationState;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\ListPosts;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

@@ -82,7 +82,10 @@ models, Filament and HTTP (enforced by
   `needs_details`), and `ContentReadinessSummaryQuery` counts the dashboard's
   "Needs finishing" rows (`ContentReadinessArea`).
 - The admin `ReadinessColumn` formats the verdict for display ("4/6 complete ·
-  Missing: Featured image, Tags").
+  Missing: Featured image, Tags") on the Projects, Podcasts and Videos lists.
+  The Posts and Episodes lists come from `jeffreydavidson/creator-kit` and use
+  its readiness column, which shows only what blocks publishing ("Ready" or
+  "2 to fix", from `ContentPublishingReadiness`).
 
 ## Dates and the display timezone
 

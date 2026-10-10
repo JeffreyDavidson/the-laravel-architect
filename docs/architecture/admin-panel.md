@@ -79,9 +79,12 @@ Beyond the resources, the panel has three custom pages:
 
 ## Dashboard counts
 
-The dashboard widgets, the Posts and Contact Inquiries navigation badges, the
+The dashboard widgets, the Contact Inquiries navigation badge, the
 newsletter send confirmation and the sent-issue delivery summary read their
 counts from `AdminMetricsQuery`, so a badge and a dashboard stat always agree.
+The Posts badge is drawn by the package's `PostResource`, which counts posts by
+the same statuses as `AdminMetricsQuery::postsInReview()` and `draftPosts()`;
+`PostResourcePagesTest` checks the badge.
 The counts are not cached: each is one aggregate query on a small or indexed
 table. `RecentlyEditedContentQuery` feeds the recent activity list. The content
 readiness counts are the exception: `ContentReadinessSummaryQuery` caches them

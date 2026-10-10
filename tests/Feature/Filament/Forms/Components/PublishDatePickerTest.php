@@ -1,8 +1,5 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\EditEpisode;
-use App\Filament\Resources\Posts\Pages\CreatePost;
-use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Models\Episode;
 use App\Models\NewsletterIssue;
 use App\Models\Post;
@@ -10,7 +7,10 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\CreatePost;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

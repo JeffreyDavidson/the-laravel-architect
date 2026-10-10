@@ -1,11 +1,11 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\CreateEpisode;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -35,4 +35,29 @@ it('rejects episode text inputs longer than their database columns', function (s
     'guest_name',
     'guest_title',
     'guest_url',
+]);
+
+it('accepts only whole numbers of zero or more for the episode number, season and duration', function (string $field, string $value, string $rule) {
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $podcast = Podcast::factory()->create();
+
+    livewire(CreateEpisode::class)
+        ->fillForm([
+            'podcast_id' => $podcast->id,
+            'title' => 'Episode title',
+            'slug' => 'episode-title',
+            'description' => 'Episode description',
+            'status' => PublishStatus::Draft,
+            $field => $value,
+        ])
+        ->call('create')
+        ->assertHasFormErrors([$field => $rule]);
+
+    expect(Episode::query()->exists())->toBeFalse();
+})->with([
+    'decimal episode number' => ['episode_number', '1.5', 'integer'],
+    'negative episode number' => ['episode_number', '-1', 'min'],
+    'decimal season' => ['season_number', '1.5', 'integer'],
+    'negative season' => ['season_number', '-1', 'min'],
+    'negative duration' => ['duration_seconds', '-1', 'min'],
 ]);

@@ -18,8 +18,8 @@ commands (`ResponsiveImageVariants`, `StoredMediaLifecycle`, the image
 workflows), and the Categories and Social Profiles admin screens with
 `SlugSourceInput` (registered through `CreatorKitPlugin` in `AdminPanelProvider`),
 the newsletter's actions, job, middleware, controllers, enums, presenter
-and routes, the contact form's actions, job, spam checks and status enum, and the
-Subscribers, Newsletter issues and Contact inquiries admin screens with View on site,
+and routes, the contact form's actions, job and status enum, and the
+Subscribers, Newsletter issues, Contact inquiries, Posts and Episodes admin screens with View on site,
 the source-review, trashed-record, soft-delete bulk and Transistor building blocks,
 and `HasTagsUntilForceDeleted` and the robots.txt controller and view model; where this page names them as examples, they now come from
 the package rather than `app/`.

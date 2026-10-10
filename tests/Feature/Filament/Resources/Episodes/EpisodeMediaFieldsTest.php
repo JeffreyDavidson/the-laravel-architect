@@ -1,8 +1,8 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\actingAs;

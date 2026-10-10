@@ -30,12 +30,11 @@
                         height="40"
                         loading="lazy"
                         decoding="async"
-                        class="h-10 w-10 rounded-full"
+                        class="size-10 shrink-0 object-contain"
                     />
-                    <span class="group-hover:text-brand-action dark:group-hover:text-brand-600 flex items-baseline gap-1 text-gray-900 transition-colors dark:text-white">
-                        <span class="text-meta font-semibold tracking-widest uppercase">The</span>
-                        <span class="font-empera text-xl tracking-wide">Laravel</span>
-                        <span class="text-meta font-semibold tracking-widest uppercase">Architect</span>
+                    <span class="flex flex-col gap-0.5 leading-none">
+                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 text-meta tracking-micro font-mono font-medium uppercase transition-colors">The Laravel</span>
+                        <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
                     </span>
                 </a>
                 <p class="mb-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">

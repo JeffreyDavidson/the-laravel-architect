@@ -1,12 +1,12 @@
 <?php
 
-use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Models\Episode;
 use App\Models\User;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
