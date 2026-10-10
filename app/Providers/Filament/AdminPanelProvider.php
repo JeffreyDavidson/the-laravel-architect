@@ -92,7 +92,7 @@ final class AdminPanelProvider extends PanelProvider
             ->brandName('The Laravel Architect')
             ->brandLogo('/images/elephant-companion-128.webp')
             ->brandLogoHeight('2.5rem')
-            ->favicon('/images/favicon-32x32.png')
+            ->favicon('/images/elephant-small-32.png')
             ->font('IBM Plex Sans', provider: LocalFontProvider::class)
             ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])

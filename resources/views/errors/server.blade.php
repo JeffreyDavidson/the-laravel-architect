@@ -11,7 +11,7 @@
         @yield('title')
         — The Laravel Architect
     </title>
-    <link rel="icon" type="image/png" href="/images/elephant-companion-32.png" />
+    <link rel="icon" type="image/png" href="/images/elephant-small-32.png" />
     {{-- Keep recovery styling inline: a missing Vite manifest must not cause another server error. --}}
     <style>
         :root {
