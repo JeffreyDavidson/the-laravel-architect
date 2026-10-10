@@ -49,7 +49,7 @@ it('orders the sidebar by navigation group case and navigation sort', function (
         '' => ['Dashboard'],
         'Publish' => ['Editorial Calendar', 'Posts', 'Podcasts', 'Episodes', 'Newsletter Issues'],
         'Library' => ['Projects', 'Categories', 'Tags', 'Videos'],
-        'Audience' => ['Social Profiles', 'Subscribers', 'Inquiry inbox'],
+        'Audience' => ['Social Profiles', 'Subscribers', 'Contact Inquiries'],
         'Operations' => ['Insights', 'Media Health'],
     ]);
 });

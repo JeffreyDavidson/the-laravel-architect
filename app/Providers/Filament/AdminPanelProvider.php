@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Enums\ContactBudget;
+use App\Enums\ContactType;
 use App\Enums\NavigationGroup;
 use App\Enums\SocialPlatform;
 use App\Filament\Pages\Dashboard;
@@ -13,6 +15,8 @@ use App\Models\SocialProfile;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -112,7 +116,19 @@ final class AdminPanelProvider extends PanelProvider
                 ->categories(Category::class, NavigationGroup::Library, 2)
                 ->socialProfiles(SocialProfile::class, SocialPlatform::class, NavigationGroup::Audience, 1)
                 ->subscribers(NavigationGroup::Audience, 7)
-                ->newsletterIssues(NavigationGroup::Publish, 5))
+                ->newsletterIssues(NavigationGroup::Publish, 5)
+                ->contactInquiries(ContactType::class, NavigationGroup::Audience, 8, notes: true, details: fn (): array => [
+                    Select::make('budget')
+                        ->options(ContactBudget::class)
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->placeholder('Not provided'),
+                    TextInput::make('project_title')
+                        ->label('Project')
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->placeholder('General inquiry'),
+                ]))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
