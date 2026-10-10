@@ -24,11 +24,11 @@ pest()->use(RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set([
-        'creator-kit.turnstile.site_key' => 'test-site-key',
-        'creator-kit.turnstile.secret_key' => 'test-secret-key',
-        'creator-kit.turnstile.siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-        'creator-kit.turnstile.contact_action' => 'contact-form',
-        'creator-kit.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
+        'services.turnstile.site_key' => 'test-site-key',
+        'services.turnstile.secret_key' => 'test-secret-key',
+        'services.turnstile.siteverify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        'services.turnstile.contact_action' => 'contact-form',
+        'services.turnstile.allowed_hostnames' => ['thelaravelarchitect.com', 'www.thelaravelarchitect.com'],
     ]);
 
     Mail::fake();
@@ -204,7 +204,7 @@ it('rejects Turnstile responses with invalid request context', function (array $
 ]);
 
 it('fails closed when the Turnstile secret is missing', function () {
-    config()->set('creator-kit.turnstile.secret_key');
+    config()->set('services.turnstile.secret_key');
 
     post(route('contact.store'), [
         'name' => 'Jane Doe',

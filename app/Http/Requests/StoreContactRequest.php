@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use App\Data\ContactMessageData;
 use App\Enums\ContactBudget;
 use App\Enums\ContactType;
+use App\Http\Requests\Concerns\ChecksForSpam;
 use App\Models\Project;
 use App\Queries\PublishedProjectQuery;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +16,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
-use JeffreyDavidson\CreatorKit\Http\Requests\Concerns\ChecksForSpam;
 
 final class StoreContactRequest extends FormRequest
 {

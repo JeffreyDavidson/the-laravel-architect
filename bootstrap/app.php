@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Middleware\AddSecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ValidateSignature;
-use JeffreyDavidson\CreatorKit\Http\Middleware\AddSecurityHeaders;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Response;
 

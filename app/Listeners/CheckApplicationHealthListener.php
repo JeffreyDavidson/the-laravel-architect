@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use App\Services\Health\RuntimeHealthMonitor;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Support\Facades\DB;
-use JeffreyDavidson\CreatorKit\Services\Health\RuntimeHealthMonitor;
 
 /**
  * Runs the checks behind the `/up` health route. Any exception thrown here

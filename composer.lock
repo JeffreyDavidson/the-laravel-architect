@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "911bafe3cb41d63c85212768eb2c1453",
+    "content-hash": "878b75a755e6e81b72619c0e62b62440",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2574,16 +2574,16 @@
         },
         {
             "name": "jeffreydavidson/creator-kit",
-            "version": "v0.12.0",
+            "version": "v0.13.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:JeffreyDavidson/creator-kit.git",
-                "reference": "105b1b83bbe3891301d7236161932aa7e31f9a6a"
+                "reference": "a579b0b64ca8dbd0db770d03f82074884e12e736"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/105b1b83bbe3891301d7236161932aa7e31f9a6a",
-                "reference": "105b1b83bbe3891301d7236161932aa7e31f9a6a",
+                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/a579b0b64ca8dbd0db770d03f82074884e12e736",
+                "reference": "a579b0b64ca8dbd0db770d03f82074884e12e736",
                 "shasum": ""
             },
             "require": {
@@ -2600,7 +2600,6 @@
             "require-dev": {
                 "driftingly/rector-laravel": "^2.6",
                 "larastan/larastan": "^3.10",
-                "laravel/nightwatch": "^1.30",
                 "laravel/pint": "^1.30.5",
                 "orchestra/testbench": "^11.3",
                 "pestphp/pest": "^5.1",
@@ -2611,12 +2610,7 @@
                 "pestphp/pest-plugin-rector": "^5.0",
                 "pestphp/pest-plugin-type-coverage": "^5.0",
                 "phpstan/extension-installer": "^1.4",
-                "rector/rector": "^2.6",
-                "sentry/sentry-laravel": "^4.27"
-            },
-            "suggest": {
-                "laravel/nightwatch": "Redacted Nightwatch telemetry (wired automatically when installed).",
-                "sentry/sentry-laravel": "Redacted Sentry events and breadcrumbs (wired automatically when installed)."
+                "rector/rector": "^2.6"
             },
             "type": "library",
             "extra": {
@@ -2686,15 +2680,15 @@
             "license": [
                 "proprietary"
             ],
-            "description": "Shared plumbing for The Laravel Architect and Mouse28: security headers, monitoring, Turnstile, feeds and Markdown.",
+            "description": "Shared content features for The Laravel Architect and Mouse28: publishing, admin screens, newsletter, contact, SEO, feeds and Markdown.",
             "keywords": [
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.12.0",
+                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.13.0",
                 "issues": "https://github.com/JeffreyDavidson/creator-kit/issues"
             },
-            "time": "2026-10-10T01:34:47+00:00"
+            "time": "2026-10-10T15:33:07+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
