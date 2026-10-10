@@ -330,8 +330,9 @@ fully circular marks only for status dots, avatars, and timeline markers.
 
 ### Identity and imagery
 
-Keep the original elephant-and-coffee badge as the primary identity and footer
-mark. Use the companion elephant head for the header and admin branding; consult
+Keep the original elephant-and-coffee badge as the primary identity, using the full
+badge where it fits, such as existing manifest icons. Use the companion elephant
+head for the header, footer and admin branding; consult
 the brand-asset guide for favicon variants. Preserve aspect ratios and transparent
 edges. Reuse current hero artwork and real project imagery. Local synthetic test
 content is not production copy or a source of business claims.
