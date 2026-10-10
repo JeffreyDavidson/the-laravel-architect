@@ -17,6 +17,7 @@ use JeffreyDavidson\CreatorKit\Filament\Forms\Components\PublishStatusSelect;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SeoSection;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugInput;
 use JeffreyDavidson\CreatorKit\Filament\Forms\Components\SlugSourceInput;
+use JeffreyDavidson\CreatorKit\Filament\Forms\Components\TransistorUrlInput;
 
 final class EpisodeForm
 {
@@ -59,13 +60,7 @@ final class EpisodeForm
 
                 Section::make('Media')
                     ->schema([
-                        TextInput::make('transistor_url')
-                            ->label('Transistor episode URL')
-                            ->url()
-                            ->maxLength(255)
-                            ->rules(['regex:/\Ahttps:\/\/share\.transistor\.fm\/s\/[a-zA-Z0-9]+\/?\z/'])
-                            ->validationMessages(['regex' => 'Paste the episode share URL, such as https://share.transistor.fm/s/428dcd6b.'])
-                            ->helperText('The public page shows the Transistor player for this episode.'),
+                        TransistorUrlInput::make('transistor_url'),
                         TextInput::make('youtube_url')
                             ->label('YouTube URL')
                             ->url()

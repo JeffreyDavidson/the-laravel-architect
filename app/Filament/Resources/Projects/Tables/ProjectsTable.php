@@ -7,11 +7,7 @@ namespace App\Filament\Resources\Projects\Tables;
 use App\Enums\ProjectReadinessFilter;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Publishing\ProjectReadinessCriteria;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -21,6 +17,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use JeffreyDavidson\CreatorKit\Filament\Actions\ViewOnSiteAction;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Actions\SoftDeleteBulkActions;
 
 final class ProjectsTable
 {
@@ -83,11 +80,7 @@ final class ProjectsTable
                 ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                SoftDeleteBulkActions::make(),
             ])
             ->defaultSort('sort_order')
             ->emptyStateIcon(Heroicon::OutlinedCodeBracket)
