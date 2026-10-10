@@ -56,7 +56,7 @@ The RSS feeds, the sitemap and robots.txt change nothing, so they are not
 actions. Each splits into three read-only parts: a Query reads the content
 (`RssFeedQuery`, `NewsletterRssFeedQuery`, `SitemapQuery`), a ViewModel turns it
 into plain arrays with URLs and dates (`RssFeedViewModel`,
-`NewsletterRssFeedViewModel`, `SitemapViewModel`, `RobotsTxtViewModel`), and a
+`NewsletterRssFeedViewModel`, `SitemapViewModel`; robots.txt's comes from creator-kit), and a
 Renderer from `jeffreydavidson/creator-kit` (`JeffreyDavidson\CreatorKit\Support\Feeds`) serialises those arrays without knowing about
 models (`RssChannelRenderer`, `SitemapRenderer`, `RobotsTxtRenderer`). The
 controller passes the ViewModel's data to the Renderer and sets the response
@@ -212,8 +212,9 @@ would also drop the route-model binding for its post slug.
 
 ## robots.txt
 
-`/robots.txt` is served by `RobotsController`, which renders the policy from
-`RobotsTxtViewModel` with `RobotsTxtRenderer`. The route
+`/robots.txt` is served by creator-kit's `RobotsTxtController`, which renders the
+policy from its `RobotsTxtViewModel` (disallowed paths in
+`creator-kit.robots.disallow`) with `RobotsTxtRenderer`. The route
 removes the `web` middleware group, so the response sets no session or CSRF
 cookies, and it is sent with `Cache-Control: public, max-age=3600` so it behaves
 like a static file at the CDN. Do not add a static `public/robots.txt`, because

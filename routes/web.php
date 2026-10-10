@@ -22,7 +22,6 @@ use App\Http\Controllers\PreviewPostController;
 use App\Http\Controllers\PreviewProjectController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\RssFeedController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
@@ -34,6 +33,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use JeffreyDavidson\CreatorKit\Http\Controllers\RobotsTxtController;
 use JeffreyDavidson\CreatorKit\Routing\NewsletterRoutes;
 
 // Pages
@@ -84,7 +84,7 @@ Route::get('/rss', RssFeedController::class)
     ->withoutMiddleware('web')
     ->name('rss');
 // Served like a static file (no session cookies, publicly cacheable) so the CDN keeps it.
-Route::get('/robots.txt', RobotsController::class)
+Route::get('/robots.txt', RobotsTxtController::class)
     ->withoutMiddleware('web')
     ->middleware('cache.headers:public;max_age=3600')
     ->name('robots');

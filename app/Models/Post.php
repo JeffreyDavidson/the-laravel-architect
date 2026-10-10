@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\DeletesOwnedContent;
-use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
 use Database\Factories\PostFactory;
@@ -24,6 +23,7 @@ use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasSourceReview;
+use JeffreyDavidson\CreatorKit\Models\Concerns\HasTagsUntilForceDeleted;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;

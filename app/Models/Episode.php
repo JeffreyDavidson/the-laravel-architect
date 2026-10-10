@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\DeletesOwnedContent;
-use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\EpisodeObserver;
 use Database\Factories\EpisodeFactory;
@@ -20,6 +19,7 @@ use JeffreyDavidson\CreatorKit\Contracts\Publishable;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
+use JeffreyDavidson\CreatorKit\Models\Concerns\HasTagsUntilForceDeleted;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
 use JeffreyDavidson\CreatorKit\Support\Podcasts\TransistorShareUrl;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;

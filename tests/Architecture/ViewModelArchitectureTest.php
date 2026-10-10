@@ -1,7 +1,6 @@
 <?php
 
 use App\ViewModels\NewsletterRssFeedViewModel;
-use App\ViewModels\RobotsTxtViewModel;
 use App\ViewModels\RssFeedViewModel;
 use App\ViewModels\SitemapViewModel;
 use App\ViewModels\SiteStructuredData;
@@ -19,7 +18,6 @@ arch('makes every page ViewModel a PageViewModel')
     ->toImplement(PageViewModel::class)
     ->ignoring([
         NewsletterRssFeedViewModel::class,
-        RobotsTxtViewModel::class,
         RssFeedViewModel::class,
         SitemapViewModel::class,
         SiteStructuredData::class,

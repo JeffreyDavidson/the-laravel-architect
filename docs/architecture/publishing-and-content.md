@@ -142,7 +142,7 @@ and admin count, since those use the default scopes) and keeps their media, SEO
 row and tags so a restore is complete.
 
 Only a force delete runs transactionally and removes owned files, responsive
-variants, OG caches, the SEO row and tag links (`HasTagsUntilForceDeleted` keeps
+variants, OG caches, the SEO row and tag links (creator-kit's `HasTagsUntilForceDeleted` keeps
 spatie/laravel-tags from detaching tags on a soft delete). Filament resources
 offer a trashed filter plus Restore and Force delete on the edit page and in
 bulk. How owned files are removed is in [Media](media.md#cleanup).

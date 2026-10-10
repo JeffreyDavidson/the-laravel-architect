@@ -19,7 +19,8 @@ workflows), and the Categories and Social Profiles admin screens with
 the newsletter's actions, job, middleware, controllers, enums, presenter
 and routes, the contact form's actions, job, spam checks and status enum, and the
 Subscribers, Newsletter issues and Contact inquiries admin screens with View on site,
-and the source-review, trashed-record, soft-delete bulk and Transistor building blocks; where this page names them as examples, they now come from
+the source-review, trashed-record, soft-delete bulk and Transistor building blocks,
+and `HasTagsUntilForceDeleted` and the robots.txt controller and view model; where this page names them as examples, they now come from
 the package rather than `app/`.
 
 The rules come from the 2026-10-07 architecture audit and are locked in by Pest
