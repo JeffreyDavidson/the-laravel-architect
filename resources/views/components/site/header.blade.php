@@ -23,18 +23,7 @@
                     href="{{ route('home') }}"
                     class="group focus-visible:outline-brand-500 flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                 >
-                    <img
-                        src="/images/elephant-companion-128.webp"
-                        alt=""
-                        width="52"
-                        height="52"
-                        decoding="async"
-                        class="size-13 shrink-0 object-contain"
-                    />
-                    <span class="flex flex-col gap-0.5 leading-none">
-                        <span class="text-brand-600 group-hover:text-brand-500 dark:text-brand-300 dark:group-hover:text-brand-200 text-meta tracking-micro font-mono font-medium uppercase transition-colors">The Laravel</span>
-                        <span class="font-empera group-hover:text-brand-600 dark:group-hover:text-brand-200 text-2xl leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white">Architect</span>
-                    </span>
+                    <x-site.logo />
                 </a>
 
                 <button
