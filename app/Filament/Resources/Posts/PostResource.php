@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Posts;
 
 use App\Enums\NavigationGroup;
-use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
@@ -19,6 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use JeffreyDavidson\CreatorKit\Filament\Concerns\ResolvesTrashedRecords;
 use UnitEnum;
 
 final class PostResource extends Resource

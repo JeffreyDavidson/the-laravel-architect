@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\SourceReviewStatus;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\HasTagsUntilForceDeleted;
 use App\Models\Concerns\TracksActivity;
 use App\Observers\PostObserver;
-use Carbon\CarbonInterface;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,9 +19,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use JeffreyDavidson\CreatorKit\Contracts\Publishable;
+use JeffreyDavidson\CreatorKit\Contracts\ReviewsSources;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
+use JeffreyDavidson\CreatorKit\Models\Concerns\HasSourceReview;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -40,7 +39,7 @@ use Spatie\Activitylog\Support\LogOptions;
 #[ObservedBy(PostObserver::class)]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
-final class Post extends Model implements Publishable
+final class Post extends Model implements Publishable, ReviewsSources
 {
     use DeletesOwnedContent;
 
@@ -49,6 +48,7 @@ final class Post extends Model implements Publishable
 
     use HasPublishingStatus;
     use HasSEO;
+    use HasSourceReview;
     use HasTagsUntilForceDeleted;
     use LocksSlugAfterPublication;
     use SoftDeletes;
@@ -61,49 +61,26 @@ final class Post extends Model implements Publishable
             'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'reviewed_at' => 'datetime',
-            'last_reviewed_at' => 'date',
             'updated_at' => 'datetime',
         ];
     }
 
-    /**
-     * Posts whose official source has never been reviewed or was last reviewed longer
-     * ago than the configured interval.
-     *
-     * @param  Builder<static>  $query
-     */
-    #[Scope]
-    protected function reviewDue(Builder $query): void
+    /** Posts are flagged for review this many days after their source was last checked. */
+    protected function sourceReviewIntervalDays(): int
     {
-        $query->whereNotNull('source_url')
-            ->where(function (Builder $query): void {
-                $query->whereNull('last_reviewed_at')
-                    ->orWhere('last_reviewed_at', '<', $this->reviewCutoff());
-            });
+        return config()->integer('content.post_review_interval_days');
     }
 
-    public function isReviewDue(): bool
+    /** Only posts with an official source are tracked for review. */
+    protected function tracksSourceReview(): bool
     {
-        $lastReviewedAt = $this->getAttribute('last_reviewed_at');
-
-        return filled($this->getAttribute('source_url'))
-            && (! $lastReviewedAt instanceof CarbonInterface || $lastReviewedAt->lt($this->reviewCutoff()));
+        return filled($this->getAttribute('source_url'));
     }
 
-    public function sourceReviewStatus(): SourceReviewStatus
+    /** @param  Builder<static>  $query */
+    protected function whereTracksSourceReview(Builder $query): void
     {
-        if (blank($this->getAttribute('source_url'))) {
-            return SourceReviewStatus::NotTracked;
-        }
-
-        return $this->isReviewDue()
-            ? SourceReviewStatus::ReviewDue
-            : SourceReviewStatus::Current;
-    }
-
-    private function reviewCutoff(): CarbonInterface
-    {
-        return today()->subDays(config()->integer('content.post_review_interval_days'));
+        $query->whereNotNull('source_url');
     }
 
     /** @return BelongsTo<User, $this> */

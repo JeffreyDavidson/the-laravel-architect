@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Projects;
 
 use App\Enums\NavigationGroup;
-use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Filament\Resources\Projects\Pages\ListProjects;
@@ -17,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffreyDavidson\CreatorKit\Filament\Concerns\ResolvesTrashedRecords;
 use UnitEnum;
 
 final class ProjectResource extends Resource

@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Posts\Tables;
 
-use App\Enums\SourceReviewStatus;
 use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Filament\Tables\Filters\PublicationFilter;
-use App\Models\Post;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -24,6 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Filament\Actions\ViewOnSiteAction;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Actions\SoftDeleteBulkActions;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Columns\SourceReviewColumns;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Filters\ReviewDueFilter;
 
 final class PostsTable
 {
@@ -58,17 +54,7 @@ final class PostsTable
                     ->dateTime('M j, Y')
                     ->placeholder('Not published')
                     ->sortable(),
-                TextColumn::make('source_review_status')
-                    ->label('Source review')
-                    ->state(fn (Post $record): SourceReviewStatus => $record->sourceReviewStatus())
-                    ->badge()
-                    ->toggleable(),
-                TextColumn::make('last_reviewed_at')
-                    ->label('Reviewed')
-                    ->date()
-                    ->sortable()
-                    ->placeholder('Not tracked')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ...SourceReviewColumns::make(),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
@@ -81,11 +67,7 @@ final class PostsTable
                 PublicationFilter::make(),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
-                Filter::make('review_due')
-                    ->label('Source review due')
-                    ->query(fn (Builder $query): Builder => $query->whereIn('posts.id', Post::query()
-                        ->reviewDue()
-                        ->select('id'))),
+                ReviewDueFilter::make(),
                 TrashedFilter::make(),
             ])
             ->recordActions([
@@ -93,11 +75,7 @@ final class PostsTable
                 ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                SoftDeleteBulkActions::make(),
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedDocumentText)

@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\SourceReviewStatus;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Enums\SourceReviewStatus;
 use Tests\Support\PublishableFixtures;
 
 use function Pest\Laravel\freezeSecond;

@@ -105,9 +105,11 @@ default `America/New_York`, read through creator-kit's `DisplayTimezone`).
 Posts can record the official source they rely on (`source_url`) and when it was
 last checked (`last_reviewed_at`). A sourced post is due for review when it was
 never checked or was last checked more than `content.post_review_interval_days`
-(env `POST_REVIEW_INTERVAL_DAYS`, default 180) days ago. `Post::reviewDue()`,
-`isReviewDue()` and `SourceReviewStatus` drive the posts table's Source review
-column and filter.
+(env `POST_REVIEW_INTERVAL_DAYS`, default 180) days ago. The rules come from
+creator-kit's `HasSourceReview` (`Post` supplies the interval and tracks only
+posts with a `source_url`); its `SourceReviewSection`, `SourceReviewColumns` and
+`ReviewDueFilter` build the form section, the posts table's Source review column
+and the filter, which lists published posts only.
 
 This is separate from the editorial approval fields (`reviewed_by`,
 `reviewed_at`, `review_notes`) and is shown only in the admin.
