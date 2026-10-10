@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "996837cffb30f32c9b03626c8d3688ce",
+    "content-hash": "cacb15cd947edbadf244a942ff0dfea4",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2574,16 +2574,16 @@
         },
         {
             "name": "jeffreydavidson/creator-kit",
-            "version": "v0.10.0",
+            "version": "v0.11.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:JeffreyDavidson/creator-kit.git",
-                "reference": "de1f6d13f4b88412036b9e91cc201cd4b90df760"
+                "reference": "deadeff0386bf2a65d62f70cf993502294cfec3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/de1f6d13f4b88412036b9e91cc201cd4b90df760",
-                "reference": "de1f6d13f4b88412036b9e91cc201cd4b90df760",
+                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/deadeff0386bf2a65d62f70cf993502294cfec3c",
+                "reference": "deadeff0386bf2a65d62f70cf993502294cfec3c",
                 "shasum": ""
             },
             "require": {
@@ -2690,10 +2690,10 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.10.0",
+                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.11.0",
                 "issues": "https://github.com/JeffreyDavidson/creator-kit/issues"
             },
-            "time": "2026-10-09T21:34:44+00:00"
+            "time": "2026-10-10T00:44:20+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

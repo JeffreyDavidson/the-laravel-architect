@@ -51,18 +51,25 @@ it('requires the source and review date together', function (array $data, string
     'review date without a source' => [['last_reviewed_at' => '2026-09-01'], 'source_url'],
 ]);
 
-it('filters the posts table to sources due for review', function () {
+it('filters the posts table to published sources due for review', function () {
     $due = PublishableFixtures::readyPost(['source_url' => 'https://laravel.com/docs']);
+    $due->publish();
     $current = PublishableFixtures::readyPost([
         'title' => 'Current post',
         'slug' => 'current-post',
         'source_url' => 'https://laravel.com/docs',
         'last_reviewed_at' => today(),
     ]);
+    $current->publish();
+    $dueDraft = PublishableFixtures::readyPost([
+        'title' => 'Draft post',
+        'slug' => 'draft-post',
+        'source_url' => 'https://laravel.com/docs',
+    ]);
 
     livewire(ListPosts::class)
         ->filterTable('review_due')
         ->assertCanSeeTableRecords([$due])
-        ->assertCanNotSeeTableRecords([$current])
+        ->assertCanNotSeeTableRecords([$current, $dueDraft])
         ->assertTableColumnExists('source_review_status');
 });

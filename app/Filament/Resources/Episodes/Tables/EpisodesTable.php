@@ -8,11 +8,7 @@ use App\Filament\Tables\Columns\ReadinessColumn;
 use App\Filament\Tables\Filters\PublicationFilter;
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -23,6 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Filament\Actions\ViewOnSiteAction;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Actions\SoftDeleteBulkActions;
 
 final class EpisodesTable
 {
@@ -87,11 +84,7 @@ final class EpisodesTable
                 ViewOnSiteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                SoftDeleteBulkActions::make(),
             ])
             ->defaultSort('episode_number', 'desc')
             ->emptyStateIcon(Heroicon::OutlinedMusicalNote)

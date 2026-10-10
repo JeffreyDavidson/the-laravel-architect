@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Podcasts\Tables;
 
 use App\Filament\Tables\Columns\ReadinessColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -17,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffreyDavidson\CreatorKit\Filament\Tables\Actions\SoftDeleteBulkActions;
 
 final class PodcastsTable
 {
@@ -56,11 +53,7 @@ final class PodcastsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
+                SoftDeleteBulkActions::make(),
             ])
             ->emptyStateIcon(Heroicon::OutlinedMicrophone)
             ->emptyStateHeading('No podcasts yet')

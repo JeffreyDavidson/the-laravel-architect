@@ -21,6 +21,7 @@ use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Models\Attributes\PublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\HasPublishingStatus;
 use JeffreyDavidson\CreatorKit\Models\Concerns\LocksSlugAfterPublication;
+use JeffreyDavidson\CreatorKit\Support\Podcasts\TransistorShareUrl;
 use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\Activitylog\Support\LogOptions;
@@ -65,14 +66,7 @@ final class Episode extends Model implements Publishable
      */
     public function transistorEpisodeId(): ?string
     {
-        $url = $this->getAttribute('transistor_url');
-        $matches = [];
-
-        if (! is_string($url) || preg_match('/\Ahttps:\/\/share\.transistor\.fm\/s\/([a-zA-Z0-9]+)\/?\z/', $url, $matches) !== 1) {
-            return null;
-        }
-
-        return $matches[1];
+        return TransistorShareUrl::episodeId($this->getAttribute('transistor_url'));
     }
 
     /**

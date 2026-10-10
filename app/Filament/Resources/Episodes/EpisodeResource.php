@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Episodes;
 
 use App\Enums\NavigationGroup;
-use App\Filament\Concerns\ResolvesTrashedRecords;
 use App\Filament\Resources\Episodes\Pages\CreateEpisode;
 use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
@@ -17,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffreyDavidson\CreatorKit\Filament\Concerns\ResolvesTrashedRecords;
 use UnitEnum;
 
 final class EpisodeResource extends Resource
