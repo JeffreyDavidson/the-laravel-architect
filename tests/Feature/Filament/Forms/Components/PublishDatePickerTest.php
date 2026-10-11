@@ -50,13 +50,14 @@ it('stores a publish date entered in Eastern time as UTC', function (string $pag
     ->with('publishable edit pages')
     ->with('eastern publish dates');
 
-it('shows a stored UTC publish date in Eastern time with a timezone hint', function (string $page, Model $record) {
+it('shows a stored UTC publish date in Eastern time with a timezone hint and the scheduling help', function (string $page, Model $record) {
     $record->forceFill(['published_at' => '2026-10-06 01:00:00'])
         ->save();
 
     livewire($page, ['record' => $record->getRouteKey()])
         ->assertSet('data.published_at', '2026-10-05 21:00:00')
-        ->assertSee('Eastern Time (America/New_York)');
+        ->assertSee('Eastern Time (America/New_York)')
+        ->assertSee('Leave blank to publish immediately, or choose a future date to schedule.');
 })->with('publishable edit pages');
 
 it('stores the publish date of a new post entered in Eastern time as UTC', function (string $entered, string $stored) {
