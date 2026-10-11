@@ -318,7 +318,7 @@ class FeaturedImageGenerator
         $fonts = [
             '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf',
             '/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf',
-            resource_path('fonts/empera/Empera-Regular.ttf'),
+            resource_path('fonts/Inter-Regular.ttf'),
         ];
 
         foreach ($fonts as $font) {
@@ -327,6 +327,6 @@ class FeaturedImageGenerator
             }
         }
 
-        return resource_path('fonts/empera/Empera-Regular.ttf');
+        return resource_path('fonts/Inter-Regular.ttf');
     }
 }

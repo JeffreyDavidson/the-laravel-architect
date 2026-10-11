@@ -19,11 +19,11 @@
 />
 <span class="flex flex-col gap-0.5 leading-none">
     <span class="text-brand-600 dark:text-brand-300 text-meta tracking-micro font-mono font-medium uppercase transition-colors">The Laravel</span>
-    <span
-        @class([
-            'font-empera group-hover:text-brand-action dark:group-hover:text-brand-200 leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white',
-            'text-xl' => $small,
-            'text-2xl' => ! $small,
-        ])
-    >Architect</span>
+    <span @class([
+        'group-hover:text-brand-action dark:group-hover:text-brand-200 leading-none tracking-[0.04em] text-gray-950 transition-colors dark:text-white',
+        'text-xl' => $small,
+        'text-2xl' => ! $small,
+    ])>
+        <x-site.lettering :size="$small ? 20 : 24" />
+    </span>
 </span>
