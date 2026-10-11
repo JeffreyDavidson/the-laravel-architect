@@ -243,10 +243,10 @@ color unchanged into light mode.
 - **IBM Plex Mono:** code, technical metadata, and selected small labels.
   The public bundle includes weights 400, 600, and 700; the admin theme declares 400.
 - **Identity lettering:** “Architect” and the About card’s “Jeffrey Davidson”
-  are outlined artwork made from licensed Empera. The font itself is not
+  are outlined artwork made from Empera. The font itself is not
   distributed with the app. Keep this display treatment within the branding
-  rather than extending it to forms or article paragraphs. Source outlines,
-  build instructions and licence provenance are listed in `docs/brand-assets.md`.
+  rather than extending it to forms or article paragraphs. Source outlines
+  and build instructions are listed in `docs/brand-assets.md`.
 
 Public headings use a clear, semibold hierarchy and balanced wrapping.
 The home hero steps from 3rem to 3.75rem and then 4.5rem at wider breakpoints.
