@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\Tag;
 use App\Models\User;
 use App\Publishing\ContentPublishingReadiness;
+use App\Publishing\ContentPublishingSuggestions;
 use App\Services\ContactEmails;
 use App\Services\ContentUrls;
 use App\Services\NewsletterEmails;
@@ -29,6 +30,7 @@ use JeffreyDavidson\CreatorKit\Contracts\ContactMails;
 use JeffreyDavidson\CreatorKit\Contracts\ContentUrls as ContentUrlsContract;
 use JeffreyDavidson\CreatorKit\Contracts\NewsletterMails;
 use JeffreyDavidson\CreatorKit\Contracts\PublishingReadiness;
+use JeffreyDavidson\CreatorKit\Contracts\PublishingSuggestions;
 use Livewire\Livewire;
 use RalphJSmit\Laravel\SEO\Facades\SEOManager;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
@@ -42,6 +44,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(PublicPageBenchmark::class);
         $this->app->bind(PublishingReadiness::class, ContentPublishingReadiness::class);
+        $this->app->bind(PublishingSuggestions::class, ContentPublishingSuggestions::class);
         $this->app->bind(ContactMails::class, ContactEmails::class);
         $this->app->bind(ContentUrlsContract::class, ContentUrls::class);
         $this->app->bind(NewsletterMails::class, NewsletterEmails::class);
