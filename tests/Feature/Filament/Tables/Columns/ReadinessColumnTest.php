@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\ListEpisodes;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\ListPosts;
 use Tests\Support\PublishableFixtures;
 
@@ -30,16 +31,33 @@ it('shows the readiness status and the missing details for a row', function () {
         ->assertTableColumnHasDescription('readiness', 'Missing: Cover image', $podcast);
 });
 
-it('shows only what blocks publishing on the posts and episodes lists', function () {
+it('badges a post by what blocks publishing and lists the optional gaps under a ready badge', function () {
     $ready = PublishableFixtures::readyPost();
     $blocked = Post::factory()->create(['excerpt' => null, 'category_id' => null]);
 
     livewire(ListPosts::class)
         ->assertTableColumnStateSet('readiness', 'Ready', $ready)
-        ->assertTableColumnHasDescription('readiness', 'All required details are complete.', $ready);
+        ->assertTableColumnHasDescription('readiness', 'Could improve: Featured image, Tags', $ready);
     livewire(ListPosts::class)
         ->assertTableColumnStateSet('readiness', '2 to fix', $blocked)
         ->assertTableColumnHasDescription('readiness', 'Missing: Excerpt, Category', $blocked);
+});
+
+it('lists the optional gaps under a ready badge on the episodes list', function () {
+    $episode = PublishableFixtures::ready('episode');
+
+    livewire(ListEpisodes::class)
+        ->assertTableColumnStateSet('readiness', 'Ready', $episode)
+        ->assertTableColumnHasDescription('readiness', 'Could improve: Show notes, Featured image, Tags', $episode);
+});
+
+it('says every required detail is complete when a post has no optional gaps', function () {
+    $post = PublishableFixtures::readyPost(['featured_image_path' => 'posts/complete.webp']);
+    $post->attachTag(Tag::factory()->create());
+
+    livewire(ListPosts::class)
+        ->assertTableColumnStateSet('readiness', 'Ready', $post)
+        ->assertTableColumnHasDescription('readiness', 'All required details are complete.', $post);
 });
 
 it('prefixes the missing details with the completed check count when showing progress', function () {
