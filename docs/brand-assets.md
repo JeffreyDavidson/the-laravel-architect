@@ -28,7 +28,7 @@ the detailed head on larger surfaces. The old companion 16px/32px and badge
 16px/32px PNGs remain for reference, but no templates link them.
 
 The header and footer place “The Laravel” in small uppercase IBM Plex Mono above
-“Architect” in Empera, with matching colours and letter-spacing. The footer uses
+“Architect” as outlined Empera artwork, with matching colours and letter-spacing. The footer uses
 a smaller 40px head and 20px wordmark; the header uses 52px and 24px respectively.
 Both show the uncropped companion head.
 
@@ -55,3 +55,21 @@ browser tab, mobile/home-screen icon, public header, admin panel, login page,
 footer, and error pages. Update the source note and any generated variants in
 the same change. Do not commit a private source image, embedded credentials,
 or an undocumented third-party asset.
+
+## Outlined identity lettering
+
+“Architect” and the About card’s “Jeffrey Davidson” are fixed vector artwork
+made from licensed Empera. The app does not distribute the Empera font files
+or load a web font for these words. The shared
+`resources/views/components/site/lettering.blade.php` renders inline paths with
+`currentColor`, preserving theme and hover colours, and separate HTML text
+keeps the words available to assistive technology and search engines.
+
+The masters and reproducible source live in the private meta repository at
+`brand/outlined-lettering-v1/`: `logos/`, `source/outline.swift`,
+`source/font-jobs.json` and `source/build.py`. Rebuilding paths requires a local
+licensed font; the font is not bundled with those sources. Earlier git commits
+retain the old font files; this change does not rewrite history.
+
+The featured-image generator keeps its system monospace preferences and uses
+the already-bundled SIL OFL Inter Regular TTF as its final fallback.

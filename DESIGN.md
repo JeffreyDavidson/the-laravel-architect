@@ -66,8 +66,7 @@ typography:
   code:
     fontFamily: "IBM Plex Mono, ui-monospace, monospace"
   wordmark:
-    fontFamily: "Empera, serif"
-    fontWeight: 400
+    artwork: "Outlined Empera lettering; no font distributed"
   auth-heading:
     fontFamily: "IBM Plex Sans, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.65rem"
@@ -243,8 +242,11 @@ color unchanged into light mode.
   Filament interface. It is locally bundled as a variable font.
 - **IBM Plex Mono:** code, technical metadata, and selected small labels.
   The public bundle includes weights 400, 600, and 700; the admin theme declares 400.
-- **Empera:** the public identity wordmark. Keep this display treatment within
-  the branding rather than extending it to forms or article paragraphs.
+- **Identity lettering:** “Architect” and the About card’s “Jeffrey Davidson”
+  are outlined artwork made from licensed Empera. The font itself is not
+  distributed with the app. Keep this display treatment within the branding
+  rather than extending it to forms or article paragraphs. Source outlines,
+  build instructions and licence provenance are listed in `docs/brand-assets.md`.
 
 Public headings use a clear, semibold hierarchy and balanced wrapping.
 The home hero steps from 3rem to 3.75rem and then 4.5rem at wider breakpoints.

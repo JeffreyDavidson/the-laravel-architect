@@ -787,6 +787,8 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     get(route('home'))
         ->assertOk()
+        ->assertSeeText('Architect')
+        ->assertDontSeeHtml('font-empera')
         ->assertDontSeeHtml('cdn.jsdelivr.net/npm/alpinejs')
         ->assertDontSeeHtml('fonts.bunny.net')
         ->assertDontSeeHtml($manifest['resources/css/filament/admin/theme.css']['file'])
@@ -801,6 +803,8 @@ it('loads public interactivity and typography from the local Vite bundle', funct
 
     get(route('about'))
         ->assertOk()
+        ->assertSeeText('Jeffrey Davidson')
+        ->assertDontSeeHtml('font-empera')
         ->assertSeeHtml($manifest['resources/css/app.css']['file'])
         ->assertSeeHtml($manifest['resources/images/avatar-320.webp']['file'])
         ->assertSeeHtml($manifest['resources/images/avatar-640.webp']['file'])
@@ -821,7 +825,7 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ->assertSeeHtml($manifest['resources/css/app.css']['file']);
 
     expect($manifest)
-        ->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
+        ->not->toHaveKey('resources/fonts/empera/Empera-Regular.woff2')
         ->not->toHaveKeys([
             'resources/css/pages/home-entry.css',
             'resources/css/pages/about-entry.css',
@@ -831,8 +835,13 @@ it('loads public interactivity and typography from the local Vite bundle', funct
         ])
         ->not->toHaveKey('resources/fonts/empera/Empera-Regular.ttf')
         ->and(implode("\n", array_column($manifest, 'file')))
-        ->not->toContain('Empera-Vintage')
-        ->not->toContain('Empera-Regular.ttf');
+        ->not->toContain('Empera')
+        ->and(file_get_contents(public_path('build/'.$manifest['resources/css/app.css']['file'])))
+        ->not->toContain('Empera', 'empera')
+        ->and(file_exists(resource_path('fonts/empera/Empera-Regular.ttf')))
+        ->toBeFalse()
+        ->and(file_exists(resource_path('fonts/empera/Empera-Regular.woff2')))
+        ->toBeFalse();
 });
 
 it('renders one concise client-focused services section', function () {
