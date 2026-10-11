@@ -51,8 +51,8 @@
                                                 />
                                             </div>
                                             <div class="px-5 pt-3 pb-3 text-center">
-                                                <p class="font-empera text-xl tracking-wide text-gray-900 dark:text-white">
-                                                    Jeffrey Davidson
+                                                <p class="text-xl tracking-wide text-gray-900 dark:text-white">
+                                                    <x-site.lettering artwork="name" :size="20" />
                                                 </p>
                                                 <div class="mt-1 flex items-center justify-center gap-2">
                                                     <div class="bg-brand-600/20 h-px flex-1"></div>
@@ -78,8 +78,8 @@
                                             <div class="flex flex-1 flex-col justify-center">
                                                 {{-- Name plate on back too --}}
                                                 <div class="px-5 pt-2 pb-3 text-center">
-                                                    <p class="font-empera text-lg tracking-wide text-gray-900 dark:text-white">
-                                                        Jeffrey Davidson
+                                                    <p class="text-lg tracking-wide text-gray-900 dark:text-white">
+                                                        <x-site.lettering artwork="name" :size="18" />
                                                     </p>
                                                     <div class="mt-0.5 flex items-center justify-center gap-2">
                                                         <div class="bg-accent-600/20 h-px flex-1"></div>
