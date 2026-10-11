@@ -84,8 +84,10 @@ models, Filament and HTTP (enforced by
 - The admin `ReadinessColumn` formats the verdict for display ("4/6 complete ·
   Missing: Featured image, Tags") on the Projects, Podcasts and Videos lists.
   The Posts and Episodes lists come from `jeffreydavidson/creator-kit` and use
-  its readiness column, which shows only what blocks publishing ("Ready" or
-  "2 to fix", from `ContentPublishingReadiness`).
+  its readiness column: the badge shows only what blocks publishing ("Ready" or
+  "2 to fix", from `ContentPublishingReadiness`), and a ready row lists its
+  optional gaps underneath ("Could improve: Featured image, Tags", from
+  `ContentPublishingSuggestions`).
 
 ## Dates and the display timezone
 
