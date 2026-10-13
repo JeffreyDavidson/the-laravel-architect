@@ -11,8 +11,22 @@ disk. Commands for setting up, repairing and checking media are in
 Uploaded images and audio are validated and stored through the `public` disk.
 Models store explicit file paths and never touch the disk themselves; their
 observers hand file changes to one lifecycle service (see [Cleanup](#cleanup)).
-Every remaining upload is an image; episode audio uploads are retired (see
+Post content also supports PDF companions; episode audio uploads are retired (see
 [Publishing and content](publishing-and-content.md#podcasts-and-episodes)).
+
+## Post PDF companions
+
+The post content editor exposes `AttachPostPdfAction` through an after-label
+action configured in `AdminPanelProvider`. It accepts PDFs up to 10 MB, checks
+the existing post create/update permission, and uses Filament's storage-path
+tampering protection. Filament stores each upload under a generated name on
+the public disk in `attachments/posts/`; the original filename is not retained.
+
+The action appends an escaped Markdown download link to the editor. The post
+is saved separately, preserving its publication state. PDFs are publicly
+accessible as soon as uploaded. Removing a link or abandoning an edit does not
+delete the file; the orphan report identifies unreferenced attachments for
+manual review. These files are not image variants or model media attributes.
 
 ## Responsive variants
 
