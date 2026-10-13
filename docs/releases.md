@@ -73,12 +73,42 @@ credentials**, or production's staging recheck) means nothing was deployed, so
 re-running the failed job is safe. Only a failure that says to inspect Forge
 before retrying a trigger leaves the deployment uncertain.
 
+### Wait for a CI retry
+
+Before requesting a retry, verify the parent CI run's `head_sha` equals the full
+candidate SHA and capture `run_attempt + 1`. Request the retry once, then use the
+shared bounded waiter with that recorded attempt. A SHA-only green result can
+still describe older checks while the new attempt is registering.
+
+Replace the quoted placeholders with the selected CI run ID and full candidate
+SHA. The commands stop if the run belongs to a different SHA or the retry request
+fails:
+
+```bash
+repo=JeffreyDavidson/the-laravel-architect
+run_id='<CI-run-id>'
+sha='<full-candidate-SHA>'
+run=$(gh api "repos/$repo/actions/runs/$run_id") &&
+jq -e --arg sha "$sha" '.head_sha == $sha' <<<"$run" &&
+next_attempt=$(jq -er '.run_attempt + 1' <<<"$run") &&
+gh run rerun "$run_id" --failed --repo "$repo" &&
+~/.agents/skills/merge-pr/scripts/wait-for-checks.sh "$sha" auto 2400 "$repo" --require-run "$run_id:$next_attempt"
+```
+
+For a cancelled whole run, omit `--failed`; for a single job, replace it with
+`--job <job-database-id>`. Capture the parent run's next attempt first in either
+case. Never calculate it after rerunning. Repeat `--require-run RUN_ID:ATTEMPT`
+when several CI runs must pass. The guard adds to the commit checks and waits
+through delayed registration; a missing or pending attempt cannot count as green.
+After success, freshly verify the PR head SHA, merge state and checks before merge.
+
 ### Recover from stuck or cancelled runs
 
 - **Release branch push CI cancelled** (for example by a GitHub runner
   incident): staging only follows successful push CI, so re-run that CI run
-  with `gh run rerun <push-CI-run-id>`. Its success triggers `Deploy staging`
-  for the same SHA.
+  using the guard above, omitting `--failed` for a whole cancelled run. Success
+  of the requested attempt triggers a new `Deploy staging` run for the same SHA.
+  Wait for that new staging run; an earlier success on the SHA is not retry evidence.
 - **Approved promotion has no runner after about five minutes:** nothing has
   been deployed yet. Cancel the run and dispatch `Promote production` again
   from `main` with the same revision and staging run ID, then approve it.
