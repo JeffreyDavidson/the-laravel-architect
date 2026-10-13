@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\NewsletterIssue;
 use App\Models\Project;
 use App\Services\StoredMediaOrphanWorkflow;
 use Illuminate\Database\Events\QueryExecuted;
@@ -67,4 +68,17 @@ it('keeps a file that became referenced after the scan and before the delete pha
     expect($report)
         ->toMatchArray(['orphaned' => 1, 'deleted' => 0, 'skipped' => 1]);
     Storage::disk('public')->assertExists('projects/orphan-1.png');
+});
+
+it('keeps an article image referenced by newsletter options even when the issue is trashed', function () {
+    Storage::disk('public')->put('newsletter/example.png', 'image');
+    $issue = NewsletterIssue::factory()->create([
+        'email_options' => ['hero_path' => 'newsletter/example.png'],
+    ]);
+    $issue->delete();
+
+    $report = app(StoredMediaOrphanWorkflow::class)->audit(delete: false);
+
+    expect($report['files'])
+        ->toBeEmpty();
 });

@@ -17,6 +17,7 @@ use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\PodcastEpisodeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PreviewEpisodeController;
+use App\Http\Controllers\PreviewNewsletterEmailController;
 use App\Http\Controllers\PreviewNewsletterIssueController;
 use App\Http\Controllers\PreviewPostController;
 use App\Http\Controllers\PreviewProjectController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\UsesController;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -67,6 +69,11 @@ Route::get('/search', SearchController::class)
     ->middleware('throttle:search')
     ->name('search');
 Route::get('/archive', ArchiveController::class)->name('archive.index');
+
+// Actual email rendering is available only to authorized editors and never sends mail.
+Route::get('/preview/newsletter-email/{newsletterIssue:slug}', PreviewNewsletterEmailController::class)
+    ->middleware([Authenticate::class, 'can:update,newsletterIssue'])
+    ->name('preview.newsletterEmail');
 
 // Signed content previews
 Route::middleware('signed')

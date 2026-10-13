@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\NewsletterTemplate;
 use App\Models\NewsletterIssue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -88,4 +89,20 @@ it('shows a newsletter issue publish date in the display timezone', function () 
         ->assertOk()
         ->assertSeeHtml('datetime="2026-10-05"')
         ->assertSeeText('Published October 5, 2026');
+});
+
+it('includes the editorial introduction and primary article link in the web version', function () {
+    $issue = NewsletterIssue::factory()
+        ->published()
+        ->create([
+            'email_template' => NewsletterTemplate::NewArticle,
+            'email_deck' => 'An introduction shared with the email.',
+            'email_options' => ['article_url' => 'https://example.test/blog/example', 'button_label' => 'Read the full example'],
+        ]);
+
+    \Pest\Laravel\get(route('newsletter.issue', $issue))
+        ->assertOk()
+        ->assertSee('An introduction shared with the email.')
+        ->assertSee('https://example.test/blog/example')
+        ->assertSee('Read the full example');
 });
