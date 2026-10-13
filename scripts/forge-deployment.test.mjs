@@ -787,6 +787,8 @@ function stagingPromotionDecision(overrides = {}) {
         /- name: Validate the successful staging run[\s\S]*?run: \|\n([\s\S]*?)(?=\n            - uses:)/,
     )?.[1];
     assert.ok(validation, 'Promotion validation Bash must exist');
+    assert.match(workflow, /staging_run_attempt:\n\s+description:[^\n]+\n\s+required: true\n\s+type: string/);
+    assert.match(workflow, /STAGING_RUN_ATTEMPT: \$\{\{ inputs\.staging_run_attempt \}\}/);
     const repo = 'owner/site';
     const successfulRun = stagingPromotionFixture();
     const successfulJob = {
