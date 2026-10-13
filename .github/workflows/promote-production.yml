@@ -1,5 +1,5 @@
 name: Promote production
-run-name: Promote ${{ inputs.revision }} from staging run ${{ inputs.staging_run_id }}
+run-name: Promote ${{ inputs.revision }} from staging run ${{ inputs.staging_run_id }} attempt ${{ inputs.staging_run_attempt }}
 
 on:
     workflow_dispatch:
@@ -10,6 +10,10 @@ on:
                 type: string
             staging_run_id:
                 description: Successful Deploy staging workflow run ID for that SHA
+                required: true
+                type: string
+            staging_run_attempt:
+                description: Successful staging attempt reviewed for that SHA
                 required: true
                 type: string
 
@@ -32,23 +36,42 @@ jobs:
         env:
             EXPECTED_REVISION: ${{ inputs.revision }}
             STAGING_RUN_ID: ${{ inputs.staging_run_id }}
+            STAGING_RUN_ATTEMPT: ${{ inputs.staging_run_attempt }}
         steps:
             - name: Validate the successful staging run
               env:
                   GH_TOKEN: ${{ github.token }}
               run: |
+                  set -euo pipefail
                   [[ "$EXPECTED_REVISION" =~ ^[a-f0-9]{40}$ ]]
                   [[ "$STAGING_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+                  [[ "$STAGING_RUN_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
+                  validate_staging_run() {
+                    jq --slurp -e --arg sha "$EXPECTED_REVISION" --arg repo "$GITHUB_REPOSITORY" \
+                      --arg id "$STAGING_RUN_ID" --arg attempt "$STAGING_RUN_ATTEMPT" '
+                        length == 1 and (.[0] |
+                          (.id | type == "number") and (.id | tostring) == $id and
+                            (.run_attempt | type == "number") and (.run_attempt | tostring) == $attempt and
+                          .conclusion == "success" and .status == "completed" and
+                          .event == "workflow_run" and .head_branch == "main" and
+                          .head_sha == $sha and .head_repository.full_name == $repo and
+                          .path == ".github/workflows/deploy-staging.yml")'
+                  }
+                  # A preceding success cannot satisfy a retry that has not registered yet.
+                  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID/attempts/$STAGING_RUN_ATTEMPT" |
+                    validate_staging_run
+                  # Require the deployment job from the reviewed attempt, including later pages.
+                  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID/attempts/$STAGING_RUN_ATTEMPT/jobs" --paginate --slurp |
+                    jq --slurp -e --arg name "Stage $EXPECTED_REVISION" --arg id "$STAGING_RUN_ID" --arg attempt "$STAGING_RUN_ATTEMPT" '
+                      length == 1 and (.[0] |
+                        type == "array" and length > 0 and all(.[]; (.jobs | type) == "array") and
+                        any(.[] | .jobs[];
+                          (.run_id | type == "number") and (.run_id | tostring) == $id and
+                          (.run_attempt | type == "number") and (.run_attempt | tostring) == $attempt and
+                          .name == $name and .status == "completed" and .conclusion == "success"))'
+                  # Reject a selected attempt superseded while evidence was being read.
                   gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID" |
-                    jq -e --arg sha "$EXPECTED_REVISION" --arg repo "$GITHUB_REPOSITORY" '
-                      .conclusion == "success" and .status == "completed" and
-                      .event == "workflow_run" and .head_branch == "main" and
-                      .head_sha == $sha and .head_repository.full_name == $repo and
-                      .path == ".github/workflows/deploy-staging.yml"'
-                  # A disabled or skipped deployment job is not successful staging evidence.
-                  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$STAGING_RUN_ID/jobs" |
-                    jq -e --arg name "Stage $EXPECTED_REVISION" '
-                      any(.jobs[]; .name == $name and .conclusion == "success")'
+                    validate_staging_run
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
                   ref: ${{ inputs.revision }}
