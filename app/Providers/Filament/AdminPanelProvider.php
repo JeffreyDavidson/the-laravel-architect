@@ -8,6 +8,7 @@ use App\Enums\ContactBudget;
 use App\Enums\ContactType;
 use App\Enums\NavigationGroup;
 use App\Enums\SocialPlatform;
+use App\Filament\Actions\AttachPostPdfAction;
 use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Pages\Dashboard;
 use App\Models\Category;
@@ -18,6 +19,7 @@ use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Enums\UserMenuPosition;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
@@ -58,6 +60,11 @@ final class AdminPanelProvider extends PanelProvider
     public function boot(): void
     {
         FilamentTimezone::set(DisplayTimezone::name(...));
+
+        MarkdownEditor::configureUsing(fn (MarkdownEditor $editor): MarkdownEditor => $editor
+            ->afterLabel(fn (MarkdownEditor $component): array => $component->getModel() === Post::class && $component->getName() === 'content'
+                ? [AttachPostPdfAction::make()]
+                : []));
     }
 
     public function panel(Panel $panel): Panel
