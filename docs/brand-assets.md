@@ -59,7 +59,7 @@ or an undocumented third-party asset.
 ## Outlined identity lettering
 
 “Architect” and the About card’s “Jeffrey Davidson” are fixed vector artwork
-made from Empera. The app does not distribute the Empera font files
+made from licensed Empera. The app does not distribute the Empera font files
 or load a web font for these words. The shared
 `resources/views/components/site/lettering.blade.php` renders inline paths with
 `currentColor`, preserving theme and hover colours, and separate HTML text
@@ -69,8 +69,12 @@ The masters and reproducible source live in the private meta repository at
 `brand/outlined-lettering-v1/`: `logos/`, `source/outline.swift`,
 `source/font-jobs.json` and `source/build.py`. Rebuilding paths requires a local
 licensed font; the font is not bundled with those sources. Earlier git commits
-retain the old font files; this change does not rewrite history. A licence
-record for Empera has not yet been added to this document.
+retain the old font files; this change does not rewrite history.
+
+Empera (six-font family by BoxTube Labs) is licensed to Jeffrey Davidson under
+a one-user Fontspring Desktop License, bought from Fontspring on 2026-10-11.
+It is the licence used to make this artwork. Fontspring sells web font use as
+a separate licence, so buy that before setting live text in Empera again.
 
 The featured-image generator keeps its system monospace preferences and uses
 the already-bundled SIL OFL Inter Regular TTF as its final fallback.
