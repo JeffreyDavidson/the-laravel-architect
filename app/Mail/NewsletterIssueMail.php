@@ -59,13 +59,14 @@ final class NewsletterIssueMail extends Mailable
         $presenter = NewsletterIssuePresenter::from($this->issue);
 
         return new Content(
-            html: 'mail.newsletter-issue',
+            html: $this->issue->email_template === null ? 'mail.newsletter-issue' : 'mail.newsletter-issue-editorial',
             text: 'mail.newsletter-issue-text',
             with: [
                 'bodyHtml' => $presenter->emailBodyHtml(),
                 'bodyText' => $presenter->emailBodyText(),
-                'issueUrl' => route('newsletter.issue', $this->issue),
+                'issueUrl' => $presenter->publicOrPreviewUrl(),
                 'preheader' => $presenter->emailPreheader(),
+                'details' => $presenter->emailDetails(),
             ],
         );
     }

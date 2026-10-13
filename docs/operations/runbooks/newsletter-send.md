@@ -7,6 +7,13 @@ How sending works under the hood is described in
 sending, so unsaved edits are stored and the email matches what is on screen. If
 the form has invalid data, the validation errors show and nothing is sent.
 
+Before publishing, choose a template and write the body in Markdown. Replace all
+starter instructions with actual copy. Use **Preview email** to save valid edits
+and inspect the actual mailable; the preview requires your admin login and sends
+nothing. Article images need descriptions. The display introduction is separate
+from the excerpt used as the inbox preheader. Existing issues can retain Original
+layout.
+
 1. Publish the issue, then use **Send test email** on its edit page. The copy
    goes to `MAIL_CONTACT_TO`, records no delivery, and omits unsubscribe
    headers.

@@ -32,6 +32,7 @@ final readonly class StoredMediaOrphanWorkflow
         [Episode::class, 'show_notes'],
         [Episode::class, 'transcript'],
         [NewsletterIssue::class, 'content'],
+        [NewsletterIssue::class, 'email_options'],
         [SEO::class, 'image'],
     ];
 
@@ -160,6 +161,10 @@ final readonly class StoredMediaOrphanWorkflow
                 ->withoutGlobalScopes([SoftDeletingScope::class])
                 ->whereNotNull($column)
                 ->pluck($column) as $value) {
+                if (is_array($value)) {
+                    $value = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+                }
+
                 if (is_string($value)) {
                     $content[] = rawurldecode($value);
                 }

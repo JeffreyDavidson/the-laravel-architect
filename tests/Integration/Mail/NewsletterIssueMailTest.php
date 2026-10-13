@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\NewsletterTemplate;
 use App\Mail\NewsletterIssueMail;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -135,4 +136,81 @@ it('keeps the delivery idempotency key stable across releases', function () {
 
     expect($headers['Resend-Idempotency-Key'] ?? null)
         ->toBe('tla-newsletter-delivery-e17ecfcb94fd504a0ffcfb303b666f895edbd85ce08eb366b103f64e94f8992c');
+});
+
+it('renders the editorial layout and text introduction for the selected template', function () {
+    $issue = publishedNewsletterIssue('A concrete promise.');
+    $issue->update([
+        'email_template' => NewsletterTemplate::PracticalTip,
+        'email_deck' => 'Check the unchanged record.',
+    ]);
+
+    $mail = new NewsletterIssueMail($issue, 'https://example.test/unsubscribe');
+
+    $mail->assertSeeInHtml('From Jeffrey Davidson')
+        ->assertSeeInHtml('width="640"', false)
+        ->assertSeeInHtml('Check the unchanged record.')
+        ->assertSeeInText('Check the unchanged record.')
+        ->assertSeeInText('A concrete promise.');
+});
+
+it('uses the editorial layout for every offered template', function (NewsletterTemplate $template) {
+    $issue = publishedNewsletterIssue('A readable body.');
+    $issue->update(['email_template' => $template]);
+
+    new NewsletterIssueMail($issue, 'https://example.test/unsubscribe')
+        ->assertSeeInHtml('From Jeffrey Davidson')
+        ->assertSeeInHtml('A readable body.')
+        ->assertSeeInText('A readable body.');
+})->with(NewsletterTemplate::cases());
+
+it('includes an article link and image description in html and plain text', function () {
+    $issue = publishedNewsletterIssue();
+    $issue->update([
+        'email_template' => NewsletterTemplate::NewArticle,
+        'email_options' => [
+            'article_url' => 'https://example.test/blog/testing',
+            'button_label' => 'Read the testing article',
+            'hero_path' => 'newsletter/testing.png',
+            'hero_alt' => 'A testing diagram.',
+        ],
+    ]);
+
+    new NewsletterIssueMail($issue, 'https://example.test/unsubscribe')
+        ->assertSeeInHtml('https://example.test/blog/testing')
+        ->assertSeeInHtml('A testing diagram.')
+        ->assertSeeInText('Read the testing article: https://example.test/blog/testing')
+        ->assertSeeInText('A testing diagram.');
+});
+
+it('rejects unsafe stored article settings and strips untrusted markup', function () {
+    $issue = publishedNewsletterIssue('<script>alert(1)</script>'."\n\n[unsafe](javascript:alert(1))");
+    $issue->update([
+        'email_template' => NewsletterTemplate::NewArticle,
+        'email_options' => [
+            'article_url' => 'javascript:alert(1)',
+            'hero_path' => 'newsletter/../private.png',
+            'button_label' => '<script>bad</script>',
+        ],
+    ]);
+    $html = new NewsletterIssueMail($issue, 'https://example.test/unsubscribe')->render();
+
+    expect($html)
+        ->not->toContain('<script>', 'javascript:', '../private.png');
+});
+
+it('preserves unicode when inlining the editorial body styles', function () {
+    $issue = publishedNewsletterIssue('Café and a promise 🐘');
+    $issue->update(['email_template' => NewsletterTemplate::PracticalTip]);
+
+    new NewsletterIssueMail($issue, 'https://example.test/unsubscribe')
+        ->assertSeeInHtml('Café and a promise 🐘');
+});
+
+it('links a draft test copy to its signed web preview', function () {
+    $issue = NewsletterIssue::factory()->create(['email_template' => NewsletterTemplate::PracticalTip]);
+
+    new NewsletterIssueMail($issue)
+        ->assertSeeInHtml(route('preview.newsletterIssue', $issue))
+        ->assertSeeInHtml('signature=');
 });

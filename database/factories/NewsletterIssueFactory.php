@@ -21,6 +21,9 @@ class NewsletterIssueFactory extends Factory
         return [
             'title' => fake()->sentence(3),
             'excerpt' => null,
+            'email_template' => null,
+            'email_deck' => null,
+            'email_options' => null,
             'content' => fake()->paragraph(),
             'status' => PublishStatus::Draft,
             'published_at' => null,
