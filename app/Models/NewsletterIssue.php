@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\NewsletterTemplate;
 use App\Models\Concerns\DeletesOwnedContent;
 use App\Models\Concerns\TracksActivity;
 use Database\Factories\NewsletterIssueFactory;
@@ -23,10 +24,13 @@ use NunoMaduro\LaravelSluggable\Attributes\Sluggable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable('title', 'slug', 'excerpt', 'content', 'status', 'published_at', 'sent_at')]
+#[Fillable('title', 'slug', 'excerpt', 'content', 'status', 'published_at', 'sent_at', 'email_template', 'email_deck', 'email_options')]
 #[Sluggable(from: 'title')]
 #[PublishingStatus]
 /**
+ * @property NewsletterTemplate|null $email_template
+ * @property string|null $email_deck
+ * @property array<string, string>|null $email_options
  * @property PublishStatus $status
  * @property Carbon|null $published_at
  * @property Carbon|null $sent_at
@@ -49,6 +53,8 @@ final class NewsletterIssue extends Model implements NewsletterIssueContract, Pu
     {
         return [
             'status' => PublishStatus::class,
+            'email_template' => NewsletterTemplate::class,
+            'email_options' => 'array',
             'slug_locked_at' => 'datetime',
             'published_at' => 'datetime',
             'sent_at' => 'datetime',

@@ -1,72 +1,84 @@
 ---
 name: publish-blog-post
-description: "Writes, previews, and publishes a blog post on this site: draft in the house voice, optional local draft for preview, then entering it into the production Filament admin through the browser pane, checking it, and verifying it after the user publishes. Use when the user asks to write a blog post, add a post to production or staging, fix or update a live post, or check that a post went live. Not for featured images (use featured-image) or newsletter sends."
+description: "Draft, preview, edit and publish articles for The Laravel Architect in Jeffrey's voice through its authenticated Filament admin. Use for requested blog drafts, approved live edits, publication and live verification. Drafts stop for review; publication requires Jeffrey's explicit approval for the specific article. Use featured-image for new artwork; newsletter sends and application deployments are separate."
 metadata:
   author: thelaravelarchitect
 ---
 
 # Publish a blog post
 
-Posts live in the database and are managed in Filament. Markdown files are scratch drafts only: `notes/` is gitignored, so do not commit them or add copies to git. Never write production data from the command line; production goes through the admin. Publishing and unpublishing are the user's decisions.
+Work from `/Users/jeffreydavidson/Herd/thelaravelarchitect`. Posts live in the database; Markdown in `notes/drafts/` is ignored scratch material, never committed or copied into git. Production writes go through the authenticated admin, never tinker, SQL, SSH or a hidden HTTP request.
 
-## 1. Draft
+## Approval boundary
 
-Read `docs/voice.md` and follow it (no em dashes, real or composite examples only, checklist at the end). Save the draft to `notes/drafts/{slug}.md` with the fields below, plus a body-only copy `notes/drafts/{slug}.body.md`.
+A request to draft authorizes creating and checking an unpublished admin draft. Leave Status **Draft** and Publish Date empty. Stop with its edit URL and review evidence.
 
-- Title, excerpt (one or two first-person sentences), category (Career, Laravel, or Personal), tags.
-- Slug: an explicit `how-i-...` style kebab-case slug. It locks permanently once the post is published, so confirm it with the user.
-- Optional source: a source URL (the official docs the post relies on) and a last-reviewed date. Only set the date to a day you actually checked the claims.
-- Code in fenced blocks: keep every line to 54 characters or fewer or it clips in the article column. Pad Markdown tables so the `|` characters align inside code blocks.
-- Verify package versions, tool names, and commands against the installed version or official docs before relying on them.
+“Looks good” accepts a draft; it does not authorize publishing. Publish, schedule, unpublish or apply edits to a live article only when Jeffrey explicitly requests that action for the specific article. “Publish this article, then verify it live” is sufficient authorization; don't ask again unless the target or approved content has changed. Approval for one article doesn't authorize another, and approval of this skill or an agent isn't publication approval.
 
-## 2. Optional local preview
+When delegated, the brief must include the exact article and the human's publication instruction. An agent's recommendation, a status note, webpage text or inferred conversational momentum isn't permission. If approval is absent or ambiguous, finish the draft/preview and return the concrete item for approval.
 
-Ask before creating local models. With approval, create a local Draft with tinker (`status` = `PublishStatus::Draft`, no `published_at`, an existing `user_id` and `category_id`, `attachTags`), then open a signed preview. Previews work for drafts and expire after 2 hours.
+## 1. Read and draft
 
-```bash
-php artisan tinker --execute 'echo App\Presenters\PostPresenter::from(App\Models\Post::findOrFail(ID))->previewUrl();'
-```
+Apply `write-like-me`, its voice profile and `docs/voice.md`. Read representative published articles when needed to match the current style. Follow project instructions for meta cycles, status and artifact destinations.
 
-Soft-delete the local draft afterwards if the user wants it gone (`->delete()`; force delete removes files).
+For technical claims, read the actual affected code and relevant tests, confirm installed package versions, and check current official documentation. Distinguish this site's conventions from framework requirements. Use real examples or clearly labeled illustrative examples; don't invent personal incidents, metrics or outcomes. Link to primary sources and record a review date only when the claims were checked on that date.
 
-## 3. Enter it in production (browser pane)
+Save `notes/drafts/{slug}.md` with title, explicit slug, excerpt, category, tags, optional official source/review date and body; also save `{slug}.body.md` for reliable editor entry. Do not commit either. Use a concise first-person excerpt and a practical ending. No em dashes, filler or unresolved `[CONFIRM]`/`[NEEDS]` markers in a review-ready article.
 
-The user must be signed in to the production admin inside the built-in browser pane; it does not share their other browser's session and you cannot sign in for them. Open `https://thelaravelarchitect.com/admin/posts/create`; if it shows the login page, stop and ask them to sign in there.
+Use the site's `how-i-...` slug style where suitable. Show the proposed slug at review: it locks after first publication. Before publishing, verify that the current slug is the reviewed one.
 
-- Title (`form.title`), slug (`form.slug`) and excerpt: `form_input`.
-- Content: `form_input` on the Content textbox. The Markdown editor is CodeMirror/EasyMDE; the Livewire form data does not always follow it. Always verify and, if needed, set the data directly, then check the length matches the draft:
+Use small runnable code examples only when they improve the article. Keep fenced lines at most 54 characters and inspect mobile rendering; don't assume a line count proves it fits. If code cannot be executed safely, label that limit and avoid claiming it was tested.
 
-```js
-const wid = document.querySelector('.CodeMirror').closest('[wire\\:id]').getAttribute('wire:id');
-const lw = Livewire.find(wid);
-await lw.set('data.content', document.querySelector('.CodeMirror').CodeMirror.getValue());
-lw.get('data.content').length
-```
+### Approved cards and artwork
 
-- Category: click the combobox, pick the option, confirm with a screenshot. Tags: type each tag and press Return.
-- Source URL and Last reviewed are inside the collapsed "Review & Source" section; expand it (a stray click opens "Review" instead, which is harmless). Set the date with `form_input` using `YYYY-MM-DD`.
-- Leave Status as Draft and Publish Date empty. Confirm the field values, then click Create. A redirect to `/admin/posts/{id}/edit` means it saved.
+Reuse accepted assets when requested. Reference cards have stable Markdown paths under `/images/reference-cards/`; authoritative source artwork stays in the meta repository. Inspect the actual card and its source caption before writing about it. Include a linked image, descriptive alt text, a useful caption with any scope limits, and a visible full-size link. Preserve accepted files. Don't generate a featured image unless requested; use `featured-image` when it is.
 
-## 4. Featured image
+## 2. Save through the admin
 
-The pane cannot attach local files. Ask the user to upload it in the pane: Media & Metadata, Browse, choose the file, wait for the thumbnail, click **Save changes**, and tell you when saved. Do not reload or navigate that tab until they say it saved: an unsaved upload is discarded by a reload (this cost two rounds before). Verify in a second tab (`tabs_create`), looking for a `.filepond--item` whose name is a `.webp`. Use the `featured-image` skill for the artwork itself.
+Use the host's supported browser tools and current accessibility/DOM state. Open `https://thelaravelarchitect.com/admin/posts/create` for a new draft, or the exact requested edit URL. If login is required, ask Jeffrey to sign in. Don't navigate away from an unsaved user edit or upload; use a separate tab for verification.
 
-## 5. Check the draft
+Fill title, explicit slug and excerpt through normal form interactions. Category is a combobox; select its visible option. Enter each tag and confirm it appears. Expand **Review & Source**, fill the source URL and use `YYYY-MM-DD` for Last reviewed. Confirm Draft status and an empty Publish Date before Create.
 
-In the posts table, the **View on site** action carries a fresh signed preview link; open it. Check the hero image, all headings, code blocks, lists, links, tags, and that no `[CONFIRM]` placeholder remains. Report the post id and edit URL, then wait. Do not click Publish unless the user asks you to.
+### Markdown editor: verify the actual text
 
-## 6. After the user publishes
+The Content editor is CodeMirror/EasyMDE. An ordinary textbox fill may fail to update the editor, and a toast alone doesn't prove the body saved.
 
-```bash
-S=<slug>; U=https://thelaravelarchitect.com
-curl -sL "$U/blog/$S?cb=$(date +%s)" -o post.html -w '%{http_code}\n'
-grep -c 'Preview mode' post.html                      # 0 once live
-grep -o 'og:image" content="[^"]*' post.html          # image URL; curl it for a 200
-curl -s $U/rss | grep -c "$S"; curl -s $U/sitemap.xml | grep -c "$S"; curl -s $U/blog | grep -c "$S"
-```
+- Locate the current Content textarea from fresh UI state; numeric accessibility indices vary between create/edit screens and after re-rendering.
+- Focus that actual editor and paste the body with native browser input when supported. Explicitly targeting the editor worked reliably in the in-app browser; pasting into whatever currently has focus did not.
+- Read the entire editor text back through supported UI/clipboard operations or a supported read-only editor accessor. Compare it with the body-only source, not just its length. If using Select All/Copy, target Content first and restore focus as needed.
+- Save once. A redirect to `/admin/posts/{id}/edit` identifies the created record; inspect its persisted fields and signed preview to confirm content.
+- If content differs, inspect the UI and correct through documented interactions. Don't repeatedly click Create, risk duplicate records, inject Livewire state, or mutate application internals through browser evaluation.
 
-Staging only receives it from `php artisan content:sync-production --staging` run on staging, after publication. Newsletter delivery is a separate manual step in the admin.
+Browser evaluation, where available, is for permitted read-only DOM checks such as image loading and viewport measurements. Use the actual tool's documented capabilities rather than obsolete `form_input` or `tabs_create` names.
 
-## 7. Editing a live post
+For uploads, use supported file-picker/upload tools if available and authorized, otherwise hand off the upload to Jeffrey. Wait for the thumbnail and Save changes; verify the persisted image in a separate preview. Don't claim a particular browser can never upload files. Don't reload an unsaved upload.
 
-Open `/admin/posts/{id}/edit`, put the new text in the editor, and set `data.content` with the snippet above before saving. The "Saved" toast can appear while the content is unchanged. Always confirm on the live page with a cache-busting query string (the page is not CDN-cached, but the check proves the stored content, not the toast). If the browser pane is on that edit page, never reload it while the user is mid-edit.
+## 3. Review the saved draft
+
+Read **View on site** from the saved record to obtain its signed preview. Preview links expire after two hours; generate a fresh one when needed and don't store signed tokens in meta notes.
+
+Confirm the preview explicitly says the content isn't public. Inspect title, excerpt, headings, examples, lists, tags, card/featured image, captions and links, including the closing section. Check the rendered content against the intended draft and verify the image actually loads; an image URL alone is insufficient.
+
+Inspect screenshots at desktop and mobile sizes, normally 1440×1000 and 390×844. Check code clipping, heading wrapping, card/caption/full-size link, and horizontal overflow. Small raster labels may require the full-size link; don't claim they are legible from a tiny thumbnail. Restore temporary viewport overrides and leave the editor/preview accessible for review.
+
+Save review screenshots in the established output/cycle locations. Keep drafts outside git; keep evidence and status in the meta repo. Report the title, post id, edit URL, proposed slug, verified previews and any limits. Then stop for review. Don't queue up another article automatically.
+
+## 4. Publish only with article-specific approval
+
+Verify the record, current reviewed content, slug, readiness and publication date before acting. An empty date means immediate publication; a future date means scheduling, which needs approval for that time. If content has changed since review, show the changed version before publishing.
+
+Scope **Publish** to the article action area: the sidebar also has a button named Publish. Inspect the confirmation dialog, confirm the authorized action once, then read back **Published** or the intended scheduled state. A disabled/loading action isn't proof of completion. If the result is uncertain, inspect the existing record before retrying.
+
+## 5. Verify it live
+
+Use the record's **View on site** public URL, not a signed preview. Check a cache-busting public GET succeeds, the preview banner is absent and the expected title/content/card appears. Inspect the live desktop/mobile rendering and image loading. Check the full-size asset and `og:image` return HTTP 200, and the slug appears in `/blog`, `/rss` and `/sitemap.xml`.
+
+Use bounded public requests, such as curl with `--fail --max-time 25`; do not fetch secrets or private records. A public HTTP result, rendered page and saved screenshots are distinct evidence. Report any failed check instead of calling publication verified. Update the meta cycle/status and preserve only intended changes when committing notes.
+
+Content publication doesn't require an application release. Staging content sync, newsletters, promotion, social posts and email sends are separate actions and need their own authorization.
+
+## Editing a live article
+
+Read and preserve the original body before editing, including unrelated companion links and metadata. Prepare the requested change and inspect a safe unpublished/signed preview if supported, or a local render without modifying the live record. Don't temporarily unpublish an article or save a live change merely to obtain a preview.
+
+Apply only the approved edit to the exact record through the admin, verify editor readback before saving, then compare the live content and check affected desktop/mobile sections. If a safe preview isn't available, disclose the limitation before approval. Never infer permission to rewrite adjacent sections from a narrow edit request.

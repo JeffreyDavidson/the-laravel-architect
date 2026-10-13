@@ -11,6 +11,7 @@ use App\Enums\SocialPlatform;
 use App\Filament\Actions\AttachPostPdfAction;
 use App\Filament\Forms\Components\OptimizedImageUpload;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Resources\NewsletterIssues\Schemas\NewsletterTemplateForm;
 use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Post;
@@ -133,7 +134,7 @@ final class AdminPanelProvider extends PanelProvider
                 ->categories(Category::class, NavigationGroup::Library, 2)
                 ->socialProfiles(SocialProfile::class, SocialPlatform::class, NavigationGroup::Audience, 1)
                 ->subscribers(NavigationGroup::Audience, 7)
-                ->newsletterIssues(NavigationGroup::Publish, 5)
+                ->newsletterIssues(NavigationGroup::Publish, 5, fields: NewsletterTemplateForm::fields(...), editActions: NewsletterTemplateForm::editActions(...))
                 ->contactInquiries(ContactType::class, NavigationGroup::Audience, 8, notes: true, details: fn (): array => [
                     Select::make('budget')
                         ->options(ContactBudget::class)

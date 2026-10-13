@@ -206,3 +206,42 @@ themed `x-mail.layout`: dark-mode styles, a preheader from the issue excerpt or
 title, an Outlook-only 600px table wrapper, and the unsubscribe link in the
 layout footer. Relative link and image URLs in both parts are made absolute with
 `config('app.url')` so they work in mail clients.
+
+
+## Newsletter templates
+
+TLA opts into creator-kit's newsletter editor callbacks through
+`NewsletterTemplateForm` in `AdminPanelProvider`. The package supplies the
+standard editor and sending actions; TLA supplies template settings, explicit
+starter-content replacement and Preview email. Other consumers keep the default
+screen unless they provide their own callbacks.
+
+Issues store a nullable `email_template`, optional `email_deck` and JSON
+`email_options`. A null template retains the original mail layout. New issues
+default to New article; Practical tip and Related reading use the same editorial
+identity with different Markdown structures. Changing a template preserves the
+body. Starter replacement requires confirmation. The excerpt remains the inbox
+preheader and archive summary, separate from the display introduction.
+
+New-article options contain an optional topic, public article image/description
+and HTTP(S) article URL/button label. Images use OptimizedImageUpload and
+Filament's path-tampering protection, including an original-value check for the
+JSON-backed path. The presenter validates optional media paths and destinations
+again before rendering. The media audit recognizes images referenced in options,
+including trashed issues. Newsletter uploads are not added to its deletion scope.
+
+NewsletterIssuePresenter renders safe Markdown with inline base styles for the
+editorial body and preserves Unicode. The dedicated newsletter layout uses the
+approved A identity artwork, live sender/label text, responsive tables and dark
+mode enhancements. Confirmation/contact messages and legacy issues keep the
+existing shared mail layout. The plain-text alternative and public issue include
+the display introduction and primary article destination/image description as
+applicable.
+
+Preview email saves a valid edit form and opens
+`preview.newsletterEmail`, protected by Filament authentication and the update
+ability. It renders NewsletterIssueMail without sending, marks the result as a
+test preview and uses private/no-store and noindex headers. Web-version links,
+one-click unsubscribe headers and stable Resend idempotency keys remain on the
+existing delivery path. Actual delivered-client rendering requires owner test
+sends and client review.

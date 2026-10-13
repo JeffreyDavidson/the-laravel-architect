@@ -15,6 +15,9 @@
                     {{ $issue->excerpt }}
                 </p>
             @endif
+            @if ($emailDetails['deck'])
+                <p class="mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-300">{{ $emailDetails['deck'] }}</p>
+            @endif
             @if ($issue->published_at)
                 <p class="mt-7 text-base text-gray-600 sm:text-sm dark:text-gray-400">
                     Published <x-display-date :date="$issue->published_at" format="F j, Y" />
@@ -23,12 +26,27 @@
         </header>
 
         <div class="mx-auto max-w-3xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8 lg:pb-20">
+            @if ($emailDetails['heroUrl'])
+                <img
+                    class="mb-8 h-auto w-full"
+                    src="{{ $emailDetails['heroUrl'] }}"
+                    alt="{{ $emailDetails['heroAlt'] }}"
+                />
+            @endif
             <x-markdown
                 :content="$issue->content"
                 data-article-prose
                 class="[&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24 prose-a:text-brand-action dark:prose-a:text-brand-300 prose-code:text-brand-300"
             />
 
+            @if ($emailDetails['articleUrl'])
+                <p class="mt-8">
+                    <a
+                        class="text-brand-action dark:text-brand-300 underline"
+                        href="{{ $emailDetails['articleUrl'] }}"
+                    >{{ $emailDetails['buttonLabel'] }}</a>
+                </p>
+            @endif
             <div class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
                 <a
                     href="{{ route('newsletter.index') }}"

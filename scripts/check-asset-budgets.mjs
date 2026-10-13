@@ -4,6 +4,7 @@ import { gzipSync } from 'node:zlib';
 const manifest = JSON.parse(readFileSync('public/build/manifest.json', 'utf8'));
 
 const publicImageBudgets = [
+    { file: 'public/images/newsletter/masthead.png', label: 'Newsletter masthead A', maxBytes: 32 * 1024 },
     { file: 'public/images/elephant-small-16.png', label: 'Small elephant 16px favicon', maxBytes: 2 * 1024 },
     { file: 'public/images/elephant-small-32.png', label: 'Small elephant 32px favicon', maxBytes: 4 * 1024 },
     { file: 'public/images/favicon-16x16.png', label: '16px favicon', maxBytes: 2 * 1024 },
