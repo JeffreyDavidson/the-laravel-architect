@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { lstatSync, readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const manifest = JSON.parse(readFileSync('public/build/manifest.json', 'utf8'));
@@ -17,11 +17,18 @@ const publicImageBudgets = [
     { file: 'public/images/elephant-companion-180.png', label: 'Companion Apple touch icon', maxBytes: 40 * 1024 },
     { file: 'public/images/logo-color-128.webp', label: 'Global logo', maxBytes: 20 * 1024 },
     { file: 'public/images/logo-color-black-bg.png', label: 'Social sharing image', maxBytes: 400 * 1024 },
+    { file: 'public/images/reference-cards/where-does-this-code-belong-v2.png', label: 'Code placement reference card', maxBytes: 3 * 1024 * 1024 },
+    { file: 'public/images/reference-cards/request-flow-v1.png', label: 'Request flow reference card', maxBytes: 3 * 1024 * 1024 },
+    { file: 'public/images/reference-cards/queues-v1.png', label: 'Queues reference card', maxBytes: 3 * 1024 * 1024 },
+    { file: 'public/images/reference-cards/authorization-v1.png', label: 'Authorization reference card', maxBytes: 3 * 1024 * 1024 },
+    { file: 'public/images/reference-cards/testing-v1.png', label: 'Testing reference card', maxBytes: 3 * 1024 * 1024 },
 ];
 
 const allowedPublicImages = new Set(publicImageBudgets.map(({ file }) => file.replace('public/images/', '')));
 
-const unexpectedPublicImages = readdirSync('public/images').filter(file => !allowedPublicImages.has(file));
+const unexpectedPublicImages = readdirSync('public/images', { recursive: true })
+    .filter(file => !lstatSync(`public/images/${file}`).isDirectory())
+    .filter(file => !allowedPublicImages.has(file));
 
 if (unexpectedPublicImages.length > 0) {
     console.error(`Unexpected files in public/images: ${unexpectedPublicImages.join(', ')}`);
