@@ -111,7 +111,8 @@ After success, freshly verify the PR head SHA, merge state and checks before mer
   Wait for that new staging run; an earlier success on the SHA is not retry evidence.
 - **Approved promotion has no runner after about five minutes:** nothing has
   been deployed yet. Cancel the run and dispatch `Promote production` again
-  from `main` with the same revision and staging run ID, then approve it.
+  from `main` with the same revision, staging run ID and reviewed attempt, then
+  approve it.
 - **A PR's CI never starts:** close and reopen the PR. The `reopened` event
   starts CI on the same head SHA without a new commit.
 
@@ -131,17 +132,24 @@ pending manual review; select and review the new revision before promotion.
 ## Promote production
 
 1. Choose a successful `Deploy staging` run for the full SHA on `main` that was
-   created after the release PR merged.
+   created after the release PR merged. Record its run ID and the exact
+   `run_attempt` reviewed; both identify the staging evidence for approval.
+   Before requesting a staging retry, record the next attempt. Wait for that
+   exact attempt to register and complete successfully, then review its staging
+   deployment. An earlier success on the same run ID cannot clear the retry.
 2. Confirm rollback artifacts, migration safety, media requirements and any
    one-time commands from [operations](operations.md). Code rollback does not undo database
    migrations. Prefer forward-compatible migrations and forward fixes.
-3. Dispatch `Promote production` **from main**, providing that staging run ID
-   and the full revision. This request is not a substitute for environment
+3. Dispatch `Promote production` **from main**, providing that staging run ID,
+   reviewed `staging_run_attempt` and the full revision. This request is not a
+   substitute for environment
    approval.
 4. Review the waiting `production` environment job and approve the exact
    revision. The workflow validates the staging run's workflow, source
-   repository, event, branch, conclusion and SHA, and verifies staging still
-   serves it before triggering production. Old approvals cannot authorize a
+   repository, event, branch, exact attempt, conclusion and SHA, and requires the
+   successful staging job from that attempt. A newer attempt invalidates the
+   previous review; review it before dispatching again. The workflow verifies
+   staging still serves it before triggering production. Old approvals cannot authorize a
    different SHA.
 5. Require production deployment verification and the HTTP smoke suite to pass.
    A timed-out trigger is an uncertain deployment: inspect Forge before retrying.
@@ -149,6 +157,16 @@ pending manual review; select and review the new revision before promotion.
    tag, `vYYYY.MM.N` (`N` starts at zero each month), on the full deployed SHA.
    Verify no existing tag uses that version, push the tag without force, and
    record the Forge deployment and workflow run. Never move or reuse a tag.
+
+The staging attempt is required; do not infer it from the current run after a
+retry. Use the values captured from the staging execution you reviewed:
+
+```bash
+gh workflow run promote-production.yml --repo JeffreyDavidson/the-laravel-architect --ref main \
+  -f revision='<full-reviewed-SHA>' \
+  -f staging_run_id='<reviewed-staging-run-ID>' \
+  -f staging_run_attempt='<reviewed-staging-attempt>'
+```
 
 ## Synchronize develop after release
 
@@ -217,7 +235,7 @@ release_branch: release/YYYY.MM.N
 release_pr_merge: merge          # regular merge commit; never squash or rebase
 release_commit: false            # the release branch is exactly the tip of develop
 staging: workflow "Deploy staging" (workflow_run after push CI on main and release/**)
-promote: workflow promote-production.yml, inputs revision (40-char SHA) + staging_run_id, protected `production` environment
+promote: workflow promote-production.yml, inputs revision (40-char SHA) + staging_run_id + staging_run_attempt, protected `production` environment
 verify: https://thelaravelarchitect.com/deployment.json (revision), https://thelaravelarchitect.com/up (200)
 smoke_pages: / /blog /podcasts /search /contact /admin/login /sitemap.xml /rss   # expect 200; the podcast index is /podcasts and the feed is /rss, so /podcast and /feed return 404
 deploy_script: Forge keeps a separate copy per site (staging 3366565, production 3044519); keep both identical to the script in docs/operations/forge-deploy-script.md and paste any change into both
