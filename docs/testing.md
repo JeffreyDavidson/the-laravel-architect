@@ -46,6 +46,26 @@ The pre-push hook runs `test`, `test:browser`, `test:types`, `test:types:pest`, 
 
 PR and push CI audit Composer packages and production JavaScript dependencies only, so a new advisory in a development-only JavaScript package does not fail unrelated pull requests. The `Dependency audit` workflow runs daily (08:43 UTC, and on demand) and audits Composer packages plus production and development JavaScript dependencies; treat its failure as a dependency-update task. `composer check` follows PR CI; run `npx --yes npm@11 audit --include=dev` to check development dependencies locally.
 
+## CI jobs and analyzer caches
+
+CI runs three independent hosted jobs: **Quality** retains audits, deployment
+safeguards, formatting, static analysis, Rector, Filament and asset checks;
+**Application tests** runs the complete non-browser suite and 100% type coverage;
+**Browser tests** runs the complete browser suite serially with its existing
+Playwright installation safeguards and failure screenshots. Each job prepares
+its own locked dependencies, database fixtures and assets through the CI runtime
+composite. The final **Laravel** check requires all three jobs to succeed;
+failed, skipped or cancelled jobs cannot clear it. Staging continues to require
+successful completion of the entire CI workflow for the exact eligible revision.
+
+Quality persists separate PHPStan application/test result caches and separate
+Rector application/test caches under `storage/framework/cache/`. Compatible keys
+include OS, architecture, PHP version, lockfile and tool configuration (plus
+PHPStan stubs); each run/attempt saves a new entry after successful analysis.
+Native analyzer invalidation handles changed source. Cache misses run full
+analysis. No application configuration, credentials or complete storage tree is
+cached. The local push hook, full suites and coverage thresholds are unchanged.
+
 ## Isolated test environment
 
 `phpunit.xml` pins every driver and external credential with both `<server>` and `<env force="true">`, because Laravel also reads inherited server variables and an unforced `<env>` can be overridden by `.env` or the shell. Tests always use an in-memory SQLite database, the array mailer, array cache and sessions, and the sync queue. Credentials for Resend, Turnstile, YouTube, Sentry, Nightwatch, the backup destinations, and S3 are blank, and Nightwatch is disabled. `TestCase` calls `Http::preventStrayRequests()`, so every outgoing request must be faked. `tests/Integration/TestHarnessTest.php` guards these guarantees; the same pattern is used in the mouse28 repository. When adding an external service, pin its credentials in `phpunit.xml` and add them to that test.

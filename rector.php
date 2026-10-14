@@ -8,6 +8,7 @@ use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 
 return RectorConfig::configure()
+    ->withCache(cacheDirectory: __DIR__.'/storage/framework/cache/rector-app')
     ->withPaths([
         __DIR__.'/app',
     ])
