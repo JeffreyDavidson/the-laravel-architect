@@ -20,7 +20,7 @@
         <table role="presentation" cellpadding="0" cellspacing="0">
             <tr>
                 <td valign="middle" style="padding-right:14px">
-                    <img src="{{ $message->embed(public_path('images/newsletter/jeffrey-portrait.png')) }}" width="56" height="56" alt="Jeffrey Davidson" style="display:block;border:0;width:56px;height:56px" />
+                    <img src="{{ $message->embed(resource_path('images/newsletter/jeffrey-portrait.png')) }}" width="56" height="56" alt="Jeffrey Davidson" style="display:block;border:0;width:56px;height:56px" />
                 </td>
                 <td valign="middle">
                     <p style="margin:0;font-size:18px;line-height:24px;font-weight:700"><a href="{{ url('/') }}" style="color:#245b91;text-decoration:none">Jeffrey Davidson</a></p>
