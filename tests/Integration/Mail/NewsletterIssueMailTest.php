@@ -164,6 +164,19 @@ it('uses the editorial layout for every offered template', function (NewsletterT
         ->assertSeeInText('A readable body.');
 })->with(NewsletterTemplate::cases());
 
+it('includes the approved signature in every editorial template and its text alternative', function (NewsletterTemplate $template) {
+    $issue = publishedNewsletterIssue('A readable body.');
+    $issue->update(['email_template' => $template]);
+
+    $mail = new NewsletterIssueMail($issue, 'https://example.test/unsubscribe');
+
+    $mail->assertSeeInHtml('alt="Jeffrey Davidson"', false)
+        ->assertSeeInHtml('Senior Software Engineer')
+        ->assertSeeInText("Jeffrey\nJeffrey Davidson\nSenior Software Engineer\nThe Laravel Architect")
+        ->assertDontSeeInHtml('— Jeffrey')
+        ->assertDontSeeInText('— Jeffrey');
+})->with(NewsletterTemplate::cases());
+
 it('includes an article link and image description in html and plain text', function () {
     $issue = publishedNewsletterIssue();
     $issue->update([
