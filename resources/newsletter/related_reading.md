@@ -19,5 +19,3 @@ Explain what this article adds.
 [Third article](https://thelaravelarchitect.com/blog)
 
 Give the reader one practical next step.
-
-Jeffrey

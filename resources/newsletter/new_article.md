@@ -7,5 +7,3 @@ Explain your approach in a short paragraph.
 - **Third takeaway.** Include a meaningful limit.
 
 Add any context the reader needs before trying this.
-
-Jeffrey

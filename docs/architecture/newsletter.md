@@ -233,7 +233,15 @@ including trashed issues. Newsletter uploads are not added to its deletion scope
 NewsletterIssuePresenter renders safe Markdown with inline base styles for the
 editorial body and preserves Unicode. The dedicated newsletter layout uses the
 approved A identity artwork, live sender/label text, responsive tables and dark
-mode enhancements. Confirmation/contact messages and legacy issues keep the
+mode enhancements. All three editorial templates append the approved compact signature with
+Jeffrey’s portrait, name, Senior Software Engineer title and TLA link. The
+portrait is an inline attachment, so no external image host is required; live
+text remains readable when images are blocked. Starter bodies omit the sign-off
+because the email view owns it. Existing issue bodies with a manual sign-off
+should remove it before a new send to avoid duplication. The plain-text email
+includes the same identity.
+
+Confirmation/contact messages and legacy issues keep the
 existing shared mail layout. The plain-text alternative and public issue include
 the display introduction and primary article destination/image description as
 applicable.
