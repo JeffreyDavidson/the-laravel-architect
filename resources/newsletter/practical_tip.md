@@ -15,5 +15,3 @@ For your next attempt, try this:
 Name the exception or limit that matters.
 
 [Read the full explanation](https://thelaravelarchitect.com/blog)
-
-Jeffrey
