@@ -38,7 +38,9 @@ it('unsubscribes with a signed one-click post', function () {
     $url = SubscriberPresenter::from($subscriber)
         ->unsubscribeUrl();
 
-    post($url, ['List-Unsubscribe' => 'One-Click'])
+    $response = post($url, ['List-Unsubscribe' => 'One-Click']);
+
+    $response
         ->assertNoContent();
 
     $subscriber->refresh();
@@ -75,7 +77,9 @@ it('still limits one-click posts from one address', function () {
 it('rejects unsigned one-click posts', function () {
     $subscriber = activeSubscriber();
 
-    post(route('newsletter.unsubscribe.oneClick', $subscriber), ['List-Unsubscribe' => 'One-Click'])
+    $response = post(route('newsletter.unsubscribe.oneClick', $subscriber), ['List-Unsubscribe' => 'One-Click']);
+
+    $response
         ->assertForbidden();
 
     $subscriber->refresh();

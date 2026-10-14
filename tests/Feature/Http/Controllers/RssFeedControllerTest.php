@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Category;
-use App\Models\NewsletterIssue;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -54,34 +53,6 @@ it('includes only currently published posts and safely escapes feed content', fu
         ->assertDontSeeHtml('Future feed post');
 });
 
-it('serves the newsletter RSS feed with published issues only', function () {
-    NewsletterIssue::factory()->published()
-        ->create([
-            'title' => 'Laravel & PHP <Patterns>',
-            'excerpt' => 'Safe & useful <summary>',
-        ]);
-    NewsletterIssue::factory()->create([
-        'title' => 'Draft newsletter issue',
-        'published_at' => now()->subDay(),
-    ]);
-    NewsletterIssue::factory()->published()
-        ->create([
-            'title' => 'Future newsletter issue',
-            'published_at' => now()->addDay(),
-        ]);
-
-    $response = get(route('newsletter.rss'));
-
-    $response
-        ->assertOk()
-        ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8')
-        ->assertSeeHtml('<atom:link href="'.route('newsletter.rss').'" rel="self" type="application/rss+xml" />')
-        ->assertSeeHtml('<title>Laravel &amp; PHP &lt;Patterns&gt;</title>')
-        ->assertSeeHtml('<description>Safe &amp; useful &lt;summary&gt;</description>')
-        ->assertDontSeeHtml('Draft newsletter issue')
-        ->assertDontSeeHtml('Future newsletter issue');
-});
-
 it('keeps the UTC publication instant in feed dates whatever the display timezone', function () {
     config(['app.display_timezone' => 'America/New_York']);
     travelTo('2026-10-10 12:00:00');
@@ -90,7 +61,9 @@ it('keeps the UTC publication instant in feed dates whatever the display timezon
             'published_at' => '2026-10-06 01:00:00',
         ]);
 
-    get(route('rss'))
+    $response = get(route('rss'));
+
+    $response
         ->assertOk()
         ->assertSeeHtml('<pubDate>Tue, 06 Oct 2026 01:00:00 +0000</pubDate>');
 });

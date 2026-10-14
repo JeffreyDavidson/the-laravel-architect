@@ -20,7 +20,9 @@ it('includes the newsletter archive and only public newsletter issues', function
         ->create();
     $draft = NewsletterIssue::factory()->create(['slug' => 'excluded-draft-issue']);
 
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertSeeHtml(route('newsletter.index'))
         ->assertSeeHtml(route('newsletter.issue', $published))
         ->assertDontSeeHtml(route('newsletter.issue', $draft));
@@ -66,7 +68,9 @@ it('only includes public content in the sitemap', function () {
     DB::table('episodes')->where('id', $publishedEpisode->id)
         ->update(['updated_at' => null]);
 
-    get('/sitemap.xml')
+    $response = get('/sitemap.xml');
+
+    $response
         ->assertOk()
         ->assertSeeHtml(route('blog.show', $publishedPost))
         ->assertDontSeeHtml(route('blog.show', $scheduledPost))

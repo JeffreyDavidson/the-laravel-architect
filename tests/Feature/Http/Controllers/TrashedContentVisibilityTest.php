@@ -28,24 +28,36 @@ it('removes trashed content from its page, the sitemap and search', function (st
     $record = PublishableFixtures::ready($type, ['published_at' => now()->subDay()]);
     $record->publish();
     $url = publicUrl($record);
-    get($url)->assertOk();
+    $response = get($url);
+
+    $response->assertOk();
 
     $record->delete();
 
-    get($url)->assertNotFound();
-    get(route('sitemap'))->assertDontSeeHtml($url);
-    get(route('search', ['q' => 'Ready']))->assertDontSeeHtml($url);
+    $response = get($url);
+
+    $response->assertNotFound();
+    $response = get(route('sitemap'));
+
+    $response->assertDontSeeHtml($url);
+    $response = get(route('search', ['q' => 'Ready']));
+
+    $response->assertDontSeeHtml($url);
 })->with(['post', 'project', 'episode', 'newsletter issue']);
 
 it('removes trashed posts and newsletter issues from their feeds', function (string $type, string $feed) {
     $record = PublishableFixtures::ready($type, ['published_at' => now()->subDay()]);
     $record->publish();
     $url = publicUrl($record);
-    get(route($feed))->assertSeeHtml($url);
+    $response = get(route($feed));
+
+    $response->assertSeeHtml($url);
 
     $record->delete();
 
-    get(route($feed))->assertDontSeeHtml($url);
+    $response = get(route($feed));
+
+    $response->assertDontSeeHtml($url);
 })->with([
     'post' => ['post', 'rss'],
     'newsletter issue' => ['newsletter issue', 'newsletter.rss'],
@@ -60,5 +72,7 @@ it('removes the episodes of a trashed podcast from the public site', function ()
         ->sole()
         ->delete();
 
-    get($url)->assertNotFound();
+    $response = get($url);
+
+    $response->assertNotFound();
 });

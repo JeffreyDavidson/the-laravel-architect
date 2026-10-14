@@ -1,9 +1,15 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\get;
 
+pest()->use(RefreshDatabase::class);
+
 it('presents services with page metadata and working next steps', function () {
-    get(route('services'))
+    $response = get(route('services'));
+
+    $response
         ->assertOk()
         ->assertViewIs('pages.services')
         ->assertSeeHtml('<title>Services — Jeffrey Davidson</title>')
