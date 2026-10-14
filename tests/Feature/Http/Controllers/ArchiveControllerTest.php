@@ -75,7 +75,9 @@ it('filters the archive by content type and year', function () {
     Project::factory()->published()
         ->create(['title' => 'Current archive project']);
 
-    get(route('archive.index', ['type' => 'writing', 'year' => 2026]))
+    $response = get(route('archive.index', ['type' => 'writing', 'year' => 2026]));
+
+    $response
         ->assertOk()
         ->assertSee($post->title)
         ->assertDontSee('Current archive project')
@@ -88,7 +90,9 @@ it('dates archive entries in the display timezone', function () {
     Post::factory()->published()
         ->create(['published_at' => '2026-10-06 01:00:00']);
 
-    get(route('archive.index', ['type' => 'writing']))
+    $response = get(route('archive.index', ['type' => 'writing']));
+
+    $response
         ->assertOk()
         ->assertSeeHtml('datetime="2026-10-05"')
         ->assertSee('October 5, 2026')
@@ -103,7 +107,9 @@ it('leaves out an episode whose podcast is in the trash', function () {
     $podcast->delete();
     $episode->restore();
 
-    get(route('archive.index'))
+    $response = get(route('archive.index'));
+
+    $response
         ->assertOk()
         ->assertDontSee('Orphaned episode');
 });
@@ -112,7 +118,9 @@ it('returns not found for an out-of-range archive page', function () {
     Post::factory()->published()
         ->create();
 
-    get(route('archive.index', ['page' => 2]))
+    $response = get(route('archive.index', ['page' => 2]));
+
+    $response
         ->assertNotFound();
 });
 
@@ -122,13 +130,17 @@ it('keeps the archive filters in page links', function () {
             ->create(['published_at' => now()->subDays($day)]);
     }
 
-    get(route('archive.index', ['type' => 'writing']))
+    $response = get(route('archive.index', ['type' => 'writing']));
+
+    $response
         ->assertOk()
         ->assertSeeHtml('href="'.e(route('archive.index', ['type' => 'writing', 'page' => 2])).'"');
 });
 
 it('rejects invalid archive filters', function (array $filters) {
-    get(route('archive.index', $filters))
+    $response = get(route('archive.index', $filters));
+
+    $response
         ->assertNotFound();
 })->with([
     'unknown type' => [['type' => 'unknown']],

@@ -4,21 +4,12 @@ use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
-use JeffreyDavidson\CreatorKit\Http\Controllers\ResendWebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\call;
 use function Pest\Laravel\post;
 
-covers(ResendWebhookController::class);
-
 pest()->use(RefreshDatabase::class);
-
-const WEBHOOK_SECRET = 'whsec_'.'dGVzdC1zZWNyZXQtdmFsdWU=';
-
-beforeEach(function () {
-    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
-});
 
 /** @return array<string, string> */
 function signedWebhookHeaders(string $body, ?int $timestamp = null, string $secret = WEBHOOK_SECRET): array
@@ -52,7 +43,11 @@ function complaintEvent(string $email): array
     return ['type' => 'email.complained', 'data' => ['to' => [$email]]];
 }
 
+const WEBHOOK_SECRET = 'whsec_'.'dGVzdC1zZWNyZXQtdmFsdWU=';
+
 it('suppresses the subscriber for a verified complaint', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $reader = Subscriber::factory()->create();
 
     postWebhook(complaintEvent($reader->email))->assertNoContent();
@@ -64,6 +59,8 @@ it('suppresses the subscriber for a verified complaint', function () {
 });
 
 it('accepts and ignores a verified event it does not use', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $reader = Subscriber::factory()->create();
 
     postWebhook(['type' => 'email.delivered', 'data' => ['to' => [$reader->email]]])->assertNoContent();
@@ -75,6 +72,8 @@ it('accepts and ignores a verified event it does not use', function () {
 });
 
 it('is harmless when the same event is delivered twice', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $reader = Subscriber::factory()->create();
 
     postWebhook(complaintEvent($reader->email))->assertNoContent();
@@ -89,6 +88,8 @@ it('is harmless when the same event is delivered twice', function () {
 });
 
 it('rejects a request with a bad signature and changes nothing', function (string $case) {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $reader = Subscriber::factory()->create();
     $body = json_encode(complaintEvent($reader->email), JSON_THROW_ON_ERROR);
     $server = [
@@ -99,7 +100,9 @@ it('rejects a request with a bad signature and changes nothing', function (strin
         'signature without a value' => ['HTTP_SVIX_SIGNATURE' => 'v1'] + signedWebhookHeaders($body),
     ][$case];
 
-    call('POST', route('webhooks.resend'), [], [], [], $server, $body)->assertForbidden();
+    $response = call('POST', route('webhooks.resend'), [], [], [], $server, $body);
+
+    $response->assertForbidden();
 
     $reader->refresh();
 
@@ -108,6 +111,8 @@ it('rejects a request with a bad signature and changes nothing', function (strin
 })->with(['missing headers', 'old timestamp', 'wrong secret', 'tampered body', 'signature without a value']);
 
 it('answers service unavailable until the secret is configured', function (?string $secret) {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     config()->set('services.resend.webhook_secret', $secret);
     $reader = Subscriber::factory()->create();
 
@@ -120,19 +125,29 @@ it('answers service unavailable until the secret is configured', function (?stri
 })->with([null, '']);
 
 it('rejects a signed body that is not JSON', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $body = 'not json';
 
-    call('POST', route('webhooks.resend'), [], [], [], signedWebhookHeaders($body), $body)->assertUnprocessable();
+    $response = call('POST', route('webhooks.resend'), [], [], [], signedWebhookHeaders($body), $body);
+
+    $response->assertUnprocessable();
 });
 
 it('leaves the package\'s unsigned webhook route unregistered', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     expect(Route::has('resend.webhook'))
         ->toBeFalse();
 
-    post('/resend/webhook')->assertNotFound();
+    $response = post('/resend/webhook');
+
+    $response->assertNotFound();
 });
 
 it('uses no session or forgery middleware', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $route = Route::getRoutes()->getByName('webhooks.resend');
 
     expect($route?->excludedMiddleware())
@@ -142,6 +157,8 @@ it('uses no session or forgery middleware', function () {
 });
 
 it('is rate limited per address', function () {
+    config()->set('services.resend.webhook_secret', WEBHOOK_SECRET);
+
     $reader = Subscriber::factory()->create();
 
     foreach (range(1, 60) as $attempt) {

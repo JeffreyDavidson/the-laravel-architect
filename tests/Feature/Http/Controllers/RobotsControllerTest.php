@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\get;
+
+pest()->use(RefreshDatabase::class);
 
 it('allows crawlers in production, keeps them out of the admin and signed previews, and points them to the sitemap', function () {
     config()->set('app.deployment_environment', 'production');
@@ -65,7 +69,9 @@ it('serves robots.txt like a static file without cookies and publicly cacheable'
 it('keeps search results crawlable so their noindex tag can be read', function () {
     config()->set('app.deployment_environment', 'production');
 
-    $content = get('/robots.txt')->getContent();
+    $response = get('/robots.txt');
+
+    $content = $response->getContent();
 
     expect($content)
         ->not->toContain('Disallow: /search');
