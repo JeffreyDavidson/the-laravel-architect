@@ -18,7 +18,9 @@ pest()->use(RefreshDatabase::class);
 it('does not query unrelated content types for a filtered search', function () {
     DB::enableQueryLog();
 
-    get(route('search', ['q' => 'Architecture', 'type' => 'projects']))
+    $response = get(route('search', ['q' => 'Architecture', 'type' => 'projects']));
+
+    $response
         ->assertOk();
 
     $queries = collect(DB::getQueryLog())
@@ -46,7 +48,9 @@ it('searches published content across every public content type', function () {
     $video = Video::factory()->create(['title' => 'Laravel Search on YouTube']);
     Post::factory()->create(['title' => 'Private Laravel Search Notes']);
 
-    get(route('search', ['q' => 'Laravel']))
+    $response = get(route('search', ['q' => 'Laravel']));
+
+    $response
         ->assertOk()
         ->assertSee('5 results for')
         ->assertSeeHtml('>Laravel</mark> Search Patterns')
@@ -73,7 +77,9 @@ it('filters search results by content type and highlights matching text', functi
     Post::factory()->published()
         ->create(['title' => 'Laravel Writing']);
 
-    get(route('search', ['q' => 'Laravel', 'type' => 'projects']))
+    $response = get(route('search', ['q' => 'Laravel', 'type' => 'projects']));
+
+    $response
         ->assertOk()
         ->assertSee('1 result for')
         ->assertSeeHtml('>Laravel</mark> Projects')
@@ -111,14 +117,18 @@ it('dates results in the display timezone', function () {
             'published_at' => '2026-10-06 01:00:00',
         ]);
 
-    get(route('search', ['q' => 'timezone']))
+    $response = get(route('search', ['q' => 'timezone']));
+
+    $response
         ->assertOk()
         ->assertSeeHtml('<time datetime="2026-10-05">Oct 5, 2026</time>')
         ->assertDontSee('Oct 6, 2026');
 });
 
 it('rejects an unknown search content type', function () {
-    get(route('search', ['q' => 'Laravel', 'type' => 'unknown']))
+    $response = get(route('search', ['q' => 'Laravel', 'type' => 'unknown']));
+
+    $response
         ->assertNotFound();
 });
 
@@ -128,7 +138,9 @@ it('rate limits repeated searches from the same visitor', function () {
             ->assertOk();
     }
 
-    get(route('search', ['q' => 'Laravel']))
+    $response = get(route('search', ['q' => 'Laravel']));
+
+    $response
         ->assertTooManyRequests();
 });
 
@@ -139,20 +151,28 @@ it('does not rate limit the empty search page', function () {
     }
 });
 
-it('renders the empty search state and rejects oversized queries', function () {
-    get(route('search'))
-        ->assertOk()
-        ->assertSee('Search across the public archive');
+it('renders the empty search state', function () {
+    $response = get(route('search'));
 
-    get(route('search', ['q' => str_repeat('x', 121)]))
-        ->assertNotFound();
+    $response->assertOk()
+        ->assertSee('Search across the public archive');
+});
+
+it('rejects oversized queries', function () {
+    $query = str_repeat('x', 121);
+
+    $response = get(route('search', ['q' => $query]));
+
+    $response->assertNotFound();
 });
 
 it('finds published newsletter issues', function () {
     $issue = NewsletterIssue::factory()->published()
         ->create(['excerpt' => 'A practical dispatching guide.']);
 
-    get(route('search', ['q' => 'dispatching']))
+    $response = get(route('search', ['q' => 'dispatching']));
+
+    $response
         ->assertOk()
         ->assertSee(
             $issue->title,
@@ -166,7 +186,9 @@ it('finds episodes by transcript content', function () {
         ->published()
         ->create(['transcript' => 'We explore event-driven Laravel systems.']);
 
-    get(route('search', ['q' => 'event-driven']))
+    $response = get(route('search', ['q' => 'event-driven']));
+
+    $response
         ->assertOk()
         ->assertSee(
             $episode->title,

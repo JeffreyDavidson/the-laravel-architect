@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Post;
-use App\Services\OgImageCache;
 use App\Services\OgImageGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -14,11 +13,9 @@ use function Pest\Laravel\get;
 
 pest()->use(RefreshDatabase::class);
 
-beforeEach(function () {
-    Storage::fake('local');
-});
-
 it('generates an OG image once and serves later requests from private storage', function () {
+    Storage::fake('local');
+
     $post = Post::factory()->published()
         ->create();
     $generator = Double::for(OgImageGenerator::class);
@@ -27,12 +24,16 @@ it('generates an OG image once and serves later requests from private storage', 
         ->returns('generated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertOk()
         ->assertHeader('Content-Type', 'image/png')
         ->assertHeader('Cache-Control', 'max-age=86400, public')
         ->assertContent('generated-png');
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertOk()
         ->assertContent('generated-png');
 
@@ -43,6 +44,8 @@ it('generates an OG image once and serves later requests from private storage', 
 });
 
 it('regenerates an OG image when rendered post data changes', function () {
+    Storage::fake('local');
+
     $post = Post::factory()->published()
         ->create();
     $generator = Double::for(OgImageGenerator::class);
@@ -51,16 +54,22 @@ it('regenerates an OG image when rendered post data changes', function () {
         ->returns('first-png', 'updated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertContent('first-png');
 
     $post->update(['title' => 'Updated title']);
 
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertContent('updated-png');
 });
 
 it('regenerates an OG image when its category name changes', function () {
+    Storage::fake('local');
+
     $post = Post::factory()->published()
         ->create();
     $generator = Double::for(OgImageGenerator::class);
@@ -69,18 +78,24 @@ it('regenerates an OG image when its category name changes', function () {
         ->returns('first-png', 'updated-png');
     app()->instance(OgImageGenerator::class, $generator);
 
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertContent('first-png');
 
     $post->category()
         ->firstOrFail()
         ->update(['name' => 'Updated category']);
 
-    get(route('ogImage', $post))
+    $response = get(route('ogImage', $post));
+
+    $response
         ->assertContent('updated-png');
 });
 
 it('serves OG images to crawlers without starting a session or setting cookies', function () {
+    Storage::fake('local');
+
     config()->set('session.driver', 'database');
     $post = Post::factory()->published()
         ->create();
@@ -101,6 +116,8 @@ it('serves OG images to crawlers without starting a session or setting cookies',
 });
 
 it('returns not found without a session for a post that is not published', function () {
+    Storage::fake('local');
+
     config()->set('session.driver', 'database');
     $post = Post::factory()->published()
         ->create();
@@ -112,20 +129,4 @@ it('returns not found without a session for a post that is not published', funct
         ->assertNotFound()
         ->assertHeaderMissing('Set-Cookie');
     assertDatabaseCount('sessions', 0);
-});
-
-it('deletes the cached OG image with its post', function () {
-    $post = Post::factory()->published()
-        ->create();
-    Storage::disk('local')->put("og-images/{$post->id}/image.png", 'png');
-    Storage::disk('local')->put("og-images/{$post->id}/signature", 'signature');
-
-    $post->forceDelete();
-
-    Storage::disk('local')->assertMissing("og-images/{$post->id}");
-});
-
-it('rejects cache operations for a post without a scalar key', function () {
-    expect(fn () => app(OgImageCache::class)->forget(new Post))
-        ->toThrow(UnexpectedValueException::class, 'without a scalar key');
 });

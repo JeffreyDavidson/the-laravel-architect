@@ -16,7 +16,9 @@ it('lets an authorized editor preview a draft email without sending it', functio
     actingAs(User::factory()->create(['is_admin' => true]));
     $issue = NewsletterIssue::factory()->create(['email_template' => NewsletterTemplate::RelatedReading]);
 
-    get(route('preview.newsletterEmail', $issue))
+    $response = get(route('preview.newsletterEmail', $issue));
+
+    $response
         ->assertOk()
         ->assertSee('From Jeffrey Davidson')
         ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
@@ -31,13 +33,17 @@ it('refuses an email preview to a non-administrator', function () {
     actingAs(User::factory()->create(['is_admin' => false]));
     $issue = NewsletterIssue::factory()->create();
 
-    get(route('preview.newsletterEmail', $issue))
+    $response = get(route('preview.newsletterEmail', $issue));
+
+    $response
         ->assertForbidden();
 });
 
 it('refuses an email preview to an anonymous reader', function () {
     $issue = NewsletterIssue::factory()->create();
 
-    get(route('preview.newsletterEmail', $issue))
+    $response = get(route('preview.newsletterEmail', $issue));
+
+    $response
         ->assertRedirect();
 });

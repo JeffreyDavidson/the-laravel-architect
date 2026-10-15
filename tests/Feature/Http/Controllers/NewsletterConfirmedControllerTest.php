@@ -13,7 +13,9 @@ it('shows the confirmed page without a token, without indexing and without subsc
         'email' => 'reader@example.com',
     ]);
 
-    get(route('newsletter.confirmed'))
+    $response = get(route('newsletter.confirmed'));
+
+    $response
         ->assertOk()
         ->assertSeeText('You’re confirmed')
         ->assertSeeHtml('<meta name="robots" content="noindex, nofollow">')
@@ -34,7 +36,9 @@ it('shows the three newest published posts on the confirmed page', function () {
         'title' => 'Draft Post',
     ]);
 
-    get(route('newsletter.confirmed'))
+    $response = get(route('newsletter.confirmed'));
+
+    $response
         ->assertOk()
         ->assertSeeText('While you’re here')
         ->assertSeeTextInOrder(['Newest Post', 'Second Post', 'Third Post'])
@@ -43,7 +47,9 @@ it('shows the three newest published posts on the confirmed page', function () {
 });
 
 it('leaves out the latest posts section when nothing is published', function () {
-    get(route('newsletter.confirmed'))
+    $response = get(route('newsletter.confirmed'));
+
+    $response
         ->assertOk()
         ->assertDontSeeText('While you’re here');
 });

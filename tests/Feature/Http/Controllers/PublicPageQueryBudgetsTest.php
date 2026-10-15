@@ -48,7 +48,9 @@ it('keeps each public page within its query budget as content grows', function (
 
     expectsDatabaseQueryCount($budget);
 
-    get($url)
+    $response = get($url);
+
+    $response
         ->assertOk();
 })->with([
     'home' => [fn (): string => route('home'), 12],

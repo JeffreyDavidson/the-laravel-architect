@@ -10,7 +10,9 @@ use function Pest\Laravel\getJson;
 pest()->use(RefreshDatabase::class);
 
 it('reports that the application and database are healthy', function () {
-    getJson('/up')
+    $response = getJson('/up');
+
+    $response
         ->assertOk()
         ->assertExactJson(['status' => 'up']);
 });
@@ -45,7 +47,9 @@ it('reports fresh scheduler and queue heartbeats as healthy when runtime monitor
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    getJson('/up')
+    $response = getJson('/up');
+
+    $response
         ->assertOk()
         ->assertExactJson(['status' => 'up']);
 });
@@ -59,7 +63,9 @@ it('reports a stale scheduler heartbeat as unhealthy', function () {
         ->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    getJson('/up')
+    $response = getJson('/up');
+
+    $response
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });
@@ -73,7 +79,9 @@ it('reports a stale queue worker heartbeat as unhealthy', function () {
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->subMinutes(6)
         ->getTimestamp());
 
-    getJson('/up')
+    $response = getJson('/up');
+
+    $response
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });
@@ -87,7 +95,9 @@ it('reports invalid runtime heartbeat configuration as unhealthy', function () {
     Cache::put(RuntimeHealthMonitor::SCHEDULER_HEARTBEAT_KEY, now()->getTimestamp());
     Cache::put(RuntimeHealthMonitor::QUEUE_HEARTBEAT_KEY, now()->getTimestamp());
 
-    getJson('/up')
+    $response = getJson('/up');
+
+    $response
         ->assertStatus(500)
         ->assertExactJson(['status' => 'down']);
 });

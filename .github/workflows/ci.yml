@@ -20,44 +20,20 @@ permissions:
   contents: read
 
 jobs:
-  laravel:
-    name: Laravel
+  quality:
+    name: Quality
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+      - name: Prepare CI runtime
+        uses: ./.github/actions/ci-runtime
         with:
-          php-version: '8.5'
-          extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, mbstring, openssl, pdo, pdo_sqlite, tokenizer, xml, zip
-          coverage: none
-
-      - name: Setup Node
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: '22'
-          cache: npm
-
-      - name: Validate Composer configuration
-        run: composer validate --strict --no-check-publish
-
-      - name: Configure private Composer repository
-        env:
-          FILAMENTEXAMPLES_COMPOSER_USERNAME: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
-          FILAMENTEXAMPLES_COMPOSER_PASSWORD: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
-        run: composer config --global --auth http-basic.satis.filamentexamples.com "$FILAMENTEXAMPLES_COMPOSER_USERNAME" "$FILAMENTEXAMPLES_COMPOSER_PASSWORD"
-
-      - name: Install PHP dependencies
-        env:
-          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Install Node dependencies
-        run: npm ci
+          composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+          composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+          composer-auth: ${{ secrets.COMPOSER_AUTH }}
 
       - name: Test deployment safeguards
         run: npm run test:deployment
@@ -82,42 +58,132 @@ jobs:
       # Development-only JavaScript advisories are reported by the daily
       # Dependency audit workflow instead of failing unrelated pull requests.
 
-      - name: Prepare application
-        run: |
-          cp .env.example .env
-          php artisan key:generate --ansi
-          php artisan config:clear --ansi
-          touch database/database.sqlite
-          php artisan migrate --force --seed
-          php artisan content:import-public tests/Browser/fixtures/public-content.json
-          php artisan storage:link --relative --force
-
       - name: Check code style
         run: composer test:lint
 
       - name: Check method chains
         run: php scripts/check-method-chaining.php
 
-      - name: Run static analysis
+      - name: Restore phpstan-app cache
+        id: restore-phpstan-app
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/phpstan-app
+          key: ci-v1-phpstan-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ci-v1-phpstan-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-
+
+      - name: Check phpstan-app
+        id: phpstan-app
         run: composer test:types
 
-      - name: Run test static analysis
+      - name: Save phpstan-app cache
+        if: ${{ !cancelled() && steps.phpstan-app.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/phpstan-app
+          key: ci-v1-phpstan-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Restore phpstan-pest cache
+        id: restore-phpstan-pest
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/phpstan-pest
+          key: ci-v1-phpstan-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ci-v1-phpstan-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-
+
+      - name: Check phpstan-pest
+        id: phpstan-pest
         run: composer test:types:pest
 
-      - name: Check Rector rules
-        run: composer test:rector && composer test:rector:pest
+      - name: Save phpstan-pest cache
+        if: ${{ !cancelled() && steps.phpstan-pest.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/phpstan-pest
+          key: ci-v1-phpstan-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'phpstan.neon', 'phpstan-pest.neon', 'tests/*.stub') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Restore rector-app cache
+        id: restore-rector-app
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/rector-app
+          key: ci-v1-rector-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ci-v1-rector-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-
+
+      - name: Check rector-app
+        id: rector-app
+        run: composer test:rector
+
+      - name: Save rector-app cache
+        if: ${{ !cancelled() && steps.rector-app.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/rector-app
+          key: ci-v1-rector-app-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Restore rector-pest cache
+        id: restore-rector-pest
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/rector-pest
+          key: ci-v1-rector-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ci-v1-rector-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-
+
+      - name: Check rector-pest
+        id: rector-pest
+        run: composer test:rector:pest
+
+      - name: Save rector-pest cache
+        if: ${{ !cancelled() && steps.rector-pest.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: storage/framework/cache/rector-pest
+          key: ci-v1-rector-pest-${{ runner.os }}-${{ runner.arch }}-php8.5-${{ hashFiles('composer.lock', 'rector.php', 'rector-pest.php') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Check Filament code quality
         run: composer test:filament
-
-      - name: Build assets
-        run: npm run build
 
       - name: Check asset budgets
         run: npm run test:assets
 
       - name: Check frontend formatting
         run: npm run format:check
+
+  tests:
+    name: Application tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Prepare CI runtime
+        uses: ./.github/actions/ci-runtime
+        with:
+          composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+          composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+          composer-auth: ${{ secrets.COMPOSER_AUTH }}
+
+      - name: Run non-browser tests in parallel
+        run: composer test
+
+      - name: Check type coverage
+        run: composer test:type-coverage
+
+  browser:
+    name: Browser tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Prepare CI runtime
+        uses: ./.github/actions/ci-runtime
+        with:
+          composer-username: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_USERNAME }}
+          composer-password: ${{ secrets.FILAMENTEXAMPLES_COMPOSER_PASSWORD }}
+          composer-auth: ${{ secrets.COMPOSER_AUTH }}
 
       - name: Read Playwright version
         id: playwright
@@ -163,12 +229,6 @@ jobs:
 
           exit 1
 
-      - name: Run non-browser tests in parallel
-        run: composer test
-
-      - name: Check type coverage
-        run: composer test:type-coverage
-
       - name: Run browser tests serially
         run: composer test:browser
 
@@ -180,3 +240,21 @@ jobs:
           path: tests/Browser/Screenshots
           if-no-files-found: ignore
           retention-days: 7
+
+  laravel:
+    name: Laravel
+    needs: [quality, tests, browser]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Require every CI lane to succeed
+        env:
+          CI_JOB_RESULTS: ${{ toJSON(needs) }}
+        run: node scripts/verify-ci-jobs.mjs

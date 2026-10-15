@@ -39,6 +39,19 @@ Use the host's supported browser tools and current accessibility/DOM state. Open
 
 Fill title, explicit slug and excerpt through normal form interactions. Category is a combobox; select its visible option. Enter each tag and confirm it appears. Expand **Review & Source**, fill the source URL and use `YYYY-MM-DD` for Last reviewed. Confirm Draft status and an empty Publish Date before Create.
 
+### Existing articles: recheck before every save
+
+An open editor or local Markdown copy can be older than changes saved by another chat. This applies to drafts and live articles, including image-only, card, PDF, metadata and publication actions that save the form.
+
+- Before preparing an edit, read the exact saved record into a private baseline: complete body and all editable fields, including companion links, images, tags, status and publication date. Record a revision timestamp if the admin exposes one, but compare actual values too. Never commit private body snapshots or signed URLs.
+- Prepare only the authorized change against that baseline. Treat local draft files as working copies, not authority to replace the entire article.
+- Immediately before saving, open the same record afresh in a separate verification tab and compare the latest persisted values with the baseline. Reading the original unsaved editor again is not a freshness check. Preserve any unsaved user work or upload in its original tab.
+- If the saved record changed, abandon the stale form as a save target. Preserve the latest version and apply the approved edit to a fresh editor. Carry forward every unrelated change, especially companion callouts and reference cards. Confirm the target passage still exists and the intended change remains valid. A disjoint change does not require renewed permission for the same approved edit; an overlapping or ambiguous change requires Jeffrey's direction before saving. Follow the separate publication-review gate if the reviewed version changed.
+- Verify complete editor readback against the latest saved version plus only the approved change. Recheck persisted state after a long preview, upload, interruption or resumed turn; an earlier comparison does not clear a later save. Save once, reload, and compare every relevant field with the intended result. Inspect retained links/assets as well as the new content before synchronizing scratch sources.
+- If post-save verification shows another change was lost or the result is uncertain, stop and preserve the evidence. Do not restore an older whole body or repeatedly save to force a match; prepare the smallest recovery for the current record and obtain approval for any live correction.
+
+These browser checks reduce stale-form overwrites; they are not an atomic lock. If another writer is actively saving the same record, coordinate a pause before saving. Do not claim this skill makes simultaneous saves safe or add application locking as part of an editorial task.
+
 ### Markdown editor: verify the actual text
 
 The Content editor is CodeMirror/EasyMDE. An ordinary textbox fill may fail to update the editor, and a toast alone doesn't prove the body saved.
@@ -81,4 +94,4 @@ Content publication doesn't require an application release. Staging content sync
 
 Read and preserve the original body before editing, including unrelated companion links and metadata. Prepare the requested change and inspect a safe unpublished/signed preview if supported, or a local render without modifying the live record. Don't temporarily unpublish an article or save a live change merely to obtain a preview.
 
-Apply only the approved edit to the exact record through the admin, verify editor readback before saving, then compare the live content and check affected desktop/mobile sections. If a safe preview isn't available, disclose the limitation before approval. Never infer permission to rewrite adjacent sections from a narrow edit request.
+Apply only the approved edit to the exact record through the admin, following the existing-article freshness check before saving. Compare the persisted fields and live content, including unrelated links and assets, and check affected desktop/mobile sections. If a safe preview isn't available, disclose the limitation before approval. Never infer permission to rewrite adjacent sections from a narrow edit request.

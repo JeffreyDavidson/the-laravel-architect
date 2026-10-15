@@ -22,26 +22,42 @@ it('exposes scheduled posts across public surfaces exactly when due without chan
             'published_at' => $due,
         ]);
 
-    get(route('blog.show', $post))
+    $response = get(route('blog.show', $post));
+
+    $response
         ->assertNotFound();
-    get(route('blog.index'))
+    $response = get(route('blog.index'));
+
+    $response
         ->assertDontSee($post->title);
-    get(route('rss'))
+    $response = get(route('rss'));
+
+    $response
         ->assertDontSee($post->title);
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertDontSee(route('blog.show', $post));
 
     travelTo($due);
 
-    get(route('blog.show', $post))
+    $response = get(route('blog.show', $post));
+
+    $response
         ->assertOk();
-    get(route('blog.index'))
+    $response = get(route('blog.index'));
+
+    $response
         ->assertOk()
         ->assertSee($post->title);
-    get(route('rss'))
+    $response = get(route('rss'));
+
+    $response
         ->assertOk()
         ->assertSee($post->title);
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertOk()
         ->assertSee(route('blog.show', $post));
 
@@ -62,21 +78,33 @@ it('exposes due scheduled episodes only while their podcast is active', function
         ]);
     $url = route('podcasts.episode', [$podcast, $episode]);
 
-    get($url)
+    $response = get($url);
+
+    $response
         ->assertNotFound();
-    get(route('podcasts.show', $podcast))
+    $response = get(route('podcasts.show', $podcast));
+
+    $response
         ->assertDontSee($episode->title);
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertDontSee($url);
 
     travelTo($due);
 
-    get($url)
+    $response = get($url);
+
+    $response
         ->assertOk();
-    get(route('podcasts.show', $podcast))
+    $response = get(route('podcasts.show', $podcast));
+
+    $response
         ->assertOk()
         ->assertSee($episode->title);
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertOk()
         ->assertSee($url);
 
@@ -85,8 +113,12 @@ it('exposes due scheduled episodes only while their podcast is active', function
 
     $podcast->update(['is_active' => false]);
 
-    get($url)
+    $response = get($url);
+
+    $response
         ->assertNotFound();
-    get(route('sitemap'))
+    $response = get(route('sitemap'));
+
+    $response
         ->assertDontSee($url);
 });
