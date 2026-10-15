@@ -2574,16 +2574,16 @@
         },
         {
             "name": "jeffreydavidson/creator-kit",
-            "version": "v0.15.0",
+            "version": "v0.15.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:JeffreyDavidson/creator-kit.git",
-                "reference": "a7b516cb27b21ed93923ccd5571242a1b8baf5f1"
+                "reference": "e7fb8ca5c1dc52eabd0f3e5edfe422f66d112497"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/a7b516cb27b21ed93923ccd5571242a1b8baf5f1",
-                "reference": "a7b516cb27b21ed93923ccd5571242a1b8baf5f1",
+                "url": "https://api.github.com/repos/JeffreyDavidson/creator-kit/zipball/e7fb8ca5c1dc52eabd0f3e5edfe422f66d112497",
+                "reference": "e7fb8ca5c1dc52eabd0f3e5edfe422f66d112497",
                 "shasum": ""
             },
             "require": {
@@ -2685,10 +2685,10 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.15.0",
+                "source": "https://github.com/JeffreyDavidson/creator-kit/tree/v0.15.1",
                 "issues": "https://github.com/JeffreyDavidson/creator-kit/issues"
             },
-            "time": "2026-10-13T19:17:28+00:00"
+            "time": "2026-10-15T17:41:11+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

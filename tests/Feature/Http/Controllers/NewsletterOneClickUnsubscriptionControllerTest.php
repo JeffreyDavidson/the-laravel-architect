@@ -1,11 +1,18 @@
 <?php
 
 use App\Models\Subscriber;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\File;
 use JeffreyDavidson\CreatorKit\Presenters\SubscriberPresenter;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -46,6 +53,43 @@ it('unsubscribes with a signed one-click post', function () {
     $subscriber->refresh();
     expect($subscriber->isActive())
         ->toBeFalse();
+});
+
+it('binds the one-click subscriber parameter when the routes are cached', function () {
+    // Arrange: cache the real routes to a private file and boot a fresh application from it, as
+    // production does after `artisan optimize`. Routes loaded from the cache skip routes/web.php.
+    $cachePath = sys_get_temp_dir().'/tla-routes-'.bin2hex(random_bytes(8)).'.php';
+    $testApplication = app();
+    putenv("APP_ROUTES_CACHE={$cachePath}");
+    $_ENV['APP_ROUTES_CACHE'] = $cachePath;
+    $_SERVER['APP_ROUTES_CACHE'] = $cachePath;
+
+    try {
+        Artisan::call('route:cache');
+        $cachedApplication = require base_path('bootstrap/app.php');
+        if (! $cachedApplication instanceof Application) {
+            throw new RuntimeException('bootstrap/app.php did not return an application.');
+        }
+
+        $cachedApplication->make(ConsoleKernel::class)
+            ->bootstrap();
+
+        // Act
+        $binding = $cachedApplication->make(Router::class)
+            ->getBindingCallback('subscriber');
+
+        // Assert
+        expect($cachedApplication->routesAreCached())->toBeTrue()
+            ->and($binding)
+            ->not->toBeNull();
+    } finally {
+        putenv('APP_ROUTES_CACHE');
+        unset($_ENV['APP_ROUTES_CACHE'], $_SERVER['APP_ROUTES_CACHE']);
+        File::delete($cachePath);
+        Container::setInstance($testApplication);
+        Facade::clearResolvedInstances();
+        Facade::setFacadeApplication($testApplication);
+    }
 });
 
 it('accepts a burst of one-click posts from one mail provider address', function () {
