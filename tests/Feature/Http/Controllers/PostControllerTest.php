@@ -223,13 +223,21 @@ describe('index', function () {
 
 describe('show', function () {
     it('renders a published post', function () {
-        $published = Post::factory()->published()
-            ->create();
-        $draft = Post::factory()->create();
-        $scheduled = Post::factory()->published()
-            ->create(['published_at' => now()->addDay()]);
+        // Arrange
+        $published = Post::factory()
+            ->published()
+            ->create([
+                'title' => 'Shipping a Laravel feature',
+                'content' => 'The body of the published post.',
+            ]);
+
+        // Act
         $response = get(route('blog.show', $published));
-        $response->assertOk();
+
+        // Assert
+        $response->assertOk()
+            ->assertSee('Shipping a Laravel feature')
+            ->assertSee('The body of the published post.');
     });
 
     it('does not expose a draft post', function () {

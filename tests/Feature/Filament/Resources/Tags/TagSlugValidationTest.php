@@ -112,13 +112,16 @@ it('allows a tag to retain its localized slug when editing', function () {
 });
 
 it('preserves an existing tag slug when the name changes', function () {
+    // Arrange
     $tag = Tag::factory()->create(['slug' => 'curated-tag-slug']);
 
-    livewire(EditTag::class, ['record' => $tag->getRouteKey()])
-        ->fillForm(['name' => 'Updated tag name', 'slug' => 'curated-tag-slug'])
-        ->call('save')
-        ->assertHasNoFormErrors();
+    // Act
+    $component = livewire(EditTag::class, ['record' => $tag->getRouteKey()])
+        ->fillForm(['name' => 'Updated tag name'])
+        ->call('save');
 
+    // Assert
+    $component->assertHasNoFormErrors();
     expect($tag->refresh())
         ->name->toBe('Updated tag name')
         ->slug->toBe('curated-tag-slug');

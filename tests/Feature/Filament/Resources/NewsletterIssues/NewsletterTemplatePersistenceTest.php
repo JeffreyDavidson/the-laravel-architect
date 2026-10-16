@@ -128,7 +128,16 @@ it('stores a validated article image with its description', function () {
         throw new UnexpectedValueException('The saved image settings must be an array.');
     }
 
-    expect($options['hero_path'])->toStartWith('newsletter/');
+    $heroPath = $options['hero_path'];
+
+    if (! is_string($heroPath)) {
+        throw new UnexpectedValueException('The saved image path must be a string.');
+    }
+
+    expect($heroPath)->toStartWith('newsletter/')
+        ->and($options['hero_alt'])
+        ->toBe('A concrete illustration.');
+    Storage::disk('public')->assertExists($heroPath);
 });
 
 it('keeps the issue own existing image when editing without reuploading it', function () {
