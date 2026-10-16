@@ -7,10 +7,15 @@ use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
-use RuntimeException;
+use Pest\Browser\Api\AwaitableWebpage;
+use Tests\Browser\Pages\AboutPage;
+use Tests\Browser\Pages\BlogIndexPage;
+use Tests\Browser\Pages\BlogPostPage;
 use Tests\Browser\Pages\HomePage;
 use Tests\Browser\Pages\PodcastEpisodePage;
+use Tests\Browser\Pages\PublicPage;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\withVite;
 
 pest()->use(RefreshDatabase::class);
@@ -33,12 +38,6 @@ it('loads public routes without high impact accessibility issues in both themes'
 
     // Audit settled content, independently of scroll-reveal animation timing.
     $page->script('document.querySelectorAll("[data-reveal]").forEach(element => { element.style.transition = "none"; element.dataset.reveal = "visible"; });');
-
-    expect(
-        $page->page()
-            ->locator('body')
-            ->count()
-    )->toBeGreaterThan(0);
 
     $page->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
@@ -258,21 +257,39 @@ it('counts the homepage proof figures up to their targets', function (): void {
         ->assertNoJavaScriptErrors();
 });
 
-it('supports the homepage services link', function (): void {
+it('lists three services on the homepage', function (): void {
+    // Arrange
     withVite();
 
+    // Act
     $page = HomePage::visit();
 
+    // Assert
     $page->assertPresent('[data-home-services]')
         ->assertCount('[data-home-services] dt', 3)
-        ->click('Explore services')
-        ->assertPathIs('/services');
+        ->assertNoJavaScriptErrors();
+});
+
+it('opens the services page from the homepage services link', function (): void {
+    // Arrange
+    withVite();
+    $page = HomePage::visit();
+
+    // Act
+    $page->page()
+        ->locator('[data-home-services]')
+        ->getByRole('link', ['name' => 'Explore services'])
+        ->click();
+
+    // Assert
+    $page->assertPathIs('/services')
+        ->assertNoJavaScriptErrors();
 });
 
 it('supports keyboard interaction on the about card', function (): void {
     withVite();
 
-    $page = $this->browserPage('/about', 'desktop');
+    $page = AboutPage::visit();
     $card = $page->page()
         ->getByRole('button', ['name' => 'Flip Jeffrey Davidson developer card']);
 
@@ -287,31 +304,62 @@ it('supports keyboard interaction on the about card', function (): void {
         ->assertNoJavaScriptErrors();
 });
 
-it('loads standalone Alpine without Livewire on non-Livewire pages', function (): void {
+it('loads standalone Alpine without Livewire on non-Livewire pages', function (string $publicPage): void {
+    // Arrange
+    /** @var class-string<PublicPage> $publicPage */
     withVite();
 
-    foreach (['/', '/about'] as $route) {
-        $page = $this->browserPage($route, 'desktop');
+    // Act
+    $page = $publicPage::visit();
 
-        $page->assertScript("typeof window.Alpine === 'object'")
-            ->assertScript("typeof window.Livewire === 'undefined'")
-            ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/livewire-'))")
-            ->assertNoJavaScriptErrors();
-    }
-});
+    // Assert
+    $page->assertScript("typeof window.Alpine === 'object'")
+        ->assertScript("typeof window.Livewire === 'undefined'")
+        ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/livewire-'))")
+        ->assertNoJavaScriptErrors();
+})->with([
+    'home' => HomePage::class,
+    'about' => AboutPage::class,
+]);
 
-it('supports blog search and reset with Livewire', function (): void {
+it('loads Livewire with its bundled Alpine on the blog', function (): void {
+    // Arrange
     withVite();
 
-    $page = $this->browserPage('/blog', 'desktop');
+    // Act
+    $page = BlogIndexPage::visit();
 
+    // Assert
     $page->assertScript("typeof window.Livewire === 'object' && typeof window.Alpine === 'object'")
         ->assertScript('window.Livewire.all().length > 0')
         ->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'")
         ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('/alpine-'))")
-        ->click('#theme-toggle')
         ->assertNoJavaScriptErrors();
+});
 
+it('toggles the theme on the Livewire blog page', function (): void {
+    // Arrange
+    withVite();
+    $page = $this->waitForSiteHeader(BlogIndexPage::visit());
+    $page->assertScript('document.documentElement.classList.contains("dark")', false);
+
+    // Act
+    $page->page()
+        ->locator('#theme-toggle')
+        ->click();
+
+    // Assert
+    $page->assertScript('document.documentElement.classList.contains("dark")')
+        ->assertNoJavaScriptErrors();
+});
+
+it('searches the blog with Livewire', function (): void {
+    // Arrange
+    withVite();
+    $page = BlogIndexPage::visit();
+    $page->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'");
+
+    // Act
     $page->page()
         ->locator('#blog-search')
         ->fill('searchable post');
@@ -319,6 +367,7 @@ it('supports blog search and reset with Livewire', function (): void {
         ->locator('#blog-search')
         ->press('Enter');
 
+    // Assert
     $page
         ->assertPathIs('/blog')
         ->assertVisible('[data-blog-clear]')
@@ -327,21 +376,49 @@ it('supports blog search and reset with Livewire', function (): void {
         ->assertTitle('Search results — Jeffrey Davidson')
         ->assertScript("document.querySelector('meta[name=\"robots\"]')?.content === 'noindex, follow'")
         ->assertScript("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)['@graph'].find(item => item['@type'] === 'ItemList').numberOfItems === 1")
-        ->click('[data-blog-clear]')
-        ->assertSee('E2E Welcome Post')
+        ->assertNoJavaScriptErrors();
+});
+
+it('resets a blog search with Livewire', function (): void {
+    // Arrange
+    withVite();
+    $page = BlogIndexPage::visit();
+    $page->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'");
+    $page->page()
+        ->locator('#blog-search')
+        ->fill('searchable post');
+    $page->page()
+        ->locator('#blog-search')
+        ->press('Enter');
+    $page->assertVisible('[data-blog-clear]')
+        ->assertDontSee('E2E Welcome Post');
+
+    // Act
+    $page->page()
+        ->getByRole('link', ['name' => 'Clear search'])
+        ->click();
+
+    // Assert
+    $page->assertSee('E2E Welcome Post')
         ->assertTitle('Blog — Jeffrey Davidson')
         ->assertScript("document.querySelector('meta[name=\"robots\"]') === null")
         ->assertNoJavaScriptErrors();
 });
 
 it('filters the blog by category when a category pill is clicked', function (): void {
+    // Arrange
     withVite();
+    $page = BlogIndexPage::visit();
+    $page->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'");
 
-    $page = $this->browserPage('/blog', 'desktop');
+    // Act
+    $page->page()
+        ->getByRole('navigation', ['name' => 'Filter articles by category'])
+        ->locator('a[href$="category=e2e-career"]')
+        ->click();
 
-    $page->assertScript("document.querySelector('[data-blog-filter]').dataset.ready === 'true'")
-        ->click('[aria-label="Filter articles by category"] a[href$="category=e2e-career"]')
-        ->assertAriaAttribute('[aria-label="Filter articles by category"] a[href$="category=e2e-career"]', 'current', 'page')
+    // Assert
+    $page->assertAriaAttribute('[aria-label="Filter articles by category"] a[href$="category=e2e-career"]', 'current', 'page')
         ->assertSee('E2E Searchable Post')
         ->assertDontSee('E2E Welcome Post')
         ->assertPathIs('/blog')
@@ -350,58 +427,82 @@ it('filters the blog by category when a category pill is clicked', function (): 
 });
 
 it('supports search filters and preserves the selected result type', function (): void {
+    // Arrange
     withVite();
-
     $page = $this->browserPage('/search', 'desktop');
-
     $page->page()
         ->locator('#site-search')
         ->fill('E2E');
     $page->page()
         ->locator('#search-type')
         ->selectOption('projects');
+
+    // Act
     $page->page()
         ->getByRole('button', ['name' => 'Search', 'exact' => true])
         ->click();
 
+    // Assert
     $page
         ->assertPathIs('/search')
         ->assertSee('E2E Project')
-        ->assertDontSeeIn('h2', 'Writing');
-
-    expect(
-        $page->page()
-            ->locator('mark')
-            ->textContent()
-    )->toContain('E2E');
+        ->assertDontSeeIn('h2', 'Writing')
+        ->assertScript('document.querySelector("mark").textContent.includes("E2E")')
+        ->assertNoJavaScriptErrors();
 });
 
-it('exposes the code copy action and delayed syntax highlighting', function (): void {
+it('marks code as copied from the copy action', function (): void {
+    // Arrange
+    withVite();
+    $page = BlogPostPage::visit(Post::query()->where('slug', 'e2e-code-example')
+        ->sole());
+    // Wait for Alpine to bind the button, so the single click below isn't lost on a slow runner.
+    $page->assertScript('document.querySelector("[data-code-copy]")._x_dataStack !== undefined');
+
+    // Act
+    $page->page()
+        ->locator('[data-code-copy]')
+        ->first()
+        ->click();
+
+    // Assert
+    $page->assertAttribute('[data-code-copy]', 'aria-label', 'Copied')
+        ->assertNoJavaScriptErrors();
+});
+
+it('highlights code syntax after the article loads', function (): void {
+    // Arrange
     withVite();
 
-    $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
+    // Act
+    $page = BlogPostPage::visit(Post::query()->where('slug', 'e2e-code-example')
+        ->sole());
 
-    $page->assertPresent('[data-code-copy]')
-        ->click('[data-code-copy]')
-        ->assertAttribute('[data-code-copy]', 'aria-label', 'Copied');
-
+    // Assert
     $page->assertScript("document.documentElement.dataset.codeHighlightingState === 'ready'")
-        ->assertPresent('.prose code .token');
+        ->assertPresent('.prose code .token')
+        ->assertNoJavaScriptErrors();
 });
 
 it('keeps stray whitespace out of code blocks around the copy action', function (): void {
+    // Arrange
     withVite();
 
-    $page = $this->browserPage('/blog/e2e-code-example', 'desktop');
+    // Act
+    $page = BlogPostPage::visit(Post::query()->where('slug', 'e2e-code-example')
+        ->sole());
 
+    // Assert
     $page->assertPresent('[data-code-copy]')
         ->assertScript('Array.from(document.querySelectorAll("[data-article-prose] pre")).every((pre) => Array.from(pre.childNodes).every((node) => node.nodeType === Node.ELEMENT_NODE))')
-        ->assertScript('Array.from(document.querySelectorAll("[data-article-prose] pre")).every((pre) => pre.getBoundingClientRect().height < pre.querySelector("code").getBoundingClientRect().height + 60)');
+        ->assertScript('Array.from(document.querySelectorAll("[data-article-prose] pre")).every((pre) => pre.getBoundingClientRect().height < pre.querySelector("code").getBoundingClientRect().height + 60)')
+        ->assertNoJavaScriptErrors();
 });
 
 it('reports clipboard failure without claiming the code was copied', function (): void {
     withVite();
-    $page = $this->browserPage(route('blog.show', 'e2e-code-example'), 'desktop');
+    $page = BlogPostPage::visit(Post::query()->where('slug', 'e2e-code-example')
+        ->sole());
     $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Denied"); } } }); document.execCommand = () => false;');
 
     $page->click('[data-code-copy]')
@@ -409,8 +510,13 @@ it('reports clipboard failure without claiming the code was copied', function ()
         ->assertNoJavaScriptErrors();
 });
 
-it('loads the podcast video only on activation and copies its share link', function (): void {
-    withVite();
+/**
+ * A published episode of the imported podcast with a YouTube video and no Transistor player.
+ *
+ * @return array{0: Podcast, 1: Episode}
+ */
+function youtubeEpisode(): array
+{
     $podcast = Podcast::query()->where('slug', 'e2e-podcast')
         ->sole();
     $episode = Episode::factory()
@@ -420,16 +526,49 @@ it('loads the podcast video only on activation and copies its share link', funct
             'transistor_url' => null,
             'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         ]);
-    $page = PodcastEpisodePage::visit($podcast, $episode);
-    $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>"; Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
 
+    return [$podcast, $episode];
+}
+
+it('loads the podcast video only on activation', function (): void {
+    // Arrange
+    withVite();
+    [$podcast, $episode] = youtubeEpisode();
+    $page = PodcastEpisodePage::visit($podcast, $episode);
+    // Keep YouTube out of the test: the player template's iframe gets local content instead of the embed URL.
+    $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>";');
     $page->assertNotPresent('[data-youtube-facade] iframe')
         ->assertEnabled('[data-youtube-play]')
-        ->click('[data-youtube-play]')
-        ->assertCount('[data-youtube-facade] iframe', 1)
+        // Wait for Alpine to bind the facade, so the single click below isn't lost on a slow runner.
+        ->assertScript('document.querySelector("[data-youtube-facade]")._x_dataStack !== undefined');
+
+    // Act
+    $page->page()
+        ->locator('[data-youtube-play]')
+        ->click();
+
+    // Assert
+    $page->assertCount('[data-youtube-facade] iframe', 1)
         ->assertScript('document.querySelector("[data-youtube-play]").hidden')
-        ->click('[data-podcast-copy-url]')
-        ->assertAttribute('[data-podcast-copy-url]', 'aria-label', 'Episode link copied')
+        ->assertNoJavaScriptErrors();
+});
+
+it('copies the podcast episode share link', function (): void {
+    // Arrange
+    withVite();
+    [$podcast, $episode] = youtubeEpisode();
+    $page = PodcastEpisodePage::visit($podcast, $episode);
+    $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
+    // Wait for Alpine to bind the button, so the single click below isn't lost on a slow runner.
+    $page->assertScript('document.querySelector("[data-podcast-copy-url]")._x_dataStack !== undefined');
+
+    // Act
+    $page->page()
+        ->locator('[data-podcast-copy-url]')
+        ->click();
+
+    // Assert
+    $page->assertAttribute('[data-podcast-copy-url]', 'aria-label', 'Episode link copied')
         ->assertScript('window.copiedEpisodeUrl === document.querySelector("[data-podcast-copy-url]").dataset.podcastCopyUrl')
         ->assertNoJavaScriptErrors();
 });
@@ -440,7 +579,7 @@ it('builds styled article navigation from the Blade template', function (): void
         ->sole();
     $post->update(['content' => "## First section\n\nIntroduction.\n\n## Second section\n\nDetails."]);
 
-    $page = $this->browserPage(route('blog.show', $post), 'desktop');
+    $page = BlogPostPage::visit($post);
 
     $page->assertCount('[data-article-toc-link]', 4)
         ->assertAttribute('aside [data-article-toc-link="first-section"]', 'href', '#first-section')
@@ -455,7 +594,7 @@ it('marks the article section being read in the contents list', function (): voi
         ->sole();
     $post->update(['content' => "## First section\n\n{$filler}## Second section\n\n{$filler}"]);
 
-    $page = $this->browserPage(route('blog.show', $post), 'desktop');
+    $page = BlogPostPage::visit($post);
 
     $page->assertCount('[data-article-toc-link]', 4)
         ->script('const heading = document.getElementById("second-section"); window.scrollTo(0, heading.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.25);');
@@ -464,58 +603,87 @@ it('marks the article section being read in the contents list', function (): voi
         ->assertNoJavaScriptErrors();
 });
 
-it('allows an administrator to reach the dashboard', function (string $theme, string $device): void {
+it('switches the admin sign-in page theme', function (string $appearance, string $browserTheme, bool $isDark, string $device): void {
+    // Arrange
     withVite();
+    $page = $this->browserPageWithTheme('/admin/login', $device, $browserTheme);
 
+    // Act
+    $page->page()
+        ->getByRole('button', ['name' => "Enable {$appearance} theme"])
+        ->click();
+
+    // Assert
+    $page->assertScript('localStorage.getItem("theme")', $appearance)
+        ->assertScript('document.documentElement.classList.contains("dark")', $isDark)
+        ->assertNoJavaScriptErrors();
+})->with([
+    'dark in a light browser' => ['dark', 'light', true],
+    'light in a dark browser' => ['light', 'dark', false],
+    'system in a dark browser' => ['system', 'dark', true],
+    'system in a light browser' => ['system', 'light', false],
+])->with(['desktop', 'mobile']);
+
+it('signs an administrator in to the dashboard', function (string $theme, string $device): void {
+    // Arrange
+    withVite();
     User::factory()->create([
-        'name' => 'E2E Admin',
         'email' => 'e2e-admin@example.test',
         'password' => 'e2e-password',
         'is_admin' => true,
     ]);
-
     $page = $this->browserPageWithTheme('/admin/login', $device, $theme);
-
-    foreach (['dark', 'light', 'system'] as $appearance) {
-        $page->click(".tla-auth-theme-switcher button[aria-label='Enable {$appearance} theme']")
-            ->assertScript("localStorage.getItem('theme') === '{$appearance}'")
-            ->assertScript("document.documentElement.classList.contains('dark') === ('{$appearance}' === 'dark' || ('{$appearance}' === 'system' && matchMedia('(prefers-color-scheme: dark)').matches))");
-    }
-
     $page->page()
         ->locator('input[type="email"]')
         ->fill('e2e-admin@example.test');
     $page->page()
         ->locator('input[type="password"]')
         ->fill('e2e-password');
+
+    // Act
     $page->page()
-        ->locator('button[type="submit"]')
+        ->getByRole('button', ['name' => 'Sign in'])
         ->click();
 
+    // Assert
     $page
         ->assertPathIs('/admin')
         ->assertSee('Dashboard')
         ->assertPresent('nav a[href*="posts"]')
         ->assertScript('document.querySelector(".tla-dashboard-hero").scrollWidth <= document.querySelector(".tla-dashboard-hero").clientWidth')
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
-        ->assertNoAccessibilityIssues(1);
+        ->assertNoAccessibilityIssues(1)
+        ->assertNoJavaScriptErrors();
+})->with(['light', 'dark'])
+    ->with(['desktop', 'mobile']);
 
-    // Pest retries a chained click in one-second attempts until the browser timeout. When the machine is slow, a click
-    // can land and still be retried: that toggles the account menu shut again or clicks a link that has already gone.
-    // Click these controls once, with Playwright's own waiting, and let the polled assertions wait for the result.
-    $clickOnce = function (string $selector) use ($page): void {
-        $page->page()
-            ->locator($selector)
-            ->click();
-    };
+/**
+ * Opens the admin account menu once through Playwright: Pest retries a chained click, which could close it again.
+ *
+ * The trigger's aria-expanded is bound by Alpine, so waiting for "false" first also waits for the menu to start.
+ */
+function openAdminUserMenu(AwaitableWebpage $page): AwaitableWebpage
+{
+    $page->assertAttribute('button[aria-label="User menu"]', 'aria-expanded', 'false');
+    $page->page()
+        ->getByRole('button', ['name' => 'User menu'])
+        ->click();
 
-    // Choosing a theme closes the menu with a fade, and a click on the trigger during the fade closes it instead
-    // of reopening it. aria-expanded turns false when the fade has finished.
-    $waitForUserMenuToClose = function () use ($page): void {
-        $page->assertAttribute('.fi-user-menu-trigger', 'aria-expanded', 'false');
-    };
+    $page->assertAttribute('button[aria-label="User menu"]', 'aria-expanded', 'true');
 
-    $clickOnce('.fi-user-menu-trigger');
+    return $page;
+}
+
+it('shows the open admin account menu above the page content', function (string $device): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = $this->browserPage('/admin', $device);
+
+    // Act
+    openAdminUserMenu($page);
+
+    // Assert
     $page->assertSee('Sign out')
         ->assertScript(<<<'JS'
             (() => {
@@ -524,61 +692,145 @@ it('allows an administrator to reach the dashboard', function (string $theme, st
                 const box = menu.getBoundingClientRect();
                 return [0.25, 0.5, 0.75].every(fraction => menu.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height * fraction)));
             })()
-            JS);
-    $clickOnce(".fi-dropdown-panel button[aria-label='Enable dark theme']");
-    $page->assertScript("document.documentElement.classList.contains('dark')");
-    $waitForUserMenuToClose();
-    $clickOnce('.fi-user-menu-trigger');
-    $clickOnce(".fi-dropdown-panel button[aria-label='Enable {$theme} theme']");
-    $waitForUserMenuToClose();
-    $clickOnce('.fi-user-menu-trigger');
-    $clickOnce('.fi-dropdown-panel a[href$="/admin/profile"]');
+            JS)
+        ->assertNoJavaScriptErrors();
+})->with(['desktop', 'mobile']);
+
+it('switches the admin theme from the account menu', function (string $appearance, string $browserTheme, bool $isDark, string $device): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = openAdminUserMenu($this->browserPageWithTheme('/admin', $device, $browserTheme));
+
+    // Act
+    $page->page()
+        ->getByRole('button', ['name' => "Enable {$appearance} theme"])
+        ->click();
+
+    // Assert
+    $page->assertScript('localStorage.getItem("theme")', $appearance)
+        ->assertScript('document.documentElement.classList.contains("dark")', $isDark)
+        ->assertAttribute('button[aria-label="User menu"]', 'aria-expanded', 'false')
+        ->assertNoJavaScriptErrors();
+})->with([
+    'dark in a light browser' => ['dark', 'light', true],
+    'light in a dark browser' => ['light', 'dark', false],
+])->with(['desktop', 'mobile']);
+
+it('opens the admin profile from the account menu', function (string $device): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = openAdminUserMenu($this->browserPage('/admin', $device));
+
+    // Act
+    $page->page()
+        ->locator('a[href$="/admin/profile"]')
+        ->click();
+
+    // Assert
     $page->assertPathIs('/admin/profile')
-        ->assertPresent('.fi-sidebar')
-        ->assertPresent('.fi-user-menu-trigger');
+        ->assertPresent('#fi-main-sidebar')
+        ->assertPresent('button[aria-label="User menu"]')
+        ->assertNoJavaScriptErrors();
+})->with(['desktop', 'mobile']);
 
-    if ($device === 'desktop') {
-        $clickOnce('.fi-sidebar-item-btn[href$="/admin"]');
-    } else {
-        $adminUrl = str_replace('/admin/profile', '/admin', $page->url());
-        $page->page()
-            ->goto($adminUrl);
-    }
+it('returns to the dashboard from the desktop sidebar', function (): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = $this->browserPage('/admin/profile', 'desktop');
 
-    $page->assertPathIs('/admin');
+    // Act
+    $page->page()
+        ->getByRole('navigation', ['name' => 'Sidebar navigation'])
+        ->getByRole('link', ['name' => 'Dashboard', 'exact' => true])
+        ->click();
 
-    if ($device === 'desktop') {
-        $clickOnce('.fi-topbar-close-collapse-sidebar-btn');
-        $page->assertScript(<<<'JS'
-            (() => {
-                const button = document.querySelector('.tla-sidebar-primary');
-                const icon = button.querySelector('.tla-sidebar-primary__icon');
-                const buttonBox = button.getBoundingClientRect();
-                const iconBox = icon.getBoundingClientRect();
-                const centered = Math.abs(buttonBox.x + buttonBox.width / 2 - iconBox.x - iconBox.width / 2) < 1 && Math.abs(buttonBox.y + buttonBox.height / 2 - iconBox.y - iconBox.height / 2) < 1;
-                return !document.querySelector('.fi-sidebar').classList.contains('fi-sidebar-open') && centered && buttonBox.width < 60 && getComputedStyle(button.querySelector('.tla-sidebar-primary__label')).display === 'none';
-            })()
-            JS);
-        $clickOnce('.tla-sidebar-primary');
-    } else {
-        $page->page()
-            ->getByRole('link', ['name' => 'Write post'])
-            ->click();
-    }
+    // Assert
+    $page->assertPathIs('/admin')
+        ->assertNoJavaScriptErrors();
+});
 
+/** JavaScript that is true when the desktop sidebar is collapsed to a centred, icon-only create action. */
+function collapsedSidebarCreateAction(): string
+{
+    return <<<'JS'
+        (() => {
+            const button = document.querySelector('a[aria-label="New post"]');
+            const icon = button.querySelector('.tla-sidebar-primary__icon');
+            const buttonBox = button.getBoundingClientRect();
+            const iconBox = icon.getBoundingClientRect();
+            const centered = Math.abs(buttonBox.x + buttonBox.width / 2 - iconBox.x - iconBox.width / 2) < 1 && Math.abs(buttonBox.y + buttonBox.height / 2 - iconBox.y - iconBox.height / 2) < 1;
+            return !document.getElementById('fi-main-sidebar').classList.contains('fi-sidebar-open') && centered && buttonBox.width < 60 && getComputedStyle(button.querySelector('.tla-sidebar-primary__label')).display === 'none';
+        })()
+        JS;
+}
+
+it('collapses the desktop sidebar to a centred create action', function (): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = $this->browserPage('/admin', 'desktop');
+
+    // Act
+    $page->page()
+        ->getByRole('button', ['name' => 'Collapse sidebar'])
+        ->click();
+
+    // Assert
+    $page->assertScript(collapsedSidebarCreateAction())
+        ->assertNoJavaScriptErrors();
+});
+
+it('opens the post editor from the collapsed desktop sidebar', function (string $theme): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = $this->browserPageWithTheme('/admin', 'desktop', $theme);
+    $page->page()
+        ->getByRole('button', ['name' => 'Collapse sidebar'])
+        ->click();
+    $page->assertScript(collapsedSidebarCreateAction());
+
+    // Act
+    $page->page()
+        ->getByRole('link', ['name' => 'New post'])
+        ->click();
+
+    // Assert
     $page
         ->assertPathIs('/admin/posts/create')
         ->assertPresent('.CodeMirror')
         ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
         ->assertNoAccessibilityIssues(1)
         ->assertNoJavaScriptErrors();
-})->with(['light', 'dark'])
-    ->with(['desktop', 'mobile']);
+})->with(['light', 'dark']);
+
+it('opens the post editor from the dashboard quick link on mobile', function (string $theme): void {
+    // Arrange
+    withVite();
+    actingAs(User::factory()->create(['is_admin' => true]));
+    $page = $this->browserPageWithTheme('/admin', 'mobile', $theme);
+
+    // Act
+    $page->page()
+        ->getByRole('link', ['name' => 'Write post'])
+        ->click();
+
+    // Assert
+    $page
+        ->assertPathIs('/admin/posts/create')
+        ->assertPresent('.CodeMirror')
+        ->assertScript('getComputedStyle(document.querySelector(".fi-main-ctn")).opacity === "1"')
+        ->assertNoAccessibilityIssues(1)
+        ->assertNoJavaScriptErrors();
+})->with(['light', 'dark']);
 
 it('subscribes to the newsletter in place without reloading the page', function (): void {
     withVite();
 
-    $page = $this->browserPage('/', 'desktop');
+    $page = HomePage::visit();
 
     $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
         ->script("window.newsletterMarker = 'kept'");
@@ -599,7 +851,7 @@ it('subscribes to the newsletter in place without reloading the page', function 
 it('shows the newsletter error in place and keeps what was typed', function (): void {
     withVite();
 
-    $page = $this->browserPage('/', 'desktop');
+    $page = HomePage::visit();
 
     $page->assertScript("document.querySelector('[data-newsletter-form]').dataset.ready === 'true'")
         ->script("window.newsletterMarker = 'kept'");
@@ -699,13 +951,37 @@ it('shows the confirming state from the first paint and never the confirm prompt
 });
 
 it('loads Cloudflare Turnstile once when the contact form is used', function (): void {
+    // Arrange
     config()->set('services.turnstile.site_key', 'test-site-key');
     withVite();
+    // Stands in for Cloudflare's script so the test needs no network: the inserted tag keeps its src but gets a
+    // non-JavaScript type, which stops the browser fetching it, and a stub widget API records each render.
+    $turnstileStub = <<<'SCRIPT'
+        if (location.pathname === '/contact') {
+            window.turnstileRenders = [];
+            const append = HTMLHeadElement.prototype.append;
+            HTMLHeadElement.prototype.append = function (...nodes) {
+                nodes.filter(node => node instanceof HTMLScriptElement && node.src.startsWith('https://challenges.cloudflare.com/turnstile/'))
+                    .forEach(script => {
+                        script.type = 'text/plain';
+                        window.turnstile = { render: (widget, options) => window.turnstileRenders.push(options.sitekey) };
+                        setTimeout(() => script.dispatchEvent(new Event('load')));
+                    });
 
-    $page = $this->browserPage('/contact', 'desktop');
-
+                return append.apply(this, nodes);
+            };
+        }
+        SCRIPT;
+    $page = HomePage::visit();
+    $page->page()
+        ->context()
+        ->addInitScript($turnstileStub);
+    $page->page()
+        ->goto(route('contact.create'));
     $page->assertScript("document.querySelectorAll('[data-turnstile-widget]').length === 1")
         ->assertScript("document.querySelector('[data-contact-form]').dataset.ready === 'true'");
+
+    // Act
     $page->page()
         ->locator('input[name="name"]')
         ->focus();
@@ -713,5 +989,9 @@ it('loads Cloudflare Turnstile once when the contact form is used', function ():
         ->locator('input[name="email"]')
         ->focus();
 
-    $page->assertScript("document.querySelectorAll('script[src*=\"challenges.cloudflare.com/turnstile\"]').length === 1");
+    // Assert
+    $page->assertScript("document.querySelectorAll('script[src*=\"challenges.cloudflare.com/turnstile\"]').length === 1")
+        ->assertScript('JSON.stringify(window.turnstileRenders)', '["test-site-key"]')
+        ->assertScript("!performance.getEntriesByType('resource').some(entry => entry.name.includes('challenges.cloudflare.com'))")
+        ->assertNoJavaScriptErrors();
 });

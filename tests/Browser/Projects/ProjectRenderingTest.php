@@ -49,31 +49,62 @@ it('renders responsive project images without overflow', function (string $route
 })->with(['projects.index', 'projects.show'])
     ->with(['mobile', 'desktop']);
 
-it('keeps image-free projects navigable', function (string $device) {
+it('lists an image-free project without overflow', function (string $device) {
+    // Arrange
     withVite();
-
-    $project = Project::factory()
+    Project::factory()
         ->published()
         ->create(['content' => null]);
 
+    // Act
     $page = $this->browserPage(route('projects.index', absolute: false), $device);
 
-    $page = $page->assertSeeIn('#more-projects-heading', 'More projects')
+    // Assert
+    $page->assertSeeIn('#more-projects-heading', 'More projects')
         ->assertCount('[data-project-entry]', 1)
         ->assertCount('[data-project-entry] img', 0)
-        ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth');
+        ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
+        ->assertNoJavaScriptErrors();
+})->with(['mobile', 'desktop']);
 
-    $page->click('[data-project-entry] h3 a');
+it('opens an image-free project from its index entry', function (string $device) {
+    // Arrange
+    withVite();
+    $project = Project::factory()
+        ->published()
+        ->create(['content' => null]);
+    $page = $this->browserPage(route('projects.index', absolute: false), $device);
 
+    // Act
+    $page->page()
+        ->locator('[data-project-entry] h3 a')
+        ->click();
+
+    // Assert
     $page->assertSeeIn('#main-content h1', $project->title)
         ->assertCount('[data-project-detail] img', 0)
         ->assertSee('The full project story is coming soon.')
         ->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
         ->assertNoJavaScriptErrors();
+})->with(['mobile', 'desktop']);
 
-    $page->click('All projects');
+it('returns from an image-free project to the projects index', function (string $device) {
+    // Arrange
+    withVite();
+    $project = Project::factory()
+        ->published()
+        ->create(['content' => null]);
+    $page = $this->browserPage(route('projects.show', $project, absolute: false), $device);
 
-    $page->assertSeeIn('#main-content h1', 'Selected projects');
+    // Act
+    $page->page()
+        ->getByRole('navigation', ['name' => 'Breadcrumb'])
+        ->getByRole('link', ['name' => 'All projects'])
+        ->click();
+
+    // Assert
+    $page->assertSeeIn('#main-content h1', 'Selected projects')
+        ->assertNoJavaScriptErrors();
 })->with(['mobile', 'desktop']);
 
 it('offers contact when there are no published projects', function (string $device) {

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RuntimeException;
 
 use function Pest\Laravel\withVite;
 
@@ -14,28 +13,15 @@ beforeEach(function (): void {
 });
 
 it('keeps public routes within the mobile viewport', function (string $route): void {
+    // Arrange
     withVite();
 
+    // Act
     $page = $this->browserPageWithTheme($route, 'mobile', 'dark');
 
-    $dimensions = $page->page()
-        ->evaluate('() => ({
-        clientWidth: document.documentElement.clientWidth,
-        scrollWidth: document.documentElement.scrollWidth,
-    })');
-
-    if (! is_array($dimensions)
-        || ! isset($dimensions['clientWidth'], $dimensions['scrollWidth'])
-        || ! is_int($dimensions['clientWidth'])
-        || ! is_int($dimensions['scrollWidth'])) {
-        throw new RuntimeException('The browser viewport dimensions were not returned.');
-    }
-
-    expect($dimensions['scrollWidth'])->toBeLessThanOrEqual($dimensions['clientWidth'])
-        ->and($page->page()
-            ->locator('body')
-            ->isVisible())
-        ->toBeTrue();
+    // Assert
+    $page->assertScript('document.documentElement.scrollWidth <= document.documentElement.clientWidth')
+        ->assertNoJavaScriptErrors();
 })->with([
     '/',
     '/about',
@@ -51,70 +37,84 @@ it('keeps public routes within the mobile viewport', function (string $route): v
     '/uses',
 ]);
 
-it('opens mobile navigation and navigates to the blog', function (): void {
+it('opens the mobile navigation from the menu button', function (): void {
+    // Arrange
     withVite();
+    $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'dark'));
+    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'false')
+        ->assertScript('document.querySelector("#mobile-menu").hidden');
 
+    // Act
+    $page->page()
+        ->getByRole('button', ['name' => 'Toggle menu'])
+        ->click();
+
+    // Assert
+    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'true')
+        ->assertVisible('#mobile-menu')
+        ->assertNoJavaScriptErrors();
+});
+
+it('closes the mobile navigation with Escape', function (): void {
+    // Arrange
+    withVite();
     $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'dark'));
     $menuButton = $page->page()
         ->getByRole('button', ['name' => 'Toggle menu']);
-
-    expect($page->page()
-        ->locator('#mobile-menu')
-        ->isHidden())->toBeTrue()
-        ->and($menuButton->getAttribute('aria-expanded'))
-        ->toBe('false');
-
     $menuButton->click();
+    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'true');
 
-    expect($page->page()
-        ->locator('#mobile-menu')
-        ->isVisible())->toBeTrue()
-        ->and($menuButton->getAttribute('aria-expanded'))
-        ->toBe('true');
-
+    // Act
     $menuButton->press('Escape');
-    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'false')
-        ->assertScript('document.querySelector("#mobile-menu").hidden');
-    $menuButton->click();
 
+    // Assert
+    $page->assertAttribute('#mobile-menu-btn', 'aria-expanded', 'false')
+        ->assertScript('document.querySelector("#mobile-menu").hidden')
+        ->assertNoJavaScriptErrors();
+});
+
+it('navigates to the blog from the mobile navigation', function (): void {
+    // Arrange
+    withVite();
+    $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'dark'));
+    $page->page()
+        ->getByRole('button', ['name' => 'Toggle menu'])
+        ->click();
+    $page->assertVisible('#mobile-menu');
+
+    // Act
     $page->page()
         ->locator('#mobile-menu')
         ->getByRole('link', ['name' => 'Writing', 'exact' => true])
         ->click();
 
+    // Assert
     $page->assertPathIs('/blog')
         ->assertSee('Notes from the work.')
         ->assertNoJavaScriptErrors();
 });
 
 it('persists the mobile theme choice across navigation', function (): void {
+    // Arrange
     withVite();
-
     $page = $this->waitForSiteHeader($this->browserPageWithTheme('/', 'mobile', 'light'));
-    $root = $page->page()
-        ->locator('html');
-    $themeToggle = $page->page()
-        ->locator('.theme-toggle-mobile');
     $page->page()
         ->getByRole('button', ['name' => 'Toggle menu'])
         ->click();
+    $page->assertVisible('#mobile-menu')
+        ->assertScript('document.documentElement.classList.contains("dark")', false)
+        ->assertAttribute('#mobile-menu [data-theme-toggle]', 'aria-pressed', 'false');
 
-    expect($root->getAttribute('class'))->not->toContain('dark')
-        ->and($themeToggle->getAttribute('aria-pressed'))
-        ->toBe('false');
-
-    $themeToggle->click();
-
-    expect($themeToggle->getAttribute('aria-pressed'))->toBe('true')
-        ->and($page->page()
-            ->evaluate('localStorage.getItem("theme")'))
-        ->toBe('dark');
-
+    // Act
+    $page->page()
+        ->locator('#mobile-menu [data-theme-toggle]')
+        ->click();
+    $page->assertAttribute('#mobile-menu [data-theme-toggle]', 'aria-pressed', 'true')
+        ->assertScript('localStorage.getItem("theme")', 'dark');
     $page->page()
         ->reload();
 
-    expect($page->page()
-        ->locator('html')
-        ->getAttribute('class'))->toContain('dark');
-    $page->assertNoJavaScriptErrors();
+    // Assert
+    $page->assertScript('document.documentElement.classList.contains("dark")')
+        ->assertNoJavaScriptErrors();
 });
