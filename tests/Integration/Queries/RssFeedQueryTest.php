@@ -34,3 +34,22 @@ it('returns the twenty newest published posts, newest first', function () {
         ->and($titles)
         ->not->toContain('Feed post 21');
 });
+
+it('leaves draft and scheduled posts out of the feed', function () {
+    // Arrange
+    Post::factory()
+        ->published()
+        ->create(['title' => 'Live entry']);
+    Post::factory()->create(['title' => 'Draft entry']);
+    Post::factory()
+        ->scheduled()
+        ->create(['title' => 'Scheduled entry']);
+
+    // Act
+    $titles = app(RssFeedQuery::class)
+        ->get()
+        ->pluck('title');
+
+    // Assert
+    expect($titles->all())->toBe(['Live entry']);
+});
