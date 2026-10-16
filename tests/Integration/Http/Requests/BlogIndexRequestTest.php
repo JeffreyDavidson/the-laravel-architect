@@ -27,20 +27,24 @@ it('accepts a trimmed search term and an existing category', function () {
     // Arrange
     Category::factory()->create(['slug' => 'architecture']);
 
+    $query = ['q' => '  queues ', 'category' => ' architecture ', 'page' => '3'];
+
     // Act
-    $request = validatedBlogIndexRequest(['q' => '  queues ', 'category' => ' architecture ', 'page' => '3']);
+    $request = validatedBlogIndexRequest($query);
 
     // Assert
     expect($request->validated())->toBe(['q' => 'queues', 'category' => 'architecture', 'page' => '3']);
 });
 
 it('treats a malformed blog filter as not found', function (array $query) {
-    // Act
-    validatedBlogIndexRequest($query);
-})->throws(NotFoundHttpException::class)
-    ->with([
-        'unknown category' => [['category' => 'no-such-category']],
-        'overlong term' => [['q' => str_repeat('a', 121)]],
-        'category list' => [['category' => ['architecture']]],
-        'page zero' => [['page' => '0']],
-    ]);
+    // Arrange
+    $validate = fn (): BlogIndexRequest => validatedBlogIndexRequest($query);
+
+    // Act and Assert
+    expect($validate)->toThrow(NotFoundHttpException::class);
+})->with([
+    'unknown category' => [['category' => 'no-such-category']],
+    'overlong term' => [['q' => str_repeat('a', 121)]],
+    'category list' => [['category' => ['architecture']]],
+    'page zero' => [['page' => '0']],
+]);

@@ -20,21 +20,26 @@ function validatedArchiveIndexRequest(array $query): ArchiveIndexRequest
 }
 
 it('accepts and trims the archive filters', function () {
+    // Arrange
+    $query = ['type' => '  writing ', 'year' => '2025', 'page' => '2'];
+
     // Act
-    $request = validatedArchiveIndexRequest(['type' => '  writing ', 'year' => '2025', 'page' => '2']);
+    $request = validatedArchiveIndexRequest($query);
 
     // Assert
     expect($request->validated())->toBe(['type' => 'writing', 'year' => '2025', 'page' => '2']);
 });
 
 it('treats a malformed archive filter as not found', function (array $query) {
-    // Act
-    validatedArchiveIndexRequest($query);
-})->throws(NotFoundHttpException::class)
-    ->with([
-        'unknown type' => [['type' => 'podcast-season']],
-        'type list' => [['type' => ['writing']]],
-        'year before 2000' => [['year' => '1999']],
-        'future year' => [['year' => (string) (now()->year + 1)]],
-        'page zero' => [['page' => '0']],
-    ]);
+    // Arrange
+    $validate = fn (): ArchiveIndexRequest => validatedArchiveIndexRequest($query);
+
+    // Act and Assert
+    expect($validate)->toThrow(NotFoundHttpException::class);
+})->with([
+    'unknown type' => [['type' => 'podcast-season']],
+    'type list' => [['type' => ['writing']]],
+    'year before 2000' => [['year' => '1999']],
+    'future year' => [['year' => (string) (now()->year + 1)]],
+    'page zero' => [['page' => '0']],
+]);

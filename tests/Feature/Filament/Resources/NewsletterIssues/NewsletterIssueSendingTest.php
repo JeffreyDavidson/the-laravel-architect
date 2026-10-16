@@ -170,7 +170,8 @@ it('hides the sending actions from a user who is not an administrator', function
 })->with(['sendTestEmail', 'sendToSubscribers']);
 
 it('refuses the sending actions when a non-administrator calls them directly', function (string $action) {
-    // Arrange: the page is open for an admin, then the user loses admin rights
+    // Arrange
+    // The page is opened by an admin, then the signed-in user loses admin rights.
     Mail::fake();
     Subscriber::factory()->create();
     $issue = editableNewsletterIssue(['title' => 'Issue One']);
