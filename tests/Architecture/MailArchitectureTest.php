@@ -8,8 +8,7 @@ arch('names mailables after their purpose with a Mail suffix')
     ->expect('App\Mail')
     ->classes()
     ->toHaveSuffix('Mail')
-    ->toExtend(Mailable::class)
-    ->ignoring('App\Mail\Concerns');
+    ->toExtend(Mailable::class);
 
 arch('names notifications after their purpose with a Notification suffix')
     ->expect('App\Notifications')

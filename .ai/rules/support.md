@@ -16,4 +16,4 @@ Answer all five; any "yes" to 1-4 means the class goes elsewhere.
 4. Would a product owner call what it does a business rule? Use an Action with a custom exception, or a domain folder such as `app/Publishing`.
 5. Can it be named after a technical concern and copied to another app? Only then is it Support.
 
-`tests/Architecture/SupportArchitectureTest.php` forbids `App\Models`, `App\Presenters`, `App\ViewModels`, `App\Http`, `App\Filament`, the Request and `abort*` in `App\Support`, with no exceptions.
+`tests/Architecture/SupportArchitectureTest.php` forbids every other `App\` namespace, Filament, Livewire, the Request and `abort*` in `App\Support`, with no exceptions.
