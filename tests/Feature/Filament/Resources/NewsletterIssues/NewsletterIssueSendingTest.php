@@ -34,21 +34,32 @@ function editableNewsletterIssue(array $overrides = []): NewsletterIssue
         ->create($overrides);
 }
 
-it('offers sending only for published issues that have not been sent', function (Closure $createIssue, bool $visible) {
+it('offers sending for a published issue that has not been sent', function () {
+    // Arrange
+    $issue = editableNewsletterIssue();
+
+    // Act
+    $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
+
+    // Assert
+    $page->assertActionVisible('sendToSubscribers');
+});
+
+it('does not offer sending for a draft or already sent issue', function (Closure $createIssue) {
+    // Arrange
     $issue = $createIssue();
     if (! $issue instanceof NewsletterIssue) {
         throw new RuntimeException('The dataset must create a newsletter issue.');
     }
 
+    // Act
     $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
 
-    $visible
-        ? $page->assertActionVisible('sendToSubscribers')
-        : $page->assertActionHidden('sendToSubscribers');
+    // Assert
+    $page->assertActionHidden('sendToSubscribers');
 })->with([
-    'published' => [fn (): NewsletterIssue => editableNewsletterIssue(), true],
-    'draft' => [fn (): NewsletterIssue => editableNewsletterIssue(['status' => PublishStatus::Draft]), false],
-    'already sent' => [fn (): NewsletterIssue => editableNewsletterIssue(['sent_at' => now()]), false],
+    'draft' => [fn (): NewsletterIssue => editableNewsletterIssue(['status' => PublishStatus::Draft])],
+    'already sent' => [fn (): NewsletterIssue => editableNewsletterIssue(['sent_at' => now()])],
 ]);
 
 it('queues the issue for active subscribers', function () {

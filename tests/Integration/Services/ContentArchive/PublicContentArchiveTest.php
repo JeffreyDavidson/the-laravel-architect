@@ -275,7 +275,8 @@ test('export query count stays bounded as tagged content grows', function (): vo
         ->toBe($initialQueryCount);
 });
 
-it('exports and synchronizes published newsletter issues', function () {
+it('exports published newsletter issues', function () {
+    // Arrange
     $issue = NewsletterIssue::factory()
         ->published()
         ->create([
@@ -283,19 +284,33 @@ it('exports and synchronizes published newsletter issues', function () {
             'content' => 'Issue content.',
         ]);
 
+    // Act
     $archive = app(PublicContentArchiveExporter::class)->export();
-    $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
 
+    // Assert
+    $issues = publicArchiveRecords($archive['newsletter_issues'] ?? null);
     expect($issues)->toHaveCount(1)
         ->and($issues[0]['slug'])
         ->toBe($issue->slug)
         ->and($issues[0]['content'])
         ->toBe('Issue content.');
+});
 
+it('synchronizes exported newsletter issues', function () {
+    // Arrange
+    NewsletterIssue::factory()
+        ->published()
+        ->create([
+            'title' => 'Production newsletter issue',
+            'content' => 'Issue content.',
+        ]);
+    $archive = app(PublicContentArchiveExporter::class)->export();
     NewsletterIssue::query()->delete();
 
+    // Act
     $counts = app(PublicContentArchiveImporter::class)->sync($archive);
 
+    // Assert
     expect($counts['newsletter_issues'])->toBe(1)
         ->and(NewsletterIssue::query()->sole()
             ->title)
@@ -369,23 +384,20 @@ test('only public content and its presentation data are exported', function (): 
         ->not->toContain('Private editorial note');
 });
 
-test('public content is synchronized without importing production identities', function (): void {
+test('public content is synchronized with its presentation data', function (): void {
+    // Arrange
     config()->set('content-sync.staging_author.email', 'staging-content@example.test');
     config()->set('content-sync.staging_author.name', 'Staging Content');
-    $localDraft = Post::factory()->create();
-    $stale = Post::factory()
-        ->published()
-        ->create();
 
+    // Act
     $counts = app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
 
+    // Assert
     $post = Post::query()->where('slug', 'production-post')
         ->sole();
     $project = Project::query()->where('slug', 'production-project')
         ->firstOrFail();
     $podcast = Podcast::query()->where('slug', 'production-podcast')
-        ->firstOrFail();
-    $stagingAuthor = User::query()->where('email', 'staging-content@example.test')
         ->firstOrFail();
     $seo = $post->seo()
         ->firstOrFail();
@@ -400,22 +412,63 @@ test('public content is synchronized without importing production identities', f
         ->toBe(['Laravel'])
         ->and($seo->getAttribute('canonical_url'))
         ->toBe('https://thelaravelarchitect.com/blog/production-post')
-        ->and($post->user_id)
-        ->toBe($stagingAuthor->getKey())
-        ->and($stagingAuthor->is_admin)
-        ->toBeFalse()
         ->and($project->tech_stack)
         ->toBe(['Laravel', 'Pest'])
         ->and($podcast->is_active)
-        ->toBeTrue()
-        ->and($localDraft->fresh()
-            ?->status)
+        ->toBeTrue();
+});
+
+test('public content is synchronized under a staging author without importing production identities', function (): void {
+    // Arrange
+    config()->set('content-sync.staging_author.email', 'staging-content@example.test');
+    config()->set('content-sync.staging_author.name', 'Staging Content');
+
+    // Act
+    app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
+
+    // Assert
+    $post = Post::query()->where('slug', 'production-post')
+        ->sole();
+    $stagingAuthor = User::query()->where('email', 'staging-content@example.test')
+        ->firstOrFail();
+
+    expect($post->user_id)
+        ->toBe($stagingAuthor->getKey())
+        ->and($stagingAuthor->is_admin)
+        ->toBeFalse();
+});
+
+test('synchronizing public content leaves local drafts unchanged', function (): void {
+    // Arrange
+    config()->set('content-sync.staging_author.email', 'staging-content@example.test');
+    config()->set('content-sync.staging_author.name', 'Staging Content');
+    $localDraft = Post::factory()->create();
+
+    // Act
+    app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
+
+    // Assert
+    expect($localDraft->fresh()
+        ?->status)
+        ->toBe(PublishStatus::Draft);
+});
+
+test('synchronizing public content unpublishes posts missing from the archive', function (): void {
+    // Arrange
+    config()->set('content-sync.staging_author.email', 'staging-content@example.test');
+    config()->set('content-sync.staging_author.name', 'Staging Content');
+    $stale = Post::factory()
+        ->published()
+        ->create();
+
+    // Act
+    app(PublicContentArchiveImporter::class)->sync(publicContentArchiveFixture());
+
+    // Assert
+    $stale->refresh();
+    expect($stale->status)
         ->toBe(PublishStatus::Draft)
-        ->and($stale->fresh()
-            ?->status)
-        ->toBe(PublishStatus::Draft)
-        ->and($stale->fresh()
-            ?->published_at)
+        ->and($stale->published_at)
         ->toBeNull();
 });
 

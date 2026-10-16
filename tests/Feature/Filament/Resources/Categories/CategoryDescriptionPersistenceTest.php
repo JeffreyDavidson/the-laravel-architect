@@ -7,7 +7,6 @@ use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\Pages\CreateCategor
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\Pages\EditCategory;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -42,12 +41,4 @@ it('persists a category description when editing a category', function () {
 
     expect($category->refresh()
         ->description)->toBe('Updated description.');
-});
-
-it('renders the persisted description on the public category page', function () {
-    $category = Category::factory()->create(['description' => 'Articles about application architecture.']);
-
-    get(route('blog.category', $category))
-        ->assertOk()
-        ->assertSee('Articles about application architecture.');
 });

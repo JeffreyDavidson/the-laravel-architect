@@ -70,24 +70,32 @@ it('schedules content with a future publish date', function () {
         ->toBeTrue();
 });
 
-it('offers publishing only for content that is neither live nor scheduled', function (?int $days, bool $visible) {
+it('offers publishing for draft content', function () {
+    // Arrange
     $record = PublishableFixtures::ready('post');
 
-    if ($days !== null) {
-        $record->forceFill(['published_at' => now()->addDays($days)])
-            ->save();
-        $record->publish();
-    }
-
+    // Act
     $page = livewire(PublishableFixtures::editPage('post'), ['record' => $record->getRouteKey()]);
 
-    $visible
-        ? $page->assertActionVisible('publish')
-        : $page->assertActionHidden('publish');
+    // Assert
+    $page->assertActionVisible('publish');
+});
+
+it('does not offer publishing for content that is live or scheduled', function (int $days) {
+    // Arrange
+    $record = PublishableFixtures::ready('post');
+    $record->forceFill(['published_at' => now()->addDays($days)])
+        ->save();
+    $record->publish();
+
+    // Act
+    $page = livewire(PublishableFixtures::editPage('post'), ['record' => $record->getRouteKey()]);
+
+    // Assert
+    $page->assertActionHidden('publish');
 })->with([
-    'draft' => [null, true],
-    'published' => [-1, false],
-    'scheduled' => [1, false],
+    'published' => [-1],
+    'scheduled' => [1],
 ]);
 
 it('schedules content for a future publish date entered but not yet saved', function (string $type) {
@@ -112,21 +120,22 @@ it('schedules content for a future publish date entered but not yet saved', func
         ->toBeTrue();
 })->with('dated publishable types');
 
-it('publishes content immediately when the unsaved publish date is past or empty', function (string $type, ?int $daysAgo) {
+it('publishes content immediately when the unsaved publish date is in the past', function (string $type) {
+    // Arrange
     freezeSecond();
     $record = PublishableFixtures::ready($type, ['published_at' => now()->addWeek()]);
     $record->unpublish();
-    $expectedPublishedAt = $daysAgo === null
-        ? now()
-        : now()->subDays($daysAgo);
+    $expectedPublishedAt = now()->subDays(2);
 
-    livewire(PublishableFixtures::editPage($type), ['record' => $record->getRouteKey()])
-        ->fillForm(['published_at' => $daysAgo === null
-            ? null
-            : $expectedPublishedAt->copy()
-                ->setTimezone(DisplayTimezone::name())
-                ->format('Y-m-d H:i:s')])
-        ->callAction('publish')
+    // Act
+    $component = livewire(PublishableFixtures::editPage($type), ['record' => $record->getRouteKey()])
+        ->fillForm(['published_at' => $expectedPublishedAt->copy()
+            ->setTimezone(DisplayTimezone::name())
+            ->format('Y-m-d H:i:s')])
+        ->callAction('publish');
+
+    // Assert
+    $component
         ->assertHasNoFormErrors()
         ->assertSchemaStateSet(['status' => PublishStatus::Published->value]);
 
@@ -137,12 +146,33 @@ it('publishes content immediately when the unsaved publish date is past or empty
         ->toBe(PublishStatus::Published)
         ->and($publishedAt?->equalTo($expectedPublishedAt))
         ->toBeTrue();
-})
-    ->with('dated publishable types')
-    ->with([
-        'past date' => [2],
-        'empty date' => [null],
-    ]);
+})->with('dated publishable types');
+
+it('publishes content immediately when the unsaved publish date is empty', function (string $type) {
+    // Arrange
+    freezeSecond();
+    $record = PublishableFixtures::ready($type, ['published_at' => now()->addWeek()]);
+    $record->unpublish();
+    $expectedPublishedAt = now();
+
+    // Act
+    $component = livewire(PublishableFixtures::editPage($type), ['record' => $record->getRouteKey()])
+        ->fillForm(['published_at' => null])
+        ->callAction('publish');
+
+    // Assert
+    $component
+        ->assertHasNoFormErrors()
+        ->assertSchemaStateSet(['status' => PublishStatus::Published->value]);
+
+    $record->refresh();
+    $publishedAt = $record->publishedAt();
+
+    expect($record->getAttribute('status'))
+        ->toBe(PublishStatus::Published)
+        ->and($publishedAt?->equalTo($expectedPublishedAt))
+        ->toBeTrue();
+})->with('dated publishable types');
 
 it('checks readiness against details entered but not yet saved', function () {
     $record = PublishableFixtures::ready('post', ['excerpt' => '']);

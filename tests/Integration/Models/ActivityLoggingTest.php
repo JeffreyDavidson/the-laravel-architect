@@ -27,36 +27,58 @@ function latestActivityFor(Model $subject): Activity
         ->firstOrFail();
 }
 
-it('records operational post changes without recording long-form content', function () {
+it('does not record post activity when only long-form content changes', function () {
+    // Arrange
     $post = Post::factory()->create();
     $post->refresh();
     $initialActivityCount = activityCountFor($post);
 
+    // Act
     $post->update(['content' => 'Updated content.']);
 
+    // Assert
     expect(activityCountFor($post))
         ->toBe($initialActivityCount);
+});
 
+it('records operational post changes without recording long-form content', function () {
+    // Arrange
+    $post = Post::factory()->create();
+    $post->refresh();
+
+    // Act
     $post->update(['title' => 'Updated activity logging']);
 
+    // Assert
     expect(latestActivityFor($post)->attribute_changes?->get('attributes'))
         ->toHaveKey('title', 'Updated activity logging')
         ->not
         ->toHaveKeys(['content', 'excerpt', 'review_notes']);
 });
 
-it('records operational newsletter issue changes without recording long-form content', function () {
+it('does not record newsletter issue activity when only long-form content changes', function () {
+    // Arrange
     $issue = NewsletterIssue::factory()->create();
     $issue->refresh();
     $initialActivityCount = activityCountFor($issue);
 
+    // Act
     $issue->update(['content' => 'Updated content.', 'excerpt' => 'Updated excerpt.']);
 
+    // Assert
     expect(activityCountFor($issue))
         ->toBe($initialActivityCount);
+});
 
+it('records operational newsletter issue changes without recording long-form content', function () {
+    // Arrange
+    $issue = NewsletterIssue::factory()->create();
+    $issue->refresh();
+
+    // Act
     $issue->update(['title' => 'Updated activity logging']);
 
+    // Assert
     expect(latestActivityFor($issue)->attribute_changes?->get('attributes'))
         ->toHaveKey('title', 'Updated activity logging')
         ->not

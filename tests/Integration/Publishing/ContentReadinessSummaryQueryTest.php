@@ -9,21 +9,47 @@ use function Pest\Laravel\travel;
 
 pest()->use(RefreshDatabase::class);
 
-it('counts the incomplete records of every area and caches the counts for a minute', function () {
+it('counts the incomplete records of every area', function () {
+    // Arrange
     Episode::factory()->create();
     $summary = app(ContentReadinessSummaryQuery::class);
 
+    // Act
     $counts = $summary->outstandingCounts();
-    Episode::factory()->create();
-    $cachedCounts = $summary->outstandingCounts();
-    travel(61)->seconds();
-    $refreshedCounts = $summary->outstandingCounts();
 
+    // Assert
     expect(array_keys($counts))->toBe(array_column(ContentReadinessArea::cases(), 'value'))
         ->and($counts[ContentReadinessArea::EpisodeDetails->value])
-        ->toBe(1)
-        ->and($cachedCounts[ContentReadinessArea::EpisodeDetails->value])
-        ->toBe(1)
-        ->and($refreshedCounts[ContentReadinessArea::EpisodeDetails->value])
+        ->toBe(1);
+});
+
+it('serves the cached counts within a minute', function () {
+    // Arrange
+    Episode::factory()->create();
+    $summary = app(ContentReadinessSummaryQuery::class);
+    $summary->outstandingCounts();
+    Episode::factory()->create();
+
+    // Act
+    $cachedCounts = $summary->outstandingCounts();
+
+    // Assert
+    expect($cachedCounts[ContentReadinessArea::EpisodeDetails->value])
+        ->toBe(1);
+});
+
+it('refreshes the counts once the minute has passed', function () {
+    // Arrange
+    Episode::factory()->create();
+    $summary = app(ContentReadinessSummaryQuery::class);
+    $summary->outstandingCounts();
+    Episode::factory()->create();
+    travel(61)->seconds();
+
+    // Act
+    $refreshedCounts = $summary->outstandingCounts();
+
+    // Assert
+    expect($refreshedCounts[ContentReadinessArea::EpisodeDetails->value])
         ->toBe(2);
 });

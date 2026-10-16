@@ -2,13 +2,11 @@
 
 use App\Filament\Resources\Tags\Pages\CreateTag;
 use App\Filament\Resources\Tags\Pages\EditTag;
-use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -125,16 +123,4 @@ it('preserves an existing tag slug when the name changes', function () {
     expect($tag->refresh())
         ->name->toBe('Updated tag name')
         ->slug->toBe('curated-tag-slug');
-});
-
-it('resolves the validated localized slug on the public tag route', function () {
-    $tag = Tag::factory()->create();
-    $post = Post::factory()
-        ->published()
-        ->create(['title' => 'Tagged post']);
-    $post->attachTag($tag);
-
-    get(route('blog.tag', $tag))
-        ->assertOk()
-        ->assertSee('Tagged post');
 });

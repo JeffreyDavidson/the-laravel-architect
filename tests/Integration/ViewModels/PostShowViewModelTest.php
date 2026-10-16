@@ -42,45 +42,69 @@ it('builds the post detail payload', function () {
         ->toBe('article');
 });
 
-it('shares the wide image and fills empty SEO fields from the ones saved in the admin', function (bool $hasSavedRow) {
+it('shares the wide image and fills empty SEO fields from the ones saved in the admin', function () {
+    // Arrange
     Schema::useFixedOrigin();
     $post = Post::factory()
         ->published()
         ->create(['title' => 'Shipping Laravel', 'slug' => 'shipping-laravel', 'excerpt' => null]);
+    $post->seo()
+        ->update([
+            'title' => 'Saved title',
+            'description' => 'Saved description.',
+            'image' => 'posts/saved.png',
+            'robots' => 'noindex, follow',
+            'canonical_url' => 'https://canonical.test/shipping-laravel',
+        ]);
+    $post->refresh();
 
-    if ($hasSavedRow) {
-        $post->seo()
-            ->update([
-                'title' => 'Saved title',
-                'description' => 'Saved description.',
-                'image' => 'posts/saved.png',
-                'robots' => 'noindex, follow',
-                'canonical_url' => 'https://canonical.test/shipping-laravel',
-            ]);
-    } else {
-        $post->seo()
-            ->delete();
-    }
-
+    // Act
     $data = app(PostShowViewModel::class)
-        ->data($post->refresh());
-    $seo = $data['pageMeta']->seo;
+        ->data($post);
 
+    // Assert
+    $seo = $data['pageMeta']->seo;
     expect($seo->title)->toBe('Shipping Laravel')
         ->and($seo->description)
-        ->toBe($hasSavedRow ? 'Saved description.' : null)
+        ->toBe('Saved description.')
         ->and($seo->image)
         ->toBe('https://example.test/og-image/shipping-laravel')
         ->and($seo->robots)
-        ->toBe($hasSavedRow ? 'noindex, follow' : null)
+        ->toBe('noindex, follow')
         ->and($seo->canonical_url)
-        ->toBe($hasSavedRow ? 'https://canonical.test/shipping-laravel' : null)
+        ->toBe('https://canonical.test/shipping-laravel')
         ->and($seo->published_time?->toIso8601String())
         ->toBe($post->published_at?->toIso8601String());
-})->with([
-    'saved SEO row' => true,
-    'no SEO row' => false,
-]);
+});
+
+it('shares the wide image and leaves the optional SEO fields empty without a saved SEO row', function () {
+    // Arrange
+    Schema::useFixedOrigin();
+    $post = Post::factory()
+        ->published()
+        ->create(['title' => 'Shipping Laravel', 'slug' => 'shipping-laravel', 'excerpt' => null]);
+    $post->seo()
+        ->delete();
+    $post->refresh();
+
+    // Act
+    $data = app(PostShowViewModel::class)
+        ->data($post);
+
+    // Assert
+    $seo = $data['pageMeta']->seo;
+    expect($seo->title)->toBe('Shipping Laravel')
+        ->and($seo->description)
+        ->toBeNull()
+        ->and($seo->image)
+        ->toBe('https://example.test/og-image/shipping-laravel')
+        ->and($seo->robots)
+        ->toBeNull()
+        ->and($seo->canonical_url)
+        ->toBeNull()
+        ->and($seo->published_time?->toIso8601String())
+        ->toBe($post->published_at?->toIso8601String());
+});
 
 it('describes a post as an article with blog breadcrumbs', function () {
     Schema::useFixedOrigin();

@@ -69,12 +69,22 @@ function seoRowCount(Model $record): int
 
 dataset('soft deleting content', ['post', 'project', 'episode', 'newsletter issue', 'podcast']);
 
+dataset('soft deleting content with an owned image', [
+    'post' => ['post', 'post/image.png'],
+    'project' => ['project', 'project/image.png'],
+    'episode' => ['episode', 'episode/image.png'],
+    'podcast' => ['podcast', 'podcasts/cover.png'],
+]);
+
 it('moves deleted content to the trash while keeping everything it owns', function (string $type) {
+    // Arrange
     $record = contentWithOwnedData($type);
     $tags = tagLinkCount($record);
 
+    // Act
     $record->delete();
 
+    // Assert
     expect($record->trashed())
         ->toBeTrue()
         ->and($record::query()->find($record->getKey()))
@@ -85,11 +95,20 @@ it('moves deleted content to the trash while keeping everything it owns', functi
         ->toBe(1)
         ->and(tagLinkCount($record))
         ->toBe($tags);
-
-    if (ownedImagePath($record) !== null) {
-        Storage::disk('public')->assertExists(ownedImagePath($record));
-    }
 })->with('soft deleting content');
+
+it('keeps the owned image of trashed content', function (string $type, string $imagePath) {
+    // Arrange
+    $record = contentWithOwnedData($type);
+
+    // Act
+    $record->delete();
+
+    // Assert
+    expect(ownedImagePath($record))
+        ->toBe($imagePath);
+    Storage::disk('public')->assertExists($imagePath);
+})->with('soft deleting content with an owned image');
 
 it('restores trashed content with everything it owns', function (string $type) {
     $record = contentWithOwnedData($type);
@@ -106,23 +125,36 @@ it('restores trashed content with everything it owns', function (string $type) {
         ->toBe($tags);
 })->with('soft deleting content');
 
-it('removes owned files, the SEO row and tag links only when force deleted', function (string $type) {
+it('removes the SEO row and tag links only when force deleted', function (string $type) {
+    // Arrange
     $record = contentWithOwnedData($type);
     $record->delete();
 
+    // Act
     $record->forceDelete();
 
+    // Assert
     expect($record::withTrashed()->find($record->getKey()))
         ->toBeNull()
         ->and(seoRowCount($record))
         ->toBe(0)
         ->and(tagLinkCount($record))
         ->toBe(0);
-
-    if (ownedImagePath($record) !== null) {
-        Storage::disk('public')->assertMissing(ownedImagePath($record));
-    }
 })->with('soft deleting content');
+
+it('removes the owned image only when trashed content is force deleted', function (string $type, string $imagePath) {
+    // Arrange
+    $record = contentWithOwnedData($type);
+    $record->delete();
+
+    // Act
+    $record->forceDelete();
+
+    // Assert
+    expect(ownedImagePath($record))
+        ->toBe($imagePath);
+    Storage::disk('public')->assertMissing($imagePath);
+})->with('soft deleting content with an owned image');
 
 it('never reuses the slug of trashed content', function () {
     $trashed = PublishableFixtures::ready('post');
@@ -210,16 +242,19 @@ it('restores every episode trashed with its podcast when the delete spans severa
         ->toBeTrue();
 });
 
-it('keeps a podcast and its episodes when an episode refuses to be deleted', function (string $method) {
+it('keeps a podcast and its episodes when an episode refuses to be trashed', function () {
+    // Arrange
     $podcast = Podcast::factory()->create();
     $episode = Episode::factory()
         ->for($podcast)
         ->create();
     Episode::deleting(fn (): bool => false);
 
-    expect(fn (): ?bool => $method === 'forceDelete'
-        ? $podcast->forceDelete()
-        : $podcast->delete())
+    // Act
+    $trash = fn (): ?bool => $podcast->delete();
+
+    // Assert
+    expect($trash)
         ->toThrow(RuntimeException::class, 'Podcast deletion was cancelled because an episode could not be deleted.')
         ->and(Podcast::query()->whereKey($podcast->id)
             ->exists())
@@ -227,7 +262,29 @@ it('keeps a podcast and its episodes when an episode refuses to be deleted', fun
         ->and(Episode::query()->whereKey($episode->id)
             ->exists())
         ->toBeTrue();
-})->with(['trash' => 'delete', 'force delete' => 'forceDelete']);
+});
+
+it('keeps a podcast and its episodes when an episode refuses to be force deleted', function () {
+    // Arrange
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->create();
+    Episode::deleting(fn (): bool => false);
+
+    // Act
+    $forceDelete = fn (): ?bool => $podcast->forceDelete();
+
+    // Assert
+    expect($forceDelete)
+        ->toThrow(RuntimeException::class, 'Podcast deletion was cancelled because an episode could not be deleted.')
+        ->and(Podcast::query()->whereKey($podcast->id)
+            ->exists())
+        ->toBeTrue()
+        ->and(Episode::query()->whereKey($episode->id)
+            ->exists())
+        ->toBeTrue();
+});
 
 it('permanently deletes every episode when a podcast is force deleted', function () {
     $episode = PublishableFixtures::ready('episode');

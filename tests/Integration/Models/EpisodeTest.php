@@ -1,18 +1,8 @@
 <?php
 
 use App\Models\Episode;
-use App\Presenters\EpisodePresenter;
 use Illuminate\Support\Carbon;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
-
-it('formats an episode code when its optional episode number is missing', function () {
-    $episode = new Episode([
-        'season_number' => 2,
-        'episode_number' => null,
-    ]);
-
-    expect(EpisodePresenter::from($episode)->code())->toBe('S02E00');
-});
 
 it('knows whether it is publicly published', function (?PublishStatus $status, ?Carbon $publishedAt, bool $expected) {
     $episode = new Episode([

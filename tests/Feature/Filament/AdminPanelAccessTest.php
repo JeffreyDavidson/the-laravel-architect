@@ -15,16 +15,28 @@ use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-it('only admits administrators to the admin panel', function () {
+it('refuses a non-administrator access to the admin panel', function () {
+    // Arrange
     $user = User::factory()->create();
     $panel = Filament::getPanel('admin');
 
-    expect($user->canAccessPanel($panel))->toBeFalse();
+    // Act
+    $canAccessPanel = $user->canAccessPanel($panel);
 
-    $user->forceFill(['is_admin' => true])
-        ->save();
+    // Assert
+    expect($canAccessPanel)->toBeFalse();
+});
 
-    expect($user->canAccessPanel($panel))->toBeTrue();
+it('admits an administrator to the admin panel', function () {
+    // Arrange
+    $user = User::factory()->create(['is_admin' => true]);
+    $panel = Filament::getPanel('admin');
+
+    // Act
+    $canAccessPanel = $user->canAccessPanel($panel);
+
+    // Assert
+    expect($canAccessPanel)->toBeTrue();
 });
 
 it('rejects a non-administrator at the admin panel boundary', function () {

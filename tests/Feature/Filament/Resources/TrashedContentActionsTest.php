@@ -69,53 +69,70 @@ it('lists trashed content only when the trashed filter asks for it', function (s
         ->assertCanSeeTableRecords([$record]);
 })->with('trashable types');
 
-it('restores and force deletes trashed content from its edit page', function (string $type) {
-    $restored = trashableRecord($type);
-    $restored->delete();
+it('restores trashed content from its edit page', function (string $type) {
+    // Arrange
+    $record = trashableRecord($type);
+    $record->delete();
 
-    livewire(trashablePages($type)[1], ['record' => $restored->getRouteKey()])
+    // Act
+    livewire(trashablePages($type)[1], ['record' => $record->getRouteKey()])
         ->callAction('restore');
 
-    $restored->refresh();
+    // Assert
+    $record->refresh();
 
-    expect($restored->trashed())
+    expect($record->trashed())
         ->toBeFalse();
+})->with('trashable types');
 
-    $restored->delete();
+it('force deletes trashed content from its edit page', function (string $type) {
+    // Arrange
+    $record = trashableRecord($type);
+    $record->delete();
 
-    livewire(trashablePages($type)[1], ['record' => $restored->getRouteKey()])
+    // Act
+    livewire(trashablePages($type)[1], ['record' => $record->getRouteKey()])
         ->callAction('forceDelete');
 
-    expect($restored::withTrashed()->find($restored->getKey()))
+    // Assert
+    expect($record::withTrashed()->find($record->getKey()))
         ->toBeNull();
 })->with('trashable types');
 
-it('restores and force deletes trashed content in bulk', function (string $type) {
+it('restores trashed content in bulk', function (string $type) {
+    // Arrange
     $record = trashableRecord($type);
     $record->delete();
-    $list = trashablePages($type)[0];
 
-    livewire($list)
+    // Act
+    livewire(trashablePages($type)[0])
         ->filterTable('trashed', false)
         ->selectTableRecords([$record])
         ->callAction(TestAction::make(RestoreBulkAction::class)
             ->table()
             ->bulk());
 
+    // Assert
     $record->refresh();
 
     expect($record->trashed())
         ->toBeFalse();
+})->with('trashable types');
 
+it('force deletes trashed content in bulk', function (string $type) {
+    // Arrange
+    $record = trashableRecord($type);
     $record->delete();
 
-    livewire($list)
+    // Act
+    livewire(trashablePages($type)[0])
         ->filterTable('trashed', false)
         ->selectTableRecords([$record])
         ->callAction(TestAction::make(ForceDeleteBulkAction::class)
             ->table()
             ->bulk());
 
+    // Assert
     expect($record::withTrashed()->find($record->getKey()))
         ->toBeNull();
 })->with('trashable types');
