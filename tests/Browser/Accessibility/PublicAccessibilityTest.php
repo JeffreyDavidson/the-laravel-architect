@@ -16,8 +16,13 @@ use function Pest\Laravel\withVite;
 pest()->use(RefreshDatabase::class);
 
 it('provides a keyboard entry point and a programmatic newsletter label', function () {
+    // Arrange
+    withVite();
+
+    // Act
     $page = HomePage::visit();
 
+    // Assert
     $page->assertAttribute('a[href="#main-content"]', 'href', '#main-content')
         ->assertAttribute('#main-content', 'tabindex', '-1')
         ->assertPresent('label[for="newsletter-email"]')
@@ -27,18 +32,26 @@ it('provides a keyboard entry point and a programmatic newsletter label', functi
 });
 
 it('keeps newsletter validation accessible and preserves the submitted email', function () {
+    // Arrange: the Alpine form readers get, with browser validation off so the server answers
+    withVite();
     $page = HomePage::visit();
-
+    $page->assertAttribute('form[data-newsletter-form]', 'data-ready', 'true');
     $page->script('document.querySelector("#newsletter-email").form.noValidate = true');
+
+    // Act
     new NewsletterForm($page)->submit('not-an-email');
 
-    $page->assertPresent('#newsletter-email-error')
+    // Assert
+    $page->assertVisible('#newsletter-email-error-live')
         ->assertValue('#newsletter-email', 'not-an-email')
         ->assertAttribute('#newsletter-email', 'aria-invalid', 'true')
-        ->assertAttribute('#newsletter-email', 'aria-describedby', 'newsletter-email-error newsletter-privacy');
+        ->assertAttribute('#newsletter-email', 'aria-describedby', 'newsletter-email-error-live newsletter-privacy')
+        ->assertScript('document.activeElement.id', 'newsletter-email')
+        ->assertNoJavaScriptErrors();
 });
 
 it('gives project entries a heading and a labeled technology list', function () {
+    // Arrange
     Project::factory()
         ->published()
         ->featured()
@@ -46,9 +59,12 @@ it('gives project entries a heading and a labeled technology list', function () 
             'title' => 'Architecture Decisions',
             'tech_stack' => ['Laravel', 'Pest'],
         ]);
+    withVite();
 
+    // Act
     $page = ProjectIndexPage::visit();
 
+    // Assert
     $page->assertCount('[data-project-entry]', 1)
         ->assertSeeIn('[data-project-entry] h3', 'Architecture Decisions')
         ->assertAttribute('[data-project-entry] ul', 'aria-label', 'Technologies used for Architecture Decisions')
@@ -141,12 +157,16 @@ it('opens the transcript at a deep-linked section', function () {
 });
 
 it('publishes machine-readable dates for articles', function () {
+    // Arrange
     $post = Post::factory()
         ->published()
         ->create(['published_at' => '2026-08-19 09:00:00']);
+    withVite();
 
+    // Act
     $page = BlogPostPage::visit($post);
 
+    // Assert
     $page->assertAttribute('time[datetime="2026-08-19"]', 'datetime', '2026-08-19')
         ->assertNoJavaScriptErrors();
 });

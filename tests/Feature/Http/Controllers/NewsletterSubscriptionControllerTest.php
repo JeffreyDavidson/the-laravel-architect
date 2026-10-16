@@ -23,6 +23,23 @@ it('flashes invalid newsletter input for recovery', function () {
 
 });
 
+it('shows an accessible error and the submitted email without JavaScript', function () {
+    // Arrange
+    $email = 'not-an-email';
+
+    // Act
+    $response = from(route('home'))
+        ->followingRedirects()
+        ->post(route('newsletter.subscribe'), ['email' => $email]);
+
+    // Assert
+    $response->assertOk()
+        ->assertSeeHtml('id="newsletter-email-error"')
+        ->assertSeeHtml('value="not-an-email"')
+        ->assertSeeHtml('aria-invalid="true"')
+        ->assertSeeHtml('aria-describedby="newsletter-email-error newsletter-privacy"');
+});
+
 it('creates an unverified subscriber and sends a confirmation message', function () {
     Mail::fake();
 

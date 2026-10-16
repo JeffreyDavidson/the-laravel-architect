@@ -162,7 +162,8 @@ describe('index', function () {
         $response->assertOk()
             ->assertSee('Selected projects')
             ->assertSee('Explore the project')
-            ->assertSee($project->title);
+            ->assertSee($project->title)
+            ->assertDontSee('Active');
     });
 
     it('loads public interactivity and typography from the local Vite bundle on projects.index', function () {

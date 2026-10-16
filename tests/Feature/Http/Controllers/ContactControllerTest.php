@@ -380,7 +380,7 @@ describe('store', function () {
         assertDatabaseCount('jobs', 0);
     });
 
-    it('does not count invalid submissions against the rate limit', function () {
+    it('keeps the submitted values and sends nothing when a submission is invalid', function () {
         Mail::fake();
 
         $payload = [

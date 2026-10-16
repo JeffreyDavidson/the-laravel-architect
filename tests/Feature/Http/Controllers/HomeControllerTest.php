@@ -19,7 +19,6 @@ pest()->use(RefreshDatabase::class);
 
 require_once __DIR__.'/../../../Support/PublicPageAssertions.php';
 
-use App\Models\Episode;
 use App\Presenters\ProjectPresenter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -367,16 +366,19 @@ it('places the theme bootstrap inside the document head', function () {
 });
 
 it('hides inactive podcasts from public podcast surfaces on /', function () {
-    $activePodcast = Podcast::factory()->create();
-    $inactivePodcast = Podcast::factory()->inactive()
-        ->create();
-    $episode = Episode::factory()->for($inactivePodcast)
-        ->published()
-        ->create();
-    $response = get('/');
+    // Arrange: the inactive podcast sorts first, so only the active filter keeps it off the page
+    Podcast::factory()
+        ->inactive()
+        ->create(['cover_image_path' => 'podcasts/inactive-cover.webp', 'sort_order' => 0]);
+    Podcast::factory()->create(['cover_image_path' => 'podcasts/active-cover.webp', 'sort_order' => 1]);
+
+    // Act
+    $response = get(route('home'));
+
+    // Assert
     $response->assertOk()
-        ->assertDontSee($inactivePodcast->name)
-        ->assertDontSeeHtml('toHaveCount</span>(<span class="syn-variable">2</span>');
+        ->assertSeeHtml('podcasts/active-cover')
+        ->assertDontSeeHtml('podcasts/inactive-cover');
 });
 
 it('serves responsive project images while retaining the original fallback on home', function () {

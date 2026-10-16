@@ -25,38 +25,38 @@ function publicUrl(Model $record): string
 }
 
 it('removes trashed content from its page, the sitemap and search', function (string $type) {
+    // Arrange: the published record is reachable on every surface before it is trashed
     $record = PublishableFixtures::ready($type, ['published_at' => now()->subDay()]);
     $record->publish();
     $url = publicUrl($record);
-    $response = get($url);
+    get($url)->assertOk();
+    get(route('sitemap'))->assertSeeHtml($url);
+    get(route('search', ['q' => 'Ready']))->assertSeeHtml($url);
 
-    $response->assertOk();
-
+    // Act
     $record->delete();
 
+    // Assert
     $response = get($url);
-
     $response->assertNotFound();
     $response = get(route('sitemap'));
-
     $response->assertDontSeeHtml($url);
     $response = get(route('search', ['q' => 'Ready']));
-
     $response->assertDontSeeHtml($url);
 })->with(['post', 'project', 'episode', 'newsletter issue']);
 
 it('removes trashed posts and newsletter issues from their feeds', function (string $type, string $feed) {
+    // Arrange: the published record is in its feed before it is trashed
     $record = PublishableFixtures::ready($type, ['published_at' => now()->subDay()]);
     $record->publish();
     $url = publicUrl($record);
-    $response = get(route($feed));
+    get(route($feed))->assertSeeHtml($url);
 
-    $response->assertSeeHtml($url);
-
+    // Act
     $record->delete();
 
+    // Assert
     $response = get(route($feed));
-
     $response->assertDontSeeHtml($url);
 })->with([
     'post' => ['post', 'rss'],
@@ -64,15 +64,18 @@ it('removes trashed posts and newsletter issues from their feeds', function (str
 ]);
 
 it('removes the episodes of a trashed podcast from the public site', function () {
+    // Arrange: the episode page is live before its podcast is trashed
     $episode = PublishableFixtures::ready('episode', ['published_at' => now()->subDay()]);
     $episode->publish();
     $url = publicUrl($episode);
+    get($url)->assertOk();
 
+    // Act
     Podcast::query()
         ->sole()
         ->delete();
 
+    // Assert
     $response = get($url);
-
     $response->assertNotFound();
 });
