@@ -7,13 +7,14 @@ declare(strict_types=1);
  * object operator continues a chain whose previous link is a method call on
  * the same line, such as `$query->where()->first()`. Separate accesses such as
  * `$this->save($model->id)`, enum `->value`, or property chains are allowed.
- * Merged migrations are never edited, so they are not checked.
+ * Merged migrations are never edited, so they are not checked. Agent worktrees
+ * under .claude/worktrees/ are separate checkouts with their own checks.
  */
 
 $root = dirname(__DIR__);
 $paths = array_slice($argv, 1);
 $ignoredDirectories = ['.git', 'node_modules', 'storage', 'vendor'];
-$ignoredPrefixes = ['database/migrations/'];
+$ignoredPrefixes = ['.claude/worktrees/', 'database/migrations/'];
 
 if ($paths === []) {
     $paths = ['.'];
