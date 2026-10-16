@@ -231,6 +231,6 @@ also runs with `APP_ENV=production`.
   crawlers must be able to fetch them to read that tag.
 - Every other deployment, including staging, answers `Disallow: /`.
 
-Cloudflare is known to rewrite the response in front of production; see
+The server needs an Nginx rule that passes `/robots.txt` to Laravel; see
 [robots.txt on production](../operations/environments.md#robotstxt-on-production)
-for that open issue and the after-deploy check.
+for the rule and the after-deploy check.

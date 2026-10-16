@@ -97,7 +97,8 @@ With no `try_files`, Nginx looks only for a static file, finds none, and returns
 404. The body still comes from Laravel through `error_page 404 /index.php`, but
 the status stays 404. Cloudflare's managed robots.txt then served only its
 "content signals" comment block, so the public file had no rules and no
-`Sitemap:` line. Cloudflare was not the cause.
+`Sitemap:` line. Cloudflare was not the cause, and no Cloudflare support
+ticket is needed.
 
 Both sites' Forge Nginx configuration (site menu, Edit Nginx configuration,
 General site configuration) therefore uses:
