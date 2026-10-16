@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\get;
@@ -14,11 +16,11 @@ it('keeps the admin panel behind authentication', function () {
 
     $manifest = assetManifest();
 
-    $response = get('/admin');
+    $response = get(Dashboard::getUrl());
 
     $response
-        ->assertRedirect('/admin/login');
-    $response = get('/admin/login');
+        ->assertRedirect(Filament::getPanel('admin')->getLoginUrl());
+    $response = get(Filament::getPanel('admin')->getLoginUrl() ?? '');
 
     $response
         ->assertOk()

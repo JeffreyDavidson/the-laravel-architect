@@ -28,7 +28,7 @@ it('publishes a post through Filament and exposes it publicly', function () {
 
     get(route('blog.show', $post))
         ->assertOk();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertSeeHtml(route('blog.show', $post));
 });
 
@@ -46,6 +46,6 @@ it('hides a post again when Filament unpublishes it', function () {
 
     get(route('blog.show', $post))
         ->assertNotFound();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertDontSeeHtml(route('blog.show', $post));
 });

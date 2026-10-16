@@ -29,7 +29,7 @@ it('controls public podcast visibility through the active toggle', function () {
         ->assertDontSee($podcast->name);
     get(route('podcasts.show', $podcast))
         ->assertNotFound();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertOk()
         ->assertDontSeeHtml(route('podcasts.show', $podcast));
 
@@ -44,7 +44,7 @@ it('controls public podcast visibility through the active toggle', function () {
     get(route('podcasts.show', $podcast))
         ->assertOk()
         ->assertSee($podcast->name);
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertOk()
         ->assertSeeHtml(route('podcasts.show', $podcast));
 });

@@ -7,20 +7,16 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Js;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\travelTo;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
 
-afterEach(function () {
-    Date::setTestNow();
-});
-
 it('plots published content by month and excludes drafts and older records', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
     $administrator = User::factory()->create(['is_admin' => true]);
 
     Post::factory()

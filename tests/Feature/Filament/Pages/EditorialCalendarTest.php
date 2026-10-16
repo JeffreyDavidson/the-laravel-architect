@@ -8,19 +8,15 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+use function Pest\Laravel\travelTo;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
-
-afterEach(function () {
-    Date::setTestNow();
-});
 
 beforeEach(function () {
     actingAs(User::factory()->create(['is_admin' => true]));
@@ -33,7 +29,7 @@ it('renders the calendar route for an authorized user', function () {
 });
 
 it('shows scheduled and review content in its publication month', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
     $post = Post::factory()
         ->inReview()
         ->create(['published_at' => '2026-09-18 09:00:00']);
@@ -50,7 +46,7 @@ it('shows scheduled and review content in its publication month', function () {
 });
 
 it('links entries to their edit pages and lists posts before episodes on the same day', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
     $post = Post::factory()
         ->inReview()
         ->create(['published_at' => '2026-09-18 09:00:00']);
@@ -69,7 +65,7 @@ it('links entries to their edit pages and lists posts before episodes on the sam
 
 it('places content on its publication day in the display timezone', function () {
     config(['app.display_timezone' => 'America/New_York']);
-    Date::setTestNow(Carbon::parse('2026-10-01 12:00:00'));
+    travelTo(Carbon::parse('2026-10-01 12:00:00'));
     Post::factory()->create([
         'title' => 'Evening post',
         'published_at' => '2026-10-06 01:00:00',
@@ -97,7 +93,7 @@ it('places content on its publication day in the display timezone', function () 
 });
 
 it('keeps undated content in the unscheduled queue and filters other months', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
     $unscheduledPost = Post::factory()->create();
     $olderPost = Post::factory()
         ->published()
@@ -110,7 +106,7 @@ it('keeps undated content in the unscheduled queue and filters other months', fu
 });
 
 it('moves between calendar months', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
 
     livewire(EditorialCalendar::class)
         ->assertSee('September 2026')

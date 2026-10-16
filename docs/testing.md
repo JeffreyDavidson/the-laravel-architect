@@ -77,16 +77,18 @@ cached. The local push hook, full suites and coverage thresholds are unchanged.
 | Page | Queries | Page | Queries |
 | --- | --- | --- | --- |
 | Home | 12 | Projects index | 4 |
-| Blog index | 7 | Project | 8 |
-| Post | 11 | Newsletter index | 4 |
-| Category | 7 | Newsletter issue | 5 |
+| Blog index | 7 | Project | 7 |
+| Post | 10 | Newsletter index | 4 |
+| Category | 7 | Newsletter issue | 4 |
 | Tag | 7 | Archive | 5 |
 | Podcast index | 3 | Search | 13 |
 | Podcast | 6 | About | 2 |
-| Episode | 11 | Contact | 4 |
+| Episode | 9 | Contact | 4 |
 | Newsletter confirmed | 4 | | |
 
 Search runs one count query per result group for its per-group pagination, and skips the results query for groups with no matches.
+
+Outside this file, tests do not count queries. Two exceptions, kept on 2026-10-16 because page budgets cannot cover them: `Integration/Services/StoredMediaOrphanWorkflowTest.php` and `Integration/Services/ContentArchive/PublicContentArchiveTest.php` each check that a workflow's query count does not grow with the number of records. Two controller tests also read the query log to check which queries run, not how many: the search page skips content types outside the filter, and the blog index runs its paginated post query once.
 
 To change a budget intentionally, make the change, run the test, and confirm the new count in the failure message is constant for the page (it must not depend on the amount of content). Update the dataset value and this table in the same commit, and explain the new query in the PR. Never raise a budget to absorb an N+1: eager-load the relation instead.
 

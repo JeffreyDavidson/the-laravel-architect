@@ -76,7 +76,7 @@ it('registers visible navigation items for every admin section', function () {
 });
 
 it('renders the publishing dashboard for an authorized user', function () {
-    get(route('filament.admin.pages.dashboard'))
+    get(Dashboard::getUrl())
         ->assertOk()
         ->assertSee('Dashboard')
         ->assertSeeHtml(Vite::asset('resources/js/filament/admin.js'))

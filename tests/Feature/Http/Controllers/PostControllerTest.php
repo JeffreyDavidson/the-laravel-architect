@@ -168,7 +168,7 @@ describe('index', function () {
         $scheduled = Post::factory()->published()
             ->create(['title' => 'Scheduled Laravel Architecture', 'published_at' => now()->addDay()]);
 
-        $response = get('/blog');
+        $response = get(route('blog.index'));
 
         $response
             ->assertOk()

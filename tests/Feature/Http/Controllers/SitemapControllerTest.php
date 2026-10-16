@@ -68,7 +68,7 @@ it('only includes public content in the sitemap', function () {
     DB::table('episodes')->where('id', $publishedEpisode->id)
         ->update(['updated_at' => null]);
 
-    $response = get('/sitemap.xml');
+    $response = get(route('sitemap'));
 
     $response
         ->assertOk()
