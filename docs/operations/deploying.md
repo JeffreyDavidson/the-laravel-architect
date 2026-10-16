@@ -144,7 +144,7 @@ Then verify all of the following against the deployed commit:
   Cloudflare Access credentials; it is not release approval evidence. The smoke
   client retries a request once, after two seconds, only when the connection
   fails; an HTTP error status is never retried.
-- `/robots.txt` and `/index.php/robots.txt` look right (see
+- `/robots.txt` returns 200 with a `User-agent` line (see
   [robots.txt on production](environments.md#robotstxt-on-production)).
 
 For content or authorization changes, also verify the affected public route and

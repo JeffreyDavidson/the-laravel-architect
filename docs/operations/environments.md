@@ -87,18 +87,33 @@ The application generates `/robots.txt` (see
 add a static `public/robots.txt`, because the web server would serve it before
 Laravel.
 
-On production, Cloudflare currently answers `/robots.txt` itself with its
-managed "content signals" comment block (no rules, no `Sitemap:` line), even
-though Bot Preference Sync is off and no rule or Worker matches the path. The
-same route arrives intact at `/index.php/robots.txt`. Making the response
-cookie-free and cacheable did not change this, so the cause is a
-Cloudflare-side setting (support ticket pending).
+Forge's default site configuration has an exact Nginx location for the file:
 
-After a deploy, check the application's file at `/index.php/robots.txt` and the
-public file at `/robots.txt`. Treat a public file with no `User-agent` line as
-this Cloudflare problem, not an application fault. Until it is resolved, submit
-`/sitemap.xml` in Search Console so sitemap discovery does not depend on
-robots.txt.
+```nginx
+location = /robots.txt  { access_log off; log_not_found off; }
+```
+
+With no `try_files`, Nginx looks only for a static file, finds none, and returns
+404. The body still comes from Laravel through `error_page 404 /index.php`, but
+the status stays 404. Cloudflare's managed robots.txt then served only its
+"content signals" comment block, so the public file had no rules and no
+`Sitemap:` line. Cloudflare was not the cause, and no Cloudflare support
+ticket is needed.
+
+Both sites' Forge Nginx configuration (site menu, Edit Nginx configuration,
+General site configuration) therefore uses:
+
+```nginx
+location = /robots.txt  { try_files $uri /index.php?$query_string; access_log off; log_not_found off; }
+```
+
+Staging and production were changed on 2026-10-16. Production's origin and
+Cloudflare now return 200 with the application's rules and `Sitemap:` line. A
+new or rebuilt site must get the same rule.
+
+After a deploy, check that `/robots.txt` returns 200 and contains a
+`User-agent` line. From the server, bypass Cloudflare with
+`curl -sk --resolve thelaravelarchitect.com:443:127.0.0.1 https://thelaravelarchitect.com/robots.txt`.
 
 ## Application settings
 
