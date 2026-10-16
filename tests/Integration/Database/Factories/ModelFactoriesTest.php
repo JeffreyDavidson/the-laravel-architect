@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Models\ContactInquiry;
 use App\Models\Episode;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
@@ -8,7 +9,9 @@ use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\SocialProfile;
+use App\Models\Subscriber;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Video;
 use App\Publishing\ContentReadiness;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +23,7 @@ pest()->use(RefreshDatabase::class);
 
 dataset('factory states', [
     'category' => fn (): Category => Category::factory()->create(),
+    'contact inquiry' => fn (): ContactInquiry => ContactInquiry::factory()->create(),
     'draft episode' => fn (): Episode => Episode::factory()->create(),
     'published episode' => fn (): Episode => Episode::factory()
         ->published()
@@ -28,6 +32,9 @@ dataset('factory states', [
         ->scheduled()
         ->create(),
     'newsletter delivery' => fn (): NewsletterDelivery => NewsletterDelivery::factory()->create(),
+    'sent newsletter delivery' => fn (): NewsletterDelivery => NewsletterDelivery::factory()
+        ->sent()
+        ->create(),
     'draft newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::factory()->create(),
     'published newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::factory()
         ->published()
@@ -60,8 +67,22 @@ dataset('factory states', [
         ->featured()
         ->create(),
     'social profile' => fn (): SocialProfile => SocialProfile::factory()->create(),
+    'active subscriber' => fn (): Subscriber => Subscriber::factory()->create(),
+    'pending subscriber' => fn (): Subscriber => Subscriber::factory()
+        ->pending()
+        ->create(),
+    'unsubscribed subscriber' => fn (): Subscriber => Subscriber::factory()
+        ->unsubscribed()
+        ->create(),
+    'suppressed subscriber' => fn (): Subscriber => Subscriber::factory()
+        ->suppressed()
+        ->create(),
     'tag' => fn (): Tag => Tag::factory()->create(),
     'video' => fn (): Video => Video::factory()->create(),
+    'user' => fn (): User => User::factory()->create(),
+    'unverified user' => fn (): User => User::factory()
+        ->unverified()
+        ->create(),
 ]);
 
 dataset('default publishable records', [

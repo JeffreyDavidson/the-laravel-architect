@@ -63,13 +63,17 @@ it('rejects a non-normalized podcast slug when editing a podcast', function () {
 });
 
 it('preserves an existing podcast slug when the name changes', function () {
+    // Arrange
     $podcast = Podcast::factory()->create(['slug' => 'curated-podcast-slug']);
 
-    livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
-        ->fillForm(['name' => 'Updated podcast name', 'slug' => 'curated-podcast-slug'])
-        ->call('save')
-        ->assertHasNoFormErrors();
+    // Act
+    $component = livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
+        ->fillForm(['name' => 'Updated podcast name'])
+        ->call('save');
 
-    expect($podcast->refresh()
-        ->slug)->toBe('curated-podcast-slug');
+    // Assert
+    $component->assertHasNoFormErrors();
+    expect($podcast->refresh())
+        ->name->toBe('Updated podcast name')
+        ->slug->toBe('curated-podcast-slug');
 });

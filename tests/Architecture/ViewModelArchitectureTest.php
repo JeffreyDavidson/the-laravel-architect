@@ -21,7 +21,6 @@ arch('makes every page ViewModel a PageViewModel')
         RssFeedViewModel::class,
         SitemapViewModel::class,
         SiteStructuredData::class,
-        'App\ViewModels\Concerns',
     ]);
 
 it('returns the page meta from every page rendering method of a page ViewModel', function () {

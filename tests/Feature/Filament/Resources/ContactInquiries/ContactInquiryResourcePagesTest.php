@@ -20,20 +20,36 @@ beforeEach(function () {
     actingAs(User::factory()->create(['is_admin' => true]));
 });
 
-it('renders inquiry details for an authorized administrator', function () {
+it('lists inquiry senders for an authorized administrator', function () {
+    // Arrange
+    ContactInquiry::factory()->create([
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'message' => 'Please review my application.',
+    ]);
+
+    // Act
+    $component = livewire(ListContactInquiries::class);
+
+    // Assert
+    $component
+        ->assertOk()
+        ->assertSee('Jane Doe')
+        ->assertSee('jane@example.com');
+});
+
+it('renders inquiry details on the edit page for an authorized administrator', function () {
+    // Arrange
     $inquiry = ContactInquiry::factory()->create([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'message' => 'Please review my application.',
     ]);
 
-    livewire(ListContactInquiries::class)
-        ->assertOk()
-        ->assertSee('Jane Doe')
-        ->assertSee('jane@example.com');
-
+    // Act
     $component = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
 
+    // Assert
     $component->assertOk();
     $component->assertSchemaStateSet([
         'name' => 'Jane Doe',

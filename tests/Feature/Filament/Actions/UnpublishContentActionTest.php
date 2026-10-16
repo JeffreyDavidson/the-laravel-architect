@@ -28,24 +28,37 @@ it('returns published content to draft from its edit page and refreshes the form
 
     expect($record->getAttribute('status'))
         ->toBe(PublishStatus::Draft);
-})->with(['post', 'project', 'episode', 'newsletter issue']);
+})->with([
+    'post' => ['post'],
+    'project' => ['project'],
+    'episode' => ['episode'],
+    'newsletter issue' => ['newsletter issue'],
+]);
 
-it('offers unpublishing for live and scheduled content only', function (?int $days, bool $visible) {
+it('does not offer unpublishing for draft content', function () {
+    // Arrange
     $record = PublishableFixtures::ready('episode');
 
-    if ($days !== null) {
-        $record->forceFill(['published_at' => now()->addDays($days)])
-            ->save();
-        $record->publish();
-    }
-
+    // Act
     $page = livewire(PublishableFixtures::editPage('episode'), ['record' => $record->getRouteKey()]);
 
-    $visible
-        ? $page->assertActionVisible('unpublish')
-        : $page->assertActionHidden('unpublish');
+    // Assert
+    $page->assertActionHidden('unpublish');
+});
+
+it('offers unpublishing for live and scheduled content', function (int $days) {
+    // Arrange
+    $record = PublishableFixtures::ready('episode');
+    $record->forceFill(['published_at' => now()->addDays($days)])
+        ->save();
+    $record->publish();
+
+    // Act
+    $page = livewire(PublishableFixtures::editPage('episode'), ['record' => $record->getRouteKey()]);
+
+    // Assert
+    $page->assertActionVisible('unpublish');
 })->with([
-    'draft' => [null, false],
-    'published' => [-1, true],
-    'scheduled' => [1, true],
+    'published' => [-1],
+    'scheduled' => [1],
 ]);

@@ -5,6 +5,7 @@ use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use App\Models\User;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
@@ -13,6 +14,7 @@ use JeffreyDavidson\CreatorKit\Jobs\DeliverNewsletterIssue;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\withoutMiddleware;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -32,21 +34,32 @@ function editableNewsletterIssue(array $overrides = []): NewsletterIssue
         ->create($overrides);
 }
 
-it('offers sending only for published issues that have not been sent', function (Closure $createIssue, bool $visible) {
+it('offers sending for a published issue that has not been sent', function () {
+    // Arrange
+    $issue = editableNewsletterIssue();
+
+    // Act
+    $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
+
+    // Assert
+    $page->assertActionVisible('sendToSubscribers');
+});
+
+it('does not offer sending for a draft or already sent issue', function (Closure $createIssue) {
+    // Arrange
     $issue = $createIssue();
     if (! $issue instanceof NewsletterIssue) {
         throw new RuntimeException('The dataset must create a newsletter issue.');
     }
 
+    // Act
     $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()]);
 
-    $visible
-        ? $page->assertActionVisible('sendToSubscribers')
-        : $page->assertActionHidden('sendToSubscribers');
+    // Assert
+    $page->assertActionHidden('sendToSubscribers');
 })->with([
-    'published' => [fn (): NewsletterIssue => editableNewsletterIssue(), true],
-    'draft' => [fn (): NewsletterIssue => editableNewsletterIssue(['status' => PublishStatus::Draft]), false],
-    'already sent' => [fn (): NewsletterIssue => editableNewsletterIssue(['sent_at' => now()]), false],
+    'draft' => [fn (): NewsletterIssue => editableNewsletterIssue(['status' => PublishStatus::Draft])],
+    'already sent' => [fn (): NewsletterIssue => editableNewsletterIssue(['sent_at' => now()])],
 ]);
 
 it('queues the issue for active subscribers', function () {
@@ -165,6 +178,30 @@ it('hides the sending actions from a user who is not an administrator', function
     actingAs(User::factory()->create(['is_admin' => false]));
 
     $page->assertActionHidden($action);
+})->with(['sendTestEmail', 'sendToSubscribers']);
+
+it('refuses the sending actions when a non-administrator calls them directly', function (string $action) {
+    // Arrange
+    // The page is opened by an admin, then the signed-in user loses admin rights.
+    Mail::fake();
+    Subscriber::factory()->create();
+    $issue = editableNewsletterIssue(['title' => 'Issue One']);
+    $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->assertActionVisible($action);
+    // The panel middleware already turns non-administrators away; skip it so the edit page's own authorization is what refuses the call.
+    withoutMiddleware(Authenticate::class)
+        ->actingAs(User::factory()->create(['is_admin' => false]));
+
+    // Act
+    $page->mountAction($action);
+
+    // Assert
+    $page->assertForbidden();
+    Mail::assertNothingQueued();
+    Mail::assertNothingSent();
+    assertDatabaseCount('newsletter_deliveries', 0);
+    $issue->refresh();
+    expect($issue->wasSent())->toBeFalse();
 })->with(['sendTestEmail', 'sendToSubscribers']);
 
 it('tells the admin how many active subscribers the send will reach', function () {

@@ -30,7 +30,7 @@ it('publishes an episode through Filament and exposes it publicly', function () 
 
     get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertOk();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });
 
@@ -49,7 +49,7 @@ it('hides an episode again when Filament unpublishes it', function () {
 
     get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertDontSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });
 
@@ -70,6 +70,6 @@ it('keeps an episode hidden while its published date is scheduled in the future'
 
     get(route('podcasts.episode', [$episode->podcast, $episode]))
         ->assertNotFound();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertDontSeeHtml(route('podcasts.episode', [$episode->podcast, $episode]));
 });

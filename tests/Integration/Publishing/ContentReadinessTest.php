@@ -27,69 +27,78 @@ it('counts only a Transistor share link or a YouTube link as episode media', fun
     'nothing' => [[], false],
 ]);
 
-it('reports actionable missing details for every supported content type', function () {
-    $records = [
-        Post::factory()->create(),
-        Project::factory()->create(),
-        Podcast::factory()->create(),
-        Episode::factory()->create(),
-        NewsletterIssue::factory()->create(),
-        Video::factory()->create(),
-    ];
+it('reports actionable missing details for every supported content type', function (Post|Project|Podcast|Episode|NewsletterIssue|Video $record) {
+    // Act
+    $readiness = new ContentReadiness($record);
 
-    foreach ($records as $record) {
-        $readiness = new ContentReadiness($record);
+    // Assert
+    expect($readiness->isReady())->toBeFalse()
+        ->and($readiness->status())
+        ->toBe(ContentReadinessStatus::NeedsAttention)
+        ->and($readiness->checks())
+        ->not->toBeEmpty()
+        ->and($readiness->missing())
+        ->not->toBeEmpty();
+})->with([
+    'post' => fn (): Post => Post::factory()->create(),
+    'project' => fn (): Project => Project::factory()->create(),
+    'podcast' => fn (): Podcast => Podcast::factory()->create(),
+    'episode' => fn (): Episode => Episode::factory()->create(),
+    'newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::factory()->create(),
+    'video' => fn (): Video => Video::factory()->create(),
+]);
 
-        expect($readiness->isReady())->toBeFalse()
-            ->and($readiness->status())
-            ->toBe(ContentReadinessStatus::NeedsAttention)
-            ->and($readiness->checks())
-            ->not->toBeEmpty()
-            ->and($readiness->missing())
-            ->not->toBeEmpty();
-    }
-});
+it('reports complete public details for each content type that supports readiness checks', function (Post|Project|Podcast|Episode|NewsletterIssue|Video $record) {
+    // Act
+    $readiness = new ContentReadiness($record);
 
-it('reports complete public details for each content type that supports readiness checks', function () {
-    $tag = Tag::factory()->create();
+    // Assert
+    expect($readiness->isReady())->toBeTrue();
+})->with([
+    'post' => function (): Post {
+        $post = Post::factory()->create(['featured_image_path' => 'posts/complete.webp']);
+        $post->attachTag(Tag::factory()->create());
 
-    $post = Post::factory()->create(['featured_image_path' => 'posts/complete.webp']);
-    $post->attachTag($tag);
+        return $post;
+    },
+    'project' => function (): Project {
+        $project = Project::factory()->create([
+            'featured_image_path' => 'projects/complete.webp',
+            'url' => 'https://example.com',
+            'tech_stack' => ['Laravel'],
+        ]);
+        $project->attachTag(Tag::factory()->create());
 
-    $project = Project::factory()->create([
-        'featured_image_path' => 'projects/complete.webp',
-        'url' => 'https://example.com',
-        'tech_stack' => ['Laravel'],
-    ]);
-    $project->attachTag($tag);
-
-    $podcast = Podcast::factory()->create([
+        return $project;
+    },
+    'podcast' => fn (): Podcast => Podcast::factory()->create([
         'long_description' => 'About.',
         'cover_image_path' => 'podcasts/complete.webp',
         'rss_url' => 'https://example.com/feed.xml',
-    ]);
+    ]),
+    'episode' => function (): Episode {
+        $episode = Episode::factory()
+            ->for(Podcast::factory()->state([
+                'long_description' => 'About.',
+                'cover_image_path' => 'podcasts/complete.webp',
+                'rss_url' => 'https://example.com/feed.xml',
+            ]))
+            ->create([
+                'show_notes' => 'Show notes.',
+                'featured_image_path' => 'episodes/complete.webp',
+            ]);
+        $episode->attachTag(Tag::factory()->create());
 
-    $episode = Episode::factory()
-        ->for($podcast)
-        ->create([
-            'show_notes' => 'Show notes.',
-            'featured_image_path' => 'episodes/complete.webp',
-        ]);
-    $episode->attachTag($tag);
-
-    $issue = NewsletterIssue::factory()->create(['excerpt' => 'Summary.']);
-
-    $video = Video::factory()->create([
+        return $episode;
+    },
+    'newsletter issue' => fn (): NewsletterIssue => NewsletterIssue::factory()->create(['excerpt' => 'Summary.']),
+    'video' => fn (): Video => Video::factory()->create([
         'description' => 'Description.',
         'thumbnail_url' => 'https://example.com/thumb.jpg',
         'duration' => '10:00',
         'synced_at' => now(),
-    ]);
-
-    foreach ([$post, $project, $podcast, $episode, $issue, $video] as $record) {
-        expect(new ContentReadiness($record)->isReady())->toBeTrue();
-    }
-});
+    ]),
+]);
 
 it('reports the missing public project details', function () {
     $project = Project::factory()->create(['content' => null]);

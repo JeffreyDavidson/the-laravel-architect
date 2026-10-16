@@ -83,39 +83,75 @@ it('opens the matching post queue from each pipeline card', function (PublishSta
     'attention queue' => [PublishStatus::InReview, '.tla-dashboard-attention__item--review'],
 ]);
 
-it('keeps live and scheduled pipeline counts and destinations consistent across publication dates', function () {
+it('counts live and scheduled pipeline posts by publication date', function () {
+    // Arrange
     freezeSecond();
     $user = User::factory()->create(['is_admin' => true]);
     actingAs($user);
-    foreach ([
-        ['Already live scheduled', PublishStatus::Scheduled, now()->subMinute()],
-        ['Future published', PublishStatus::Published, now()->addDay()],
-        ['No publication date', PublishStatus::Published, null],
-    ] as [$title, $status, $date]) {
-        Post::factory()->create([
-            'title' => $title,
-            'status' => $status,
-            'published_at' => $date,
-        ]);
-    }
 
+    Post::factory()->create([
+        'title' => 'Already live scheduled',
+        'status' => PublishStatus::Scheduled,
+        'published_at' => now()->subMinute(),
+    ]);
+    Post::factory()->create([
+        'title' => 'Future published',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->addDay(),
+    ]);
+    Post::factory()->create([
+        'title' => 'No publication date',
+        'status' => PublishStatus::Published,
+        'published_at' => null,
+    ]);
+
+    // Act
     $widget = livewire(WelcomeWidget::class);
 
+    // Assert
     $widget->assertViewHas('publishedPosts', 1)
         ->assertViewHas('scheduledPosts', 1);
-    $document = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>');
-    foreach (['published' => 'Already live scheduled', 'scheduled' => 'Future published'] as $queue => $title) {
-        $url = $document->querySelector(".tla-dashboard-pipeline__step--{$queue}")
-            ?->getAttribute('href');
-
-        if ($url === null || $url === '') {
-            throw new RuntimeException("The {$queue} pipeline link is missing.");
-        }
-
-        $response = get($url);
-
-        $response->assertSee($title)
-            ->assertDontSee('No publication date')
-            ->assertDontSee($queue === 'published' ? 'Future published' : 'Already live scheduled');
-    }
 });
+
+it('opens a pipeline queue that lists posts by publication date', function (string $queue, string $listedTitle, string $excludedTitle) {
+    // Arrange
+    freezeSecond();
+    $user = User::factory()->create(['is_admin' => true]);
+    actingAs($user);
+
+    Post::factory()->create([
+        'title' => 'Already live scheduled',
+        'status' => PublishStatus::Scheduled,
+        'published_at' => now()->subMinute(),
+    ]);
+    Post::factory()->create([
+        'title' => 'Future published',
+        'status' => PublishStatus::Published,
+        'published_at' => now()->addDay(),
+    ]);
+    Post::factory()->create([
+        'title' => 'No publication date',
+        'status' => PublishStatus::Published,
+        'published_at' => null,
+    ]);
+
+    $widget = livewire(WelcomeWidget::class);
+    $document = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$widget->html().'</body></html>');
+    $url = $document->querySelector(".tla-dashboard-pipeline__step--{$queue}")
+        ?->getAttribute('href');
+
+    if ($url === null || $url === '') {
+        throw new RuntimeException("The {$queue} pipeline link is missing.");
+    }
+
+    // Act
+    $response = get($url);
+
+    // Assert
+    $response->assertSee($listedTitle)
+        ->assertDontSee('No publication date')
+        ->assertDontSee($excludedTitle);
+})->with([
+    'published' => ['published', 'Already live scheduled', 'Future published'],
+    'scheduled' => ['scheduled', 'Future published', 'Already live scheduled'],
+]);

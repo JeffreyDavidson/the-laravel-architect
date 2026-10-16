@@ -162,7 +162,8 @@ describe('index', function () {
         $response->assertOk()
             ->assertSee('Selected projects')
             ->assertSee('Explore the project')
-            ->assertSee($project->title);
+            ->assertSee($project->title)
+            ->assertDontSee('Active');
     });
 
     it('loads public interactivity and typography from the local Vite bundle on projects.index', function () {
@@ -176,27 +177,50 @@ describe('index', function () {
 });
 
 describe('show', function () {
-    it('keeps repository URLs out of public project markup and structured data', function (?string $website) {
+    it('keeps repository URLs out of public project markup and structured data when the project has no website', function () {
+        // Arrange
         $project = Project::factory()->published()
             ->create([
                 'github_url' => 'https://github.com/example/confidential-repository',
-                'url' => $website,
+                'url' => null,
             ]);
 
+        // Act
         $response = get(route('projects.show', $project));
 
+        // Assert
         $response->assertOk()
             ->assertDontSeeHtml('confidential-repository')
             ->assertDontSee('Explore the code')
             ->assertSee('Discuss a similar project');
 
-        if ($website !== null) {
-            $response->assertSeeHtml($website);
-        }
+        $project->refresh();
 
-        expect($project->refresh()
-            ->github_url)->toBe('https://github.com/example/confidential-repository');
-    })->with([null, 'https://example.com/product']);
+        expect($project->github_url)->toBe('https://github.com/example/confidential-repository');
+    });
+
+    it('links the project website while keeping repository URLs out of public project markup and structured data', function () {
+        // Arrange
+        $project = Project::factory()->published()
+            ->create([
+                'github_url' => 'https://github.com/example/confidential-repository',
+                'url' => 'https://example.com/product',
+            ]);
+
+        // Act
+        $response = get(route('projects.show', $project));
+
+        // Assert
+        $response->assertOk()
+            ->assertDontSeeHtml('confidential-repository')
+            ->assertDontSee('Explore the code')
+            ->assertSee('Discuss a similar project')
+            ->assertSeeHtml('https://example.com/product');
+
+        $project->refresh();
+
+        expect($project->github_url)->toBe('https://github.com/example/confidential-repository');
+    });
 
     it('renders project content as safe Markdown', function () {
         $project = Project::factory()->published()

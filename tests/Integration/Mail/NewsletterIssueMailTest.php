@@ -111,15 +111,28 @@ it('fixes the card width for Outlook with a conditional wrapper', function () {
         ->assertSeeInHtml('<![endif]-->', false);
 });
 
-it('shows the unsubscribe link in the footer only for subscriber emails', function () {
+it('shows the unsubscribe link in the footer of subscriber emails', function () {
+    // Arrange
     $issue = publishedNewsletterIssue();
     $unsubscribeUrl = 'https://example.test/newsletter/unsubscribe/1?signature=abc';
 
-    new NewsletterIssueMail($issue, $unsubscribeUrl)
-        ->assertSeeInHtml('>Unsubscribe</a>', false)
+    // Act
+    $mail = new NewsletterIssueMail($issue, $unsubscribeUrl);
+
+    // Assert
+    $mail->assertSeeInHtml('>Unsubscribe</a>', false)
         ->assertSeeInHtml($unsubscribeUrl, false);
-    new NewsletterIssueMail($issue)
-        ->assertDontSeeInHtml('>Unsubscribe</a>', false)
+});
+
+it('omits the footer unsubscribe link from test emails', function () {
+    // Arrange
+    $issue = publishedNewsletterIssue();
+
+    // Act
+    $mail = new NewsletterIssueMail($issue);
+
+    // Assert
+    $mail->assertDontSeeInHtml('>Unsubscribe</a>', false)
         ->assertSeeInHtml('This is a test email');
 });
 

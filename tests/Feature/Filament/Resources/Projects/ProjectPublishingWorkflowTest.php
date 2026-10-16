@@ -28,7 +28,7 @@ it('publishes a project through Filament and exposes it publicly', function () {
 
     get(route('projects.show', $project))
         ->assertOk();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertSeeHtml(route('projects.show', $project));
 });
 
@@ -46,6 +46,6 @@ it('hides a project again when Filament unpublishes it', function () {
 
     get(route('projects.show', $project))
         ->assertNotFound();
-    get('/sitemap.xml')
+    get(route('sitemap'))
         ->assertDontSeeHtml(route('projects.show', $project));
 });

@@ -27,3 +27,22 @@ it('returns the twenty newest published issues, newest first', function () {
         ->and($titles)
         ->not->toContain('Newsletter issue 21');
 });
+
+it('leaves draft and scheduled issues out of the feed', function () {
+    // Arrange
+    NewsletterIssue::factory()
+        ->published()
+        ->create(['title' => 'Live entry']);
+    NewsletterIssue::factory()->create(['title' => 'Draft entry']);
+    NewsletterIssue::factory()
+        ->scheduled()
+        ->create(['title' => 'Scheduled entry']);
+
+    // Act
+    $titles = app(NewsletterRssFeedQuery::class)
+        ->get()
+        ->pluck('title');
+
+    // Assert
+    expect($titles->all())->toBe(['Live entry']);
+});

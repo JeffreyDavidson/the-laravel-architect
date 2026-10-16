@@ -72,3 +72,25 @@ it('does not check merged migrations', function (string $path) {
     'migrations directory' => 'database/migrations',
     'repository root' => '.',
 ]);
+
+it('does not check agent worktrees inside the checkout', function () {
+    // Arrange
+    $root = dirname(__DIR__, 3);
+    $worktree = "{$root}/.claude/worktrees/chaining-test-".bin2hex(random_bytes(4));
+    mkdir($worktree, recursive: true);
+    file_put_contents("{$worktree}/Chained.php", "<?php\n\n\$query->where('a', 1)->first();\n");
+
+    try {
+        // Act
+        $process = new Process([PHP_BINARY, 'scripts/check-method-chaining.php', '.'], $root);
+        $process->run();
+    } finally {
+        unlink("{$worktree}/Chained.php");
+        rmdir($worktree);
+    }
+
+    // Assert
+    expect($process->getErrorOutput())
+        ->not
+        ->toContain('.claude/worktrees/');
+});

@@ -204,101 +204,74 @@ it('deletes native media with its record', function () {
     Storage::disk('public')->assertMissing('projects/image.png');
 });
 
-it('keeps responsive project image variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('project.png', 1280, 8)
+dataset('responsive image owners', [
+    'project' => [Project::class, 'featured_image_path', 'projects'],
+    'post' => [Post::class, 'featured_image_path', 'posts'],
+    'podcast cover' => [Podcast::class, 'cover_image_path', 'podcasts'],
+]);
+
+it('generates responsive variants when a record is created with an original image', function (string $model, string $column, string $directory) {
+    // Arrange
+    /** @var class-string<Project|Post|Podcast> $model */
+    $image = UploadedFile::fake()->image('original.png', 1280, 8)
         ->getContent();
-    Storage::disk('public')->put('projects/old.png', $image);
-    Storage::disk('public')->put('projects/new.png', $image);
+    Storage::disk('public')->put("{$directory}/old.png", $image);
 
-    $project = Project::factory()->create(['featured_image_path' => 'projects/old.png']);
+    // Act
+    $model::factory()
+        ->create([$column => "{$directory}/old.png"]);
 
+    // Assert
     Storage::disk('public')->assertExists([
-        'projects/responsive/old-640.webp',
-        'projects/responsive/old-1280.webp',
+        "{$directory}/responsive/old-640.webp",
+        "{$directory}/responsive/old-1280.webp",
     ]);
+})->with('responsive image owners');
 
-    $project->update(['featured_image_path' => 'projects/new.png']);
-
-    Storage::disk('public')->assertMissing([
-        'projects/responsive/old-640.webp',
-        'projects/responsive/old-1280.webp',
-    ]);
-    Storage::disk('public')->assertExists([
-        'projects/responsive/new-640.webp',
-        'projects/responsive/new-1280.webp',
-    ]);
-
-    $project->forceDelete();
-
-    Storage::disk('public')->assertMissing([
-        'projects/responsive/new-640.webp',
-        'projects/responsive/new-1280.webp',
-    ]);
-});
-
-it('keeps responsive post image variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('post.png', 1280, 8)
+it('replaces responsive variants when the original image changes', function (string $model, string $column, string $directory) {
+    // Arrange
+    /** @var class-string<Project|Post|Podcast> $model */
+    $image = UploadedFile::fake()->image('original.png', 1280, 8)
         ->getContent();
-    Storage::disk('public')->put('posts/old.png', $image);
-    Storage::disk('public')->put('posts/new.png', $image);
+    Storage::disk('public')->put("{$directory}/old.png", $image);
+    Storage::disk('public')->put("{$directory}/new.png", $image);
+    $record = $model::factory()
+        ->create([$column => "{$directory}/old.png"]);
 
-    $post = Post::factory()->create(['featured_image_path' => 'posts/old.png']);
+    // Act
+    $record->update([$column => "{$directory}/new.png"]);
 
-    Storage::disk('public')->assertExists([
-        'posts/responsive/old-640.webp',
-        'posts/responsive/old-1280.webp',
-    ]);
-
-    $post->update(['featured_image_path' => 'posts/new.png']);
-
+    // Assert
     Storage::disk('public')->assertMissing([
-        'posts/responsive/old-640.webp',
-        'posts/responsive/old-1280.webp',
+        "{$directory}/responsive/old-640.webp",
+        "{$directory}/responsive/old-1280.webp",
     ]);
     Storage::disk('public')->assertExists([
-        'posts/responsive/new-640.webp',
-        'posts/responsive/new-1280.webp',
+        "{$directory}/responsive/new-640.webp",
+        "{$directory}/responsive/new-1280.webp",
     ]);
+})->with('responsive image owners');
 
-    $post->forceDelete();
-
-    Storage::disk('public')->assertMissing([
-        'posts/responsive/new-640.webp',
-        'posts/responsive/new-1280.webp',
-    ]);
-});
-
-it('keeps responsive podcast cover variants in sync with the original image', function () {
-    $image = UploadedFile::fake()->image('podcast.png', 1280, 8)
+it('deletes responsive variants with the record', function (string $model, string $column, string $directory) {
+    // Arrange
+    /** @var class-string<Project|Post|Podcast> $model */
+    $image = UploadedFile::fake()->image('original.png', 1280, 8)
         ->getContent();
-    Storage::disk('public')->put('podcasts/old.png', $image);
-    Storage::disk('public')->put('podcasts/new.png', $image);
+    Storage::disk('public')->put("{$directory}/old.png", $image);
+    Storage::disk('public')->put("{$directory}/new.png", $image);
+    $record = $model::factory()
+        ->create([$column => "{$directory}/old.png"]);
+    $record->update([$column => "{$directory}/new.png"]);
 
-    $podcast = Podcast::factory()->create(['cover_image_path' => 'podcasts/old.png']);
+    // Act
+    $record->forceDelete();
 
-    Storage::disk('public')->assertExists([
-        'podcasts/responsive/old-640.webp',
-        'podcasts/responsive/old-1280.webp',
-    ]);
-
-    $podcast->update(['cover_image_path' => 'podcasts/new.png']);
-
+    // Assert
     Storage::disk('public')->assertMissing([
-        'podcasts/responsive/old-640.webp',
-        'podcasts/responsive/old-1280.webp',
+        "{$directory}/responsive/new-640.webp",
+        "{$directory}/responsive/new-1280.webp",
     ]);
-    Storage::disk('public')->assertExists([
-        'podcasts/responsive/new-640.webp',
-        'podcasts/responsive/new-1280.webp',
-    ]);
-
-    $podcast->forceDelete();
-
-    Storage::disk('public')->assertMissing([
-        'podcasts/responsive/new-640.webp',
-        'podcasts/responsive/new-1280.webp',
-    ]);
-});
+})->with('responsive image owners');
 
 it('logs responsive generation failures without exposing media paths', function () {
     $logger = Double::for(LoggerInterface::class);

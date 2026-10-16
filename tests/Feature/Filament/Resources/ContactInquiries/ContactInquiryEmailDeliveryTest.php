@@ -29,23 +29,50 @@ it('shows when each contact email was sent', function () {
         ->assertFormFieldDisabled('confirmation_sent_at');
 });
 
-it('offers a retry only after an incomplete delivery attempt', function (?bool $notificationSent, bool $visible) {
+it('does not offer a retry before any delivery attempt', function () {
+    // Arrange
     $inquiry = ContactInquiry::factory()->create([
-        'email_attempted_at' => $notificationSent === null ? null : now(),
-        'notification_sent_at' => $notificationSent === true ? now() : null,
-        'confirmation_sent_at' => $notificationSent === true ? now() : null,
+        'email_attempted_at' => null,
+        'notification_sent_at' => null,
+        'confirmation_sent_at' => null,
     ]);
 
+    // Act
     $page = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
 
-    $visible
-        ? $page->assertActionVisible('retryEmails')
-        : $page->assertActionHidden('retryEmails');
-})->with([
-    'not attempted yet' => [null, false],
-    'attempted and incomplete' => [false, true],
-    'fully delivered' => [true, false],
-]);
+    // Assert
+    $page->assertActionHidden('retryEmails');
+});
+
+it('offers a retry after an incomplete delivery attempt', function () {
+    // Arrange
+    $inquiry = ContactInquiry::factory()->create([
+        'email_attempted_at' => now(),
+        'notification_sent_at' => null,
+        'confirmation_sent_at' => null,
+    ]);
+
+    // Act
+    $page = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
+
+    // Assert
+    $page->assertActionVisible('retryEmails');
+});
+
+it('does not offer a retry once every email is delivered', function () {
+    // Arrange
+    $inquiry = ContactInquiry::factory()->create([
+        'email_attempted_at' => now(),
+        'notification_sent_at' => now(),
+        'confirmation_sent_at' => now(),
+    ]);
+
+    // Act
+    $page = livewire(EditContactInquiry::class, ['record' => $inquiry->getRouteKey()]);
+
+    // Assert
+    $page->assertActionHidden('retryEmails');
+});
 
 it('queues the unsent emails again from the retry action', function () {
     $inquiry = ContactInquiry::factory()->create([

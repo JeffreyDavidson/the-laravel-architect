@@ -168,7 +168,7 @@ describe('index', function () {
         $scheduled = Post::factory()->published()
             ->create(['title' => 'Scheduled Laravel Architecture', 'published_at' => now()->addDay()]);
 
-        $response = get('/blog');
+        $response = get(route('blog.index'));
 
         $response
             ->assertOk()
@@ -223,13 +223,21 @@ describe('index', function () {
 
 describe('show', function () {
     it('renders a published post', function () {
-        $published = Post::factory()->published()
-            ->create();
-        $draft = Post::factory()->create();
-        $scheduled = Post::factory()->published()
-            ->create(['published_at' => now()->addDay()]);
+        // Arrange
+        $published = Post::factory()
+            ->published()
+            ->create([
+                'title' => 'Shipping a Laravel feature',
+                'content' => 'The body of the published post.',
+            ]);
+
+        // Act
         $response = get(route('blog.show', $published));
-        $response->assertOk();
+
+        // Assert
+        $response->assertOk()
+            ->assertSee('Shipping a Laravel feature')
+            ->assertSee('The body of the published post.');
     });
 
     it('does not expose a draft post', function () {
@@ -440,37 +448,64 @@ describe('show', function () {
 });
 
 describe('shared contracts', function () {
-    it('renders bundled editorial artwork and article navigation for seeded posts', function () {
+    it('renders bundled editorial artwork and article navigation for a seeded post', function (string $slug, string $asset) {
+        // Arrange
         withVite();
 
-        $posts = [
-            'hello-world-why-im-starting-this-blog' => 'post-hello-world-768',
-            'from-kansas-to-florida-a-developers-journey' => 'post-kansas-florida-768',
-            'what-15-years-of-web-development-taught-me' => 'home-writing-modules-768',
-            'why-i-still-choose-laravel-in-2026' => 'home-writing-review-768',
-            'how-i-structure-every-laravel-project' => 'home-writing-fallback-768',
+        $post = Post::factory()->published()
+            ->create([
+                'slug' => $slug,
+                'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
+            ]);
+
+        // Act
+        $response = get(route('blog.show', $post));
+
+        // Assert
+        $response
+            ->assertOk()
+            ->assertSeeHtml("data-post-artwork=\"{$slug}\"")
+            ->assertSeeHtml($asset)
+            ->assertSeeHtml(str_replace('-768', '-384', $asset))
+            ->assertSeeHtml('data-article-toc');
+    })->with('seeded post artwork');
+
+    it('renders bundled editorial artwork for every seeded post on the blog index', function () {
+        // Arrange
+        withVite();
+
+        $slugs = [
+            'hello-world-why-im-starting-this-blog',
+            'from-kansas-to-florida-a-developers-journey',
+            'what-15-years-of-web-development-taught-me',
+            'why-i-still-choose-laravel-in-2026',
+            'how-i-structure-every-laravel-project',
         ];
 
-        foreach ($posts as $slug => $asset) {
-            $post = Post::factory()->published()
+        foreach ($slugs as $slug) {
+            Post::factory()->published()
                 ->create([
                     'slug' => $slug,
                     'content' => "## A Starting Point\n\nStart with Laravel.\n\n## Thin Controllers\n\nKeep the boundary clear.",
                 ]);
-
-            get(route('blog.show', $post))
-                ->assertOk()
-                ->assertSeeHtml("data-post-artwork=\"{$slug}\"")
-                ->assertSeeHtml($asset)
-                ->assertSeeHtml(str_replace('-768', '-384', $asset))
-                ->assertSeeHtml('data-article-toc');
         }
 
-        $blog = get(route('blog.index'))
-            ->assertOk();
+        // Act
+        $response = get(route('blog.index'));
 
-        foreach (array_keys($posts) as $slug) {
-            $blog->assertSeeHtml("data-post-artwork=\"{$slug}\"");
+        // Assert
+        $response->assertOk();
+
+        foreach ($slugs as $slug) {
+            $response->assertSeeHtml("data-post-artwork=\"{$slug}\"");
         }
     });
 });
+
+dataset('seeded post artwork', [
+    'hello-world-why-im-starting-this-blog' => ['hello-world-why-im-starting-this-blog', 'post-hello-world-768'],
+    'from-kansas-to-florida-a-developers-journey' => ['from-kansas-to-florida-a-developers-journey', 'post-kansas-florida-768'],
+    'what-15-years-of-web-development-taught-me' => ['what-15-years-of-web-development-taught-me', 'home-writing-modules-768'],
+    'why-i-still-choose-laravel-in-2026' => ['why-i-still-choose-laravel-in-2026', 'home-writing-review-768'],
+    'how-i-structure-every-laravel-project' => ['how-i-structure-every-laravel-project', 'home-writing-fallback-768'],
+]);

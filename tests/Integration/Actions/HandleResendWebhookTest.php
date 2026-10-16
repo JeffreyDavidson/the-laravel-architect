@@ -79,12 +79,14 @@ it('suppresses every known recipient of an event and skips unknown ones', functi
 
 it('changes nothing for other events and malformed payloads', function (array $event) {
     /** @var array<array-key, mixed> $event */
-    $reader = Subscriber::factory()->create();
+    // Arrange: the subscriber every payload addresses, so only the event decides the outcome
+    $reader = Subscriber::factory()->create(['email' => 'reader@example.com']);
 
+    // Act
     $suppressed = app(HandleResendWebhook::class)->handle($event);
 
+    // Assert
     $reader->refresh();
-
     expect($suppressed)
         ->toBe(0)
         ->and($reader->isActive())

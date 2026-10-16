@@ -114,7 +114,8 @@ it('describes an episode within its series with three-level breadcrumbs', functi
     ]);
 });
 
-it('decides when the description and the coming soon notice stand in for the episode', function (array $attributes, bool $tagged, bool $descriptionFallback, bool $detailsComingSoon) {
+it('decides when the description and the coming soon notice stand in for the episode', function (array $attributes, bool $descriptionFallback, bool $detailsComingSoon) {
+    // Arrange
     /** @var array<string, mixed> $attributes */
     $podcast = Podcast::factory()->create();
     $episode = Episode::factory()
@@ -125,22 +126,38 @@ it('decides when the description and the coming soon notice stand in for the epi
             ...$attributes,
         ]);
 
-    if ($tagged) {
-        $episode->attachTag('Architecture');
-    }
-
+    // Act
     $data = app(EpisodeShowViewModel::class)
         ->data($podcast, $episode);
 
+    // Assert
     expect($data['showDescriptionFallback'])->toBe($descriptionFallback)
         ->and($data['showDetailsComingSoon'])
         ->toBe($detailsComingSoon);
 })->with([
-    'nothing to show' => [[], false, true, true],
-    'a guest' => [['guest_name' => 'Taylor'], false, true, false],
-    'a topic' => [[], true, true, false],
-    'a Transistor player' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], false, false, false],
-    'a YouTube video' => [['youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'], false, false, false],
-    'show notes' => [['show_notes' => '<p>Notes</p>'], false, false, false],
-    'a transcript' => [['transcript' => 'Transcript'], false, false, false],
+    'nothing to show' => [[], true, true],
+    'a guest' => [['guest_name' => 'Taylor'], true, false],
+    'a Transistor player' => [['transistor_url' => 'https://share.transistor.fm/s/428dcd6b'], false, false],
+    'a YouTube video' => [['youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'], false, false],
+    'show notes' => [['show_notes' => '<p>Notes</p>'], false, false],
+    'a transcript' => [['transcript' => 'Transcript'], false, false],
 ]);
+
+it('shows the description but not the coming soon notice for an episode with only a topic', function () {
+    // Arrange
+    $podcast = Podcast::factory()->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->published()
+        ->create(['transistor_url' => null]);
+    $episode->attachTag('Architecture');
+
+    // Act
+    $data = app(EpisodeShowViewModel::class)
+        ->data($podcast, $episode);
+
+    // Assert
+    expect($data['showDescriptionFallback'])->toBeTrue()
+        ->and($data['showDetailsComingSoon'])
+        ->toBeFalse();
+});

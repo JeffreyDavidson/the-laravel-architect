@@ -16,35 +16,56 @@ beforeEach(function () {
     actingAs($user);
 });
 
-it('controls public podcast visibility through the active toggle', function () {
+it('hides a podcast from the public site when the active toggle is turned off', function () {
+    // Arrange
     $podcast = Podcast::factory()->create(['name' => 'Visibility workflow podcast']);
 
-    livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
+    // Act
+    $component = livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['is_active' => false])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->call('save');
 
-    get(route('podcasts.index'))
+    // Assert
+    $component->assertHasNoFormErrors();
+
+    $indexResponse = get(route('podcasts.index'));
+    $showResponse = get(route('podcasts.show', $podcast));
+    $sitemapResponse = get(route('sitemap'));
+
+    $indexResponse
         ->assertOk()
         ->assertDontSee($podcast->name);
-    get(route('podcasts.show', $podcast))
-        ->assertNotFound();
-    get('/sitemap.xml')
+    $showResponse->assertNotFound();
+    $sitemapResponse
         ->assertOk()
         ->assertDontSeeHtml(route('podcasts.show', $podcast));
+});
 
-    livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
+it('shows a podcast on the public site when the active toggle is turned on', function () {
+    // Arrange
+    $podcast = Podcast::factory()
+        ->inactive()
+        ->create(['name' => 'Visibility workflow podcast']);
+
+    // Act
+    $component = livewire(EditPodcast::class, ['record' => $podcast->getRouteKey()])
         ->fillForm(['is_active' => true])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->call('save');
 
-    get(route('podcasts.index'))
+    // Assert
+    $component->assertHasNoFormErrors();
+
+    $indexResponse = get(route('podcasts.index'));
+    $showResponse = get(route('podcasts.show', $podcast));
+    $sitemapResponse = get(route('sitemap'));
+
+    $indexResponse
         ->assertOk()
         ->assertSee($podcast->name);
-    get(route('podcasts.show', $podcast))
+    $showResponse
         ->assertOk()
         ->assertSee($podcast->name);
-    get('/sitemap.xml')
+    $sitemapResponse
         ->assertOk()
         ->assertSeeHtml(route('podcasts.show', $podcast));
 });

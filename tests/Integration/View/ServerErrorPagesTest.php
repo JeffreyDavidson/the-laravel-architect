@@ -22,11 +22,14 @@ beforeEach(function () {
 });
 
 it('renders a safe branded page without database access or compiled assets', function (Throwable $exception, int $status, string $heading) {
+    // Arrange
     $request = Request::create('/unavailable-page', 'GET', server: ['HTTP_ACCEPT' => 'text/html']);
 
-    $response = app(ExceptionHandler::class)->render($request, $exception);
+    // Act
+    $response = TestResponse::fromBaseResponse(app(ExceptionHandler::class)->render($request, $exception));
 
-    TestResponse::fromBaseResponse($response)
+    // Assert
+    $response
         ->assertStatus($status)
         ->assertSeeText('The Laravel Architect')
         ->assertSeeHtml('<link rel="icon" type="image/png" href="/images/elephant-small-32.png" />')
@@ -39,12 +42,6 @@ it('renders a safe branded page without database access or compiled assets', fun
         ->assertDontSee('private-throttle-detail')
         ->assertDontSee('SQLSTATE')
         ->assertDontSee('/build/');
-
-    if ($status === 503) {
-        expect($response->headers
-            ->get('Retry-After'))
-            ->toBe('120');
-    }
 })->with([
     'database failure' => [
         fn (): QueryException => new QueryException('unavailable', 'select private-database-detail', [], new PDOException('SQLSTATE connection failed')),
@@ -63,9 +60,24 @@ it('renders a safe branded page without database access or compiled assets', fun
     ],
 ]);
 
+it('tells clients when to retry a temporarily unavailable page', function () {
+    // Arrange
+    $request = Request::create('/unavailable-page', 'GET', server: ['HTTP_ACCEPT' => 'text/html']);
+
+    // Act
+    $response = TestResponse::fromBaseResponse(app(ExceptionHandler::class)->render($request, new ServiceUnavailableHttpException(120, 'private-maintenance-detail')));
+
+    // Assert
+    $response
+        ->assertServiceUnavailable()
+        ->assertHeader('Retry-After', '120');
+});
+
 it('renders the maintenance template without an exception or request-specific data', function () {
+    // Act
     $html = view('errors.503')->render();
 
+    // Assert
     expect($html)
         ->toContain('Taking a short break.', 'href=""', 'href="/"')
         ->not

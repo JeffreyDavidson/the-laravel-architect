@@ -61,22 +61,37 @@ it('rejects a release-local database even when its path is absolute', function (
         ->assertFailed();
 });
 
-it('resolves database symlinks before checking release persistence', function (bool $persistent) {
+it('accepts a database symlink that resolves to a persistent file', function () {
+    // Arrange
     $link = tempnam(sys_get_temp_dir(), 'tla-config-link-');
     unlink($link);
-    symlink($persistent ? config()->string('database.connections.sqlite.database') : base_path('composer.json'), $link);
+    symlink(config()->string('database.connections.sqlite.database'), $link);
     $this->beforeApplicationDestroyed(fn () => unlink($link));
     config()->set('database.connections.sqlite.database', $link);
 
+    // Act
     $command = $this->artisanCommand('app:verify-production');
 
-    if ($persistent) {
-        $command->assertSuccessful();
-    } else {
-        $command->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
-            ->assertFailed();
-    }
-})->with(['persistent target' => true, 'release-local target' => false]);
+    // Assert
+    $command->assertSuccessful();
+});
+
+it('rejects a database symlink that resolves inside the release directory', function () {
+    // Arrange
+    $link = tempnam(sys_get_temp_dir(), 'tla-config-link-');
+    unlink($link);
+    symlink(base_path('composer.json'), $link);
+    $this->beforeApplicationDestroyed(fn () => unlink($link));
+    config()->set('database.connections.sqlite.database', $link);
+
+    // Act
+    $command = $this->artisanCommand('app:verify-production');
+
+    // Assert
+    $command
+        ->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+        ->assertFailed();
+});
 
 it('rejects missing or nonpersistent database paths', function (string $path) {
     config()->set('database.connections.sqlite.database', $path);
@@ -92,22 +107,32 @@ it('accepts a safe production configuration', function () {
         ->assertSuccessful();
 });
 
-it('validates the effective database URL rather than the overridden database path', function (bool $persistent) {
-    $path = $persistent ? config()->string('database.connections.sqlite.database') : base_path('composer.json');
+it('accepts a persistent database URL even when the overridden database path is release-local', function () {
+    // Arrange
     config()->set([
-        'database.connections.sqlite.url' => 'sqlite:///'.$path,
-        'database.connections.sqlite.database' => $persistent ? base_path('composer.json') : config()->string('database.connections.sqlite.database'),
+        'database.connections.sqlite.url' => 'sqlite:///'.config()->string('database.connections.sqlite.database'),
+        'database.connections.sqlite.database' => base_path('composer.json'),
     ]);
 
+    // Act
     $command = $this->artisanCommand('app:verify-production');
 
-    if ($persistent) {
-        $command->assertSuccessful();
-    } else {
-        $command->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
-            ->assertFailed();
-    }
-})->with(['persistent URL' => true, 'release-local URL' => false]);
+    // Assert
+    $command->assertSuccessful();
+});
+
+it('rejects a release-local database URL even when the overridden database path is persistent', function () {
+    // Arrange
+    config()->set('database.connections.sqlite.url', 'sqlite:///'.base_path('composer.json'));
+
+    // Act
+    $command = $this->artisanCommand('app:verify-production');
+
+    // Assert
+    $command
+        ->expectsOutputToContain('DB_DATABASE must resolve to an existing persistent SQLite file outside the release directory.')
+        ->assertFailed();
+});
 
 it('does not mistake a differently named local disk for an off-server backup', function () {
     config()->set('backup.backup.destination.disks', ['local', 'public']);

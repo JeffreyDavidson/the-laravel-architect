@@ -30,3 +30,12 @@ it('requires actions to expose handle instead of invoke', function () {
             ->toBeFalse("{$class}::handle must be an instance method.");
     }
 });
+
+arch('keeps HTTP and Filament out of actions')
+    ->expect('App\\Actions')
+    ->not->toUse([
+        'Illuminate\\Http',
+        'App\\Http',
+        'Filament',
+        'Livewire',
+    ]);

@@ -24,6 +24,7 @@ beforeEach(function () {
 });
 
 it('shows source and responsive variant health for stored images', function () {
+    // Arrange
     $healthy = Project::withoutEvents(fn (): Project => Project::factory()->create([
         'title' => 'Healthy project',
         'slug' => 'healthy-project',
@@ -54,14 +55,18 @@ it('shows source and responsive variant health for stored images', function () {
     });
 
     app(ResponsiveImageVariants::class)->generate($healthyPath);
+    $healthyKey = "project:{$healthy->id}";
+    $needsRepairKey = "project:{$needsRepair->id}";
 
-    livewire(MediaHealth::class)
-        ->assertSee('Healthy project')
-        ->assertSee('Needs repair project')
-        ->assertSee('Healthy')
-        ->assertSee('Needs repair')
-        ->assertSee('Ready')
-        ->assertSee('Missing');
+    // Act
+    $component = livewire(MediaHealth::class);
+
+    // Assert
+    $component->assertCanSeeTableRecords([$healthyKey, $needsRepairKey])
+        ->assertTableColumnFormattedStateSet('status', 'Healthy', $healthyKey)
+        ->assertTableColumnFormattedStateSet('variants', 'Ready', $healthyKey)
+        ->assertTableColumnFormattedStateSet('status', 'Needs repair', $needsRepairKey)
+        ->assertTableColumnFormattedStateSet('variants', 'Missing', $needsRepairKey);
 });
 
 it('filters stored images by health status and labels each status', function () {

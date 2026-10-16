@@ -1,0 +1,45 @@
+<?php
+
+use App\Http\Requests\ArchiveIndexRequest;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+covers(ArchiveIndexRequest::class);
+
+/**
+ * @param  array<mixed>  $query
+ */
+function validatedArchiveIndexRequest(array $query): ArchiveIndexRequest
+{
+    $request = ArchiveIndexRequest::create('/archive', 'GET', $query);
+    $request->setContainer(app())
+        ->setRedirector(app('redirect'));
+
+    $request->validateResolved();
+
+    return $request;
+}
+
+it('accepts and trims the archive filters', function () {
+    // Arrange
+    $query = ['type' => '  writing ', 'year' => '2025', 'page' => '2'];
+
+    // Act
+    $request = validatedArchiveIndexRequest($query);
+
+    // Assert
+    expect($request->validated())->toBe(['type' => 'writing', 'year' => '2025', 'page' => '2']);
+});
+
+it('treats a malformed archive filter as not found', function (array $query) {
+    // Arrange
+    $validate = fn (): ArchiveIndexRequest => validatedArchiveIndexRequest($query);
+
+    // Act and Assert
+    expect($validate)->toThrow(NotFoundHttpException::class);
+})->with([
+    'unknown type' => [['type' => 'podcast-season']],
+    'type list' => [['type' => ['writing']]],
+    'year before 2000' => [['year' => '1999']],
+    'future year' => [['year' => (string) (now()->year + 1)]],
+    'page zero' => [['page' => '0']],
+]);

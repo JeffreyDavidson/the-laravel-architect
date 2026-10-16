@@ -189,7 +189,7 @@ describe('show', function () {
         $episode = Episode::factory()->for($inactivePodcast)
             ->published()
             ->create();
-        $response = get('/podcasts');
+        $response = get(route('podcasts.index'));
         $response->assertOk()
             ->assertSee($activePodcast->name)
             ->assertDontSee($inactivePodcast->name)
@@ -218,7 +218,7 @@ describe('show', function () {
             ->assertSeeHtml(configuredString(PodcastPresenter::from($podcast)->coverImageUrl()));
     });
 
-    it('renders accessible podcast episode embeds and external links on podcasts.show', function () {
+    it('styles its episodes with the podcast colour and no inline style blocks on podcasts.show', function () {
         $podcast = Podcast::factory()->create(['color' => '#2563eb']);
         $episode = Episode::factory()->for($podcast)
             ->published()

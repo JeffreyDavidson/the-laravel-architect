@@ -68,15 +68,19 @@ it('rejects a non-normalized post slug when editing a post', function () {
 });
 
 it('preserves an existing post slug when the title changes', function () {
+    // Arrange
     $post = Post::factory()->create(['slug' => 'curated-post-slug']);
 
-    livewire(EditPost::class, ['record' => $post->getRouteKey()])
-        ->fillForm(['title' => 'Updated post title', 'slug' => 'curated-post-slug'])
-        ->call('save')
-        ->assertHasNoFormErrors();
+    // Act
+    $component = livewire(EditPost::class, ['record' => $post->getRouteKey()])
+        ->fillForm(['title' => 'Updated post title'])
+        ->call('save');
 
-    expect($post->refresh()
-        ->slug)->toBe('curated-post-slug');
+    // Assert
+    $component->assertHasNoFormErrors();
+    expect($post->refresh())
+        ->title->toBe('Updated post title')
+        ->slug->toBe('curated-post-slug');
 });
 
 it('rejects a non-normalized slug when creating a category inline', function () {

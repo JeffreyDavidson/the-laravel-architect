@@ -8,6 +8,7 @@ use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\Pages\ListSocia
 use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\SocialProfileResource;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -33,4 +34,28 @@ it('lists each profile under its platform label', function () {
 
     livewire(ListSocialProfiles::class)
         ->assertTableColumnFormattedStateSet('platform', 'X / Twitter', $profile);
+});
+
+it('renders the social profile create page for an administrator', function () {
+    // Arrange
+    actingAs(User::factory()->create(['is_admin' => true]));
+
+    // Act
+    $response = get(SocialProfileResource::getUrl('create'));
+
+    // Assert
+    $response->assertOk();
+});
+
+it('renders the social profile edit page for an administrator', function () {
+    // Arrange
+    $profile = SocialProfile::factory()->create(['label' => 'Personal site']);
+    actingAs(User::factory()->create(['is_admin' => true]));
+
+    // Act
+    $response = get(SocialProfileResource::getUrl('edit', ['record' => $profile]));
+
+    // Assert
+    $response->assertOk()
+        ->assertSee('Personal site');
 });

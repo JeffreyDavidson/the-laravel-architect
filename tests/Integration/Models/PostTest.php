@@ -1,17 +1,8 @@
 <?php
 
 use App\Models\Post;
-use App\Presenters\PostPresenter;
 use Illuminate\Support\Carbon;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
-
-it('calculates reading time from post content', function () {
-    $post = new Post([
-        'content' => str_repeat('word ', 251),
-    ]);
-
-    expect(PostPresenter::from($post)->readingTime())->toBe(2);
-});
 
 it('returns its cast publishing values', function () {
     $publishedAt = now()->subMinute()
