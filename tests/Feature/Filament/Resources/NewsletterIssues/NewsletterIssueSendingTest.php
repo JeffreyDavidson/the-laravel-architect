@@ -5,6 +5,7 @@ use App\Models\NewsletterDelivery;
 use App\Models\NewsletterIssue;
 use App\Models\Subscriber;
 use App\Models\User;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
@@ -13,6 +14,7 @@ use JeffreyDavidson\CreatorKit\Jobs\DeliverNewsletterIssue;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\withoutMiddleware;
 use function Pest\Livewire\livewire;
 
 pest()->use(RefreshDatabase::class);
@@ -165,6 +167,30 @@ it('hides the sending actions from a user who is not an administrator', function
     actingAs(User::factory()->create(['is_admin' => false]));
 
     $page->assertActionHidden($action);
+})->with(['sendTestEmail', 'sendToSubscribers']);
+
+it('refuses the sending actions when a non-administrator calls them directly', function (string $action) {
+    // Arrange
+    // The page is opened by an admin, then the signed-in user loses admin rights.
+    Mail::fake();
+    Subscriber::factory()->create();
+    $issue = editableNewsletterIssue(['title' => 'Issue One']);
+    $page = livewire(EditNewsletterIssue::class, ['record' => $issue->getRouteKey()])
+        ->assertActionVisible($action);
+    // The panel middleware already turns non-administrators away; skip it so the edit page's own authorization is what refuses the call.
+    withoutMiddleware(Authenticate::class)
+        ->actingAs(User::factory()->create(['is_admin' => false]));
+
+    // Act
+    $page->mountAction($action);
+
+    // Assert
+    $page->assertForbidden();
+    Mail::assertNothingQueued();
+    Mail::assertNothingSent();
+    assertDatabaseCount('newsletter_deliveries', 0);
+    $issue->refresh();
+    expect($issue->wasSent())->toBeFalse();
 })->with(['sendTestEmail', 'sendToSubscribers']);
 
 it('tells the admin how many active subscribers the send will reach', function () {
