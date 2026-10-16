@@ -456,7 +456,8 @@ it('marks code as copied from the copy action', function (): void {
     withVite();
     $page = BlogPostPage::visit(Post::query()->where('slug', 'e2e-code-example')
         ->sole());
-    $page->assertPresent('[data-code-copy]');
+    // Wait for Alpine to bind the button, so the single click below isn't lost on a slow runner.
+    $page->assertScript('document.querySelector("[data-code-copy]")._x_dataStack !== undefined');
 
     // Act
     $page->page()
@@ -537,7 +538,9 @@ it('loads the podcast video only on activation', function (): void {
     // Keep YouTube out of the test: the player template's iframe gets local content instead of the embed URL.
     $page->script('const frame = document.querySelector("[data-youtube-player]").content.querySelector("iframe"); frame.removeAttribute("src"); frame.srcdoc = "<p>Video fixture</p>";');
     $page->assertNotPresent('[data-youtube-facade] iframe')
-        ->assertEnabled('[data-youtube-play]');
+        ->assertEnabled('[data-youtube-play]')
+        // Wait for Alpine to bind the facade, so the single click below isn't lost on a slow runner.
+        ->assertScript('document.querySelector("[data-youtube-facade]")._x_dataStack !== undefined');
 
     // Act
     $page->page()
@@ -556,6 +559,8 @@ it('copies the podcast episode share link', function (): void {
     [$podcast, $episode] = youtubeEpisode();
     $page = PodcastEpisodePage::visit($podcast, $episode);
     $page->script('Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.copiedEpisodeUrl = text; } } });');
+    // Wait for Alpine to bind the button, so the single click below isn't lost on a slow runner.
+    $page->assertScript('document.querySelector("[data-podcast-copy-url]")._x_dataStack !== undefined');
 
     // Act
     $page->page()
@@ -616,6 +621,7 @@ it('switches the admin sign-in page theme', function (string $appearance, string
     'dark in a light browser' => ['dark', 'light', true],
     'light in a dark browser' => ['light', 'dark', false],
     'system in a dark browser' => ['system', 'dark', true],
+    'system in a light browser' => ['system', 'light', false],
 ])->with(['desktop', 'mobile']);
 
 it('signs an administrator in to the dashboard', function (string $theme, string $device): void {
