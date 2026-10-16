@@ -30,14 +30,27 @@ it('regenerates the responsive variants of a stored image', function () {
     Storage::disk('public')->assertExists('projects/responsive/cover-640.webp');
 });
 
-it('reports failure when there is no stored image to repair', function (?string $path, bool $unknownRecord) {
+it('reports failure when the record has no stored image to repair', function (?string $path) {
+    // Arrange
     $project = repairableProject($path);
 
-    $repaired = app(RepairImageVariants::class)->handle(MediaHealthType::Project, $unknownRecord ? '999' : (string) $project->id);
+    // Act
+    $repaired = app(RepairImageVariants::class)->handle(MediaHealthType::Project, (string) $project->id);
 
+    // Assert
     expect($repaired)->toBeFalse();
 })->with([
-    'no image' => [null, false],
-    'missing file' => ['projects/gone.webp', false],
-    'unknown record' => [null, true],
+    'no image' => [null],
+    'missing file' => ['projects/gone.webp'],
 ]);
+
+it('reports failure for an unknown record', function () {
+    // Arrange
+    repairableProject(null);
+
+    // Act
+    $repaired = app(RepairImageVariants::class)->handle(MediaHealthType::Project, '999');
+
+    // Assert
+    expect($repaired)->toBeFalse();
+});

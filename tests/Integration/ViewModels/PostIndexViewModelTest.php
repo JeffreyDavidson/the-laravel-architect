@@ -61,58 +61,67 @@ it('builds the public blog index payload', function () {
         ->toBe('Blog');
 });
 
-it('filters the paginated archive by title excerpt and translated tag name', function () {
-    $author = User::factory()->create();
-    $category = Category::factory()->create();
-    $tag = Tag::factory()->create(['name' => 'Boundaries']);
+it('filters the paginated archive by translated tag name', function () {
+    // Arrange
+    createPostIndexSearchPosts();
 
-    foreach ([
-        ['title' => 'Title Match', 'excerpt' => 'Nothing special.'],
-        ['title' => 'Unrelated', 'excerpt' => 'Excerpt Match.'],
-        ['title' => 'Another Article', 'excerpt' => 'Nothing special.', 'tag' => true],
-    ] as $index => $attributes) {
-        $post = Post::factory()
-            ->for($category)
-            ->for($author, 'author')
-            ->published()
-            ->create([
-                'title' => $attributes['title'],
-                'excerpt' => $attributes['excerpt'],
-                'content' => str_repeat('word ', 251),
-                'published_at' => now()->subDays($index + 1),
-            ]);
-
-        if ($attributes['tag'] ?? false) {
-            $post->attachTag($tag);
-        }
-    }
-
+    // Act
     $data = blogIndexViewModelData(['q' => 'boundaries']);
 
+    // Assert
     expect($data['posts']->total())->toBe(1)
         ->and($data['posts']->sole()
             ->title)
-        ->toBe('Another Article')
-        ->and($data['posts']->sole()
-            ->content)
+        ->toBe('Another Article');
+});
+
+it('loads the full content of search results for their reading time', function () {
+    // Arrange
+    createPostIndexSearchPosts();
+
+    // Act
+    $data = blogIndexViewModelData(['q' => 'boundaries']);
+
+    // Assert
+    expect($data['posts']->sole()
+        ->content)
         ->toContain('word')
         ->and(PostPresenter::from($data['posts']->sole())->readingTime())
-        ->toBe(2)
-        ->and($data['pageMeta']->seo->robots)
+        ->toBe(2);
+});
+
+it('keeps search results out of the index under the blog canonical url', function () {
+    // Arrange
+    createPostIndexSearchPosts();
+
+    // Act
+    $data = blogIndexViewModelData(['q' => 'boundaries']);
+
+    // Assert
+    expect($data['pageMeta']->seo->robots)
         ->toBe('noindex, follow')
         ->and($data['pageMeta']->seo->canonical_url)
         ->toBe(route('blog.index'));
+});
 
-    foreach ([
-        'title match' => 'Title Match',
-        'excerpt match' => 'Unrelated',
-    ] as $term => $expectedTitle) {
-        $filtered = blogIndexViewModelData(['q' => $term]);
+it('filters the paginated archive by title or excerpt', function (string $term, string $expectedTitle) {
+    // Arrange
+    createPostIndexSearchPosts();
 
-        expect($filtered['posts']->sole()
-            ->title)->toBe($expectedTitle);
-    }
+    // Act
+    $data = blogIndexViewModelData(['q' => $term]);
 
+    // Assert
+    expect($data['posts']->sole()
+        ->title)->toBe($expectedTitle);
+})->with([
+    'title match' => ['title match', 'Title Match'],
+    'excerpt match' => ['excerpt match', 'Unrelated'],
+]);
+
+it('matches search wildcard characters literally', function (string $term) {
+    // Arrange
+    [$author, $category] = createPostIndexSearchPosts();
     $literal = Post::factory()
         ->for($category)
         ->for($author, 'author')
@@ -122,12 +131,16 @@ it('filters the paginated archive by title excerpt and translated tag name', fun
             'published_at' => now(),
         ]);
 
-    expect(blogIndexViewModelData(['q' => '%'])['posts']->sole()
-        ->is($literal))->toBeTrue()
-        ->and(blogIndexViewModelData(['q' => '_'])['posts']->sole()
-            ->is($literal))
-        ->toBeTrue();
-});
+    // Act
+    $data = blogIndexViewModelData(['q' => $term]);
+
+    // Assert
+    expect($data['posts']->sole()
+        ->is($literal))->toBeTrue();
+})->with([
+    'percent' => ['%'],
+    'underscore' => ['_'],
+]);
 
 it('lists the first blog page from position one under the canonical url', function () {
     Schema::useFixedOrigin();
@@ -219,6 +232,42 @@ function blogIndexViewModelData(array $filters = []): array
     $categorySlug = $filters['category'] ?? null;
 
     return app(PostIndexViewModel::class)->data($query, $categorySlug);
+}
+
+/**
+ * Create three published posts that match a search only by title, by excerpt or by the
+ * "Boundaries" tag, each long enough for a two-minute reading time.
+ *
+ * @return array{User, Category}
+ */
+function createPostIndexSearchPosts(): array
+{
+    $author = User::factory()->create();
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create(['name' => 'Boundaries']);
+
+    foreach ([
+        ['title' => 'Title Match', 'excerpt' => 'Nothing special.'],
+        ['title' => 'Unrelated', 'excerpt' => 'Excerpt Match.'],
+        ['title' => 'Another Article', 'excerpt' => 'Nothing special.', 'tag' => true],
+    ] as $index => $attributes) {
+        $post = Post::factory()
+            ->for($category)
+            ->for($author, 'author')
+            ->published()
+            ->create([
+                'title' => $attributes['title'],
+                'excerpt' => $attributes['excerpt'],
+                'content' => str_repeat('word ', 251),
+                'published_at' => now()->subDays($index + 1),
+            ]);
+
+        if ($attributes['tag'] ?? false) {
+            $post->attachTag($tag);
+        }
+    }
+
+    return [$author, $category];
 }
 
 function createPostIndexViewModelPost(

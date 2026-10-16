@@ -3,6 +3,20 @@
 use App\Models\Episode;
 use App\Presenters\EpisodePresenter;
 
+it('formats an episode code when its optional episode number is missing', function () {
+    // Arrange
+    $episode = new Episode([
+        'season_number' => 2,
+        'episode_number' => null,
+    ]);
+
+    // Act
+    $code = EpisodePresenter::from($episode)->code();
+
+    // Assert
+    expect($code)->toBe('S02E00');
+});
+
 it('formats an episode duration stored in seconds', function (?int $seconds, string $expected) {
     $episode = new Episode(['duration_seconds' => $seconds]);
 

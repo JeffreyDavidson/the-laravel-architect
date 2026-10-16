@@ -45,21 +45,30 @@ it('returns the public page of live content', function (string $type, string $pa
     'newsletter issue' => ['newsletter issue', '/newsletter/ready-issue'],
 ]);
 
-it('has no public page for content that is not live yet', function (string $type, ?int $days) {
-    $content = PublishableFixtures::ready($type, ['published_at' => $days === null ? null : now()->addDays($days)]);
+it('has no public page for a draft', function () {
+    // Arrange
+    $content = PublishableFixtures::ready('post', ['published_at' => null]);
 
-    if ($days !== null) {
-        $content->publish();
-    }
-
+    // Act
     $url = contentPresenter($content)->publicUrl();
 
+    // Assert
     expect($url)
         ->toBeNull();
-})->with([
-    'draft post' => ['post', null],
-    'scheduled newsletter issue' => ['newsletter issue', 1],
-]);
+});
+
+it('has no public page for scheduled content', function () {
+    // Arrange
+    $content = PublishableFixtures::ready('newsletter issue', ['published_at' => now()->addDays(1)]);
+    $content->publish();
+
+    // Act
+    $url = contentPresenter($content)->publicUrl();
+
+    // Assert
+    expect($url)
+        ->toBeNull();
+});
 
 it('has no public page for a live episode of an inactive show', function () {
     $episode = PublishableFixtures::ready('episode', [

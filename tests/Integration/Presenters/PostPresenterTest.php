@@ -11,6 +11,19 @@ use function Pest\Laravel\withVite;
 
 covers(PostPresenter::class);
 
+it('calculates reading time from post content', function () {
+    // Arrange
+    $post = new Post([
+        'content' => str_repeat('word ', 251),
+    ]);
+
+    // Act
+    $readingTime = PostPresenter::from($post)->readingTime();
+
+    // Assert
+    expect($readingTime)->toBe(2);
+});
+
 it('links the uploaded featured image on the public disk', function (?string $path, ?string $expected) {
     Storage::fake('public');
     $post = new Post(['featured_image_path' => $path]);

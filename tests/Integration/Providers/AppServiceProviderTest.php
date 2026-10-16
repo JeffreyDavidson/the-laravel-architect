@@ -19,6 +19,7 @@ use App\Models\Video;
 use App\Providers\AppServiceProvider;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\LazyLoadingViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,6 +34,8 @@ use JeffreyDavidson\CreatorKit\Filament\Resources\SocialProfiles\SocialProfileRe
 use JeffreyDavidson\CreatorKit\Filament\Resources\Subscribers\SubscriberResource;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\artisan;
+use function Pest\Laravel\withoutMockingConsoleOutput;
 
 pest()->use(RefreshDatabase::class);
 
@@ -151,17 +154,34 @@ it('rejects lazy loading outside production', function () {
         ->toThrow(LazyLoadingViolationException::class);
 });
 
-it('refuses destructive database commands and permits lazy loading in production', function () {
+it('refuses destructive database commands in production', function () {
+    // Arrange
     // The guards are static; the next test's fresh application boot re-applies the testing settings.
     app()->instance('env', 'production');
     new AppServiceProvider(app())
         ->boot();
+    withoutMockingConsoleOutput();
 
-    $this->artisanCommand('db:wipe', ['--force' => true])
-        ->assertFailed();
+    // Act
+    $exitCode = artisan('db:wipe', ['--force' => true]);
 
-    expect(Schema::hasTable('users'))
-        ->toBeTrue()
-        ->and(Model::preventsLazyLoading())
+    // Assert
+    expect($exitCode)
+        ->toBe(Command::FAILURE)
+        ->and(Schema::hasTable('users'))
+        ->toBeTrue();
+});
+
+it('permits lazy loading in production', function () {
+    // Arrange
+    // The guards are static; the next test's fresh application boot re-applies the testing settings.
+    app()->instance('env', 'production');
+
+    // Act
+    new AppServiceProvider(app())
+        ->boot();
+
+    // Assert
+    expect(Model::preventsLazyLoading())
         ->toBeFalse();
 });

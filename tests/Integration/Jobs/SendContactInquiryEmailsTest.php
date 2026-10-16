@@ -55,13 +55,26 @@ it('sends the owner notification to the contact address and the confirmation to 
     Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'jane@example.com');
 });
 
-it('addresses the confirmation to the bare sender email without their name', function () {
+it('names the sender in the owner notification reply-to address', function () {
+    // Arrange
     $inquiry = ContactInquiry::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
 
+    // Act
     sendContactInquiryEmails($inquiry);
 
+    // Assert
     Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'owner@example.com'
         && $event->message->getReplyTo()[0]->getName() === 'Jane Doe');
+});
+
+it('addresses the confirmation to the bare sender email without their name', function () {
+    // Arrange
+    $inquiry = ContactInquiry::factory()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
+
+    // Act
+    sendContactInquiryEmails($inquiry);
+
+    // Assert
     Event::assertDispatched(MessageSent::class, fn (MessageSent $event): bool => $event->message->getTo()[0]->getAddress() === 'jane@example.com'
         && $event->message->getTo()[0]->getName() === '');
 });
