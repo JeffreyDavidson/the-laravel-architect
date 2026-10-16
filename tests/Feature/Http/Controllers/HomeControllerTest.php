@@ -108,6 +108,7 @@ it('renders enabled footer social profiles and hides contact-only and disabled o
 });
 
 it('uses the enabled YouTube profile for the homepage channel link', function () {
+    // Arrange
     SocialProfile::query()->delete();
 
     $youtubeProfile = SocialProfileFixtures::create(
@@ -117,15 +118,30 @@ it('uses the enabled YouTube profile for the homepage channel link', function ()
         false,
     );
 
+    // Act
     $response = get(route('home'));
 
+    // Assert
     $response
         ->assertSeeHtml($youtubeProfile->url);
+});
 
-    $youtubeProfile->update(['is_enabled' => false]);
+it('omits a disabled YouTube profile from the homepage channel link', function () {
+    // Arrange
+    SocialProfile::query()->delete();
 
+    $youtubeProfile = SocialProfileFixtures::create(
+        SocialPlatform::YouTube,
+        'https://youtube.com/@managed-channel',
+        false,
+        false,
+        false,
+    );
+
+    // Act
     $response = get(route('home'));
 
+    // Assert
     $response
         ->assertDontSeeHtml($youtubeProfile->url);
 });

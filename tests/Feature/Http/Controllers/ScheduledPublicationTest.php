@@ -65,7 +65,7 @@ it('exposes scheduled posts across public surfaces exactly when due without chan
         ->status)->toBe(PublishStatus::Scheduled);
 });
 
-it('exposes due scheduled episodes only while their podcast is active', function () {
+it('exposes scheduled episodes of an active podcast exactly when due without changing their status', function () {
     freezeSecond();
     $due = now()->addMinute();
     $podcast = Podcast::factory()->create();
@@ -110,15 +110,55 @@ it('exposes due scheduled episodes only while their podcast is active', function
 
     expect($episode->refresh()
         ->status)->toBe(PublishStatus::Scheduled);
+});
 
-    $podcast->update(['is_active' => false]);
+it('returns not found for a due scheduled episode of an inactive podcast', function () {
+    // Arrange
+    freezeSecond();
+    $due = now()->addMinute();
+    $podcast = Podcast::factory()
+        ->inactive()
+        ->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->scheduled()
+        ->create([
+            'title' => 'Scheduled episode boundary',
+            'published_at' => $due,
+        ]);
 
-    $response = get($url);
+    travelTo($due);
 
+    // Act
+    $response = get(route('podcasts.episode', [$podcast, $episode]));
+
+    // Assert
     $response
         ->assertNotFound();
+});
+
+it('leaves a due scheduled episode of an inactive podcast out of the sitemap', function () {
+    // Arrange
+    freezeSecond();
+    $due = now()->addMinute();
+    $podcast = Podcast::factory()
+        ->inactive()
+        ->create();
+    $episode = Episode::factory()
+        ->for($podcast)
+        ->scheduled()
+        ->create([
+            'title' => 'Scheduled episode boundary',
+            'published_at' => $due,
+        ]);
+
+    travelTo($due);
+
+    // Act
     $response = get(route('sitemap'));
 
+    // Assert
     $response
-        ->assertDontSee($url);
+        ->assertOk()
+        ->assertDontSee(route('podcasts.episode', [$podcast, $episode]));
 });

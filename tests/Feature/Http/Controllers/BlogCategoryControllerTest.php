@@ -50,6 +50,18 @@ it('lists only the category\'s published posts on blog.category', function () {
         ->assertDontSee('Post in another category');
 });
 
+it('renders the category description on blog.category', function () {
+    // Arrange
+    $category = Category::factory()->create(['description' => 'Articles about application architecture.']);
+
+    // Act
+    $response = get(route('blog.category', $category));
+
+    // Assert
+    $response->assertOk()
+        ->assertSee('Articles about application architecture.');
+});
+
 it('returns not found for an unknown category on blog.category', function () {
     // Act
     $response = get(route('blog.category', 'no-such-category'));
