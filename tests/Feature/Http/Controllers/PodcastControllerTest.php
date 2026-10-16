@@ -189,7 +189,7 @@ describe('show', function () {
         $episode = Episode::factory()->for($inactivePodcast)
             ->published()
             ->create();
-        $response = get('/podcasts');
+        $response = get(route('podcasts.index'));
         $response->assertOk()
             ->assertSee($activePodcast->name)
             ->assertDontSee($inactivePodcast->name)

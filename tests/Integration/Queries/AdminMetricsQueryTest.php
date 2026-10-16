@@ -10,16 +10,12 @@ use App\Models\Video;
 use App\Queries\AdminMetricsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use JeffreyDavidson\CreatorKit\Enums\ContactInquiryStatus;
 
 use function Pest\Laravel\freezeSecond;
+use function Pest\Laravel\travelTo;
 
 pest()->use(RefreshDatabase::class);
-
-afterEach(function () {
-    Date::setTestNow();
-});
 
 it('counts posts at each stage of the publishing pipeline', function () {
     freezeSecond();
@@ -136,7 +132,7 @@ it('totals the synced YouTube views', function () {
 });
 
 it('counts published content per month and ignores drafts and earlier months', function () {
-    Date::setTestNow(Carbon::parse('2026-09-15 12:00:00'));
+    travelTo(Carbon::parse('2026-09-15 12:00:00'));
     Post::factory()
         ->published()
         ->create(['published_at' => '2026-09-10 12:00:00']);
@@ -161,7 +157,7 @@ it('counts published content per month and ignores drafts and earlier months', f
 
 it('buckets published content by display timezone month', function () {
     config(['app.display_timezone' => 'America/New_York']);
-    Date::setTestNow(Carbon::parse('2026-10-01 02:00:00'));
+    travelTo(Carbon::parse('2026-10-01 02:00:00'));
     foreach (['Before the window' => '2026-04-01 02:00:00', 'July evening' => '2026-08-01 02:00:00', 'August morning' => '2026-08-01 05:00:00'] as $title => $publishedAt) {
         Post::factory()
             ->published()

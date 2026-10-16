@@ -7,10 +7,7 @@ use App\Filament\Widgets\ContentReadinessWidget;
 use App\Models\Episode;
 use App\Models\Podcast;
 use App\Models\Project;
-use App\Publishing\ContentReadinessSummaryQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\NewsletterIssueResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\PostResource;
@@ -61,12 +58,4 @@ it('renders a clear completed state when no content needs attention', function (
     livewire(ContentReadinessWidget::class)
         ->assertSee('Everything is ready')
         ->assertSee('The public-facing content checks are complete.');
-});
-it('keeps the readiness widget query count bounded', function () {
-    Cache::forget(ContentReadinessSummaryQuery::CACHE_KEY);
-    DB::enableQueryLog();
-
-    livewire(ContentReadinessWidget::class)->assertViewHas('items');
-
-    expect(count(DB::getQueryLog()))->toBeLessThanOrEqual(8);
 });

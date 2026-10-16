@@ -9,9 +9,8 @@ use App\Models\NewsletterIssue;
 use App\Models\Podcast;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use JeffreyDavidson\CreatorKit\Enums\PublishStatus;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\Pages\EditEpisode;
 use JeffreyDavidson\CreatorKit\Filament\Resources\NewsletterIssues\Pages\EditNewsletterIssue;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
@@ -19,55 +18,69 @@ use JeffreyDavidson\CreatorKit\Filament\Resources\Posts\Pages\EditPost;
 class PublishableFixtures
 {
     /**
-     * Create a draft of the given publishable type with every required-to-publish detail filled in.
+     * Create a draft of the given publishable type with every required-to-publish detail filled in,
+     * through the model factories (slugs come from the title).
      *
      * @param  array<string, mixed>  $attributes
      */
     public static function ready(string $type, array $attributes = []): Post|Project|Episode|NewsletterIssue
     {
         return match ($type) {
-            'post' => Post::query()->create([
-                'title' => 'Ready post',
-                'slug' => 'ready-post',
-                'excerpt' => 'Summary.',
-                'content' => 'Content.',
-                'category_id' => Category::query()
-                    ->firstOrCreate(['slug' => 'laravel'], ['name' => 'Laravel'])
-                    ->id,
-                'user_id' => User::factory()
-                    ->create()
-                    ->id,
-                'status' => PublishStatus::Draft,
-                ...$attributes,
-            ]),
-            'project' => Project::query()->create([
+            'post' => Post::factory()
+                ->for(self::sharedCategory())
+                ->create([
+                    'title' => 'Ready post',
+                    'excerpt' => 'Summary.',
+                    'content' => 'Content.',
+                    ...$attributes,
+                ]),
+            'project' => Project::factory()->create([
                 'title' => 'Ready project',
-                'slug' => 'ready-project',
                 'description' => 'Description.',
                 'content' => 'Case study.',
-                'status' => PublishStatus::Draft,
-                ...$attributes,
+                ...self::fillableOnly(new Project, $attributes),
             ]),
-            'episode' => Episode::query()->create([
-                'podcast_id' => Podcast::query()
-                    ->firstOrCreate(['slug' => 'show'], ['name' => 'Show', 'description' => 'A show.'])
-                    ->id,
-                'title' => 'Ready episode',
-                'slug' => 'ready-episode',
-                'description' => 'Description.',
-                'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
-                'status' => PublishStatus::Draft,
-                ...$attributes,
-            ]),
-            'newsletter issue' => NewsletterIssue::query()->create([
+            'episode' => Episode::factory()
+                ->for(self::sharedPodcast())
+                ->create([
+                    'title' => 'Ready episode',
+                    'description' => 'Description.',
+                    'transistor_url' => 'https://share.transistor.fm/s/428dcd6b',
+                    ...$attributes,
+                ]),
+            'newsletter issue' => NewsletterIssue::factory()->create([
                 'title' => 'Ready issue',
-                'slug' => 'ready-issue',
                 'content' => 'Content.',
-                'status' => PublishStatus::Draft,
                 ...$attributes,
             ]),
             default => throw new InvalidArgumentException("Unknown publishable type [{$type}]."),
         };
+    }
+
+    /**
+     * Keep only the attributes the model accepts, as the mass-assigned `create()` this helper
+     * used to call did: shared datasets pass `published_at`, which projects do not have.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    private static function fillableOnly(Model $model, array $attributes): array
+    {
+        return array_filter($attributes, $model->isFillable(...), ARRAY_FILTER_USE_KEY);
+    }
+
+    /** The one category every fixture post shares, so several posts can sit side by side. */
+    private static function sharedCategory(): Category
+    {
+        return Category::query()->firstWhere('slug', 'laravel')
+            ?? Category::factory()->create(['name' => 'Laravel', 'slug' => 'laravel']);
+    }
+
+    /** The one podcast every fixture episode shares. */
+    private static function sharedPodcast(): Podcast
+    {
+        return Podcast::query()->firstWhere('slug', 'show')
+            ?? Podcast::factory()->create(['name' => 'Show', 'slug' => 'show', 'description' => 'A show.']);
     }
 
     /**
