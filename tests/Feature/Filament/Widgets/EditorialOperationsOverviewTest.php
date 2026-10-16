@@ -52,9 +52,36 @@ it('summarizes first-party editorial work and links', function () {
     ]);
 });
 
-it('excludes already live scheduled content from unpublished operational queues', function () {
+it('excludes already live scheduled content from unpublished operational queue counts', function () {
+    // Arrange
     freezeSecond();
     actingAs(User::factory()->create(['is_admin' => true]));
+
+    $podcast = Podcast::factory()->create();
+    foreach ([now()->subMinute(), now()->addDay(), null] as $index => $date) {
+        Episode::factory()
+            ->for($podcast)
+            ->scheduled()
+            ->create(['title' => "Queue episode {$index}", 'published_at' => $date]);
+        NewsletterIssue::factory()
+            ->scheduled()
+            ->create(['title' => "Queue issue {$index}", 'published_at' => $date]);
+    }
+
+    // Act
+    $stats = RenderedStats::from(livewire(EditorialOperationsOverview::class)->html());
+
+    // Assert
+    expect($stats['Episode queue']['value'])->toBe('2')
+        ->and($stats['Newsletter queue']['value'])
+        ->toBe('2');
+});
+
+it('links an unpublished operational queue to a list without already live scheduled content', function (string $label, string $type) {
+    // Arrange
+    freezeSecond();
+    actingAs(User::factory()->create(['is_admin' => true]));
+
     $podcast = Podcast::factory()->create();
     foreach ([now()->subMinute(), now()->addDay(), null] as $index => $date) {
         Episode::factory()
@@ -67,22 +94,20 @@ it('excludes already live scheduled content from unpublished operational queues'
     }
 
     $stats = RenderedStats::from(livewire(EditorialOperationsOverview::class)->html());
-
-    expect($stats['Episode queue']['value'])->toBe('2')
-        ->and($stats['Newsletter queue']['value'])
-        ->toBe('2');
-
-    foreach (['Episode queue' => 'episode', 'Newsletter queue' => 'issue'] as $label => $type) {
-        $url = $stats[$label]['url'];
-        if ($url === null || $url === '') {
-            throw new RuntimeException("Missing {$type} queue URL.");
-        }
-
-        $response = get($url);
-
-        $response->assertSuccessful()
-            ->assertSee("Queue {$type} 1")
-            ->assertSee("Queue {$type} 2")
-            ->assertDontSee("Queue {$type} 0");
+    $url = $stats[$label]['url'];
+    if ($url === null || $url === '') {
+        throw new RuntimeException("Missing {$type} queue URL.");
     }
-});
+
+    // Act
+    $response = get($url);
+
+    // Assert
+    $response->assertSuccessful()
+        ->assertSee("Queue {$type} 1")
+        ->assertSee("Queue {$type} 2")
+        ->assertDontSee("Queue {$type} 0");
+})->with([
+    'episode queue' => ['Episode queue', 'episode'],
+    'newsletter queue' => ['Newsletter queue', 'issue'],
+]);

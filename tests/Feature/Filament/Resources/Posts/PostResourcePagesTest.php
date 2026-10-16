@@ -50,12 +50,20 @@ it('badges posts in review first, then drafts', function (int $inReview, int $dr
 ]);
 
 it('updates the post badge as soon as a post enters review', function () {
+    // Arrange
     Post::factory()->create();
-    expect(PostResource::getNavigationBadge())->toBe('1 draft');
 
+    $badgeBeforeReview = PostResource::getNavigationBadge();
+
+    // Act
     Post::factory()
         ->inReview()
         ->create();
 
-    expect(PostResource::getNavigationBadge())->toBe('1 to review');
+    $badgeAfterReview = PostResource::getNavigationBadge();
+
+    // Assert
+    expect($badgeBeforeReview)->toBe('1 draft')
+        ->and($badgeAfterReview)
+        ->toBe('1 to review');
 });

@@ -58,7 +58,8 @@ it('updates a post through the Filament form', function () {
         ->toBe(PublishStatus::InReview);
 });
 
-it('links and unlinks related episodes through the Filament form', function () {
+it('links related episodes through the Filament form', function () {
+    // Arrange
     $episodeIds = Episode::factory()
         ->count(2)
         ->recycle(Podcast::factory()->create())
@@ -67,20 +68,39 @@ it('links and unlinks related episodes through the Filament form', function () {
         ->all();
     $post = Post::factory()->create();
 
-    livewire(EditPost::class, ['record' => $post->getRouteKey()])
+    // Act
+    $component = livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['episodes' => $episodeIds])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->call('save');
+
+    // Assert
+    $component->assertHasNoFormErrors();
 
     $post->refresh();
 
     expect($post->episodes)
         ->toHaveCount(2);
+});
 
-    livewire(EditPost::class, ['record' => $post->getRouteKey()])
+it('unlinks related episodes through the Filament form', function () {
+    // Arrange
+    $episodeIds = Episode::factory()
+        ->count(2)
+        ->recycle(Podcast::factory()->create())
+        ->create()
+        ->pluck('id')
+        ->all();
+    $post = Post::factory()->create();
+    $post->episodes()
+        ->attach($episodeIds);
+
+    // Act
+    $component = livewire(EditPost::class, ['record' => $post->getRouteKey()])
         ->fillForm(['episodes' => []])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->call('save');
+
+    // Assert
+    $component->assertHasNoFormErrors();
 
     $post->refresh();
 
