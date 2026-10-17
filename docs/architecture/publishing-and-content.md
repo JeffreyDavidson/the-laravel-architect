@@ -119,6 +119,16 @@ and the filter, which lists published posts only.
 This is separate from the editorial approval fields (`reviewed_by`,
 `reviewed_at`, `review_notes`) and is shown only in the admin.
 
+## Uncategorized posts
+
+Deleting a category keeps its posts: the foreign key is `nullOnDelete`, so they
+lose their category and stay published. The public site shows no category label
+for them and keeps them in the blog's "All" list, search and feeds; there is no
+public catch-all category. In the admin, `Post::uncategorized()` backs the posts
+table's "Uncategorized" filter (added through `PostScreenOptions::extraFilters()`
+in `AdminPanelProvider`), and the readiness column already reports the missing
+category.
+
 ## Slugs
 
 Admin forms generate an initial slug but preserve it when titles change, and
