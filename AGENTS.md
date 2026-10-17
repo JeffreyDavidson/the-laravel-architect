@@ -8,7 +8,7 @@
 
 ## Local repository path
 
-- The local application directory is `/Users/jeffreydavidson/Herd/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
+- The local application directory is `/Users/jeffreydavidson/Herd/personal/thelaravelarchitect`, matching the site domain. Keep workspace commands and tool context pointed at this path; the GitHub repository remains `the-laravel-architect`.
 
 ## Meta Repo
 
