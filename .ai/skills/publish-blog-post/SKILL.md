@@ -7,7 +7,7 @@ metadata:
 
 # Publish a blog post
 
-Work from `/Users/jeffreydavidson/Herd/thelaravelarchitect`. Posts live in the database; Markdown in `notes/drafts/` is ignored scratch material, never committed or copied into git. Production writes go through the authenticated admin, never tinker, SQL, SSH or a hidden HTTP request.
+Work from `/Users/jeffreydavidson/Herd/personal/thelaravelarchitect`. Posts live in the database; Markdown in `notes/drafts/` is ignored scratch material, never committed or copied into git. Production writes go through the authenticated admin, never tinker, SQL, SSH or a hidden HTTP request.
 
 ## Approval boundary
 
