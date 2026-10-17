@@ -168,7 +168,7 @@ final class ProductionConfigurationVerifier
         return is_array($disks) && array_any(
             $disks,
             fn (mixed $disk): bool => is_string($disk)
-                && in_array(config("filesystems.disks.{$disk}.driver"), ['s3', 'sftp'], true),
+                && config("filesystems.disks.{$disk}.driver") === 's3',
         );
     }
 
