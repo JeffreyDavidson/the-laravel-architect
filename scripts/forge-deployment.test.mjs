@@ -735,7 +735,7 @@ test('the documented deploy script backs up and verifies before migrating, on pr
     assert.equal(script.split('backup:run').length - 1, 1);
 });
 
-test('the documented deploy script builds assets and links storage before the backup gate and migrates last before activation', () => {
+test('the documented deploy script builds assets, drops node_modules and links storage before the backup gate and migrates last before activation', () => {
     const deployScript = readFileSync(new URL('../docs/operations/forge-deploy-script.md', import.meta.url), 'utf8');
     const script = deployScript.match(/# Forge deploy script[\s\S]*?```bash\n([\s\S]*?)\n```/)?.[1];
 
@@ -745,6 +745,7 @@ test('the documented deploy script builds assets and links storage before the ba
         '$FORGE_COMPOSER install',
         'npm ci --production=false',
         'npm run build',
+        'rm -rf node_modules',
         'artisan storage:link',
         'artisan app:verify-production',
         'artisan backup:run',
@@ -765,7 +766,7 @@ test('the documented deploy script builds assets and links storage before the ba
     );
 
     // Nothing between the migration and activation may stop the deploy.
-    const afterMigration = script.slice(positions[7] + steps[7].length, positions[9]);
+    const afterMigration = script.slice(positions[8] + steps[8].length, positions[10]);
     assert.match(afterMigration, /nightwatch:deploy [^\n]*\\\n\s+\|\| echo /);
 });
 

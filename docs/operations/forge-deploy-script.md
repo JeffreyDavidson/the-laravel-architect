@@ -56,6 +56,8 @@ $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autol
 export NODE_OPTIONS="--max-old-space-size=1024"
 npm ci --production=false
 npm run build
+# The assets are built and nothing at runtime reads node_modules, so each kept release drops it.
+rm -rf node_modules
 
 # Recreate the public storage link in the new release
 rm -f public/storage
@@ -139,6 +141,10 @@ release serving a schema it was not written for.
 - The asset install and build and `storage:link` therefore run first, before the
   backup gate, and a failed `npm ci` or `npm run build` stops the deploy with
   the database untouched.
+- `rm -rf node_modules` follows the build. Forge keeps several releases, and
+  each one carried its own copy (about 120 MB) on the disk all sites share.
+  Every deploy runs a fresh `npm ci`, so the next build is unaffected. Keep
+  `.git`: `app:verify-deployment` reads the release's revision with `git`.
 - `nightwatch:deploy` runs after the migration, so it only records a deploy
   whose migrations succeeded. Its `|| echo` keeps a Nightwatch failure from
   blocking activation (the package already exits successfully on API errors;
