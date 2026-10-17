@@ -38,6 +38,7 @@ use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -166,6 +167,14 @@ final class AdminPanelProvider extends PanelProvider
                             ->label('Author')
                             ->sortable()
                             ->toggleable(isToggledHiddenByDefault: true),
+                    ])
+                    ->extraFilters(fn (): array => [
+                        Filter::make('uncategorized')
+                            ->label('Uncategorized')
+                            ->query(function (Builder $query): void {
+                                /** @var Builder<Post> $query */
+                                $query->uncategorized();
+                            }),
                     ])
                     ->modifyQuery(fn (Builder $query): Builder => $query->withCount('tags'))
                     ->reviewIntervalDays(fn (): int => config()->integer('content.post_review_interval_days'))

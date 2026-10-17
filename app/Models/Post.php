@@ -10,6 +10,7 @@ use App\Observers\PostObserver;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -81,6 +82,17 @@ final class Post extends Model implements Publishable, ReviewsSources
     protected function whereTracksSourceReview(Builder $query): void
     {
         $query->whereNotNull('source_url');
+    }
+
+    /**
+     * Posts left without a category, for example after their category was deleted.
+     *
+     * @param  Builder<Post>  $query
+     */
+    #[Scope]
+    protected function uncategorized(Builder $query): void
+    {
+        $query->whereNull('category_id');
     }
 
     /** @return BelongsTo<User, $this> */
