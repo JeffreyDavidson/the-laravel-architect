@@ -36,6 +36,12 @@ fast-forward develop to main
    push CI, `Deploy staging` deploys the tested full SHA. The staging workflow
    rejects a stale candidate if its source branch has advanced. Review public
    pages, affected behavior, and the authenticated admin boundary on staging.
+   Then run the **Staging Verifier** agent on the candidate (release skill,
+   step 6). It reads push CI and the `Deploy staging` run for the exact SHA,
+   including that run's own smoke step between its marker checks, maps each PR
+   in the release to a check that covers it, and ends with "Ready to ship:
+   yes/no". Put its report in the release PR description. A "no" blocks the
+   release until a new candidate passes.
 4. Open a release PR from the release branch into `main`. After review and
    approval, merge it with a regular merge commit to preserve ancestry. Do not
    squash or rebase the release PR.
@@ -157,6 +163,8 @@ pending manual review; select and review the new revision before promotion.
    tag, `vYYYY.MM.N` (`N` starts at zero each month), on the full deployed SHA.
    Verify no existing tag uses that version, push the tag without force, and
    record the Forge deployment and workflow run. Never move or reuse a tag.
+7. Create a GitHub Release for that tag with the release notes:
+   `gh release create <tag> --verify-tag --title "<tag>" --notes-file <notes>`.
 
 The staging attempt is required; do not infer it from the current run after a
 retry. Use the values captured from the staging execution you reviewed:
@@ -235,6 +243,10 @@ release_branch: release/YYYY.MM.N
 release_pr_merge: merge          # regular merge commit; never squash or rebase
 release_commit: false            # the release branch is exactly the tip of develop
 staging: workflow "Deploy staging" (workflow_run after push CI on main and release/**)
+staging_smoke: the "Run application smoke checks" step inside the Deploy staging run, between its two marker checks of the candidate SHA; staging-smoke.yml is only a scheduled check of whatever staging serves (it checks out main and reads no marker)
+staging_verify: https://staging.thelaravelarchitect.com/deployment.json (revision), https://staging.thelaravelarchitect.com/up (200); behind Cloudflare Access, so read inside the Deploy staging run
+verifier: staging-verifier       # its "Ready to ship" report goes in the release PR description; "no" blocks the release
+github_release: required         # a GitHub Release with the notes for every tag
 promote: workflow promote-production.yml, inputs revision (40-char SHA) + staging_run_id + staging_run_attempt, protected `production` environment
 verify: https://thelaravelarchitect.com/deployment.json (revision), https://thelaravelarchitect.com/up (200)
 smoke_pages: / /blog /podcasts /search /contact /admin/login /sitemap.xml /rss   # expect 200; the podcast index is /podcasts and the feed is /rss, so /podcast and /feed return 404

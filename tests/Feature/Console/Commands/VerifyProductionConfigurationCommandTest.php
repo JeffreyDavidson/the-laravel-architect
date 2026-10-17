@@ -223,6 +223,21 @@ it('rejects an incomplete Backblaze backup disk without exposing credentials', f
         ->assertFailed();
 });
 
+it('does not count an SFTP disk as an off-server backup', function () {
+    // Arrange
+    config()->set([
+        'backup.backup.destination.disks' => ['local', 'nas-backups'],
+        'filesystems.disks.nas-backups' => ['driver' => 'sftp'],
+    ]);
+
+    // Act
+    $command = $this->artisanCommand('app:verify-production');
+
+    // Assert
+    $command->expectsOutputToContain('BACKUP_DISKS must include an off-server disk.')
+        ->assertFailed();
+});
+
 it('rejects an unknown backup disk', function () {
     config()->set('backup.backup.destination.disks', ['local', 'missing-disk']);
 
