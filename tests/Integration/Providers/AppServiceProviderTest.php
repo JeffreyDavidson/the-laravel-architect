@@ -4,6 +4,7 @@ use App\Filament\Resources\Podcasts\PodcastResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Tags\TagResource;
 use App\Filament\Resources\Videos\VideoResource;
+use App\Mail\NewsletterConfirmationMail;
 use App\Models\Category;
 use App\Models\ContactInquiry;
 use App\Models\Episode;
@@ -23,8 +24,11 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\LazyLoadingViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use JeffreyDavidson\CreatorKit\Actions\RequestNewsletterSubscription;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Categories\CategoryResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\ContactInquiries\ContactInquiryResource;
 use JeffreyDavidson\CreatorKit\Filament\Resources\Episodes\EpisodeResource;
@@ -184,4 +188,24 @@ it('permits lazy loading in production', function () {
     // Assert
     expect(Model::preventsLazyLoading())
         ->toBeFalse();
+});
+
+it('builds emailed links on the application URL in production whatever the request host', function () {
+    // Arrange
+    Mail::fake();
+    config()->set('app.url', 'https://thelaravelarchitect.test');
+    app()->instance('request', Request::create('http://attacker.example/newsletter', 'POST'));
+    app()->instance('env', 'production');
+    new AppServiceProvider(app())
+        ->boot();
+
+    // Act
+    app(RequestNewsletterSubscription::class)
+        ->handle('reader@example.com');
+
+    // Assert
+    Mail::assertQueued(
+        NewsletterConfirmationMail::class,
+        fn (NewsletterConfirmationMail $mail): bool => str_starts_with($mail->confirmationUrl, 'https://thelaravelarchitect.test/newsletter/confirm/'),
+    );
 });
