@@ -12,7 +12,7 @@
 
 ## Meta Repo
 
-Plans, the status list, brand work, and source artwork for The Laravel Architect live in the private `the-laravel-architect-meta` repository, checked out at `~/Projects/the-laravel-architect-meta`, not in this repository. This replaces the global `tasks/todo.md`, `_plans/status.md`, and `branding/` locations for this project.
+Plans, the status list, brand work, and source artwork for The Laravel Architect live in the private `the-laravel-architect-meta` repository, checked out at `~/Projects/personal/the-laravel-architect/the-laravel-architect-meta`, not in this repository. This replaces the global `tasks/todo.md`, `_plans/status.md`, and `branding/` locations for this project.
 
 - Write the plan for a piece of work to `cycles/YYYY-MM-DD-short-name/summary.md` there, keep its progress notes current, and finish with the review section in the same file.
 - Keep the status list at `status.md` there.
