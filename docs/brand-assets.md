@@ -21,7 +21,7 @@ The simplified small elephant serves the public site, error pages, and admin
 browser tabs: `public/images/elephant-small-16.png` and
 `public/images/elephant-small-32.png`. Both are transparent exports of the accepted
 fitted vector in the private meta repository at
-`~/Projects/the-laravel-architect-meta/brand/small-head-v3/variants/fitted.svg`.
+`~/Projects/personal/the-laravel-architect/the-laravel-architect-meta/brand/small-head-v3/variants/fitted.svg`.
 `public/favicon.ico` contains the same artwork at 16px and 32px for legacy fallback.
 The small head has solid white tusks and transparent eyes; it does not replace
 the detailed head on larger surfaces. The old companion 16px/32px and badge
