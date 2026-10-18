@@ -31,7 +31,7 @@ Pick a composition that differs from these (a new desk arrangement or diagram sh
 
 ## 3. Write the prompt
 
-Combine the fixed style block below with a subject block for this post. Follow the project meta-repository instructions: keep source artwork and prompts under `~/Projects/the-laravel-architect-meta/artwork/`, reusing an established per-post folder where available; keep review evidence and the asset inventory in the task’s `cycles/YYYY-MM-DD-short-name/` folder. Record exact paths so existing accepted assets in earlier cycles remain discoverable. Save a versioned `{slug}.featured-v1.prompt.md` alongside its master and show the prompt to the user. If the required meta checkout is missing, stop and ask rather than creating app-local artwork folders. Reuse an existing prompt when it still matches the post. Keep this file aligned with the final prompt used for generation.
+Combine the fixed style block below with a subject block for this post. Follow the project meta-repository instructions: keep source artwork and prompts under `~/Projects/personal/the-laravel-architect/the-laravel-architect-meta/artwork/`, reusing an established per-post folder where available; keep review evidence and the asset inventory in the task’s `cycles/YYYY-MM-DD-short-name/` folder. Record exact paths so existing accepted assets in earlier cycles remain discoverable. Save a versioned `{slug}.featured-v1.prompt.md` alongside its master and show the prompt to the user. If the required meta checkout is missing, stop and ask rather than creating app-local artwork folders. Reuse an existing prompt when it still matches the post. Keep this file aligned with the final prompt used for generation.
 
 **Style block (use as written):**
 
